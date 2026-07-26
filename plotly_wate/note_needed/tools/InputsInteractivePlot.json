@@ -1,0 +1,30 @@
+{
+    "INPUT_HDF": [
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163718_0001.h5",
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163733_0002.h5",
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163748_0003.h5",
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163803_0004.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\R604_in.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\R11_in.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\R607_in.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\607_wup.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\sin_in.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\input.h5",
+        "C:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\ds\\kpi_dummy_pair1_input.h5",
+        "C:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\ds\\kpi_dummy_pair2_input.h5"
+    ],
+    "OUTPUT_HDF": [
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163718_0001_r00070104.h5",
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163733_0002_r00070104.h5",
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163748_0003_r00070104.h5",
+        "C:/Users/ouymc2/Desktop/hdf_db/CCA_9010_3100099_DEBUG_20250828_163803_0004_r00070104.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\R604_out.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\R11_out.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\R607_out.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\607_wup_out.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\sin_out.h5",
+        "c:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\output.h5",
+        "C:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\ds\\kpi_dummy_pair1_output.h5",
+        "C:\\git\\10030156_03_Analysis_Framework_Suite\\ResimulationTool\\SOURCE\\ApplicationProjects\\ResimHTMLReport\\Interactiveplot\\plotly\\hdf_DB\\ds\\kpi_dummy_pair2_output.h5"
+    ]
+}

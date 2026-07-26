@@ -1,0 +1,129 @@
+# Singularity/Apptainer definition file for Interactive Plot Tool
+# Build with: apptainer build --fakeroot interactive_plot.simg Singularity_InteractivePlot.def
+#
+# Resource Requirements:
+#   - Memory: 64 GB
+#   - CPUs: 7-10
+#   - Partition: plcyf-com
+#
+# Usage:
+#   srun --partition=plcyf-com --mem=64G --cpus-per-task=8 \
+#       singularity exec interactive_plot.simg python -m InteractivePlot.e_presentation_layer.main_front_end \
+#       <config.xml> <inputs.json> [output_dir]
+
+Bootstrap: docker
+From: docker.io/python:3.10-slim
+
+%labels
+    Name InteractivePlot
+    Version 1.0
+    Author ouymc2
+    Description Interactive Plot Tool - Generates HTML reports from HDF files
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export PATH=/opt/venv/bin:$PATH
+    export PYTHONPATH=/app/tools:$PYTHONPATH
+
+%post
+    # Install system dependencies
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+      libzmq3-dev \
+        git \
+        curl \
+        ca-certificates \
+        && rm -rf /var/lib/apt/lists/*
+
+    # Create virtual environment
+    python -m venv /opt/venv
+    . /opt/venv/bin/activate
+    pip install --upgrade pip setuptools wheel
+
+    # Install Python dependencies (minimal, no version pins for speed)
+    pip install --no-cache-dir numpy pandas h5py plotly lxml pyzmq
+
+    # Create required directories
+    mkdir -p /app/tools /app/output /app/html_db /app/simg/html_db
+    chmod -R 755 /app
+
+%files
+    # Copy InteractivePlot tool and dependencies (paths from root)
+    tools/InteractivePlot/a_config_layer /app/tools/InteractivePlot/a_config_layer
+    tools/InteractivePlot/b_persistence_layer /app/tools/InteractivePlot/b_persistence_layer
+    tools/InteractivePlot/c_data_storage /app/tools/InteractivePlot/c_data_storage
+    tools/InteractivePlot/d_business_layer /app/tools/InteractivePlot/d_business_layer
+    tools/InteractivePlot/e_presentation_layer /app/tools/InteractivePlot/e_presentation_layer
+    tools/InteractivePlot/kpi_client /app/tools/InteractivePlot/kpi_client
+
+%runscript
+    # Activate virtual environment
+    . /opt/venv/bin/activate
+    
+    # Parse arguments
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: singularity run interactive_plot.simg <config.xml> <inputs.json> [output_dir]"
+        echo ""
+        echo "Arguments:"
+        echo "  config.xml   - Path to the HTML configuration XML file"
+        echo "  inputs.json  - Path to the inputs JSON file with HDF pairs"
+        echo "  output_dir   - Optional output directory (default: same as input)"
+        echo ""
+        echo "Example:"
+        echo "  singularity run interactive_plot.simg HTMLConfig.xml inputs.json /output"
+        exit 1
+    fi
+    
+    CONFIG_XML="$1"
+    INPUTS_JSON="$2"
+    OUTPUT_DIR="${3:-$(dirname $INPUTS_JSON)}"
+    
+    echo "=== Interactive Plot Tool ==="
+    echo "Config: $CONFIG_XML"
+    echo "Inputs: $INPUTS_JSON"
+    echo "Output: $OUTPUT_DIR"
+    echo "Started at: $(date)"
+    echo ""
+    
+    # Ensure output directory exists
+    mkdir -p "$OUTPUT_DIR"
+    
+    # Run the Interactive Plot tool
+    cd /app/tools
+    exec python -m InteractivePlot.e_presentation_layer.main_front_end \
+        "$CONFIG_XML" "$INPUTS_JSON" "$OUTPUT_DIR"
+
+%test
+    . /opt/venv/bin/activate
+    python -c "import numpy; import pandas; import h5py; import plotly; print('All dependencies OK')"
+
+%help
+    Interactive Plot Tool - Singularity Container
+    
+    Generates interactive HTML reports from HDF sensor data files.
+    
+    Resource Requirements:
+      - Memory: 64 GB
+      - CPUs: 7-10 cores
+      - Recommended Partition: plcyf-com
+    
+    Usage:
+      # With srun allocation (recommended)
+      srun --partition=plcyf-com --mem=64G --cpus-per-task=8 \
+          singularity run interactive_plot.simg config.xml inputs.json /output
+      
+      # Direct execution (for testing)
+      singularity run interactive_plot.simg config.xml inputs.json /output
+    
+    Input File Formats:
+      inputs.json structure:
+      [
+        {
+          "input_path": "/path/to/input.h5",
+          "output_path": "/path/to/output.h5"
+        }
+      ]
+    
+    Environment Variables:
+      OUTPUT_DIR - Override default output directory

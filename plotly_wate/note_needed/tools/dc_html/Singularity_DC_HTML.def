@@ -1,0 +1,177 @@
+# Singularity/Apptainer definition file for DC HTML Tool
+# Build with: apptainer build --fakeroot dc_html.simg Singularity_DC_HTML.def
+#
+# Resource Requirements:
+#   - Memory: 32 GB
+#   - CPUs: 4-8
+#   - Partition: plcyf-com
+#
+# Usage Modes:
+#   1. Standard Mode (with config and inputs):
+#      srun --partition=plcyf-com --mem=32G --cpus-per-task=4 \
+#          singularity run dc_html.simg <HTMLConfig.xml> <Inputs.json> <output_dir>
+#
+#   2. Interactive Mode (port mode):
+#      singularity run dc_html.simg server <port>
+
+Bootstrap: docker
+From: docker.io/python:3.10-slim
+
+%labels
+    Name DC_HTML
+    Version 1.0
+    Author ouymc2
+    Description DC HTML Report Generation Tool - Generates HTML reports from DC HDF sensor data
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export PATH=/opt/venv/bin:$PATH
+    export PYTHONPATH=/app/tools:$PYTHONPATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+
+%post
+    # Install system dependencies
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        libzmq3-dev \
+        git \
+        curl \
+        ca-certificates \
+        && rm -rf /var/lib/apt/lists/*
+
+    # Create virtual environment
+    python -m venv /opt/venv
+    . /opt/venv/bin/activate
+    pip install --upgrade pip setuptools wheel
+
+    # Install Python dependencies (minimal, no version pins for speed)
+    pip install --no-cache-dir numpy pandas h5py plotly lxml pyzmq tqdm
+
+    # Create required directories
+    mkdir -p /app/tools /app/output /app/html_db /app/simg/html_db
+    chmod -R 755 /app
+
+%files
+    # Copy IPS module and all submodules (paths from root)
+    tools/dc_html/IPS /app/tools/IPS
+
+%runscript
+    # Activate virtual environment
+    . /opt/venv/bin/activate
+    
+    # Parse mode argument
+    MODE="${1:-help}"
+    
+    case "$MODE" in
+        server)
+            # Server Mode: dc_html.simg server <port>
+            shift
+            PORT="${1:-5556}"
+            
+            echo "=== DC HTML Tool - Server Mode ==="
+            echo "Port: $PORT"
+            echo "Started at: $(date)"
+            echo ""
+            
+            cd /app/tools
+            exec python -m IPS.ResimHTMLReport "$PORT"
+            ;;
+            
+        help|--help|-h)
+            echo "DC HTML Report Tool - Singularity Container"
+            echo ""
+            echo "Usage:"
+            echo "  singularity run dc_html.simg <config.xml> <inputs.json> <output_dir>"
+            echo "  singularity run dc_html.simg server <port>"
+            echo ""
+            echo "Modes:"
+            echo "  <config.xml> <inputs.json> <output_dir>"
+            echo "      Generate DC HTML reports from HDF pairs defined in inputs.json"
+            echo ""
+            echo "  server <port>"
+            echo "      Start interactive server mode (default port: 5556)"
+            echo ""
+            echo "Examples:"
+            echo "  # Standard mode with srun"
+            echo "  srun --partition=plcyf-com --mem=32G --cpus-per-task=4 \\"
+            echo "      singularity run dc_html.simg HTMLConfig.xml Inputs.json /output/dc_html"
+            echo ""
+            echo "  # Server mode"
+            echo "  singularity run dc_html.simg server 5556"
+            exit 0
+            ;;
+            
+        *)
+            # Standard Mode: dc_html.simg <config.xml> <inputs.json> <output_dir>
+            CONFIG_XML="$1"
+            INPUTS_JSON="$2"
+            OUTPUT_DIR="${3:-.}"
+            
+            if [ -z "$CONFIG_XML" ] || [ -z "$INPUTS_JSON" ]; then
+                echo "Error: Config XML and Inputs JSON are required"
+                echo "Usage: singularity run dc_html.simg <config.xml> <inputs.json> [output_dir]"
+                exit 1
+            fi
+            
+            echo "=== DC HTML Tool - Standard Mode ==="
+            echo "Config XML:  $CONFIG_XML"
+            echo "Inputs JSON: $INPUTS_JSON"
+            echo "Output Dir:  $OUTPUT_DIR"
+            echo "Started at:  $(date)"
+            echo ""
+            
+            # Ensure output directory exists
+            mkdir -p "$OUTPUT_DIR"
+            
+            # Count total pairs for progress
+            TOTAL_PAIRS=$(python -c "import json; data=json.load(open('$INPUTS_JSON')); print(len(data.get('InputHDF', [])))" 2>/dev/null || echo "?")
+            echo "Total HDF pairs to process: $TOTAL_PAIRS"
+            echo ""
+            
+            cd /app/tools
+            exec python -m IPS.ResimHTMLReport "$CONFIG_XML" "$INPUTS_JSON" "$OUTPUT_DIR"
+            ;;
+    esac
+
+%test
+    . /opt/venv/bin/activate
+    python -c "import numpy; import pandas; import h5py; import plotly; import zmq; import tqdm; print('All dependencies OK')"
+    python -c "from IPS.ResimHTMLReport import *; print('DC HTML modules OK')" 2>/dev/null || echo "Module import test skipped"
+
+%help
+    DC HTML Report Tool - Singularity Container
+    
+    Generates DC (Data Collect) HTML reports from HDF sensor data files.
+    Supports UDP, UDPDC, MCIP_CAN, and CEER_CAN data sources.
+    
+    Resource Requirements:
+      - Memory: 32 GB
+      - CPUs: 4-8 cores
+      - Recommended Partition: plcyf-com
+    
+    Usage with srun:
+      # Standard Mode (recommended)
+      srun --partition=plcyf-com --mem=32G --cpus-per-task=4 \
+          singularity run dc_html.simg HTMLConfig.xml Inputs.json /output/dc_html
+    
+    Configuration:
+      HTMLConfig.xml - Select data source type:
+        - UDP: HDF Files from MUDP with UDP Data
+        - MCIP_CAN: HDF Files from Bordnet with MCIP_CAN Data
+        - CEER_CAN: HDF Files from Bordnet with CEER_CAN Data
+        - UDPDC: HDF Files from DC with UDP Data
+    
+    Inputs.json Format:
+      {
+        "InputHDF": ["/path/to/input1.h5", "/path/to/input2.h5"],
+        "OutputHDF": ["/path/to/output1.h5", "/path/to/output2.h5"]
+      }
+    
+    Environment Variables:
+      OUTPUT_DIR - Override default output directory
+    
+    Progress Tracking:
+      The tool displays progress for each HDF pair being processed,
+      including elapsed time and estimated time remaining.

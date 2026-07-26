@@ -1,0 +1,879 @@
+Project Architecture & Design Notes
+1. High-Level Architecture: The "Manager-Worker" Model
+Since you are operating in an HPC (High-Performance Computing) environment with Slurm, you cannot treat the cluster like a single server. You must separate the Control Plane (Web App) from the Compute Plane (Heavy Tools).
+
+Node A: Login/Head Node (The "Manager")
+
+Role: User Interface & Job Orchestration.
+
+Software: Flask Web Application, PostgreSQL Database.
+
+Resource Usage: Low CPU, Low RAM. Runs 24/7.
+
+Action: When a user clicks "Run", this node does not run the code. It generates a Slurm script (sbatch) and submits it to the queue.
+
+Node B: Compute/GPU Nodes (The "Workers")
+
+Role: Heavy Execution (KPI, IPS, DHTML, LLM).
+
+Software: Singularity Containers (.sif files) containing heavy libraries (PyTorch, TensorFlow, etc.).
+
+Resource Usage: High CPU, GPU utilization. Runs only when requested.
+
+2. Technology Stack
+Backend Framework: Flask (Python).
+
+Container Engine: Singularity/Apptainer (Required for HPC clusters). You will build Docker images locally and convert them to .sif files on the cluster.
+
+Database 1 (Relational): PostgreSQL.
+
+Purpose: User management (NetID/Password), Session history, Job logs (Status: Queued, Running, Failed, Success).
+
+Database 2 (Vector): ChromaDB.
+
+Purpose: Storing embeddings of tool outputs so the Local LLM can "remember" context.
+
+Job Scheduler: Slurm (using sbatch for background tasks and srun for interactive tasks).
+
+LLM: Qwen (or similar) running as a persistent service on a GPU node.
+
+3. Critical Workflows
+A. The Job Submission Workflow (KPI/IPS/DHTML)
+
+User: Uploads a file or selects a path like /mnt/cluster/data/input.h5 via the Flask UI.
+
+Flask:
+
+Creates a unique job_id.
+
+Inserts a record into PostgreSQL: (job_id, user, status="QUEUED").
+
+Constructs a shell command: sbatch --parsable --output=log_%j.txt run_kpi.sh <input_path>
+
+Executes command using Python subprocess.
+
+Slurm: Allocates a Compute Node and runs the Singularity container.
+
+Worker (Compute Node):
+
+Runs the heavy algorithm.
+
+Writes output files to disk.
+
+(Optional) Calls back to a Flask API endpoint to update status to "COMPLETED".
+
+B. The "Chat with AI" Workflow
+
+Challenge: You cannot sbatch every chat message (too slow).
+
+Solution: Host the LLM as a "server" inside the cluster.
+
+Start one Slurm job that requests a GPU for 24 hours (or indefinitely).
+
+This job runs Qwen and exposes an API (e.g., http://10.0.0.5:8000/generate).
+
+Your Flask app sends user prompts to 10.0.0.5:8000 and displays the response.
+
+4. File System Strategy
+Local Laptop Uploads: Flask saves these to a "scratch" directory that is mounted and visible to the compute nodes (e.g., /scratch/user/uploads).
+
+Cluster Paths: The UI must include a file browser component that allows users to click-select files from /mnt/cluster to avoid typo errors and security risks.
+
+The "Master Prompt" for Code Generation
+You can paste this prompt into an AI coding assistant (like ChatGPT, Claude, or Gemini) to generate the exact boilerplate you need.
+
+Prompt:
+
+I am building an enterprise Flask application to be deployed on an HPC Cluster using Slurm and Singularity. I need you to generate the project structure and key boilerplate code based on the following strict requirements:
+
+1. Architecture:
+
+Manager: A Flask app running on the Login Node. It handles UI, Auth, and Job Submission.
+
+Workers: Heavy Python scripts (KPI, IPS, DHTML) running inside Singularity containers on Compute Nodes.
+
+2. Database Schema (PostgreSQL):
+
+Use SQLAlchemy.
+
+User table: id, net_id (string, unique), password_hash, role.
+
+JobHistory table: id, user_id, tool_name (e.g., 'KPI'), input_path, slurm_job_id, status (Queued/Running/Done), output_log_path, timestamp.
+
+3. Key Features to Implement:
+
+Login System: Standard username/password login.
+
+Slurm Submission Function: A Python function submit_slurm_job(script_path, args) that uses subprocess.run to execute sbatch. It must capture the Slurm Job ID and return it.
+
+Job Monitor: A route /check_status/<job_id> that runs squeue to check if the job is still running.
+
+File Browser: A secure helper function that lists directories in a specific base path (e.g., /data/shared) so users can select files instead of typing paths.
+
+4. Constraints:
+
+Do not use standard Docker commands; use singularity exec syntax in the generated Slurm scripts.
+
+Include a placeholder for ChromaDB initialization.
+
+Provide a docker-compose.yml only for the PostgreSQL database (since Flask runs natively on the login node).
+
+Output:
+
+Project folder structure.
+
+models.py (Database classes).
+
+app.py (Main Flask logic with routes for Login and Job Submission).
+
+utils.py (The Slurm submission logic).
+
+templates/dashboard.html (A simple HTML sketch showing the History table).
+
+
+
+
+✅ Cluster Overview
+
+OS: Rocky Linux 8.7 (Green Obsidian)
+Workload Manager: Slurm (versions available: 23.02.3, 24.05.0, 24.05.4)
+Modules Installed:
+
+Python (multiple versions: 2.7.18, 3.5.6, 3.7.x, 3.8.x, 3.9.x, 3.10.x, 3.11.x, 3.12.x)
+AWS CLI, AzCopy, MinIO
+GCC 11.4.0, CMake 3.26.4, Boost 1.82.0
+Jupyter 7.3.2
+MATLAB Compiler Runtime (MCR) multiple versions
+Singularity (3.8.0, 3.11.4)
+Wine (multiple versions)
+tmux 3.2a
+
+
+Scheduler Partitions:
+
+interactive
+highPrio
+plcyf-com*
+plcyf-gpu
+
+
+
+
+✅ Compute Nodes
+CPU Nodes
+
+Nodes: plcyf-com-prod-com[01,001-019], plcyf-com-prod-upl[001-008]
+Typical specs:
+
+CPUs: 16 or 40 per node
+Memory: ~13 GB (small nodes) to ~384 GB (large nodes)
+
+
+Current idle resources:
+
+16 CPUs, ~13 GB RAM (one node)
+Most others are allocated or mixed.
+
+
+
+GPU Node
+
+Node: plcyf-com-prod-gpu001
+Specs:
+
+CPUs: 40
+Memory: 384 GB
+GPUs: 2 × NVIDIA V100
+Partition: plcyf-gpu
+
+
+Slurm reports:
+Gres=gpu:v100:2(S:0-1)
+CfgTRES=cpu=40,mem=384050M,gres/gpu=2
+
+
+
+
+✅ Current Free Resources
+From sinfo --states=idle:
+
+CPUs: 56 (16 + 40)
+Memory: ~397 GB
+GPUs: 2 × V100 (on GPU node)
+
+
+✅ Login Node
+
+lscpu: 4 CPUs, Intel Haswell (KVM virtualized)
+free -h: 15 GB RAM
+No GPUs (nvidia-smi not found)
+Purpose: Job submission, not computation.
+
+
+✅ Storage
+
+Local disks:
+
+/ → 19 GB (6.9 GB free)
+/local → 21 GB (16 GB free)
+/var/log → 20 GB
+/tmp → 20 GB
+
+
+Network-mounted storage:
+
+/net/8k3/e0fs02 → 10 PB total (5 PB free)
+/net/8k3/e0fs01 → 40 PB total (9 PB free)
+
+
+Slurm config directory: /etc/slurm (39 GB, 8 GB free)
+✅ Permanent storage is huge (50 PB combined).
+
+
+✅ Job Queue
+squeue shows many jobs in PD (Pending) state due to (PartitionTimeLimit) — meaning jobs are waiting because of partition time restrictions.
+
+✅ Summary Table
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ComponentDetailsOSRocky Linux 8.7SchedulerSlurmIdle CPUs56Idle Memory~397 GBGPUs2 × NVIDIA V100GPU Nodeplcyf-com-prod-gpu001StorageLocal: ~80 GB, Network: 50 PBLogin Node4 CPUs, 15 GB RAM
+
+👉 Do you want me to create a well-formatted document (Markdown or PDF) with this cluster summary for your reference?
+Or should I generate a diagram showing the cluster architecture (login node, compute nodes, GPU node, storage)?
+I can also write a script that automatically pulls this info from Slurm and system commands for future use. Which option do you prefer?
+Provide your feedback on BizChatYou said: Write a script to gather this infoCopilot said: CopilotReasoned for 16sCrafting a scriptCrafting a Slurm scriptParsing node dataMapping the scriptAwesome — I’ll give you a ready-to-run script that gathers everything we discussed: OS info, Slurm version, partitions, per-node CPU/RAM/GPUs, exact free resources (including mixed nodes), job queue summary, and mounted storage.
+You can run it from the login node.
+
+🧰 Option 1: Python script (robust parsing, JSON + pretty output)
+Save this as cluster_summary.py and run:
+Shellpython3 cluster_summary.py# or JSON output:python3 cluster_summary.py --json > cluster_summary.jsonShow more lines
+Python#!/usr/bin/env python3"""Cluster Summary Script for Slurm (Rocky Linux)- Gathers OS, Slurm version, partitions, detailed node resources (CPU/RAM/GPU),  totals of free vs allocated (accurate even for 'mixed' nodes), job queue, and storage mounts.Usage:  python3 cluster_summary.py            # pretty text output  python3 cluster_summary.py --json     # structured JSON"""import subprocessimport shleximport jsonimport refrom collections import defaultdictdef run_cmd(cmd, timeout=20):    """Run a shell command and return stdout (str)."""    try:        out = subprocess.check_output(shlex.split(cmd), stderr=subprocess.STDOUT, timeout=timeout)        return out.decode("utf-8", errors="replace")    except subprocess.CalledProcessError as e:        return e.output.decode("utf-8", errors="replace")    except Exception as e:        return f"ERROR: {e}"def parse_os_release():    info = {}    try:        for line in open("/etc/os-release", "r", encoding="utf-8"):            line = line.strip()            if "=" in line:                k, v = line.split("=", 1)                info[k] = v.strip('"')    except Exception:        pass    return {        "pretty_name": info.get("PRETTY_NAME"),        "name": info.get("NAME"),        "version": info.get("VERSION"),        "id": info.get("ID"),    }def get_slurm_version():    # Try scontrol first, then sinfo    v1 = run_cmd("scontrol --version").strip()    if v1 and not v1.startswith("ERROR"):        return v1    v2 = run_cmd("sinfo --version").strip()    return v2 or Nonedef get_partitions_summary():    # %P=Partition, %a=Avail, %l=Timelimit, %F=Features, %D=Nodes, %C=CPU summary alloc/idle/other/total    fmt = "%P %a %l %F %D %C"    out = run_cmd(f"sinfo -h -o \"{fmt}\"")    parts = []    for line in out.splitlines():        if not line.strip():            continue        cols = line.split(None, 5)        if len(cols) == 6:            parts.append({                "partition": cols[0],                "availability": cols[1],                "time_limit": cols[2],                "features": cols[3],                "nodes": cols[4],                "cpu_summary": cols[5],  # format: alloc/idle/other/total            })    return partsdef count_gpus_from_gres(gres_str):    """    Parse Slurm GRES strings like:      "gpu:v100:2(S:0-1)" or "gpu:2" or "gpu:a100:4"    Returns total integer count of GPUs.    """    if not gres_str:        return 0    total = 0    # Find any fragment with 'gpu' and a trailing ':<num>'    for frag in gres_str.split(","):        if "gpu" in frag:            m = re.search(r":(\d+)(?:\(|$)", frag)            if m:                total += int(m.group(1))            else:                # Sometimes format is gpu:<num> (no model)                m2 = re.search(r"gpu:(\d+)", frag)                if m2:                    total += int(m2.group(1))    return totaldef parse_nodes_oneline():    """    Use 'scontrol show node --oneline' to get one line per node with key=value tokens.    Extract:      NodeName, CPUTot, CPUAlloc, RealMemory, AllocMem, FreeMem, Gres, GresUsed, Partitions, State    Compute per-node free CPU/mem and free GPUs.    """    out = run_cmd("scontrol show node --oneline")    nodes = []    for line in out.splitlines():        if not line.strip() or line.startswith("ERROR"):            continue        # tokenization by spaces, each token like key=value        tokens = {}        for tok in re.findall(r"(\S+=\S+)", line):            k, v = tok.split("=", 1)            tokens[k] = v        name = tokens.get("NodeName") or tokens.get("NodeAddr")        cputot = int(tokens.get("CPUTot", "0"))        cpualloc = int(tokens.get("CPUAlloc", "0"))        realmem = int(re.sub(r"\D", "", tokens.get("RealMemory", "0")))  # MB        allocmem = int(re.sub(r"\D", "", tokens.get("AllocMem", "0")))   # MB        freemem = int(re.sub(r"\D", "", tokens.get("FreeMem", "0")))     # MB (may be 0 if not reported)        gres = tokens.get("Gres", "")        gres_used = tokens.get("GresUsed", "")        state = tokens.get("State", tokens.get("StateString", "unknown"))        parts = tokens.get("Partitions", "")        # Derived values        free_cpu = max(cputot - cpualloc, 0)        if freemem > 0:            free_mem = freemem        else:            free_mem = max(realmem - allocmem, 0) if realmem and allocmem else None        gpu_total = count_gpus_from_gres(gres)        gpu_used = count_gpus_from_gres(gres_used)        gpu_free = gpu_total - gpu_used if gpu_total is not None else 0        nodes.append({            "name": name,            "state": state,            "partitions": parts,            "cpu_total": cputot,            "cpu_alloc": cpualloc,            "cpu_free": free_cpu,            "mem_total_mb": realmem or None,            "mem_alloc_mb": allocmem or None,            "mem_free_mb": free_mem,            "gres": gres or None,            "gres_used": gres_used or None,            "gpu_total": gpu_total,            "gpu_used": gpu_used,            "gpu_free": max(gpu_free, 0),        })    return nodesdef sinfo_gpu_nodes():    out = run_cmd('sinfo -h -o "%N %G %t"')    gpu_nodes = []    for line in out.splitlines():        cols = line.split(None, 2)        if len(cols) >= 2 and "gpu" in cols[1].lower():            gpu_nodes.append({"nodelist": cols[0], "gres": cols[1], "state": cols[2] if len(cols) > 2 else None})    return gpu_nodesdef squeue_summary():    out = run_cmd("squeue -o \"%A %P %j %u %T %M %D %R\"")    jobs = []    for line in out.splitlines()[1:]:        cols = line.split(None, 7)        if len(cols) >= 8:            jobs.append({                "jobid": cols[0],                "partition": cols[1],                "name": cols[2],                "user": cols[3],                "state": cols[4],                "time": cols[5],                "nodes": cols[6],                "reason": cols[7],            })    # Aggregate reasons for PD jobs    reason_counts = defaultdict(int)    for j in jobs:        if j["state"] == "PD":            reason_counts[j["reason"]] += 1    return {"jobs": jobs, "pending_reason_counts": dict(reason_counts)}def storage_df():    out = run_cmd("df -h")    return outdef cpu_mem_totals(nodes):    totals = {        "cpu_total": 0,        "cpu_alloc": 0,        "cpu_free": 0,        "mem_total_mb": 0,        "mem_alloc_mb": 0,        "mem_free_mb": 0,        "gpu_total": 0,        "gpu_used": 0,        "gpu_free": 0,    }    for n in nodes:        totals["cpu_total"] += n.get("cpu_total", 0)        totals["cpu_alloc"] += n.get("cpu_alloc", 0)        totals["cpu_free"] += n.get("cpu_free", 0)        if n.get("mem_total_mb") is not None:            totals["mem_total_mb"] += n.get("mem_total_mb", 0)        if n.get("mem_alloc_mb") is not None:            totals["mem_alloc_mb"] += n.get("mem_alloc_mb", 0)        if n.get("mem_free_mb") is not None:            totals["mem_free_mb"] += n.get("mem_free_mb", 0)        totals["gpu_total"] += n.get("gpu_total", 0)        totals["gpu_used"] += n.get("gpu_used", 0)        totals["gpu_free"] += n.get("gpu_free", 0)    return totalsdef human_mb(mb):    if mb is None:        return "n/a"    gb = mb / 1024.0    if gb >= 1024:        return f"{gb/1024:.2f} TB"    return f"{gb:.1f} GB"def main(json_mode=False):    osinfo = parse_os_release()    slurm_ver = get_slurm_version()    parts = get_partitions_summary()    nodes = parse_nodes_oneline()    totals = cpu_mem_totals(nodes)    gpu_nodes = sinfo_gpu_nodes()    queue = squeue_summary()    df_out = storage_df()    if json_mode:        print(json.dumps({            "os": osinfo,            "slurm_version": slurm_ver,            "partitions": parts,            "nodes": nodes,            "totals": totals,            "gpu_nodes": gpu_nodes,            "squeue": queue,            "storage_df": df_out,        }, indent=2))        return    # Pretty text output    print("=== Cluster Summary ===")    print(f"OS: {osinfo.get('pretty_name') or osinfo.get('name')} (id={osinfo.get('id')}, version={osinfo.get('version')})")    print(f"Slurm: {slurm_ver}\n")    print("Partitions:")    for p in parts:        print(f"  - {p['partition']}: avail={p['availability']}, time_limit={p['time_limit']}, features={p['features']}, nodes={p['nodes']}, cpu={p['cpu_summary']}")    print()    print("Node Totals:")    print(f"  CPUs: total={totals['cpu_total']}, alloc={totals['cpu_alloc']}, free={totals['cpu_free']}")    print(f"  Memory: total={human_mb(totals['mem_total_mb'])}, alloc={human_mb(totals['mem_alloc_mb'])}, free={human_mb(totals['mem_free_mb'])}")    print(f"  GPUs: total={totals['gpu_total']}, used={totals['gpu_used']}, free={totals['gpu_free']}\n")    print("GPU Nodes (from sinfo):")    if gpu_nodes:        for g in gpu_nodes:            print(f"  - {g['nodelist']}: {g['gres']} ({g['state']})")    else:        print("  (none)")    print()    print("Per-Node (compact):")    for n in nodes:        mem_total = human_mb(n.get("mem_total_mb"))        mem_free = human_mb(n.get("mem_free_mb"))        print(f"  {n['name']} [{n['state']}] parts={n['partitions'] or '-'} "              f"CPU t/a/f={n['cpu_total']}/{n['cpu_alloc']}/{n['cpu_free']} "              f"Mem t/f={mem_total}/{mem_free} "              f"GPU t/u/f={n['gpu_total']}/{n['gpu_used']}/{n['gpu_free']} "              f"GRES={n['gres'] or '-'}")    print("\nJob Queue (simple view):")    pending = queue["pending_reason_counts"]    if pending:        print("  Pending reasons:")        for r, c in pending.items():            print(f"    - {r}: {c}")    else:        print("  No pending jobs or no restrictions reported.")    print("\nMounted Storage (df -h):")    print(df_out)if __name__ == "__main__":    import argparse    ap = argparse.ArgumentParser()    ap.add_argument("--json", action="store_true", help="Output structured JSON")    args = ap.parse_args()    main(json_mode=args.json)Show more lines
+What this script captures (and how)
+
+OS: /etc/os-release
+Slurm version: scontrol --version
+Partitions & CPU state summary: sinfo -o "%P %a %l %F %D %C"
+Accurate per-node free CPU/RAM/GPUs (even for mixed nodes): scontrol show node --oneline
+
+Uses CPUTot, CPUAlloc → free CPU
+Uses FreeMem (or RealMemory - AllocMem) → free memory
+Parses Gres and GresUsed → GPU totals/used/free
+
+
+GPU nodes overview: sinfo -o "%N %G %t"
+Job queue with pending reasons summary: squeue
+Permanent & local storage listing: df -h
+
+
+🐚 Option 2: Bash script (compact, readable)
+If you prefer pure Bash, save as cluster_summary.sh:
+Shell#!/usr/bin/env bashset -euo pipefailecho "=== Cluster Summary (Bash) ==="# OS infoif [[ -f /etc/os-release ]]; then  . /etc/os-release  echo "OS: ${PRETTY_NAME:-$NAME $VERSION}"fi# Slurm versionif command -v scontrol >/dev/null 2>&1; then  echo "Slurm: $(scontrol --version)"elif command -v sinfo >/dev/null 2>&1; then  echo "Slurm: $(sinfo --version)"fiecho# Partitions summaryecho "Partitions:"sinfo -h -o "%P %a %l %F %D %C" | sed 's/^/  /'echo# GPU nodesecho "GPU Nodes:"sinfo -h -o "%N %G %t" | awk 'tolower($2) ~ /gpu/ {printf("  %s: %s (%s)\n",$1,$2,$3)}' || trueecho# Per-node free resources via scontrol (exact even for mixed nodes)echo "Per-Node Resources (CPU/Mem/GPU):"scontrol show node --oneline | while read -r line; do  # Extract fields key=value  name=$(grep -o 'NodeName=[^ ]*' <<<"$line" | cut -d= -f2)  state=$(grep -o 'State=[^ ]*' <<<"$line" | cut -d= -f2)  parts=$(grep -o 'Partitions=[^ ]*' <<<"$line" | cut -d= -f2)  cputot=$(grep -o 'CPUTot=[0-9]*' <<<"$line" | cut -d= -f2)  cpualloc=$(grep -o 'CPUAlloc=[0-9]*' <<<"$line" | cut -d= -f2)  realmem=$(grep -o 'RealMemory=[0-9]*' <<<"$line" | cut -d= -f2)  allocmem=$(grep -o 'AllocMem=[0-9]*' <<<"$line" | cut -d= -f2)  freemem=$(grep -o 'FreeMem=[0-9]*' <<<"$line" | cut -d= -f2)  gres=$(grep -o 'Gres=[^ ]*' <<<"$line" | cut -d= -f2)  gresused=$(grep -o 'GresUsed=[^ ]*' <<<"$line" | cut -d= -f2)  [[ -z "$cpualloc" ]] && cpualloc=0  [[ -z "$allocmem" ]] && allocmem=0  [[ -z "$freemem" ]] && freemem=0  cpu_free=$(( cputot - cpualloc ))  if [[ "$freemem" -gt 0 ]]; then    mem_free_mb=$freemem  else    mem_free_mb=$(( realmem - allocmem ))  fi  # Count GPUs from Gres strings (gpu:v100:2, gpu:2, etc.)  count_gpus() {    local s="$1"    local total=0    IFS=',' read -ra parts <<<"$s"    for p in "${parts[@]}"; do      if [[ "$p" == *gpu* ]]; then        # last numeric piece after ':' is count        cnt=$(awk -F':' '{print $NF}' <<<"$p" | sed 's/[^0-9].*//')        [[ -n "$cnt" ]] && total=$(( total + cnt ))      fi    done    echo "$total"  }  gpu_total=$(count_gpus "${gres:-}")  gpu_used=$(count_gpus "${gresused:-}")  gpu_free=$(( gpu_total - gpu_used ))  # Print compact line  # Convert MB to GB for readability  gb_free=$(awk -v m="$mem_free_mb" 'BEGIN{printf "%.1f", m/1024}')  gb_total=$(awk -v m="$realmem" 'BEGIN{printf "%.1f", m/1024}')  printf "  %s [%s] parts=%s CPU t/a/f=%s/%s/%s Mem t/f=%sGB/%sGB GPU t/u/f=%s/%s/%s GRES=%s\n" \    "${name:-unknown}" "${state:-unknown}" "${parts:-"-"}" \    "${cputot:-0}" "${cpualloc:-0}" "${cpu_free:-0}" \    "${gb_total:-0}" "${gb_free:-0}" \    "${gpu_total:-0}" "${gpu_used:-0}" "${gpu_free:-0}" \    "${gres:-"-"}"doneecho# Totalsecho "Totals (computed):"scontrol show node --oneline | awk '{  match($0, /CPUTot=([0-9]+)/, a); cputot += a[1]  match($0, /CPUAlloc=([0-9]+)/, a); cpualloc += (a[1]?a[1]:0)  # mem totals (MB)  match($0, /RealMemory=([0-9]+)/, a); memtot += a[1]  match($0, /AllocMem=([0-9]+)/, a); memalloc += (a[1]?a[1]:0)  match($0, /FreeMem=([0-9]+)/, a); memfree += (a[1]?a[1]:0)  # GPU totals (simple)  n=split($0, parts, /[ ,]/)  for (i=1;i<=n;i++){    if (parts[i] ~ /^Gres=.*gpu/){      split(parts[i], x, "="); s=x[2]      if (match(s, /gpu[^:]*:[^:]*:([0-9]+)/, g)) gputot += g[1]      else if (match(s, /gpu:([0-9]+)/, g)) gputot += g[1]    }    if (parts[i] ~ /^GresUsed=.*gpu/){      split(parts[i], x, "="); s=x[2]      if (match(s, /gpu[^:]*:[^:]*:([0-9]+)/, g)) gpuused += g[1]      else if (match(s, /gpu:([0-9]+)/, g)) gpuused += g[1]    }  }}END {  printf "  CPUs: total=%d alloc=%d free=%d\n", cputot, cpualloc, cputot - cpualloc  # If FreeMem not reported, will be 0; show alloc & total anyway  printf "  Memory: total=%.1f GB alloc=%.1f GB free=%.1f GB\n", memtot/1024.0, memalloc/1024.0, memfree/1024.0  printf "  GPUs: total=%d used=%d free=%d\n", gputot, gpuused, gputot - gpuused}'echo# Job queue summaryecho "Job Queue (pending reasons):"squeue -h -o "%T %R" | awk '($1=="PD"){cnt[$2]++} END{if(length(cnt)==0){print "  (none)"} else {for(r in cnt) printf "  %s: %d\n", r, cnt[r]}}'echo# Storageecho "Mounted Storage (df -h):"df -hShow more lines
+Run:
+Shellbash cluster_summary.shShow more lines
+
+Notes & Tips
+
+You can run srun --nodelist=plcyf-com-prod-gpu001 --pty /bin/bash && nvidia-smi to check the GPU node directly.
+The Python version gives the most accurate aggregation (handles mixed nodes via CPUAlloc, AllocMem, and GresUsed).
+If your Slurm config doesn’t expose FreeMem or AllocMem, the scripts fall back to RealMemory - AllocMem or show n/a.
+
+
+If you’d like, I can package this into a single zip with both scripts and a README, or customize the output (Markdown report, email-friendly text, or CSV).
+Provide your feedback on BizChatYou said:  Local disks on the login node. in ttoal howmuch disk space and memory Copilot said: CopilotFrom the df -h output you shared, here’s the local disk space and memory on the login node:
+
+✅ Local Disk Space
+Local disks are the ones mounted from /dev/sda* (not network mounts like /net/...):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Mount PointSizeUsedFree/19G11G6.9G/local21G4.4G16G/var/log20G2.8G16G/tmp20G337M18G/boot984M274M660M/boot/efi300M5.9M294M
+Total Local Disk Size ≈ 81 GB
+Free Local Disk Space ≈ 57 GB (excluding /boot partitions)
+
+✅ Memory
+From free -h:
+Mem: 15Gi total, 3.3Gi used, 11Gi free
+
+So:
+
+Total RAM: 15 GB
+Free RAM: ~11 GB
+
+
+✅ Network Storage
+
+/net/8k3/e0fs02: 10 PB total, 5 PB free
+/net/8k3/e0fs01: 40 PB total, 9 PB free
+(These are shared permanent storage, not local.)
+
+
+above one is krakow server detail 
+
+below is south feild server ""🖥️ Detailed Cluster Notes
+Here’s an in-depth breakdown of your Slurm-managed Rocky Linux (8.7) HPC cluster, including CPU details and procurement insights:
+
+1. Operating System & Scheduler
+
+OS: Rocky Linux 8.7 (Green Obsidian) – a RHEL-compatible distribution widely adopted in HPC environments. [admin-magazine.com], [cloud.google.com]
+Slurm Version: 25.05.2 – current stable release coordinating job scheduling, resource allocation, and node monitoring.
+
+
+2. Partitions & Job Queues
+Your clusters include several partitions, each with defined features, limits, and nodes:
+
+defq, eHz, highPrio: CPU-focused partitions, up to 7-days runtime, mixed state.
+gpu & gpuHz: GPU partitions; gpuHz offers 8-hour max runtime and includes node reservations.
+interactive & web_service: Shorter-live, specialized partitions (interactive for debugging, web service likely for shared compute tasks).
+
+
+3. Node & GPU Inventory
+
+GPU node families:
+
+usmidet-com-prod-gpu[001-003]: 4 × NVIDIA L40s per node (IDs indicating GPU IDs 1,3,5,7).
+usmidet-com-prod-dgx001: 4 × NVIDIA V100 (currently drained).
+usmidet-com-prod-gpu[004-006]: 4 × NVIDIA L40s (idle). [stackoverflow.com], [docs.icer.msu.edu], [github.com]
+
+
+
+
+4. CPU Model & Features
+To gather CPU vendor/model info, these Slurm commands are useful:
+
+scontrol show node: Lists per-node architecture, sockets, cores, threads, memory. [stackoverflow.com], [github.com]
+sinfo --Node --long: Provides node-by-node detailed CPU layout. [stackoverflow.com], [stackoverflow.com]
+
+Data typically includes:
+
+Architecture (e.g., x86_64)
+Socket/CPU count (e.g., 2 sockets)
+Cores and threads per socket
+Memory capacity per node
+
+Common CPU vendors for Rocky Linux HPC setups include:
+
+Intel Xeon Scalable (e.g., Cascade Lake, Ice Lake)
+AMD EPYC (Rome, Milan)
+OS hints: CPU features (--constraint=skylake or cascadelake) may surface in Slurm config if present. [hpc.caltech.edu], [github.com]
+
+
+5. Getting Exact CPU Details
+Run these on your login node for precise data:
+Shellscontrol show node <nodename>``Show more lines
+or
+Shellsinfo --Node --longShow more lines
+Look for fields like:
+
+Arch=x86_64
+Sockets=2, CoresPerSocket=16, ThreadsPerCore=2
+CPU model names from the “Features” or node_features
+
+
+6. Example Nodes from Other HPC Systems
+For comparison, similar HPC clusters include:
+
+AMD EPYC-based systems: Swift cluster features EPYC 7532 (Rome) CPUs, with dual sockets per node and up to 8 PetaFLOPS performance. [nrel.gov]
+Intel setups often utilize Xeon families (Cascade Lake / Sapphire Rapids).
+
+
+7. Per-Node Resources Overview
+Your cluster’s GPU notes imply a likely CPU layout such as:
+
+2 sockets × 24–64 cores per socket, with Hyper-Threading (2 threads per core)
+Total memory per node likely several hundred GB (depends on spec; often 256 GB+ to support GPU workloads)
+
+
+✅ Recommendations
+
+Use scontrol show node or sinfo --long to capture exact CPU vendor, core counts, socket layout.
+Look for Features= field in Slurm output for vendor-specific keys (e.g., “skylake”, “epyc”).
+Cross-reference with system admin or hardware inventory (e.g., via lscpu) for full CPU model number.""
+
+
+
+
+Below is a compact, copy-ready project overview you can give to others — folder tree, purpose of important files, run/build steps, and quick troubleshooting notes.
+
+Project root (compact tree)
+
+What each major piece does
+
+.env / .env.template — environment variables (DATABASE_URL, SECRET_KEY, file paths, LLM endpoints). Edit .env for local/cluster settings.
+app.py — Flask application entrypoint; creates Flask app, initializes SQLAlchemy, defines routes and registration/login flows.
+config.py — chooses DB URI (environment-aware). If DATABASE_URL unset on Windows dev, project may default to SQLite (see repo).
+models.py — SQLAlchemy ORM models and any DB helpers.
+requirements*.txt — Python deps installed into container or venv — pin MarkupSafe==2.0.1 to avoid Jinja2 import error.
+Singularity.def — builds container image; creates venv, installs requirements, sets runscript to start gunicorn.
+wsl_build_simg.sh — helper to build SIF/SIMG inside WSL, copy to cluster.
+run_all_services_simg.sh — cluster runner that detects apptainer/singularity and runs container with recommended binds.
+all_services.sif/.simg — built container image (SIF format). Extension is cosmetic; apptainer/singularity runs either.
+hpc_tools_dev.db — local SQLite file usable for dev to avoid needing local Postgres.
+How to run locally (dev)
+
+Option A — Python venv (fast iteration)
+Option B — run built container in WSL (use bundled SQLite DB)
+Build container (WSL)
+
+Copy + run on cluster
+
+Important env / DB notes
+
+DATABASE_URL controls DB backend:
+sqlite: sqlite:////absolute/path/to/dbfile
+postgres: postgresql://user:pass@host:5432/dbname
+If DATABASE_URL is unset on Linux, the app may try Postgres at localhost:5432 — set DATABASE_URL to use SQLite or point to a running Postgres.
+.env contains default Postgres URL; change it for dev or cluster.
+Common issues & fixes
+
+Jinja2 / MarkupSafe import error ("cannot import name soft_unicode"):
+Fix: pin MarkupSafe to 2.0.1 in requirements.txt and requirements-min.txt and rebuild container.
+psycopg2 OperationalError (Connection refused):
+Means Postgres unavailable. Use SQLite for dev or start Postgres (Docker or system) and set DATABASE_URL accordingly.
+all_services.sif vs all_services.simg:
+Extension does not matter. You can cp or mv .sif -> .simg. Scripts can be updated to normalize.
+WSL networking:
+Container binds 0.0.0.0:5001; access from Windows at http://localhost:5001. If blocked, use wsl --shutdown and restart or set portproxy in Windows.
+File ownership/permissions after build:
+apptainer build might create root-owned image; chown to your user for easy scp: sudo chown "$USER:$USER" all_services.simg
+Recommended minimal edits before sharing/cluster
+
+Update .env with cluster DB / file paths.
+Add MarkupSafe==2.0.1 to requirements files.
+Ensure Singularity.def installs requirements via the venv pip (see earlier suggested %post reordering).
+Make run_all_services_simg.sh set DATABASE_URL when needed or accept env from caller.
+Short README snippet to hand to others
+
+If you want, I can:
+
+Patch requirements.txt/requirements-min.txt to pin MarkupSafe==2.0.1.
+Patch Singularity.def %post to use /opt/venv/bin/pip and upgrade pip/setuptools/wheel first.
+Tell me which patch to apply.
+
+
+
+all_services/
+├─ .env                 # local env (copy .env.template -> .env)
+├─ .env.template
+├─ README.md
+├─ Singularity.def      # container build recipe (Apptainer/Singularity)
+├─ app.py               # main Flask app (routes, DB init)
+├─ config.py            # app configuration / SQLALCHEMY_DATABASE_URI logic
+├─ models.py            # SQLAlchemy models
+├─ requirements.txt
+├─ requirements-min.txt
+├─ docker-compose.yml
+├─ hpc_tools_dev.db     # local SQLite dev DB (optional)
+├─ init_db.sql
+├─ all_services.sif     # built SIF image (can copy to .simg)
+├─ run_all_services_simg.sh
+├─ scripts/
+│   ├─ wsl_build_simg.sh
+│   └─ ...other build helpers...
+├─ static/              # static assets served by Flask
+├─ templates/           # Jinja2 templates (HTML pages)
+├─ llm_model/           # local LLM artifacts (if used)
+├─ tools/               # helper scripts / utilities
+├─ utils.py
+├─ main.py
+└─ venv/                # optional local virtualenv (for dev)
+
+python -m venv venv
+. venv/bin/activate    # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
+cp .env.template .env
+# edit .env to use sqlite: DATABASE_URL="sqlite:////full/path/to/hpc_tools_dev.db"
+python app.py
+# open http://127.0.0.1:5001/html
+
+
+
+# in WSL from repo root
+apptainer exec --bind "$PWD":/app \
+  --env DATABASE_URL="sqlite:////app/hpc_tools_dev.db" \
+  ./all_services.simg /opt/venv/bin/gunicorn -b 0.0.0.0:5001 app:app
+# open in Windows browser: http://localhost:5001/html
+
+
+
+# from /mnt/c/git/Core_RESIM_KPI/all_services
+./scripts/wsl_build_simg.sh all_services.simg
+# or direct
+sudo apptainer build all_services.simg Singularity.def
+
+
+
+scp all_services.simg user@cluster:/path/
+scp run_all_services_simg.sh user@cluster:/path/
+# on cluster:
+cd /path
+chmod +x run_all_services_simg.sh
+# set DB env if needed, then:
+./run_all_services_simg.sh ./all_services.simg 5001
+
+
+
+1) Copy .env.template -> .env, edit DATABASE_URL (use sqlite for quick start).
+2) For dev: python -m venv venv; . venv/bin/activate; pip install -r requirements.txt; python app.py
+3) To run via container (WSL): ./scripts/wsl_build_simg.sh all_services.simg; apptainer exec --bind "$PWD":/app --env DATABASE_URL="sqlite:////app/hpc_tools_dev.db" ./all_services.simg /opt/venv/bin/gunicorn -b 0.0.0.0:5001 app:app
+4) On cluster: scp image + run script; set DATABASE_URL to cluster DB; run run_all_services_simg.sh
+
+C:\git\Core_RESIM_KPI\all_services> tree
+Folder PATH listing for volume Windows
+Volume serial number is 00650073 7CE1:B30F
+C:.
+├───llm_model
+│   └───qwn_kk_fine_model
+│       └───.cache
+│           └───huggingface
+│               └───download
+├───scripts
+├───static
+│   ├───css
+│   └───js
+├───templates
+│   ├───errors
+│   └───tools
+├───tools
+│   ├───.vscode
+│   ├───dc_html
+│   │   ├───DashManager
+│   │   ├───DataCollect
+│   │   ├───DataPrep
+│   │   ├───DataStore
+│   │   ├───EventMan
+│   │   ├───InputParsing
+│   │   ├───Metadata
+│   │   │   └───GEN7V2
+│   │   ├───PlotConvert
+│   │   ├───RepGen
+│   │   └───Sig_Prep
+│   ├───Hyperlink_tool
+│   │   └───code
+│   │       ├───.vscode
+│   │       ├───html_offline
+│   │       │   ├───db
+│   │       │   │   ├───html
+│   │       │   │   │   ├───CCA_9010_1_asdf
+│   │       │   │   │   │   ├───FC
+│   │       │   │   │   │   ├───FL
+│   │       │   │   │   │   ├───FR
+│   │       │   │   │   │   ├───RL
+│   │       │   │   │   │   └───RR
+│   │       │   │   │   ├───CCA_9010_2_sdf
+│   │       │   │   │   │   ├───FC
+│   │       │   │   │   │   ├───FL
+│   │       │   │   │   │   ├───FR
+│   │       │   │   │   │   ├───RL
+│   │       │   │   │   │   └───RR
+│   │       │   │   │   ├───CCA_9010_3_ert
+│   │       │   │   │   │   ├───FC
+│   │       │   │   │   │   ├───FL
+│   │       │   │   │   │   ├───FR
+│   │       │   │   │   │   ├───RL
+│   │       │   │   │   │   └───RR
+│   │       │   │   │   ├───CCA_9010_4_sder
+│   │       │   │   │   │   ├───FC
+│   │       │   │   │   │   ├───FL
+│   │       │   │   │   │   ├───FR
+│   │       │   │   │   │   ├───RL
+│   │       │   │   │   │   └───RR
+│   │       │   │   │   └───logs
+│   │       │   │   └───video
+│   │       │   │       └───log_txt
+│   │       │   └───out
+│   │       ├───html_online
+│   │       │   ├───.venv
+│   │       │   │   ├───Include
+│   │       │   │   ├───Lib
+│   │       │   │   │   └───site-packages
+│   │       │   │   │       ├───pip
+│   │       │   │   │       │   ├───_internal
+│   │       │   │   │       │   │   ├───cli
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───commands
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───distributions
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───index
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───locations
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───metadata
+│   │       │   │   │       │   │   │   ├───importlib
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───models
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───network
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───operations
+│   │       │   │   │       │   │   │   ├───build
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───install
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───req
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───resolution
+│   │       │   │   │       │   │   │   ├───legacy
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───resolvelib
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───utils
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───vcs
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   ├───_vendor
+│   │       │   │   │       │   │   ├───cachecontrol
+│   │       │   │   │       │   │   │   ├───caches
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───certifi
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───chardet
+│   │       │   │   │       │   │   │   ├───cli
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───metadata
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───colorama
+│   │       │   │   │       │   │   │   ├───tests
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───distlib
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───distro
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───idna
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───msgpack
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───packaging
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───pkg_resources
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───platformdirs
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───pygments
+│   │       │   │   │       │   │   │   ├───filters
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───formatters
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───lexers
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───styles
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───pyparsing
+│   │       │   │   │       │   │   │   ├───diagram
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───pyproject_hooks
+│   │       │   │   │       │   │   │   ├───_in_process
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───requests
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───resolvelib
+│   │       │   │   │       │   │   │   ├───compat
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───rich
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───tenacity
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───tomli
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───urllib3
+│   │       │   │   │       │   │   │   ├───contrib
+│   │       │   │   │       │   │   │   │   ├───_securetransport
+│   │       │   │   │       │   │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───packages
+│   │       │   │   │       │   │   │   │   ├───backports
+│   │       │   │   │       │   │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   ├───util
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───webencodings
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   └───__pycache__
+│   │       │   │   │       ├───pip-23.0.1.dist-info
+│   │       │   │   │       ├───pkg_resources
+│   │       │   │   │       │   ├───extern
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   ├───_vendor
+│   │       │   │   │       │   │   ├───importlib_resources
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───jaraco
+│   │       │   │   │       │   │   │   ├───text
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───more_itertools
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───packaging
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───pyparsing
+│   │       │   │   │       │   │   │   ├───diagram
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   └───__pycache__
+│   │       │   │   │       ├───setuptools
+│   │       │   │   │       │   ├───command
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   ├───config
+│   │       │   │   │       │   │   ├───_validate_pyproject
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   ├───extern
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   ├───_distutils
+│   │       │   │   │       │   │   ├───command
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   ├───_vendor
+│   │       │   │   │       │   │   ├───importlib_metadata
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───importlib_resources
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───jaraco
+│   │       │   │   │       │   │   │   ├───text
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───more_itertools
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───packaging
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───pyparsing
+│   │       │   │   │       │   │   │   ├───diagram
+│   │       │   │   │       │   │   │   │   └───__pycache__
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   ├───tomli
+│   │       │   │   │       │   │   │   └───__pycache__
+│   │       │   │   │       │   │   └───__pycache__
+│   │       │   │   │       │   └───__pycache__
+│   │       │   │   │       ├───setuptools-65.5.0.dist-info
+│   │       │   │   │       └───_distutils_hack
+│   │       │   │   │           └───__pycache__
+│   │       │   │   └───Scripts
+│   │       │   ├───build
+│   │       │   │   ├───log_viewer_online_linux
+│   │       │   │   │   └───localpycs
+│   │       │   │   └───log_viewer_online_windows
+│   │       │   ├───dist
+│   │       │   ├───static
+│   │       │   │   ├───css
+│   │       │   │   └───js
+│   │       │   └───static copy
+│   │       │       ├───css
+│   │       │       └───js
+│   │       ├───out
+│   │       └───singularity
+│   ├───InteractivePlot
+│   │   ├───a_config_layer
+│   │   ├───b_persistence_layer
+│   │   ├───c_data_storage
+│   │   ├───d_business_layer
+│   │   ├───e_presentation_layer
+│   │   └───kpi_client
+│   ├───KPI
+│   │   ├───a_persistence_layer
+│   │   ├───b_data_storage
+│   │   ├───c_business_layer
+│   │   └───d_presentation_layer
+│   ├───Readme
+│   └───tests
+└───venv
+    ├───Include
+    ├───Lib
+    │   └───site-packages
+    └───Scripts
+PS C:\git\Core_RESIM_KPI\all_services> 

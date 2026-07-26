@@ -15,7 +15,16 @@ The documentation in this folder is intended to describe the current architectur
 
 This file is the entrypoint into the documentation set.
 
-### 2. Integration And Operations Guide
+### 2. Developer Runbook
+
+See `README_dev.md` for:
+
+- the current developer workflow
+- the meaning of the large artifact files commonly left out of git
+- exact build, upload, and run commands
+- a practical explanation of when to rebuild images versus when to sync source only
+
+### 3. Integration And Operations Guide
 
 See `README_hpcc_integration.md` for:
 
@@ -26,7 +35,7 @@ See `README_hpcc_integration.md` for:
 - broker and runtime-store behavior
 - operational troubleshooting
 
-### 3. System Design Deep Dive
+### 4. System Design Deep Dive
 
 See `HPCC_RUNTIME_SYSTEM_DESIGN.md` for:
 
@@ -36,7 +45,7 @@ See `HPCC_RUNTIME_SYSTEM_DESIGN.md` for:
 - data ownership and persistence model
 - architectural decisions and extension guidance
 
-### 4. Diagram Pack
+### 5. Diagram Pack
 
 See `hpcc_integration.drawio` for multi-page diagrams covering:
 
@@ -144,9 +153,10 @@ Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5100/health
 
 ## Recommended Reading Order
 
-1. Read `README_hpcc_integration.md` to understand the end-to-end stack.
-2. Read `HPCC_RUNTIME_SYSTEM_DESIGN.md` if you need component-level design detail.
-3. Open `hpcc_integration.drawio` in diagrams.net for the architecture and sequence views.
+1. Read `README_dev.md` if your immediate goal is to build, upload, run, or explain the current artifact set.
+2. Read `README_hpcc_integration.md` to understand the end-to-end stack.
+3. Read `HPCC_RUNTIME_SYSTEM_DESIGN.md` if you need component-level design detail.
+4. Open `hpcc_integration.drawio` in diagrams.net for the architecture and sequence views.
 
 ## Scope Note
 

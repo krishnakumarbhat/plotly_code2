@@ -1,0 +1,10 @@
+# Optional: VLM video->text generation dependencies
+# NOTE: This is NOT wired to Slurm srun yet in this repo.
+# Install only on machines/environments intended to run the model.
+
+torch
+transformers
+opencv-python
+qwen-vl-utils
+requests
+urllib3

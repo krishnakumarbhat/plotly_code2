@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# PyInstaller
+.spec
+
+# Virtual environments
+.venv/
+.venv-py310/
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache for HTML viewer
+.cache_html/
+*.html
+*.csv
+*/.vscode/settings.json
+*__pycache__
+*.pyc
+.idea
+.vscode/launch.json
+/profile_timing_plotter/.idea/
+/profile_timing_plotter/venv/
+/gen7v2_resim_kpi_scripts/venv/
+/gen7v2_resim_kpi_scripts/.idea/
+gen7v2_resim_kpi_scripts/log_path.txt
+gen7v2_resim_kpi_scripts/meta_data.txt

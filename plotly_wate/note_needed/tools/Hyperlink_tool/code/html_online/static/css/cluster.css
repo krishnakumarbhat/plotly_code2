@@ -1,0 +1,337 @@
+/* Cluster Modal specific styles */
+.cluster-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.cluster-tab {
+  padding: 8px 16px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.cluster-tab.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.cluster-panel {
+  display: none;
+}
+
+.cluster-panel.active {
+  display: block;
+}
+
+.connection-form {
+  display: grid;
+  gap: 12px;
+}
+
+.browser-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.browser-path {
+  flex: 1;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-up-btn {
+  padding: 8px 12px;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.browser-up-btn:hover {
+  background: #d0d0d0;
+}
+
+.file-list {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.file-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+.file-item:hover {
+  background: #f8fafc;
+}
+
+.file-item.folder::before {
+  content: '📁';
+}
+
+.file-item.file::before {
+  content: '📄';
+}
+
+.selected-paths {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.selected-path-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.selected-path-label {
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.selected-path-value {
+  flex: 1;
+  padding: 6px 10px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.download-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.local-path-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.download-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #32cd32, #00fa9a);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(50, 205, 50, 0.4);
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.status-dot.connected {
+  background: #32cd32;
+}
+
+.status-dot.disconnected {
+  background: #ff6b6b;
+}
+
+/* Password toggle */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-icon {
+  margin-right: 6px;
+}
+
+/* Remote Logs Section */
+.remote-logs-section {
+  margin-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 16px;
+}
+
+.remote-logs-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.remote-logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.remote-log-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remote-log-item:hover {
+  background: #e8f4fd;
+  border-color: #667eea;
+}
+
+.remote-log-item.downloading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.remote-log-item.downloaded,
+.remote-log-item.cached {
+  background: #d4edda;
+  border-color: #28a745;
+}
+
+.remote-log-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.remote-log-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remote-log-status {
+  font-size: 11px;
+  color: #666;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: 12px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #4a5568;
+  text-align: center;
+}
+
+/* Make modal content position relative for loading overlay */
+.modal-content {
+  position: relative;
+}

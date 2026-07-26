@@ -1,0 +1,49 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ? -->
+<!-- Delphi SIL component configuration -->
+<Interactiveplot_Extracter_Configuration>
+	
+	<Interactiveplot_Extracter_Configuration_Config_XML_Version>1.0</Interactiveplot_Extracter_Configuration_Config_XML_Version>
+	
+	<!-- HDF_SOURCE_SELECTION
+	 MUDP   : Input and output HDF Generated from MUDP Extractor (UDP Data)
+	 BORDNET: Input and output HDF Generated from BORDNET (CAN Data)
+	 -->
+	 <HDF_SOURCE_SELECTION>MUDP</HDF_SOURCE_SELECTION>
+	 
+     <!-- HDF_FILE
+		HDF_WITH_ALLSENSOR: A single HDF5 file containing data from all sensors.
+		HDF_PER_SENSOR: Separate HDF5 files for each sensor, including files for the Right Rear (RR), Right Left (RL), Front Left (FL), and Front Right (FR) sensors.
+	 	HDF_PAIRED_FILES: if you have separate hdf for streams .
+	 -->
+	 <HDF_FILE>HDF_WITH_ALLSENSOR</HDF_FILE>
+	  
+	   <!-- PLOT_MODE :    
+			 PLOT_OVERLAY
+							0 : Default
+							1 : Generates Interactive HTML Reports with Overlay plots between file1 and file2 data    				
+			 VIDEO_OVERLAY
+						   0 : Default
+						   1 : Generates Video Reports between file1 and file2 tracker data				   
+			 3D_VISUALIZATION
+			               0 : Default
+						   1 : Generates 3D_VISUALIZATION Web UI for detections and tracks with video Overlay              	
+			 KPI:
+						  0 : Default
+						  1 : Generates Interactive KPI Reports between file1 and file2 data  	 
+			 ALLUR_REPORT:
+						 0 : Default
+						 1 : Generates High Level Test Reports between file1 and file2 data  .		
+		-->	
+
+
+
+	<PLOT_MODE> 
+				<PLOT_OVERLAY>1</PLOT_OVERLAY>			
+				<KPI>0</KPI>
+				<VIDEO_OVERLAY>0</VIDEO_OVERLAY>
+				<D3_VISUALIZATION>0</D3_VISUALIZATION>
+				<ALLUR_REPORT>0</ALLUR_REPORT>			
+	</PLOT_MODE>
+	 		
+</Interactiveplot_Extracter_Configuration>
+

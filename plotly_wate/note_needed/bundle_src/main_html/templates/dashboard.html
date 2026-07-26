@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - HPCC Runtime Console{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 pb-5">
+    <section class="hero-panel mb-4">
+        <div class="hero-copy">
+            <span class="eyebrow">HPCC launcher</span>
+            <h1>Single front door for KPI runs, Hyperlink review, and runtime operations.</h1>
+            <p>The dashboard stays centered on two user tools. KPI routes to CAN KPI, UDP KPI, or Interactive Plot through the broker. Hyperlink stays in the same session with integrated upload, streaming, and report review.</p>
+        </div>
+        <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('tool_kpi') }}">Open KPI</a>
+            <a class="btn btn-outline-light btn-lg" href="{{ url_for('tool_hyperlink') }}">Open Hyperlink</a>
+            <a class="btn btn-outline-dark btn-lg hero-outline" href="{{ url_for('runtime_map') }}">Runtime Map</a>
+        </div>
+    </section>
+
+    <div class="row g-4 align-items-stretch">
+        <div class="col-xl-8">
+            <div class="status-strip mb-4">
+                <div class="status-pill {{ 'status-online' if broker_health.ok else 'status-offline' }}">
+                    <span>Broker</span>
+                    <strong>{{ broker_health.status or 'offline' }}</strong>
+                </div>
+                <div class="status-pill">
+                    <span>Runtime tools</span>
+                    <strong>{{ runtime_tools|length }}</strong>
+                </div>
+                <div class="status-pill">
+                    <span>Recent jobs</span>
+                    <strong>{{ recent_jobs|length }}</strong>
+                </div>
+                <div class="status-pill">
+                    <span>Completed</span>
+                    <strong>{{ recent_jobs|selectattr('status', 'equalto', 'COMPLETED')|list|length }}</strong>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <a class="tool-spotlight kpi" href="{{ url_for('tool_kpi') }}">
+                        <span class="tool-tag">KPI</span>
+                        <h2>CAN KPI, UDP KPI, and Interactive Plot under one form.</h2>
+                        <p>Ask for XML, JSON, optional config, output target, and Slurm resources. The broker stores each run in SQLite and keeps the log path visible.</p>
+                        <span class="tool-link">Configure KPI <i class="bi bi-arrow-up-right"></i></span>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="tool-spotlight hyperlink" href="{{ url_for('tool_hyperlink') }}">
+                        <span class="tool-tag">Hyperlink</span>
+                        <h2>Reuse the integrated viewer with per-user HTML and video roots.</h2>
+                        <p>Set the report root, optional video root, and output cache root. The viewer stays in the same main_html session instead of opening a separate tool shell.</p>
+                        <span class="tool-link">Open Hyperlink <i class="bi bi-arrow-up-right"></i></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card runtime-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="section-label">Execution log</span>
+                        <h3 class="mb-0">Recent runtime requests</h3>
+                    </div>
+                    <a class="btn btn-sm btn-outline-dark" href="{{ url_for('job_history') }}">Runtime console</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive history-table-shell">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Execution</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobHistoryTable">
+                                {% for job in recent_jobs %}
+                                {% set execution_target = job.parameters.get('execution_label') if job.parameters else job.tool_name %}
+                                <tr data-job-id="{{ job.id }}">
+                                    <td>
+                                        <div class="fw-semibold text-truncate" style="max-width: 260px;" title="{{ job.input_path }}">
+                                            {{ job.input_filename or job.input_path.split('/')[-1] }}
+                                        </div>
+                                        <small class="text-muted">{{ job.input_path }}</small>
+                                    </td>
+                                    <td><span class="tool-badge">{{ execution_target|replace('_', ' ')|title }}</span></td>
+                                    <td><span class="status-badge status-{{ job.status }}">{{ job.status }}</span></td>
+                                    <td>{{ job.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-secondary" data-action="refresh" data-job-id="{{ job.id }}"><i class="bi bi-arrow-clockwise"></i></button>
+                                        <a class="btn btn-sm btn-outline-dark" href="{{ url_for('view_job_log', job_id=job.id) }}"><i class="bi bi-journal-text"></i></a>
+                                        {% if job.status in ['QUEUED', 'RUNNING', 'SUBMITTED'] %}
+                                        <button class="btn btn-sm btn-outline-danger" data-action="cancel" data-job-id="{{ job.id }}"><i class="bi bi-x-circle"></i></button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">No runtime requests yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card runtime-card chat-shell mb-4">
+                <div class="card-header">
+                    <span class="section-label">Guide</span>
+                    <h3 class="mb-0">Workspace guide</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            <div class="message-content assistant-bubble">
+                                <strong>Guide</strong>
+                                <p class="mb-0 mt-2">Ask about KPI inputs, report paths, or runtime wiring. The response uses the configured workspace help service behind the same dashboard session.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-shell p-3">
+                        <form id="chatForm" class="d-flex gap-2">
+                            <input type="hidden" id="sessionId" value="{{ chat_session.session_id }}">
+                            <input type="text" class="form-control" id="chatInput" placeholder="Ask about KPI flow, report paths, or runtime wiring" autocomplete="off">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card runtime-card mb-4">
+                <div class="card-header">
+                    <span class="section-label">Runtime map</span>
+                    <h3 class="mb-0">Broker summary</h3>
+                </div>
+                <div class="card-body d-grid gap-3">
+                    {% for tool in runtime_tools if tool.tool_key in ['main_html', 'can_kpi', 'udp_kpi', 'interactive_plot', 'hyperlink'] %}
+                    <div class="runtime-line">
+                        <div>
+                            <strong>{{ tool.display_name }}</strong>
+                            <small>{{ tool.input_hint }}</small>
+                        </div>
+                        <span class="runtime-kind">{{ tool.category }}</span>
+                    </div>
+                    {% endfor %}
+                    <a class="btn btn-outline-dark" href="{{ url_for('runtime_map') }}">Open editable map</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
+const sessionId = document.getElementById('sessionId').value;
+
+chatForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) {
+        return;
+    }
+
+    addMessage(message, 'user');
+    chatInput.value = '';
+    const typingId = showTypingIndicator();
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, session_id: sessionId })
+        });
+        const data = await response.json();
+        removeTypingIndicator(typingId);
+        addMessage(data.response || 'No response returned.', 'assistant');
+    } catch (error) {
+        removeTypingIndicator(typingId);
+        addMessage('Chat request failed. Check the workspace help entry in Runtime Map and make sure the broker can reach it.', 'assistant');
+    }
+});
+
+function addMessage(content, role) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+    messageDiv.innerHTML = `<div class="message-content ${role === 'assistant' ? 'assistant-bubble' : 'user-bubble'}">${content.replace(/\n/g, '<br>')}</div>`;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const id = 'typing-' + Date.now();
+    const typingDiv = document.createElement('div');
+    typingDiv.id = id;
+    typingDiv.className = 'message assistant';
+    typingDiv.innerHTML = '<div class="message-content assistant-bubble">Thinking...</div>';
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return id;
+}
+
+function removeTypingIndicator(id) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.remove();
+    }
+}
+
+async function refreshJobStatus(jobId) {
+    const response = await fetch(`/api/job/${jobId}/status`);
+    const data = await response.json();
+    const row = document.querySelector(`tr[data-job-id="${jobId}"]`);
+    if (!row) {
+        return;
+    }
+    const badge = row.querySelector('.status-badge');
+    badge.className = `status-badge status-${data.status}`;
+    badge.textContent = data.status;
+}
+
+async function cancelJob(jobId) {
+    const response = await fetch(`/api/job/${jobId}/cancel`, { method: 'POST' });
+    const data = await response.json();
+    if (data.success) {
+        await refreshJobStatus(jobId);
+    } else {
+        alert(data.error || 'Unable to cancel job.');
+    }
+}
+
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-action][data-job-id]');
+    if (!button) {
+        return;
+    }
+    const jobId = parseInt(button.dataset.jobId, 10);
+    if (button.dataset.action === 'refresh') {
+        refreshJobStatus(jobId);
+    }
+    if (button.dataset.action === 'cancel') {
+        cancelJob(jobId);
+    }
+});
+</script>
+{% endblock %}

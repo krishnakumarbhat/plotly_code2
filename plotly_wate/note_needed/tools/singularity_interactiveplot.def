@@ -1,0 +1,117 @@
+# Option 1: Build from Docker Hub (may have network issues)
+# Bootstrap: docker
+# From: python:3.11-slim
+
+# Option 2: Build from local Docker image (recommended)
+# First run: docker pull python:3.11-slim
+# Then: sudo singularity build interactiveplot.sif singularity_interactiveplot.def
+Bootstrap: docker-daemon
+From: python:3.11-slim
+
+%labels
+    Author ResimHTMLReport Team
+    Version 1.0
+    Description Interactive Plot Application with ZMQ/Protobuf client for KPI communication
+
+%files
+    # Copy requirements
+    requirements.txt /requirements-dev.txt
+    
+    # Copy main application
+    ResimHTMLReport.py /app/ResimHTMLReport.py
+    
+    # Copy configuration files
+    ConfigInteractivePlots.xml /app/ConfigInteractivePlots.xml
+    InputsInteractivePlot.json /app/InputsInteractivePlot.json
+    InputsPerSensorInteractivePlot.json /app/InputsPerSensorInteractivePlot.json
+    Inputperstreamplot.json /app/Inputperstreamplot.json
+    
+    # Copy InteractivePlot module
+    InteractivePlot /app/InteractivePlot
+    
+    # Copy KPI module (needed for protobuf definitions)
+    KPI /app/KPI
+
+%post
+    # Update system packages
+    apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        build-essential \
+        && rm -rf /var/lib/apt/lists/*
+    
+    # Install Python dependencies
+    pip install --no-cache-dir --upgrade pip
+    pip install --no-cache-dir -r /app/requirements.txt
+    
+    # Create necessary directories
+    mkdir -p /app/data /app/html /app/plots
+    
+    # Set permissions
+    chmod -R 755 /app
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export PYTHONPATH=/app
+    export KPI_SERVER_HOST=127.0.0.1
+    export KPI_SERVER_PORT=5555
+    export LC_ALL=C
+
+%runscript
+    # Default: show help
+    cd /app
+    exec python ResimHTMLReport.py "$@"
+
+%apprun process
+    # Process HDF files and generate interactive plots
+    cd /app
+    exec python ResimHTMLReport.py "$@"
+
+%apprun help
+    # Show help
+    cd /app
+    exec python ResimHTMLReport.py --help
+
+%test
+    # Test that the container works
+    python -c "import plotly; import h5py; import numpy; import pandas; import zmq; print('All imports OK')"
+    python -c "from InteractivePlot.kpi_client.kpi_integration import kpiIntegration; print('KPI Integration module OK')"
+
+%help
+    Interactive Plot Singularity Container
+    ======================================
+    
+    This container runs the Interactive Plot application for generating
+    interactive HTML reports from HDF sensor data. It can communicate
+    with the KPI server via ZMQ/Protobuf.
+    
+    Communication: ZMQ client connecting to KPI server on port 5555 (default)
+    
+    USAGE:
+    ------
+    # Show help
+    singularity run interactiveplot.sif --help
+    
+    # Process HDF files
+    singularity run interactiveplot.sif --input /data/input.h5 --output /html
+    
+    # Process with KPI server connection
+    KPI_SERVER_HOST=kpi-server singularity run interactiveplot.sif --input /data/input.h5
+    
+    ENVIRONMENT VARIABLES:
+    ----------------------
+    KPI_SERVER_HOST - Hostname/IP of KPI server (default: 127.0.0.1)
+    KPI_SERVER_PORT - ZMQ port of KPI server (default: 5555)
+    
+    BIND MOUNTS:
+    ------------
+    singularity run -B /path/to/hdf:/app/data -B /path/to/html:/app/html interactiveplot.sif
+    
+    NETWORKING WITH KPI SERVER:
+    ---------------------------
+    To enable communication between InteractivePlot and KPI server containers:
+    
+    1. Start KPI server instance:
+       singularity instance start --net --network-args "portmap=5555:5555/tcp" kpi_server.sif kpi_srv
+    
+    2. Run InteractivePlot with network:
+       singularity run --net interactiveplot.sif --input /data/input.h5

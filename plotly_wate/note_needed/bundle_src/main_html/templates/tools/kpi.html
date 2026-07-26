@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tool_name }} - HPCC Runtime Console{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 pb-5">
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <div class="card runtime-card mb-4">
+                <div class="card-header">
+                    <span class="section-label">KPI entrypoint</span>
+                    <h1 class="mb-0">{{ tool_name }}</h1>
+                </div>
+                <div class="card-body">
+                    <p class="lead-copy">Choose CAN KPI or UDP KPI as the primary runtime. Interactive Plot can stay disabled, run alongside the selected KPI target, or switch into a standalone Interactive Plot only run.</p>
+
+                    <form method="POST" id="kpiRuntimeForm">
+                        <input type="hidden" name="interactive_plot_mode" id="interactive_plot_mode" value="disabled">
+                        <div class="mb-4">
+                            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                                <div>
+                                    <label class="form-label section-label">Execution target</label>
+                                    <p class="text-muted small mb-0">Pick the KPI runtime first. The Interactive Plot controls below decide whether that target runs alone, together with Interactive Plot, or whether only Interactive Plot runs.</p>
+                                </div>
+                                <button type="button" class="btn btn-outline-dark" id="interactiveOnlyButton" aria-pressed="false">Interactive Plot only</button>
+                            </div>
+                            <div class="row g-3 mt-1">
+                                {% for tool in runtime_tools if tool.tool_key in ['can_kpi', 'udp_kpi'] %}
+                                <div class="col-md-4">
+                                    <label class="selection-card">
+                                        <input class="form-check-input d-none execution-target" type="radio" name="execution_target" value="{{ tool.tool_key }}" {% if tool.tool_key == 'udp_kpi' %}checked{% endif %}>
+                                        <span class="selection-body">
+                                            <strong>{{ tool.display_name }}</strong>
+                                            <small>{{ tool.input_hint }}</small>
+                                        </span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="alert alert-light border mt-3 mb-0">
+                                <div class="form-check form-switch d-flex justify-content-between align-items-center gap-3 mb-0">
+                                    <div>
+                                        <label class="form-check-label fw-semibold" for="interactivePlotToggle">Enable Interactive Plot</label>
+                                        <div class="text-muted small">Disabled runs only the selected KPI target. Enabled adds Interactive Plot to the selected KPI runtime.</div>
+                                    </div>
+                                    <input class="form-check-input" type="checkbox" role="switch" id="interactivePlotToggle">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label section-label">Input mode</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="input_mode" id="mode_json" value="json" checked>
+                                <label class="btn btn-outline-dark" for="mode_json">JSON batch</label>
+                                <input type="radio" class="btn-check" name="input_mode" id="mode_hdf" value="hdf">
+                                <label class="btn btn-outline-dark" for="mode_hdf">HDF pair</label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6 json-only">
+                                <label class="form-label" id="jsonInputLabel">JSON input</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="kpi_json" name="kpi_json" placeholder="/path/to/kpi.json">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('kpi_json', ['json'])">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 xml-needed d-none">
+                                <label class="form-label">XML config override</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="config_xml" name="config_xml" placeholder="/path/to/ConfigInteractivePlots.xml">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('config_xml', ['xml'])">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 hdf-only d-none">
+                                <label class="form-label">Input HDF</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="input_hdf" name="input_hdf" placeholder="/path/to/input.h5">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('input_hdf', ['h5', 'hdf5'])">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 hdf-only d-none">
+                                <label class="form-label">Output HDF</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="output_hdf" name="output_hdf" placeholder="/path/to/output.h5">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_hdf', ['h5', 'hdf5'])">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Optional config</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="optional_config" name="optional_config" placeholder="/path/to/optional-config.json or .xml">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('optional_config', ['xml', 'json'])">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Output directory</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="output_dir" name="output_dir" placeholder="/path/to/output/html_db">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_dir', [], true)">Browse</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Scheduler</label>
+                                <select class="form-select" name="scheduler" id="scheduler">
+                                    <option value="slurm" selected>Slurm / srun</option>
+                                    {% if allow_local_scheduler %}
+                                    <option value="local">Local shell</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Partition</label>
+                                <input type="text" class="form-control" name="partition" id="partition" value="{{ defaults['udp_kpi']['partition'] }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Account</label>
+                                <input type="text" class="form-control" name="account" id="account" value="{{ defaults['udp_kpi']['account'] }}" placeholder="RNA-SDV-SRR7">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">QoS</label>
+                                <input type="text" class="form-control" name="qos" id="qos" value="{{ defaults['udp_kpi']['qos'] }}" placeholder="Optional">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-2">
+                                <label class="form-label">Memory</label>
+                                <input type="text" class="form-control" name="memory" id="memory" value="{{ defaults['udp_kpi']['memory'] }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">CPUs</label>
+                                <input type="number" class="form-control" name="cpus" id="cpus" value="{{ defaults['udp_kpi']['cpus'] }}" min="1">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Time</label>
+                                <input type="text" class="form-control" name="time_limit" id="time_limit" value="{{ defaults['udp_kpi']['time_limit'] }}">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border mt-4 mb-4">
+                            <strong>Execution note</strong>
+                            <p class="mb-0">The form sends a socket request to hpcc_main.py. The broker records the input path, output path, requested resources, command, and log file location in SQLite before spawning the selected container.</p>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Queue through broker</button>
+                            <a class="btn btn-outline-dark btn-lg" href="{{ url_for('runtime_map') }}">Edit runtime map</a>
+                            <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('dashboard') }}">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card runtime-card mb-4">
+                <div class="card-header">
+                    <span class="section-label">Selected runtime</span>
+                    <h3 class="mb-0">What the broker will launch</h3>
+                </div>
+                <div class="card-body d-grid gap-3" id="runtimeSummary">
+                    {% for tool in runtime_tools %}
+                    <div class="runtime-line {% if tool.tool_key == 'udp_kpi' %}active{% endif %}" data-runtime="{{ tool.tool_key }}">
+                        <div>
+                            <strong>{{ tool.display_name }}</strong>
+                            <small>{{ tool.output_hint }}</small>
+                        </div>
+                        <span class="runtime-kind">{{ tool.tool_key }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="alert alert-light border mb-0">
+                        <strong>Selected flow</strong>
+                        <p class="mb-0" id="runtimeModeCopy">UDP KPI only.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card runtime-card">
+                <div class="card-header">
+                    <span class="section-label">Recent runs</span>
+                    <h3 class="mb-0">KPI history</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for job in recent_jobs %}
+                        {% set execution_target = job.parameters.get('execution_label') if job.parameters else job.tool_name %}
+                        <div class="list-group-item bg-transparent border-light-subtle">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <strong class="d-block">{{ execution_target|replace('_', ' ')|title }}</strong>
+                                    <small class="text-muted d-block">{{ job.input_filename or job.input_path }}</small>
+                                    <small class="text-muted">{{ job.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                                <span class="status-badge status-{{ job.status }}">{{ job.status }}</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="list-group-item text-muted text-center py-4 bg-transparent">No KPI jobs queued yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fileBrowserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-folder2-open"></i> Browse files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="fileBrowserContent" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="selectFileBtn" disabled>Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/file_browser.js') }}"></script>
+<script>
+const runtimeDefaults = {{ defaults|tojson }};
+const executionInputs = document.querySelectorAll('.execution-target');
+const modeInputs = document.querySelectorAll('input[name="input_mode"]');
+const xmlFields = document.querySelectorAll('.xml-needed');
+const jsonFields = document.querySelectorAll('.json-only');
+const hdfFields = document.querySelectorAll('.hdf-only');
+const interactivePlotModeInput = document.getElementById('interactive_plot_mode');
+const interactivePlotToggle = document.getElementById('interactivePlotToggle');
+const interactiveOnlyButton = document.getElementById('interactiveOnlyButton');
+const jsonInputLabel = document.getElementById('jsonInputLabel');
+const jsonInputField = document.getElementById('kpi_json');
+const configXmlField = document.getElementById('config_xml');
+const runtimeModeCopy = document.getElementById('runtimeModeCopy');
+
+function selectedExecutionTarget() {
+    const selected = document.querySelector('.execution-target:checked');
+    return selected ? selected.value : 'udp_kpi';
+}
+
+function selectedInputMode() {
+    const selected = document.querySelector('input[name="input_mode"]:checked');
+    return selected ? selected.value : 'json';
+}
+
+function selectedInteractivePlotMode() {
+    return interactivePlotModeInput ? interactivePlotModeInput.value : 'disabled';
+}
+
+function executionLabel(target) {
+    return target === 'can_kpi' ? 'CAN KPI' : 'UDP KPI';
+}
+
+function setInteractivePlotMode(mode) {
+    if (!interactivePlotModeInput) {
+        return;
+    }
+
+    interactivePlotModeInput.value = mode;
+    if (interactivePlotToggle) {
+        interactivePlotToggle.checked = mode === 'enabled';
+        interactivePlotToggle.disabled = mode === 'only';
+    }
+    if (interactiveOnlyButton) {
+        interactiveOnlyButton.classList.toggle('btn-dark', mode === 'only');
+        interactiveOnlyButton.classList.toggle('btn-outline-dark', mode !== 'only');
+        interactiveOnlyButton.setAttribute('aria-pressed', mode === 'only' ? 'true' : 'false');
+    }
+    updateRuntimeForm();
+}
+
+function updateRuntimeForm() {
+    const target = selectedExecutionTarget();
+    const mode = selectedInputMode();
+    const interactivePlotMode = selectedInteractivePlotMode();
+    const interactiveEnabled = interactivePlotMode === 'enabled';
+    const interactiveOnly = interactivePlotMode === 'only';
+    const requiresXml = interactivePlotMode !== 'disabled';
+    const resourceProfile = requiresXml ? 'interactive_plot' : target;
+
+    xmlFields.forEach((item) => item.classList.toggle('d-none', !requiresXml));
+    jsonFields.forEach((item) => item.classList.toggle('d-none', mode !== 'json'));
+    hdfFields.forEach((item) => item.classList.toggle('d-none', mode !== 'hdf'));
+
+    if (jsonInputLabel && jsonInputField) {
+        if (requiresXml) {
+            jsonInputLabel.textContent = 'Inputs JSON';
+            jsonInputField.placeholder = '/path/to/InputsInteractivePlot.json';
+        } else {
+            jsonInputLabel.textContent = 'JSON input';
+            jsonInputField.placeholder = '/path/to/kpi.json';
+        }
+    }
+
+    if (configXmlField) {
+        configXmlField.placeholder = target === 'can_kpi'
+            ? '/path/to/ConfigInteractivePlots_bordnet.xml'
+            : '/path/to/ConfigInteractivePlots.xml';
+    }
+
+    document.querySelectorAll('#runtimeSummary .runtime-line').forEach((line) => {
+        const runtime = line.dataset.runtime;
+        const isActive = interactiveOnly
+            ? runtime === 'interactive_plot'
+            : runtime === target || (interactiveEnabled && runtime === 'interactive_plot');
+        line.classList.toggle('active', isActive);
+    });
+
+    if (runtimeModeCopy) {
+        if (interactiveOnly) {
+            runtimeModeCopy.textContent = `Interactive Plot only using the ${executionLabel(target)} source profile.`;
+        } else if (interactiveEnabled && target === 'udp_kpi') {
+            runtimeModeCopy.textContent = 'UDP KPI plus Interactive Plot through the existing ZMQ bridge.';
+        } else if (interactiveEnabled) {
+            runtimeModeCopy.textContent = 'CAN KPI plus Interactive Plot as one broker request with both outputs generated together.';
+        } else {
+            runtimeModeCopy.textContent = `${executionLabel(target)} only.`;
+        }
+    }
+
+    const defaults = runtimeDefaults[resourceProfile] || runtimeDefaults.udp_kpi;
+    document.getElementById('partition').value = defaults.partition || 'plcyf-com';
+    document.getElementById('account').value = defaults.account || 'RNA-SDV-SRR7';
+    document.getElementById('qos').value = defaults.qos || '';
+    document.getElementById('memory').value = defaults.memory || '32G';
+    document.getElementById('cpus').value = defaults.cpus || 8;
+    document.getElementById('time_limit').value = defaults.time_limit || '02:00:00';
+}
+
+executionInputs.forEach((input) => input.addEventListener('change', updateRuntimeForm));
+modeInputs.forEach((input) => input.addEventListener('change', updateRuntimeForm));
+
+if (interactivePlotToggle) {
+    interactivePlotToggle.addEventListener('change', () => {
+        setInteractivePlotMode(interactivePlotToggle.checked ? 'enabled' : 'disabled');
+    });
+}
+
+if (interactiveOnlyButton) {
+    interactiveOnlyButton.addEventListener('click', () => {
+        const nextMode = selectedInteractivePlotMode() === 'only' ? 'disabled' : 'only';
+        setInteractivePlotMode(nextMode);
+    });
+}
+
+setInteractivePlotMode('disabled');
+
+let currentTargetField = null;
+
+function openFileBrowser(targetFieldId, extensions, dirMode) {
+    currentTargetField = targetFieldId;
+    const title = dirMode ? 'Select directory' : 'Select file';
+    document.querySelector('#fileBrowserModal .modal-title').innerHTML = `<i class="bi bi-folder2-open"></i> ${title}`;
+    const modal = new bootstrap.Modal(document.getElementById('fileBrowserModal'));
+    modal.show();
+    loadDirectory('/net');
+}
+
+document.getElementById('selectFileBtn').addEventListener('click', () => {
+    if (window.selectedFilePath) {
+        document.getElementById(currentTargetField).value = window.selectedFilePath;
+        bootstrap.Modal.getInstance(document.getElementById('fileBrowserModal')).hide();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+# ==============================================================================
+# ResimHTMLReport - Complete Project Requirements
+# ==============================================================================
+# This file contains all dependencies for the entire project including:
+# - InteractivePlot module
+# - KPI module (server and processing)
+# - Testing dependencies
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Core Data Processing
+# ------------------------------------------------------------------------------
+numpy>=1.24.0                    # Numerical operations and array processing
+pandas>=2.0.0                    # Data manipulation and analysis
+h5py>=3.8.0                      # HDF5 file handling for sensor data
+
+# ------------------------------------------------------------------------------
+# Visualization
+# ------------------------------------------------------------------------------
+plotly>=5.17.0                   # Interactive HTML chart generation
+
+# ------------------------------------------------------------------------------
+# XML/HTML Processing
+# ------------------------------------------------------------------------------
+lxml>=4.9.0                      # XML configuration parsing
+
+# ------------------------------------------------------------------------------
+# KPI Process Communication (ZMQ Server Mode)
+# ------------------------------------------------------------------------------
+pyzmq>=25.0.0                    # ZeroMQ messaging for inter-process communication
+protobuf>=4.21.0                 # Protocol Buffers for data serialization
+
+# ------------------------------------------------------------------------------
+# Memory & Performance Profiling (Optional - for development/debugging)
+# ------------------------------------------------------------------------------
+memory-profiler>=0.61.0          # Memory usage profiling
+psutil>=5.9.0                    # System and process utilities
+
+# ------------------------------------------------------------------------------
+# Testing Dependencies
+# ------------------------------------------------------------------------------
+pytest>=7.4.0                    # Testing framework
+pytest-cov>=4.1.0                # Code coverage for pytest
+pytest-asyncio>=0.21.0           # Async test support
+
+# ------------------------------------------------------------------------------
+# Build & Packaging (Optional)
+# ------------------------------------------------------------------------------
+# setuptools>=61.0.0             # Package building
+# wheel>=0.40.0                  # Wheel package format
+# cx-Freeze>=6.15.0              # Executable generation (Windows/Linux)
+# pyinstaller>=5.13.0            # Alternative executable generation

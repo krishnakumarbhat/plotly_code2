@@ -1,0 +1,46 @@
+kpi, html plots -> vislized 
+
+
+2 . extentd it to engle genrated video from cloud 
+
+3 . extentd it to sinchana converted tool  genrated video from vechical logs 
+
+4. change the ui fredly to go to next or log selection 
+
+5.open vehical log in orcus to look at detection tool -- > file list view 
+
+6. when we pull the log we want like resim version number yeild report (dq, resim,kpi tools ,bodnet tools ,video extraction tool) 
+
+7. fhw to trigger the jobs update the GUI to trigger the job 
+
+Identify SW version in the logs provided
+Data Quality Yield  
+RESIM Yield 
+UDP KPI Matching 
+CAN KPI Matching 
+Run Pipeline for Radar + DC 
+ 
+8.try creating fhw ticker in jira possible 
+
+
+9. POC:user can trigger job basd on cone of silence  add kpi to to this addtion tricker kpi html tool those result should uplalod in reslse email
+10.genrate reports from every log testing 
+
+11. accumilate split data for kpi R9  
+
+12 . extend ploting tools for other modele (thoughput   <50ms , exection time..) first for every split and accumialte for every thing 
+13. create report to DQ tools ( create udp DQ , hdf data
+
+14. create report to boadnet tools ( create CAN DQ , hdf data)
+
+resim  -> hdf (jyothis to create this ticket for this) 
+
+add mismatch in same plot in interactive plot 
+
+sil engine use artifactory --> link this in ui 
+
+
+if fhw if possible when the result was created using the meta data  like hsitory of log store log in sqlite  db so that we get the data from ticker fhw jira api jothis to idetify the name bmw 51 job trigger 
+
+in future PI 3
+event finder 

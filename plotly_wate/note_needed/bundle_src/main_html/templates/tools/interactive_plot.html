@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tool_name }} - HPC Tools Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Tool Configuration -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up"></i> {{ tool_name }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Generate interactive HTML reports from HDF sensor data files.
+                        <br><small class="text-info">
+                            <i class="bi bi-cpu"></i> Resources: 64 GB RAM, 8 CPUs | 
+                            <i class="bi bi-server"></i> Partition: plcyf-com
+                        </small>
+                    </p>
+                    
+                    <!-- Input Mode Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Input Mode</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="input_mode" id="mode_json" value="json" checked>
+                            <label class="btn btn-outline-success" for="mode_json">
+                                <i class="bi bi-file-earmark-code"></i> JSON Config
+                            </label>
+                            <input type="radio" class="btn-check" name="input_mode" id="mode_hdf" value="hdf">
+                            <label class="btn btn-outline-success" for="mode_hdf">
+                                <i class="bi bi-file-earmark-binary"></i> HDF Pair
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" id="toolForm">
+                        <input type="hidden" name="input_mode" id="hidden_input_mode" value="json">
+                        
+                        <!-- JSON Mode Inputs -->
+                        <div id="json_inputs">
+                            <div class="mb-3">
+                                <label for="config_xml" class="form-label">Config XML File</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="config_xml" name="config_xml" 
+                                           placeholder="/path/to/HTMLConfig.xml">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('config_xml', ['xml'])">
+                                        <i class="bi bi-folder2-open"></i> Browse
+                                    </button>
+                                </div>
+                                <small class="text-muted">Configuration file defining plot settings</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="inputs_json" class="form-label">Inputs JSON File</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="inputs_json" name="inputs_json" 
+                                           placeholder="/path/to/Inputs.json" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('inputs_json', ['json'])">
+                                        <i class="bi bi-folder2-open"></i> Browse
+                                    </button>
+                                </div>
+                                <small class="text-muted">JSON file with HDF input/output pairs</small>
+                            </div>
+                        </div>
+                        
+                        <!-- HDF Pair Mode Inputs -->
+                        <div id="hdf_inputs" style="display: none;">
+                            <div class="mb-3">
+                                <label for="input_hdf" class="form-label">Input HDF File</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="input_hdf" name="input_hdf" 
+                                           placeholder="/path/to/input.h5">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('input_hdf', ['h5', 'hdf5'])">
+                                        <i class="bi bi-folder2-open"></i> Browse
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="output_hdf" class="form-label">Output HDF File</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="output_hdf" name="output_hdf" 
+                                           placeholder="/path/to/output.h5">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_hdf', ['h5', 'hdf5'])">
+                                        <i class="bi bi-folder2-open"></i> Browse
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Output Directory -->
+                        <div class="mb-3">
+                            <label for="output_dir" class="form-label">Output Directory</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="output_dir" name="output_dir"
+                                       placeholder="Leave empty to use html_db in simg folder">
+                                <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_dir', [], true)">
+                                    <i class="bi bi-folder2-open"></i> Browse
+                                </button>
+                            </div>
+                            <small class="text-muted">If empty, outputs to <code>html_db/</code> folder where .simg is located</small>
+                        </div>
+                        
+                        <!-- Plot Configuration -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="plot_config" class="form-label">Plot Configuration</label>
+                                <select class="form-select" id="plot_config" name="plot_config">
+                                    <option value="default">Default Plots (InputsInteractivePlot.json)</option>
+                                    <option value="per_stream">Per Stream Plots (Inputperstreamplot.json)</option>
+                                    <option value="per_sensor">Per Sensor Plots (InputsPerSensorInteractivePlot.json)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="plot_format" class="form-label">Output Format</label>
+                                <select class="form-select" id="plot_format" name="plot_format">
+                                    <option value="html">Interactive HTML</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Resource Allocation Info -->
+                        <div class="alert alert-info mb-3">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Slurm Resource Allocation:</strong>
+                            <ul class="mb-0 mt-1">
+                                <li>Memory: 64 GB</li>
+                                <li>CPUs: 8 cores</li>
+                                <li>Partition: plcyf-com</li>
+                                <li>Module: singularity/3.11.4</li>
+                            </ul>
+                        </div>
+
+                        <!-- Cluster password confirmation (only needed for /net or /mnt paths) -->
+                        <div class="alert alert-warning mb-3">
+                            <i class="bi bi-shield-lock"></i>
+                            <strong>Cluster Access:</strong>
+                            <div class="mt-2">
+                                <label for="cluster_password" class="form-label mb-1">Confirm Password (cluster)</label>
+                                <input type="password" class="form-control" id="cluster_password" name="cluster_password"
+                                       placeholder="Enter your cluster password">
+                                <small class="text-muted">Required only when your input paths are on <code>/net</code> (Krakow) or <code>/mnt</code> (Southfield). NetID is taken from your login.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-play-fill"></i> Submit to Slurm
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Jobs Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> Recent Plot Jobs</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for job in recent_jobs %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong class="d-block text-truncate" style="max-width: 200px;">
+                                        {{ job.input_filename or job.input_path.split('/')[-1] }}
+                                    </strong>
+                                    <small class="text-muted">{{ job.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                                <span class="badge 
+                                    {% if job.status == 'COMPLETED' %}bg-success
+                                    {% elif job.status == 'RUNNING' %}bg-info
+                                    {% elif job.status == 'QUEUED' %}bg-warning text-dark
+                                    {% elif job.status == 'FAILED' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ job.status }}
+                                </span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="list-group-item text-center text-muted py-4">
+                            No Interactive Plot jobs yet
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- File Browser Modal -->
+<div class="modal fade" id="fileBrowserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-folder2-open"></i> Browse Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="fileBrowserContent" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="selectFileBtn" disabled>Select File</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/file_browser.js') }}"></script>
+<script>
+    // Input mode toggle functionality
+    document.querySelectorAll('input[name="input_mode"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const mode = this.value;
+            document.getElementById('hidden_input_mode').value = mode;
+            
+            if (mode === 'json') {
+                document.getElementById('json_inputs').style.display = 'block';
+                document.getElementById('hdf_inputs').style.display = 'none';
+                document.getElementById('inputs_json').required = true;
+                document.getElementById('input_hdf').required = false;
+                document.getElementById('output_hdf').required = false;
+            } else {
+                document.getElementById('json_inputs').style.display = 'none';
+                document.getElementById('hdf_inputs').style.display = 'block';
+                document.getElementById('inputs_json').required = false;
+                document.getElementById('input_hdf').required = true;
+                document.getElementById('output_hdf').required = true;
+            }
+        });
+    });
+    
+    // Enhanced file browser with target field
+    let currentTargetField = null;
+    let currentExtensions = [];
+    let isDirectoryMode = false;
+    
+    function openFileBrowser(targetFieldId, extensions, dirMode) {
+        currentTargetField = targetFieldId || 'input_path';
+        currentExtensions = extensions || [];
+        isDirectoryMode = dirMode || false;
+        
+        // Update modal title
+        const title = isDirectoryMode ? 'Select Directory' : 'Select File';
+        document.querySelector('#fileBrowserModal .modal-title').innerHTML = 
+            '<i class="bi bi-folder2-open"></i> ' + title;
+        
+        // Open modal
+        const modal = new bootstrap.Modal(document.getElementById('fileBrowserModal'));
+        modal.show();
+        
+        // Load initial directory
+        loadDirectory('/net');
+    }
+    
+    document.getElementById('selectFileBtn').addEventListener('click', function() {
+        if (window.selectedFilePath) {
+            document.getElementById(currentTargetField).value = window.selectedFilePath;
+            bootstrap.Modal.getInstance(document.getElementById('fileBrowserModal')).hide();
+        }
+    });
+</script>
+{% endblock %}
