@@ -1,0 +1,127 @@
+# Singularity/Apptainer definition file for HPC Tools Platform
+# Build with: apptainer build --fakeroot all_services.simg Singularity.def
+
+Bootstrap: docker
+From: docker.io/python:3.10-slim
+
+%labels
+    Name All_Services
+    Version 2.0
+    Author ouymc2
+    Description HPC Tools Platform with DC HTML, Interactive Plot, KPI, and Hyperlink tools
+
+%environment
+    export FLASK_APP=/app/main_html/app.py
+    export FLASK_ENV=production
+    export PYTHONUNBUFFERED=1
+    export PATH=/opt/venv/bin:$PATH
+    export CACHE_HTML_DIR=${CACHE_HTML_DIR:-/tmp/hpc_tools/.cache_html}
+    export HYPERLINK_VLM_CACHE_DIR=${HYPERLINK_VLM_CACHE_DIR:-$CACHE_HTML_DIR/vlm_cache}
+    export HF_HUB_OFFLINE=${HF_HUB_OFFLINE:-1}
+    export TRANSFORMERS_OFFLINE=${TRANSFORMERS_OFFLINE:-1}
+    export SLURM_CONF=/etc/slurm/slurm.conf
+    export SINGULARITY_MODULE=singularity/3.11.4
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        git \
+        curl \
+        ca-certificates \
+        ffmpeg \
+        && rm -rf /var/lib/apt/lists/*
+
+    python -m venv /opt/venv
+    . /opt/venv/bin/activate
+    export PIP_DISABLE_PIP_VERSION_CHECK=1
+    export PIP_DEFAULT_TIMEOUT=300
+    pip install --upgrade pip setuptools wheel --retries 10 --timeout 300
+
+    if [ -f /app/main_html/requirements.txt ]; then
+        pip install -r /app/main_html/requirements.txt --retries 10 --timeout 300
+    fi
+    
+    if [ -f /app/Hyperlink_tool/code/requirements.txt ]; then
+        pip install -r /app/Hyperlink_tool/code/requirements.txt --retries 10 --timeout 300
+    fi
+
+    if [ -f /app/Hyperlink_tool/code/requirements-vlm.txt ]; then
+        pip install -r /app/Hyperlink_tool/code/requirements-vlm.txt --retries 10 --timeout 300
+    fi
+
+    mkdir -p /app/simg/.cache_html/html /app/simg/.cache_html/video
+    mkdir -p /app/simg/.cache_html/vlm_cache
+    mkdir -p /scratch/logs /scratch/uploads /app/html_db /app/jobs
+
+    chmod -R 755 /app
+
+%files
+    main_html /app/main_html
+    Hyperlink_tool /app/Hyperlink_tool
+    KPI /app/KPI
+    Singularity.def /app/Singularity.def
+    app.py /app/app.py
+
+%runscript
+    HOST="${HOST:-0.0.0.0}"
+    PORT="${PORT:-5002}"
+    
+    . /opt/venv/bin/activate
+    
+    python -c "import sys; sys.path.insert(0, '/app/main_html'); from app import app, db; app.app_context().push(); db.create_all()" 2>/dev/null || true
+    
+    # Use config file if available, otherwise use inline settings
+    if [ -f /app/main_html/gunicorn_config.py ]; then
+        exec gunicorn -c /app/main_html/gunicorn_config.py \
+            --chdir /app/main_html \
+            app:app
+    else
+        exec gunicorn -w "${WORKERS:-4}" -b "$HOST:$PORT" \
+            --chdir /app/main_html \
+            --timeout "${TIMEOUT:-300}" \
+            --keep-alive 5 \
+            --worker-class gthread \
+            --threads 4 \
+            --access-logfile - \
+            --error-logfile - \
+            app:app
+    fi
+
+%startscript
+    HOST="${HOST:-0.0.0.0}"
+    PORT="${PORT:-5002}"
+    
+    . /opt/venv/bin/activate
+    cd /app
+    
+    # Use config file if available, otherwise use inline settings
+    if [ -f /app/main_html/gunicorn_config.py ]; then
+        exec gunicorn -c /app/main_html/gunicorn_config.py \
+            --chdir /app/main_html \
+            --daemon \
+            app:app
+    else
+        exec gunicorn -w "${WORKERS:-4}" -b "$HOST:$PORT" \
+            --chdir /app/main_html \
+            --timeout "${TIMEOUT:-300}" \
+            --keep-alive 5 \
+            --worker-class gthread \
+            --threads 4 \
+            --daemon \
+            app:app
+    fi
+
+%test
+    . /opt/venv/bin/activate
+    python -c "import importlib.metadata as m; print(f'Flask version: {m.version(\"flask\")}')"
+
+%help
+    HPC Tools Platform - Singularity Container
+    
+    Usage:
+      singularity run all_services.simg
+      PORT=8080 singularity run all_services.simg
+    
+    Environment Variables:
+      HOST, PORT, WORKERS, DATABASE_URL, CACHE_HTML_DIR

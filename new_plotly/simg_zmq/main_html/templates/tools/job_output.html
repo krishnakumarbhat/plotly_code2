@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Job Output - {{ job.tool_name }} #{{ job.id }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3>
+                <i class="bi bi-folder2-open"></i> Job Output
+            </h3>
+            <p class="text-muted mb-0">
+                {{ job.tool_name | upper }} Job #{{ job.id }} - 
+                <span class="badge bg-success">{{ job.status }}</span>
+            </p>
+        </div>
+        <div>
+            <a href="{{ url_for('job_history') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Runtime Console
+            </a>
+        </div>
+    </div>
+    
+    <!-- Output Path Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h6 class="mb-0"><i class="bi bi-folder"></i> Output Directory</h6>
+        </div>
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <code class="flex-grow-1 bg-light p-2 rounded">{{ output_path }}</code>
+                <button class="btn btn-outline-primary btn-sm ms-2" onclick="copyPath('{{ output_path }}')" title="Copy path">
+                    <i class="bi bi-clipboard"></i>
+                </button>
+            </div>
+            <small class="text-muted mt-2 d-block">
+                <i class="bi bi-info-circle"></i> 
+                {{ files | length }} file(s) found
+                {% if files %}
+                 | {{ files | selectattr('is_html') | list | length }} HTML file(s)
+                {% endif %}
+            </small>
+        </div>
+    </div>
+    
+    <!-- Files List -->
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="bi bi-files"></i> Output Files</h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary active" onclick="showView('list')" id="viewListBtn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <button class="btn btn-outline-primary" onclick="showView('grid')" id="viewGridBtn">
+                    <i class="bi bi-grid"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if files %}
+            <!-- List View -->
+            <div id="listView">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>File Name</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Modified</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for file in files %}
+                            <tr>
+                                <td>
+                                    {% if file.is_html %}
+                                    <i class="bi bi-file-earmark-code text-primary"></i>
+                                    {% elif file.name.endswith('.json') %}
+                                    <i class="bi bi-file-earmark-text text-warning"></i>
+                                    {% elif file.name.endswith('.png') or file.name.endswith('.jpg') %}
+                                    <i class="bi bi-file-earmark-image text-success"></i>
+                                    {% else %}
+                                    <i class="bi bi-file-earmark text-secondary"></i>
+                                    {% endif %}
+                                    <strong>{{ file.name }}</strong>
+                                    {% if file.rel_path != file.name %}
+                                    <br><small class="text-muted">{{ file.rel_path }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if file.is_html %}
+                                    <span class="badge bg-primary">HTML</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ file.name.split('.')[-1] | upper }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ (file.size / 1024) | round(1) }} KB</td>
+                                <td>{{ file.modified.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if file.is_html %}
+                                    <a href="{{ url_for('serve_job_file', job_id=job.id, rel_path=file.rel_path) }}" 
+                                       target="_blank" class="btn btn-sm btn-primary" title="Open in new tab">
+                                        <i class="bi bi-box-arrow-up-right"></i> Open
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('serve_job_file', job_id=job.id, rel_path=file.rel_path) }}" 
+                                       class="btn btn-sm btn-outline-secondary" title="Download">
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Grid View -->
+            <div id="gridView" style="display: none;">
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+                    {% for file in files %}
+                    <div class="col">
+                        <div class="card h-100 file-card {% if file.is_html %}border-primary{% endif %}">
+                            <div class="card-body text-center">
+                                {% if file.is_html %}
+                                <i class="bi bi-file-earmark-code display-4 text-primary"></i>
+                                {% elif file.name.endswith('.json') %}
+                                <i class="bi bi-file-earmark-text display-4 text-warning"></i>
+                                {% elif file.name.endswith('.png') or file.name.endswith('.jpg') %}
+                                <i class="bi bi-file-earmark-image display-4 text-success"></i>
+                                {% else %}
+                                <i class="bi bi-file-earmark display-4 text-secondary"></i>
+                                {% endif %}
+                                <h6 class="card-title mt-2 text-truncate" title="{{ file.name }}">
+                                    {{ file.name }}
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    {{ (file.size / 1024) | round(1) }} KB
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                {% if file.is_html %}
+                                <a href="{{ url_for('serve_job_file', job_id=job.id, rel_path=file.rel_path) }}" 
+                                   target="_blank" class="btn btn-sm btn-primary w-100">
+                                    <i class="bi bi-box-arrow-up-right"></i> Open
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('serve_job_file', job_id=job.id, rel_path=file.rel_path) }}" 
+                                   class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                <p>No files found in the output directory.</p>
+                <p class="small">The job may still be processing or the output was saved elsewhere.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Job Details Card -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header">
+            <h6 class="mb-0"><i class="bi bi-info-circle"></i> Job Details</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Job ID:</th>
+                            <td>{{ job.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tool:</th>
+                            <td>{{ job.tool_name | upper }}</td>
+                        </tr>
+                        <tr>
+                            <th>Slurm ID:</th>
+                            <td><code>{{ job.slurm_job_id or 'Local execution' }}</code></td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td><span class="badge bg-success">{{ job.status }}</span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Created:</th>
+                            <td>{{ job.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Started:</th>
+                            <td>{{ job.started_at.strftime('%Y-%m-%d %H:%M:%S') if job.started_at else '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Completed:</th>
+                            <td>{{ job.completed_at.strftime('%Y-%m-%d %H:%M:%S') if job.completed_at else '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Duration:</th>
+                            <td>{{ job.get_duration() | round(1) if job.get_duration() else '-' }} seconds</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            {% if job.input_path %}
+            <div class="mt-3">
+                <strong>Input Path:</strong>
+                <code class="bg-light p-1 rounded">{{ job.input_path }}</code>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyPath(path) {
+    navigator.clipboard.writeText(path).then(() => {
+        // Show a brief tooltip or notification
+        alert('Path copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy path:', err);
+    });
+}
+
+function showView(view) {
+    if (view === 'list') {
+        document.getElementById('listView').style.display = 'block';
+        document.getElementById('gridView').style.display = 'none';
+        document.getElementById('viewListBtn').classList.add('active');
+        document.getElementById('viewGridBtn').classList.remove('active');
+    } else {
+        document.getElementById('listView').style.display = 'none';
+        document.getElementById('gridView').style.display = 'block';
+        document.getElementById('viewListBtn').classList.remove('active');
+        document.getElementById('viewGridBtn').classList.add('active');
+    }
+}
+</script>
+{% endblock %}

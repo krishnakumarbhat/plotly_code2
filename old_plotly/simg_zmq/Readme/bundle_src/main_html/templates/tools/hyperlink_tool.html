@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tool_name }} - HPCC Runtime Console{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 pb-5">
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <div class="card runtime-card">
+                <div class="card-header">
+                    <span class="section-label">Viewer session</span>
+                    <h1 class="mb-0">{{ tool_name }}</h1>
+                </div>
+                <div class="card-body">
+                    <p class="lead-copy">Hyperlink stays inside main_html. Point it at the HTML report root and optional video root, then the integrated viewer will reuse your session cache and per-user output area.</p>
+
+                    <form method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">HTML reports directory</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="input_path" name="input_path" placeholder="/path/to/html/reports" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('input_path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Video directory</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="video_path" name="video_path" placeholder="/path/to/video/files">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('video_path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Viewer cache root</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="output_root" name="output_root" placeholder="/path/to/output/root or leave blank for .cache_html">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('output_root')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-check form-switch border rounded-3 px-3 py-3 bg-light">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="hyperlink_ai_enabled" name="hyperlink_ai_enabled" {% if hyperlink_ai_enabled %}checked{% endif %}>
+                                    <label class="form-check-label fw-semibold" for="hyperlink_ai_enabled">Enable AI video description</label>
+                                    <div class="small text-muted mt-1">When enabled, Hyperlink uses the offline local model path configured for this HPCC stack. When disabled, the viewer keeps manual comments only and blocks AI summary generation.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border mt-4">
+                            <strong>What is stored</strong>
+                            <p class="mb-0">The HTML root, video root, and output root are recorded in the same SQLite-backed runtime history so the viewer session can be reconstructed and audited later.</p>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Open integrated viewer</button>
+                            <a href="{{ url_for('hyperlink_viewer_app') }}" class="btn btn-outline-dark btn-lg">Open current session</a>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card runtime-card mb-4">
+                <div class="card-header">
+                    <span class="section-label">How it works</span>
+                    <h3 class="mb-0">Session flow</h3>
+                </div>
+                <div class="card-body d-grid gap-3">
+                    <div class="runtime-line active"><div><strong>1. Bind report root</strong><small>Select the folder that contains generated HTML output.</small></div></div>
+                    <div class="runtime-line"><div><strong>2. Add media root</strong><small>Optional video folders stay outside the viewer cache until needed.</small></div></div>
+                    <div class="runtime-line"><div><strong>3. Reuse the same viewer</strong><small>No extra container startup is required for browsing.</small></div></div>
+                </div>
+            </div>
+
+            <div class="card runtime-card">
+                <div class="card-header">
+                    <span class="section-label">Recent sessions</span>
+                    <h3 class="mb-0">Hyperlink history</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for job in recent_jobs %}
+                        <div class="list-group-item bg-transparent border-light-subtle">
+                            <strong class="d-block">{{ job.input_filename or job.input_path }}</strong>
+                            <small class="text-muted d-block">{{ job.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            <span class="status-badge status-{{ job.status }} mt-2">{{ job.status }}</span>
+                        </div>
+                        {% else %}
+                        <div class="list-group-item text-muted text-center py-4 bg-transparent">No Hyperlink sessions yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fileBrowserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-folder2-open"></i> Browse files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="fileBrowserContent" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="selectFileBtn" disabled>Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/file_browser.js') }}"></script>
+<script>
+let currentTargetField = null;
+
+function openFileBrowser(targetFieldId) {
+    currentTargetField = targetFieldId;
+    const modal = new bootstrap.Modal(document.getElementById('fileBrowserModal'));
+    modal.show();
+    loadDirectory('/net');
+}
+
+document.getElementById('selectFileBtn').addEventListener('click', () => {
+    if (window.selectedFilePath) {
+        document.getElementById(currentTargetField).value = window.selectedFilePath;
+        bootstrap.Modal.getInstance(document.getElementById('fileBrowserModal')).hide();
+    }
+});
+</script>
+{% endblock %}

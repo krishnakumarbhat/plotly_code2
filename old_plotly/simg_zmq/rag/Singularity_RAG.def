@@ -1,0 +1,65 @@
+Bootstrap: docker
+From: docker.io/python:3.10-slim
+
+%labels
+    Name RAG_Service
+    Version 2.0
+    Author ouymc2
+    Description RAG service with bundled llama.cpp for HPCC runtime console
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export PATH=/opt/venv/bin:/app/rag/llama.cpp/build/bin:$PATH
+    export PYTHONPATH=/app/rag
+    export FLASK_HOST=${FLASK_HOST:-0.0.0.0}
+    export FLASK_PORT=${FLASK_PORT:-5100}
+    export VECTOR_BACKEND=${VECTOR_BACKEND:-chroma}
+    export LLAMA_SERVER_BINARY=/app/rag/llama.cpp/build/bin/llama-server
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates build-essential cmake git \
+        && rm -rf /var/lib/apt/lists/*
+
+    python -m venv /opt/venv
+    . /opt/venv/bin/activate
+    pip install --upgrade pip setuptools wheel
+    pip install --no-cache-dir -r /app/rag/requirements.txt
+
+    git clone --depth 1 https://github.com/ggml-org/llama.cpp /app/rag/llama.cpp
+    cd /app/rag/llama.cpp
+    cmake -B build -DLLAMA_CUDA=OFF -DLLAMA_NATIVE=OFF
+    cmake --build build --config Release -j$(nproc)
+    cp build/bin/llama-server /usr/local/bin/llama-server
+    rm -rf /app/rag/llama.cpp/.git
+
+    mkdir -p /app/rag/data /app/rag/vector_store
+    chmod -R 755 /app
+
+%files
+    rag/app /app/rag/app
+    rag/main.py /app/rag/main.py
+    rag/run.py /app/rag/run.py
+    rag/run_rag.sh /app/rag/run_rag.sh
+    rag/requirements.txt /app/rag/requirements.txt
+
+%runscript
+    . /opt/venv/bin/activate
+    cd /app/rag
+    exec python main.py "$@"
+
+%test
+    . /opt/venv/bin/activate
+    python -c "import flask; import chromadb; print('RAG deps OK')"
+    test -x /usr/local/bin/llama-server && echo "llama-server OK" || echo "llama-server not built"
+
+%help
+    RAG service with bundled llama.cpp for HPCC Runtime Console.
+    GGUF model files must be bind-mounted at runtime.
+
+    Usage:
+      singularity run rag.simg --talk
+      singularity run rag.simg --scrap /path/to/html/root
+
+    Port: FLASK_PORT=5100
+    LLM:  llama-server on port 8081 (auto-started)

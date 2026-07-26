@@ -1,0 +1,13 @@
+# Hyperlink_tool (Log Viewer) - minimal runtime deps
+# Install: pip install -r requirements.txt
+
+Flask>=2.3
+flask-cors>=4.0
+paramiko>=3.4
+
+# PostgreSQL logging (no SQLite)
+SQLAlchemy>=2.0
+psycopg2-binary>=2.9
+
+# Optional (recommended for cloud serving)
+gunicorn>=21.2; platform_system != "Windows"

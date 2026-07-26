@@ -1,0 +1,8 @@
+{
+    "INPUT_HDF": [
+        "/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/4-Checkout/outputs/CCA_9010_3100099_DEBUG_20251105_132836_0022.h5"
+    ],
+    "OUTPUT_HDF": [
+        "/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/4-Checkout/outputs/CCA_9010_3100099_DEBUG_20251105_132836_0022_HIL_OUT.h5"
+    ]
+}
