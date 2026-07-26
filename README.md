@@ -1,10 +1,10 @@
 # simg_zmq Documentation Hub
 
-This folder now documents the current HPCC runtime stack that uses `main_html` as the single user-facing entrypoint, `hpcc_main.py` as the runtime broker/supervisor, containerized KPI and RAG services, and the integrated Hyperlink viewer.
+This folder now documents the current HPCC runtime stack that uses `main_html` as the single user-facing entrypoint, `main_html/temp_dir/hpcc_main.py` as the runtime broker/supervisor, containerized KPI and RAG services, and the integrated Hyperlink viewer.
 
 The documentation in this folder is intended to describe the current architecture, deployment model, operational flow, and extension points for the stack that was validated with:
 
-- `python .\\hpcc_main.py`
+- `python .\simg_zmq\main_html\temp_dir\hpcc_main.py`
 - `http://127.0.0.1:5001/html`
 - `http://127.0.0.1:5100/health`
 - `127.0.0.1:9100` broker access
@@ -78,32 +78,34 @@ The most important folders for the integrated runtime are:
 
 ```text
 simg_zmq/
-|-- hpcc_main.py                     # Broker, launcher, Windows/WSL forwarding
 |-- main_html/                      # Primary web application and runtime map
 |   |-- app.py
+|   |-- models.py
 |   |-- runtime_store.py
 |   |-- hpcc_broker_client.py
 |   |-- rag_client.py
-|   `-- templates/
+|   |-- templates/
+|   `-- temp_dir/
+|       `-- hpcc_main.py            # Broker, launcher, Windows/WSL forwarding
 |-- rag/                            # RAG service and storage
 |-- KPI/                            # CAN KPI, UDP KPI, and Interactive Plot implementations
 |-- Hyperlink_tool/                 # Integrated viewer code
-|-- scripts/                        # Build helpers
-|-- simg_sh_hpcc/                   # Built images and runtime state
-`-- Readme/                         # This documentation set
+|-- scripts/                        # Build helpers (wsl_build_hpcc_bundle.sh, etc.)
+|-- Readme/                         # This documentation set
+`-- requirements.txt
 ```
 
 ## Quick Start
 
 ### Build Images
 
-Run inside WSL:
+Run inside WSL from `simg_zmq/`:
 
 ```bash
 bash scripts/wsl_build_hpcc_bundle.sh
 ```
 
-Expected outputs in `simg_sh_hpcc/`:
+Expected outputs in `simg_zmq/`:
 
 - `main_html.simg`
 - `kpi/can/can_kpi.simg`
@@ -116,7 +118,7 @@ Expected outputs in `simg_sh_hpcc/`:
 Run on Windows from the repository root:
 
 ```powershell
-python .\hpcc_main.py
+python .\simg_zmq\main_html\temp_dir\hpcc_main.py
 ```
 
 ### Verify Health
@@ -138,9 +140,9 @@ Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5100/health
 
 | Path | Purpose |
 |------|---------|
-| `simg_sh_hpcc/runtime_state/main_html/cache_html/` | `main_html` cache and SQLite database |
-| `simg_sh_hpcc/runtime_state/rag/` | RAG SQLite data and vector store |
-| `simg_sh_hpcc/runs/` | Broker-created per-run logs and outputs |
+| `simg_zmq/runtime_state/main_html/cache_html/` | `main_html` cache and SQLite database |
+| `simg_zmq/runtime_state/rag/` | RAG SQLite data and vector store |
+| `simg_zmq/runtime_local/` | Fast local runtime root (broker DB, per-run logs and outputs) |
 
 ## Recommended Reading Order
 
@@ -150,4 +152,4 @@ Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5100/health
 
 ## Scope Note
 
-Some older files in the repository still describe previous layouts such as legacy `all_services`, Docker-first workflows, or older cluster packaging approaches. This documentation set is specifically about the current `main_html` + `hpcc_main.py` + `simg_sh_hpcc` architecture.
+Some older files in the repository still describe previous layouts such as legacy `all_services`, Docker-first workflows, or older cluster packaging approaches. This documentation set is specifically about the current `main_html` + `hpcc_main.py` (`main_html/temp_dir/hpcc_main.py`) architecture.
