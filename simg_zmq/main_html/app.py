@@ -20,7 +20,7 @@ import importlib.util
 import time
 import shlex
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from flask import Flask, Response, render_template, request, redirect, url_for, flash, jsonify, session, send_from_directory, send_file, abort
@@ -32,7 +32,7 @@ from sqlalchemy.exc import OperationalError
 from config import config
 from hpcc_broker_client import HpccBrokerClient
 from jira_integration import JiraIntegration
-from models import db, User, JobHistory, ChatSession, ChatMessage, HyperlinkSavedPair, init_db
+from models import db, User, JobHistory, ChatSession, ChatMessage, HyperlinkSavedPair, ResourceAllocation, init_db
 from rag_client import RagClient
 from runtime_store import RuntimeStore
 from utils import (
@@ -3791,6 +3791,130 @@ def submit_tool_job(tool_name: str):
 # CHAT API ROUTES
 # ============================================================================
 
+MAX_CONCURRENT_MODEL_ALLOCATIONS = int(os.environ.get('HPCC_MAX_CONCURRENT_MODEL_ALLOCATIONS', '3'))
+ALLOCATION_STALE_SECONDS = int(os.environ.get('HPCC_ALLOCATION_STALE_SECONDS', '1800'))
+DEFAULT_ALLOCATION_NODES = int(os.environ.get('HPCC_DEFAULT_ALLOCATION_NODES', '1'))
+DEFAULT_ALLOCATION_MEMORY_GB = int(os.environ.get('HPCC_DEFAULT_ALLOCATION_MEMORY_GB', '64'))
+
+
+def _expire_stale_allocations():
+    """Auto-release allocations that stopped heartbeating (crashed tab,
+    network drop, etc.) so they don't permanently occupy one of the 3 slots.
+    """
+    cutoff = datetime.utcnow() - timedelta(seconds=ALLOCATION_STALE_SECONDS)
+    stale = ResourceAllocation.query.filter(
+        ResourceAllocation.status == 'ACTIVE',
+        ResourceAllocation.last_heartbeat_at < cutoff,
+    ).all()
+    for row in stale:
+        row.status = 'RELEASED'
+        row.released_at = datetime.utcnow()
+    if stale:
+        db.session.commit()
+
+
+def _get_or_create_allocation(user_id: int, cluster: str, nodes: int = None, memory_gb: int = None):
+    """Return (allocation_or_none, active_count, at_capacity_bool).
+    Reuses an existing ACTIVE allocation for this user if present (updates
+    its heartbeat); otherwise creates a new one if under the concurrency cap.
+    A DB row (shared across all gunicorn worker processes) is used instead of
+    an in-memory counter so the cap is enforced correctly regardless of which
+    worker handles the request.
+    """
+    _expire_stale_allocations()
+    existing = ResourceAllocation.query.filter_by(user_id=user_id, status='ACTIVE').first()
+    if existing:
+        existing.last_heartbeat_at = datetime.utcnow()
+        if nodes:
+            existing.nodes = nodes
+        if memory_gb:
+            existing.memory_gb = memory_gb
+        db.session.commit()
+        active_count = ResourceAllocation.query.filter_by(status='ACTIVE').count()
+        return existing, active_count, False
+
+    active_count = ResourceAllocation.query.filter_by(status='ACTIVE').count()
+    if active_count >= MAX_CONCURRENT_MODEL_ALLOCATIONS:
+        return None, active_count, True
+
+    allocation = ResourceAllocation(
+        user_id=user_id,
+        cluster=cluster or 'unknown',
+        nodes=nodes or DEFAULT_ALLOCATION_NODES,
+        memory_gb=memory_gb or DEFAULT_ALLOCATION_MEMORY_GB,
+        status='ACTIVE',
+    )
+    db.session.add(allocation)
+    db.session.commit()
+    active_count = ResourceAllocation.query.filter_by(status='ACTIVE').count()
+    return allocation, active_count, False
+
+
+@app.route('/api/resource/status', methods=['GET'])
+@login_required
+def api_resource_status():
+    _expire_stale_allocations()
+    mine = ResourceAllocation.query.filter_by(user_id=current_user.id, status='ACTIVE').first()
+    active_count = ResourceAllocation.query.filter_by(status='ACTIVE').count()
+    return jsonify({
+        'ok': True,
+        'max_concurrent': MAX_CONCURRENT_MODEL_ALLOCATIONS,
+        'active_count': active_count,
+        'my_allocation': ({
+            'cluster': mine.cluster,
+            'nodes': mine.nodes,
+            'memory_gb': mine.memory_gb,
+            'created_at': mine.created_at.isoformat() + 'Z',
+        } if mine else None),
+        'default_nodes': DEFAULT_ALLOCATION_NODES,
+        'default_memory_gb': DEFAULT_ALLOCATION_MEMORY_GB,
+    })
+
+
+@app.route('/api/resource/allocate', methods=['POST'])
+@login_required
+def api_resource_allocate():
+    data = request.get_json(silent=True) or {}
+    cluster = (data.get('cluster') or '').strip().lower() or 'krakow'
+    if cluster not in ('krakow', 'southfield'):
+        return jsonify({'ok': False, 'error': 'cluster must be krakow or southfield'}), 400
+    try:
+        nodes = max(1, int(data.get('nodes', DEFAULT_ALLOCATION_NODES)))
+        memory_gb = max(1, int(data.get('memory_gb', DEFAULT_ALLOCATION_MEMORY_GB)))
+    except (TypeError, ValueError):
+        return jsonify({'ok': False, 'error': 'nodes/memory_gb must be integers'}), 400
+
+    allocation, active_count, at_capacity = _get_or_create_allocation(current_user.id, cluster, nodes, memory_gb)
+    if at_capacity:
+        return jsonify({
+            'ok': False,
+            'error': f'At capacity: {active_count}/{MAX_CONCURRENT_MODEL_ALLOCATIONS} users are already using the model. Please try again shortly.',
+            'active_count': active_count,
+            'max_concurrent': MAX_CONCURRENT_MODEL_ALLOCATIONS,
+        }), 429
+
+    return jsonify({
+        'ok': True,
+        'cluster': allocation.cluster,
+        'nodes': allocation.nodes,
+        'memory_gb': allocation.memory_gb,
+        'active_count': active_count,
+        'max_concurrent': MAX_CONCURRENT_MODEL_ALLOCATIONS,
+        'status': 'Resources allocated. Loading model...',
+    })
+
+
+@app.route('/api/resource/release', methods=['POST'])
+@login_required
+def api_resource_release():
+    mine = ResourceAllocation.query.filter_by(user_id=current_user.id, status='ACTIVE').first()
+    if mine:
+        mine.status = 'RELEASED'
+        mine.released_at = datetime.utcnow()
+        db.session.commit()
+    return jsonify({'ok': True})
+
+
 @app.route('/api/chat', methods=['POST'])
 @login_required
 def chat_api():
@@ -3833,14 +3957,21 @@ def chat_api():
     db.session.commit()
     
     try:
-        rag_response = rag_client.ask(message, chat_session.session_id)
-        if rag_response.get('ok'):
-            response = rag_response.get('answer', '')
-        else:
+        allocation, active_count, at_capacity = _get_or_create_allocation(current_user.id, '')
+        if at_capacity:
             response = (
-                'KPI Guide depends on the RAG service and did not get a valid response.\n\n'
-                f"Details: {rag_response.get('error', 'No details available')}"
+                f'The model is at capacity ({active_count}/{MAX_CONCURRENT_MODEL_ALLOCATIONS} users). '
+                'Please try again in a moment, or use the Resource Allocation button to check status.'
             )
+        else:
+            rag_response = rag_client.ask(message, chat_session.session_id)
+            if rag_response.get('ok'):
+                response = rag_response.get('answer', '')
+            else:
+                response = (
+                    'KPI Guide depends on the RAG service and did not get a valid response.\n\n'
+                    f"Details: {rag_response.get('error', 'No details available')}"
+                )
     except Exception as e:
         logger.error(f"KPI guide backend error: {e}")
         response = "KPI Guide is unavailable because the RAG service failed unexpectedly."

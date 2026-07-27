@@ -191,7 +191,7 @@ class DetectionMappingKPIHDF:
                         i < len(veh_rdd.get('rdd1_dindx', [])) and 
                         j < len(veh_rdd['rdd1_rindx'][i]) and 
                         j < len(veh_rdd['rdd1_dindx'][i])):
-                        key = (veh_rdd['rdd1_rindx'][i][j], veh_rdd['rdd1_dindx'][i][j])
+                        key = (int(veh_rdd['rdd1_rindx'][i][j]), int(veh_rdd['rdd1_dindx'][i][j]))
                         veh_hash.setdefault(key, []).append(j)
                         logger.debug("Built veh_hash entry for scan %s: %s", i, key)
                     else:
@@ -205,7 +205,7 @@ class DetectionMappingKPIHDF:
                 # num_sim_detections = min(len(sim_rdd['rdd1_rindx'][i]), len(sim_rdd['rdd1_dindx'][i]))
                 num_sim_detections = val
                 for j in range(num_sim_detections):
-                    sim_key = (sim_rdd['rdd1_rindx'][i][j], sim_rdd['rdd1_dindx'][i][j])
+                    sim_key = (int(sim_rdd['rdd1_rindx'][i][j]), int(sim_rdd['rdd1_dindx'][i][j]))
                     logger.debug("Sim detection for scan %s: %s (det idx %s)", i, sim_key, j)
                     if sim_key in veh_hash:
                         key = tuple(veh_hash[sim_key])
@@ -364,28 +364,11 @@ class DetectionMappingKPIHDF:
                 except (TypeError, ValueError):
                     continue
 
-            # Remap store from RDD indices to detection indices
-            mapped_store = {}
-            for veh_key, sim_indices in store.items():
-                veh_indices_rdd = list(veh_key) if isinstance(veh_key, tuple) else [veh_key]
-                sim_indices_rdd = list(sim_indices) if isinstance(sim_indices, (list, tuple)) else [sim_indices]
-
-                veh_indices_det = []
-                for idx in veh_indices_rdd:
-                    if isinstance(idx, (int, np.integer)) and idx in veh_rdd_of_det:
-                        veh_indices_det.append(veh_rdd_of_det[idx])
-
-                sim_indices_det = []
-                for idx in sim_indices_rdd:
-                    if isinstance(idx, (int, np.integer)) and idx in sim_rdd_of_det:
-                        sim_indices_det.append(sim_rdd_of_det[idx])
-
-                if not veh_indices_det or not sim_indices_det:
-                    continue
-
-                veh_key_det = tuple(veh_indices_det) if len(veh_indices_det) > 1 else veh_indices_det[0]
-                sim_val_det = sim_indices_det if len(sim_indices_det) > 1 else sim_indices_det[0]
-                mapped_store[veh_key_det] = sim_val_det
+            # Store keys/values are already detection indices (j values from the
+            # RDD iteration loop). Use them directly — the old remapping via
+            # veh_rdd_of_det/sim_rdd_of_det was incorrect because those maps
+            # key on rdd_idx VALUES, not detection position indices.
+            mapped_store = {veh_key: sim_indices for veh_key, sim_indices in store.items()}
 
             # Now process using detection indices
             for veh_key, sim_indices in mapped_store.items():

@@ -71,12 +71,19 @@ if [[ -z "${RAG_DATA_DIR:-}" ]]; then
     export RAG_DATA_DIR="$RAG_CACHE_ROOT/rag"
 fi
 
+if [[ -z "${LLM_N_THREADS:-}" ]]; then
+    export LLM_N_THREADS="${SLURM_CPUS_PER_TASK:-8}"
+fi
+
 bind_args=()
 for host_path in "$BUNDLE_ROOT" "$PROJECT_ROOT" "$RAG_CACHE_ROOT" /net /scratch /mnt /local /tmp; do
     if [[ -n "$host_path" && -d "$host_path" ]]; then
         bind_args+=(--bind "$host_path:$host_path")
     fi
 done
+if [[ -d "$SCRIPT_DIR/app" ]]; then
+    bind_args+=(--bind "$SCRIPT_DIR/app:/app/rag/app")
+fi
 
 if model_path="$(resolve_model_path 2>/dev/null)"; then
     export QWEN_GGUF_PATH="$model_path"
@@ -99,6 +106,9 @@ cmd=(
     --env "FLASK_PORT=${FLASK_PORT:-5100}"
     --env "RAG_CACHE_ROOT=$RAG_CACHE_ROOT"
     --env "RAG_DATA_DIR=$RAG_DATA_DIR"
+    --env "LLM_N_THREADS=$LLM_N_THREADS"
+    --env "LLAMA_REASONING_FORMAT=${LLAMA_REASONING_FORMAT:-none}"
+    --env "LLM_MAX_NEW_TOKENS=${LLM_MAX_NEW_TOKENS:-32}"
     --env "VECTOR_BACKEND=${VECTOR_BACKEND:-chroma}"
 )
 if [[ -n "${QWEN_GGUF_PATH:-}" ]]; then

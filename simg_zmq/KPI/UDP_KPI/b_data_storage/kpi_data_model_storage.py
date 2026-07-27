@@ -1,6 +1,43 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 import numpy as np
+
+
+def _normalize_signal_name(name):
+    return "".join(ch for ch in str(name or "").strip().lower() if ch.isalnum())
+
+
+def _candidate_normalized_names(name):
+    normalized = _normalize_signal_name(name)
+    alias_groups = [
+        {"ran", "range", "detectionrange"},
+        {"vel", "velocity", "detectionvelocity", "rr", "rangerate"},
+        {"phi", "elevation", "eli"},
+        {"theta", "azimuth", "azi"},
+    ]
+    for group in alias_groups:
+        if normalized in group:
+            return group
+    return {normalized}
+
+
+def _resolve_signal_mapping(data_obj, requested_name):
+    signal_map = getattr(data_obj, "_signal_to_value", None)
+    if not signal_map:
+        return None
+
+    direct = signal_map.get(requested_name)
+    if direct:
+        return direct
+
+    candidate_names = _candidate_normalized_names(requested_name)
+    for existing_name, existing_value in signal_map.items():
+        if (
+            _normalize_signal_name(existing_name) in candidate_names
+            and existing_value
+        ):
+            return existing_value
+    return None
 
 
 class KPI_DataModelStorage:
@@ -319,9 +356,13 @@ class KPI_DataModelStorage:
         
         signal_info = data._signal_to_value.get(signal_name)
 
-        # Return early if signal not found in either map
+        # Try alias resolution if exact key not found
         if not signal_info:
-            return [], f"Signal '{signal_name}' not found in data model."
+            resolved = _resolve_signal_mapping(data, signal_name)
+            if resolved is not None:
+                signal_info = resolved
+            else:
+                return [], f"Signal '{signal_name}' not found in data model."
 
         storage_key = None
         if isinstance(signal_info, str):
@@ -441,42 +482,6 @@ class KPI_DataModelStorage:
             "input_point_total": 0,
             "output_point_total": 0,
         }
-
-        def _normalize_signal_name(name):
-            return "".join(
-                ch for ch in str(name or "").strip().lower() if ch.isalnum()
-            )
-
-        def _candidate_normalized_names(name):
-            normalized = _normalize_signal_name(name)
-            alias_groups = [
-                {"ran", "range", "detectionrange"},
-                {"vel", "velocity", "detectionvelocity", "rr", "rangerate"},
-                {"phi", "elevation", "eli"},
-                {"theta", "azimuth", "azi"},
-            ]
-            for group in alias_groups:
-                if normalized in group:
-                    return group
-            return {normalized}
-
-        def _resolve_signal_mapping(data_obj, requested_name):
-            signal_map = getattr(data_obj, "_signal_to_value", None)
-            if not signal_map:
-                return None
-
-            direct = signal_map.get(requested_name)
-            if direct:
-                return direct
-
-            candidate_names = _candidate_normalized_names(requested_name)
-            for existing_name, existing_value in signal_map.items():
-                if (
-                    _normalize_signal_name(existing_name) in candidate_names
-                    and existing_value
-                ):
-                    return existing_value
-            return None
 
         def _parse_index_pair(unique_value):
             if isinstance(unique_value, str) and unique_value:

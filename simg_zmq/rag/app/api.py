@@ -29,7 +29,11 @@ class RagApi:
     def _register_routes(self) -> None:
         @self.app.get("/health")
         def health() -> tuple:
-            return jsonify({"status": "ok", "db": self.sqlite_store.stats()}), 200
+            return jsonify({
+                "status": "ok",
+                "db": self.sqlite_store.stats(),
+                "llm_last_error": self.query_graph.rag_engine._last_llm_error,
+            }), 200
 
         @self.app.get("/")
         def index() -> str:

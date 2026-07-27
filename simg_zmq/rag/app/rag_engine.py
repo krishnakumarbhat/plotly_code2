@@ -20,6 +20,8 @@ try:
 except ImportError:  # pragma: no cover - validated at runtime in the deployment image
     chromadb = None
 
+logger = logging.getLogger(__name__)
+_DIRECT_URL_OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 
 
@@ -75,6 +77,7 @@ class RagEngine:
         self._llm_n_gpu_layers = max(0, int(llm_n_gpu_layers or 0))
         self._llama_server_process: Optional[subprocess.Popen] = None
         self._llama_server_lock = threading.Lock()
+        self._last_llm_error: Optional[str] = None
         self._client = None
         self._collection = self._create_collection()
         self._documents = self._load_documents()
@@ -270,7 +273,7 @@ class RagEngine:
             url, data=payload, headers={'Content-Type': 'application/json'}, method='POST'
         )
         try:
-            with urllib.request.urlopen(request, timeout=5) as response:
+            with _DIRECT_URL_OPENER.open(request, timeout=5) as response:
                 body = json.loads(response.read().decode('utf-8'))
         except Exception:
             return None
@@ -584,12 +587,10 @@ class RagEngine:
 
         health_url = self._llama_server_base_url + '/health'
         try:
-            with urllib.request.urlopen(health_url, timeout=2) as response:
-                return 200 <= getattr(response, 'status', 200) < 500
-        except urllib.error.HTTPError:
-            return True
-        except Exception:
-            return True
+            with _DIRECT_URL_OPENER.open(health_url, timeout=2) as response:
+                return 200 <= getattr(response, 'status', 200) < 300
+        except (urllib.error.HTTPError, OSError):
+            return False
 
     def _ensure_llama_server(self) -> bool:
         if self._llm_backend != 'llama_server':
@@ -616,6 +617,7 @@ class RagEngine:
                 '-t', str(self._llm_n_threads),
                 '-b', str(self._llm_n_batch),
                 '-n', str(self._llm_max_new_tokens),
+                '--reasoning-format', os.environ.get('LLAMA_REASONING_FORMAT', 'none'),
             ]
             if self._llm_n_gpu_layers > 0:
                 command.extend(['-ngl', str(self._llm_n_gpu_layers)])
@@ -645,7 +647,7 @@ class RagEngine:
         return self._llama_server_ready()
 
     def _answer_from_matches(self, question: str, matches: list[dict[str, Any]]) -> str:
-        lines = ["Top matches from the indexed workspace:"]
+        lines = ["LLM answer unavailable; showing retrieved context:"]
         seen_sources: set[str] = set()
         for document in matches[:3]:
             source_path = document['source_path']
@@ -663,12 +665,17 @@ class RagEngine:
         return "\n".join(lines)
 
     def _llama_answer(self, question: str, history: list[dict[str, str]] | None, matches: list[dict[str, Any]]) -> Optional[str]:
-        if not matches or not self._ensure_llama_server():
+        self._last_llm_error = None
+        if not matches:
+            self._last_llm_error = 'no matching indexed context'
+            return None
+        if not self._ensure_llama_server():
+            self._last_llm_error = 'llama-server is not ready'
             return None
 
         context_sections: list[str] = []
         for document in matches[:3]:
-            snippet = document['text'].strip()[:1200]
+            snippet = document['text'].strip()[:700]
             context_sections.append(
                 f"Source: {Path(document['source_path']).name}\nPath: {document['source_path']}\nContext: {snippet}"
             )
@@ -715,13 +722,16 @@ class RagEngine:
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=240) as response:
+            with _DIRECT_URL_OPENER.open(request, timeout=240) as response:
                 body = json.loads(response.read().decode('utf-8'))
-        except Exception:
+        except Exception as exc:
+            self._last_llm_error = str(exc)
+            logger.warning('llama-server chat request failed: %s', exc)
             return None
 
         choices = body.get('choices') or []
         if not choices:
+            self._last_llm_error = 'llama-server returned no choices'
             return None
 
         message = choices[0].get('message') or {}
@@ -730,7 +740,10 @@ class RagEngine:
             content = ' '.join(str(part.get('text') or '') for part in content if isinstance(part, dict)).strip()
         elif content is not None:
             content = str(content).strip()
-        return content or None
+        if not content:
+            self._last_llm_error = 'llama-server returned empty message content'
+            return None
+        return content
 
     def answer(self, question: str, history: list[dict[str, str]] | None = None) -> str:
         if self._is_greeting_or_smalltalk(question):

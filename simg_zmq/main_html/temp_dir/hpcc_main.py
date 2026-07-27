@@ -144,6 +144,16 @@ def _cluster_slurm_defaults() -> Dict[str, str]:
     }
 
 
+def _can_use_localhost_ssh() -> bool:
+    """Return whether this process has a resolvable local Unix identity."""
+    try:
+        import pwd
+        pwd.getpwuid(os.getuid())
+    except (ImportError, KeyError, OSError):
+        return False
+    return True
+
+
 def _wsl_available() -> bool:
     return os.name == 'nt' and shutil.which('wsl') is not None
 
@@ -1061,7 +1071,7 @@ class RuntimeBroker:
             launch_plan['pane_log_dir'] = str(output_log_dir)
             if use_tmux_console:
                 launch_plan['project_console_log_path'] = str(output_log_dir / 'runtime_console.log')
-        if user_password and os.name != 'nt':
+        if user_password and os.name != 'nt' and not use_tmux_console and _can_use_localhost_ssh():
             askpass_path = run_dir / '.ssh_askpass.sh'
             _write_askpass_script(user_password, askpass_path)
             launch_plan['ssh_run_as_user'] = requested_by

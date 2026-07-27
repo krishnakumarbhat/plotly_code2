@@ -744,6 +744,26 @@ class HtmlGenerator:
         return float("nan")
 
     @classmethod
+    def _extract_detection_accuracy_from_html(cls, file_path: Path) -> float:
+        try:
+            txt = file_path.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            return float("nan")
+        m = re.search(r'Accuracy:\s*<span[^>]*>([\d.]+)%</span>', txt)
+        if m:
+            try:
+                return float(m.group(1)) / 100.0
+            except Exception:
+                return float("nan")
+        m = re.search(r'Accuracy[:\s]+([\d.]+)%', txt)
+        if m:
+            try:
+                return float(m.group(1)) / 100.0
+            except Exception:
+                return float("nan")
+        return float("nan")
+
+    @classmethod
     def _compute_sensor_accuracy(cls, sensor_stream_data: dict) -> Dict[str, float]:
         accuracy_map: Dict[str, float] = {}
         for sensor_name, streams in sensor_stream_data.items():
@@ -753,17 +773,24 @@ class HtmlGenerator:
                     if category_name != "kpi":
                         continue
                     for plot_info in plots:
-                        if "sil_validation_report" not in plot_info["name"].lower():
-                            continue
                         file_path = Path(plot_info["path"])
-                        f1 = cls._extract_f1_from_html(file_path)
-                        if not math.isnan(f1) and 0.0 <= f1 <= 1.0:
-                            accuracy_values.append(f1)
-                            continue
+                        name_lower = plot_info["name"].lower()
 
-                        avg_scan_match_pct = cls._extract_kpi_metric_from_html(file_path, "avg_scan_match_pct")
-                        if not math.isnan(avg_scan_match_pct) and 0.0 <= avg_scan_match_pct <= 100.0:
-                            accuracy_values.append(avg_scan_match_pct / 100.0)
+                        if "sil_validation_report" in name_lower:
+                            f1 = cls._extract_f1_from_html(file_path)
+                            if not math.isnan(f1) and 0.0 <= f1 <= 1.0:
+                                accuracy_values.append(f1)
+                                continue
+
+                            avg_scan_match_pct = cls._extract_kpi_metric_from_html(file_path, "avg_scan_match_pct")
+                            if not math.isnan(avg_scan_match_pct) and 0.0 <= avg_scan_match_pct <= 100.0:
+                                accuracy_values.append(avg_scan_match_pct / 100.0)
+                                continue
+
+                        if "detection_kpi" in name_lower:
+                            acc = cls._extract_detection_accuracy_from_html(file_path)
+                            if not math.isnan(acc) and 0.0 <= acc <= 1.0:
+                                accuracy_values.append(acc)
             accuracy_map[sensor_name] = (
                 (sum(accuracy_values) / len(accuracy_values)) if accuracy_values else float("nan")
             )

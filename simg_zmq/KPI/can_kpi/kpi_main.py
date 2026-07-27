@@ -332,10 +332,28 @@ class KpiMain:
         )
 
     def _build_index(self, reports: List[Dict[str, Any]]) -> str:
+        log_names = [str(report.get("name", "Unknown")) for report in reports]
+        avg_accuracy = [float(report.get("overall_accuracy", 0.0)) for report in reports]
+
+        all_sensors: Dict[str, List[float]] = {}
+        for report in reports:
+            for row in report.get("accuracy_rows", []):
+                sensor = row.get("sensor", "Unknown")
+                all_sensors.setdefault(sensor, [None] * len(reports))
+
+        for i, report in enumerate(reports):
+            acc_map = {
+                row["sensor"]: float(row["accuracy"])
+                for row in report.get("accuracy_rows", [])
+            }
+            for sensor in all_sensors:
+                all_sensors[sensor][i] = acc_map.get(sensor, 0.0)
+
         plot_html = self._html.index_accuracy_plot(
-            [str(report.get("name", "Unknown")) for report in reports],
-            [float(report.get("overall_accuracy", 0.0)) for report in reports],
+            log_names,
+            avg_accuracy,
             "Average Accuracy Across Logs",
+            sensor_accuracies=all_sensors if all_sensors else None,
         )
         cards: List[str] = []
         for idx, report in enumerate(reports):

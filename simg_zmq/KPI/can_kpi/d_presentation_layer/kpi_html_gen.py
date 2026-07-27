@@ -244,29 +244,31 @@ class KpiHtmlGen:
         )
         return self._div(fig)
 
+    @staticmethod
+    def _extract_short_name(name: str) -> str:
+        import re
+        match = re.search(r"_(\d{4})_(?:HDF|PreDetList)", name)
+        if match:
+            return match.group(1)
+        parts = name.split("_")
+        if len(parts) >= 2 and parts[-2].isdigit() and len(parts[-2]) == 4:
+            return parts[-2]
+        return name[-4:] if len(name) >= 4 else name
+
     def index_accuracy_plot(
         self,
         log_names: List[str],
         avg_accuracy: List[float],
         title: str,
+        sensor_accuracies: Dict[str, List[float]] = None,
     ) -> str:
         if not log_names or not avg_accuracy:
             return ""
 
-        def extract_short_name(name: str) -> str:
-            import re
-            match = re.search(r"_(\d{4})_(?:HDF|PreDetList)", name)
-            if match:
-                return match.group(1)
-            parts = name.split("_")
-            if len(parts) >= 2 and parts[-2].isdigit() and len(parts[-2]) == 4:
-                return parts[-2]
-            return name[-4:] if len(name) >= 4 else name
-
         paired = list(zip(log_names, avg_accuracy))
-        paired.sort(key=lambda x: extract_short_name(x[0]))
+        paired.sort(key=lambda x: self._extract_short_name(x[0]))
 
-        short_names = [extract_short_name(name) for name, _ in paired]
+        short_names = [self._extract_short_name(name) for name, _ in paired]
         sorted_accuracy = [acc for _, acc in paired]
 
         fig = go.Figure()
@@ -283,6 +285,32 @@ class KpiHtmlGen:
                 name="Avg Accuracy",
             )
         )
+
+        if sensor_accuracies:
+            sensor_colors = {
+                "SRR / FL": "rgba(46,204,113,1)",
+                "SRR / FLR": "rgba(231,76,60,1)",
+                "SRR / FR": "rgba(52,152,219,1)",
+                "SRR / RL": "rgba(148,0,211,1)",
+                "SRR / RR": "rgba(241,196,15,1)",
+            }
+            for sensor, acc_list in sensor_accuracies.items():
+                paired_s = list(zip(log_names, acc_list))
+                paired_s.sort(key=lambda x: self._extract_short_name(x[0]))
+                sorted_s_acc = [acc for _, acc in paired_s]
+                color = sensor_colors.get(sensor, "gray")
+                fig.add_trace(
+                    go.Scatter(
+                        x=short_names,
+                        y=sorted_s_acc,
+                        mode="lines+markers",
+                        line=dict(color=color, width=1.5, dash="dot"),
+                        marker=dict(size=6, color=color, symbol="diamond"),
+                        hovertemplate=f"Log: %{{x}}<br>{sensor}: %{{y:.2f}}%<extra></extra>",
+                        name=sensor,
+                    )
+                )
+
         fig.update_layout(
             title=title,
             xaxis_title="Log ID (last 4 digits)",

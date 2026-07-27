@@ -46,8 +46,9 @@ export HPCC_RUNTIME_LOCAL_ROOT="$FAST_RUNTIME_ROOT"
 LOG_DIR="$SCRIPT_DIR/logs"
 RUNTIME_STATE_DIR="$SCRIPT_DIR/runtime_state"
 MAIN_HTML_STATE_DIR="$RUNTIME_STATE_DIR/main_html"
+export HPCC_RUNTIME_WORK_ROOT="${HPCC_RUNTIME_WORK_ROOT:-$RUNTIME_STATE_DIR/hpcc_runtime}"
 MAIN_HTML_CACHE_DIR="${CACHE_HTML_DIR:-$FAST_RUNTIME_ROOT/cache_html}"
-mkdir -p "$LOG_DIR" "$MAIN_HTML_CACHE_DIR/html" "$MAIN_HTML_CACHE_DIR/video" "$MAIN_HTML_CACHE_DIR/vlm_cache"
+mkdir -p "$LOG_DIR" "$RUNTIME_STATE_DIR" "$HPCC_RUNTIME_WORK_ROOT" "$MAIN_HTML_CACHE_DIR/html" "$MAIN_HTML_CACHE_DIR/video" "$MAIN_HTML_CACHE_DIR/vlm_cache"
 
 rotate_log() {
     local log_path="$1"
@@ -77,7 +78,7 @@ export HPCC_BROKER_PORT="${HPCC_BROKER_PORT:-9100}"
 export PORT="${PORT:-5005}"
 export HOST_SIMG_PATH="$SCRIPT_DIR"
 export HPCC_AUTO_START_RAG="${HPCC_AUTO_START_RAG:-0}"
-export HPCC_PORT_CONFLICT_POLICY="${HPCC_PORT_CONFLICT_POLICY:-shift}"
+export HPCC_PORT_CONFLICT_POLICY="${HPCC_PORT_CONFLICT_POLICY:-kill}"
 export HPCC_REQUIRE_SLURM_FOR_KPI="${HPCC_REQUIRE_SLURM_FOR_KPI:-1}"
 export HPCC_ALLOW_LOCAL_KPI="${HPCC_ALLOW_LOCAL_KPI:-0}"
 export HPCC_SLURM_IMMEDIATE_SECONDS="${HPCC_SLURM_IMMEDIATE_SECONDS:-}"
@@ -212,6 +213,10 @@ find_listen_pids() {
     fi
     if command -v ss >/dev/null 2>&1; then
         ss -ltnp "sport = :$port" 2>/dev/null | sed -n 's/.*pid=\([0-9][0-9]*\).*/\1/p' || true
+        return 0
+    fi
+    if command -v fuser >/dev/null 2>&1; then
+        fuser -n tcp "$port" 2>/dev/null | tr ' ' '\n' | sed '/^$/d' || true
         return 0
     fi
     return 1
@@ -437,11 +442,49 @@ printf 'Project root: %s\n' "$HPCC_PROJECT_ROOT"
 printf 'Dashboard URL: http://%s:%s/html\n' "${PUBLIC_HOST:-127.0.0.1}" "$PORT"
 printf 'Broker port: %s\n' "$HPCC_BROKER_PORT"
 
-"${BROKER_CMD[@]}" --host "$HPCC_BROKER_HOST" --port "$HPCC_BROKER_PORT" --broker-only >> "$BROKER_LOG" 2>&1 &
-BROKER_PID="$!"
+# Login-node fork()/memory pressure (many concurrent users, leftover
+# processes, GGUF models resident in RAM) can make `fork: Cannot allocate
+# memory` a TRANSIENT condition. Retry each launch a few times with backoff
+# instead of letting `set -e` + the EXIT trap tear down every already-running
+# service (broker/rag) just because one (re)launch attempt hit a momentary
+# ENOMEM. On success, the started PID is written into the global var named
+# by $2 (e.g. BROKER_PID); on exhausted retries, that var is left empty and
+# the function returns non-zero.
+launch_with_retry() {
+    local label="$1" pid_var="$2"; shift 2
+    local max_attempts="${LAUNCH_RETRY_ATTEMPTS:-4}"
+    local delay="${LAUNCH_RETRY_DELAY:-5}"
+    local attempt pid
+    printf -v "$pid_var" '%s' ''
+    for ((attempt = 1; attempt <= max_attempts; attempt++)); do
+        set +e
+        "$@" &
+        pid="$!"
+        set -e
+        sleep 1
+        if kill -0 "$pid" >/dev/null 2>&1; then
+            printf -v "$pid_var" '%s' "$pid"
+            return 0
+        fi
+        echo "WARNING: $label failed to start (attempt $attempt/$max_attempts, possible fork/memory pressure); retrying in ${delay}s." >&2
+        sleep "$delay"
+    done
+    echo "ERROR: $label failed to start after $max_attempts attempts." >&2
+    return 1
+}
+
+launch_broker() {
+    "${BROKER_CMD[@]}" --host "$HPCC_BROKER_HOST" --port "$HPCC_BROKER_PORT" --broker-only >> "$BROKER_LOG" 2>&1
+}
+launch_with_retry Broker BROKER_PID launch_broker \
+    || { echo 'Broker failed to start after retries.' >&2; exit 1; }
 
 if ! wait_for_tcp 127.0.0.1 "$HPCC_BROKER_PORT" 60; then
-    echo 'Broker did not become ready.' >&2
+    echo "Broker did not become ready on 127.0.0.1:$HPCC_BROKER_PORT." >&2
+    echo "Broker log: $BROKER_LOG" >&2
+    if [[ -s "$BROKER_LOG" ]]; then
+        tail -n 40 "$BROKER_LOG" >&2 || true
+    fi
     exit 1
 fi
 
@@ -450,22 +493,33 @@ if [[ "$HPCC_AUTO_START_RAG" =~ ^(1|true|yes|y)$ ]]; then
         echo 'RAG auto-start is enabled but rag/run_rag.sh is missing or not executable.' >&2
         exit 1
     fi
-    FLASK_PORT="$RAG_PORT" "$SCRIPT_DIR/rag/run_rag.sh" --talk >> "$RAG_LOG" 2>&1 &
-    RAG_PID="$!"
-    if ! wait_for_http 127.0.0.1 "$RAG_PORT" /health 120; then
-        echo 'WARNING: rag did not become ready (continuing without rag).' >&2
+    launch_rag() {
+        FLASK_PORT="$RAG_PORT" "$SCRIPT_DIR/rag/run_rag.sh" --talk >> "$RAG_LOG" 2>&1
+    }
+    if launch_with_retry RAG RAG_PID launch_rag; then
+        if ! wait_for_http 127.0.0.1 "$RAG_PORT" /health 120; then
+            echo 'WARNING: rag did not become ready (continuing without rag).' >&2
+            RAG_PID=''
+        fi
+    else
+        echo 'WARNING: rag failed to start after retries (continuing without rag).' >&2
         RAG_PID=''
     fi
 fi
 
-"${ui_cmd[@]}" >> "$UI_LOG" 2>&1 &
-UI_PID="$!"
+launch_ui() {
+    "${ui_cmd[@]}" >> "$UI_LOG" 2>&1
+}
+launch_with_retry main_html UI_PID launch_ui \
+    || { echo 'main_html failed to start after retries.' >&2; exit 1; }
 
 if ! wait_for_http 127.0.0.1 "$PORT" /html 120; then
     echo 'main_html did not become ready.' >&2
     exit 1
 fi
 
+MEM_LOG_INTERVAL="${HPCC_MEM_LOG_INTERVAL_SECONDS:-300}"
+last_mem_log=0
 while true; do
     if ! kill -0 "$BROKER_PID" >/dev/null 2>&1; then
         wait "$BROKER_PID" || true
@@ -479,6 +533,18 @@ while true; do
     if [[ -n "$RAG_PID" ]] && ! kill -0 "$RAG_PID" >/dev/null 2>&1; then
         wait "$RAG_PID" || true
         RAG_PID=''
+    fi
+    # Periodically surface memory headroom so operators can see pressure
+    # building up before the next fork failure, instead of only finding out
+    # after the whole stack goes down.
+    now="$(date +%s 2>/dev/null || echo 0)"
+    if (( now - last_mem_log >= MEM_LOG_INTERVAL )); then
+        last_mem_log="$now"
+        cg_max="$(cat /sys/fs/cgroup/memory.max 2>/dev/null || true)"
+        cg_cur="$(cat /sys/fs/cgroup/memory.current 2>/dev/null || true)"
+        if [[ -n "$cg_cur" ]]; then
+            echo "[$(date -Iseconds 2>/dev/null || date)] cgroup memory: current=$cg_cur max=$cg_max" >> "$LOG_DIR/hpcc_broker.log" 2>/dev/null || true
+        fi
     fi
     sleep 2
 done

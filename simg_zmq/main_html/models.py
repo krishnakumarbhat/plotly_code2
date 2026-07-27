@@ -188,6 +188,28 @@ class ChatMessage(db.Model):
         return f'<ChatMessage {self.id} - {self.role}>'
 
 
+class ResourceAllocation(db.Model):
+    """Tracks active GGUF/model resource allocations (RAG chat + Hyperlink
+    video summary share the same allocation pool). A DB row (not an
+    in-memory counter) is used so the cap is enforced correctly across all
+    gunicorn worker processes, not just within one worker.
+    """
+    __tablename__ = 'resource_allocations'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    cluster = db.Column(db.String(50), nullable=False)
+    nodes = db.Column(db.Integer, default=1)
+    memory_gb = db.Column(db.Integer, default=64)
+    status = db.Column(db.String(20), default='ACTIVE', index=True)  # ACTIVE, RELEASED
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    last_heartbeat_at = db.Column(db.DateTime, default=datetime.utcnow)
+    released_at = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f'<ResourceAllocation {self.id} user={self.user_id} cluster={self.cluster} status={self.status}>'
+
+
 class HyperlinkSavedPair(db.Model):
     """Per-user saved hyperlink HTML/video pair metadata."""
     __tablename__ = 'hyperlink_saved_pairs'

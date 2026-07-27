@@ -121,12 +121,23 @@ class KPIHDFParser:
         child_groups = []
         current_stream = group.name.split("/")[2] if len(group.name.split("/")) > 1 else ""
 
+        # Build set of valid signal names (keys + aliases) for the current stream
+        def _collect_names(config):
+            names = set()
+            stream_cfg = config.get(current_stream, {})
+            for key, cfg in stream_cfg.items():
+                names.add(key)
+                names.update(cfg.get('aliases', []))
+            return names
+
+        valid_names = _collect_names(KPI_ALIGNMENT_CONFIG) | \
+                      _collect_names(KPI_DETECTION_CONFIG) | \
+                      _collect_names(KPI_TRACKER_CONFIG)
+
         # First collect all items to process with minimal memory retention
         for item_name, item in group.items():
             if isinstance(item, h5py.Dataset) and current_stream in all_keys:
-                if item_name in KPI_ALIGNMENT_CONFIG.get(current_stream, {}) or \
-                item_name in KPI_DETECTION_CONFIG.get(current_stream, {}) or \
-                item_name in KPI_TRACKER_CONFIG.get(current_stream, {}):
+                if item_name in valid_names:
                     datasets_to_process.append((item_name, item))
             elif isinstance(item, h5py.Group) and item_name not in header_names:
                 child_groups.append(item)
