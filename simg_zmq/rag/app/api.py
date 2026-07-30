@@ -29,10 +29,13 @@ class RagApi:
     def _register_routes(self) -> None:
         @self.app.get("/health")
         def health() -> tuple:
+            err = self.query_graph.rag_engine._last_llm_error
+            if err is not None and not isinstance(err, str):
+                err = str(err)
             return jsonify({
                 "status": "ok",
                 "db": self.sqlite_store.stats(),
-                "llm_last_error": self.query_graph.rag_engine._last_llm_error,
+                "llm_last_error": err,
             }), 200
 
         @self.app.get("/")

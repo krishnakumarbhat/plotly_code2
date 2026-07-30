@@ -73,8 +73,9 @@ else
 fi
 export HPCC_BUNDLE_VERSION="${HPCC_BUNDLE_VERSION:-2026-04-13-hpcc-standalone}"
 export HPCC_PUBLIC_HOST="${HPCC_PUBLIC_HOST:-}"
-export HPCC_BROKER_HOST="${HPCC_BROKER_HOST:-0.0.0.0}"
-export HPCC_BROKER_PORT="${HPCC_BROKER_PORT:-9100}"
+export HPCC_BROKER_HOST="${HPCC_BROKER_HOST:-127.0.0.1}"
+export HPCC_BROKER_PORT="${HPCC_BROKER_PORT:-9200}"
+export HPCC_BROKER_PORT_END="${HPCC_BROKER_PORT_END:-9203}"
 export PORT="${PORT:-5005}"
 export HOST_SIMG_PATH="$SCRIPT_DIR"
 export HPCC_AUTO_START_RAG="${HPCC_AUTO_START_RAG:-0}"
@@ -82,6 +83,7 @@ export HPCC_PORT_CONFLICT_POLICY="${HPCC_PORT_CONFLICT_POLICY:-kill}"
 export HPCC_REQUIRE_SLURM_FOR_KPI="${HPCC_REQUIRE_SLURM_FOR_KPI:-1}"
 export HPCC_ALLOW_LOCAL_KPI="${HPCC_ALLOW_LOCAL_KPI:-0}"
 export HPCC_SLURM_IMMEDIATE_SECONDS="${HPCC_SLURM_IMMEDIATE_SECONDS:-}"
+export HPCC_MAX_MEMORY_PRESSURE_WAIT="${HPCC_MAX_MEMORY_PRESSURE_WAIT:-120}"
 export HPCC_HYPERLINK_SESSION_TTL_SECONDS="${HPCC_HYPERLINK_SESSION_TTL_SECONDS:-1800}"
 export WORKERS="${WORKERS:-3}"
 export THREADS="${THREADS:-4}"
@@ -188,23 +190,6 @@ if [[ -n "$QWEN_MODEL_DIR" && -d "$QWEN_MODEL_DIR" ]]; then
     bind_args+=(--bind "$QWEN_MODEL_DIR:$QWEN_MODEL_DIR")
 fi
 
-port_is_available() {
-    local port="$1"
-    python3 - "$port" <<'PY'
-import socket
-import sys
-
-port = int(sys.argv[1])
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    try:
-        sock.bind(('0.0.0.0', port))
-    except OSError:
-        raise SystemExit(1)
-raise SystemExit(0)
-PY
-}
-
 find_listen_pids() {
     local port="$1"
     if command -v lsof >/dev/null 2>&1; then
@@ -222,15 +207,68 @@ find_listen_pids() {
     return 1
 }
 
+resolve_broker_port() {
+    local start="${1:-9200}"
+    local end="${2:-9203}"
+    local current_user
+    current_user="$(id -un 2>/dev/null || printf '%s' unknown)"
+    local candidate
+
+    for candidate in $(seq "$start" "$end"); do
+        if python3 - "$candidate" <<'PY'
+import socket, sys
+port = int(sys.argv[1])
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.settimeout(2)
+    try:
+        s.bind(('127.0.0.1', port))
+    except OSError:
+        raise SystemExit(1)
+raise SystemExit(0)
+PY
+        then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+        # If the port is occupied by a process we own, kill it
+        local pid
+        while IFS= read -r pid; do
+            [[ -n "$pid" ]] || continue
+            local owner
+            owner="$(ps -o user= -p "$pid" 2>/dev/null | tr -d '[:space:]')"
+            if [[ "$owner" == "$current_user" ]]; then
+                kill "$pid" >/dev/null 2>&1 || true
+                sleep 1
+                kill -9 "$pid" >/dev/null 2>&1 || true
+            fi
+        done < <(find_listen_pids "$candidate")
+    done
+
+    echo "ERROR: No free broker port in range $start-$end." >&2
+    exit 1
+}
+
 resolve_requested_port() {
     local label="$1"
     local requested_port="$2"
     local policy="$3"
-    local max_shift="${4:-50}"
     local current_user
     current_user="$(id -un 2>/dev/null || printf '%s' unknown)"
 
-    if port_is_available "$requested_port"; then
+    if python3 - "$requested_port" <<'PY'
+import socket, sys
+port = int(sys.argv[1])
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.settimeout(2)
+    try:
+        s.bind(('127.0.0.1', port))
+    except OSError:
+        raise SystemExit(1)
+raise SystemExit(0)
+PY
+    then
         printf '%s\n' "$requested_port"
         return 0
     fi
@@ -248,7 +286,15 @@ resolve_requested_port() {
             kill -9 "$pid" >/dev/null 2>&1 || true
             killed_any=1
         done < <(find_listen_pids "$requested_port")
-        if (( killed_any )) && port_is_available "$requested_port"; then
+        if (( killed_any )) && python3 - "$requested_port" <<'PY'
+import socket, sys; port=int(sys.argv[1])
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1); s.settimeout(2)
+    try: s.bind(('127.0.0.1', port))
+    except OSError: raise SystemExit(1)
+raise SystemExit(0)
+PY
+        then
             printf '%s\n' "$requested_port"
             return 0
         fi
@@ -257,9 +303,18 @@ resolve_requested_port() {
         return 1
     fi
 
+    local max_shift="${4:-50}"
     local candidate
     for candidate in $(seq $((requested_port + 1)) $((requested_port + max_shift))); do
-        if port_is_available "$candidate"; then
+        if python3 - "$candidate" <<'PY'
+import socket, sys; port=int(sys.argv[1])
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1); s.settimeout(2)
+    try: s.bind(('127.0.0.1', port))
+    except OSError: raise SystemExit(1)
+raise SystemExit(0)
+PY
+        then
             echo "$label port shifted from $requested_port to $candidate." >&2
             printf '%s\n' "$candidate"
             return 0
@@ -345,7 +400,7 @@ print(candidate)
 PY
 }
 
-HPCC_BROKER_PORT="$(resolve_requested_port 'Broker' "$HPCC_BROKER_PORT" "$HPCC_PORT_CONFLICT_POLICY")"
+HPCC_BROKER_PORT="$(resolve_broker_port "$HPCC_BROKER_PORT" "$HPCC_BROKER_PORT_END")"
 export HPCC_BROKER_PORT
 PORT="$(resolve_requested_port 'Dashboard' "$PORT" "$HPCC_PORT_CONFLICT_POLICY")"
 export PORT
@@ -520,24 +575,72 @@ fi
 
 MEM_LOG_INTERVAL="${HPCC_MEM_LOG_INTERVAL_SECONDS:-300}"
 last_mem_log=0
+BROKER_GRACE_START=-1
+UI_GRACE_START=-1
+RAG_GRACE_START=-1
 while true; do
+    now="$(date +%s 2>/dev/null || echo 0)"
     if ! kill -0 "$BROKER_PID" >/dev/null 2>&1; then
-        wait "$BROKER_PID" || true
-        echo 'Broker exited.' >&2
-        exit 1
+        if (( BROKER_GRACE_START < 0 )); then
+            BROKER_GRACE_START="$now"
+            echo "Broker process died; entering ${HPCC_MAX_MEMORY_PRESSURE_WAIT}s grace period for restart." >&2
+        fi
+        if (( now - BROKER_GRACE_START < HPCC_MAX_MEMORY_PRESSURE_WAIT )); then
+            launch_with_retry Broker BROKER_PID launch_broker || true
+        fi
+        if ! kill -0 "$BROKER_PID" >/dev/null 2>&1; then
+            wait "$BROKER_PID" 2>/dev/null || true
+            echo 'Broker exited and could not be restarted within grace period.' >&2
+            exit 1
+        fi
+        BROKER_GRACE_START=-1
+    else
+        BROKER_GRACE_START=-1
     fi
+
     if ! kill -0 "$UI_PID" >/dev/null 2>&1; then
-        wait "$UI_PID"
-        exit $?
+        if (( UI_GRACE_START < 0 )); then
+            UI_GRACE_START="$now"
+            echo "UI process died; entering ${HPCC_MAX_MEMORY_PRESSURE_WAIT}s grace period for restart." >&2
+        fi
+        if (( now - UI_GRACE_START < HPCC_MAX_MEMORY_PRESSURE_WAIT )); then
+            launch_with_retry main_html UI_PID launch_ui || true
+        fi
+        if ! kill -0 "$UI_PID" >/dev/null 2>&1; then
+            wait "$UI_PID" 2>/dev/null || true
+            echo 'UI exited and could not be restarted within grace period.' >&2
+            exit 1
+        fi
+        UI_GRACE_START=-1
+    else
+        UI_GRACE_START=-1
     fi
-    if [[ -n "$RAG_PID" ]] && ! kill -0 "$RAG_PID" >/dev/null 2>&1; then
-        wait "$RAG_PID" || true
-        RAG_PID=''
+
+    if [[ -n "$RAG_PID" ]]; then
+        if ! kill -0 "$RAG_PID" >/dev/null 2>&1; then
+            if (( RAG_GRACE_START < 0 )); then
+                RAG_GRACE_START="$now"
+                echo "RAG process died; entering ${HPCC_MAX_MEMORY_PRESSURE_WAIT}s grace period for restart." >&2
+            fi
+            if (( now - RAG_GRACE_START < HPCC_MAX_MEMORY_PRESSURE_WAIT )); then
+                launch_with_retry RAG RAG_PID launch_rag || true
+            fi
+            if ! kill -0 "$RAG_PID" >/dev/null 2>&1; then
+                wait "$RAG_PID" 2>/dev/null || true
+                echo 'RAG exited and could not be restarted within grace period; continuing without RAG.' >&2
+                RAG_PID=''
+                RAG_GRACE_START=-1
+            else
+                RAG_GRACE_START=-1
+            fi
+        else
+            RAG_GRACE_START=-1
+        fi
     fi
+
     # Periodically surface memory headroom so operators can see pressure
     # building up before the next fork failure, instead of only finding out
     # after the whole stack goes down.
-    now="$(date +%s 2>/dev/null || echo 0)"
     if (( now - last_mem_log >= MEM_LOG_INTERVAL )); then
         last_mem_log="$now"
         cg_max="$(cat /sys/fs/cgroup/memory.max 2>/dev/null || true)"

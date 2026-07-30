@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 import sqlite3
 import hashlib
 from datetime import datetime, timezone
@@ -21,13 +22,38 @@ class RuntimeStore:
     RUNTIME_DB_VERSION = '2026.04.27'
     ARTIFACT_SUFFIXES = {'.html', '.htm', '.hdf', '.hdf5', '.mf4', '.csv', '.json', '.xml', '.txt', '.log', '.md'}
     MAX_INDEXED_ARTIFACTS = 2048
+    CACHE_TTL_SECONDS = 2
 
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = db_path or os.environ.get('HPCC_RUNTIME_DB') or get_db_path()
         project_root_override = (os.environ.get('HPCC_PROJECT_ROOT') or '').strip()
         self.repo_root = Path(project_root_override).resolve() if project_root_override else Path(__file__).resolve().parents[1]
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+        self._cache: Dict[str, tuple[float, Any]] = {}
         self._ensure_schema()
+
+    def _cache_get(self, key: str) -> Any:
+        entry = self._cache.get(key)
+        if entry is None:
+            return None
+        ts, value = entry
+        if time.monotonic() - ts > self.CACHE_TTL_SECONDS:
+            del self._cache[key]
+            return None
+        return value
+
+    def _cache_set(self, key: str, value: Any) -> None:
+        self._cache[key] = (time.monotonic(), value)
+
+    def _cache_invalidate(self, *prefixes: str) -> None:
+        if not prefixes:
+            self._cache.clear()
+            return
+        for key in list(self._cache):
+            for prefix in prefixes:
+                if key.startswith(prefix):
+                    del self._cache[key]
+                    break
 
     def _runtime_dir(self) -> Path:
         bundle_root_override = (os.environ.get('HPCC_BUNDLE_ROOT') or '').strip()
@@ -278,11 +304,16 @@ class RuntimeStore:
         self._ensure_default_graph_variant()
 
     def list_tools(self) -> List[Dict[str, Any]]:
+        cached = self._cache_get('list_tools')
+        if cached is not None:
+            return cached
         with self._connect() as connection:
             rows = connection.execute(
                 "SELECT * FROM runtime_tools ORDER BY CASE category WHEN 'service' THEN 0 WHEN 'batch' THEN 1 ELSE 2 END, display_name"
             ).fetchall()
-        return [self._row_to_tool(row) for row in rows]
+        result = [self._row_to_tool(row) for row in rows]
+        self._cache_set('list_tools', result)
+        return result
 
     def get_tool(self, tool_key: str) -> Optional[Dict[str, Any]]:
         with self._connect() as connection:
@@ -331,14 +362,20 @@ class RuntimeStore:
                     timestamp,
                 ),
             )
+        self._cache_invalidate('list_tools')
         return self.get_tool(payload['tool_key'])
 
     def list_graph_variants(self) -> List[Dict[str, Any]]:
+        cached = self._cache_get('list_graph_variants')
+        if cached is not None:
+            return cached
         with self._connect() as connection:
             rows = connection.execute(
                 'SELECT * FROM runtime_graph_variants ORDER BY is_default DESC, display_name'
             ).fetchall()
-        return [self._row_to_variant(row) for row in rows]
+        result = [self._row_to_variant(row) for row in rows]
+        self._cache_set('list_graph_variants', result)
+        return result
 
     def get_graph_variant(self, variant_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
         with self._connect() as connection:
@@ -391,6 +428,7 @@ class RuntimeStore:
                 ),
             )
 
+        self._cache_invalidate('list_graph_variants')
         return self.get_graph_variant(variant_key)
 
     def reset_graph_variant(self, variant_key: str, updated_by: str = 'system') -> Dict[str, Any]:
@@ -482,6 +520,7 @@ class RuntimeStore:
                 """,
                 (runtime_job_id, log_path, mirror_path, self._hash_text(''), self._utcnow()),
             )
+            self._cache_invalidate('list_jobs')
             return runtime_job_id
 
     def update_job(self, runtime_job_id: int, **fields: Any) -> Optional[Dict[str, Any]]:
@@ -502,6 +541,7 @@ class RuntimeStore:
                 f"UPDATE runtime_jobs SET {', '.join(columns)} WHERE id = ?",
                 tuple(values),
             )
+        self._cache_invalidate('list_jobs')
         return self.get_job(runtime_job_id)
 
     def append_event(self, runtime_job_id: int, level: str, message: str) -> None:
@@ -520,12 +560,18 @@ class RuntimeStore:
         return self._row_to_job(row) if row else None
 
     def list_jobs(self, limit: int = 50) -> List[Dict[str, Any]]:
+        cache_key = f'list_jobs:{limit}'
+        cached = self._cache_get(cache_key)
+        if cached is not None:
+            return cached
         with self._connect() as connection:
             rows = connection.execute(
                 'SELECT * FROM runtime_jobs ORDER BY id DESC LIMIT ?',
                 (limit,),
             ).fetchall()
-        return [self._row_to_job(row) for row in rows]
+        result = [self._row_to_job(row) for row in rows]
+        self._cache_set(cache_key, result)
+        return result
 
     @classmethod
     def compute_request_fingerprint(cls, tool_key: str, mode: str, request_payload: Dict[str, Any]) -> str:

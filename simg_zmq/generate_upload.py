@@ -267,17 +267,18 @@ def _build_compatible_zipapp(src: Path, dst: Path):
     dst.write_bytes(shebang + zip_data)
 
 
-def generate():
+def generate(no_rag=False):
     runtime = _check_runtime()
     if not runtime:
         _p('ERROR: apptainer/singularity is required')
         print('On Windows, run from WSL (Ubuntu) where apptainer is installed.')
         print('Or install: wsl --install -d Ubuntu')
         raise SystemExit(1)
+    build_order = [i for i in BUILD_ORDER if not (no_rag and i == 'rag.simg')]
     built_any = False
     errors = []
     with ThreadPoolExecutor(max_workers=2) as executor:
-        f2i = {executor.submit(build_simg, img_rel): img_rel for img_rel in BUILD_ORDER}
+        f2i = {executor.submit(build_simg, img_rel): img_rel for img_rel in build_order}
         for future in as_completed(f2i):
             img_rel = f2i[future]
             try:
@@ -886,29 +887,36 @@ def _gguf_deploy_check() -> bool:
 
 
 def main():
-    mode = sys.argv[1] if len(sys.argv) > 1 else 'deploy'
+    args_list = sys.argv[1:]
+    no_rag = '--no-rag' in args_list
+    args_list = [a for a in args_list if a != '--no-rag']
+    mode = args_list[0] if args_list else 'deploy'
     if mode == 'generate':
         print('=== Generating deployment folder ===')
-        generate()
+        generate(no_rag=no_rag)
     elif mode == 'upload':
         print('=== Uploading to cluster ===')
         upload()
     elif mode == 'deploy':
         print('=== Deploy: generate + GGUF check + upload ===')
         if platform.system() == 'Windows':
+            wsl_args = ['generate']
+            if no_rag:
+                wsl_args.append('--no-rag')
             print('  Running generate in WSL (apptainer)...')
-            _run_in_wsl(['generate'])
+            _run_in_wsl(wsl_args)
             print('  Checking GGUF files...')
             _gguf_deploy_check()
             print('  Running upload from Windows (paramiko)...')
             upload()
         else:
-            generate()
+            generate(no_rag=no_rag)
             _gguf_deploy_check()
             upload()
     else:
         print(f'Usage: {sys.argv[0]} [generate|upload|deploy]')
         print('  default: deploy (build + assemble + upload)')
+        print('  optional: --no-rag  skip building rag.simg')
         sys.exit(1)
 
 

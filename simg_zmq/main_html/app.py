@@ -389,6 +389,11 @@ def _set_hyperlink_cache_headers(response):
     return response
 
 
+@app.route('/health')
+def health():
+    return {'status': 'ok'}, 200
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

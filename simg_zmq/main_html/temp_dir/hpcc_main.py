@@ -732,7 +732,7 @@ def default_service_command(workspace_root: Path, tool_key: str) -> Optional[Lis
     return None
 
 
-def _start_wsl_broker(workspace_root: Path, port: int) -> subprocess.Popen:
+def _start_wsl_broker(workspace_root: Path, port: int, port_end: int = 9203) -> subprocess.Popen:
     runtime_root = _runtime_root(workspace_root)
     broker_path = runtime_root / 'hpcc_main.py'
     if not broker_path.exists():
@@ -741,7 +741,7 @@ def _start_wsl_broker(workspace_root: Path, port: int) -> subprocess.Popen:
         f"cd {shlex.quote(_to_wsl_path(runtime_root))} && "
         f"HPCC_BUNDLE_ROOT={shlex.quote(_to_wsl_path(runtime_root))} "
         f"HPCC_PROJECT_ROOT={shlex.quote(_to_wsl_path(workspace_root))} "
-        f"python3 {shlex.quote(_to_wsl_path(broker_path))} --broker-only --host 0.0.0.0 --port {port}"
+        f"python3 {shlex.quote(_to_wsl_path(broker_path))} --broker-only --host 0.0.0.0 --port {port} --port-end {port_end}"
     )
     return subprocess.Popen(
         ['wsl', 'bash', '-lc', command],
@@ -1809,7 +1809,8 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description='HPCC runtime broker for main_html + SIMG tools')
     parser.add_argument('--host', default=os.environ.get('HPCC_BROKER_HOST', '127.0.0.1'))
-    parser.add_argument('--port', type=int, default=int(os.environ.get('HPCC_BROKER_PORT', '9100')))
+    parser.add_argument('--port', type=int, default=int(os.environ.get('HPCC_BROKER_PORT', '9200')))
+    parser.add_argument('--port-end', type=int, default=int(os.environ.get('HPCC_BROKER_PORT_END', '9203')))
     parser.add_argument('--ui-command', default=os.environ.get('HPCC_MAIN_HTML_CMD', ''))
     parser.add_argument('--broker-only', action='store_true', help='Run the socket broker only and skip launching services')
     args = parser.parse_args()
@@ -1843,7 +1844,7 @@ def main() -> None:
             'FLASK_PORT': launch_env['FLASK_PORT'],
         })
 
-        broker_process = _start_wsl_broker(workspace_root, args.port)
+        broker_process = _start_wsl_broker(workspace_root, args.port, args.port_end)
         time.sleep(2)
         wsl_service_host = _wsl_guest_ip()
         forwarders: List[PortForwardServer] = []
@@ -1900,6 +1901,21 @@ def main() -> None:
         return
 
     bind_host = args.host
+    resolved_port = args.port
+    for candidate_port in range(args.port, args.port_end + 1):
+        try:
+            test_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            test_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            test_sock.settimeout(2)
+            test_sock.bind((bind_host, candidate_port))
+            test_sock.close()
+            resolved_port = candidate_port
+            break
+        except OSError:
+            continue
+    if resolved_port != args.port:
+        print(f'Broker port shifted from {args.port} to {resolved_port}.')
+    args.port = resolved_port
     advertised_host = os.environ.get('HPCC_BROKER_ADVERTISE_HOST', '').strip()
     if not advertised_host:
         if _wsl_available():

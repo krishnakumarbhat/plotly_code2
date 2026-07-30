@@ -23,7 +23,6 @@ From: docker.io/python:3.10-slim
     apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
-        git \
         curl \
         ca-certificates \
         ffmpeg \
@@ -33,21 +32,24 @@ From: docker.io/python:3.10-slim
     python -m venv /opt/venv
     . /opt/venv/bin/activate
     export PIP_DISABLE_PIP_VERSION_CHECK=1
+    export PIP_NO_CACHE_DIR=1
     export PIP_DEFAULT_TIMEOUT=300
-    pip install --upgrade pip setuptools wheel --retries 10 --timeout 300
 
-    if [ -f /app/main_html/requirements.txt ]; then
-        pip install -r /app/main_html/requirements.txt --retries 10 --timeout 300
+    reqs=""
+    for f in /app/main_html/requirements.txt /app/Hyperlink_tool/code/requirements.txt; do
+        [ -f "$f" ] && reqs="$reqs -r $f"
+    done
+    if [ -n "$reqs" ]; then
+        pip install $reqs --retries 10 --timeout 300
     fi
-    
-    if [ -f /app/Hyperlink_tool/code/requirements.txt ]; then
-        pip install -r /app/Hyperlink_tool/code/requirements.txt --retries 10 --timeout 300
-    fi
+
+    rm -rf /opt/venv/lib/python*/site-packages/pip /root/.cache/pip
 
     mkdir -p /app/simg/.cache_html/html /app/simg/.cache_html/video
     mkdir -p /app/simg/.cache_html/vlm_cache
     mkdir -p /scratch/logs /scratch/uploads /app/html_db /app/jobs
 
+    find /opt/venv -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true
     chmod -R 755 /app
 
 %files
@@ -105,10 +107,6 @@ From: docker.io/python:3.10-slim
             --daemon \
             app:app
     fi
-
-%test
-    . /opt/venv/bin/activate
-    python -c "import importlib.metadata as m; print(f'Flask version: {m.version(\"flask\")}')"
 
 %help
     HPC Tools Platform - Singularity Container

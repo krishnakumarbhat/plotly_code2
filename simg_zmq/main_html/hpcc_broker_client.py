@@ -7,7 +7,7 @@ from typing import Any, Dict
 class HpccBrokerClient:
     def __init__(self, host: str = '', port: int = 0, timeout: float = 60.0):
         self.host = host or os.environ.get('HPCC_BROKER_HOST', '127.0.0.1')
-        self.port = port or int(os.environ.get('HPCC_BROKER_PORT', '9100'))
+        self.port = port or int(os.environ.get('HPCC_BROKER_PORT', '9200'))
         self.timeout = timeout
 
     def ping(self) -> Dict[str, Any]:
