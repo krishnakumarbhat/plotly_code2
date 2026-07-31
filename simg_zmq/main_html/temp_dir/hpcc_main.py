@@ -1,4 +1,5 @@
 import argparse
+import getpass
 import json
 import os
 import shlex
@@ -127,12 +128,12 @@ def _cluster_slurm_defaults() -> Dict[str, str]:
     elif os.path.isdir('/net/8k3'):
         defaults = {
             'partition': 'plcyf-com',
-            'account': 'RNA-SDV-SRR7',
+            'account': 'rna-sdv-srr7',
             'qos': '',
         }
     else:
         defaults = {
-            'partition': 'compute',
+            'partition': '',
             'account': '',
             'qos': '',
         }
@@ -142,6 +143,121 @@ def _cluster_slurm_defaults() -> Dict[str, str]:
         'account': (os.environ.get('SLURM_ACCOUNT') or defaults['account']).strip(),
         'qos': (os.environ.get('SLURM_QOS') or defaults['qos']).strip(),
     }
+
+
+def _int_env(name: str, default: int) -> int:
+    """Read a positive integer tunable from the environment."""
+    try:
+        value = int(str(os.environ.get(name, '')).strip())
+    except (TypeError, ValueError):
+        return default
+    return value if value > 0 else default
+
+
+def _memory_to_gb(value: Any, default_gb: int) -> int:
+    """Normalise a Slurm memory string ('32G', '512M', '16') to whole GB."""
+    text = str(value or '').strip().upper()
+    if not text:
+        return default_gb
+    unit = text[-1]
+    number = text[:-1] if unit in 'KMGT' else text
+    try:
+        amount = float(number)
+    except ValueError:
+        return default_gb
+    if unit == 'T':
+        amount *= 1024
+    elif unit == 'M':
+        amount /= 1024
+    elif unit == 'K':
+        amount /= 1024 * 1024
+    return max(1, int(amount))
+
+
+def _slurm_bin(name: str) -> str:
+    """Resolve a Slurm binary, falling back to the module install prefix.
+
+    Login nodes do not always have the Slurm bin directory on PATH.
+    """
+    found = shutil.which(name)
+    if found:
+        return found
+    srun = _srun_binary()
+    if srun:
+        candidate = os.path.join(os.path.dirname(srun), name)
+        if os.path.exists(candidate):
+            return candidate
+    return name
+
+
+def _valid_partitions() -> List[str]:
+    try:
+        result = subprocess.run(
+            [_slurm_bin('sinfo'), '-h', '-o', '%P'],
+            capture_output=True, text=True, timeout=20,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return []
+    if result.returncode != 0:
+        return []
+    return [line.strip().rstrip('*') for line in result.stdout.splitlines() if line.strip()]
+
+
+def _valid_accounts() -> List[str]:
+    try:
+        result = subprocess.run(
+            [_slurm_bin('sacctmgr'), '-nP', 'show', 'assoc',
+             f'user={getpass.getuser()}', 'format=Account'],
+            capture_output=True, text=True, timeout=20,
+        )
+    except (OSError, subprocess.SubprocessError, KeyError):
+        return []
+    if result.returncode != 0:
+        return []
+    seen: List[str] = []
+    for line in result.stdout.splitlines():
+        value = line.strip().strip('|')
+        if value and value not in seen:
+            seen.append(value)
+    return seen
+
+
+def _resolve_slurm_target(partition: str, account: str) -> Tuple[str, str, List[str]]:
+    """Validate partition/account against the live cluster and self-heal.
+
+    Returns (partition, account, notes). Never raises: when Slurm cannot be
+    queried the requested values are passed through unchanged.
+    """
+    notes: List[str] = []
+    defaults = _cluster_slurm_defaults()
+
+    partitions = _valid_partitions()
+    if partitions:
+        if not partition or partition not in partitions:
+            fallback = defaults['partition'] if defaults['partition'] in partitions else partitions[0]
+            if partition:
+                notes.append(
+                    f"partition '{partition}' is not valid on this cluster "
+                    f"(available: {', '.join(partitions)}); using '{fallback}'"
+                )
+            partition = fallback
+    elif not partition:
+        partition = defaults['partition']
+
+    accounts = _valid_accounts()
+    if accounts:
+        if not account or account not in accounts:
+            fallback = defaults['account'] if defaults['account'] in accounts else accounts[0]
+            if account:
+                notes.append(
+                    f"account '{account}' is not valid for this user "
+                    f"(available: {', '.join(accounts)}); using '{fallback}'"
+                )
+            account = fallback
+    elif not account:
+        account = defaults['account']
+
+    return partition, account, notes
 
 
 def _can_use_localhost_ssh() -> bool:
@@ -1542,34 +1658,44 @@ INPUT_WATCHER_PID=$!
         slurm_defaults = _cluster_slurm_defaults()
         account_value = str(resources.get('account') or slurm_defaults['account']).strip()
         partition_value = str(resources.get('partition') or slurm_defaults['partition']).strip()
+        partition_value, account_value, slurm_notes = _resolve_slurm_target(partition_value, account_value)
+        for note in slurm_notes:
+            print(f'[broker] slurm target corrected: {note}', file=sys.stderr, flush=True)
 
-        srun_command = [_srun_binary() or 'srun']
+        # Arguments that never change between allocation attempts. Node/CPU/memory
+        # sizing is emitted as shell variables so the launcher can back off.
+        srun_fixed = [_srun_binary() or 'srun']
         if account_value:
-            srun_command.append(f'--account={account_value}')
+            srun_fixed.append(f'--account={account_value}')
         if partition_value:
-            srun_command.append(f'--partition={partition_value}')
-        srun_command.extend([
-            f"--nodes={resources.get('nodes') or 1}",
+            srun_fixed.append(f'--partition={partition_value}')
+        srun_fixed.extend([
             f"--ntasks={resources.get('ntasks') or 1}",
-            f"--cpus-per-task={resources.get('cpus') or 8}",
-            f"--mem={resources.get('memory') or '72G'}",
             f"--time={resources.get('time_limit') or '18:00:00'}",
             f"--job-name={session_name}",
         ])
-        immediate_seconds = _slurm_immediate_seconds(tool_key, resources)
-        if immediate_seconds:
-            srun_command.append(f'--immediate={immediate_seconds}')
         qos = str(resources.get('qos') or slurm_defaults['qos']).strip()
         if qos:
-            srun_command.append(f'--qos={qos}')
+            srun_fixed.append(f'--qos={qos}')
         exclude_nodes = (resources.get('exclude') or os.environ.get('HPC_TOOLS_SLURM_EXCLUDE_NODES') or '').strip()
         if exclude_nodes:
-            srun_command.append(f'--exclude={exclude_nodes}')
+            srun_fixed.append(f'--exclude={exclude_nodes}')
         gres_value = (resources.get('gres') or '').strip()
         if not gres_value and resources.get('gpu'):
             gres_value = 'gpu:1'
         if gres_value:
-            srun_command.append(f'--gres={gres_value}')
+            srun_fixed.append(f'--gres={gres_value}')
+
+        # Backoff sizing: halve nodes/cpus/memory per retry, never below the
+        # configured floor and never above what the caller asked for.
+        req_nodes = max(1, int(resources.get('nodes') or 1))
+        req_cpus = max(1, int(resources.get('cpus') or 8))
+        req_mem_gb = max(1, _memory_to_gb(resources.get('memory'), 72))
+        min_nodes = min(req_nodes, _int_env('HPCC_ALLOC_MIN_NODES', 2))
+        min_cpus = min(req_cpus, _int_env('HPCC_ALLOC_MIN_CPUS', 2))
+        min_mem_gb = min(req_mem_gb, _int_env('HPCC_ALLOC_MIN_MEM_GB', 8))
+        alloc_wait = _slurm_immediate_seconds(tool_key, resources) or _int_env('HPCC_ALLOC_WAIT_SECONDS', 60)
+        max_attempts = _int_env('HPCC_ALLOC_MAX_ATTEMPTS', 8)
 
         service_host_file = launch_plan.get('service_host_file', '')
         pane_log_dir = Path(launch_plan.get('pane_log_dir') or run_dir)
@@ -1696,24 +1822,124 @@ fi
 bash -lc {shlex.quote(single_payload)}
 """
 
+        ssh_prefix = (
+            _shell_join(['ssh',
+                         '-o', 'StrictHostKeyChecking=no',
+                         '-o', 'PasswordAuthentication=yes',
+                         '-o', 'NumberOfPasswordPrompts=1',
+                         f'{launch_plan["ssh_run_as_user"]}@127.0.0.1']) + ' '
+            if (launch_plan.get('ssh_run_as_user') or '').strip() else ''
+        )
+
         script_content = (
             '#!/usr/bin/env bash\n'
             'set -euo pipefail\n\n'
-            f"cd {shlex.quote(str(self.workspace_root))}\n"
-            + (_shell_join(['ssh',
-                            '-o', 'StrictHostKeyChecking=no',
-                            '-o', 'PasswordAuthentication=yes',
-                            '-o', 'NumberOfPasswordPrompts=1',
-                            f'{launch_plan["ssh_run_as_user"]}@127.0.0.1']) + ' '
-               if (launch_plan.get('ssh_run_as_user') or '').strip() else '')
-            + _shell_join(srun_command)
-            + ' bash -lc '
-            + shlex.quote(remote_script)
-            + '\n'
+            f"cd {shlex.quote(str(self.workspace_root))}\n\n"
+            + self._allocation_preamble(
+                run_dir=run_dir,
+                nodes=req_nodes,
+                cpus=req_cpus,
+                mem_gb=req_mem_gb,
+                min_nodes=min_nodes,
+                min_cpus=min_cpus,
+                min_mem_gb=min_mem_gb,
+                wait_seconds=alloc_wait,
+                max_attempts=max_attempts,
+                srun_fixed=srun_fixed,
+                ssh_prefix=ssh_prefix,
+                payload=remote_script,
+            )
         )
         script_path.write_text(script_content, encoding='utf-8')
         script_path.chmod(0o755)
         return script_path
+
+    @staticmethod
+    def _allocation_preamble(
+        run_dir: Path,
+        nodes: int,
+        cpus: int,
+        mem_gb: int,
+        min_nodes: int,
+        min_cpus: int,
+        min_mem_gb: int,
+        wait_seconds: int,
+        max_attempts: int,
+        srun_fixed: List[str],
+        ssh_prefix: str,
+        payload: str,
+    ) -> str:
+        """Emit the adaptive-allocation driver for the generated launcher.
+
+        Slurm is asked for the requested shape first. If the allocation does not
+        materialise within ``wait_seconds`` because the cluster is saturated (or
+        the request is simply too large), the request is halved -- down to the
+        configured floor -- and retried. Configuration errors (bad partition or
+        account) are fatal immediately because retrying cannot help.
+        """
+        return f"""
+ALLOC_DIR={shlex.quote(str(run_dir))}
+NODES={nodes}
+CPUS={cpus}
+MEM_GB={mem_gb}
+MIN_NODES={min_nodes}
+MIN_CPUS={min_cpus}
+MIN_MEM_GB={min_mem_gb}
+WAIT_SECONDS={wait_seconds}
+MAX_ATTEMPTS={max_attempts}
+
+at_floor() {{ [[ "$NODES" -le "$MIN_NODES" && "$CPUS" -le "$MIN_CPUS" && "$MEM_GB" -le "$MIN_MEM_GB" ]]; }}
+
+shrink() {{
+    local before="nodes=$NODES cpus=$CPUS mem=${{MEM_GB}}G"
+    if (( NODES > MIN_NODES )); then NODES=$(( NODES / 2 )); fi
+    if (( NODES < MIN_NODES )); then NODES=$MIN_NODES; fi
+    if (( CPUS > MIN_CPUS )); then CPUS=$(( CPUS / 2 )); fi
+    if (( CPUS < MIN_CPUS )); then CPUS=$MIN_CPUS; fi
+    if (( MEM_GB > MIN_MEM_GB )); then MEM_GB=$(( MEM_GB / 2 )); fi
+    if (( MEM_GB < MIN_MEM_GB )); then MEM_GB=$MIN_MEM_GB; fi
+    echo "[alloc] reduced request: $before -> nodes=$NODES cpus=$CPUS mem=${{MEM_GB}}G" >&2
+    return 0
+}}
+
+attempt=1
+while :; do
+    ALLOC_LOG="$ALLOC_DIR/slurm_alloc_attempt_${{attempt}}.log"
+    echo "[alloc] attempt $attempt/$MAX_ATTEMPTS: nodes=$NODES ntasks-cpus=$CPUS mem=${{MEM_GB}}G wait=${{WAIT_SECONDS}}s" >&2
+    set +e
+    {ssh_prefix}{_shell_join(srun_fixed)} \\
+        --nodes="$NODES" --cpus-per-task="$CPUS" --mem="${{MEM_GB}}G" \\
+        --immediate="$WAIT_SECONDS" \\
+        bash -lc {shlex.quote(payload)} 2> >(tee "$ALLOC_LOG" >&2)
+    rc=$?
+    set -e
+    sleep 1
+
+    # Job actually started: propagate its exit code untouched.
+    if ! grep -qE 'Unable to allocate resources|Memory specification can not be satisfied' "$ALLOC_LOG" 2>/dev/null; then
+        exit "$rc"
+    fi
+
+    # Misconfiguration cannot be fixed by shrinking the request.
+    if grep -qE 'invalid partition specified|Invalid account or account/partition combination|Invalid qos' "$ALLOC_LOG" 2>/dev/null; then
+        echo "[alloc] FATAL: invalid Slurm partition/account/qos - not retrying." >&2
+        exit "$rc"
+    fi
+
+    if at_floor; then
+        echo "[alloc] Resources Not Allocated: cluster could not satisfy the minimum request (nodes=$MIN_NODES, cpus-per-task=$MIN_CPUS, mem=${{MIN_MEM_GB}}G) after $attempt attempt(s)." >&2
+        exit 75
+    fi
+
+    if (( attempt >= MAX_ATTEMPTS )); then
+        echo "[alloc] Resources Not Allocated: exhausted $MAX_ATTEMPTS allocation attempts." >&2
+        exit 75
+    fi
+
+    shrink
+    attempt=$(( attempt + 1 ))
+done
+""".lstrip()
 
     def _maybe_prefix_scheduler(
         self,

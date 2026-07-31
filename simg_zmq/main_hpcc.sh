@@ -28,9 +28,25 @@ if [[ -f "$RUNTIME_CONFIG_FILE" ]]; then
     source "$RUNTIME_CONFIG_FILE"
 fi
 
+# /local (and /var/tmp, /tmp) is node-local storage shared by every account on
+# the login node. A bare /local/hpc_tools root makes all users converge on the
+# same SQLite file; whoever creates it first owns it with mode 0644, so every
+# other account opens it read-only and each write dies with
+# "sqlite3.OperationalError: attempt to write a readonly database".
+# The directory-level `-w` test below cannot catch that, because the parent
+# directory is group-writable while the DB file is not.
+# Scope the runtime root per user AND per host so runtime state is always owned
+# by the account that launched the bundle.
+RUNTIME_OWNER="$(id -un 2>/dev/null || printf '%s' "${USER:-unknown}")"
+RUNTIME_NODE="$(hostname -s 2>/dev/null || printf '%s' unknown)"
+
 select_fast_runtime_root() {
     local candidate
-    for candidate in "${HPCC_RUNTIME_LOCAL_ROOT:-}" /local/hpc_tools /var/tmp/hpc_tools /tmp/hpc_tools "$SCRIPT_DIR/runtime_local"; do
+    for candidate in "${HPCC_RUNTIME_LOCAL_ROOT:-}" \
+        "/local/hpc_tools/$RUNTIME_OWNER/$RUNTIME_NODE" \
+        "/var/tmp/hpc_tools/$RUNTIME_OWNER/$RUNTIME_NODE" \
+        "/tmp/hpc_tools/$RUNTIME_OWNER/$RUNTIME_NODE" \
+        "$SCRIPT_DIR/runtime_local"; do
         [[ -n "$candidate" ]] || continue
         if mkdir -p "$candidate" >/dev/null 2>&1 && [[ -w "$candidate" ]]; then
             printf '%s' "$candidate"
@@ -70,6 +86,15 @@ if [[ -z "${HPCC_RUNTIME_DB:-}" ]]; then
     export HPCC_RUNTIME_DB="$runtime_db_root/hpc_tools_dev.db"
 else
     export HPCC_RUNTIME_DB
+fi
+# Refuse to start against a runtime DB this account cannot write, so the
+# failure is reported here instead of as an opaque SQLite error inside the
+# broker (which the launch retry loop misreports as memory pressure).
+if [[ -e "$HPCC_RUNTIME_DB" && ! -w "$HPCC_RUNTIME_DB" ]]; then
+    echo "ERROR: runtime DB is not writable by $RUNTIME_OWNER: $HPCC_RUNTIME_DB" >&2
+    echo "       Owner: $(stat -c '%U (uid %u), mode %a' "$HPCC_RUNTIME_DB" 2>/dev/null)" >&2
+    echo "       Point HPCC_RUNTIME_DB (or HPCC_RUNTIME_LOCAL_ROOT) at a path this account owns." >&2
+    exit 1
 fi
 export HPCC_BUNDLE_VERSION="${HPCC_BUNDLE_VERSION:-2026-04-13-hpcc-standalone}"
 export HPCC_PUBLIC_HOST="${HPCC_PUBLIC_HOST:-}"
@@ -532,7 +557,12 @@ launch_broker() {
     "${BROKER_CMD[@]}" --host "$HPCC_BROKER_HOST" --port "$HPCC_BROKER_PORT" --broker-only >> "$BROKER_LOG" 2>&1
 }
 launch_with_retry Broker BROKER_PID launch_broker \
-    || { echo 'Broker failed to start after retries.' >&2; exit 1; }
+    || {
+        echo 'Broker failed to start after retries.' >&2
+        echo "Broker log: $BROKER_LOG" >&2
+        [[ -s "$BROKER_LOG" ]] && tail -n 40 "$BROKER_LOG" >&2
+        exit 1
+    }
 
 if ! wait_for_tcp 127.0.0.1 "$HPCC_BROKER_PORT" 60; then
     echo "Broker did not become ready on 127.0.0.1:$HPCC_BROKER_PORT." >&2

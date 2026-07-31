@@ -78,8 +78,8 @@ except Exception:
 
 # Initialize managers
 slurm_manager = SlurmManager(
-    partition=app.config.get('SLURM_PARTITION', 'compute'),
-    account=app.config.get('SLURM_ACCOUNT', 'default')
+    partition=app.config.get('SLURM_PARTITION', ''),
+    account=app.config.get('SLURM_ACCOUNT', '')
 )
 
 file_browser = FileBrowser([
@@ -2363,8 +2363,11 @@ def _build_runtime_kpi_submission(form_source) -> dict:
         'memory': (form_source.get('memory') or default_resources.get('memory', '32G')).strip(),
         'cpus': int(form_source.get('cpus') or default_resources.get('cpus', 8)),
         'time_limit': (form_source.get('time_limit') or default_resources.get('time_limit', '02:00:00')).strip(),
-        'partition': (form_source.get('partition') or default_resources.get('partition', 'plcyf-com')).strip(),
-        'account': (form_source.get('account') or default_resources.get('account', app.config.get('SLURM_ACCOUNT', 'RNA-SDV-SRR7'))).strip(),
+        # Leave blank when unknown: the broker runs on the login node and fills
+        # in the correct cluster values. Hardcoding a cluster name here used to
+        # send Krakow partitions to Southfield jobs.
+        'partition': (form_source.get('partition') or default_resources.get('partition') or '').strip(),
+        'account': (form_source.get('account') or default_resources.get('account') or app.config.get('SLURM_ACCOUNT') or '').strip(),
         'qos': (form_source.get('qos') or default_resources.get('qos', app.config.get('SLURM_QOS', ''))).strip(),
         'nodes': int(form_source.get('nodes') or default_resources.get('nodes', 1)),
         'ntasks': int(form_source.get('ntasks') or default_resources.get('ntasks', 1)),

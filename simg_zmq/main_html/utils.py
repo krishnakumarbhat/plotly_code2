@@ -128,7 +128,7 @@ def validate_cluster_credentials(
 class SlurmManager:
     """Manager class for Slurm job submission and monitoring"""
     
-    def __init__(self, partition: str = 'compute', account: str = 'default'):
+    def __init__(self, partition: str = '', account: str = ''):
         self.partition = partition
         self.account = account
     
@@ -170,8 +170,14 @@ class SlurmManager:
         cmd = [
             'sbatch',
             '--parsable',
-            f'--partition={self.partition}',
-            f'--account={self.account}',
+        ]
+        # Both clusters reject jobs without an explicit --account and have no
+        # partition called 'compute'; only emit what is actually configured.
+        if self.partition:
+            cmd.append(f'--partition={self.partition}')
+        if self.account:
+            cmd.append(f'--account={self.account}')
+        cmd += [
             f'--job-name={job_name}',
             f'--time={time_limit}',
             f'--mem={memory}',

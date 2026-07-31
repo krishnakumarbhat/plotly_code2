@@ -29,8 +29,27 @@ class RuntimeStore:
         project_root_override = (os.environ.get('HPCC_PROJECT_ROOT') or '').strip()
         self.repo_root = Path(project_root_override).resolve() if project_root_override else Path(__file__).resolve().parents[1]
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+        self._assert_writable()
         self._cache: Dict[str, tuple[float, Any]] = {}
         self._ensure_schema()
+
+    def _assert_writable(self) -> None:
+        """Turn SQLite's opaque 'attempt to write a readonly database' into an
+        actionable message. This happens when the runtime DB lives on a shared
+        node-local path and was created by a different account (mode 0644)."""
+        db_file = Path(self.db_path)
+        if not db_file.exists() or os.access(db_file, os.W_OK):
+            return
+        try:
+            owner_uid = db_file.stat().st_uid
+        except OSError:
+            owner_uid = 'unknown'
+        current_uid = getattr(os, 'getuid', lambda: 'unknown')()
+        raise PermissionError(
+            f'Runtime DB {self.db_path} is not writable by uid {current_uid} '
+            f'(file owned by uid {owner_uid}). Set HPCC_RUNTIME_DB or '
+            'HPCC_RUNTIME_LOCAL_ROOT to a path owned by this account.'
+        )
 
     def _cache_get(self, key: str) -> Any:
         entry = self._cache.get(key)

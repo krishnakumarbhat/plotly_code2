@@ -79,6 +79,40 @@ def _detect_runtime() -> RuntimeEnv:
     return RuntimeEnv.LINUX
 
 
+# Cluster filesystem markers. These are bind-mounted into the UI container, so
+# they stay visible even though _detect_runtime() short-circuits on Singularity.
+_CLUSTER_MARKERS = (
+    ('krakow', '/net/8k3'),
+    ('southfield', '/mnt/usmidet'),
+)
+
+# Verified against `sinfo` / `sacctmgr show assoc` on both clusters.
+# Krakow partitions: ISP, highPrio, interactive, plcyf-com*, plcyf-gpu, plcyf-upload
+# Southfield partitions: ISP, defq*, eHz, gpu, gpuHz, highPrio, interactive, web_service, aws, aws-com
+CLUSTER_SLURM_DEFAULTS = {
+    'krakow': {'partition': 'plcyf-com', 'account': 'rna-sdv-srr7', 'qos': ''},
+    'southfield': {'partition': 'defq', 'account': 'radarcore', 'qos': ''},
+}
+
+
+def detect_cluster() -> str:
+    """Identify the HPC cluster independently of container detection.
+
+    ``_detect_runtime()`` returns SINGULARITY/DOCKER before it ever reaches the
+    cluster checks, so anything running inside the UI container used to resolve
+    to the 'generic' profile. Probe the bind-mounted cluster paths directly.
+
+    Returns 'krakow', 'southfield', or '' when not on a known cluster.
+    """
+    override = (os.environ.get('HPCC_CLUSTER') or '').strip().lower()
+    if override in {'krakow', 'southfield'}:
+        return override
+    for name, marker in _CLUSTER_MARKERS:
+        if os.path.isdir(marker):
+            return name
+    return ''
+
+
 def _get_project_root() -> Path:
     """Get the project root directory"""
     project_root_override = (os.environ.get('HPCC_PROJECT_ROOT') or '').strip()
@@ -318,34 +352,25 @@ def get_cluster_paths(cluster: str = None) -> dict:
 
 
 def get_cluster_slurm_defaults(cluster: str = None) -> dict:
-    env = get_env()
+    """Resolve Slurm partition/account/qos for the active cluster.
 
+    Both clusters reject jobs that omit --account ("Usage of default accounts
+    is forbidden") and neither has a partition named 'compute', so the old
+    'generic' profile produced jobs that could never be scheduled. When the
+    cluster cannot be identified the values are left empty and the broker --
+    which always runs on the login node -- fills them in.
+    """
     if cluster is None:
+        cluster = detect_cluster()
+
+    if not cluster:
+        env = get_env()
         if env.runtime == RuntimeEnv.KRAKOW:
             cluster = 'krakow'
         elif env.runtime == RuntimeEnv.SOUTHFIELD:
             cluster = 'southfield'
-        else:
-            cluster = 'generic'
 
-    if cluster == 'southfield':
-        defaults = {
-            'partition': 'defq',
-            'account': 'radarcore',
-            'qos': '',
-        }
-    elif cluster == 'krakow':
-        defaults = {
-            'partition': 'plcyf-com',
-            'account': 'RNA-SDV-SRR7',
-            'qos': '',
-        }
-    else:
-        defaults = {
-            'partition': 'compute',
-            'account': 'default',
-            'qos': '',
-        }
+    defaults = CLUSTER_SLURM_DEFAULTS.get(cluster, {'partition': '', 'account': '', 'qos': ''})
 
     return {
         'partition': (os.environ.get('SLURM_PARTITION') or defaults['partition']).strip(),

@@ -18,7 +18,7 @@ RAG_SIMG_PATH = os.environ.get('VLM_RAG_SIMG_PATH', '')
 GEMMA_GGUF_PATH = os.environ.get('GEMMA_GGUF_PATH', '')
 
 VLM_SCRIPT = '/app/rag/vlm_process.py'
-DEFAULT_PARTITION = os.environ.get('VLM_PARTITION', 'compute')
+DEFAULT_PARTITION = os.environ.get('VLM_PARTITION', '')
 DEFAULT_ACCOUNT = os.environ.get('VLM_ACCOUNT', '')
 DEFAULT_MEMORY = os.environ.get('VLM_MEMORY', '64G')
 DEFAULT_TIMEOUT = int(os.environ.get('VLM_POLL_TIMEOUT', '300'))
