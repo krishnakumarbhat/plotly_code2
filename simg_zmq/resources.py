@@ -72,16 +72,18 @@ def sbatch_header(tool: str, cluster: str = '') -> list[str]:
     """Build #SBATCH directive list for a tool on a given cluster."""
     cfg = cluster_config(cluster)
     res = tool_resources(tool)
-    return [
+    directives = [
         f'#SBATCH --partition={cfg["partition"]}',
-        f'#SBATCH --account={cfg["account"]}',
         f'#SBATCH --job-name=hpc_{tool}',
         f'#SBATCH --nodes={res["nodes"]}',
         f'#SBATCH --ntasks={res["ntasks"]}',
         f'#SBATCH --cpus-per-task={res["cpus"]}',
         f'#SBATCH --mem={res["memory"]}',
         f'#SBATCH --time={res["time_limit"]}',
-    ] + ([f'#SBATCH --gres={res["gres"]}'] if res.get('gres') else []) + [
+    ]
+    if cfg['account']:
+        directives.insert(1, f'#SBATCH --account={cfg["account"]}')
+    return directives + ([f'#SBATCH --gres={res["gres"]}'] if res.get('gres') else []) + [
         f'#SBATCH --output={cfg["log_dir"]}/hpc_{tool}_%j.out',
         f'#SBATCH --error={cfg["log_dir"]}/hpc_{tool}_%j.err',
     ]
@@ -91,17 +93,20 @@ def generate_slurm_cmd(tool: str, script_path: str, cluster: str = '', **overrid
     """Return full sbatch command array for a tool script with cluster resources."""
     cfg = cluster_config(cluster)
     res = tool_resources(tool)
-    return [
+    cmd = [
         'sbatch',
         f'--partition={overrides.get("partition", cfg["partition"])}',
-        f'--account={overrides.get("account", cfg["account"])}',
         f'--job-name=hpc_{tool}',
         f'--nodes={overrides.get("nodes", res["nodes"])}',
         f'--ntasks={overrides.get("ntasks", res["ntasks"])}',
         f'--cpus-per-task={overrides.get("cpus", res["cpus"])}',
         f'--mem={overrides.get("memory", res["memory"])}',
         f'--time={overrides.get("time_limit", res["time_limit"])}',
-    ] + ([f'--gres={overrides.get("gres", res["gres"])}'] if res.get('gres') else []) + [
+    ]
+    account = overrides.get('account', cfg['account'])
+    if account:
+        cmd.insert(2, f'--account={account}')
+    return cmd + ([f'--gres={overrides.get("gres", res["gres"])}'] if res.get('gres') else []) + [
         f'--output={cfg["log_dir"]}/hpc_{tool}_%j.out',
         f'--error={cfg["log_dir"]}/hpc_{tool}_%j.err',
         str(script_path),

@@ -123,7 +123,12 @@ else
 fi
 
 if [[ -n "$OPTIONAL_CONFIG" ]]; then
-    bundle_ensure_file "$OPTIONAL_CONFIG"
+    if [[ -d "$OPTIONAL_CONFIG" ]]; then
+        echo "Optional config path is a directory; ignoring it: $OPTIONAL_CONFIG" >&2
+        OPTIONAL_CONFIG=''
+    else
+        bundle_ensure_file "$OPTIONAL_CONFIG"
+    fi
 fi
 
 if [[ "$INPUT_MODE" == 'json' ]]; then
@@ -179,20 +184,46 @@ run_interactive_plot() {
     "${command[@]}"
 }
 
+wait_for_udp_port_or_exit() {
+    local attempts="${HPCC_PORT_WAIT_ATTEMPTS:-90}"
+    local delay="${HPCC_PORT_WAIT_DELAY_SECONDS:-2}"
+    local attempt
+    local status
+
+    for attempt in $(seq 1 "$attempts"); do
+        if bundle_wait_for_port 127.0.0.1 "$PORT" 1 0; then
+            return 0
+        fi
+        if ! kill -0 "$UDP_PID" >/dev/null 2>&1; then
+            if wait "$UDP_PID"; then
+                status=0
+            else
+                status=$?
+            fi
+            echo "UDP KPI server exited before port $PORT became ready (status $status)." >&2
+            if [[ "$status" == '0' ]]; then
+                return 1
+            fi
+            return "$status"
+        fi
+        sleep "$delay"
+    done
+
+    return 1
+}
+
 case "$TARGET" in
     can_kpi)
         if [[ "$INTERACTIVE_MODE" == 'enabled' ]]; then
             local_json="$(pair_json_for_interactive)"
-            if (( DETACHED )); then
-                command=("$BUNDLE_ROOT/kpi/inplot_can.sh" "$CONFIG_XML" "$local_json" "$OUTPUT_DIR")
-                if [[ -n "$OPTIONAL_CONFIG" ]]; then
-                    command+=("$OPTIONAL_CONFIG")
-                fi
-                "${command[@]}"
-                exit 0
+            # inplot_can.sh prefers the combined CAN KPI + Interactive Plot image
+            # (kpi/can_intplot/canintplot_kpi.simg) and falls back to the sequential
+            # run_can.sh + run_intplot.sh flow when it is not present.
+            command=("$BUNDLE_ROOT/kpi/inplot_can.sh" --wait "$CONFIG_XML" "$local_json" "$OUTPUT_DIR")
+            if [[ -n "$OPTIONAL_CONFIG" ]]; then
+                command+=("$OPTIONAL_CONFIG")
             fi
-            "$BUNDLE_ROOT/kpi/can/run_can.sh" "$local_json" "$OUTPUT_DIR/can_kpi"
-            run_interactive_plot "$CONFIG_XML" "$local_json" "$OUTPUT_DIR/interactive_plot"
+            "${command[@]}"
             exit 0
         fi
 
@@ -204,12 +235,9 @@ case "$TARGET" in
         ;;
     udp_kpi)
         if [[ "$INTERACTIVE_MODE" == 'enabled' ]]; then
-            if [[ "$INPUT_MODE" != 'json' ]]; then
-                echo 'UDP KPI + Interactive Plot requires JSON input mode.' >&2
-                exit 1
-            fi
+            local_json="$(pair_json_for_interactive)"
             if (( DETACHED )); then
-                command=("$BUNDLE_ROOT/kpi/inplot_udp.sh" "$CONFIG_XML" "$JSON_PATH" "$OUTPUT_DIR" "$PORT")
+                command=("$BUNDLE_ROOT/kpi/inplot_udp.sh" "$CONFIG_XML" "$local_json" "$OUTPUT_DIR" "$PORT")
                 if [[ -n "$OPTIONAL_CONFIG" ]]; then
                     command+=("$OPTIONAL_CONFIG")
                 fi
@@ -218,14 +246,14 @@ case "$TARGET" in
             fi
             "$BUNDLE_ROOT/kpi/udp/run_udp.sh" zmq "$PORT" &
             UDP_PID="$!"
-            if ! bundle_wait_for_port 127.0.0.1 "$PORT" 90 2; then
+            if ! wait_for_udp_port_or_exit; then
                 echo "Timed out waiting for UDP KPI server on port $PORT." >&2
                 exit 1
             fi
             bundle_set_container_env INTERACTIVE_PLOT_ENABLE_KPI 1
             bundle_set_container_env KPI_SERVER_HOST 127.0.0.1
             bundle_set_container_env KPI_SERVER_PORT "$PORT"
-            run_interactive_plot "$CONFIG_XML" "$JSON_PATH" "$OUTPUT_DIR"
+            run_interactive_plot "$CONFIG_XML" "$local_json" "$OUTPUT_DIR"
             exit 0
         fi
 

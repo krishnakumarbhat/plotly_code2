@@ -247,7 +247,7 @@ class KpiHtmlGen:
     @staticmethod
     def _extract_short_name(name: str) -> str:
         import re
-        match = re.search(r"_(\d{4})_(?:HDF|PreDetList)", name)
+        match = re.search(r"_(\d{4})(?:_[^_]+)?_(?:HDF|PreDetList)(?:\.[^.]+)?$", name)
         if match:
             return match.group(1)
         parts = name.split("_")

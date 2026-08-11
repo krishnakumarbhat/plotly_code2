@@ -37,11 +37,34 @@
         <div class="error-code">500</div>
         <h2 class="mb-4">Internal Server Error</h2>
         <p class="mb-4 opacity-75">
-            Something went wrong on our end. Please try again later.
+            The service may still be initializing. This page will retry automatically.
         </p>
-        <a href="/" class="btn btn-light btn-lg">
+        <div id="retryStatus" class="mb-3">Checking backend readiness...</div>
+        <a href="/" id="dashboardLink" class="btn btn-light btn-lg disabled" aria-disabled="true">
             <i class="bi bi-house me-2"></i> Go to Dashboard
         </a>
     </div>
+    <script>
+    (() => {
+        const status = document.getElementById('retryStatus');
+        const dashboard = document.getElementById('dashboardLink');
+        let attempts = 0;
+        async function retry() {
+            attempts += 1;
+            try {
+                const response = await fetch('/health', {cache: 'no-store'});
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                status.textContent = 'Backend ready.';
+                dashboard.classList.remove('disabled');
+                dashboard.removeAttribute('aria-disabled');
+                window.setTimeout(() => window.location.assign('/login'), 300);
+            } catch (error) {
+                status.textContent = `Still initializing. Retrying automatically (attempt ${attempts})...`;
+                window.setTimeout(retry, Math.min(10000, 1000 + attempts * 500));
+            }
+        }
+        retry();
+    })();
+    </script>
 </body>
 </html>

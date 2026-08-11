@@ -23,6 +23,7 @@ class RuntimeStore:
     ARTIFACT_SUFFIXES = {'.html', '.htm', '.hdf', '.hdf5', '.mf4', '.csv', '.json', '.xml', '.txt', '.log', '.md'}
     MAX_INDEXED_ARTIFACTS = 2048
     CACHE_TTL_SECONDS = 2
+    SQLITE_BUSY_TIMEOUT_MS = 15000
 
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = db_path or os.environ.get('HPCC_RUNTIME_DB') or get_db_path()
@@ -87,11 +88,15 @@ class RuntimeStore:
         return self.repo_root / 'generate_upload'
 
     def _connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.db_path)
+        connection = sqlite3.connect(self.db_path, timeout=self.SQLITE_BUSY_TIMEOUT_MS / 1000)
         connection.row_factory = sqlite3.Row
         connection.execute('PRAGMA foreign_keys = ON')
-        connection.execute('PRAGMA busy_timeout = 5000')
+        connection.execute(f'PRAGMA busy_timeout = {self.SQLITE_BUSY_TIMEOUT_MS}')
         return connection
+
+    @staticmethod
+    def _is_locked_error(error: BaseException) -> bool:
+        return isinstance(error, sqlite3.OperationalError) and 'locked' in str(error).lower()
 
     def _configure_sqlite(self, connection: sqlite3.Connection) -> None:
         connection.execute('PRAGMA foreign_keys = ON')
@@ -561,7 +566,7 @@ class RuntimeStore:
                 tuple(values),
             )
         self._cache_invalidate('list_jobs')
-        return self.get_job(runtime_job_id)
+        return self.get_job(runtime_job_id, refresh=False)
 
     def append_event(self, runtime_job_id: int, level: str, message: str) -> None:
         with self._connect() as connection:
@@ -570,16 +575,16 @@ class RuntimeStore:
                 (runtime_job_id, level, message, self._utcnow()),
             )
 
-    def get_job(self, runtime_job_id: int) -> Optional[Dict[str, Any]]:
+    def get_job(self, runtime_job_id: int, refresh: bool = True) -> Optional[Dict[str, Any]]:
         with self._connect() as connection:
             row = connection.execute(
                 'SELECT * FROM runtime_jobs WHERE id = ?',
                 (runtime_job_id,),
             ).fetchone()
-        return self._row_to_job(row) if row else None
+        return self._row_to_job(row, refresh=refresh) if row else None
 
-    def list_jobs(self, limit: int = 50) -> List[Dict[str, Any]]:
-        cache_key = f'list_jobs:{limit}'
+    def list_jobs(self, limit: int = 50, refresh: bool = True) -> List[Dict[str, Any]]:
+        cache_key = f'list_jobs:{limit}:{refresh}'
         cached = self._cache_get(cache_key)
         if cached is not None:
             return cached
@@ -588,7 +593,7 @@ class RuntimeStore:
                 'SELECT * FROM runtime_jobs ORDER BY id DESC LIMIT ?',
                 (limit,),
             ).fetchall()
-        result = [self._row_to_job(row) for row in rows]
+        result = [self._row_to_job(row, refresh=refresh) for row in rows]
         self._cache_set(cache_key, result)
         return result
 
@@ -637,7 +642,7 @@ class RuntimeStore:
                 """,
                 (request_fingerprint, *self.REUSABLE_JOB_STATUSES),
             ).fetchone()
-        return self._row_to_job(row) if row else None
+        return self._row_to_job(row, refresh=False) if row else None
 
     def get_events(self, runtime_job_id: int) -> List[Dict[str, Any]]:
         with self._connect() as connection:
@@ -774,66 +779,79 @@ class RuntimeStore:
 
         now = self._utcnow()
         remaining = self.MAX_INDEXED_ARTIFACTS
-        with self._connect() as connection:
-            # Mark all previously indexed artifacts as gone; the INSERT loop below
-            # will set exists_flag = 1 for each path that still exists.  This avoids
-            # a single large NOT IN (?, ?, …) clause that would exceed SQLite's
-            # SQLITE_LIMIT_VARIABLE_NUMBER (999) when there are many artifacts.
-            connection.execute(
-                'UPDATE runtime_job_artifacts SET exists_flag = 0, updated_at = ? WHERE runtime_job_id = ?',
-                (now, runtime_job_id),
-            )
-            for current_root, _, filenames in os.walk(root):
-                for filename in sorted(filenames):
-                    if remaining <= 0:
-                        break
-                    full_path = Path(current_root) / filename
-                    lower_name = filename.lower()
-                    if full_path.suffix.lower() not in self.ARTIFACT_SUFFIXES and 'report' not in lower_name:
-                        continue
-
-                    artifact_path = str(full_path)
-                    remaining -= 1
-                    try:
-                        relative_path = os.path.relpath(artifact_path, str(root))
-                    except ValueError:
-                        relative_path = filename
-                    try:
-                        size_bytes = int(full_path.stat().st_size)
-                    except OSError:
-                        size_bytes = 0
-
-                    metadata = {
-                        'extension': full_path.suffix.lower(),
-                        'filename': filename,
-                    }
-                    connection.execute(
-                        """
-                        INSERT INTO runtime_job_artifacts (
-                            runtime_job_id, artifact_type, artifact_path, relative_path,
-                            size_bytes, exists_flag, metadata_json, created_at, updated_at
-                        ) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)
-                        ON CONFLICT(runtime_job_id, artifact_path) DO UPDATE SET
-                            artifact_type = excluded.artifact_type,
-                            relative_path = excluded.relative_path,
-                            size_bytes = excluded.size_bytes,
-                            exists_flag = excluded.exists_flag,
-                            metadata_json = excluded.metadata_json,
-                            updated_at = excluded.updated_at
-                        """,
-                        (
-                            runtime_job_id,
-                            self._artifact_type_for_path(full_path),
-                            artifact_path,
-                            relative_path,
-                            size_bytes,
-                            json.dumps(metadata),
-                            now,
-                            now,
-                        ),
-                    )
+        artifact_rows = []
+        # Inspect the output tree before opening SQLite.  The old implementation
+        # held a write transaction while doing this potentially slow filesystem walk.
+        for current_root, _, filenames in os.walk(root):
+            for filename in sorted(filenames):
                 if remaining <= 0:
                     break
+                full_path = Path(current_root) / filename
+                lower_name = filename.lower()
+                if full_path.suffix.lower() not in self.ARTIFACT_SUFFIXES and 'report' not in lower_name:
+                    continue
+
+                artifact_path = str(full_path)
+                remaining -= 1
+                try:
+                    relative_path = os.path.relpath(artifact_path, str(root))
+                except ValueError:
+                    relative_path = filename
+                try:
+                    size_bytes = int(full_path.stat().st_size)
+                except OSError:
+                    size_bytes = 0
+
+                metadata = {
+                    'extension': full_path.suffix.lower(),
+                    'filename': filename,
+                }
+                artifact_rows.append(
+                    (
+                        runtime_job_id,
+                        self._artifact_type_for_path(full_path),
+                        artifact_path,
+                        relative_path,
+                        size_bytes,
+                        json.dumps(metadata),
+                        now,
+                        now,
+                    )
+                )
+            if remaining <= 0:
+                break
+
+        try:
+            # Mark all previously indexed artifacts as gone; the INSERT below
+            # restores the files that still exist.  Keep this transaction limited
+            # to SQLite work so other users are not blocked by filesystem latency.
+            with self._connect() as connection:
+                connection.execute(
+                    'UPDATE runtime_job_artifacts SET exists_flag = 0, updated_at = ? WHERE runtime_job_id = ?',
+                    (now, runtime_job_id),
+                )
+                connection.executemany(
+                    """
+                    INSERT INTO runtime_job_artifacts (
+                        runtime_job_id, artifact_type, artifact_path, relative_path,
+                        size_bytes, exists_flag, metadata_json, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)
+                    ON CONFLICT(runtime_job_id, artifact_path) DO UPDATE SET
+                        artifact_type = excluded.artifact_type,
+                        relative_path = excluded.relative_path,
+                        size_bytes = excluded.size_bytes,
+                        exists_flag = excluded.exists_flag,
+                        metadata_json = excluded.metadata_json,
+                        updated_at = excluded.updated_at
+                    """,
+                    artifact_rows,
+                )
+        except sqlite3.OperationalError as exc:
+            if not self._is_locked_error(exc):
+                raise
+            # Artifact indexing is an enrichment step.  A busy database must not
+            # turn a dashboard or status read into an HTTP 500.
+            return self.list_job_artifacts(runtime_job_id)
         return self.list_job_artifacts(runtime_job_id)
 
     @staticmethod
@@ -857,26 +875,35 @@ class RuntimeStore:
         tool_version = job.get('tool_version') or self._tool_version()
         mirror_log_path = ''
         if str(job.get('log_path') or '').strip():
-            mirror_log_path = self._sync_job_log(runtime_job_id, str(job['log_path']))
+            try:
+                mirror_log_path = self._sync_job_log(runtime_job_id, str(job['log_path']))
+            except sqlite3.OperationalError as exc:
+                if not self._is_locked_error(exc):
+                    raise
+                mirror_log_path = str(job.get('mirror_log_path') or '')
         artifacts = self._sync_job_artifacts(runtime_job_id, str(job.get('output_path') or ''))
-        with self._connect() as connection:
-            connection.execute(
-                """
-                UPDATE runtime_jobs
-                SET request_fingerprint = ?, execution_path = ?, tool_version = ?,
-                    db_version = ?, mirror_log_path = ?, last_seen_at = ?
-                WHERE id = ?
-                """,
-                (
-                    request_fingerprint,
-                    execution_path,
-                    tool_version,
-                    self.RUNTIME_DB_VERSION,
-                    mirror_log_path,
-                    self._utcnow(),
-                    runtime_job_id,
-                ),
-            )
+        try:
+            with self._connect() as connection:
+                connection.execute(
+                    """
+                    UPDATE runtime_jobs
+                    SET request_fingerprint = ?, execution_path = ?, tool_version = ?,
+                        db_version = ?, mirror_log_path = ?, last_seen_at = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        request_fingerprint,
+                        execution_path,
+                        tool_version,
+                        self.RUNTIME_DB_VERSION,
+                        mirror_log_path,
+                        self._utcnow(),
+                        runtime_job_id,
+                    ),
+                )
+        except sqlite3.OperationalError as exc:
+            if not self._is_locked_error(exc):
+                raise
         job['request_fingerprint'] = request_fingerprint
         job['execution_path'] = execution_path
         job['tool_version'] = tool_version
@@ -893,7 +920,7 @@ class RuntimeStore:
     def graph_payload(self, variant_key: Optional[str] = None) -> Dict[str, Any]:
         self._ensure_default_graph_variant()
         tools = self.list_tools()
-        jobs = self.list_jobs(limit=20)
+        jobs = self.list_jobs(limit=20, refresh=False)
         variants = self.list_graph_variants()
         variant = self.get_graph_variant(variant_key) or self.get_graph_variant()
         merged_graph = self._merge_graph_state((variant or {}).get('graph', {}), tools)
@@ -1089,7 +1116,7 @@ class RuntimeStore:
             'updated_at': row['updated_at'],
         }
 
-    def _row_to_job(self, row: sqlite3.Row) -> Dict[str, Any]:
+    def _row_to_job(self, row: sqlite3.Row, refresh: bool = True) -> Dict[str, Any]:
         job = {
             'id': row['id'],
             'tool_key': row['tool_key'],
@@ -1118,7 +1145,8 @@ class RuntimeStore:
             'completed_at': row['completed_at'],
         }
         job = self._derive_job_state(job)
-        self._refresh_persisted_job(job)
+        if refresh:
+            self._refresh_persisted_job(job)
         job['events'] = self.get_events(int(row['id']))
         if 'artifacts' not in job:
             job['artifacts'] = self.list_job_artifacts(int(row['id']))

@@ -1,0 +1,97 @@
+# Build from workspace root in WSL:
+#   apptainer build --fakeroot simg_sh_hpcc/canintplot_kpi.simg KPI/can_interactive_plot/singularity_canintplot.def
+Bootstrap: docker
+From: python:3.11-slim
+
+%labels
+    Author ResimHTMLReport Team
+    Version 1.0
+    Description Combined CAN KPI + Interactive Plot application (HDF batch, plot, KPI server, index refresh)
+
+%files
+    # Copy main application
+    KPI/can_interactive_plot/a_persistence_layer /app/can_interactive_plot/a_persistence_layer
+    KPI/can_interactive_plot/b_data_storage /app/can_interactive_plot/b_data_storage
+    KPI/can_interactive_plot/c_business_layer /app/can_interactive_plot/c_business_layer
+    KPI/can_interactive_plot/d_presentation_layer /app/can_interactive_plot/d_presentation_layer
+    KPI/can_interactive_plot/InteractivePlot /app/can_interactive_plot/InteractivePlot
+    KPI/can_interactive_plot/can_intplot_main.py /app/can_interactive_plot/can_intplot_main.py
+    KPI/can_interactive_plot/can_kpi_main.py /app/can_interactive_plot/can_kpi_main.py
+    KPI/can_interactive_plot/can_kpi_server.py /app/can_interactive_plot/can_kpi_server.py
+    KPI/can_interactive_plot/hdf_batch.py /app/can_interactive_plot/hdf_batch.py
+    KPI/can_interactive_plot/sensor_matcher.py /app/can_interactive_plot/sensor_matcher.py
+    KPI/can_interactive_plot/ConfigInteractivePlots.xml /app/can_interactive_plot/ConfigInteractivePlots.xml
+    KPI/intplot_kpi/ConfigInteractivePlots_bordnet.xml /app/can_interactive_plot/ConfigInteractivePlots_bordnet.xml
+    KPI/can_interactive_plot/InputsInteractivePlot.json /app/can_interactive_plot/InputsInteractivePlot.json
+    KPI/can_interactive_plot/kpi.json /app/can_interactive_plot/kpi.json
+    KPI/can_interactive_plot/requirements.txt /app/can_interactive_plot/requirements.txt
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        build-essential \
+        ca-certificates \
+        && rm -rf /var/lib/apt/lists/*
+
+    pip install --no-cache-dir --upgrade pip setuptools wheel
+    pip install --no-cache-dir -r /app/can_interactive_plot/requirements.txt
+    mkdir -p /app/data /app/html /app/plots
+    chmod -R 755 /app
+
+%environment
+    umask 022
+    export PYTHONUNBUFFERED=1
+    export PYTHONPATH=/app/can_interactive_plot
+    export CAN_KPI_SERVER_HOST=127.0.0.1
+    export CAN_KPI_SERVER_PORT=5556
+    export CAN_KPI_SERVER_RESPONSE_TIMEOUT_MS=180000
+    export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    export LC_ALL=C
+
+%runscript
+    # Combined HDF batch: plot pipeline -> CAN KPI -> master index refresh
+    umask 022
+    cd /app/can_interactive_plot
+    exec python hdf_batch.py "$@"
+
+%apprun hdf
+    cd /app/can_interactive_plot
+    exec python hdf_batch.py "$@"
+
+%apprun plot
+    cd /app/can_interactive_plot
+    exec python can_intplot_main.py "$@"
+
+%apprun kpi
+    cd /app/can_interactive_plot
+    exec python can_kpi_main.py "$@"
+
+%apprun server
+    cd /app/can_interactive_plot
+    exec python can_kpi_server.py "$@"
+
+%test
+    python -c "import numpy, pandas, h5py, plotly, zmq, lxml; import can_kpi_server, can_intplot_main; print('CAN KPI and Interactive Plot imports OK')"
+
+%help
+    Combined CAN KPI + Interactive Plot Singularity Container
+    =========================================================
+
+    Runs the merged plot pipeline, CAN KPI report generation and master
+    index refresh from a single entrypoint.
+
+    USAGE:
+    ------
+    # Full batch (plots + KPI + index refresh)
+    singularity run canintplot_kpi.simg input.h5 output_dir.h5 --outdir /html
+
+    # Plot only
+    singularity run --app plot canintplot_kpi.simg Config.xml Inputs.json /html [plot_config.json]
+
+    # CAN KPI only
+    singularity run --app kpi canintplot_kpi.simg Config.xml Inputs.json /html
+
+    ENVIRONMENT VARIABLES:
+    ----------------------
+    CAN_KPI_SERVER_HOST - Hostname/IP of CAN KPI ZMQ server (default: 127.0.0.1)
+    CAN_KPI_SERVER_PORT - ZMQ port of CAN KPI server (default: 5556)

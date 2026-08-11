@@ -18,8 +18,9 @@ class HpccBrokerClient:
         payload['action'] = 'submit'
         return self.request(payload)
 
-    def get_status(self, runtime_job_id: int) -> Dict[str, Any]:
-        return self.request({'action': 'status', 'runtime_job_id': runtime_job_id})
+    def get_status(self, runtime_job_id: int, refresh: bool = False) -> Dict[str, Any]:
+        payload = {'action': 'status', 'runtime_job_id': runtime_job_id, 'refresh': refresh}
+        return self.request(payload)
 
     def cancel_job(self, runtime_job_id: int) -> Dict[str, Any]:
         return self.request({'action': 'cancel', 'runtime_job_id': runtime_job_id})

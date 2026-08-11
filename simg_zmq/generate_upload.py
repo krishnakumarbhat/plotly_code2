@@ -5,7 +5,7 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parent
 GEN = ROOT / 'generate_upload'
 META = ROOT / '.metadata.json'
-BUILD_ORDER = ['main_html.simg', 'rag.simg', 'kpi/can/can_kpi.simg', 'kpi/udp/udp_kpi.simg', 'kpi/int_plot/intplot_kpi.simg']
+BUILD_ORDER = ['main_html.simg', 'rag.simg', 'kpi/can/can_kpi.simg', 'kpi/udp/udp_kpi.simg', 'kpi/int_plot/intplot_kpi.simg', 'kpi/can_intplot/canintplot_kpi.simg']
 
 DEF_MAP = {
     'main_html.simg':          ROOT / 'Singularity.def',
@@ -13,6 +13,7 @@ DEF_MAP = {
     'kpi/can/can_kpi.simg':    ROOT / 'KPI' / 'can_kpi' / 'can_singularity_KPI.def',
     'kpi/udp/udp_kpi.simg':    ROOT / 'KPI' / 'UDP_KPI' / 'Singularity_KPI.def',
     'kpi/int_plot/intplot_kpi.simg': ROOT / 'KPI' / 'intplot_kpi' / 'singularity_interactiveplot.def',
+    'kpi/can_intplot/canintplot_kpi.simg': ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def',
 }
 
 SIMGG_SRC = {
@@ -21,6 +22,7 @@ SIMGG_SRC = {
     'kpi/can/can_kpi.simg':    [ROOT / 'KPI' / 'can_kpi' / 'can_singularity_KPI.def', ROOT / 'KPI' / 'can_kpi'],
     'kpi/udp/udp_kpi.simg':    [ROOT / 'KPI' / 'UDP_KPI' / 'Singularity_KPI.def', ROOT / 'KPI' / 'UDP_KPI', ROOT / 'KPI' / 'intplot_kpi' / 'InteractivePlot'],
     'kpi/int_plot/intplot_kpi.simg': [ROOT / 'KPI' / 'intplot_kpi' / 'singularity_interactiveplot.def', ROOT / 'KPI' / 'intplot_kpi', ROOT / 'KPI' / 'UDP_KPI'],
+    'kpi/can_intplot/canintplot_kpi.simg': [ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def', ROOT / 'KPI' / 'can_interactive_plot', ROOT / 'KPI' / 'intplot_kpi' / 'ConfigInteractivePlots_bordnet.xml'],
 }
 
 SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh']
@@ -111,6 +113,17 @@ def _save_meta(meta):
     META.write_text(json.dumps(meta, indent=2, sort_keys=True))
 
 
+def _remove_tree(path: Path) -> None:
+    """Remove a generated tree, including transient WSL 9p directory races."""
+    if not path.exists():
+        return
+    shutil.rmtree(path, ignore_errors=True)
+    if path.exists() and os.name != 'nt':
+        subprocess.run(['rm', '-rf', '--', str(path)], check=False)
+    if path.exists():
+        raise OSError(f'Unable to remove generated directory: {path}')
+
+
 _SRC_EXTS = {'.py', '.html', '.htm', '.js', '.css', '.scss', '.def', '.sh', '.json', '.xml', '.yaml', '.yml', '.txt', '.cfg', '.env', '.md', '.spec', '.toml', '.jinja', '.jinja2'}
 _DATA_EXTS = {'.h5', '.hdf5', '.gguf', '.mf4', '.csv', '.pyc', '.pyd', '.pyo', '.so', '.log', '.db', '.sqlite', '.simg', '.sif', '.zip', '.tar', '.gz', '.tar.gz', '.tgz', '.bin', '.pt', '.pth', '.onnx', '.npy', '.npz', '.wav', '.mp3', '.mp4', '.avi', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf', '.eot', '.pdf', '.o', '.a', '.lib', '.dll', '.dylib', '.exe'}
 
@@ -195,20 +208,34 @@ def build_simg(img_rel):
         if _app_py.exists():
             _shutil.copy2(_app_py, _linux_root / 'app.py')
         _tmp_img = Path(_build_dir) / dst.name
-        proc = subprocess.Popen(
-            [runtime, 'build', '--fakeroot', '--disable-cache', '--tmpdir', '/tmp',
-             '--mksquashfs-args', '-mem 4G -processors 1 -no-exports -no-sparse',
-             str(_tmp_img), str(_def_linux)],
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=build_env, cwd=str(_linux_root), bufsize=1,
-        )
-        stdout_lines = []
-        for line in proc.stdout:
-            _p(f'  [{img_rel}] {line}', end='')
-            stdout_lines.append(line)
-        proc.wait()
-        result_stdout = ''.join(stdout_lines)
+        # Retry transient Docker Hub pull timeouts. Keep the OCI cache enabled
+        # (no --disable-cache) so the python:3.10-slim base layers pulled for one
+        # image are reused by the other images sharing the same base.
+        max_attempts = 3
+        result_returncode = None
+        result_stdout = ''
         result_stderr = ''
-        result_returncode = proc.returncode
+        for attempt in range(1, max_attempts + 1):
+            if attempt > 1:
+                _p(f'  [{img_rel}] attempt {attempt - 1} failed, retrying...')
+                time.sleep(10 * (attempt - 1))
+            proc = subprocess.Popen(
+                [runtime, 'build', '--fakeroot', '--tmpdir', '/tmp',
+                 '--mksquashfs-args', '-mem 4G -processors 1 -no-exports -no-sparse',
+                 str(_tmp_img), str(_def_linux)],
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=build_env, cwd=str(_linux_root), bufsize=1,
+            )
+            stdout_lines = []
+            for line in proc.stdout:
+                _p(f'  [{img_rel}] {line}', end='')
+                stdout_lines.append(line)
+            proc.wait()
+            result_stdout = ''.join(stdout_lines)
+            result_stderr = ''
+            result_returncode = proc.returncode
+            if result_returncode == 0:
+                break
+            _p(f'  [{img_rel}] attempt {attempt}/{max_attempts} failed (exit {result_returncode})')
         if result_returncode != 0:
             _p(f'  ERROR: {runtime} build failed (exit {result_returncode})')
             if result_stdout:
@@ -301,6 +328,25 @@ def generate(no_rag=False):
             shutil.copy2(src, GEN / s)
             print(f'  copied {s}')
 
+    # KPI launcher support scripts (run_can.sh, run_udp.sh, run_intplot.sh,
+    # inplot_can.sh, inplot_udp.sh). kpi_runtime_launcher.sh resolves these as
+    # $BUNDLE_ROOT/kpi/... on the cluster, so they must be part of the bundle.
+    kpi_templates = ROOT / 'scripts' / 'hpcc_bundle_templates' / 'kpi'
+    if kpi_templates.is_dir():
+        for kpi_script in kpi_templates.rglob('*'):
+            if kpi_script.is_file():
+                rel = kpi_script.relative_to(kpi_templates)
+                dst_script = GEN / 'kpi' / rel
+                dst_script.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(kpi_script, dst_script)
+                try:
+                    dst_script.chmod(dst_script.stat().st_mode | 0o111)
+                except OSError:
+                    pass
+                print(f'  copied kpi/{rel.as_posix()}')
+    else:
+        print('  WARNING: scripts/hpcc_bundle_templates/kpi not found; KPI launcher scripts will be missing from the bundle')
+
     # Copy rResim_Gen7.sh from project root (parent directory)
     resim_sh_src = ROOT / 'rResim_Gen7.sh'
     if resim_sh_src.exists():
@@ -342,14 +388,14 @@ def generate(no_rag=False):
         dst = GEN / 'bundle_src' / name
         if src.is_dir():
             if dst.exists():
-                shutil.rmtree(dst)
+                _remove_tree(dst)
             shutil.copytree(src, dst, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.git'))
             print(f'  copied bundle_src/{name}/')
 
     if (ROOT / 'rag').is_dir():
         dst = GEN / 'rag'
         if dst.exists():
-            shutil.rmtree(dst)
+            _remove_tree(dst)
         shutil.copytree(ROOT / 'rag', dst, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', 'model', 'tools', 'data'))
         print('  copied rag/ (app code only)')
 
@@ -359,7 +405,7 @@ def generate(no_rag=False):
     if (ROOT / 'jira').is_dir():
         dst = GEN / 'jira'
         if dst.exists():
-            shutil.rmtree(dst)
+            _remove_tree(dst)
         shutil.copytree(ROOT / 'jira', dst, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.git'))
         print('  copied jira/')
 
@@ -618,7 +664,7 @@ def upload():
         raise SystemExit(1)
 
     netid = env.get('netid', '')
-    password = env.get('netid_password', '')
+    password = env.get('netid_password', '') or os.environ.get('HPCC_NETID_PASSWORD', '')
     krakow_path = env.get('krakow_path', '')
     southfield_path = env.get('southfield_path', '')
     host = env.get('host', '') or env.get('HOST', '')

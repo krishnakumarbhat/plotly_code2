@@ -34,6 +34,9 @@ except ModuleNotFoundError:
     from hpcc_runtime_store import RuntimeStore
 
 
+_BUNDLE_STAGE_REPLACE_LOCK = threading.Lock()
+
+
 def _to_wsl_path(path_value: Path) -> str:
     resolved = str(path_value.resolve())
     normalized = resolved.replace('\\', '/')
@@ -143,6 +146,23 @@ def _cluster_slurm_defaults() -> Dict[str, str]:
         'account': (os.environ.get('SLURM_ACCOUNT') or defaults['account']).strip(),
         'qos': (os.environ.get('SLURM_QOS') or defaults['qos']).strip(),
     }
+
+
+def _infer_project_account(paths: Dict[str, Any]) -> str:
+    """Infer the Slurm account from a submitted project path when possible."""
+    path_text = ' '.join(str(value) for value in paths.values() if value)
+    project_accounts = (
+        ('/CEER-PROGRAM/', 'ceer-program'),
+        ('/RNA-SDV-SRR7/', 'rna-sdv-srr7'),
+        ('/GPO-IFV7XX/', 'gpo-ifv7xx'),
+        ('/RADARCORE/', 'radarcore'),
+        ('/STLA-THUNDER/', 'stla-thunder'),
+    )
+    upper_path = path_text.upper()
+    for marker, account in project_accounts:
+        if marker in upper_path:
+            return account
+    return ''
 
 
 def _int_env(name: str, default: int) -> int:
@@ -361,7 +381,10 @@ def _normalize_container_path(path_value: str) -> str:
 
 
 def _sanitize_runtime_path(path_value: str) -> str:
-    normalized = _normalize_container_path(path_value)
+    normalized = str(path_value or '').strip()
+    while len(normalized) >= 2 and normalized[0] == normalized[-1] and normalized[0] in {'"', "'"}:
+        normalized = normalized[1:-1].strip()
+    normalized = _normalize_container_path(normalized)
     if not normalized:
         return normalized
 
@@ -603,14 +626,17 @@ def _stage_bundle_file_for_user_job(workspace_root: Path, source_path: Path) -> 
     except OSError:
         pass
 
-    temp_path = target_path.with_name(f'{target_path.name}.tmp.{os.getpid()}')
+    temp_path = target_path.with_name(
+        f'{target_path.name}.tmp.{os.getpid()}.{threading.get_ident()}'
+    )
     shutil.copy2(str(source_path), str(temp_path))
     if os.name != 'nt':
         try:
             temp_path.chmod(0o755 if (source_stat.st_mode & 0o111) else 0o644)
         except OSError:
             pass
-    os.replace(str(temp_path), str(target_path))
+    with _BUNDLE_STAGE_REPLACE_LOCK:
+        os.replace(str(temp_path), str(target_path))
     return target_path
 
 
@@ -650,6 +676,8 @@ def _stage_kpi_bundle_support(workspace_root: Path, target: str, interactive_mod
         ])
         if interactive_mode == 'enabled':
             required_files.append(runtime_root / 'kpi' / 'inplot_can.sh')
+            # Combined CAN KPI + Interactive Plot image (preferred by inplot_can.sh)
+            required_files.append(runtime_root / 'kpi' / 'can_intplot' / 'canintplot_kpi.simg')
 
     if interactive_mode != 'disabled' or target == 'interactive_plot':
         required_files.extend([
@@ -956,7 +984,7 @@ class RuntimeBroker:
             }
         if action == 'status':
             runtime_job_id = int(payload['runtime_job_id'])
-            job = self.store.get_job(runtime_job_id)
+            job = self.store.get_job(runtime_job_id, refresh=bool(payload.get('refresh', False)))
             return {'ok': True, 'job': job}
         if action == 'cancel':
             return self._cancel(int(payload['runtime_job_id']))
@@ -1116,7 +1144,7 @@ class RuntimeBroker:
     def _watch_service_host(self, runtime_job_id: int, tool_key: str, host_file: str, port: int) -> None:
         deadline = time.time() + 180
         while time.time() < deadline:
-            job = self.store.get_job(runtime_job_id)
+            job = self.store.get_job(runtime_job_id, refresh=False)
             if not job or job.get('status') in {'FAILED', 'CANCELLED', 'COMPLETED'}:
                 return
 
@@ -1147,7 +1175,7 @@ class RuntimeBroker:
         with self.lock:
             process = self.processes.get(runtime_job_id)
         if not process:
-            job = self.store.get_job(runtime_job_id)
+            job = self.store.get_job(runtime_job_id, refresh=False)
             return {'ok': True, 'job': job, 'message': 'Job is not running'}
 
         if os.name == 'nt':
@@ -1162,12 +1190,15 @@ class RuntimeBroker:
             error_message='Cancelled by user',
         )
         self.store.append_event(runtime_job_id, 'warning', 'Cancelled by user request')
-        return {'ok': True, 'job': self.store.get_job(runtime_job_id)}
+        return {'ok': True, 'job': self.store.get_job(runtime_job_id, refresh=False)}
 
     def _build_spec(self, tool: Dict[str, Any], payload: Dict[str, Any]) -> Dict[str, Any]:
         tool_key = tool['tool_key']
         paths = payload.get('paths', {}) or {}
-        resources = payload.get('resources', {}) or {}
+        resources = dict(payload.get('resources', {}) or {})
+        inferred_account = _infer_project_account(paths)
+        if inferred_account:
+            resources['account'] = inferred_account
         requested_by = payload.get('user', 'unknown')
         user_password = (payload.get('user_password') or '').strip()
         timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
@@ -1558,6 +1589,7 @@ class RuntimeBroker:
         mirror_log_path: Optional[Path] = None,
         service_host_file: str = '',
         wait_for_port: str = '',
+        peer_exit_path: Optional[Path] = None,
     ) -> str:
         pane_label = pane_name.upper()
         tee_targets = []
@@ -1591,8 +1623,18 @@ class RuntimeBroker:
         if service_host_file:
             payload_parts.append(f"(hostname -f 2>/dev/null || hostname) > {shlex.quote(service_host_file)}")
         if wait_for_port:
+            peer_check = ''
+            if peer_exit_path:
+                peer_path = shlex.quote(str(peer_exit_path))
+                peer_check = (
+                    f"if [[ -f {peer_path} ]]; then "
+                    f"peer_status=\"$(cat {peer_path} 2>/dev/null || true)\"; "
+                    f'echo "UDP KPI pane exited before port {wait_for_port} became ready (status $peer_status)" >&2; '
+                    f"case \"$peer_status\" in ''|*[!0-9]*|0) status=1 ;; *) status=\"$peer_status\" ;; esac; "
+                    f"printf '%s' \"$status\" > {shlex.quote(str(exit_path))}; exit \"$status\"; fi; "
+                )
             payload_parts.append(
-                f"for attempt in $(seq 1 90); do (echo > /dev/tcp/127.0.0.1/{shlex.quote(wait_for_port)}) >/dev/null 2>&1 && break; sleep 2; done"
+                f"for attempt in $(seq 1 90); do {peer_check}(echo > /dev/tcp/127.0.0.1/{shlex.quote(wait_for_port)}) >/dev/null 2>&1 && break; sleep 2; done"
             )
             payload_parts.append(
                 f"(echo > /dev/tcp/127.0.0.1/{shlex.quote(wait_for_port)}) >/dev/null 2>&1 || {{ echo 'Timed out waiting for port {wait_for_port}' >&2; status=1; printf '%s' \"$status\" > {shlex.quote(str(exit_path))}; exit \"$status\"; }}"
@@ -1730,6 +1772,7 @@ INPUT_WATCHER_PID=$!
                 shared_log_path=project_console_log or console_log,
                 mirror_log_path=console_log if project_console_log else None,
                 wait_for_port=str(launch_plan.get('secondary_port') or '5560'),
+                peer_exit_path=udp_exit,
             )
             input_worker = self._tmux_input_worker(input_queue, ['udp', 'interactive'])
             remote_script = f"""set -euo pipefail
@@ -1907,11 +1950,11 @@ while :; do
     ALLOC_LOG="$ALLOC_DIR/slurm_alloc_attempt_${{attempt}}.log"
     echo "[alloc] attempt $attempt/$MAX_ATTEMPTS: nodes=$NODES ntasks-cpus=$CPUS mem=${{MEM_GB}}G wait=${{WAIT_SECONDS}}s" >&2
     set +e
-    {ssh_prefix}{_shell_join(srun_fixed)} \\
+            {{ {_shell_join(srun_fixed)} \\
         --nodes="$NODES" --cpus-per-task="$CPUS" --mem="${{MEM_GB}}G" \\
         --immediate="$WAIT_SECONDS" \\
-        bash -lc {shlex.quote(payload)} 2> >(tee "$ALLOC_LOG" >&2)
-    rc=$?
+        bash -lc {shlex.quote(payload)} 2>&1; }} | tee "$ALLOC_LOG" >&2
+    rc=${{PIPESTATUS[0]}}
     set -e
     sleep 1
 

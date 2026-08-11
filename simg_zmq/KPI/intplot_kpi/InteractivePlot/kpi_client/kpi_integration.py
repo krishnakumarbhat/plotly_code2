@@ -146,13 +146,26 @@ class kpiIntegration:
             if False:
                 logger.info("Starting KPI server...")
                 if platform.system() == 'Windows':
-                    command = f'{sys.executable} "{kpi_server_path}" --port {self.server_port}'
-                    subprocess.Popen(f'start cmd /k "{command}"', shell=True)
+                    try:
+                        creationflags = subprocess.CREATE_NO_WINDOW
+                    except AttributeError:
+                        creationflags = 0
+                    subprocess.Popen(
+                        [sys.executable, kpi_server_path, '--port', str(self.server_port)],
+                        creationflags=creationflags,
+                        close_fds=True,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
                 elif platform.system() == 'Linux':
-                    subprocess.Popen([
-                        'gnome-terminal', '--', sys.executable, kpi_server_path,
-                        '--port', str(self.server_port)
-                    ])
+                    subprocess.Popen(
+                        [sys.executable, kpi_server_path, '--port', str(self.server_port)],
+                        stdin=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        close_fds=True,
+                        start_new_session=True,
+                    )
                 else:
                     logger.error('Unsupported OS for launching KPI server')
                     return False

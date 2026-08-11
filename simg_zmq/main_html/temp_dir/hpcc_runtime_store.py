@@ -493,7 +493,7 @@ class RuntimeStore:
         values.append(runtime_job_id)
         with self._connect() as connection:
             connection.execute(f"UPDATE runtime_jobs SET {', '.join(columns)} WHERE id = ?", tuple(values))
-        return self.get_job(runtime_job_id)
+        return self.get_job(runtime_job_id, refresh=False)
 
     def append_event(self, runtime_job_id: int, level: str, message: str) -> None:
         with self._connect() as connection:
@@ -502,10 +502,10 @@ class RuntimeStore:
                 (runtime_job_id, level, message, self._utcnow()),
             )
 
-    def get_job(self, runtime_job_id: int) -> Optional[Dict[str, Any]]:
+    def get_job(self, runtime_job_id: int, refresh: bool = True) -> Optional[Dict[str, Any]]:
         with self._connect() as connection:
             row = connection.execute('SELECT * FROM runtime_jobs WHERE id = ?', (runtime_job_id,)).fetchone()
-        return self._row_to_job(row) if row else None
+        return self._row_to_job(row, refresh=refresh) if row else None
 
     def list_jobs(self, limit: int = 50) -> List[Dict[str, Any]]:
         with self._connect() as connection:
@@ -842,7 +842,7 @@ class RuntimeStore:
             'updated_at': row['updated_at'],
         }
 
-    def _row_to_job(self, row: sqlite3.Row) -> Dict[str, Any]:
+    def _row_to_job(self, row: sqlite3.Row, refresh: bool = True) -> Dict[str, Any]:
         job = {
             'id': row['id'],
             'tool_key': row['tool_key'],
@@ -871,7 +871,8 @@ class RuntimeStore:
             'completed_at': row['completed_at'],
         }
         job = self._derive_job_state(job)
-        self._refresh_persisted_job(job)
+        if refresh:
+            self._refresh_persisted_job(job)
         job['events'] = self.get_events(int(row['id']))
         if 'artifacts' not in job:
             job['artifacts'] = self.list_job_artifacts(int(row['id']))

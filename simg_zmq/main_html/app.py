@@ -19,6 +19,7 @@ import shutil
 import importlib.util
 import time
 import shlex
+import re
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from typing import Optional
@@ -44,7 +45,15 @@ from utils import (
     cluster_from_path,
     validate_cluster_credentials,
 )
-from env_utils import get_env, get_cache_dir, get_cluster_paths, get_cluster_slurm_defaults
+from env_utils import detect_cluster as detect_environment_cluster, get_env, get_cache_dir, get_cluster_paths, get_cluster_slurm_defaults
+from kpi_config_manager import (
+    configuration_path,
+    get_configuration,
+    list_configurations,
+    save_configuration,
+    save_uploaded_configuration,
+    validate_configuration,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -267,6 +276,44 @@ RUNTIME_TOOL_DEFAULTS = {
     'interactive_plot': {**_HPCC_RESOURCE_BASE, **_tool_resources('interactive_plot')},
     'rag': {**_HPCC_RESOURCE_BASE, **_tool_resources('rag')},
 }
+KRAKOW_RUNTIME_PROFILES = {
+    'helios': {
+        'label': 'Helios',
+        'module': 'slurm/helios',
+        'account': '8k3p89',
+        'partition': '8k3',
+        'memory': '4G',
+        'cpus': 6,
+        'time_limit': '00:30:00',
+    },
+    'athena': {
+        'label': 'Athena',
+        'module': 'slurm/athena',
+        'account': '8k3p89',
+        'partition': 'athena',
+        'memory': '4G',
+        'cpus': 6,
+        'time_limit': '00:30:00',
+    },
+    'sf': {
+        'label': 'SF',
+        'module': 'slurm/sf',
+        'account': '8k3p89',
+        'partition': 'sf',
+        'memory': '4G',
+        'cpus': 6,
+        'time_limit': '00:30:00',
+    },
+    'cyfronet': {
+        'label': 'Cyfronet',
+        'module': 'slurm/cyfronet',
+        'account': '8k3p89',
+        'partition': 'cyfronet',
+        'memory': '4G',
+        'cpus': 6,
+        'time_limit': '00:30:00',
+    },
+}
 ACTIVE_RUNTIME_STATUSES = {'QUEUED', 'SUBMITTED', 'PENDING', 'RUNNING'}
 PENDING_RUNTIME_STATUSES = {'QUEUED', 'SUBMITTED', 'PENDING'}
 
@@ -298,6 +345,16 @@ def _cluster_choices():
     ]
 
 
+def _request_cluster_target() -> str:
+    forwarded_host = (request.headers.get('X-Forwarded-Host') or '').split(',', 1)[0].strip()
+    host = (forwarded_host or request.host or '').split(':', 1)[0].lower()
+    if host.startswith('10.192.') or 'southfield' in host:
+        return 'southfield'
+    if host.startswith('10.214.') or 'krakow' in host:
+        return 'krakow'
+    return detect_environment_cluster() or 'any'
+
+
 def _resolve_cluster_request(cluster_target: str):
     target = (cluster_target or 'any').strip().lower()
     if target == 'krakow':
@@ -310,11 +367,10 @@ def _resolve_cluster_request(cluster_target: str):
     ], False
 
 
-def _auth_template_context(cluster_target: str = 'any') -> dict:
+def _auth_template_context(cluster_target: str = '') -> dict:
     return {
         'cluster_auth_enabled': _cluster_auth_enabled(),
-        'cluster_choices': _cluster_choices(),
-        'selected_cluster_target': (cluster_target or 'any').strip().lower(),
+        'detected_cluster': (cluster_target or _request_cluster_target()).strip().lower(),
     }
 
 
@@ -421,7 +477,7 @@ def login():
         net_id = request.form.get('net_id', '').strip()
         password = request.form.get('password', '')
         remember = request.form.get('remember', False)
-        cluster_target = (request.form.get('cluster_target') or 'any').strip().lower()
+        cluster_target = _request_cluster_target()
 
         if _default_admin_disabled() and net_id == 'admin':
             flash('Administrator fallback is disabled on HPCC. Sign in with your cluster Net ID and password.', 'error')
@@ -566,19 +622,12 @@ def logout():
 @login_required
 def dashboard():
     """Main dashboard with chat and tools navigation"""
-    # Get recent job history for current user
-    recent_jobs = JobHistory.query.filter_by(user_id=current_user.id)\
-        .order_by(JobHistory.created_at.desc())\
-        .limit(10)\
-        .all()
-    for job in recent_jobs:
-        _sync_runtime_job(job)
-    
     # Get active chat session or create new one
-    active_session = ChatSession.query.filter_by(
-        user_id=current_user.id,
-        is_active=True
-    ).first()
+    with db.session.no_autoflush:
+        active_session = ChatSession.query.filter_by(
+            user_id=current_user.id,
+            is_active=True
+        ).first()
     
     if not active_session:
         active_session = ChatSession(
@@ -586,6 +635,18 @@ def dashboard():
             session_id=str(uuid.uuid4())
         )
         db.session.add(active_session)
+        db.session.commit()
+
+    # Get recent job history for current user after the only dashboard commit.
+    recent_jobs = JobHistory.query.filter_by(user_id=current_user.id)\
+        .order_by(JobHistory.created_at.desc())\
+        .limit(10)\
+        .all()
+    runtime_jobs_changed = False
+    for job in recent_jobs:
+        if job.status in {'QUEUED', 'SUBMITTED', 'PENDING', 'RUNNING'}:
+            runtime_jobs_changed = _sync_runtime_job(job, persist=False) is not None or runtime_jobs_changed
+    if runtime_jobs_changed:
         db.session.commit()
     
     tools = runtime_store.list_tools()
@@ -627,13 +688,235 @@ def tool_kpi():
     if request.method == 'POST':
         return submit_runtime_kpi_job()
     
-    recent_jobs = get_user_tool_jobs('kpi', include_all=True)
+    recent_jobs = get_recent_kpi_activity()
     return render_template('tools/kpi.html',
                          tool_name='KPI Analysis',
                          recent_jobs=recent_jobs,
                          runtime_tools=[tool for tool in runtime_store.list_tools() if tool['tool_key'] in {'can_kpi', 'udp_kpi', 'interactive_plot'}],
                          defaults=RUNTIME_TOOL_DEFAULTS,
+                         configuration_files=list_configurations(),
+                         detected_cluster=_request_cluster_target(),
+                         krakow_runtime_profiles=KRAKOW_RUNTIME_PROFILES,
                          allow_local_scheduler=_allow_local_kpi_scheduler())
+
+
+@app.route('/api/kpi/configurations')
+@login_required
+def api_kpi_configurations():
+    return jsonify({'ok': True, 'configurations': list_configurations()})
+
+
+@app.route('/api/kpi/configurations/<config_id>', methods=['GET', 'PUT'])
+@login_required
+def api_kpi_configuration(config_id):
+    try:
+        if request.method == 'GET':
+            metadata, content = get_configuration(config_id)
+            return jsonify({'ok': True, 'configuration': metadata, 'content': content})
+        payload = request.get_json(silent=True) or {}
+        result = validate_configuration(config_id, payload.get('content', ''))
+        return jsonify({'ok': True, 'validation': result})
+    except (KeyError, FileNotFoundError, ValueError) as exc:
+        return jsonify({'ok': False, 'error': str(exc)}), 400
+
+
+@app.route('/api/kpi/configurations/<config_id>/save', methods=['POST'])
+@login_required
+def api_save_kpi_configuration(config_id):
+    try:
+        payload = request.get_json(silent=True) or {}
+        result = save_configuration(config_id, payload.get('content', ''))
+        return jsonify({'ok': True, 'message': f"Saved {result['filename']}.", 'configuration': result})
+    except (KeyError, FileNotFoundError, ValueError, OSError) as exc:
+        return jsonify({'ok': False, 'error': str(exc)}), 400
+
+
+@app.route('/api/kpi/configurations/<config_id>/upload', methods=['POST'])
+@login_required
+def api_upload_kpi_configuration(config_id):
+    uploaded = request.files.get('file')
+    if uploaded is None:
+        return jsonify({'ok': False, 'error': 'Choose a configuration file to upload.'}), 400
+    try:
+        result = save_uploaded_configuration(config_id, uploaded.read())
+        return jsonify({'ok': True, 'message': f"Uploaded {result['filename']}.", 'configuration': result})
+    except (KeyError, FileNotFoundError, ValueError, OSError) as exc:
+        return jsonify({'ok': False, 'error': str(exc)}), 400
+
+
+@app.route('/api/kpi/configurations/<config_id>/download')
+@login_required
+def download_kpi_configuration(config_id):
+    try:
+        metadata, content = get_configuration(config_id)
+    except (KeyError, FileNotFoundError, ValueError) as exc:
+        return jsonify({'ok': False, 'error': str(exc)}), 404
+    response = Response(content, mimetype='application/xml' if metadata['format'] == 'xml' else 'application/json')
+    response.headers['Content-Disposition'] = f"attachment; filename={metadata['filename']}"
+    return response
+
+
+def _run_kpi_deploy_background(job_id: int, log_path: str):
+    """Run the full bundle deployment without blocking the Flask request."""
+    try:
+        script = _repo_root() / 'generate_upload.py'
+        if not script.exists():
+            raise FileNotFoundError(f'generate_upload.py not found at {script}')
+        command = [sys.executable, str(script), 'deploy', '--no-rag']
+        with app.app_context():
+            job = JobHistory.query.get(job_id)
+            if job:
+                job.status = 'RUNNING'
+                job.started_at = datetime.utcnow()
+                db.session.commit()
+        process = subprocess.Popen(command, cwd=str(script.parent), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout, stderr = process.communicate()
+        return_code = process.returncode
+        with open(log_path, 'w', encoding='utf-8', errors='replace') as log_fp:
+            log_fp.write(f'COMMAND: {shlex.join(command)}\nSTART: {datetime.utcnow().isoformat()}Z\n\n')
+            log_fp.write('STDOUT:\n')
+            log_fp.write(stdout or '')
+            log_fp.write('\nSTDERR:\n')
+            log_fp.write(stderr or '')
+            log_fp.write(f'\nEND: {datetime.utcnow().isoformat()}Z\nEXIT_CODE: {return_code}\n')
+        with app.app_context():
+            job = JobHistory.query.get(job_id)
+            if job:
+                parameters = dict(job.parameters or {})
+                parameters.update({'exit_code': return_code, 'stdout': (stdout or '')[-4000:], 'stderr': (stderr or '')[-4000:]})
+                job.parameters = parameters
+                job.status = 'COMPLETED' if return_code == 0 else 'FAILED'
+                job.error_message = '' if return_code == 0 else f'Deployment exited with code {return_code}.'
+                job.completed_at = datetime.utcnow()
+                db.session.commit()
+    except Exception as exc:
+        logger.exception('KPI deployment failed')
+        with app.app_context():
+            job = JobHistory.query.get(job_id)
+            if job:
+                parameters = dict(job.parameters or {})
+                parameters['exit_code'] = None
+                job.parameters = parameters
+                job.status = 'FAILED'
+                job.error_message = str(exc)
+                job.completed_at = datetime.utcnow()
+                db.session.commit()
+
+
+@app.route('/api/kpi/deploy', methods=['POST'])
+@login_required
+def api_kpi_deploy():
+    try:
+        for item in list_configurations():
+            _, content = get_configuration(item['id'])
+            validate_configuration(item['id'], content)
+    except (KeyError, FileNotFoundError, ValueError) as exc:
+        return jsonify({'ok': False, 'error': f'Managed configuration validation failed: {exc}'}), 400
+
+    log_dir = _first_writable_dir(get_cache_dir(), os.path.join(get_cache_dir(), 'kpi_deployments'))
+    if not log_dir:
+        return jsonify({'ok': False, 'error': 'No writable deployment log directory is available.'}), 500
+    log_path = os.path.join(log_dir, f'kpi_deploy_{uuid.uuid4().hex[:10]}.log')
+    job = JobHistory(
+        user_id=current_user.id,
+        tool_name='kpi_deploy',
+        input_path='generate_upload.py deploy --no-rag',
+        input_filename='generate_upload.py',
+        output_path=str(_repo_root() / 'generate_upload'),
+        output_log_path=log_path,
+        parameters={'execution_label': 'KPI bundle deploy', 'no_rag': True, 'deployment_log': log_path},
+        status='QUEUED',
+    )
+    db.session.add(job)
+    db.session.commit()
+    threading.Thread(target=_run_kpi_deploy_background, args=(job.id, log_path), daemon=True).start()
+    return jsonify({'ok': True, 'job_id': job.id, 'message': 'Bundle deployment queued with --no-rag.'})
+
+
+def _run_krakow_probe_background(job_id: int, log_path: str, profile_id: str):
+    profile = KRAKOW_RUNTIME_PROFILES[profile_id]
+    command = (
+        f"module load {shlex.quote(profile['module'])} && "
+        f"srun -A {shlex.quote(profile['account'])} -p {shlex.quote(profile['partition'])} "
+        f"--mem={shlex.quote(profile['memory'])} --cpus-per-task={profile['cpus']} "
+        f"--time={shlex.quote(profile['time_limit'])} sh -c 'hostname; pwd; id'"
+    )
+    try:
+        with app.app_context():
+            job = JobHistory.query.get(job_id)
+            if job:
+                job.status = 'RUNNING'
+                job.started_at = datetime.utcnow()
+                db.session.commit()
+        process = subprocess.Popen(['bash', '-lc', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout, stderr = process.communicate()
+        return_code = process.returncode
+        node = next((line.strip() for line in stdout.splitlines() if line.strip()), '')
+        slurm_job_id = (os.environ.get('SLURM_JOB_ID') or '').strip()
+        with open(log_path, 'w', encoding='utf-8', errors='replace') as log_fp:
+            log_fp.write(f'COMMAND: {command}\nSTART: {datetime.utcnow().isoformat()}Z\n\n')
+            log_fp.write('STDOUT:\n')
+            log_fp.write(stdout or '')
+            log_fp.write('\nSTDERR:\n')
+            log_fp.write(stderr or '')
+            log_fp.write(f'\nEND: {datetime.utcnow().isoformat()}Z\nEXIT_CODE: {return_code}\n')
+        with app.app_context():
+            job = JobHistory.query.get(job_id)
+            if job:
+                parameters = dict(job.parameters or {})
+                parameters.update({
+                    'node': node,
+                    'slurm_job_id': slurm_job_id,
+                    'exit_code': return_code,
+                    'stdout': (stdout or '')[-4000:],
+                    'stderr': (stderr or '')[-4000:],
+                })
+                job.parameters = parameters
+                job.slurm_job_id = slurm_job_id or None
+                job.status = 'COMPLETED' if return_code == 0 else 'FAILED'
+                job.error_message = '' if return_code == 0 else f'Helios probe exited with code {return_code}.'
+                job.completed_at = datetime.utcnow()
+                db.session.commit()
+    except Exception as exc:
+        with app.app_context():
+            job = JobHistory.query.get(job_id)
+            if job:
+                parameters = dict(job.parameters or {})
+                parameters['exit_code'] = None
+                job.parameters = parameters
+                job.status = 'FAILED'
+                job.error_message = str(exc)
+                job.completed_at = datetime.utcnow()
+                db.session.commit()
+
+
+@app.route('/api/kpi/krakow-probe', methods=['POST'])
+@login_required
+def api_kpi_krakow_probe():
+    if _request_cluster_target() != 'krakow':
+        return jsonify({'ok': False, 'error': 'Krakow runtime probes are available only from the Krakow URL.'}), 400
+    profile_id = (request.get_json(silent=True) or {}).get('profile', 'helios')
+    if profile_id not in KRAKOW_RUNTIME_PROFILES:
+        return jsonify({'ok': False, 'error': 'Unknown Krakow runtime profile.'}), 400
+    log_dir = _first_writable_dir(get_cache_dir(), os.path.join(get_cache_dir(), 'kpi_probes'))
+    if not log_dir:
+        return jsonify({'ok': False, 'error': 'No writable probe log directory is available.'}), 500
+    log_path = os.path.join(log_dir, f'krakow_probe_{uuid.uuid4().hex[:10]}.log')
+    profile = KRAKOW_RUNTIME_PROFILES[profile_id]
+    job = JobHistory(
+        user_id=current_user.id,
+        tool_name='krakow_probe',
+        input_path=profile_id,
+        input_filename=profile['label'],
+        output_path='',
+        output_log_path=log_path,
+        parameters={'execution_label': f"Krakow {profile['label']} probe", 'profile': profile_id, 'interactive': False},
+        status='QUEUED',
+    )
+    db.session.add(job)
+    db.session.commit()
+    threading.Thread(target=_run_krakow_probe_background, args=(job.id, log_path, profile_id), daemon=True).start()
+    return jsonify({'ok': True, 'job_id': job.id, 'message': f"{profile['label']} probe queued without --pty."})
 
 
 @app.route('/html/hyperlink_tool', methods=['GET', 'POST'])
@@ -2301,6 +2584,19 @@ def get_user_tool_jobs(tool_name: str, limit: int = 20, include_all: bool = Fals
     return jobs
 
 
+def get_recent_kpi_activity(limit: int = 20):
+    """Return KPI runs plus deployment/probe activity for the KPI page."""
+    jobs = (
+        JobHistory.query.filter(JobHistory.tool_name.in_(['kpi', 'kpi_deploy', 'krakow_probe']))
+        .order_by(JobHistory.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    for job in jobs:
+        _sync_runtime_job(job)
+    return jobs
+
+
 def _job_owner(job: JobHistory) -> str:
     if getattr(job, 'user', None) is not None and job.user is not None:
         return job.user.net_id
@@ -2335,6 +2631,21 @@ def _build_runtime_submit_payload(tool_key: str, mode: str, paths: dict, resourc
         'user': current_user.net_id,
         'user_password': user_password,
     }
+
+
+def _validate_hdf_inputs(input_hdf: str, output_hdf: str) -> None:
+    hdf_signature = b'\x89HDF\r\n\x1a\n'
+    for label, path in (('Input HDF', input_hdf), ('Output HDF', output_hdf)):
+        try:
+            if not os.path.isfile(path):
+                raise ValueError(f'{label} does not exist or is not a regular file: {path}')
+            if os.path.getsize(path) == 0:
+                raise ValueError(f'{label} is empty (0 bytes): {path}')
+            with open(path, 'rb') as handle:
+                if handle.read(len(hdf_signature)) != hdf_signature:
+                    raise ValueError(f'{label} is not a valid HDF5 file: {path}')
+        except OSError as exc:
+            raise ValueError(f'Cannot read {label.lower()} {path}: {exc}') from exc
 
 
 def _build_runtime_kpi_submission(form_source) -> dict:
@@ -2383,7 +2694,8 @@ def _build_runtime_kpi_submission(form_source) -> dict:
         'interactive_plot_mode': interactive_plot_mode,
         'interactive_source_target': primary_target,
     }
-    config_xml = (form_source.get('config_xml') or '').strip()
+    default_xml_id = 'can_config_xml' if primary_target == 'can_kpi' else 'udp_config_xml'
+    config_xml = (form_source.get('config_xml') or '').strip() or configuration_path(default_xml_id)
     json_path = (form_source.get('kpi_json') or '').strip()
     input_hdf = (form_source.get('input_hdf') or '').strip()
     output_hdf = (form_source.get('output_hdf') or '').strip()
@@ -2392,6 +2704,8 @@ def _build_runtime_kpi_submission(form_source) -> dict:
         raise ValueError('JSON path is required for the selected KPI submission mode.')
     if input_mode == 'hdf' and (not input_hdf or not output_hdf):
         raise ValueError('Input and output HDF paths are required for HDF mode.')
+    if input_mode == 'hdf':
+        _validate_hdf_inputs(input_hdf, output_hdf)
 
     paths.update(
         {
@@ -2552,7 +2866,7 @@ def _resolve_job_log_path(job: JobHistory, runtime_job=None):
     if source_log_path:
         console['source_log_path'] = source_log_path
 
-    log_path = mirror_log_path or source_log_path
+    log_path = mirror_log_path if mirror_log_path and os.path.exists(mirror_log_path) else source_log_path
     if not log_path and job.output_path:
         log_path = os.path.join(job.output_path, f'local_{job.tool_name}_{job.id}.log')
     if not log_path and job.slurm_job_id:
@@ -2572,7 +2886,7 @@ def _read_log_tail_text(log_path: str, n_lines: int) -> str:
     return ''.join(lines[-n_lines:])
 
 
-def _sync_runtime_job(job: JobHistory):
+def _sync_runtime_job(job: JobHistory, persist: bool = True):
     runtime_job_id = ((job.parameters or {}).get('runtime_job_id') if job.parameters else None)
     if not runtime_job_id:
         return None
@@ -2581,7 +2895,7 @@ def _sync_runtime_job(job: JobHistory):
     try:
         runtime_job = broker_client.get_status(int(runtime_job_id)).get('job')
     except Exception:
-        runtime_job = runtime_store.get_job(int(runtime_job_id))
+        runtime_job = runtime_store.get_job(int(runtime_job_id), refresh=False)
     if not runtime_job:
         return None
 
@@ -2617,7 +2931,8 @@ def _sync_runtime_job(job: JobHistory):
         parsed_completed_at = _parse_runtime_datetime(runtime_job['completed_at'])
         if parsed_completed_at is not None:
             job.completed_at = parsed_completed_at
-    db.session.commit()
+    if persist:
+        db.session.commit()
     return runtime_job
 
 
@@ -2842,6 +3157,11 @@ def _rerun_history_job(job: JobHistory):
         raise ValueError('This history row does not have enough saved input data to be re-triggered.')
 
     mode = str(parameters.get('mode') or paths.get('input_mode') or 'json').strip().lower()
+    if mode == 'hdf':
+        _validate_hdf_inputs(
+            str(paths.get('input_hdf') or '').strip(),
+            str(paths.get('output_hdf') or '').strip(),
+        )
     fallback_tool_key = execution_target if execution_target in RUNTIME_TOOL_DEFAULTS else 'interactive_plot'
     resources = _coerce_runtime_resources(parameters.get('resources') or {}, fallback_tool_key)
     execution_label = str(parameters.get('execution_label') or '').strip()
@@ -4254,11 +4574,20 @@ def view_job_output(job_id):
     except Exception as e:
         flash(f'Error reading output directory: {str(e)}', 'error')
         return redirect(url_for('job_history'))
+
+    featured_outputs = []
+    for label, relative_path in (
+        ('Interactive Plot', os.path.join('interactive_plot', 'master_index.html')),
+        ('CAN KPI Reports', os.path.join('can_kpi', 'index.html')),
+    ):
+        if os.path.isfile(os.path.join(output_path, relative_path)):
+            featured_outputs.append({'label': label, 'rel_path': relative_path})
     
     return render_template('tools/job_output.html',
                          job=job,
                          output_path=output_path,
-                         files=files)
+                         files=files,
+                         featured_outputs=featured_outputs)
 
 
 @app.route('/html/job/<int:job_id>/log')

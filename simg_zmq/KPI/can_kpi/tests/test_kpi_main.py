@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 
 from kpi_main import KpiMain
+from d_presentation_layer.kpi_html_gen import KpiHtmlGen
 
 
 class KpiMainRenderingTests(unittest.TestCase):
@@ -60,6 +61,14 @@ class KpiMainRenderingTests(unittest.TestCase):
         self.assertIn("Average Accuracy %", index_html)
         self.assertIn("Overall Average Accuracy", index_html)
         self.assertIn("input_fc_alias", index_html)
+
+    def test_extract_short_name_handles_build_token_before_hdf(self) -> None:
+        self.assertEqual(
+            KpiHtmlGen._extract_short_name(
+                "ThunderMCIP_WS11656_20250730_121739_0002_b04_HDF"
+            ),
+            "0002",
+        )
 
     def _write_pair_hdf(self, path: Path, sparse_sensor_id: str) -> None:
         with h5py.File(path, "w") as hdf:

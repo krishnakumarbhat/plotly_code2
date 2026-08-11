@@ -1,0 +1,145 @@
+Bootstrap: docker
+From: docker.io/python:3.11-slim
+
+%labels
+    Name CAN_INTERACTIVE_PLOT
+    Version 1.0
+    Author ouymc2
+    Description Combined CAN KPI ZMQ server and Interactive Plot pipeline
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export PYTHONPATH=/app/can_interactive_plot:$PYTHONPATH
+    export CAN_KPI_SERVER_HOST=${CAN_KPI_SERVER_HOST:-127.0.0.1}
+    export CAN_KPI_SERVER_PORT=${CAN_KPI_SERVER_PORT:-5556}
+    export CAN_KPI_SERVER_RESPONSE_TIMEOUT_MS=${CAN_KPI_SERVER_RESPONSE_TIMEOUT_MS:-180000}
+    export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    export LC_ALL=C
+
+%files
+    KPI/can_interactive_plot/a_persistence_layer /app/can_interactive_plot/a_persistence_layer
+    KPI/can_interactive_plot/b_data_storage /app/can_interactive_plot/b_data_storage
+    KPI/can_interactive_plot/c_business_layer /app/can_interactive_plot/c_business_layer
+    KPI/can_interactive_plot/d_presentation_layer /app/can_interactive_plot/d_presentation_layer
+    KPI/can_interactive_plot/InteractivePlot /app/can_interactive_plot/InteractivePlot
+    KPI/can_interactive_plot/can_intplot_main.py /app/can_interactive_plot/can_intplot_main.py
+    KPI/can_interactive_plot/can_kpi_main.py /app/can_interactive_plot/can_kpi_main.py
+    KPI/can_interactive_plot/can_kpi_server.py /app/can_interactive_plot/can_kpi_server.py
+    KPI/can_interactive_plot/ConfigInteractivePlots.xml /app/can_interactive_plot/ConfigInteractivePlots.xml
+    KPI/intplot_kpi/ConfigInteractivePlots_bordnet.xml /app/can_interactive_plot/ConfigInteractivePlots_bordnet.xml
+    KPI/can_interactive_plot/InputsInteractivePlot.json /app/can_interactive_plot/InputsInteractivePlot.json
+    KPI/can_interactive_plot/kpi.json /app/can_interactive_plot/kpi.json
+    KPI/can_interactive_plot/requirements.txt /app/can_interactive_plot/requirements.txt
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        && rm -rf /var/lib/apt/lists/*
+
+    python -m venv /opt/venv
+    . /opt/venv/bin/activate
+    pip install --no-cache-dir --upgrade pip setuptools wheel
+    pip install --no-cache-dir -r /app/can_interactive_plot/requirements.txt
+
+    mkdir -p /app/output /tmp/can_interactive_plot
+    chmod -R 755 /app/can_interactive_plot
+
+%runscript
+    . /opt/venv/bin/activate
+    umask 022
+
+    MODE="${1:-help}"
+    shift || true
+    APP_DIR=/app/can_interactive_plot
+
+    case "$MODE" in
+        server)
+            PORT="${1:-${CAN_KPI_SERVER_PORT:-5556}}"
+            exec python "$APP_DIR/can_kpi_server.py" zmq "$PORT"
+            ;;
+
+        kpi)
+            exec python "$APP_DIR/can_kpi_main.py" "$@"
+            ;;
+
+        plot)
+            exec python "$APP_DIR/can_intplot_main.py" "$@"
+            ;;
+
+        both)
+            if [ "$#" -lt 2 ]; then
+                echo "Usage: apptainer run can_interactive_plot.sif both <config.xml> <inputs.json> [output_dir] [plot_config.json]" >&2
+                exit 1
+            fi
+
+            PORT="${CAN_KPI_SERVER_PORT:-5556}"
+            SERVER_LOG="${CAN_KPI_SERVER_LOG:-/tmp/can_interactive_plot_can_kpi_server.log}"
+            python "$APP_DIR/can_kpi_server.py" zmq "$PORT" >"$SERVER_LOG" 2>&1 &
+            SERVER_PID=$!
+
+            cleanup() {
+                kill "$SERVER_PID" 2>/dev/null || true
+                wait "$SERVER_PID" 2>/dev/null || true
+            }
+            trap cleanup EXIT INT TERM
+
+            READY=0
+            for ATTEMPT in $(seq 1 30); do
+                if ! kill -0 "$SERVER_PID" 2>/dev/null; then
+                    cat "$SERVER_LOG" >&2 || true
+                    exit 1
+                fi
+                if python - "$PORT" <<'PY'
+import socket
+import sys
+
+port = int(sys.argv[1])
+try:
+    with socket.create_connection(("127.0.0.1", port), timeout=0.5):
+        pass
+except OSError:
+    raise SystemExit(1)
+PY
+                then
+                    READY=1
+                    break
+                fi
+                sleep 1
+            done
+
+            if [ "$READY" -ne 1 ]; then
+                echo "CAN KPI server did not start on port $PORT" >&2
+                cat "$SERVER_LOG" >&2 || true
+                exit 1
+            fi
+
+            python "$APP_DIR/can_intplot_main.py" "$@"
+            RC=$?
+            cleanup
+            trap - EXIT INT TERM
+            exit "$RC"
+            ;;
+
+        help|--help|-h|*)
+            echo "Combined CAN KPI and Interactive Plot container"
+            echo "Usage: apptainer run can_interactive_plot.sif <mode> [args]"
+            echo "Modes:"
+            echo "  server [port]"
+            echo "  kpi <kpi.json> [html_dir]"
+            echo "  plot <config.xml> <inputs.json> [output_dir] [plot_config.json]"
+            echo "  both <config.xml> <inputs.json> [output_dir] [plot_config.json]"
+            exit 0
+            ;;
+    esac
+
+%test
+    . /opt/venv/bin/activate
+    PYTHONPATH=/app/can_interactive_plot python -c "import numpy, pandas, h5py, plotly, zmq, lxml; import can_kpi_server; import can_intplot_main; print('CAN KPI and Interactive Plot imports OK')"
+
+%help
+    Combined CAN KPI and Interactive Plot container.
+
+    The both mode starts can_kpi_server.py on TCP port 5556, then runs
+    can_intplot_main.py. The interactive plot sends per-sensor CAN KPI
+    requests to that server and embeds the generated KPI HTML pages.

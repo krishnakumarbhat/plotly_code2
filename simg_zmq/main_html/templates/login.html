@@ -89,22 +89,13 @@
                         Sign in with your Net ID to continue.
                         {% endif %}
                     </p>
+                    <div class="alert alert-light border mb-4" role="status">
+                        <strong>Cluster detected from this URL:</strong>
+                        <span class="text-capitalize">{{ detected_cluster if detected_cluster != 'any' else 'automatic detection' }}</span>.
+                        <div class="small text-muted mt-1">No cluster selection is required. Use the URL for the cluster you want to access.</div>
+                    </div>
                     
                     <form method="POST" action="{{ url_for('login') }}">
-                        {% if cluster_auth_enabled %}
-                        <div class="mb-3">
-                            <label for="cluster_target" class="form-label">Cluster</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-hdd-network"></i></span>
-                                <select class="form-select" id="cluster_target" name="cluster_target">
-                                    {% for cluster_value, cluster_label in cluster_choices %}
-                                    <option value="{{ cluster_value }}" {% if selected_cluster_target == cluster_value %}selected{% endif %}>{{ cluster_label }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-text">Use the same Net ID and password you use to open an SSH session on the selected cluster.</div>
-                        </div>
-                        {% endif %}
                         <div class="mb-3">
                             <label for="net_id" class="form-label">Net ID</label>
                             <div class="input-group">
@@ -129,6 +120,8 @@
                             <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
                         </button>
                     </form>
+                    <div id="backendReadyState" class="small text-muted text-center" role="status">Checking backend readiness...</div>
+                    <a id="dashboardReadyLink" class="btn btn-outline-primary w-100 mt-2 disabled" href="{{ url_for('dashboard') }}" aria-disabled="true">Go to Dashboard</a>
                     
                     <div class="text-center mt-4">
                         {% if cluster_auth_enabled %}
@@ -146,5 +139,31 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    (() => {
+        const state = document.getElementById('backendReadyState');
+        const dashboardLink = document.getElementById('dashboardReadyLink');
+        let attempts = 0;
+        async function checkBackend() {
+            attempts += 1;
+            try {
+                const response = await fetch('{{ url_for("health") }}', {cache: 'no-store'});
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                state.className = 'small text-success text-center';
+                state.textContent = 'Backend ready. You can sign in or continue to the dashboard.';
+                dashboardLink.classList.remove('disabled');
+                dashboardLink.removeAttribute('aria-disabled');
+                return;
+            } catch (error) {
+                state.className = 'small text-warning text-center';
+                state.textContent = `Backend is starting. Retrying automatically (attempt ${attempts})...`;
+                dashboardLink.classList.add('disabled');
+                dashboardLink.setAttribute('aria-disabled', 'true');
+                window.setTimeout(checkBackend, Math.min(10000, 1000 + attempts * 500));
+            }
+        }
+        checkBackend();
+    })();
+    </script>
 </body>
 </html>

@@ -205,6 +205,72 @@
                 </div>
             </div>
 
+            <div class="card runtime-card mb-4" id="configurationFilesCard">
+                <div class="card-header d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <span class="section-label">Configuration files</span>
+                        <h3 class="mb-1">Edit, validate, and use</h3>
+                        <p class="text-muted small mb-0">Changes are validated before saving and the previous file is backed up automatically.</p>
+                    </div>
+                    <span class="runtime-kind">{{ detected_cluster|title }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for config in configuration_files %}
+                        <div class="list-group-item bg-transparent border-light-subtle config-row" data-config-id="{{ config.id }}">
+                            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                <div class="min-w-0">
+                                    <strong class="d-block text-break">{{ config.filename }}</strong>
+                                    <small class="text-muted d-block">{{ config.purpose }}</small>
+                                    <small class="text-muted d-block text-break" title="{{ config.configured_path }}">{{ config.path }}</small>
+                                </div>
+                                <span class="badge rounded-pill {% if config.exists %}text-bg-success{% else %}text-bg-warning{% endif %}">{{ 'Ready' if config.exists else 'Missing' }}</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <button type="button" class="btn btn-sm btn-outline-dark config-action" data-action="view">View</button>
+                                <button type="button" class="btn btn-sm btn-outline-dark config-action" data-action="edit">Edit</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary config-action" data-action="validate">Validate</button>
+                                <button type="button" class="btn btn-sm btn-primary config-action" data-action="save">Save</button>
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('download_kpi_configuration', config_id=config.id) }}">Download</a>
+                                <label class="btn btn-sm btn-outline-secondary mb-0">
+                                    Upload
+                                    <input type="file" class="d-none config-upload" accept=".json,.xml,text/xml,application/json">
+                                </label>
+                                {% if config.format == 'xml' %}
+                                <button type="button" class="btn btn-sm btn-outline-success config-action" data-action="use">Use for {{ 'CAN KPI' if config.id == 'can_config_xml' else 'UDP KPI' }}</button>
+                                {% elif config.id == 'input_output_json' %}
+                                <button type="button" class="btn btn-sm btn-outline-success config-action" data-action="use">Use as input</button>
+                                {% endif %}
+                            </div>
+                            <div class="small mt-2 config-status" role="status"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card runtime-card mb-4">
+                <div class="card-header">
+                    <span class="section-label">Deployment and runtime checks</span>
+                    <h3 class="mb-1">Prepare the bundle</h3>
+                    <p class="text-muted small mb-0">Build and upload all non-RAG SIMG images, or run a non-interactive Krakow probe.</p>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <button type="button" class="btn btn-primary" id="deployBundleButton"><i class="bi bi-cloud-arrow-up me-1"></i>Generate and deploy all SIMG</button>
+                        {% if detected_cluster == 'krakow' %}
+                        <select class="form-select w-auto" id="krakowProfile" aria-label="Krakow runtime profile">
+                            {% for profile_id, profile in krakow_runtime_profiles.items() %}
+                            <option value="{{ profile_id }}">{{ profile.label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-dark" id="krakowProbeButton"><i class="bi bi-terminal me-1"></i>Probe Slurm</button>
+                        {% endif %}
+                    </div>
+                    <div class="small mt-3" id="deploymentStatus" role="status"></div>
+                </div>
+            </div>
+
             <div class="card runtime-card">
                 <div class="card-header">
                     <span class="section-label">Recent runs</span>
@@ -220,7 +286,12 @@
                                     <strong class="d-block">{{ execution_target|replace('_', ' ')|title }}</strong>
                                     <small class="text-muted d-block">{{ job.input_filename or job.input_path }}</small>
                                     <small class="text-muted d-block">Requested by {{ job.user.net_id if job.user else (job.parameters.get('requested_by') if job.parameters else 'unknown') }}</small>
+                                    <small class="text-muted d-block">Run #{{ job.id }}</small>
                                     <small class="text-muted">{{ job.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    {% if job.parameters and job.parameters.get('node') %}<small class="text-muted d-block">Node: {{ job.parameters.get('node') }}</small>{% endif %}
+                                    {% if job.parameters and job.parameters.get('slurm_job_id') %}<small class="text-muted d-block">Slurm job: {{ job.parameters.get('slurm_job_id') }}</small>{% endif %}
+                                    {% if job.parameters and job.parameters.get('exit_code') is not none %}<small class="text-muted d-block">Exit code: {{ job.parameters.get('exit_code') }}</small>{% endif %}
+                                    {% if job.output_log_path %}<small class="text-muted d-block text-break">Log: {{ job.output_log_path }}</small>{% endif %}
                                 </div>
                                 <span class="status-badge status-{{ job.status }}">{{ job.status }}</span>
                             </div>
@@ -252,6 +323,29 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="configEditorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="section-label">Configuration editor</span>
+                    <h5 class="modal-title mb-0" id="configEditorTitle">Configuration</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control font-monospace" id="configEditorContent" rows="24" spellcheck="false"></textarea>
+                <div class="small mt-2" id="configEditorStatus" role="status"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-dark" id="configEditorValidate">Validate</button>
+                <button type="button" class="btn btn-primary" id="configEditorSave">Validate and save</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -271,6 +365,149 @@ const configXmlField = document.getElementById('config_xml');
 const runtimeModeCopy = document.getElementById('runtimeModeCopy');
 const kpiRuntimeForm = document.getElementById('kpiRuntimeForm');
 const reuseDecisionInput = document.getElementById('reuse_decision');
+const configurationFiles = {{ configuration_files|tojson }};
+const configurationById = Object.fromEntries(configurationFiles.map((item) => [item.id, item]));
+let activeConfigurationId = null;
+let activeConfigurationMode = 'view';
+
+function setStatus(element, message, tone = 'muted') {
+    element.className = `small mt-2 text-${tone}`;
+    element.textContent = message;
+}
+
+async function fetchConfiguration(configId) {
+    const response = await fetch(`/api/kpi/configurations/${encodeURIComponent(configId)}`);
+    const data = await response.json();
+    if (!response.ok || !data.ok) {
+        throw new Error(data.error || 'Unable to load configuration.');
+    }
+    return data;
+}
+
+function openConfigurationEditor(configId, mode) {
+    activeConfigurationId = configId;
+    activeConfigurationMode = mode;
+    const config = configurationById[configId];
+    document.getElementById('configEditorTitle').textContent = config ? config.filename : 'Configuration';
+    const editor = document.getElementById('configEditorContent');
+    const validateButton = document.getElementById('configEditorValidate');
+    const saveButton = document.getElementById('configEditorSave');
+    editor.readOnly = mode === 'view';
+    validateButton.classList.toggle('d-none', mode === 'view');
+    saveButton.classList.toggle('d-none', mode === 'view');
+    setStatus(document.getElementById('configEditorStatus'), 'Loading...', 'muted');
+    new bootstrap.Modal(document.getElementById('configEditorModal')).show();
+    fetchConfiguration(configId).then((data) => {
+        editor.value = data.content;
+        setStatus(document.getElementById('configEditorStatus'), mode === 'view' ? 'Read-only view.' : 'Ready to edit.', 'muted');
+    }).catch((error) => setStatus(document.getElementById('configEditorStatus'), error.message, 'danger'));
+}
+
+async function validateConfiguration(configId, content) {
+    const response = await fetch(`/api/kpi/configurations/${encodeURIComponent(configId)}`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content}),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || 'Validation failed.');
+    return data;
+}
+
+async function saveActiveConfiguration() {
+    const content = document.getElementById('configEditorContent').value;
+    const status = document.getElementById('configEditorStatus');
+    setStatus(status, 'Validating...', 'muted');
+    await validateConfiguration(activeConfigurationId, content);
+    setStatus(status, 'Validation passed. Saving with a backup...', 'muted');
+    const response = await fetch(`/api/kpi/configurations/${encodeURIComponent(activeConfigurationId)}/save`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content}),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || 'Save failed.');
+    setStatus(status, `${data.message} Backup: ${data.configuration.backup_path || 'none'}`, 'success');
+    const rowStatus = document.querySelector(`[data-config-id="${CSS.escape(activeConfigurationId)}"] .config-status`);
+    if (rowStatus) setStatus(rowStatus, data.message, 'success');
+}
+
+document.querySelectorAll('.config-row').forEach((row) => {
+    const configId = row.dataset.configId;
+    row.querySelectorAll('.config-action').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const action = button.dataset.action;
+            const rowStatus = row.querySelector('.config-status');
+            try {
+                if (action === 'view' || action === 'edit') {
+                    openConfigurationEditor(configId, action);
+                } else if (action === 'validate') {
+                    const data = await fetchConfiguration(configId);
+                    await validateConfiguration(configId, data.content);
+                    setStatus(rowStatus, 'Validation passed.', 'success');
+                } else if (action === 'save') {
+                    openConfigurationEditor(configId, 'edit');
+                } else if (action === 'use') {
+                    const config = configurationById[configId];
+                    if (configId === 'input_output_json') document.getElementById('kpi_json').value = config.path;
+                    if (configId === 'config_json') document.getElementById('optional_config').value = config.path;
+                    if (configId === 'udp_config_xml' || configId === 'can_config_xml') document.getElementById('config_xml').value = config.path;
+                    setStatus(rowStatus, `${config.filename} selected for the current run.`, 'success');
+                    updateRuntimeForm();
+                }
+            } catch (error) {
+                setStatus(rowStatus, error.message, 'danger');
+            }
+        });
+    });
+    const upload = row.querySelector('.config-upload');
+    if (upload) upload.addEventListener('change', async () => {
+        if (!upload.files.length) return;
+        const formData = new FormData();
+        formData.append('file', upload.files[0]);
+        const rowStatus = row.querySelector('.config-status');
+        setStatus(rowStatus, 'Uploading, validating, and saving...', 'muted');
+        try {
+            const response = await fetch(`/api/kpi/configurations/${encodeURIComponent(configId)}/upload`, {method: 'POST', body: formData});
+            const data = await response.json();
+            if (!response.ok || !data.ok) throw new Error(data.error || 'Upload failed.');
+            setStatus(rowStatus, `${data.message} Backup: ${data.configuration.backup_path || 'none'}`, 'success');
+        } catch (error) {
+            setStatus(rowStatus, error.message, 'danger');
+        } finally {
+            upload.value = '';
+        }
+    });
+});
+
+document.getElementById('configEditorValidate').addEventListener('click', async () => {
+    try {
+        await validateConfiguration(activeConfigurationId, document.getElementById('configEditorContent').value);
+        setStatus(document.getElementById('configEditorStatus'), 'Validation passed.', 'success');
+    } catch (error) {
+        setStatus(document.getElementById('configEditorStatus'), error.message, 'danger');
+    }
+});
+document.getElementById('configEditorSave').addEventListener('click', async () => {
+    try {
+        await saveActiveConfiguration();
+    } catch (error) {
+        setStatus(document.getElementById('configEditorStatus'), error.message, 'danger');
+    }
+});
+
+async function queueKpiAction(url, payload, statusMessage) {
+    const status = document.getElementById('deploymentStatus');
+    setStatus(status, statusMessage, 'muted');
+    try {
+        const response = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload || {})});
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Request failed.');
+        setStatus(status, `${data.message} Job ${data.job_id} is now visible under Recent Runs.`, 'success');
+        window.setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+        setStatus(status, error.message, 'danger');
+    }
+}
+document.getElementById('deployBundleButton').addEventListener('click', () => queueKpiAction('/api/kpi/deploy', {}, 'Generating and uploading all non-RAG SIMG images...'));
+const krakowProbeButton = document.getElementById('krakowProbeButton');
+if (krakowProbeButton) krakowProbeButton.addEventListener('click', () => queueKpiAction('/api/kpi/krakow-probe', {profile: document.getElementById('krakowProfile').value}, 'Submitting a non-interactive Slurm probe...'));
 
 function selectedExecutionTarget() {
     const selected = document.querySelector('.execution-target:checked');
@@ -335,6 +572,14 @@ function updateRuntimeForm() {
         configXmlField.placeholder = target === 'can_kpi'
             ? '/path/to/ConfigInteractivePlots_bordnet.xml'
             : '/path/to/ConfigInteractivePlots.xml';
+        if (requiresXml) {
+            const managedConfigId = target === 'can_kpi' ? 'can_config_xml' : 'udp_config_xml';
+            const managedConfig = configurationById[managedConfigId];
+            if (managedConfig && managedConfig.exists && (!configXmlField.value || configXmlField.dataset.managed === 'true')) {
+                configXmlField.value = managedConfig.path;
+                configXmlField.dataset.managed = 'true';
+            }
+        }
     }
 
     document.querySelectorAll('#runtimeSummary .runtime-line').forEach((line) => {
@@ -368,6 +613,7 @@ function updateRuntimeForm() {
 
 executionInputs.forEach((input) => input.addEventListener('change', updateRuntimeForm));
 modeInputs.forEach((input) => input.addEventListener('change', updateRuntimeForm));
+if (configXmlField) configXmlField.addEventListener('input', () => { configXmlField.dataset.managed = 'false'; });
 
 if (interactivePlotToggle) {
     interactivePlotToggle.addEventListener('change', () => {

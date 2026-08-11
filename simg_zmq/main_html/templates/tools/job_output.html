@@ -43,6 +43,22 @@
             </small>
         </div>
     </div>
+
+    {% if featured_outputs %}
+    <div class="card shadow-sm mb-4 border-primary">
+        <div class="card-header">
+            <h6 class="mb-0"><i class="bi bi-bar-chart-line"></i> Reports</h6>
+        </div>
+        <div class="card-body d-flex flex-wrap gap-2">
+            {% for report in featured_outputs %}
+            <a href="{{ url_for('serve_job_file', job_id=job.id, rel_path=report.rel_path) }}"
+               target="_blank" class="btn btn-primary">
+                <i class="bi bi-box-arrow-up-right"></i> Open {{ report.label }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     
     <!-- Files List -->
     <div class="card shadow-sm">
