@@ -42,27 +42,12 @@ else
     mkdir -p "$OUTPUT_DIR"
 fi
 
-# Prefer the combined CAN KPI + Interactive Plot image: it runs the merged plot
-# pipeline, CAN KPI reports and master index refresh in one pass. Falls back to
-# the sequential launcher flow when the combined image is not present.
+# Prefer the CAN Interactive Plot image. Its plot app accepts the full JSON batch
+# and keeps CAN KPI integration inside the CAN-specific pipeline.
 COMBINED_IMAGE="$SCRIPT_DIR/can_intplot/canintplot_kpi.simg"
 USE_COMBINED=0
 if [[ -f "$COMBINED_IMAGE" ]]; then
-    PAIR="$(bundle_python - "$INPUT_JSON" <<'PY'
-import json, sys
-with open(sys.argv[1], encoding='utf-8') as handle:
-    data = json.load(handle)
-print((data.get('INPUT_HDF') or [''])[0])
-print((data.get('OUTPUT_HDF') or [''])[0])
-PY
-)"
-    INPUT_HDF="$(printf '%s\n' "$PAIR" | sed -n '1p')"
-    OUTPUT_HDF="$(printf '%s\n' "$PAIR" | sed -n '2p')"
-    if [[ -n "$INPUT_HDF" && -n "$OUTPUT_HDF" && -f "$INPUT_HDF" && -f "$OUTPUT_HDF" ]]; then
-        USE_COMBINED=1
-    else
-        echo "[inplot_can] combined image found but inputs.json has no valid INPUT_HDF/OUTPUT_HDF pair; falling back to launcher flow" >&2
-    fi
+    USE_COMBINED=1
 fi
 
 bundle_require_tmux
@@ -73,7 +58,6 @@ MAIN_LOG="$RUN_DIR/can_intplot.log"
 MAIN_SCRIPT="$RUN_DIR/can_intplot_window.sh"
 
 if (( USE_COMBINED )); then
-    COMBINED_ARGS=("$INPUT_HDF" "$OUTPUT_HDF" --outdir "$OUTPUT_DIR")
     cat > "$MAIN_SCRIPT" <<EOF
 #!/usr/bin/env bash
 set -uo pipefail
@@ -81,7 +65,7 @@ exec > >(tee -a "$MAIN_LOG") 2>&1
 # shellcheck source=/dev/null
 source "$BUNDLE_ROOT/bundle_common.sh"
 echo '[inplot_can] combined CAN KPI + Interactive Plot run'
-bundle_run_image "$COMBINED_IMAGE" "${COMBINED_ARGS[@]}"
+bundle_run_image --app plot "$COMBINED_IMAGE" "$CONFIG_XML" "$INPUT_JSON" "$OUTPUT_DIR"${PLOT_CONFIG:+ "$PLOT_CONFIG"}
 status=\$?
 printf '%s' "\$status" > "$MAIN_EXIT"
 exit "\$status"

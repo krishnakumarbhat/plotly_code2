@@ -2656,6 +2656,11 @@ def _build_runtime_kpi_submission(form_source) -> dict:
     interactive_plot_mode = (form_source.get('interactive_plot_mode') or 'disabled').strip().lower()
     if interactive_plot_mode not in {'disabled', 'enabled', 'only'}:
         interactive_plot_mode = 'disabled'
+    can_interactive_plot_mode = (form_source.get('can_interactive_plot_mode') or 'disabled').strip().lower()
+    if can_interactive_plot_mode not in {'disabled', 'enabled'}:
+        can_interactive_plot_mode = 'disabled'
+    if primary_target == 'can_kpi' and can_interactive_plot_mode == 'enabled':
+        interactive_plot_mode = 'enabled'
     interactive_plot_enabled = interactive_plot_mode == 'enabled'
     interactive_plot_only = interactive_plot_mode == 'only'
     execution_target = 'interactive_plot' if interactive_plot_only else primary_target
@@ -2692,6 +2697,7 @@ def _build_runtime_kpi_submission(form_source) -> dict:
         'input_mode': input_mode,
         'output_dir': output_dir,
         'interactive_plot_mode': interactive_plot_mode,
+        'can_interactive_plot_mode': can_interactive_plot_mode,
         'interactive_source_target': primary_target,
     }
     default_xml_id = 'can_config_xml' if primary_target == 'can_kpi' else 'udp_config_xml'
@@ -2722,7 +2728,7 @@ def _build_runtime_kpi_submission(form_source) -> dict:
     if interactive_plot_only:
         execution_label = 'Interactive Plot only'
     elif interactive_plot_enabled and primary_target == 'can_kpi':
-        execution_label = 'CAN KPI + Interactive Plot'
+        execution_label = 'CAN KPI + CAN Interactive Plot'
     elif interactive_plot_enabled:
         execution_label = 'UDP KPI + Interactive Plot'
     elif primary_target == 'can_kpi':

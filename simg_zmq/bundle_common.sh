@@ -116,6 +116,12 @@ bundle_set_container_env() {
 bundle_run_image() {
     local image_path="$1"
     shift
+    local app_name=''
+    if [[ "$image_path" == '--app' ]]; then
+        app_name="$1"
+        image_path="$2"
+        shift 2
+    fi
 
     local runtime_bin
     runtime_bin="$(bundle_runtime_bin)"
@@ -137,6 +143,9 @@ bundle_run_image() {
         fi
     done
 
+    if [[ -n "$app_name" ]]; then
+        command+=(--app "$app_name")
+    fi
     command+=("$image_path" "$@")
     "${command[@]}"
 }

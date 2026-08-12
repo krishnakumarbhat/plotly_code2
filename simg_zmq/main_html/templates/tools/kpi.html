@@ -16,6 +16,7 @@
 
                     <form method="POST" id="kpiRuntimeForm">
                         <input type="hidden" name="interactive_plot_mode" id="interactive_plot_mode" value="disabled">
+                        <input type="hidden" name="can_interactive_plot_mode" id="can_interactive_plot_mode" value="disabled">
                         <input type="hidden" name="reuse_decision" id="reuse_decision" value="">
                         <div class="mb-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
@@ -38,13 +39,28 @@
                                 </div>
                                 {% endfor %}
                             </div>
-                            <div class="alert alert-light border mt-3 mb-0">
-                                <div class="form-check form-switch d-flex justify-content-between align-items-center gap-3 mb-0">
-                                    <div>
-                                        <label class="form-check-label fw-semibold" for="interactivePlotToggle">Enable Interactive Plot</label>
-                                        <div class="text-muted small">Disabled runs only the selected KPI target. Enabled adds Interactive Plot to the selected KPI runtime.</div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <div class="alert alert-light border mb-0 h-100">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center gap-3 mb-0">
+                                            <div>
+                                                <label class="form-check-label fw-semibold" for="interactivePlotToggle">Enable Interactive Plot</label>
+                                                <div class="text-muted small">Use the generic Interactive Plot path with UDP KPI.</div>
+                                            </div>
+                                            <input class="form-check-input" type="checkbox" role="switch" id="interactivePlotToggle">
+                                        </div>
                                     </div>
-                                    <input class="form-check-input" type="checkbox" role="switch" id="interactivePlotToggle">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="alert alert-primary border mb-0 h-100">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center gap-3 mb-0">
+                                            <div>
+                                                <label class="form-check-label fw-semibold" for="canInteractivePlotToggle">Enable CAN Interactive Plot</label>
+                                                <div class="text-muted small">Use the CAN KPI + CAN Interactive Plot pipeline when CAN KPI is selected.</div>
+                                            </div>
+                                            <input class="form-check-input" type="checkbox" role="switch" id="canInteractivePlotToggle">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -357,7 +373,9 @@ const xmlFields = document.querySelectorAll('.xml-needed');
 const jsonFields = document.querySelectorAll('.json-only');
 const hdfFields = document.querySelectorAll('.hdf-only');
 const interactivePlotModeInput = document.getElementById('interactive_plot_mode');
+const canInteractivePlotModeInput = document.getElementById('can_interactive_plot_mode');
 const interactivePlotToggle = document.getElementById('interactivePlotToggle');
+const canInteractivePlotToggle = document.getElementById('canInteractivePlotToggle');
 const interactiveOnlyButton = document.getElementById('interactiveOnlyButton');
 const jsonInputLabel = document.getElementById('jsonInputLabel');
 const jsonInputField = document.getElementById('kpi_json');
@@ -545,11 +563,19 @@ function setInteractivePlotMode(mode) {
     updateRuntimeForm();
 }
 
+function setCanInteractivePlotMode(mode) {
+    if (!canInteractivePlotModeInput) return;
+    canInteractivePlotModeInput.value = mode;
+    if (canInteractivePlotToggle) canInteractivePlotToggle.checked = mode === 'enabled';
+    updateRuntimeForm();
+}
+
 function updateRuntimeForm() {
     const target = selectedExecutionTarget();
     const mode = selectedInputMode();
     const interactivePlotMode = selectedInteractivePlotMode();
-    const interactiveEnabled = interactivePlotMode === 'enabled';
+    const canInteractiveEnabled = canInteractivePlotModeInput && canInteractivePlotModeInput.value === 'enabled';
+    const interactiveEnabled = target === 'can_kpi' ? canInteractiveEnabled : interactivePlotMode === 'enabled';
     const interactiveOnly = interactivePlotMode === 'only';
     const requiresXml = interactivePlotMode !== 'disabled';
     const resourceProfile = requiresXml ? 'interactive_plot' : target;
@@ -596,10 +622,17 @@ function updateRuntimeForm() {
         } else if (interactiveEnabled && target === 'udp_kpi') {
             runtimeModeCopy.textContent = 'UDP KPI plus Interactive Plot through the existing ZMQ bridge.';
         } else if (interactiveEnabled) {
-            runtimeModeCopy.textContent = 'CAN KPI plus Interactive Plot as one broker request with both outputs generated together.';
+            runtimeModeCopy.textContent = 'CAN KPI plus CAN Interactive Plot as one broker request with both outputs generated together.';
         } else {
             runtimeModeCopy.textContent = `${executionLabel(target)} only.`;
         }
+    }
+
+    if (interactivePlotToggle) {
+        interactivePlotToggle.disabled = target === 'can_kpi' || interactiveOnly;
+    }
+    if (canInteractivePlotToggle) {
+        canInteractivePlotToggle.disabled = target !== 'can_kpi' || interactiveOnly;
     }
 
     const defaults = runtimeDefaults[resourceProfile] || runtimeDefaults.udp_kpi;
@@ -621,6 +654,12 @@ if (interactivePlotToggle) {
     });
 }
 
+if (canInteractivePlotToggle) {
+    canInteractivePlotToggle.addEventListener('change', () => {
+        setCanInteractivePlotMode(canInteractivePlotToggle.checked ? 'enabled' : 'disabled');
+    });
+}
+
 if (interactiveOnlyButton) {
     interactiveOnlyButton.addEventListener('click', () => {
         const nextMode = selectedInteractivePlotMode() === 'only' ? 'disabled' : 'only';
@@ -629,6 +668,7 @@ if (interactiveOnlyButton) {
 }
 
 setInteractivePlotMode('disabled');
+setCanInteractivePlotMode('disabled');
 
 document.getElementById('create_jira').addEventListener('change', function() {
     const fields = document.getElementById('kpiJiraFields');

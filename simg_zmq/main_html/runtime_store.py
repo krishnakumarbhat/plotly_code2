@@ -983,7 +983,7 @@ class RuntimeStore:
                     {'id': 'main-int', 'source': 'main_html', 'target': 'interactive_plot', 'label': 'Interactive Plot only', 'notes': 'Interactive Plot can also run by itself from the KPI form.'},
                     {'id': 'main-rag', 'source': 'main_html', 'target': 'rag', 'label': 'Chat / RAG', 'notes': 'Chat requests are forwarded to the RAG service.'},
                     {'id': 'udp-int', 'source': 'udp_kpi', 'target': 'interactive_plot', 'label': 'ZMQ bridge', 'notes': 'UDP KPI can stream live KPI data to Interactive Plot over ZMQ.'},
-                    {'id': 'can-int', 'source': 'can_kpi', 'target': 'interactive_plot', 'label': 'Shared output flow', 'notes': 'CAN KPI can run together with Interactive Plot in the coordinated broker flow.'},
+                    {'id': 'can-int', 'source': 'can_kpi', 'target': 'interactive_plot', 'label': 'CAN output flow', 'notes': 'CAN KPI can run together with CAN Interactive Plot in the coordinated broker flow.'},
                 ],
                 'viewport': {'x': 0, 'y': 0, 'zoom': 1},
             },
