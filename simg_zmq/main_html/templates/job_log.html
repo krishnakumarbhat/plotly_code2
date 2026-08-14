@@ -341,7 +341,7 @@ if (consoleOutput && consolePaneSelect && consoleInput && sendConsoleInputBtn &&
 
   sendInterruptBtn.addEventListener('click', () => sendConsoleInput('interrupt'));
 
-  pollTimer = window.setInterval(pollConsoleTail, 1500);
+  pollTimer = window.setInterval(pollConsoleTail, 3000);
   window.setTimeout(() => {
     consoleOutput.scrollTop = consoleOutput.scrollHeight;
     pollConsoleTail();

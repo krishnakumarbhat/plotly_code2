@@ -389,7 +389,11 @@ def generate(no_rag=False):
         if src.is_dir():
             if dst.exists():
                 _remove_tree(dst)
-            shutil.copytree(src, dst, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.git'))
+            shutil.copytree(
+                src,
+                dst,
+                ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.git', '.cache_html', '*.db', '*.sqlite', '*.sqlite3'),
+            )
             print(f'  copied bundle_src/{name}/')
 
     if (ROOT / 'rag').is_dir():
@@ -653,6 +657,54 @@ def _sftp_ensure_dir(sftp, path, known_dirs=None):
             known_dirs.add(p)
 
 
+def _atomic_sftp_put(sftp, local_path, remote_path, callback=None, executable=False, preserve_partial=False):
+    """Resume a staged upload, then verify and atomically replace the live path."""
+    local_path = Path(local_path)
+    remote_path = str(PurePosixPath(remote_path))
+    remote_parent = PurePosixPath(remote_path).parent
+    staged_remote_path = str(remote_parent / f'.{PurePosixPath(remote_path).name}.uploading')
+    local_size = local_path.stat().st_size
+    try:
+        try:
+            staged_size = int(getattr(sftp.stat(staged_remote_path), 'st_size', 0))
+        except FileNotFoundError:
+            staged_size = 0
+        if staged_size > local_size:
+            sftp.remove(staged_remote_path)
+            staged_size = 0
+
+        with local_path.open('rb') as source:
+            source.seek(staged_size)
+            with sftp.open(staged_remote_path, 'ab') as target:
+                if hasattr(target, 'set_pipelined'):
+                    target.set_pipelined(True)
+                transferred = staged_size
+                while transferred < local_size:
+                    chunk = source.read(min(1024 * 1024, local_size - transferred))
+                    if not chunk:
+                        break
+                    target.write(chunk)
+                    transferred += len(chunk)
+                    if callback:
+                        callback(transferred, local_size)
+        if executable:
+            sftp.chmod(staged_remote_path, 0o755)
+        staged_attr = sftp.stat(staged_remote_path)
+        if getattr(staged_attr, 'st_size', -1) != local_size:
+            raise OSError(
+                f'staged upload size mismatch: local={local_size}, remote={getattr(staged_attr, "st_size", "?")}'
+            )
+        sftp.posix_rename(staged_remote_path, remote_path)
+        return sftp.stat(remote_path)
+    except Exception:
+        if not preserve_partial:
+            try:
+                sftp.remove(staged_remote_path)
+            except (FileNotFoundError, OSError):
+                pass
+        raise
+
+
 def upload():
     env = _load_env()
     if not env:
@@ -685,7 +737,11 @@ def upload():
         targets.append(('southfield', southfield_host if krakow_path else (host or southfield_host), southfield_path))
 
     # Runtime data dirs that must NOT be overwritten (exist cluster-side with real data)
-    _RUNTIME_EXCLUDE_DIRS = {'store/db', 'store/logs', 'store/rag/vector_store', 'store'}
+    _RUNTIME_EXCLUDE_DIRS = {
+        'store',
+        'bundle_src/main_html/simg/.cache_html',
+        'bundle_src/main_html/__pycache__',
+    }
 
     import paramiko
     meta = _read_meta()
@@ -703,6 +759,9 @@ def upload():
         rel = _rel_key(f.relative_to(GEN))
         # Skip runtime data dirs (cluster has real data that must persist)
         if any(rel.startswith(ex + '/') or rel == ex for ex in _RUNTIME_EXCLUDE_DIRS):
+            excluded += 1
+            continue
+        if f.suffix in {'.db', '.sqlite', '.sqlite3', '.pyc'}:
             excluded += 1
             continue
         if f.suffix == '.gguf':
@@ -796,7 +855,6 @@ def upload():
         sftp = None
         ensured_dirs = None
         try:
-            transport, sftp, ensured_dirs = _connect_target(target_name, target_host, remote_root)
             for index, (rel, local_path, sha) in enumerate(files_to_upload, start=1):
                 remote_path = str(PurePosixPath(remote_root) / rel)
                 remote_dir = str(PurePosixPath(remote_path).parent)
@@ -809,19 +867,45 @@ def upload():
                     flush=True,
                 )
                 try:
-                    _sftp_ensure_dir(sftp, remote_dir, ensured_dirs)
-                    stage = 'put'
-                    sftp.put(
-                        str(local_path),
-                        remote_path,
-                        callback=_progress_callback(target_name, index, total, local_path, remote_path, size, started),
-                        confirm=True,
-                    )
-                    if rel.endswith('.sh') or local_path.suffix.lower() == '.sh' or rel.startswith('bin/'):
-                        stage = 'chmod'
-                        sftp.chmod(remote_path, 0o755)
-                    stage = 'verify'
-                    remote_attr = sftp.stat(remote_path)
+                    remote_attr = None
+                    for upload_attempt in range(1, 6):
+                        if sftp is None:
+                            transport, sftp, ensured_dirs = _connect_target(target_name, target_host, remote_root)
+                        try:
+                            _sftp_ensure_dir(sftp, remote_dir, ensured_dirs)
+                            stage = f'put attempt {upload_attempt}/5'
+                            remote_attr = _atomic_sftp_put(
+                                sftp,
+                                local_path,
+                                remote_path,
+                                callback=_progress_callback(target_name, index, total, local_path, remote_path, size, started),
+                                executable=(rel.endswith('.sh') or local_path.suffix.lower() == '.sh' or rel.startswith('bin/')),
+                                preserve_partial=True,
+                            )
+                            break
+                        except Exception:
+                            if sftp is not None:
+                                try:
+                                    sftp.close()
+                                except Exception:
+                                    pass
+                            if transport is not None:
+                                try:
+                                    transport.close()
+                                except Exception:
+                                    pass
+                            sftp = None
+                            transport = None
+                            ensured_dirs = None
+                            if upload_attempt >= 5:
+                                raise
+                            print(
+                                f'[{target_name}] [{index}/{total}] RETRY '
+                                f'after connection loss; staged bytes will resume',
+                                flush=True,
+                            )
+                    if remote_attr is None:
+                        raise OSError('upload did not return a promoted remote file')
                     elapsed = time.perf_counter() - started
                     with changed_lock:
                         changed += 1

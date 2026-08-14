@@ -277,9 +277,19 @@ RUNTIME_TOOL_DEFAULTS = {
     'rag': {**_HPCC_RESOURCE_BASE, **_tool_resources('rag')},
 }
 KRAKOW_RUNTIME_PROFILES = {
+    'krakow': {
+        'label': 'Krakow Default',
+        'module': 'slurm',
+        'account': 'rna-sdv-srr7',
+        'partition': 'highPrio',
+        'memory': '4G',
+        'cpus': 6,
+        'time_limit': '00:30:00',
+    },
     'helios': {
         'label': 'Helios',
         'module': 'slurm/helios',
+        'srun': '/app/software/slurm/helios/bin/srun',
         'account': '8k3p89',
         'partition': '8k3',
         'memory': '4G',
@@ -289,6 +299,7 @@ KRAKOW_RUNTIME_PROFILES = {
     'athena': {
         'label': 'Athena',
         'module': 'slurm/athena',
+        'srun': '/app/software/slurm/athena/bin/srun',
         'account': '8k3p89',
         'partition': 'athena',
         'memory': '4G',
@@ -298,6 +309,7 @@ KRAKOW_RUNTIME_PROFILES = {
     'sf': {
         'label': 'SF',
         'module': 'slurm/sf',
+        'srun': '/app/software/slurm/sf/bin/srun',
         'account': '8k3p89',
         'partition': 'sf',
         'memory': '4G',
@@ -307,6 +319,7 @@ KRAKOW_RUNTIME_PROFILES = {
     'cyfronet': {
         'label': 'Cyfronet',
         'module': 'slurm/cyfronet',
+        'srun': '/app/software/slurm/cyfronet/bin/srun',
         'account': '8k3p89',
         'partition': 'cyfronet',
         'memory': '4G',
@@ -314,6 +327,27 @@ KRAKOW_RUNTIME_PROFILES = {
         'time_limit': '00:30:00',
     },
 }
+
+
+def _runtime_customer_accounts():
+    """Return the known Slurm customer/account values for runtime forms."""
+    candidates = [
+        app.config.get('SLURM_ACCOUNT'),
+        _SLURM_DEFAULTS.get('account'),
+        get_cluster_slurm_defaults('krakow').get('account'),
+        get_cluster_slurm_defaults('southfield').get('account'),
+    ]
+    candidates.extend(profile.get('account') for profile in KRAKOW_RUNTIME_PROFILES.values())
+    candidates.extend(defaults.get('account') for defaults in RUNTIME_TOOL_DEFAULTS.values())
+
+    accounts = []
+    for value in candidates:
+        account = str(value or '').strip()
+        if account and account not in accounts:
+            accounts.append(account)
+    return accounts
+
+
 ACTIVE_RUNTIME_STATUSES = {'QUEUED', 'SUBMITTED', 'PENDING', 'RUNNING'}
 PENDING_RUNTIME_STATUSES = {'QUEUED', 'SUBMITTED', 'PENDING'}
 
@@ -694,6 +728,7 @@ def tool_kpi():
                          recent_jobs=recent_jobs,
                          runtime_tools=[tool for tool in runtime_store.list_tools() if tool['tool_key'] in {'can_kpi', 'udp_kpi', 'interactive_plot'}],
                          defaults=RUNTIME_TOOL_DEFAULTS,
+                         customer_accounts=_runtime_customer_accounts(),
                          configuration_files=list_configurations(),
                          detected_cluster=_request_cluster_target(),
                          krakow_runtime_profiles=KRAKOW_RUNTIME_PROFILES,
@@ -833,14 +868,32 @@ def api_kpi_deploy():
     return jsonify({'ok': True, 'job_id': job.id, 'message': 'Bundle deployment queued with --no-rag.'})
 
 
-def _run_krakow_probe_background(job_id: int, log_path: str, profile_id: str):
+def _run_krakow_probe_background(job_id: int, log_path: str, profile_id: str, net_id: str, user_password: str):
     profile = KRAKOW_RUNTIME_PROFILES[profile_id]
-    command = (
+    srun_command = shlex.quote(profile.get('srun') or 'srun')
+    host_command = (
         f"module load {shlex.quote(profile['module'])} && "
-        f"srun -A {shlex.quote(profile['account'])} -p {shlex.quote(profile['partition'])} "
+        f"{srun_command} -A {shlex.quote(profile['account'])} -p {shlex.quote(profile['partition'])} "
         f"--mem={shlex.quote(profile['memory'])} --cpus-per-task={profile['cpus']} "
         f"--time={shlex.quote(profile['time_limit'])} sh -c 'hostname; pwd; id'"
     )
+    askpass_path = os.path.join(os.path.dirname(log_path), f'.probe_askpass_{uuid.uuid4().hex[:10]}.sh')
+    _write_askpass_script(user_password, askpass_path)
+    command = [
+        'ssh', '-T',
+        '-o', 'StrictHostKeyChecking=no',
+        '-o', 'UserKnownHostsFile=/dev/null',
+        '-o', 'ConnectTimeout=20',
+        f'{net_id}@127.0.0.1',
+        f"bash -lc {shlex.quote(host_command)}",
+    ]
+    command_display = ' '.join(shlex.quote(part) for part in command)
+    command_env = {
+        'SSH_ASKPASS': askpass_path,
+        'SSH_ASKPASS_REQUIRE': 'force',
+        'DISPLAY': ':0',
+        'PATH': os.environ.get('PATH', ''),
+    }
     try:
         with app.app_context():
             job = JobHistory.query.get(job_id)
@@ -848,13 +901,19 @@ def _run_krakow_probe_background(job_id: int, log_path: str, profile_id: str):
                 job.status = 'RUNNING'
                 job.started_at = datetime.utcnow()
                 db.session.commit()
-        process = subprocess.Popen(['bash', '-lc', command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        process = subprocess.Popen(
+            command,
+            env=command_env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
         stdout, stderr = process.communicate()
         return_code = process.returncode
         node = next((line.strip() for line in stdout.splitlines() if line.strip()), '')
         slurm_job_id = (os.environ.get('SLURM_JOB_ID') or '').strip()
         with open(log_path, 'w', encoding='utf-8', errors='replace') as log_fp:
-            log_fp.write(f'COMMAND: {command}\nSTART: {datetime.utcnow().isoformat()}Z\n\n')
+            log_fp.write(f'COMMAND: {command_display}\nSTART: {datetime.utcnow().isoformat()}Z\n\n')
             log_fp.write('STDOUT:\n')
             log_fp.write(stdout or '')
             log_fp.write('\nSTDERR:\n')
@@ -888,6 +947,11 @@ def _run_krakow_probe_background(job_id: int, log_path: str, profile_id: str):
                 job.error_message = str(exc)
                 job.completed_at = datetime.utcnow()
                 db.session.commit()
+    finally:
+        try:
+            os.remove(askpass_path)
+        except OSError:
+            pass
 
 
 @app.route('/api/kpi/krakow-probe', methods=['POST'])
@@ -903,6 +967,9 @@ def api_kpi_krakow_probe():
         return jsonify({'ok': False, 'error': 'No writable probe log directory is available.'}), 500
     log_path = os.path.join(log_dir, f'krakow_probe_{uuid.uuid4().hex[:10]}.log')
     profile = KRAKOW_RUNTIME_PROFILES[profile_id]
+    user_password = _stored_cluster_password_for_current_user(current_user.net_id)
+    if not user_password:
+        return jsonify({'ok': False, 'error': 'No cluster password saved. Sign in again before probing Krakow Slurm.'}), 400
     job = JobHistory(
         user_id=current_user.id,
         tool_name='krakow_probe',
@@ -915,7 +982,11 @@ def api_kpi_krakow_probe():
     )
     db.session.add(job)
     db.session.commit()
-    threading.Thread(target=_run_krakow_probe_background, args=(job.id, log_path, profile_id), daemon=True).start()
+    threading.Thread(
+        target=_run_krakow_probe_background,
+        args=(job.id, log_path, profile_id, current_user.net_id, user_password),
+        daemon=True,
+    ).start()
     return jsonify({'ok': True, 'job_id': job.id, 'message': f"{profile['label']} probe queued without --pty."})
 
 
@@ -970,6 +1041,8 @@ def runtime_map():
         'runtime_map.html',
         runtime_graph=runtime_store.graph_payload(),
         broker_defaults=RUNTIME_TOOL_DEFAULTS,
+        detected_cluster=_request_cluster_target(),
+        krakow_runtime_profiles=KRAKOW_RUNTIME_PROFILES,
     )
 
 
@@ -989,6 +1062,7 @@ def api_resim_run_submit():
     data = request.get_json(silent=True) or {}
     input_txt = (data.get('input_txt') or '').strip()
     simg_path = (data.get('simg_path') or '').strip()
+    profile_id = (data.get('profile') or 'krakow').strip().lower()
     create_jira = data.get('create_jira') in (True, '1', 'true')
     jira_board = (data.get('jira_board') or '').strip() or 'FHW'
     jira_assignee = (data.get('jira_assignee') or '').strip()
@@ -998,6 +1072,8 @@ def api_resim_run_submit():
         return jsonify({'ok': False, 'error': 'Input file (input.txt) path is required.'}), 400
     if not simg_path:
         return jsonify({'ok': False, 'error': 'Simg file path is required.'}), 400
+    if profile_id not in KRAKOW_RUNTIME_PROFILES:
+        return jsonify({'ok': False, 'error': 'Unknown Krakow Resim runtime profile.'}), 400
 
     cluster_txt = cluster_from_path(input_txt)
     cluster_simg = cluster_from_path(simg_path)
@@ -1007,6 +1083,8 @@ def api_resim_run_submit():
         return jsonify({'ok': False, 'error': 'Simg file path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
     if cluster_txt != cluster_simg:
         return jsonify({'ok': False, 'error': f'Both files must be in the same partition. Input is on {cluster_txt}, simg is on {cluster_simg}.'}), 400
+    if cluster_txt != 'krakow':
+        profile_id = 'krakow'
 
     project_name, project_root = extract_project_from_path(input_txt)
     if not project_name:
@@ -1057,15 +1135,32 @@ def api_resim_run_submit():
     # interactive "are you sure you want to continue connecting" prompt on
     # the first-ever SSH to 127.0.0.1 for this user, which otherwise hangs
     # forever with no tty/askpass path to answer it.
+    profile = KRAKOW_RUNTIME_PROFILES[profile_id]
+    resim_invocation = (
+        f"env RESIM_SLURM_MODULE={shlex.quote(profile['module'])} "
+        f"{shlex.quote(resim_script_src)} {shlex.quote(input_txt)} "
+        f"{shlex.quote(simg_path)} highPrio"
+    )
+    if cluster_txt == 'krakow' and profile_id != 'krakow':
+        srun_command = shlex.quote(profile.get('srun') or 'srun')
+        resim_invocation = (
+            f"module load {shlex.quote(profile['module'])} && "
+            f"{srun_command} -A {shlex.quote(profile['account'])} -p {shlex.quote(profile['partition'])} "
+            f"--mem={shlex.quote(profile['memory'])} --cpus-per-task={profile['cpus']} "
+            f"--time={shlex.quote(profile['time_limit'])} {resim_invocation}"
+        )
+    remote_command = (
+        f"stty -echo 2>/dev/null; {env_prefix}"
+        f"cd {shlex.quote(project_root)} 2>/dev/null || cd {shlex.quote(log_dir)}; "
+        f"{resim_invocation}"
+    )
     cmd = [
         'ssh', '-tt',
         '-o', 'StrictHostKeyChecking=no',
         '-o', 'UserKnownHostsFile=/dev/null',
         '-o', 'ConnectTimeout=20',
         f'{current_user.net_id}@127.0.0.1',
-        'bash', '-lc',
-        f"stty -echo 2>/dev/null; {env_prefix}cd {shlex.quote(project_root)} 2>/dev/null || cd {shlex.quote(log_dir)}; "
-        f"{shlex.quote(resim_script_src)} {shlex.quote(input_txt)} {shlex.quote(simg_path)} highPrio"
+        f"bash -lc {shlex.quote(remote_command)}",
     ]
 
     # Environment for SSH_ASKPASS
@@ -1092,6 +1187,8 @@ def api_resim_run_submit():
             'jira_notes': jira_notes,
             'project': project_name,
             'project_root': project_root,
+            'profile': profile_id,
+            'profile_label': KRAKOW_RUNTIME_PROFILES[profile_id]['label'],
         },
         status='QUEUED',
     )
@@ -2633,6 +2730,13 @@ def _build_runtime_submit_payload(tool_key: str, mode: str, paths: dict, resourc
     }
 
 
+def _normalize_submitted_path(value) -> str:
+    normalized = str(value or '').strip()
+    while len(normalized) >= 2 and normalized[0] == normalized[-1] and normalized[0] in {'"', "'"}:
+        normalized = normalized[1:-1].strip()
+    return normalized
+
+
 def _validate_hdf_inputs(input_hdf: str, output_hdf: str) -> None:
     hdf_signature = b'\x89HDF\r\n\x1a\n'
     for label, path in (('Input HDF', input_hdf), ('Output HDF', output_hdf)):
@@ -2692,7 +2796,7 @@ def _build_runtime_kpi_submission(form_source) -> dict:
     if resources['scheduler'] != 'slurm':
         resources['immediate'] = ''
 
-    output_dir = (form_source.get('output_dir') or '').strip()
+    output_dir = _normalize_submitted_path(form_source.get('output_dir'))
     paths = {
         'input_mode': input_mode,
         'output_dir': output_dir,
@@ -2701,10 +2805,10 @@ def _build_runtime_kpi_submission(form_source) -> dict:
         'interactive_source_target': primary_target,
     }
     default_xml_id = 'can_config_xml' if primary_target == 'can_kpi' else 'udp_config_xml'
-    config_xml = (form_source.get('config_xml') or '').strip() or configuration_path(default_xml_id)
-    json_path = (form_source.get('kpi_json') or '').strip()
-    input_hdf = (form_source.get('input_hdf') or '').strip()
-    output_hdf = (form_source.get('output_hdf') or '').strip()
+    config_xml = _normalize_submitted_path(form_source.get('config_xml')) or configuration_path(default_xml_id)
+    json_path = _normalize_submitted_path(form_source.get('kpi_json'))
+    input_hdf = _normalize_submitted_path(form_source.get('input_hdf'))
+    output_hdf = _normalize_submitted_path(form_source.get('output_hdf'))
 
     if input_mode == 'json' and not json_path:
         raise ValueError('JSON path is required for the selected KPI submission mode.')
@@ -2721,7 +2825,7 @@ def _build_runtime_kpi_submission(form_source) -> dict:
             'output_hdf': output_hdf,
         }
     )
-    optional_config = (form_source.get('optional_config') or '').strip()
+    optional_config = _normalize_submitted_path(form_source.get('optional_config'))
     if optional_config:
         paths['optional_config'] = optional_config
 
@@ -3143,6 +3247,10 @@ def _rerun_history_job(job: JobHistory):
 
     if not paths:
         raise ValueError('Re-trigger is only available for broker-backed KPI, Interactive Plot, and Hyperlink history rows.')
+    paths = dict(paths)
+    for path_key in ('output_dir', 'config_xml', 'json_path', 'input_hdf', 'output_hdf', 'optional_config', 'html_root'):
+        if path_key in paths:
+            paths[path_key] = _normalize_submitted_path(paths[path_key])
 
     execution_target = str(parameters.get('execution_target') or '').strip()
     if not execution_target:
@@ -3222,15 +3330,12 @@ def submit_runtime_kpi_job():
             submission['paths'],
             submission['resources'],
             'kpi',
-            submission['primary_input'],
+            submission['input_path'],
             submission['execution_label'],
-            jira_fields=submission.get('jira_fields'),
         )
     except Exception as exc:
-        logger.exception('Failed to submit runtime KPI job')
         flash(f'HPCC broker submission failed: {exc}', 'error')
         return redirect(request.referrer or url_for('tool_kpi'))
-
 
 @app.route('/api/runtime/kpi/reuse-check', methods=['POST'])
 @login_required

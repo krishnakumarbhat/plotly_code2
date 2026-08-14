@@ -14,7 +14,7 @@ workers = int(os.environ.get('WORKERS', str(default_workers)))
 # Use threaded workers for long-lived Hyperlink/video requests without forking too
 # many copies of the Flask app.
 worker_class = 'gthread'
-threads = int(os.environ.get('THREADS', '4'))
+threads = int(os.environ.get('THREADS', '8'))
 
 timeout = int(os.environ.get('TIMEOUT', '240'))
 graceful_timeout = int(os.environ.get('GRACEFUL_TIMEOUT', '30'))

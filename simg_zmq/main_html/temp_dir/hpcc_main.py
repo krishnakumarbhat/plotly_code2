@@ -2,6 +2,7 @@ import argparse
 import getpass
 import json
 import os
+import re
 import shlex
 import shutil
 import signal
@@ -11,6 +12,7 @@ import subprocess
 import sys
 import threading
 import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -220,7 +222,12 @@ def _valid_partitions() -> List[str]:
         return []
     if result.returncode != 0:
         return []
-    return [line.strip().rstrip('*') for line in result.stdout.splitlines() if line.strip()]
+    partitions = []
+    for line in result.stdout.splitlines():
+        value = line.strip().rstrip('*')
+        if value and re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', value):
+            partitions.append(value)
+    return partitions
 
 
 def _valid_accounts() -> List[str]:
@@ -1003,6 +1010,7 @@ class RuntimeBroker:
 
         spec = self._build_spec(tool, payload)
         request_payload = dict(payload)
+        request_payload.pop('user_password', None)
         if spec.get('console'):
             request_payload['_console'] = spec['console']
         runtime_job_id = self.store.create_job(
@@ -1114,8 +1122,11 @@ class RuntimeBroker:
 
     def _watch_process(self, runtime_job_id: int, process: subprocess.Popen, log_fp, spec: Dict[str, Any]) -> None:
         return_code = process.wait()
+        log_fp.flush()
+        error_message = self._failure_message(spec, return_code) if return_code != 0 else ''
         footer_lines = [
             '',
+            *(['[broker] ERROR: ' + error_message] if error_message else []),
             '[broker] END: ' + self._utcnow(),
             '[broker] RETURN_CODE: ' + str(return_code),
         ]
@@ -1132,6 +1143,7 @@ class RuntimeBroker:
             runtime_job_id,
             status=status,
             return_code=return_code,
+            error_message=error_message,
             completed_at=self._utcnow(),
         )
         self.store.append_event(runtime_job_id, 'info', f'Process finished with code {return_code}')
@@ -1140,6 +1152,36 @@ class RuntimeBroker:
 
         if spec.get('service_tool_key'):
             self._update_service_url(spec['service_tool_key'], '')
+
+    @staticmethod
+    def _failure_message(spec: Dict[str, Any], return_code: int) -> str:
+        candidates = []
+        for value in (spec.get('launcher_log_path'), spec.get('log_path')):
+            if value:
+                candidates.append(Path(value))
+        console = spec.get('console') or {}
+        for directory_value in (console.get('control_dir'), console.get('run_dir')):
+            if not directory_value:
+                continue
+            directory = Path(directory_value)
+            candidates.extend(directory.glob('slurm_alloc_attempt_*.log'))
+            candidates.extend(directory / name for name in ('compute_main.log', 'compute_udp.log', 'compute_interactive.log'))
+
+        text_parts = []
+        seen = set()
+        for path in candidates:
+            path_text = str(path)
+            if path_text in seen or not path.is_file():
+                continue
+            seen.add(path_text)
+            try:
+                with path.open('rb') as handle:
+                    size = handle.seek(0, os.SEEK_END)
+                    handle.seek(max(size - 65536, 0))
+                    text_parts.append(handle.read().decode('utf-8', errors='replace'))
+            except OSError:
+                continue
+        return RuntimeStore.classify_failure_text('\n'.join(text_parts), return_code)
 
     def _watch_service_host(self, runtime_job_id: int, tool_key: str, host_file: str, port: int) -> None:
         deadline = time.time() + 180
@@ -1201,8 +1243,8 @@ class RuntimeBroker:
             resources['account'] = inferred_account
         requested_by = payload.get('user', 'unknown')
         user_password = (payload.get('user_password') or '').strip()
-        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
-        job_dir_name = f'{tool_key}_{timestamp}'
+        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S_%f')
+        job_dir_name = f'{tool_key}_{timestamp}_{uuid.uuid4().hex[:8]}'
         run_dir = _runtime_work_root(self.workspace_root) / requested_by / job_dir_name
         run_dir.mkdir(parents=True, exist_ok=True)
         run_dir.chmod(0o777)  # allow the submitting user's srun job to write exit/log files back
@@ -2028,6 +2070,9 @@ class BrokerHandler(socketserver.StreamRequestHandler):
 
 class ThreadedBrokerServer(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
+    request_queue_size = 256
+    daemon_threads = True
+    block_on_close = False
 
     def __init__(self, address: Tuple[str, int], handler_cls, runtime_broker: RuntimeBroker):
         super().__init__(address, handler_cls)

@@ -2,11 +2,26 @@
 echo "[ver-3.0] : Starting Resim Execution"
 if [[ $1 == *'/projects/'* ]]; then
     $(xxd -p -r <<<"73 6F 75 72 63 65 20 2F 6D 6E 74 2F 75 73 6D 69 64 65 74 2F 70 72 6F 6A 65 63 74 73 2F 52 41 44 41 52 43 4F 52 45 2F 32 2D 53 69 6D 2F 55 53 45 52 5F 44 41 54 41 2F 7A 35 64 61 61 39 2F 76 69 72 74 75 61 6C 5F 65 6E 76 2F 67 65 6E 37 76 32 2F 62 69 6E 2F 61 63 74 69 76 61 74 65")
-    $(xxd -p -r <<<"70 79 74 68 6f 6e 20 2d 42 20 2f 6d 6e 74 2f 75 73 6d 69 64 65 74 2f 70 72 6f 6a 65 63 74 73 2f 47 50 4f 2d 49 46 56 37 58 58 2f 34 2d 43 68 65 63 6b 6f 75 74 2f 52 65 53 69 6d 41 75 74 6f 4d 6e 67 2f 53 75 70 70 6f 72 74 2f 52 65 73 69 6d 2f 72 65 73 69 6d 5f 6d 61 69 6e 2e 70 79") $@
+    $(xxd -p -r <<<"70 79 74 68 6f 6e 20 2d 42 20 2f 6d 6e 74 2f 75 73 6d 69 64 65 74 2f 70 72 6f 6a 65 63 74 73 2f 47 50 4f 2d 49 46 56 37 58 58 2f 34 2d 43 68 65 63 6b 6f 75 74 2f 52 65 53 69 6d 41 75 74 6f 4d 6e 67 2f 53 75 70 70 6f 72 74 2f 52 65 73 69 6d 2f 72 65 73 69 6d 5f 6d 61 69 6e 2e 70 79") "$@"
     $(xxd -p -r <<<"64 65 61 63 74 69 76 61 74 65")
 else
     $(xxd -p -r <<<"73 6f 75 72 63 65 20 2f 6e 65 74 2f 38 6b 33 2f 65 30 66 73 30 31 2f 69 72 6f 64 73 2f 50 4c 4b 52 41 2d 50 52 4f 4a 45 43 54 53 2f 52 4e 41 2d 53 44 56 2d 53 52 52 37 2f 37 2d 54 6f 6f 6c 73 2f 52 65 53 69 6d 41 75 74 6f 4d 6e 67 2f 45 6e 76 69 72 6f 6e 6d 65 6e 74 2f 72 65 73 69 6d 50 69 70 65 2f 62 69 6e 2f 61 63 74 69 76 61 74 65")
-    $(xxd -p -r <<<"6d 6f 64 75 6c 65 20 6c 6f 61 64 20 73 6c 75 72 6d")
-    $(xxd -p -r <<<"70 79 74 68 6f 6e 20 2f 6e 65 74 2f 38 6b 33 2f 65 30 66 73 30 31 2f 69 72 6f 64 73 2f 50 4c 4b 52 41 2d 50 52 4f 4a 45 43 54 53 2f 53 54 4c 41 2d 53 4d 41 4c 4c 2f 37 2d 54 6f 6f 6c 73 2f 52 65 53 69 6d 41 75 74 6f 4d 6e 67 2f 53 75 70 70 6f 72 74 2f 52 65 73 69 6d 2f 72 65 73 69 6d 5f 6d 61 69 6e 2e 70 79") $@
+    if [[ -f /etc/profile.d/modules.sh ]]; then
+        source /etc/profile.d/modules.sh >/dev/null 2>&1 || true
+    fi
+    if type module >/dev/null 2>&1; then
+        module load "${RESIM_SLURM_MODULE:-slurm}"
+        module_status=$?
+    elif command -v modulecmd >/dev/null 2>&1; then
+        eval "$(modulecmd bash load "${RESIM_SLURM_MODULE:-slurm}")"
+        module_status=$?
+    else
+        module_status=127
+    fi
+    if [[ "$module_status" -ne 0 ]]; then
+        echo "Unable to load Resim Slurm module: ${RESIM_SLURM_MODULE:-slurm}" >&2
+        exit 127
+    fi
+    $(xxd -p -r <<<"70 79 74 68 6f 6e 20 2f 6e 65 74 2f 38 6b 33 2f 65 30 66 73 30 31 2f 69 72 6f 64 73 2f 50 4c 4b 52 41 2d 50 52 4f 4a 45 43 54 53 2f 53 54 4c 41 2d 53 4d 41 4c 4c 2f 37 2d 54 6f 6f 6c 73 2f 52 65 53 69 6d 41 75 74 6f 4d 6e 67 2f 53 75 70 70 6f 72 74 2f 52 65 73 69 6d 2f 72 65 73 69 6d 5f 6d 61 69 6e 2e 70 79") "$@"
     $(xxd -p -r <<<"64 65 61 63 74 69 76 61 74 65")
 fi

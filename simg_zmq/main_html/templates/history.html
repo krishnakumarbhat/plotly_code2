@@ -112,6 +112,9 @@
                                 {% if job.slurm_job_id %}
                                 <br><small class="text-muted">SLURM: {{ job.slurm_job_id }}</small>
                                 {% endif %}
+                                {% if job.status == 'FAILED' and job.error_message %}
+                                <br><small class="text-danger d-block text-break" style="max-width: 320px;">{{ job.error_message }}</small>
+                                {% endif %}
                                 {% if job.output_log_path %}
                                 <br>
                                 <small class="text-muted">

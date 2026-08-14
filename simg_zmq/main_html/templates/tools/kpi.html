@@ -8,6 +8,27 @@
         <div class="col-xl-8">
             <div class="card runtime-card mb-4">
                 <div class="card-header">
+                    <span class="section-label">Deployment and runtime checks</span>
+                    <h3 class="mb-1">Prepare the bundle</h3>
+                    <p class="text-muted small mb-0">Build and upload all non-RAG SIMG images, or run a non-interactive Krakow probe.</p>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <button type="button" class="btn btn-primary" id="deployBundleButton"><i class="bi bi-cloud-arrow-up me-1"></i>Generate and deploy all SIMG</button>
+                        {% if detected_cluster == 'krakow' %}
+                        <select class="form-select w-auto" id="krakowProfile" aria-label="Krakow runtime profile">
+                            {% for profile_id, profile in krakow_runtime_profiles.items() %}
+                            <option value="{{ profile_id }}">{{ profile.label }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-outline-dark" id="krakowProbeButton"><i class="bi bi-terminal me-1"></i>Probe Slurm</button>
+                        {% endif %}
+                    </div>
+                    <div class="small mt-3" id="deploymentStatus" role="status"></div>
+                </div>
+            </div>
+            <div class="card runtime-card mb-4">
+                <div class="card-header">
                     <span class="section-label">KPI entrypoint</span>
                     <h1 class="mb-0">{{ tool_name }}</h1>
                 </div>
@@ -137,8 +158,18 @@
                                 <input type="text" class="form-control" name="partition" id="partition" value="{{ defaults['udp_kpi']['partition'] }}">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Account</label>
-                                <input type="text" class="form-control" name="account" id="account" value="{{ defaults['udp_kpi']['account'] }}" placeholder="RNA-SDV-SRR7">
+                                {% set default_customer_account = defaults['udp_kpi']['account'] %}
+                                <label class="form-label">Customer Name</label>
+                                <select class="form-select" id="account_selector">
+                                    {% for account in customer_accounts %}
+                                    <option value="{{ account }}" {% if account == default_customer_account %}selected{% endif %}>{{ account }}</option>
+                                    {% endfor %}
+                                    <option value="__other__" {% if default_customer_account not in customer_accounts %}selected{% endif %}>Other</option>
+                                </select>
+                                <input type="hidden" name="account" id="account" value="{{ default_customer_account }}">
+                                <div class="mt-2 {% if default_customer_account in customer_accounts %}d-none{% endif %}" id="customAccountField">
+                                    <input type="text" class="form-control" id="custom_account" value="{% if default_customer_account not in customer_accounts %}{{ default_customer_account }}{% endif %}" placeholder="Enter customer account">
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">QoS</label>
@@ -265,28 +296,6 @@
                 </div>
             </div>
 
-            <div class="card runtime-card mb-4">
-                <div class="card-header">
-                    <span class="section-label">Deployment and runtime checks</span>
-                    <h3 class="mb-1">Prepare the bundle</h3>
-                    <p class="text-muted small mb-0">Build and upload all non-RAG SIMG images, or run a non-interactive Krakow probe.</p>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <button type="button" class="btn btn-primary" id="deployBundleButton"><i class="bi bi-cloud-arrow-up me-1"></i>Generate and deploy all SIMG</button>
-                        {% if detected_cluster == 'krakow' %}
-                        <select class="form-select w-auto" id="krakowProfile" aria-label="Krakow runtime profile">
-                            {% for profile_id, profile in krakow_runtime_profiles.items() %}
-                            <option value="{{ profile_id }}">{{ profile.label }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" class="btn btn-outline-dark" id="krakowProbeButton"><i class="bi bi-terminal me-1"></i>Probe Slurm</button>
-                        {% endif %}
-                    </div>
-                    <div class="small mt-3" id="deploymentStatus" role="status"></div>
-                </div>
-            </div>
-
             <div class="card runtime-card">
                 <div class="card-header">
                     <span class="section-label">Recent runs</span>
@@ -382,6 +391,10 @@ const jsonInputField = document.getElementById('kpi_json');
 const configXmlField = document.getElementById('config_xml');
 const runtimeModeCopy = document.getElementById('runtimeModeCopy');
 const kpiRuntimeForm = document.getElementById('kpiRuntimeForm');
+const accountSelector = document.getElementById('account_selector');
+const accountInput = document.getElementById('account');
+const customAccountField = document.getElementById('customAccountField');
+const customAccountInput = document.getElementById('custom_account');
 const reuseDecisionInput = document.getElementById('reuse_decision');
 const configurationFiles = {{ configuration_files|tojson }};
 const configurationById = Object.fromEntries(configurationFiles.map((item) => [item.id, item]));
@@ -570,6 +583,21 @@ function setCanInteractivePlotMode(mode) {
     updateRuntimeForm();
 }
 
+function syncCustomerAccount() {
+    if (!accountSelector || !accountInput) return;
+    const isOther = accountSelector.value === '__other__';
+    if (customAccountField) customAccountField.classList.toggle('d-none', !isOther);
+    accountInput.value = isOther ? (customAccountInput ? customAccountInput.value.trim() : '') : accountSelector.value;
+}
+
+function setCustomerAccount(value) {
+    if (!accountSelector || !accountInput) return;
+    const knownAccount = Array.from(accountSelector.options).some((option) => option.value === value);
+    accountSelector.value = knownAccount ? value : '__other__';
+    if (customAccountInput) customAccountInput.value = knownAccount ? '' : value;
+    syncCustomerAccount();
+}
+
 function updateRuntimeForm() {
     const target = selectedExecutionTarget();
     const mode = selectedInputMode();
@@ -637,7 +665,7 @@ function updateRuntimeForm() {
 
     const defaults = runtimeDefaults[resourceProfile] || runtimeDefaults.udp_kpi;
     document.getElementById('partition').value = defaults.partition || 'plcyf-com';
-    document.getElementById('account').value = defaults.account || 'RNA-SDV-SRR7';
+    setCustomerAccount(defaults.account || '');
     document.getElementById('qos').value = defaults.qos || '';
     document.getElementById('memory').value = defaults.memory || '32G';
     document.getElementById('cpus').value = defaults.cpus || 8;
@@ -646,6 +674,8 @@ function updateRuntimeForm() {
 
 executionInputs.forEach((input) => input.addEventListener('change', updateRuntimeForm));
 modeInputs.forEach((input) => input.addEventListener('change', updateRuntimeForm));
+if (accountSelector) accountSelector.addEventListener('change', syncCustomerAccount);
+if (customAccountInput) customAccountInput.addEventListener('input', syncCustomerAccount);
 if (configXmlField) configXmlField.addEventListener('input', () => { configXmlField.dataset.managed = 'false'; });
 
 if (interactivePlotToggle) {

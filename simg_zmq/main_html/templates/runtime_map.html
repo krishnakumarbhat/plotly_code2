@@ -198,8 +198,21 @@
         </div>
         <div class="collapse show" id="resimFormBody">
             <div class="card-body">
-                <p class="lead-copy">Provide the <code>input.txt</code> and <code>.simg</code> paths. The system detects the project and submits via <strong>srun --partition=highPrio</strong>.</p>
+                <p class="lead-copy">Provide the <code>input.txt</code> and <code>.simg</code> paths. Krakow runs can use the default Slurm environment or the shared-storage Helios runtime.</p>
                 <form id="resimRunForm">
+                    {% if detected_cluster == 'krakow' %}
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-5">
+                            <label class="form-label" for="resimProfile">Execution environment</label>
+                            <select class="form-select" id="resimProfile" name="profile">
+                                {% for profile_id, profile in krakow_runtime_profiles.items() %}
+                                <option value="{{ profile_id }}" data-partition="{{ profile.partition }}" data-module="{{ profile.module }}" {% if profile_id == 'krakow' %}selected{% endif %}>{{ profile.label }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted" id="resimProfileHelp">Krakow Default uses <code>module load slurm</code>. Helios uses the shared Krakow storage with <code>module load slurm/helios</code>.</small>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Input file (input.txt)</label>
@@ -233,7 +246,7 @@
                         <div class="col-md-4">
                             <div class="alert alert-light border mb-0 py-2">
                                 <small class="text-muted d-block">Partition</small>
-                                <strong>highPrio</strong>
+                                <strong id="detectedPartition">highPrio</strong>
                             </div>
                         </div>
                     </div>
@@ -1377,6 +1390,17 @@ document.getElementById('launchToolBtn').addEventListener('click', async () => {
 });
 
 // ── Resim Run form ───────────────────────────────────────────────────
+let detectedResimCluster = {{ detected_cluster|tojson }};
+const resimProfile = document.getElementById('resimProfile');
+
+function updateResimProfileSummary() {
+    const selectedOption = resimProfile ? resimProfile.options[resimProfile.selectedIndex] : null;
+    const partition = detectedResimCluster === 'krakow' && selectedOption
+        ? selectedOption.dataset.partition
+        : 'highPrio';
+    document.getElementById('detectedPartition').textContent = partition || 'highPrio';
+}
+
 function detectProject() {
     const inputTxt = document.getElementById('input_txt').value.trim();
     if (!inputTxt) {
@@ -1389,6 +1413,8 @@ function detectProject() {
             document.getElementById('detectedInfo').style.display = 'block';
             document.getElementById('detectedCluster').textContent = data.cluster || '—';
             document.getElementById('detectedProject').textContent = data.project || '—';
+            detectedResimCluster = data.cluster || '';
+            updateResimProfileSummary();
         })
         .catch(() => {
             document.getElementById('detectedInfo').style.display = 'none';
@@ -1455,6 +1481,7 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
             body: JSON.stringify({
                 input_txt: inputTxt,
                 simg_path: simgPath,
+                profile: resimProfile ? resimProfile.value : 'krakow',
                 create_jira: createJira,
                 jira_board: jiraBoard || 'FHW',
                 jira_assignee: jiraAssignee,
@@ -1481,6 +1508,8 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
 document.getElementById('input_txt').addEventListener('input', detectProject);
 document.getElementById('simg_path').addEventListener('input', detectProject);
 document.getElementById('detectProjectBtn').addEventListener('click', detectProject);
+if (resimProfile) resimProfile.addEventListener('change', updateResimProfileSummary);
+updateResimProfileSummary();
 
 document.getElementById('create_jira').addEventListener('change', function() {
     document.getElementById('jiraFields').style.display = this.checked ? 'flex' : 'none';

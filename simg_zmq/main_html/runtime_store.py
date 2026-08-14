@@ -19,7 +19,7 @@ class RuntimeStore:
     DEFAULT_VARIANT = 'default'
     ACTIVE_JOB_STATUSES = {'QUEUED', 'SUBMITTED', 'PENDING', 'RUNNING'}
     REUSABLE_JOB_STATUSES = {'QUEUED', 'SUBMITTED', 'PENDING', 'RUNNING', 'COMPLETED'}
-    RUNTIME_DB_VERSION = '2026.04.27'
+    RUNTIME_DB_VERSION = '2026.08.13'
     ARTIFACT_SUFFIXES = {'.html', '.htm', '.hdf', '.hdf5', '.mf4', '.csv', '.json', '.xml', '.txt', '.log', '.md'}
     MAX_INDEXED_ARTIFACTS = 2048
     CACHE_TTL_SECONDS = 2
@@ -213,6 +213,21 @@ class RuntimeStore:
             self._ensure_column(connection, 'runtime_jobs', 'mirror_log_path', 'TEXT')
             self._ensure_column(connection, 'runtime_jobs', 'reused_from_runtime_job_id', 'INTEGER')
             self._ensure_column(connection, 'runtime_jobs', 'last_seen_at', 'TEXT')
+            connection.executescript(
+                """
+                CREATE INDEX IF NOT EXISTS idx_runtime_jobs_status_created
+                    ON runtime_jobs(status, created_at DESC);
+                CREATE INDEX IF NOT EXISTS idx_runtime_jobs_fingerprint_status
+                    ON runtime_jobs(request_fingerprint, status);
+                CREATE INDEX IF NOT EXISTS idx_runtime_jobs_requested_by_created
+                    ON runtime_jobs(requested_by, created_at DESC);
+                CREATE INDEX IF NOT EXISTS idx_runtime_events_job
+                    ON runtime_events(runtime_job_id, id);
+                CREATE INDEX IF NOT EXISTS idx_runtime_artifacts_job
+                    ON runtime_job_artifacts(runtime_job_id, id);
+                """
+            )
+            self._redact_stored_request_passwords(connection)
             self._set_meta(connection, 'runtime_db_version', self.RUNTIME_DB_VERSION)
 
     @staticmethod
@@ -222,6 +237,29 @@ class RuntimeStore:
         if column_name in existing_columns:
             return
         connection.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}')
+
+    @staticmethod
+    def _sanitize_request_payload(request_payload: Dict[str, Any]) -> Dict[str, Any]:
+        sanitized = dict(request_payload) if isinstance(request_payload, dict) else {}
+        sanitized.pop('user_password', None)
+        return sanitized
+
+    @classmethod
+    def _redact_stored_request_passwords(cls, connection: sqlite3.Connection) -> None:
+        rows = connection.execute(
+            "SELECT id, request_json FROM runtime_jobs WHERE request_json LIKE '%user_password%'"
+        ).fetchall()
+        for row in rows:
+            try:
+                payload = json.loads(row['request_json'] or '{}')
+            except (TypeError, ValueError):
+                continue
+            sanitized = cls._sanitize_request_payload(payload)
+            if sanitized != payload:
+                connection.execute(
+                    'UPDATE runtime_jobs SET request_json = ? WHERE id = ?',
+                    (json.dumps(sanitized), int(row['id'])),
+                )
 
     def _set_meta(self, connection: sqlite3.Connection, key: str, value: str) -> None:
         connection.execute(
@@ -492,6 +530,7 @@ class RuntimeStore:
         request_payload: Dict[str, Any],
         status: str = 'QUEUED',
     ) -> int:
+        request_payload = self._sanitize_request_payload(request_payload)
         request_fingerprint = self.compute_request_fingerprint(tool_key, mode, request_payload)
         execution_path = str(Path(log_path).parent) if log_path else str(Path(output_path).parent) if output_path else ''
         tool_version = self._tool_version()
@@ -1153,7 +1192,8 @@ class RuntimeStore:
         return job
 
     def _derive_job_state(self, job: Dict[str, Any]) -> Dict[str, Any]:
-        if job.get('status') not in self.ACTIVE_JOB_STATUSES:
+        is_active = job.get('status') in self.ACTIVE_JOB_STATUSES
+        if not is_active and (job.get('status') != 'FAILED' or job.get('error_message')):
             return job
 
         log_path_value = str(job.get('log_path') or '').strip()
@@ -1206,6 +1246,11 @@ class RuntimeStore:
                     or self._path_mtime(exit_path)
                     or self._path_mtime(log_path)
                 )
+            if exit_status != 0 and not job.get('error_message'):
+                job['error_message'] = self.classify_failure_text(
+                    launcher_head + '\n' + launcher_tail + '\n' + console_text,
+                    exit_status,
+                )
             job.pop('status_detail', None)
             return job
 
@@ -1219,6 +1264,11 @@ class RuntimeStore:
                     self._extract_timestamp(launcher_tail, r'^\[broker\] END: (.+)$')
                     or self._path_mtime(launcher_log_path)
                     or self._path_mtime(log_path)
+                )
+            if broker_return_code != 0 and not job.get('error_message'):
+                job['error_message'] = self.classify_failure_text(
+                    launcher_head + '\n' + launcher_tail + '\n' + console_text,
+                    broker_return_code,
                 )
             job.pop('status_detail', None)
             return job
@@ -1348,27 +1398,42 @@ class RuntimeStore:
 
     @staticmethod
     def _extract_launcher_failure(text: str):
-        detail = ''
-        for line in reversed((text or '').splitlines()):
-            normalized = line.strip()
-            lowered = normalized.lower()
-            if not normalized:
-                continue
-            if normalized.startswith('srun: error:') or 'error connecting to /tmp/tmux-' in lowered:
-                detail = normalized
-                break
-
         match = re.search(r'exited with exit code (\d+)', text or '', re.IGNORECASE)
         if match:
             try:
-                return int(match.group(1)), detail or match.group(0)
+                return_code = int(match.group(1))
+                return return_code, RuntimeStore.classify_failure_text(text, return_code)
             except ValueError:
-                return None, detail
+                return None, ''
 
+        detail = RuntimeStore.classify_failure_text(text)
         if detail:
             return 1, detail
 
         return None, ''
+
+    @staticmethod
+    def classify_failure_text(text: str, return_code: Optional[int] = None) -> str:
+        patterns = (
+            ('Slurm partition discovery returned invalid output', r'USAGE:\s*sinfo|partition=USAGE'),
+            ('Invalid Slurm account, partition, or QoS', r'invalid partition|invalid account|account/partition combination|invalid qos'),
+            ('Slurm resources were unavailable', r'Unable to allocate resources|Resources Not Allocated|Memory specification can not be satisfied'),
+            ('Required input or runtime file is missing', r'Missing file:|No such file or directory|not found'),
+            ('Container image is incomplete or corrupted', r'bad superblock|image is corrupted'),
+            ('Filesystem permission denied', r'Permission denied|readonly database|not writable'),
+            ('Runtime service did not become ready', r'Timed out waiting for port|exited before port'),
+            ('Environment module is unavailable', r'module: command not found|Unable to locate a modulefile'),
+            ('tmux runtime failed', r'error connecting to /tmp/tmux-|no server running on'),
+            ('Python runtime failed', r'Traceback \(most recent call last\)'),
+        )
+        lines = [line.strip() for line in (text or '').splitlines() if line.strip()]
+        for label, pattern in patterns:
+            for line in reversed(lines):
+                if re.search(pattern, line, re.IGNORECASE):
+                    return f'{label}: {line[:800]}'
+        if return_code not in (None, 0):
+            return f'Runtime launcher exited with code {return_code}. Check launcher and compute logs for the first error.'
+        return ''
 
     @staticmethod
     def _path_mtime(path: Optional[Path]) -> str:
