@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HPCC Runtime Console — Demo Deck</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --panel: #ffffff;
+    --ink: #1f2a26;
+    --muted: #5b6b7b;
+    --brand: #0e7c66;
+    --brand-deep: #09594a;
+    --amber: #e9a259;
+    --red: #c0504d;
+    --blue: #2f6f9f;
+    --line: rgba(31, 42, 38, 0.12);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background:
+      radial-gradient(circle at 15% 12%, rgba(14, 124, 102, 0.10), transparent 34%),
+      radial-gradient(circle at 85% 20%, rgba(233, 162, 89, 0.12), transparent 30%),
+      var(--bg);
+    color: var(--ink);
+    overflow: hidden;
+  }
+  .deck { height: 100vh; display: flex; flex-direction: column; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 28px; background: rgba(255,255,255,0.85);
+    border-bottom: 1px solid var(--line); backdrop-filter: blur(6px);
+    z-index: 5;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  .brand .logo {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--brand), var(--amber));
+    display: grid; place-items: center; color: #fff; font-size: 15px;
+  }
+  .progress-track { flex: 1; margin: 0 24px; height: 6px; background: rgba(31,42,38,0.08); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand), var(--amber)); transition: width 0.3s ease; }
+  .slide-count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Slides ---------- */
+  .viewport { flex: 1; position: relative; overflow: hidden; }
+  .slides { height: 100%; transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1); display: flex; }
+  .slide {
+    min-width: 100%; height: 100%; overflow-y: auto;
+    padding: 46px 9vw 90px;
+    scrollbar-width: thin;
+  }
+  .slide-inner { max-width: 1080px; margin: 0 auto; }
+
+  /* ---------- Typography ---------- */
+  .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--brand); margin-bottom: 10px;
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 52px); line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 14px; }
+  h2 { font-size: clamp(22px, 3vw, 34px); line-height: 1.15; margin-bottom: 12px; }
+  h3 { font-size: 17px; margin-bottom: 8px; }
+  p.lead { font-size: clamp(15px, 1.6vw, 19px); color: var(--muted); line-height: 1.55; max-width: 60ch; }
+  .sub { color: var(--muted); font-size: 15px; line-height: 1.55; }
+
+  /* ---------- Components ---------- */
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 22px 26px; box-shadow: 0 10px 24px rgba(15,30,24,0.05);
+  }
+  .grid { display: grid; gap: 18px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  }
+  .tag.green { background: rgba(14,124,102,0.12); color: var(--brand-deep); }
+  .tag.amber { background: rgba(233,162,89,0.18); color: #8a5a1e; }
+  .tag.red { background: rgba(192,80,77,0.12); color: #8f2f2d; }
+  .tag.blue { background: rgba(47,111,159,0.12); color: #1d4f78; }
+  .tag.gray { background: rgba(91,107,123,0.12); color: var(--muted); }
+
+  .kpi-box { border-radius: 16px; padding: 14px 16px; border: 1px solid var(--line); background: rgba(255,255,255,0.7); }
+  .kpi-num { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; color: var(--brand); }
+  .kpi-label { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.tbl th { text-align: left; padding: 10px 12px; background: rgba(14,124,102,0.08); color: var(--brand-deep); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+  table.tbl td { padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+  table.tbl tr:hover td { background: rgba(14,124,102,0.03); }
+
+  .flow-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .flow-node {
+    border-radius: 14px; padding: 10px 16px; font-weight: 600; font-size: 14px;
+    border: 1.5px solid var(--line); background: #fff; box-shadow: 0 4px 12px rgba(15,30,24,0.06);
+  }
+  .flow-node.brand { background: rgba(14,124,102,0.1); border-color: rgba(14,124,102,0.4); color: var(--brand-deep); }
+  .flow-node.amber { background: rgba(233,162,89,0.14); border-color: rgba(233,162,89,0.45); color: #8a5a1e; }
+  .flow-node.blue { background: rgba(47,111,159,0.1); border-color: rgba(47,111,159,0.4); color: #1d4f78; }
+  .flow-arrow { color: var(--muted); font-size: 18px; }
+
+  .steps { counter-reset: step; display: grid; gap: 12px; }
+  .step { display: flex; gap: 14px; align-items: flex-start; }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    min-width: 30px; height: 30px; border-radius: 10px;
+    background: rgba(14,124,102,0.1); color: var(--brand-deep); font-weight: 700;
+    display: grid; place-items: center; font-size: 14px;
+  }
+  .step b { display: block; margin-bottom: 2px; }
+
+  .callout { border-left: 4px solid var(--amber); background: rgba(233,162,89,0.08); border-radius: 0 14px 14px 0; padding: 14px 18px; font-size: 14.5px; line-height: 1.55; }
+  .callout.green { border-color: var(--brand); background: rgba(14,124,102,0.07); }
+  .callout.blue { border-color: var(--blue); background: rgba(47,111,159,0.07); }
+
+  code {
+    font-family: Consolas, "Cascadia Mono", monospace; font-size: 0.92em;
+    background: rgba(31,42,38,0.06); padding: 2px 7px; border-radius: 6px; color: var(--brand-deep);
+  }
+  pre.code {
+    font-family: Consolas, "Cascadia Mono", monospace; font-size: 13px; line-height: 1.55;
+    background: #0d1827; color: #e6edf3; padding: 16px 18px; border-radius: 14px; overflow-x: auto;
+  }
+  pre.code .c { color: #7f97ad; }
+  pre.code .ok { color: #4ade80; }
+  pre.code .err { color: #f87171; }
+
+  ul.tight { padding-left: 20px; line-height: 1.7; font-size: 15px; }
+  ul.tight li { margin-bottom: 6px; }
+
+  .timer { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(14,124,102,0.1); color: var(--brand-deep); font-weight: 700; font-size: 13.5px; }
+  .timer i { font-style: normal; font-size: 15px; }
+
+  /* ---------- Bottom nav ---------- */
+  .bottomnav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 28px; background: rgba(255,255,255,0.9);
+    border-top: 1px solid var(--line); backdrop-filter: blur(6px); z-index: 5;
+  }
+  .navbtn {
+    border: 1px solid var(--line); background: #fff; border-radius: 999px;
+    padding: 8px 18px; font-weight: 600; font-size: 14px; cursor: pointer; color: var(--ink);
+    transition: all 0.15s ease;
+  }
+  .navbtn:hover:not(:disabled) { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .navbtn:disabled { opacity: 0.35; cursor: default; }
+  .dots { display: flex; gap: 8px; }
+  .dot { width: 10px; height: 10px; border-radius: 99px; background: rgba(31,42,38,0.18); cursor: pointer; transition: all 0.2s ease; }
+  .dot.active { background: var(--brand); transform: scale(1.3); }
+  .hint { font-size: 12px; color: var(--muted); }
+  .hint kbd { background: #fff; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; font-size: 11px; font-family: inherit; }
+
+  /* Cover */
+  .cover { display: grid; place-items: center; text-align: center; padding-bottom: 60px; }
+  .cover h1 { font-size: clamp(32px, 5vw, 60px); margin-bottom: 18px; }
+  .cover .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+  .divider { height: 3px; width: 90px; background: linear-gradient(90deg, var(--brand), var(--amber)); border-radius: 99px; margin: 0 auto 18px; }
+
+  /* Simple diagram for UDP box + neural-net look */
+  .net-canvas { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .node-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 10px 0; }
+  .node-row .lbl { font-size: 12px; color: var(--muted); }
+  .nd {
+    border-radius: 10px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; text-align: center;
+    background: rgba(14,124,102,0.1); border: 1.5px solid rgba(14,124,102,0.35); min-width: 90px;
+  }
+  .link-line { height: 14px; border-left: 2px dashed rgba(14,124,102,0.5); margin-left: 3px; }
+</style>
+</head>
+<body>
+<div class="deck">
+  <div class="topbar">
+    <div class="brand"><div class="logo">▣</div> HPCC Runtime Console — Demo</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="slide-count" id="slideCount">1 / 18</div>
+  </div>
+
+  <div class="viewport">
+    <div class="slides" id="slides">
+
+      <!-- ================= 1. COVER ================= -->
+      <section class="slide cover">
+        <div class="slide-inner">
+          <span class="eyebrow">Team demo · 30 minutes</span>
+          <h1>Resim Run &amp; the KPI Platform<br>on the HPCC Runtime Console</h1>
+          <div class="divider"></div>
+          <p class="lead" style="margin:0 auto;">One web console to launch resimulation jobs, run CAN / UDP KPI, inspect raw sensor plots, and reuse results — without re-triggering anything.</p>
+          <div class="badges">
+            <span class="tag green">Resim Run — focus</span>
+            <span class="tag amber">CAN KPI + CAN Interactive Plot</span>
+            <span class="tag blue">UDP KPI + Interactive Plot</span>
+            <span class="tag gray">Reuse · no duplicate runs</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. AGENDA ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Plan</span>
+          <h1>Agenda — how we spend the 30 minutes</h1>
+          <div class="grid grid-2" style="margin-top:22px;">
+            <div class="card">
+              <span class="timer"><i>⏱</i> 00:00 – 03:00</span>
+              <h3 style="margin-top:10px;">Context — why this platform exists</h3>
+              <p class="sub">One console for Resim + KPI + plotting. Who uses it, what it replaces.</p>
+            </div>
+            <div class="card">
+              <span class="timer"><i>⏱</i> 03:00 – 10:00</span>
+              <h3 style="margin-top:10px;">Resim Run — the star of the demo</h3>
+              <p class="sub">input.txt + .simg → remote SSH → Slurm → live console. Focus of the tech lead.</p>
+            </div>
+            <div class="card">
+              <span class="timer"><i>⏱</i> 10:00 – 18:00</span>
+              <h3 style="margin-top:10px;">KPI in brief — CAN vs UDP</h3>
+              <p class="sub">What KPI is, how to run it from the UI, what the outputs mean, how averages are computed.</p>
+            </div>
+            <div class="card">
+              <span class="timer"><i>⏱</i> 18:00 – 25:00</span>
+              <h3 style="margin-top:10px;">Interactive Plots — what they show &amp; how to debug</h3>
+              <p class="sub">CAN Interactive Plot (raw data, distribution). UDP Interactive Plot (box + connected view).</p>
+            </div>
+            <div class="card">
+              <span class="timer"><i>⏱</i> 25:00 – 28:00</span>
+              <h3 style="margin-top:10px;">Runtime console &amp; reuse</h3>
+              <p class="sub">How output is shown live, and why you never trigger the same run twice.</p>
+            </div>
+            <div class="card">
+              <span class="timer"><i>⏱</i> 28:00 – 30:00</span>
+              <h3 style="margin-top:10px;">Recap + Q&amp;A</h3>
+              <p class="sub">One-line summary of each tool, then questions.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. CONTEXT ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Context</span>
+          <h1>Why this platform exists</h1>
+          <p class="lead">Today, running a resimulation or a KPI job means SSH-ing to a cluster, sourcing a virtual environment, remembering Slurm flags, and babysitting a terminal. This console removes all of that.</p>
+          <div class="grid grid-3" style="margin-top:26px;">
+            <div class="card">
+              <h3>🚫 Before</h3>
+              <ul class="tight">
+                <li>Manual SSH + sourcing environments</li>
+                <li>Remembering <code>module load slurm</code>, partitions, accounts</li>
+                <li>Re-running everything by hand every time</li>
+                <li>Outputs scattered in unknown folders</li>
+              </ul>
+            </div>
+            <div class="card" style="border-color: rgba(14,124,102,0.4);">
+              <h3>✅ After (this demo)</h3>
+              <ul class="tight">
+                <li>One web console: <code>/html</code> dashboard</li>
+                <li>Resim Run, KPI, Interactive Plot, Hyperlink, RAG chat</li>
+                <li>Slurm resources picked from profiles &amp; presets</li>
+                <li>Everything recorded in SQLite — logs, artifacts, reuse</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>🧩 Pieces</h3>
+              <ul class="tight">
+                <li><b>main_html</b> — the browser UI you see</li>
+                <li><b>hpcc_main.py broker</b> — queues &amp; supervises jobs (port 9100)</li>
+                <li><b>SIMG containers</b> — can_kpi, udp_kpi, intplot, rag</li>
+                <li><b>runtime_store</b> — SQLite memory of every run</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout green" style="margin-top:20px;"><b>Message:</b> the console is the single door. KPI runs go to Slurm compute nodes, never to the login node.</div>
+        </div>
+      </section>
+
+      <!-- ================= 4. RESIM: WHAT ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 1 · Resim Run</span>
+          <h1>What a Resim Run is</h1>
+          <p class="lead">A resimulation ("resim") job takes a customer scenario (<code>input.txt</code>) and a container image (<code>.simg</code>), then replays the simulation on the cluster under Slurm — and the console shows the whole thing live.</p>
+          <div class="card" style="margin-top:24px;">
+            <h3>What the user provides</h3>
+            <table class="tbl" style="margin-top:10px;">
+              <tr><th>Field</th><th>Example</th><th>What it is</th></tr>
+              <tr><td><b>Input file</b></td><td><code>/net/…/PLKRA-PROJECTS/…/input.txt</code></td><td>The scenario to simulate — auto-detects project, account, cluster</td></tr>
+              <tr><td><b>SIMG file</b></td><td><code>/net/…/project.simg</code></td><td>The application container (must live on the same cluster partition)</td></tr>
+              <tr><td><b>Execution profile</b></td><td><code>Krakow Default / Helios / Athena / SF / Cyfronet</code></td><td>Slurm module, account, partition, memory, CPUs, time limit</td></tr>
+              <tr><td><b>Optional</b></td><td>Create JIRA ticket</td><td>Auto-file a ticket with a Gemma-generated analysis of the run</td></tr>
+            </table>
+          </div>
+          <div class="callout" style="margin-top:20px;"><b>Key point for the tech lead:</b> the console executes <code>rResim_Gen7.sh</code> <i>as the logged-in user</i> via SSH (askpass-based, non-interactive), auto-answers vendor prompts, and writes everything to a per-job log.</div>
+        </div>
+      </section>
+
+      <!-- ================= 5. RESIM: FLOW ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 1 · Resim Run</span>
+          <h1>Resim Run — end-to-end flow</h1>
+          <div class="card" style="margin-top:22px;">
+            <div class="steps">
+              <div class="step"><div><b>1 · Open Runtime Map → "Resim Run"</b>From the dashboard open <code>Runtime Map</code>; the Resim Run form is right on top. Click <b>Detect</b> to auto-fill cluster, project and partition from the paths.</div></div>
+              <div class="step"><div><b>2 · Fill paths &amp; options</b>Paste the <code>input.txt</code> and <code>.simg</code> paths (or use the Browse picker), pick an execution profile, optionally check "Create JIRA ticket".</div></div>
+              <div class="step"><div><b>3 · Submit</b>“Run Resim” → the app validates same-partition paths, writes a unique job log, and launches an SSH background worker.</div></div>
+              <div class="step"><div><b>4 · SSH as you</b>The worker runs <code>rResim_Gen7.sh input.txt image.simg highPrio</code> on your behalf (stored credentials via askpass), auto-answering “Y” prompts, with a 30-min safety timeout.</div></div>
+              <div class="step"><div><b>5 · Live console</b>You land on the <b>Runtime Console</b> page: the log tails every 3 seconds, and the owner can even send keystrokes (or Ctrl+C) into the running tmux-backed session.</div></div>
+              <div class="step"><div><b>6 · Result</b>Status becomes COMPLETED (exit code + failure-marker sniffing, since the vendor script always exits 0). JIRA ticket auto-created if enabled.</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. RESIM: WHY IT MATTERS ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 1 · Resim Run</span>
+          <h1>Why Resim Run matters</h1>
+          <div class="grid grid-2" style="margin-top:24px;">
+            <div class="card">
+              <h3>👤 For users</h3>
+              <ul class="tight">
+                <li>No SSH, no sourcing, no Slurm flags — a browser form</li>
+                <li>Path-based auto-detection of project &amp; account</li>
+                <li>Live console instead of a lost terminal</li>
+                <li>History: every run is recorded with owner, node, job id, exit code, log path</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>🔧 For engineers / support</h3>
+              <ul class="tight">
+                <li>Failure markers — the console tells you WHY it failed (permission denied, missing file, traceback…)</li>
+                <li>Exit code interpreted (e.g. <code>-9</code> = killed, usually OOM)</li>
+                <li>One click to open the stored log, or re-trigger the exact same run</li>
+                <li>Optional JIRA ticket with AI summary for traceability</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout blue" style="margin-top:20px;"><b>Demo tip:</b> show a completed resim first (history tab), then submit a fresh one so the audience sees the live tail. Mention: “the script survives laptop disconnect via tmux sessions.”</div>
+        </div>
+      </section>
+
+      <!-- ================= 7. KPI 101 ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 2 · KPI in brief</span>
+          <h1>KPI in one minute</h1>
+          <p class="lead">KPI = <b>K</b>ey <b>P</b>erformance <b>I</b>ndicators: numbers that tell us whether the sensor data recorded by the simulation matches reality (reference). It compares an <b>input HDF</b> against an <b>output HDF</b> and produces an HTML report with scores.</p>
+          <div class="grid grid-2" style="margin-top:24px;">
+            <div class="card">
+              <div class="flow-row">
+                <span class="flow-node">input.h5</span><span class="flow-arrow">→</span>
+                <span class="flow-node brand">KPI engine</span><span class="flow-arrow">→</span>
+                <span class="flow-node">KPI report.html</span>
+              </div>
+              <p class="sub" style="margin-top:12px;">Per sensor: <b>Precision · Recall · F1 · Accuracy · Overall match %</b>, plus scan counts and per-signal comparison.</p>
+            </div>
+            <div class="card">
+              <h3>Where do you run it?</h3>
+              <p class="sub" style="margin-top:8px;">Dashboard → <b>KPI Analysis</b> page. Pick the execution target, toggle the plots you want, fill paths, and press <b>Queue through broker</b>. The broker records the request in SQLite and spawns the container on Slurm.</p>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:20px;"><b>How the KPI number is computed:</b> detections from the input and output are matched scan-by-scan (exact 4-D alignment), then TP / FP / FN counts are turned into precision, recall, F1 and accuracy per scan, and finally <b>averaged over all scans and all sensors</b>.</div>
+        </div>
+      </section>
+
+      <!-- ================= 8. CAN vs UDP ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 2 · KPI in brief</span>
+          <h1>CAN KPI vs UDP KPI</h1>
+          <div class="grid grid-2" style="margin-top:22px;">
+            <div class="card">
+              <span class="tag amber">CAN KPI</span>
+              <h3 style="margin-top:10px;">Controller Area Network data</h3>
+              <ul class="tight">
+                <li>Radar/sensor <b>detection</b> streams over CAN bus</li>
+                <li>Compares detection counts &amp; signal values between input/output HDF</li>
+                <li>Output: tabbed HTML per log + <code>index.html</code> with per-sensor accuracy &amp; F1 charts</li>
+                <li>Runs with <b>CAN Interactive Plot</b> (its own pipeline) — the generic Interactive Plot is <b>not available</b> for CAN</li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag blue">UDP KPI</span>
+              <h3 style="margin-top:10px;">UDP sensor streams</h3>
+              <ul class="tight">
+                <li>Sensor notifications delivered over <b>UDP/ZMQ</b></li>
+                <li>KPI server exposes a ZMQ bridge; Interactive Plot subscribes and renders live</li>
+                <li>Output: KPI HTML per sensor, generated via the ZMQ server or JSON/HDF batch modes</li>
+                <li>Pairs with the <b>generic Interactive Plot</b> through the ZMQ bridge</li>
+              </ul>
+            </div>
+          </div>
+          <table class="tbl" style="margin-top:20px;">
+            <tr><th></th><th>CAN KPI</th><th>UDP KPI</th></tr>
+            <tr><td><b>Data source</b></td><td>CAN bus detection streams</td><td>UDP sensor notifications</td></tr>
+            <tr><td><b>Interactive plot</b></td><td>CAN Interactive Plot (own pipeline, one broker request)</td><td>Generic Interactive Plot over ZMQ bridge</td></tr>
+            <tr><td><b>Output</b></td><td>CAN KPI report + CAN Interactive Plot</td><td>UDP KPI report + Interactive Plot</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 9. KPI FORM ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 2 · KPI in brief</span>
+          <h1>Running KPI from the UI — the form</h1>
+          <div class="card" style="margin-top:22px;">
+            <table class="tbl">
+              <tr><th>Control</th><th>What it does</th></tr>
+              <tr><td><b>Execution target</b></td><td>Radio: <b>CAN KPI</b> or <b>UDP KPI</b> — pick the primary runtime first</td></tr>
+              <tr><td><b>Enable Interactive Plot</b></td><td>Generic Interactive Plot path — only valid with <b>UDP KPI</b></td></tr>
+              <tr><td><b>Enable CAN Interactive Plot</b></td><td>CAN pipeline toggle — only valid with <b>CAN KPI</b>; produces both outputs in one request</td></tr>
+              <tr><td><b>Interactive Plot only</b></td><td>Run plotting alone, using the selected target's source profile</td></tr>
+              <tr><td><b>Input mode</b></td><td><b>JSON batch</b> (list of HDF pairs) or <b>HDF pair</b> (one in → one out)</td></tr>
+              <tr><td><b>Configuration files</b></td><td>Side panel: view / edit / validate / save / upload <code>kpi.json</code>, <code>ConfigInteractivePlots.xml</code>, inputs JSON — validated before saving, auto backup</td></tr>
+              <tr><td><b>Resources</b></td><td>Scheduler, partition, customer account, QoS, memory, CPUs, time — pre-filled from profiles</td></tr>
+              <tr><td><b>Queue through broker</b></td><td>Sends the request to the broker; job appears under <b>Recent runs</b> immediately</td></tr>
+            </table>
+          </div>
+          <div class="callout green" style="margin-top:18px;"><b>Remember the golden rule:</b> <span class="tag amber">CAN KPI → CAN Interactive Plot</span> &nbsp;·&nbsp; <span class="tag blue">UDP KPI → Interactive Plot</span> — the wrong combination is simply not offered in the UI.</div>
+        </div>
+      </section>
+
+      <!-- ================= 10. CAN INTERACTIVE PLOT ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 3 · Interactive Plots</span>
+          <h1>CAN Interactive Plot — raw data &amp; distribution</h1>
+          <p class="lead">Purpose: <b>see the raw sensor data before trusting any KPI number.</b> The CAN Interactive Plot renders every sensor's recorded signal over time so you can eyeball the distribution, the noise and the behavior.</p>
+          <div class="grid grid-2" style="margin-top:24px;">
+            <div class="card">
+              <h3>What you can see</h3>
+              <ul class="tight">
+                <li>Raw signal traces per sensor (time series)</li>
+                <li>How values are <b>distributed</b> (histograms / spread)</li>
+                <li>Detection events and their timing</li>
+                <li>Input vs output overlay — spot drift instantly</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>How you debug with it</h3>
+              <ul class="tight">
+                <li>KPI low? → open the plot, check whether the signal exists at all</li>
+                <li>Empty / flat curves → sensor not parsed (see parse notices)</li>
+                <li>Offset curves → timing alignment issues between logs</li>
+                <li>Outliers → distribution view reveals them before they skew averages</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:20px;"><b>Sequence for CAN:</b> enable CAN KPI → enable CAN Interactive Plot → one broker request → <b>CAN KPI report + CAN Interactive Plot</b> are generated together in the same output directory.</div>
+        </div>
+      </section>
+
+      <!-- ================= 11. UDP INTERACTIVE PLOT ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 3 · Interactive Plots</span>
+          <h1>UDP Interactive Plot — the connected "box" view</h1>
+          <p class="lead">For UDP, the plot is <b>live and connected</b>: the UDP KPI server streams over ZMQ, and the Interactive Plot renders a graph of sensor boxes linked like a neural network — showing exactly how sensors are wired to the pipeline.</p>
+          <div class="grid grid-2" style="margin-top:24px;">
+            <div class="card net-canvas">
+              <div class="node-row">
+                <span class="nd">Sensor A</span>
+                <div class="link-line"></div>
+                <span class="nd">Sensor B</span>
+                <div class="link-line"></div>
+                <span class="nd">Sensor C</span>
+              </div>
+              <div class="node-row" style="justify-content:center;">
+                <span class="nd" style="background:rgba(47,111,159,0.1);border-color:rgba(47,111,159,0.4);">UDP KPI ZMQ server</span>
+              </div>
+              <div class="node-row" style="justify-content:center;">
+                <span class="nd" style="background:rgba(233,162,89,0.14);border-color:rgba(233,162,89,0.45);">Interactive Plot client</span>
+              </div>
+              <div class="node-row" style="justify-content:center;">
+                <span class="nd" style="background:rgba(14,124,102,0.1);border-color:rgba(14,124,102,0.4);">HTML report</span>
+              </div>
+            </div>
+            <div class="card">
+              <h3>What it means</h3>
+              <ul class="tight">
+                <li>Each <b>box</b> = a sensor / pipeline stage</li>
+                <li><b>Connections</b> = data flow between them</li>
+                <li>You see the topology at a glance — like a neural network</li>
+                <li>Output: <b>UDP KPI + Interactive Plot</b> in one combined flow</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout blue" style="margin-top:20px;"><b>Under the hood:</b> combined UDP + Interactive Plot runs use a tmux-backed wrapper (two panes: KPI ZMQ server + plot client), so the run survives a laptop disconnect. Port, e.g. <code>5560</code>, is passed through the launcher.</div>
+        </div>
+      </section>
+
+      <!-- ================= 12. OUTPUTS SIDE BY SIDE ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 3 · Interactive Plots</span>
+          <h1>Outputs — side by side</h1>
+          <div class="grid grid-2" style="margin-top:22px;">
+            <div class="card">
+              <span class="tag amber">CAN path</span>
+              <div class="flow-row" style="margin-top:12px;">
+                <span class="flow-node amber">CAN KPI</span>
+                <span class="flow-arrow">+</span>
+                <span class="flow-node amber">CAN Interactive Plot</span>
+              </div>
+              <p class="sub" style="margin-top:10px;">One broker request. Two outputs in the same folder:</p>
+              <ul class="tight">
+                <li><code>…/&lt;log&gt;.html</code> — CAN KPI tabs (overview, per-sensor, KPI scores)</li>
+                <li><code>index.html</code> — accuracy &amp; F1 across logs</li>
+                <li>Interactive plots — raw signals &amp; distribution</li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag blue">UDP path</span>
+              <div class="flow-row" style="margin-top:12px;">
+                <span class="flow-node blue">UDP KPI</span>
+                <span class="flow-arrow">→ ZMQ →</span>
+                <span class="flow-node blue">Interactive Plot</span>
+              </div>
+              <p class="sub" style="margin-top:10px;">KPI server in ZMQ mode, plot client attached live:</p>
+              <ul class="tight">
+                <li>KPI HTML generated per sensor</li>
+                <li>Live connected box-view while running</li>
+                <li>Final HTML report with plots</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout green" style="margin-top:20px;"><b>What to compare in the demo:</b> run the same scenario through both paths and show that CAN gives you raw-data plots for debugging, while UDP gives you the live connected topology — <b>both always pair with their own KPI</b>.</div>
+        </div>
+      </section>
+
+      <!-- ================= 13. AVERAGES ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 4 · Under the hood</span>
+          <h1>How the KPI takes an average</h1>
+          <div class="card" style="margin-top:22px;">
+            <div class="steps">
+              <div class="step"><div><b>1 · Align scans</b>Input and output storage rows are aligned by <code>scanindex</code> — only common scans are compared (unmatched scans are counted and reported).</div></div>
+              <div class="step"><div><b>2 · Match detections</b>Each scan's detection candidates are matched between input and output (4-D neighborhood hash match). Empty-vs-empty scans score 100%.</div></div>
+              <div class="step"><div><b>3 · Per-scan scores</b>True positives / false positives / false negatives → per scan: <code>precision</code>, <code>recall</code>, <code>F1</code>, <code>accuracy</code>, <code>overall match %</code>.</div></div>
+              <div class="step"><div><b>4 · Average it</b>Each sensor's score array is averaged with <code>nanmean</code> → one number per sensor per metric.</div></div>
+              <div class="step"><div><b>5 · Overall</b>The sensor averages are averaged again → <b>Overall Average Accuracy</b> and <b>Overall F1</b>, shown on the index page and used for alerting (<code>&lt; 60%</code> → JIRA ticket).</div></div>
+            </div>
+          </div>
+          <div class="grid grid-3" style="margin-top:20px;">
+            <div class="kpi-box"><div class="kpi-num">nanmean</div><div class="kpi-label">per-sensor score arrays → one number per metric</div></div>
+            <div class="kpi-box"><div class="kpi-num">mean</div><div class="kpi-label">sensor averages → overall accuracy / F1</div></div>
+            <div class="kpi-box"><div class="kpi-num">&lt;60%</div><div class="kpi-label">accuracy threshold → auto JIRA ticket</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 14. RUNTIME CONSOLE ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 5 · Live output</span>
+          <h1>Output in the Runtime Console</h1>
+          <p class="lead">Every job lands on the <b>Runtime Console</b> page — a live terminal in the browser.</p>
+          <div class="grid grid-2" style="margin-top:24px;">
+            <div class="card">
+              <h3>What you see</h3>
+              <ul class="tight">
+                <li>Dark terminal view — last N lines, then <b>polled every 3 s</b></li>
+                <li>Meta chips: status, live-tmux vs log-viewer mode, session &amp; pane names</li>
+                <li>Stored log path (mirrored into the persistent runtime store)</li>
+                <li>Execution path, tool version, DB version</li>
+                <li>Generated artifacts — indexed from the runtime store</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>What you can do</h3>
+              <ul class="tight">
+                <li><b>Watch</b> any job shared by your team (read-only)</li>
+                <li><b>Send input</b> — only the owner, while the job is active (select pane, type, Enter)</li>
+                <li><b>Ctrl+C</b> button to interrupt the remote process</li>
+                <li><b>Output</b> button → browse the generated folder when COMPLETED</li>
+                <li>Auto-scroll sticks to the bottom while the run is live</li>
+              </ul>
+            </div>
+          </div>
+          <pre class="code" style="margin-top:20px;"><span class="c"># what a live console tail looks like</span>
+CMD: ssh -tt user@127.0.0.1 bash -lc 'env RESIM_SLURM_MODULE=slurm ./rResim_Gen7.sh ... '
+START: 2026-08-14T09:12:03Z
+[ver-3.0] : Starting Resim Execution
+module load slurm ... OK
+<span class="ok">Processing input.txt ... 42 scenarios queued</span>
+EXIT_CODE: 0 · END: 2026-08-14T09:17:41Z</pre>
+        </div>
+      </section>
+
+      <!-- ================= 15. REUSE ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Part 5 · Reuse</span>
+          <h1>Reuse — never trigger the same run twice</h1>
+          <p class="lead">Before submitting, the KPI form asks the broker: <i>“has this exact scenario already run?”</i> The answer comes from a fingerprint of the request stored in SQLite.</p>
+          <div class="card" style="margin-top:24px;">
+            <div class="steps">
+              <div class="step"><div><b>1 · Fingerprint</b>Submit → the app hashes tool + mode + all input/output paths + resources → <code>request_fingerprint</code>.</div></div>
+              <div class="step"><div><b>2 · Reuse-check</b>A dialog appears: <i>“This scenario is already present — Owner, Status, Output, Stored log, Artifacts.”</i></div></div>
+              <div class="step"><div><b>3 · Choose</b><b>OK</b> = generate again (deliberate rerun) · <b>Cancel</b> = open the <b>stored runtime console</b> instead — zero compute used.</div></div>
+              <div class="step"><div><b>4 · History</b>Both paths create a history row; a reused job links back to the original runtime job (<code>reused_from_runtime_job_id</code>).</div></div>
+            </div>
+          </div>
+          <div class="callout green" style="margin-top:20px;"><b>Why this matters:</b> HDF pairs are huge and KPI runs cost Slurm hours. Colleagues on the same customer account immediately see that the result already exists — and just open the console. It also helps the team <i>learn to run KPI</i> by example: the history tab shows exactly what inputs previous runs used.</div>
+        </div>
+      </section>
+
+      <!-- ================= 16. LIVE DEMO FLOW ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Live demo</span>
+          <h1>The demo, minute by minute</h1>
+          <div class="card" style="margin-top:22px;">
+            <table class="tbl">
+              <tr><th>Time</th><th>What to show</th><th>On screen</th></tr>
+              <tr><td><b>0–3</b></td><td>Context &amp; dashboard tour</td><td><code>/html</code> dashboard, broker health, runtime map graph</td></tr>
+              <tr><td><b>3–10</b></td><td><b>Resim Run</b></td><td>Runtime Map → Resim Run form → Detect → submit → live console tail → completed row in history</td></tr>
+              <tr><td><b>10–14</b></td><td>KPI 101 + the form</td><td>KPI Analysis page: execution target, toggles, config files panel (view/validate/save)</td></tr>
+              <tr><td><b>14–18</b></td><td>CAN path</td><td>CAN KPI + CAN Interactive Plot → output folder: KPI html + plots + index</td></tr>
+              <tr><td><b>18–21</b></td><td>UDP path</td><td>UDP KPI + Interactive Plot → ZMQ bridge, connected box view</td></tr>
+              <tr><td><b>21–24</b></td><td>Plots as a debug tool</td><td>Raw traces, distribution, input-vs-output overlay; how to spot a bad sensor</td></tr>
+              <tr><td><b>24–26</b></td><td>Averages</td><td>One report: scan alignment → per-scan scores → nanmean per sensor → overall</td></tr>
+              <tr><td><b>26–28</b></td><td>Reuse + console</td><td>Submit the same scenario again → reuse dialog → open stored console, no re-run</td></tr>
+              <tr><td><b>28–30</b></td><td>Recap + Q&amp;A</td><td>One line per tool, invite questions</td></tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 17. TALKING POINTS / PREP ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Preparation</span>
+          <h1>Before you start — checklist</h1>
+          <div class="grid grid-2" style="margin-top:22px;">
+            <div class="card">
+              <h3>Environment</h3>
+              <ul class="tight">
+                <li>Console reachable: <code>python hpcc_main.py</code> then <code>http://127.0.0.1:5001/html</code></li>
+                <li>Broker healthy: <code>127.0.0.1:9100</code> ping</li>
+                <li>Login as a demo user with cluster credentials stored (askpass needs them)</li>
+                <li>Slurm reachable from the UI (or local scheduler for fallback)</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Demo data</h3>
+              <ul class="tight">
+                <li>One known-good <code>input.txt</code> + matching <code>.simg</code> on the cluster</li>
+                <li>One <code>kpi.json</code> with a small HDF pair (fast run)</li>
+                <li>One completed KPI job from earlier — so the reuse dialog shows instantly</li>
+                <li>One intentionally-broken artifact (optional) to show failure markers</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:20px;"><b>Fallback plan:</b> if Slurm is slow, show the reuse dialog on a completed job and the history tab first — both are instant and prove the platform without waiting for a queue.</div>
+        </div>
+      </section>
+
+      <!-- ================= 18. RECAP ================= -->
+      <section class="slide">
+        <div class="slide-inner">
+          <span class="eyebrow">Wrap-up</span>
+          <h1>Recap — one line per thing</h1>
+          <div class="grid grid-2" style="margin-top:22px;">
+            <div class="card"><span class="tag green">Resim Run</span><p class="sub" style="margin-top:8px;">Submit <code>input.txt</code> + <code>.simg</code> from a form; the console SSH-runs the vendor script as you, under Slurm, with a live terminal and full history.</p></div>
+            <div class="card"><span class="tag amber">CAN KPI</span><p class="sub" style="margin-top:8px;">Detection-match scores (precision / recall / F1 / accuracy) for CAN radar sensors, per log, plus an index across logs.</p></div>
+            <div class="card"><span class="tag blue">UDP KPI</span><p class="sub" style="margin-top:8px;">Sensor KPI over a ZMQ bridge, feeding the live interactive plot; same averaging logic, different transport.</p></div>
+            <div class="card"><span class="tag gray">Interactive Plots</span><p class="sub" style="margin-top:8px;">CAN: raw data &amp; distribution for debugging. UDP: live connected box-view. Each pairs with its own KPI — never mixed.</p></div>
+            <div class="card"><span class="tag gray">Averages</span><p class="sub" style="margin-top:8px;">Align scans → match detections → per-scan metrics → nanmean per sensor → overall average; &lt;60% auto-opens a JIRA ticket.</p></div>
+            <div class="card"><span class="tag gray">Console &amp; Reuse</span><p class="sub" style="margin-top:8px;">Every run gets a live console and persistent record; identical scenarios are detected by fingerprint and reuse the stored result instead of re-running.</p></div>
+          </div>
+          <div class="callout green" style="margin-top:22px; text-align:center;"><b>Thank you — questions?</b></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="bottomnav">
+    <button class="navbtn" id="prevBtn">← Previous</button>
+    <div class="dots" id="dots"></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsWrap = document.getElementById('dots');
+  const progressFill = document.getElementById('progressFill');
+  const slideCount = document.getElementById('slideCount');
+  let current = 0;
+  const total = slides.length;
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => go(i));
+    dotsWrap.appendChild(d);
+  }
+
+  function go(index) {
+    current = Math.max(0, Math.min(total - 1, index));
+    document.getElementById('slides').style.transform = `translateX(-${current * 100}%)`;
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    progressFill.style.width = `${((current + 1) / total) * 100}%`;
+    slideCount.textContent = `${current + 1} / ${total}`;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+    slides[current].scrollTop = 0;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => go(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => go(current + 1));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(total - 1);
+  });
+  go(0);
+</script>
+</body>
+</html>
