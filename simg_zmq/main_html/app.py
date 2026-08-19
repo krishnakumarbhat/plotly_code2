@@ -3330,7 +3330,7 @@ def submit_runtime_kpi_job():
             submission['paths'],
             submission['resources'],
             'kpi',
-            submission['input_path'],
+            submission['primary_input'],
             submission['execution_label'],
         )
     except Exception as exc:

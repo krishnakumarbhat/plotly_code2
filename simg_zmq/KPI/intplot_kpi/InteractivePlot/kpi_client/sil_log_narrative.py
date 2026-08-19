@@ -298,7 +298,7 @@ def _write_html(output_path: Path, title: str, text_body: str) -> None:
     output_path.write_text(html_body, encoding="utf-8")
 
 
-def process_pair(pair: sil.FilePair, output_dir: Path, gate: float, metric: str, max_sensors: int = 4) -> Path:
+def process_pair(pair: sil.FilePair, output_dir: Path, gate: float, metric: str, max_sensors: int = 6) -> Path:
     veh_sensors = sil.sensors_in_file(pair.veh_path)
     resim_sensors = sil.sensors_in_file(pair.resim_path)
     sensors = sorted(set(veh_sensors) & set(resim_sensors))

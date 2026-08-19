@@ -45,12 +45,59 @@ OPTIONAL_SIGNAL_KEYS = (
     "hdrTimestamp_fractionalSec",
 )
 HEADER_VARIANTS = (
-    "Stream_Hdr",
     "stream_hdr",
-    "StreamHdr",
-    "STREAM_HDR",
-    "streamheader",
+    "stream_Hdr",
+    "stream_HDR",
     "stream_header",
+    "stream_Header",
+    "stream_HEADER",
+    "Stream_hdr",
+    "Stream_Hdr",
+    "Stream_HDR",
+    "Stream_header",
+    "Stream_Header",
+    "Stream_HEADER",
+    "STREAM_hdr",
+    "STREAM_Hdr",
+    "STREAM_HDR",
+    "STREAM_header",
+    "STREAM_Header",
+    "STREAM_HEADER",
+    "streamhdr",
+    "streamHdr",
+    "streamHDR",
+    "streamheader",
+    "streamHeader",
+    "streamHEADER",
+    "Streamhdr",
+    "StreamHdr",
+    "StreamHDR",
+    "Streamheader",
+    "StreamHeader",
+    "StreamHEADER",
+    "STREAMhdr",
+    "STREAMHdr",
+    "STREAMHDR",
+    "STREAMheader",
+    "STREAMHeader",
+    "STREAMHEADER",
+    "hdr_stream",
+    "hdr_Stream",
+    "hdr_STREAM",
+    "Hdr_stream",
+    "Hdr_Stream",
+    "Hdr_STREAM",
+    "HDR_stream",
+    "HDR_Stream",
+    "HDR_STREAM",
+    "header_stream",
+    "header_Stream",
+    "header_STREAM",
+    "Header_stream",
+    "Header_Stream",
+    "Header_STREAM",
+    "HEADER_stream",
+    "HEADER_Stream",
     "HEADER_STREAM",
 )
 
@@ -305,6 +352,23 @@ def _safe_read_first_excluding(
     return None, None
 
 
+def _scan_index_candidates(handle: h5py.File, sensor: str) -> Tuple[str, ...]:
+    """Build scan_index candidate paths by resolving the header group name
+    dynamically against HEADER_VARIANTS, mirroring the all-sensor HDF parser."""
+    candidates: list = []
+    for stream_name in ("DETECTION_STREAM", "RDD_STREAM"):
+        stream_path = f"{sensor}/{stream_name}"
+        if stream_path not in handle:
+            continue
+        data_group = handle[stream_path]
+        for variant in HEADER_VARIANTS:
+            if variant in data_group:
+                candidates.append(f"{stream_path}/{variant}/scan_index")
+    if f"{sensor}/RDD_STREAM/Look_Data" in handle:
+        candidates.append(f"{sensor}/RDD_STREAM/Look_Data/scan_index")
+    return tuple(candidates)
+
+
 def _as_scan_indices(arr: np.ndarray, n_scans: int) -> np.ndarray:
     one_d = np.ravel(arr).astype(np.float64)
     if one_d.size < n_scans:
@@ -366,11 +430,7 @@ def _build_from_af_det_with_rdd_fallback(handle: h5py.File, sensor: str) -> Opti
 
     dataset_map: Dict[str, str] = {}
 
-    scan_candidates = (
-        f"{sensor}/DETECTION_STREAM/Stream_Hdr/scan_index",
-        f"{sensor}/RDD_STREAM/Look_Data/scan_index",
-        f"{sensor}/RDD_STREAM/Stream_Hdr/scan_index",
-    )
+    scan_candidates = _scan_index_candidates(handle, sensor)
     scan_raw, scan_path = _safe_read_first(handle, scan_candidates)
     if scan_raw is None:
         return None
@@ -567,11 +627,7 @@ def _load_radar_storage(
     handle: h5py.File,
     sensor: str,
 ) -> tuple[DataModelStorage, Dict[str, str], Dict[str, str]]:
-    scan_candidates = (
-        f"{sensor}/DETECTION_STREAM/Stream_Hdr/scan_index",
-        f"{sensor}/RDD_STREAM/Look_Data/scan_index",
-        f"{sensor}/RDD_STREAM/Stream_Hdr/scan_index",
-    )
+    scan_candidates = _scan_index_candidates(handle, sensor)
     scan_raw, scan_path = _safe_read_first(handle, scan_candidates)
     if scan_raw is None:
         raise ValueError(f"{sensor}: missing scan_index dataset")
