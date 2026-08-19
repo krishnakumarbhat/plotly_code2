@@ -219,6 +219,20 @@ class KPI_DataModelStorage:
 
         dataset = self._align_dataset_rows(dataset, signal_name)
 
+        # Length checks (important for preventing invalid parent/child state).
+        # If the dataset has more rows than unique scan indices (e.g., duplicate
+        # scan_index entries in the source HDF), truncate like InteractivePlot's
+        # storage does instead of dropping the whole signal.
+        dataset_len = len(dataset) if dataset is not None else 0
+        container_len = len(self._data_container)
+
+        if dataset is not None and dataset_len > container_len:
+            logging.warning(
+                f"Truncating dataset for {signal_name}: dataset length ({dataset_len}) exceeds scan indices length ({container_len})"
+            )
+            dataset = dataset[:container_len]
+            dataset_len = container_len
+
         if is_new_parent:
             # Handle new parent group
             key_grp = f"{self._parent_counter}_None"

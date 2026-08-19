@@ -125,7 +125,10 @@ def load_sensor_data(path: Path, sensor: str) -> Optional[dict]:
             return None
         scan = _safe_read(h, [
             f"{sensor}/DETECTION_STREAM/Stream_Hdr/scan_index",
+            f"{sensor}/DETECTION_STREAM/Stream_HDR/scan_index",
             f"{sensor}/RDD_STREAM/Look_Data/scan_index",
+            f"{sensor}/RDD_STREAM/Stream_Hdr/scan_index",
+            f"{sensor}/RDD_STREAM/Stream_HDR/scan_index",
         ])
         ran = _safe_read(h, [f"{af}/ran", f"{af}/range"])
         vel = _safe_read(h, [f"{af}/vel", f"{af}/velocity"])

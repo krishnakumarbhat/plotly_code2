@@ -280,8 +280,10 @@ def _build_from_af_det_with_rdd_fallback(handle: h5py.File, sensor: str) -> Opti
 
     scan_candidates = (
         f"{sensor}/DETECTION_STREAM/Stream_Hdr/scan_index",
+        f"{sensor}/DETECTION_STREAM/Stream_HDR/scan_index",
         f"{sensor}/RDD_STREAM/Look_Data/scan_index",
         f"{sensor}/RDD_STREAM/Stream_Hdr/scan_index",
+        f"{sensor}/RDD_STREAM/Stream_HDR/scan_index",
     )
     scan_raw, scan_path = _safe_read_first(handle, scan_candidates)
     if scan_raw is None:
@@ -423,6 +425,7 @@ def load_radar_hdf(path: Path, sensor: str) -> LoadedRadar:
     column_candidates: Mapping[str, Sequence[str]] = {
         "scan_index": (
             f"{sensor}/DETECTION_STREAM/Stream_Hdr/scan_index",
+            f"{sensor}/DETECTION_STREAM/Stream_HDR/scan_index",
             f"{sensor}/RDD_STREAM/Look_Data/scan_index",
             "scan_index",
             "ScanIndex",
