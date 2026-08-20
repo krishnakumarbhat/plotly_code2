@@ -1,14 +1,17 @@
 import socket
 import subprocess
 import sys
+from pathlib import Path
 
-import pytest
+
+_ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_broker_port_default_is_9200():
     result = subprocess.run(
         [sys.executable, '-c', 'import os; os.environ.pop("HPCC_BROKER_PORT", None); from main_html.hpcc_broker_client import HpccBrokerClient; c = HpccBrokerClient(); print(c.port)'],
         capture_output=True, text=True, timeout=10,
+        cwd=_ROOT,
     )
     assert result.returncode == 0, result.stderr
     assert '9200' in result.stdout.strip()

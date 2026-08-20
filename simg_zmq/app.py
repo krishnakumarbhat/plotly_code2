@@ -22,18 +22,18 @@ sys.path.insert(0, str(MAIN_HTML_PATH))
 
 # Import environment utilities first
 try:
-    from env_utils import get_env, get_cache_dir
+    from env_utils import get_env, get_cache_dir  # noqa: F401
     env = get_env()
 except ImportError:
     env = None
 
 # Import the Flask app from main_html
 try:
-    from app import app, db, init_db
+    from app import app, db, init_db  # noqa: F401
 except ImportError as e:
     print(f"ERROR: Could not import app from main_html: {e}")
-    print(f"Make sure main_html/app.py exists and has required dependencies installed.")
-    print(f"Run: pip install -r main_html/requirements.txt")
+    print("Make sure main_html/app.py exists and has required dependencies installed.")
+    print("Run: pip install -r main_html/requirements.txt")
     sys.exit(1)
 
 

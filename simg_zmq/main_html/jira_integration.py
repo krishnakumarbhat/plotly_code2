@@ -1,9 +1,10 @@
-import json
 import logging
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from datetime import datetime
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -163,7 +164,7 @@ class JiraIntegration:
             '',
         ]
         if notes:
-            parts.append(f'Additional notes from user:')
+            parts.append('Additional notes from user:')
             parts.append(f'{notes}')
             parts.append('')
 
@@ -248,20 +249,20 @@ class JiraIntegration:
     def _build_ticket_description(self, accuracy_score: float, log_path: str, hdf_path: str, debug_analysis: str = '') -> str:
         now = datetime.now().isoformat()
         parts = [
-            f'KPI Accuracy Alert',
-            f'',
+            'KPI Accuracy Alert',
+            '',
             f'Accuracy: {accuracy_score:.1f}%',
             f'Generated: {now}',
             f'Log file: {log_path}',
             f'HDF file: {hdf_path}',
-            f'',
+            '',
         ]
         if debug_analysis:
-            parts.append(f'AI Debug Analysis:')
-            parts.append(f'')
+            parts.append('AI Debug Analysis:')
+            parts.append('')
             parts.append(debug_analysis)
-            parts.append(f'')
-        parts.append(f'Accuracy is below the 60% threshold. Review the AI analysis above and the logs for root cause.')
+            parts.append('')
+        parts.append('Accuracy is below the 60% threshold. Review the AI analysis above and the logs for root cause.')
         return '\n'.join(parts)
 
     def _summarize_hdf5(self, hdf_path: str) -> str:
@@ -367,19 +368,19 @@ class JiraIntegration:
 
         prompt_lines = [
             f'A KPI validation run achieved only {accuracy:.1f}% accuracy.',
-            f'Here is the HDF5 input data summary:',
-            f'',
+            'Here is the HDF5 input data summary:',
+            '',
             summary,
-            f'',
+            '',
             f'Log path: {log_path}',
-            f'',
-            f'Analyze why accuracy might be low. Consider:',
-            f'- Are there empty groups or zero-size datasets?',
-            f'- Is the scan count very low?',
-            f'- Are signal ranges abnormal?',
-            f'- Could there be a timestamp/alignment mismatch?',
-            f'- Are expected sensors/groups missing?',
-            f'Provide specific debugging suggestions.',
+            '',
+            'Analyze why accuracy might be low. Consider:',
+            '- Are there empty groups or zero-size datasets?',
+            '- Is the scan count very low?',
+            '- Are signal ranges abnormal?',
+            '- Could there be a timestamp/alignment mismatch?',
+            '- Are expected sensors/groups missing?',
+            'Provide specific debugging suggestions.',
         ]
 
         return self._call_llm_for_debug('\n'.join(prompt_lines))

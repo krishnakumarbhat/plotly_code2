@@ -2,7 +2,6 @@ import pytest
 import pandas as pd # Assuming pandas is used for data manipulation
 import numpy as np
 from unittest.mock import patch, MagicMock, ANY
-from unittest.mock import call
 import logging
 import plotly.graph_objects as go
 from InteractivePlot.d_business_layer.data_prep import DataPrep

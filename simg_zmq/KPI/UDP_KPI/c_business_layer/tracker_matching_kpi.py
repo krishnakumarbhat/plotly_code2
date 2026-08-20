@@ -1,17 +1,13 @@
 #################################
 # Tracker Matching KPI HDF Implementation
 #################################
-import sys
-import os
-import re
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.subplots as sp
 import plotly.io as pio
-import json
 import logging
-from typing import Dict, List, Tuple, Any
+from typing import Dict
 
 from UDP_KPI.b_data_storage.kpi_data_model_storage import KPI_DataModelStorage
 from UDP_KPI.b_data_storage.kpi_config_storage import KPI_VALIDATION_RULES, KPI_TRACKER_CONFIG

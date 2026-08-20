@@ -7,7 +7,6 @@ import sys
 import platform
 import threading
 import webbrowser
-import json
 from typing import Any, Dict, List, Optional
 
 # Base directories - handle PyInstaller frozen mode

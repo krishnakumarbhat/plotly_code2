@@ -1,4 +1,13 @@
-import os, platform, shutil, subprocess, sys, json, hashlib, socket, threading, time
+import os
+import platform
+import shutil
+import subprocess
+import sys
+import json
+import hashlib
+import socket
+import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path, PurePosixPath
 
@@ -172,8 +181,8 @@ def build_simg(img_rel):
     runtime = _check_runtime()
     if not runtime:
         _p(f'  ERROR: apptainer/singularity not found — cannot build {img_rel}')
-        _p(f'  Run this command from WSL (Ubuntu) where apptainer is installed.')
-        _p(f'  Or install WSL: wsl --install -d Ubuntu')
+        _p('  Run this command from WSL (Ubuntu) where apptainer is installed.')
+        _p('  Or install WSL: wsl --install -d Ubuntu')
         raise SystemExit(1)
     build_env = os.environ.copy()
     build_env['APPTAINER_TMPDIR'] = '/tmp'
@@ -184,7 +193,8 @@ def build_simg(img_rel):
     build_env['APPTAINER_SQUASHFS_COMPRESSION'] = 'gzip'
     build_env['SINGULARITY_SQUASHFS_COMPRESSION'] = 'gzip'
     # Build entirely on Linux tmpfs to avoid mksquashfs crash on /mnt/c/ (Windows 9P mount)
-    import tempfile as _tf, shutil as _shutil
+    import tempfile as _tf
+    import shutil as _shutil
     with _tf.TemporaryDirectory(dir='/tmp') as _build_dir:
         _linux_root = Path(_build_dir) / 'src'
         _linux_root.mkdir()
@@ -242,10 +252,10 @@ def build_simg(img_rel):
                 _p(f'  stdout:\n{result_stdout}')
             if result_stderr:
                 _p(f'  stderr:\n{result_stderr}')
-            _p(f'  Check:')
-            _p(f'    - Is docker/podman running?  (apptainer needs it to pull the base image)')
-            _p(f'    - Is there enough disk space in /tmp?  (build uses squashfs)')
-            _p(f'    - Try: wsl --shutdown, then restart your terminal')
+            _p('  Check:')
+            _p('    - Is docker/podman running?  (apptainer needs it to pull the base image)')
+            _p('    - Is there enough disk space in /tmp?  (build uses squashfs)')
+            _p('    - Try: wsl --shutdown, then restart your terminal')
             raise SystemExit(1)
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(_tmp_img, dst)
@@ -265,7 +275,7 @@ def build_pyz():
     current_hash = _sha256(src) if src.exists() else ''
     prev_hash = meta.get('build', {}).get('hpcc_main.pyz', {}).get('src_hash', '')
     if dst.exists() and current_hash and current_hash == prev_hash:
-        _p(f'  up-to-date: hpcc_main.pyz')
+        _p('  up-to-date: hpcc_main.pyz')
         return
     _p('  building hpcc_main.pyz...')
     dst.parent.mkdir(parents=True, exist_ok=True)
@@ -282,7 +292,8 @@ def build_pyz():
 
 
 def _build_compatible_zipapp(src: Path, dst: Path):
-    import zipfile, io
+    import zipfile
+    import io
     dst.parent.mkdir(parents=True, exist_ok=True)
     # Build a proper ZIP archive with __main__.py
     buf = io.BytesIO()

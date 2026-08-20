@@ -1,7 +1,6 @@
 import paramiko
 import os
-import threading
-from typing import Optional, Tuple, Dict, Any, Callable
+from typing import Optional, Tuple, Dict, Any
 
 SERVERS = {
     "southfield": "10.192.224.131",

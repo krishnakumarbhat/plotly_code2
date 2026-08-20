@@ -9,7 +9,6 @@ import uuid
 import re
 import shutil
 from datetime import datetime
-from pathlib import Path
 from typing import Optional, Dict, List, Tuple
 import logging
 
@@ -379,7 +378,8 @@ def extract_hdf_filename(path: str) -> str:
 
 def _load_resources_for_slurm(tool_name: str) -> dict:
     """Load resources for a tool from resources.py (single source of truth), with fallback."""
-    import sys as _sys, os as _os
+    import sys as _sys
+    import os as _os
     _resources_path = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), 'resources.py')
     if _os.path.exists(_resources_path):
         _dir = _os.path.dirname(_resources_path)

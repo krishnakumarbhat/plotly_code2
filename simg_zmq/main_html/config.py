@@ -3,7 +3,6 @@ Configuration settings for the HPC Flask Application
 """
 import os
 from datetime import timedelta
-from pathlib import Path
 
 # Import environment utilities
 try:
@@ -28,8 +27,6 @@ def _default_database_uri() -> str:
 
 def _get_data_base_path() -> str:
     """Get data base path based on environment"""
-    env = get_env()
-    
     # Check environment variable first
     env_path = os.environ.get('DATA_BASE_PATH')
     if env_path:
@@ -60,8 +57,6 @@ def _get_scratch_dir() -> str:
 
 def _get_llm_url() -> str:
     """Get LLM service URL based on environment"""
-    env = get_env()
-    
     env_url = os.environ.get('LLM_SERVICE_URL')
     if env_url:
         return env_url

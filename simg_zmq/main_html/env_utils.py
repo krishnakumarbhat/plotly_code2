@@ -16,7 +16,6 @@ Usage:
 """
 
 import os
-import sys
 import platform
 import stat
 from pathlib import Path

@@ -1,9 +1,8 @@
 import h5py
 import logging
 import os
-import re
 from collections import deque
-from sensor_matcher import canonical_sensor_id, match_sensor_pairs, match_stream_pairs
+from sensor_matcher import match_sensor_pairs, match_stream_pairs
 
 
 class PreRun:

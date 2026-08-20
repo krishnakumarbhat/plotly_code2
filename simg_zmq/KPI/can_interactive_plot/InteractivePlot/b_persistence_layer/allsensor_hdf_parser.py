@@ -5,7 +5,6 @@ import time
 import re
 import math
 import shutil
-import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, List

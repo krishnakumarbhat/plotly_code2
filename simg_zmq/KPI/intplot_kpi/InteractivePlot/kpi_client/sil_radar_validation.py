@@ -12,7 +12,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import product
 from pathlib import Path
-from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 import h5py
 import numpy as np

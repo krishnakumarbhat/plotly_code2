@@ -7,7 +7,6 @@ Usage:
     result = client.process_video('/net/.../video.mp4', force=True)
     # Returns immediately with {success, status, job_id} or {success, status: 'skipped', description}
 """
-import json
 import os
 import time
 from typing import Optional
@@ -101,7 +100,6 @@ singularity exec --bind "{model_dir}:/models" "{RAG_SIMG_PATH}" \\
             f'cat << "VLMEOF" | sbatch\n{script}\nVLMEOF', timeout=30
         )
         output = stdout.read().decode().strip()
-        error = stderr.read().decode().strip()
         parts = output.split()
         job_id = parts[-1] if parts else ''
         if job_id.isdigit():
@@ -113,7 +111,7 @@ singularity exec --bind "{model_dir}:/models" "{RAG_SIMG_PATH}" \\
             stdin, stdout, stderr = self.ssh.exec_command(
                 f'sacct -j {job_id} --format=State --noheader --parsable2', timeout=15
             )
-            states = [l.strip() for l in stdout.read().decode().splitlines() if l.strip()]
+            states = [line.strip() for line in stdout.read().decode().splitlines() if line.strip()]
             if not states:
                 return 'unknown'
             state = states[-1].split('|')[0] if '|' in states[-1] else states[-1].split()[0]

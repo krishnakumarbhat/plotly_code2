@@ -3,7 +3,6 @@ import h5py
 import tempfile
 import pytest
 from UDP_KPI.a_persistence_layer.hdf_wrapper import KPIHDFWrapper, KPIProcessingConfig
-from UDP_KPI.b_data_storage.kpi_data_model_storage import KPI_DataModelStorage
 
 @pytest.fixture
 def sample_hdf5_file():

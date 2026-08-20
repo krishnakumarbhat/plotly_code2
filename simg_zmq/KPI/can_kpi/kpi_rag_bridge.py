@@ -14,7 +14,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import h5py
 import numpy as np
@@ -168,7 +168,6 @@ def _to_long(data: dict):
 
 
 def match_points(veh: dict, resim: dict, gate: float = 1.0) -> dict:
-    import pandas as pd
     veh_df = _to_long(veh)
     resim_df = _to_long(resim)
     if veh_df is None or resim_df is None:
@@ -609,7 +608,7 @@ def process_log(pair: dict, output_dir: Path, gate: float, store: KpiRagStore,
                 base_key=pair["base_key"],
                 accuracy=accuracy_pct,
                 summary=f"Low accuracy {accuracy_pct:.1f}% - {pair['base_key']}",
-                description=f"Auto-created from KPI RAG bridge.",
+                description="Auto-created from KPI RAG bridge.",
                 hdf_path=str(pair["veh"]),
                 log_path=str(pair["veh"]),
             )

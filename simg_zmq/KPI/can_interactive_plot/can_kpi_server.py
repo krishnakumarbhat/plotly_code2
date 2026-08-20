@@ -26,7 +26,6 @@ import zmq
 os.environ.setdefault('PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION', 'python')
 
 from a_persistence_layer.can_kpi_wrapper import parse_for_can_kpi, get_engine
-from d_presentation_layer.kpi_html_gen import KpiHtmlGen
 
 # Lazily import protobuf definitions only when running ZMQ mode
 hdf_add_pb2 = None
