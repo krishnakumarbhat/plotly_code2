@@ -10,7 +10,7 @@ deploy_root/
 ├── kpi/
 │   ├── can/can_kpi.simg
 │   ├── udp/udp_kpi.simg
-│   └── int_plot/intplot_kpi.simg
+│   └── int_plot/udp_intplot_kpi.simg
 ├── bundle_src/            ← Live source (bind-mounted)
 │   ├── main_html/
 │   ├── Hyperlink_tool/
@@ -33,7 +33,7 @@ deploy_root/
 | RAG | `python3 rag/run.py --talk` | `singularity run rag.simg --talk` |
 | CAN KPI | `python3 KPI/can_kpi/kpi_main.py json <in> <out>` | `singularity run can_kpi.simg json <in> <out>` |
 | UDP KPI | `python3 KPI/UDP_KPI/kpi_server.py json <in> <out>` | `singularity run udp_kpi.simg json <in> <out>` |
-| Int Plot | `python3 KPI/intplot_kpi/ResimHTMLReport.py <xml> <in> <out>` | `singularity run intplot_kpi.simg <xml> <in> <out>` |
+| Int Plot | `python3 KPI/udp_intplot_kpi/ResimHTMLReport.py <xml> <in> <out>` | `singularity run udp_intplot_kpi.simg <xml> <in> <out>` |
 
 ## Deployment Steps
 
@@ -82,7 +82,7 @@ deploy_root/
 ├── kpi/
 │   ├── can/can_kpi.simg
 │   ├── udp/udp_kpi.simg
-│   └── int_plot/intplot_kpi.simg
+│   └── int_plot/udp_intplot_kpi.simg
 ├── bundle_src/            <- Live source (bind-mounted)
 ├── store/                 <- Runtime data
 ├── resources.py           <- Resource allocation

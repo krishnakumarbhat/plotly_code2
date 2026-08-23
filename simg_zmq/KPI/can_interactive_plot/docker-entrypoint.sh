@@ -6,7 +6,7 @@ MODE="${1:-help}"
 shift || true
 
 start_server() {
-    port="${CAN_KPI_SERVER_PORT:-5556}"
+    port="${CAN_KPI_SERVER_PORT:-6000}"
     log_path="${CAN_KPI_SERVER_LOG:-/tmp/can_kpi_server.log}"
     python "$APP_DIR/can_kpi_server.py" zmq "$port" >"$log_path" 2>&1 &
     server_pid=$!
@@ -27,7 +27,7 @@ start_server() {
         if python - "$port" <<'PY'
 import sys
 import zmq
-from InteractivePlot.kpi_client import hdf_add_pb2
+from kpi_proto import hdf_add_pb2
 
 port = int(sys.argv[1])
 context = zmq.Context.instance()
@@ -57,13 +57,13 @@ PY
 
 case "$MODE" in
     server)
-        exec python "$APP_DIR/can_kpi_server.py" zmq "${1:-${CAN_KPI_SERVER_PORT:-5556}}"
+        exec python "$APP_DIR/can_kpi_server.py" zmq "${1:-${CAN_KPI_SERVER_PORT:-6000}}"
         ;;
     kpi)
         exec python "$APP_DIR/can_kpi_main.py" "$@"
         ;;
     plot)
-        exec python "$APP_DIR/can_intplot_main.py" "$@"
+        exec python "/app/can_inplot/can_inplot_main.py" "$@"
         ;;
     both)
         if [ "$#" -lt 2 ]; then
@@ -72,7 +72,7 @@ case "$MODE" in
         fi
         start_server
         set +e
-        python "$APP_DIR/can_intplot_main.py" "$@"
+        python "/app/can_inplot/can_inplot_main.py" "$@"
         rc=$?
         set -e
         cleanup_server

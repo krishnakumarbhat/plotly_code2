@@ -178,7 +178,7 @@ This repository hosts KPI and Interactive Plot workloads running through a backg
     *   `main_html.simg` from `Singularity.def`
     *   `can_kpi.simg` from `KPI/can_kpi/can_singularity_KPI.def`
     *   `udp_kpi.simg` from `KPI/UDP_KPI/Singularity_KPI.def`
-    *   `intplot_kpi.simg` from `KPI/intplot_kpi/singularity_interactiveplot.def`
+    *   `udp_intplot_kpi.simg` from `KPI/udp_intplot_kpi/singularity_interactiveplot.def`
     *   `rag/rag.simg` from `rag/Singularity_RAG.def`
 3.  **Deploy**: Use `main_html/deploy.py` to compile, sync files, and copy the `.simg` files to the target cluster.
 4.  **Verification**: Confirm broker port `9100` and web UI port `5002` are running, and test a sample submission.
@@ -252,7 +252,7 @@ To deploy and execute files on the cluster, follow these steps:
         apptainer build --force --fakeroot simg_sh_hpcc/main_html.simg Singularity.def
         apptainer build --force --fakeroot simg_sh_hpcc/kpi/can/can_kpi.simg KPI/can_kpi/can_singularity_KPI.def
         apptainer build --force --fakeroot simg_sh_hpcc/kpi/udp/udp_kpi.simg KPI/UDP_KPI/Singularity_KPI.def
-        apptainer build --force --fakeroot simg_sh_hpcc/kpi/int_plot/intplot_kpi.simg KPI/intplot_kpi/singularity_interactiveplot.def
+        apptainer build --force --fakeroot simg_sh_hpcc/kpi/int_plot/udp_intplot_kpi.simg KPI/udp_intplot_kpi/singularity_interactiveplot.def
         apptainer build --force --fakeroot simg_sh_hpcc/rag/rag.simg rag/Singularity_RAG.def
         ```
 
@@ -294,7 +294,7 @@ The table below outlines the precise execution sequence of scripts, targets, and
 | **5** | Broker Execution | Cluster Login | `/tmp/hpcc_runtime/<user>/<job>/` | Receives JSON, inserts job into `hpc_tools_dev.db`, generates target launch scripts. | Writes `slurm_tmux_launcher.sh` in the workspace. |
 | **6** | `srun / sbatch` | Cluster Login | Cluster scheduler queue | Executes Slurm command targeting queue (e.g., `radarcore`/`defq` or `RNA-SDV-SRR7`/`plcyf-com`). | Slurm allocates compute node resource. |
 | **7** | `slurm_tmux_launcher.sh` | Compute Node | Compute Node sandbox | Spawns a tmux session on compute node and runs `kpi_runtime_launcher.sh`. | Active tmux execution wrapper on compute node. |
-| **8** | `kpi_runtime_launcher.sh` | Compute Node | User `<output_dir>` | Calls `apptainer exec` on target `.simg` file (e.g. `can_kpi.simg`, `udp_kpi.simg`, or `intplot_kpi.simg`). | Launches raw container process. |
+| **8** | `kpi_runtime_launcher.sh` | Compute Node | User `<output_dir>` | Calls `apptainer exec` on target `.simg` file (e.g. `can_kpi.simg`, `udp_kpi.simg`, or `udp_intplot_kpi.simg`). | Launches raw container process. |
 | **9** | Container Execution | Compute Node | User `<output_dir>` | Apptainer executes ZMQ/CAN parser and interactive Plotly renderer inside container. | Writes final `.html` plots and video files under user `<output_dir>`. |
 
 ---

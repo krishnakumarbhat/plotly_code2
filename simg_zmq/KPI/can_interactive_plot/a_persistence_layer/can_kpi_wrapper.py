@@ -140,6 +140,28 @@ class CanKpiEngine:
             result,
             diag,
         )
+        # Timeline Overview: record this sensor's per-scan series, rebuild page
+        try:
+            from d_presentation_layer.kpi_html_gen import (
+                generate_timeline_overview,
+                record_timeline_series,
+            )
+            record_timeline_series(
+                output_dir,
+                base_name,
+                sensor_id,
+                np.asarray(result.get("scan", []), dtype=np.int64).tolist(),
+                {
+                    "Accuracy": result.get("accuracy"),
+                    "F1": result.get("f1"),
+                    "Overall": result.get("overall"),
+                },
+            )
+            overview_path = generate_timeline_overview(output_dir, base_name)
+            if overview_path:
+                logger.info("Timeline overview updated: %s", overview_path)
+        except Exception as exc:
+            logger.debug("Timeline overview generation failed: %s", exc)
         logger.info(
             "Generated CAN KPI report for sensor=%s base=%s -> %s",
             sensor_id,

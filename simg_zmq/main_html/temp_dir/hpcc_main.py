@@ -500,9 +500,9 @@ def _default_interactive_config_path(project_root: Path, source_target: str) -> 
     runtime_root = _runtime_root(project_root)
     file_name = 'ConfigInteractivePlots_bordnet.xml' if source_target == 'can_kpi' else 'ConfigInteractivePlots.xml'
     candidates = [
-        project_root / 'KPI' / 'intplot_kpi' / file_name,
+        project_root / 'KPI' / 'udp_intplot_kpi' / file_name,
         runtime_root / file_name,
-        runtime_root / 'bundle_src' / 'KPI' / 'intplot_kpi' / file_name,
+        runtime_root / 'bundle_src' / 'KPI' / 'udp_intplot_kpi' / file_name,
     ]
     for candidate in candidates:
         if candidate.exists():
@@ -524,7 +524,7 @@ def _tool_image_definition(workspace_root: Path, tool_key: str) -> Optional[Tupl
         'main_html': ('main_html.simg', workspace_root / 'Singularity.def'),
         'can_kpi': ('kpi/can/can_kpi.simg', workspace_root / 'KPI' / 'can_kpi' / 'can_singularity_KPI.def'),
         'udp_kpi': ('kpi/udp/udp_kpi.simg', workspace_root / 'KPI' / 'UDP_KPI' / 'Singularity_KPI.def'),
-        'interactive_plot': ('kpi/int_plot/intplot_kpi.simg', workspace_root / 'KPI' / 'intplot_kpi' / 'singularity_interactiveplot.def'),
+        'interactive_plot': ('kpi/int_plot/udp_intplot_kpi.simg', workspace_root / 'KPI' / 'udp_intplot_kpi' / 'singularity_interactiveplot.def'),
         'rag': ('rag/rag.simg', workspace_root / 'rag' / 'Singularity_RAG.def'),
     }
     return definitions.get(tool_key)
@@ -684,12 +684,12 @@ def _stage_kpi_bundle_support(workspace_root: Path, target: str, interactive_mod
         if interactive_mode == 'enabled':
             required_files.append(runtime_root / 'kpi' / 'inplot_can.sh')
             # Combined CAN KPI + Interactive Plot image (preferred by inplot_can.sh)
-            required_files.append(runtime_root / 'kpi' / 'can_intplot' / 'canintplot_kpi.simg')
+            required_files.append(runtime_root / 'kpi' / 'can_intplot' / 'canudp_intplot_kpi.simg')
 
     if interactive_mode != 'disabled' or target == 'interactive_plot':
         required_files.extend([
             runtime_root / 'kpi' / 'int_plot' / 'run_intplot.sh',
-            runtime_root / 'kpi' / 'int_plot' / 'intplot_kpi.simg',
+            runtime_root / 'kpi' / 'int_plot' / 'udp_intplot_kpi.simg',
             runtime_root / 'ConfigInteractivePlots.xml',
             runtime_root / 'ConfigInteractivePlots_bordnet.xml',
         ])

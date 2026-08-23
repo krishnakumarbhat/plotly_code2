@@ -37,13 +37,17 @@ def _ensure_pb():
         here = Path(__file__).resolve().parent
         candidates = [
             here,
-            here / "InteractivePlot" / "kpi_client",
+            here / "kpi_proto",
+            here.parent / "can_inplot" / "kpi_client",
         ]
         for candidate in candidates:
             candidate_str = str(candidate)
             if candidate.exists() and candidate_str not in sys.path:
                 sys.path.insert(0, candidate_str)
-        import InteractivePlot.kpi_client.hdf_add_pb2 as _pb
+        try:
+            from kpi_proto import hdf_add_pb2 as _pb
+        except ImportError:
+            import hdf_add_pb2 as _pb
         hdf_add_pb2 = _pb
 
 logger = logging.getLogger(__name__)
@@ -51,7 +55,7 @@ logger = logging.getLogger(__name__)
 class CanKPIZMQServer:
     """ZMQ server for handling CAN KPI processing requests using protobuf."""
 
-    def __init__(self, port: int = 5556):
+    def __init__(self, port: int = 6000):
         self.port = port
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REP)
@@ -64,7 +68,8 @@ class CanKPIZMQServer:
         try:
             # Ensure protobuf is available when running server
             _ensure_pb()
-            self.socket.bind(f"tcp://*:{self.port}")
+            from port_utils import bind_with_retry
+            self.port = bind_with_retry(self.socket, self.port)
             self._running = True
             logger.info(f"CAN KPI ZMQ server started on port {self.port}")
 
@@ -477,7 +482,7 @@ if __name__ == "__main__":
 
     # ### ZMQ MODE
     if argv[0].lower() == 'zmq':
-        port = int(argv[1]) if len(argv) > 1 else 5556
+        port = int(argv[1]) if len(argv) > 1 else 6000
         logger.info(f"Starting CAN KPI ZMQ server on port {port}...")
         try:
             run_server(port)

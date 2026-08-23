@@ -69,7 +69,7 @@ From: docker.io/python:3.10-slim
     KPI/UDP_KPI/__init__.py /app/tools/UDP_KPI/__init__.py
     # Copy the full InteractivePlot package because the UDP KPI runtime imports
     # beyond the parser/client layers during paired-HDF and ZMQ flows.
-    KPI/intplot_kpi/InteractivePlot /app/tools/InteractivePlot
+    KPI/udp_intplot_kpi/InteractivePlot /app/tools/InteractivePlot
 
 %runscript
     # Activate virtual environment

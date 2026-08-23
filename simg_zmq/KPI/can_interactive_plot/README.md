@@ -10,11 +10,11 @@ plotting pipeline, connected over ZeroMQ — exactly like the existing
 ┌────────────────────────── can_interactive_plot/ ──────────────────────────┐
 │                                                                            │
 │  InteractivePlot/                     CAN layers (top level)              │
-│    a_config_layer/        (from intplot_kpi)                              │
-│    b_persistence_layer/   (from intplot_kpi, KPI client swapped)          │
-│    c_data_storage/        (from intplot_kpi)                              │
-│    d_business_layer/      (from intplot_kpi)                              │
-│    e_presentation_layer/  (from intplot_kpi)                              │
+│    a_config_layer/        (from udp_intplot_kpi)                              │
+│    b_persistence_layer/   (from udp_intplot_kpi, KPI client swapped)          │
+│    c_data_storage/        (from udp_intplot_kpi)                              │
+│    d_business_layer/      (from udp_intplot_kpi)                              │
+│    e_presentation_layer/  (from udp_intplot_kpi)                              │
 │    kpi_client/                                                           │
 │      can_kpi_integration.py    ZMQ client  ─────────┐                     │
 │      hdf_add.proto / hdf_add_pb2.py                 │                     │
@@ -47,7 +47,7 @@ data model), `d_business_layer` (plot calculations), `e_presentation_layer`
    plot pipeline) and starts `HdfProcessorFactory`.
 2. During parsing, for every sensor, `CanKpiIntegration` (ZMQ REQ) sends a
    protobuf `RequestMessage` (sensor, input/output HDF paths, output dir,
-   base name) to `can_kpi_server.py` (default port **5556**).
+   base name) to `can_kpi_server.py` (default port **6000**).
 3. The server parses the HDF pair with the CAN parser (layer a + b), computes
    the match/precision/recall/F1/accuracy KPIs (layer c), renders the sensor
    KPI HTML (layer d) and replies with the HTML path.
@@ -57,8 +57,8 @@ data model), `d_business_layer` (plot calculations), `e_presentation_layer`
 ## Usage
 
 ```bash
-# 1) Start the CAN KPI ZMQ server (default port 5556)
-python can_kpi_server.py zmq 5556
+# 1) Start the CAN KPI ZMQ server (default port 6000)
+python can_kpi_server.py zmq 6000
 
 # 2) Run the combined interactive plot pipeline (KPI enabled via ConfigInteractivePlots.xml PLOT_MODE)
 python can_intplot_main.py ConfigInteractivePlots.xml InputsInteractivePlot.json html_out
@@ -82,7 +82,7 @@ python can_kpi_main.py kpi.json html_out
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `CAN_KPI_SERVER_HOST` | `127.0.0.1` | ZMQ server host |
-| `CAN_KPI_SERVER_PORT` | `5556` | ZMQ server port (UDP KPI uses 5555) |
+| `CAN_KPI_SERVER_PORT` | `6000` | ZMQ server port (UDP KPI uses 5555) |
 | `CAN_KPI_SERVER_RESPONSE_TIMEOUT_MS` | `180000` | Client reply timeout |
 | `INTERACTIVE_PLOT_ENABLE_KPI` | set from XML `PLOT_MODE/KPI` | Master KPI switch |
 | `CAN_KPI_LOG_LEVEL` | `INFO` | Server log level |

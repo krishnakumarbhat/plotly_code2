@@ -22,21 +22,21 @@ CONFIGURATION_SPECS = {
     },
     'input_output_json': {
         'filename': 'input_output.json',
-        'configured_path': r'C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\intplot_kpi\InputsInteractivePlot.json',
+        'configured_path': r'C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\udp_intplot_kpi\InputsInteractivePlot.json',
         'purpose': 'Interactive Plot input and output settings.',
         'format': 'json',
         'env': 'HPCC_KPI_INPUT_OUTPUT_JSON',
     },
     'udp_config_xml': {
         'filename': 'ConfigInteractivePlots.xml',
-        'configured_path': r'C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\intplot_kpi\ConfigInteractivePlots.xml',
+        'configured_path': r'C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\udp_intplot_kpi\ConfigInteractivePlots.xml',
         'purpose': 'UDP KPI Interactive Plot configuration.',
         'format': 'xml',
         'env': 'HPCC_KPI_UDP_CONFIG_XML',
     },
     'can_config_xml': {
         'filename': 'ConfigInteractivePlots_bordnet.xml',
-        'configured_path': r'C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\intplot_kpi\ConfigInteractivePlots_bordnet.xml',
+        'configured_path': r'C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\udp_intplot_kpi\ConfigInteractivePlots_bordnet.xml',
         'purpose': 'CAN KPI Interactive Plot configuration.',
         'format': 'xml',
         'env': 'HPCC_KPI_CAN_CONFIG_XML',
@@ -55,7 +55,7 @@ def _candidate_paths(config_id: str) -> list[Path]:
     spec = CONFIGURATION_SPECS[config_id]
     configured = os.environ.get(spec['env'], '').strip() or spec['configured_path']
     candidates = [Path(configured)]
-    intplot_root = _project_root() / 'KPI' / 'intplot_kpi'
+    intplot_root = _project_root() / 'KPI' / 'udp_intplot_kpi'
     candidates.append(intplot_root / spec['filename'])
     if config_id == 'config_json':
         candidates.append(_project_root().parent / 'config_1.json')

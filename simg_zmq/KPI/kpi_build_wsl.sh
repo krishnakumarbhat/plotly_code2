@@ -24,7 +24,7 @@ fi
 echo "Using container builder: $CTR_BUILD"
 
 echo "[1/3] Building interactiveplot.simg"
-"$CTR_BUILD" build --force interactiveplot.simg intplot_kpi/singularity_interactiveplot.def
+"$CTR_BUILD" build --force interactiveplot.simg udp_intplot_kpi/singularity_interactiveplot.def
 
 echo "[2/3] Building kpi.simg"
 "$CTR_BUILD" build --force kpi.simg UDP_KPI/Singularity_KPI.def

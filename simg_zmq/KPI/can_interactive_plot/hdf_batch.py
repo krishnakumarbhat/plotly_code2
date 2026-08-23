@@ -17,7 +17,7 @@ logging.basicConfig(
 
 
 def run_pipeline(input_hdf: str, output_hdf: str, output_dir: str) -> None:
-    from InteractivePlot.b_persistence_layer.hdf_processor_factory import (
+    from can_inplot.b_persistence_layer.hdf_processor_factory import (
         HdfProcessorFactory,
     )
 
@@ -34,11 +34,11 @@ def run_can_kpi(input_hdf: str, output_hdf: str, output_dir: str) -> None:
 
 def refresh_indexes(output_dir: str) -> None:
     try:
-        from InteractivePlot.e_presentation_layer.html_generator import HtmlGenerator
+        from can_inplot.e_presentation_layer.html_generator import HtmlGenerator
 
-        HtmlGenerator.create_master_index(output_dir)
+        HtmlGenerator.create_timeline_overview(output_dir)
     except Exception:
-        logging.exception("Failed to refresh master index")
+        logging.exception("Failed to refresh timeline overview")
 
 
 def main() -> None:

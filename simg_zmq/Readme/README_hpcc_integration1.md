@@ -74,7 +74,7 @@ This makes the stack easier to operate, easier to document, and easier to extend
 
 - `kpi/can/can_kpi.simg`
 - `kpi/udp/udp_kpi.simg`
-- `kpi/int_plot/intplot_kpi.simg`
+- `kpi/int_plot/udp_intplot_kpi.simg`
 - `rag/rag.simg`
 
 ### Persistence Layer
@@ -210,7 +210,7 @@ Only `main_html` and Hyperlink should remain active on the login node. KPI and I
 | `simg_sh_hpcc/main_html.simg` | Main UI container |
 | `simg_sh_hpcc/kpi/can/can_kpi.simg` | CAN KPI image |
 | `simg_sh_hpcc/kpi/udp/udp_kpi.simg` | UDP KPI image |
-| `simg_sh_hpcc/kpi/int_plot/intplot_kpi.simg` | Interactive Plot image |
+| `simg_sh_hpcc/kpi/int_plot/udp_intplot_kpi.simg` | Interactive Plot image |
 | `simg_sh_hpcc/rag/rag.simg` | RAG service container |
 | `simg_sh_hpcc/kpi/inplot_udp.sh` | tmux wrapper for UDP KPI + Interactive Plot |
 | `simg_sh_hpcc/kpi/inplot_can.sh` | tmux wrapper for CAN KPI + Interactive Plot |
@@ -231,7 +231,7 @@ Expected outputs:
 - `main_html.simg`
 - `kpi/can/can_kpi.simg`
 - `kpi/udp/udp_kpi.simg`
-- `kpi/int_plot/intplot_kpi.simg`
+- `kpi/int_plot/udp_intplot_kpi.simg`
 - `rag/rag.simg`
 - `main_hpcc.sh`, `kpi_runtime_launcher.sh`, and the direct wrapper scripts under `kpi/` and `rag/`
 
@@ -240,7 +240,7 @@ Main definition files:
 - `Singularity.def`
 - `KPI/can_kpi/can_singularity_KPI.def`
 - `KPI/UDP_KPI/Singularity_KPI.def`
-- `KPI/intplot_kpi/singularity_interactiveplot.def`
+- `KPI/udp_intplot_kpi/singularity_interactiveplot.def`
 - `rag/Singularity_RAG.def`
 
 ## Runtime Ports

@@ -94,7 +94,7 @@ bundle_default_config_xml() {
     local candidate
     for candidate in \
         "$bundle_root/$file_name" \
-        "$bundle_root/bundle_src/KPI/intplot_kpi/$file_name"
+        "$bundle_root/bundle_src/KPI/udp_intplot_kpi/$file_name"
     do
         if [[ -f "$candidate" ]]; then
             printf '%s\n' "$candidate"

@@ -416,7 +416,12 @@ class AlignmentMappingKPIHDF:
         return {
             'kpi_results': self.kpi_results,
             'html_content': self.html_content,
-            'success': bool(self.kpi_results)
+            'success': bool(self.kpi_results),
+            # Compact per-scan series for the Timeline Overview page
+            'series': {
+                'az_est_diff': list(getattr(self, 'az_misalign_lists', {}).get('est_diff', [])),
+                'el_est_diff': list(getattr(self, 'el_misalign_lists', {}).get('est_diff', [])),
+            },
         }
 
 # Main processing function to be called by KPI factory

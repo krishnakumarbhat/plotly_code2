@@ -21,7 +21,7 @@ try:
     from InteractivePlot.b_persistence_layer.prerun_hdf_parser import PreRun
 except Exception:
     repo_root = Path(__file__).resolve().parents[1]
-    intplot_root = repo_root / "intplot_kpi"
+    intplot_root = repo_root / "udp_intplot_kpi"
     intplot_root_str = str(intplot_root)
     if intplot_root.exists() and intplot_root_str not in sys.path:
         sys.path.insert(0, intplot_root_str)
@@ -37,8 +37,8 @@ def _ensure_pb():
         repo_root = Path(__file__).resolve().parents[1]
         candidates = [
             repo_root,
-            repo_root / "intplot_kpi",
-            repo_root / "intplot_kpi" / "InteractivePlot" / "kpi_client",
+            repo_root / "udp_intplot_kpi",
+            repo_root / "udp_intplot_kpi" / "InteractivePlot" / "kpi_client",
         ]
         for candidate in candidates:
             candidate_str = str(candidate)
@@ -67,7 +67,8 @@ class KPIZMQServer:
         try:
             # Ensure protobuf is available when running server
             _ensure_pb()
-            self.socket.bind(f"tcp://*:{self.port}")
+            from port_utils import bind_with_retry
+            self.port = bind_with_retry(self.socket, self.port)
             self._running = True
             logger.info(f"KPI ZMQ server started on port {self.port}")
             

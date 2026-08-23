@@ -20,7 +20,7 @@ if [[ $# -lt 2 || $# -gt 4 ]]; then
     exit 1
 fi
 
-IMAGE_PATH="$SCRIPT_DIR/intplot_kpi.simg"
+IMAGE_PATH="$SCRIPT_DIR/udp_intplot_kpi.simg"
 bundle_ensure_file "$IMAGE_PATH"
 
 CONFIG_XML="$(bundle_abs_path "$1")"

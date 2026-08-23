@@ -64,15 +64,15 @@ chmod +x \
     "$OUT_DIR/cleanup_memory.sh" \
     "$OUT_DIR/rag/run_rag.sh"
 
-rm -rf "$OUT_DIR/bundle_src/main_html" "$OUT_DIR/bundle_src/Hyperlink_tool" "$OUT_DIR/bundle_src/KPI/intplot_kpi"
+rm -rf "$OUT_DIR/bundle_src/main_html" "$OUT_DIR/bundle_src/Hyperlink_tool" "$OUT_DIR/bundle_src/KPI/udp_intplot_kpi"
 cp -a "$ROOT_DIR/main_html" "$OUT_DIR/bundle_src/main_html"
 cp -a "$ROOT_DIR/Hyperlink_tool" "$OUT_DIR/bundle_src/Hyperlink_tool"
-cp -a "$ROOT_DIR/KPI/intplot_kpi" "$OUT_DIR/bundle_src/KPI/intplot_kpi"
+cp -a "$ROOT_DIR/KPI/udp_intplot_kpi" "$OUT_DIR/bundle_src/KPI/udp_intplot_kpi"
 
 "$RUNTIME_BIN" build --force --fakeroot "$OUT_DIR/main_html.simg" "$ROOT_DIR/Singularity.def"
 "$RUNTIME_BIN" build --force --fakeroot "$OUT_DIR/kpi/can/can_kpi.simg" "$ROOT_DIR/KPI/can_kpi/can_singularity_KPI.def"
 "$RUNTIME_BIN" build --force --fakeroot "$OUT_DIR/kpi/udp/udp_kpi.simg" "$ROOT_DIR/KPI/UDP_KPI/Singularity_KPI.def"
-"$RUNTIME_BIN" build --force --fakeroot "$OUT_DIR/kpi/int_plot/intplot_kpi.simg" "$ROOT_DIR/KPI/intplot_kpi/singularity_interactiveplot.def"
+"$RUNTIME_BIN" build --force --fakeroot "$OUT_DIR/kpi/int_plot/udp_intplot_kpi.simg" "$ROOT_DIR/KPI/udp_intplot_kpi/singularity_interactiveplot.def"
 "$RUNTIME_BIN" build --force --fakeroot "$OUT_DIR/rag/rag.simg" "$ROOT_DIR/rag/Singularity_RAG.def"
 
 echo "Built HPCC bundle at $OUT_DIR"

@@ -570,7 +570,13 @@ class DetectionMappingKPIHDF:
         return {
             'kpi_results': self.kpi_results,
             'html_content': self.html_content,
-            'success': bool(self.kpi_results)
+            'success': bool(self.kpi_results),
+            # Compact per-scan series for the Timeline Overview page
+            'series': {
+                'scan_index': list(self.kpi_results.get('per_scan_scanindex', [])),
+                'accuracy': list(self.kpi_results.get('per_scan_accuracy', [])),
+                'matches': list(self.kpi_results.get('per_scan_matches', [])),
+            },
         }
 
 # Main processing function to be called by KPI factory

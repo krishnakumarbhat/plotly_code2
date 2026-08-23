@@ -217,7 +217,7 @@ case "$TARGET" in
         if [[ "$INTERACTIVE_MODE" == 'enabled' ]]; then
             local_json="$(pair_json_for_interactive)"
             # inplot_can.sh prefers the combined CAN KPI + Interactive Plot image
-            # (kpi/can_intplot/canintplot_kpi.simg) and falls back to the sequential
+            # (kpi/can_intplot/canudp_intplot_kpi.simg) and falls back to the sequential
             # run_can.sh + run_intplot.sh flow when it is not present.
             command=("$BUNDLE_ROOT/kpi/inplot_can.sh" --wait "$CONFIG_XML" "$local_json" "$OUTPUT_DIR")
             if [[ -n "$OPTIONAL_CONFIG" ]]; then

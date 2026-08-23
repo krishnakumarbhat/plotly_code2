@@ -1,5 +1,6 @@
 """Plotly HTML generation with tabbed sensor layout."""
 
+from pathlib import Path
 from typing import Dict, List
 
 import numpy as np
@@ -554,3 +555,121 @@ function switchTab(tabId, btn) {
         fig.update_layout(template=self._template)
         config = {"responsive": True, "displayModeBar": False, "scrollZoom": False}
         return plot(fig, include_plotlyjs=False, output_type="div", config=config)
+
+
+# ------------------------------
+# Timeline Overview (per-log)
+# ------------------------------
+
+def record_timeline_series(output_dir, base_name, sensor_id, scan_index, metrics: dict) -> str:
+    """Persist one sensor's per-scan KPI series for the Timeline Overview page."""
+    import json
+
+    series_root = Path(output_dir) / base_name / "timeline_series"
+    series_root.mkdir(parents=True, exist_ok=True)
+    payload = {"sensor": sensor_id, "scan": list(scan_index or [])}
+    for name, arr in (metrics or {}).items():
+        try:
+            payload[name.lower()] = [None if v is None else float(v) for v in np.asarray(arr).tolist()]
+        except Exception:
+            payload[name.lower()] = []
+    out_file = series_root / f"{sensor_id}.json"
+    out_file.write_text(json.dumps(payload), encoding="utf-8")
+    return str(out_file)
+
+
+def generate_timeline_overview(output_dir, base_name) -> str:
+    """Build can_kpi_timeline_overview.html: per-sensor KPI line plots vs scan
+    index plus links to the per-sensor KPI pages. Rebuilt on every sensor
+    completion so the last call covers the whole log."""
+    import json
+
+    try:
+        import plotly.graph_objects as go
+    except Exception:
+        return ""
+
+    root = Path(output_dir) / base_name
+    series_root = root / "timeline_series"
+    if not series_root.exists():
+        return ""
+    series_files = sorted(series_root.glob("*.json"))
+    if not series_files:
+        return ""
+
+    colors = {"accuracy": "#1f77b4", "f1": "#2ca02c", "overall": "#9467bd"}
+    sections = []
+    first = True
+    buttons = []
+
+    for sf in series_files:
+        try:
+            payload = json.loads(sf.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        sensor = payload.get("sensor") or sf.stem
+        # Link to the per-sensor KPI page
+        kpi_page = root / str(sensor).upper() / "KPI" / f"{base_name}_{sensor}_kpi.html"
+        if kpi_page.exists():
+            buttons.append(
+                f'<a class="btn" href="{kpi_page.relative_to(root.parent).as_posix()}" target="_blank">{sensor}: KPI report</a>'
+            )
+        fig = go.Figure()
+        has_trace = False
+        for metric, color in colors.items():
+            ys = payload.get(metric) or []
+            xs = payload.get("scan") or []
+            n = min(len(xs), len(ys))
+            if not n:
+                continue
+            fig.add_trace(go.Scattergl(
+                x=xs[:n], y=ys[:n], mode="lines+markers",
+                name=metric.capitalize(), line=dict(color=color),
+            ))
+            has_trace = True
+        if not has_trace:
+            continue
+        fig.update_layout(
+            title=f"{sensor} — KPI timeline",
+            xaxis_title="Scan Index",
+            yaxis_title="Score",
+            yaxis=dict(range=[0, 105]),
+            hovermode="closest",
+            margin=dict(l=40, r=20, t=50, b=40),
+        )
+        sections.append(
+            f'<section class="ov-plot"><h3>{sensor}</h3>'
+            + plot(fig, include_plotlyjs="cdn" if first else False, output_type="div",
+                   config={"responsive": True, "displaylogo": False})
+            + "</section>"
+        )
+        first = False
+
+    html = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{base_name} — CAN KPI Timeline Overview</title>
+  <style>
+    body {{ font-family: 'Inter', Arial, sans-serif; margin: 24px; background: #eef3f7; color: #17324a; }}
+    h1, h2 {{ color: #17324a; }}
+    .ov-plot {{ background: #fff; border: 1px solid #d9e3ec; border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; }}
+    .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }}
+    .btn {{ display: inline-block; padding: 12px 14px; background: #175f7b; color: #fff;
+            text-decoration: none; border-radius: 8px; font-weight: 600; }}
+    .btn:hover {{ background: #0f4760; }}
+  </style>
+</head>
+<body>
+  <h1>{base_name} — CAN KPI Timeline Overview</h1>
+  {''.join(sections) or '<p>No per-scan series recorded.</p>'}
+  <h2>KPI Reports</h2>
+  <div class="grid">{''.join(buttons)}</div>
+</body>
+</html>
+"""
+    overview_file = root.parent / f"{base_name}_timeline_overview.html"
+    overview_file.write_text(html, encoding="utf-8")
+    return str(overview_file)

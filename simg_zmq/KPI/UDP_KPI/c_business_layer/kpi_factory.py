@@ -86,7 +86,9 @@ class KpiDataModel:
                     self.per_kpi_sections.append({
                         'type': kpi_type,
                         'sensor_id': sensor_id,
-                        'html_content': item['html_content']
+                        'html_content': item['html_content'],
+                        'kpi_results': item.get('kpi_results', {}),
+                        'series': item.get('series', {}),
                     })
 
         # Explicitly configurable mode: serial | thread | process

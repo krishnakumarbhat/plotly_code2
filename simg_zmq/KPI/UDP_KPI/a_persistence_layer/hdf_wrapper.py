@@ -418,6 +418,19 @@ class KPIHDFWrapper:
             except Exception as _:
                 # Index generation is best-effort; do not fail parsing if it errors
                 pass
+            # Timeline Overview: record this sensor's series and rebuild page
+            try:
+                from UDP_KPI.d_presentation_layer.kpi_html_gen import (
+                    generate_timeline_overview,
+                    record_timeline_series,
+                )
+                sections = kpi_model.per_kpi_sections if hasattr(kpi_model, "per_kpi_sections") else []
+                record_timeline_series(self.config.output_dir, self.config.base_name, self.config.sensor_id, sections)
+                results["timeline_overview_path"] = generate_timeline_overview(
+                    self.config.output_dir, self.config.base_name
+                )
+            except Exception:
+                logger.debug("Timeline overview generation failed", exc_info=True)
         except Exception as e:
             logger.error(f"Error saving per-KPI HTML files: {e}")
 

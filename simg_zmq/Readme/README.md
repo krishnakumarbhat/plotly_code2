@@ -78,7 +78,7 @@ The current stack is organized around a single runtime control plane.
 
 - `main_html.simg` serves the Flask UI.
 - `rag/rag.simg` serves the RAG API.
-- `kpi/can/can_kpi.simg`, `kpi/udp/udp_kpi.simg`, and `kpi/int_plot/intplot_kpi.simg` execute compute-oriented jobs.
+- `kpi/can/can_kpi.simg`, `kpi/udp/udp_kpi.simg`, and `kpi/int_plot/udp_intplot_kpi.simg` execute compute-oriented jobs.
 - Hyperlink remains integrated in-process through `main_html` routes.
 
 ## Repository Areas
@@ -117,7 +117,7 @@ Expected outputs in `simg_sh_hpcc/`:
 - `main_html.simg`
 - `kpi/can/can_kpi.simg`
 - `kpi/udp/udp_kpi.simg`
-- `kpi/int_plot/intplot_kpi.simg`
+- `kpi/int_plot/udp_intplot_kpi.simg`
 - `rag/rag.simg`
 
 ### Start The Stack

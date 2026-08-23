@@ -76,6 +76,29 @@ class KpiMain:
                 report_path = out_dir / filename
                 report_path.write_text(result["html"], encoding="utf-8")
                 logger.info(f"Wrote report to {report_path}")
+                # Timeline Overview: per-sensor KPI line plots for this log
+                try:
+                    from d_presentation_layer.kpi_html_gen import (
+                        generate_timeline_overview,
+                        record_timeline_series,
+                    )
+                    for sensor_id, res in (result.get("match_results") or {}).items():
+                        record_timeline_series(
+                            str(out_dir),
+                            safe,
+                            sensor_id,
+                            np.asarray(res.get("scan", []), dtype=np.int64).tolist(),
+                            {
+                                "Accuracy": res.get("accuracy"),
+                                "F1": res.get("f1"),
+                                "Overall": res.get("overall"),
+                            },
+                        )
+                    overview = generate_timeline_overview(str(out_dir), safe)
+                    if overview:
+                        logger.info(f"Wrote timeline overview to {overview}")
+                except Exception:
+                    logger.debug("Timeline overview generation failed", exc_info=True)
                 report_files.append(
                     {
                         "name": stem,
@@ -277,6 +300,7 @@ class KpiMain:
 
         return {
             "html": html,
+            "match_results": match_results,
             "signals": signals,
             "storages": {"input": in_stores, "output": out_stores},
             "parse_reports": {

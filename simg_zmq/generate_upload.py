@@ -14,24 +14,24 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parent
 GEN = ROOT / 'generate_upload'
 META = ROOT / '.metadata.json'
-BUILD_ORDER = ['main_html.simg', 'rag.simg', 'kpi/can/can_kpi.simg', 'kpi/udp/udp_kpi.simg', 'kpi/int_plot/intplot_kpi.simg', 'kpi/can_intplot/canintplot_kpi.simg']
+BUILD_ORDER = ['main_html.simg', 'rag.simg', 'kpi/can/can_kpi.simg', 'kpi/udp/udp_kpi.simg', 'kpi/int_plot/udp_intplot_kpi.simg', 'kpi/can_intplot/canudp_intplot_kpi.simg']
 
 DEF_MAP = {
     'main_html.simg':          ROOT / 'Singularity.def',
     'rag.simg':                ROOT / 'rag' / 'Singularity_RAG.def',
     'kpi/can/can_kpi.simg':    ROOT / 'KPI' / 'can_kpi' / 'can_singularity_KPI.def',
     'kpi/udp/udp_kpi.simg':    ROOT / 'KPI' / 'UDP_KPI' / 'Singularity_KPI.def',
-    'kpi/int_plot/intplot_kpi.simg': ROOT / 'KPI' / 'intplot_kpi' / 'singularity_interactiveplot.def',
-    'kpi/can_intplot/canintplot_kpi.simg': ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def',
+    'kpi/int_plot/udp_intplot_kpi.simg': ROOT / 'KPI' / 'udp_intplot_kpi' / 'singularity_interactiveplot.def',
+    'kpi/can_intplot/canudp_intplot_kpi.simg': ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def',
 }
 
 SIMGG_SRC = {
     'main_html.simg':          [ROOT / 'Singularity.def', ROOT / 'main_html', ROOT / 'Hyperlink_tool', ROOT / 'KPI'],
     'rag.simg':                [ROOT / 'rag' / 'Singularity_RAG.def', ROOT / 'rag', ROOT / 'rag' / 'vlm_process.py'],
     'kpi/can/can_kpi.simg':    [ROOT / 'KPI' / 'can_kpi' / 'can_singularity_KPI.def', ROOT / 'KPI' / 'can_kpi'],
-    'kpi/udp/udp_kpi.simg':    [ROOT / 'KPI' / 'UDP_KPI' / 'Singularity_KPI.def', ROOT / 'KPI' / 'UDP_KPI', ROOT / 'KPI' / 'intplot_kpi' / 'InteractivePlot'],
-    'kpi/int_plot/intplot_kpi.simg': [ROOT / 'KPI' / 'intplot_kpi' / 'singularity_interactiveplot.def', ROOT / 'KPI' / 'intplot_kpi', ROOT / 'KPI' / 'UDP_KPI'],
-    'kpi/can_intplot/canintplot_kpi.simg': [ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def', ROOT / 'KPI' / 'can_interactive_plot', ROOT / 'KPI' / 'intplot_kpi' / 'ConfigInteractivePlots_bordnet.xml'],
+    'kpi/udp/udp_kpi.simg':    [ROOT / 'KPI' / 'UDP_KPI' / 'Singularity_KPI.def', ROOT / 'KPI' / 'UDP_KPI', ROOT / 'KPI' / 'udp_intplot_kpi' / 'InteractivePlot'],
+    'kpi/int_plot/udp_intplot_kpi.simg': [ROOT / 'KPI' / 'udp_intplot_kpi' / 'singularity_interactiveplot.def', ROOT / 'KPI' / 'udp_intplot_kpi', ROOT / 'KPI' / 'UDP_KPI'],
+    'kpi/can_intplot/canudp_intplot_kpi.simg': [ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def', ROOT / 'KPI' / 'can_interactive_plot', ROOT / 'KPI' / 'udp_intplot_kpi' / 'ConfigInteractivePlots_bordnet.xml'],
 }
 
 SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh']
@@ -595,7 +595,7 @@ deploy_root/
 ├── kpi/
 │   ├── can/can_kpi.simg
 │   ├── udp/udp_kpi.simg
-│   └── int_plot/intplot_kpi.simg
+│   └── int_plot/udp_intplot_kpi.simg
 ├── bundle_src/            <- Live source (bind-mounted)
 ├── store/                 <- Runtime data
 ├── resources.py           <- Resource allocation

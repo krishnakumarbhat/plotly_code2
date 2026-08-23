@@ -9,9 +9,9 @@ From: docker.io/python:3.11-slim
 
 %environment
     export PYTHONUNBUFFERED=1
-    export PYTHONPATH=/app/can_interactive_plot:$PYTHONPATH
+    export PYTHONPATH=/app:/app/can_interactive_plot:$PYTHONPATH
     export CAN_KPI_SERVER_HOST=${CAN_KPI_SERVER_HOST:-127.0.0.1}
-    export CAN_KPI_SERVER_PORT=${CAN_KPI_SERVER_PORT:-5556}
+    export CAN_KPI_SERVER_PORT=${CAN_KPI_SERVER_PORT:-6000}
     export CAN_KPI_SERVER_RESPONSE_TIMEOUT_MS=${CAN_KPI_SERVER_RESPONSE_TIMEOUT_MS:-180000}
     export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     export LC_ALL=C
@@ -21,12 +21,13 @@ From: docker.io/python:3.11-slim
     KPI/can_interactive_plot/b_data_storage /app/can_interactive_plot/b_data_storage
     KPI/can_interactive_plot/c_business_layer /app/can_interactive_plot/c_business_layer
     KPI/can_interactive_plot/d_presentation_layer /app/can_interactive_plot/d_presentation_layer
-    KPI/can_interactive_plot/InteractivePlot /app/can_interactive_plot/InteractivePlot
-    KPI/can_interactive_plot/can_intplot_main.py /app/can_interactive_plot/can_intplot_main.py
+    KPI/can_inplot /app/can_inplot
+    KPI/can_inplot/can_inplot_main.py /app/can_inplot/can_inplot_main.py
+    KPI/can_interactive_plot/kpi_proto /app/can_interactive_plot/kpi_proto
     KPI/can_interactive_plot/can_kpi_main.py /app/can_interactive_plot/can_kpi_main.py
     KPI/can_interactive_plot/can_kpi_server.py /app/can_interactive_plot/can_kpi_server.py
     KPI/can_interactive_plot/ConfigInteractivePlots.xml /app/can_interactive_plot/ConfigInteractivePlots.xml
-    KPI/intplot_kpi/ConfigInteractivePlots_bordnet.xml /app/can_interactive_plot/ConfigInteractivePlots_bordnet.xml
+    KPI/udp_intplot_kpi/ConfigInteractivePlots_bordnet.xml /app/can_interactive_plot/ConfigInteractivePlots_bordnet.xml
     KPI/can_interactive_plot/InputsInteractivePlot.json /app/can_interactive_plot/InputsInteractivePlot.json
     KPI/can_interactive_plot/kpi.json /app/can_interactive_plot/kpi.json
     KPI/can_interactive_plot/requirements.txt /app/can_interactive_plot/requirements.txt
@@ -55,7 +56,7 @@ From: docker.io/python:3.11-slim
 
     case "$MODE" in
         server)
-            PORT="${1:-${CAN_KPI_SERVER_PORT:-5556}}"
+            PORT="${1:-${CAN_KPI_SERVER_PORT:-6000}}"
             exec python "$APP_DIR/can_kpi_server.py" zmq "$PORT"
             ;;
 
@@ -64,7 +65,7 @@ From: docker.io/python:3.11-slim
             ;;
 
         plot)
-            exec python "$APP_DIR/can_intplot_main.py" "$@"
+            exec python "/app/can_inplot/can_inplot_main.py" "$@"
             ;;
 
         both)
@@ -73,7 +74,7 @@ From: docker.io/python:3.11-slim
                 exit 1
             fi
 
-            PORT="${CAN_KPI_SERVER_PORT:-5556}"
+            PORT="${CAN_KPI_SERVER_PORT:-6000}"
             SERVER_LOG="${CAN_KPI_SERVER_LOG:-/tmp/can_interactive_plot_can_kpi_server.log}"
             python "$APP_DIR/can_kpi_server.py" zmq "$PORT" >"$SERVER_LOG" 2>&1 &
             SERVER_PID=$!
@@ -114,7 +115,7 @@ PY
                 exit 1
             fi
 
-            python "$APP_DIR/can_intplot_main.py" "$@"
+            python "/app/can_inplot/can_inplot_main.py" "$@"
             RC=$?
             cleanup
             trap - EXIT INT TERM
@@ -135,11 +136,11 @@ PY
 
 %test
     . /opt/venv/bin/activate
-    PYTHONPATH=/app/can_interactive_plot python -c "import numpy, pandas, h5py, plotly, zmq, lxml; import can_kpi_server; import can_intplot_main; print('CAN KPI and Interactive Plot imports OK')"
+    PYTHONPATH=/app:/app/can_interactive_plot python -c "import numpy, pandas, h5py, plotly, zmq, lxml; import can_kpi_server; print('CAN KPI and Interactive Plot imports OK')"
 
 %help
     Combined CAN KPI and Interactive Plot container.
 
-    The both mode starts can_kpi_server.py on TCP port 5556, then runs
+    The both mode starts can_kpi_server.py on TCP port 6000, then runs
     can_intplot_main.py. The interactive plot sends per-sensor CAN KPI
     requests to that server and embeds the generated KPI HTML pages.

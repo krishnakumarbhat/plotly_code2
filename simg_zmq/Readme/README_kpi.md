@@ -26,7 +26,7 @@ simg_sh_hpcc/
       udp_kpi.simg
       run_udp.sh
     int_plot/
-      intplot_kpi.simg
+      udp_intplot_kpi.simg
       run_intplot.sh
     inplot_udp.sh
     inplot_can.sh

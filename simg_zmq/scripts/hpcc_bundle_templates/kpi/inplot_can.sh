@@ -44,7 +44,7 @@ fi
 
 # Prefer the CAN Interactive Plot image. Its plot app accepts the full JSON batch
 # and keeps CAN KPI integration inside the CAN-specific pipeline.
-COMBINED_IMAGE="$SCRIPT_DIR/can_intplot/canintplot_kpi.simg"
+COMBINED_IMAGE="$SCRIPT_DIR/can_intplot/canudp_intplot_kpi.simg"
 USE_COMBINED=0
 if [[ -f "$COMBINED_IMAGE" ]]; then
     USE_COMBINED=1

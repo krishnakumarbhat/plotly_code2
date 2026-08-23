@@ -137,7 +137,7 @@ curl -X POST http://127.0.0.1:5000/ask -H "Content-Type: application/json" -d "{
 
 ## Notes
 - Default HTML path:
-  `C:\Users\ouymc2\Desktop\plotly_code\main_html\all_services\tools\intplot_kpi`
+  `C:\Users\ouymc2\Desktop\plotly_code\main_html\all_services\tools\udp_intplot_kpi`
 - Default file filter keyword: `sil_narrative`
 - If same file content is already ingested, system inserts again with 2 duplicate rounds.
 - If ingestion output says no matching files found, your index is unchanged and answers can come from older data.
