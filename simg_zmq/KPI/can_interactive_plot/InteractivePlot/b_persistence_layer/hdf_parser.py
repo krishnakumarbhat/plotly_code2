@@ -1,5 +1,6 @@
 import h5py
 import gc
+import numpy as np
 from typing import List, Set
 from InteractivePlot.c_data_storage.data_model_storage import DataModelStorage
 from InteractivePlot.c_data_storage.config_loader import (
@@ -118,6 +119,29 @@ class HDF5Parser:
                     datasets_to_process.append((canonical_signal_name, item))
             elif isinstance(item, h5py.Group) and item_name not in header_names:
                 child_groups.append(item)
+
+        # Attribute-based fallback: some HDF producers (CAN edge-case HDFs)
+        # store signal payloads as group attributes instead of child datasets.
+        # Mirror the CAN KPI reader (HdfAttrReader._read_group_payload) so both
+        # pipelines support the same file layouts.
+        if stream_config:
+            resolved_signals = {name for name, _ in datasets_to_process}
+            child_names = set(group.keys())
+            for attr_name in group.attrs.keys():
+                if attr_name in child_names:
+                    continue  # already stored as a child dataset
+                attr_value = group.attrs[attr_name]
+                if not isinstance(attr_value, np.ndarray) or attr_value.ndim != 1:
+                    continue
+                canonical_signal_name = resolve_signal_name(
+                    current_stream, attr_name, stream_config
+                )
+                if (
+                    canonical_signal_name is not None
+                    and canonical_signal_name not in resolved_signals
+                ):
+                    datasets_to_process.append((canonical_signal_name, attr_value))
+                    resolved_signals.add(canonical_signal_name)
 
         # Process datasets immediately
         for dataset_name, dataset in datasets_to_process:

@@ -63,7 +63,11 @@ class HdfAttrReader:
     def get_scan_index(self, sensor_data: Dict[str, Any]) -> np.ndarray:
         header_groups = sensor_data.get("header", {})
         for attrs in header_groups.values():
-            for key in ("HED_SCAN_INDEX", "HED_LOOK_INDEX"):
+            # HED_LOOK_INDEX preferred over HED_SCAN_INDEX: some producers write
+            # HED_SCAN_INDEX = HED_LOOK_INDEX - 1 while detection payloads are
+            # indexed by the look index; aligning on HED_SCAN_INDEX would shift
+            # input vs output by one scan.
+            for key in ("HED_LOOK_INDEX", "HED_SCAN_INDEX"):
                 if key in attrs:
                     return attrs[key].astype(int)
 

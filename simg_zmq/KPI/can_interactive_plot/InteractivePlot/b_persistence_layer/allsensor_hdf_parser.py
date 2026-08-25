@@ -6,6 +6,7 @@ import re
 import math
 import shutil
 import tempfile
+import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, List
@@ -191,6 +192,7 @@ class AllsensorHdfParser(PersensorHdfParser):
                             f"Merged {len(streams_data)} streams into one plot set"
                             f" for sensor /{sensor}/ in {b - a:.1f}s"
                         )
+                        self._write_sensor_sync_sidecar(base_name, sensor, streams_data)
 
                     logging.info(
                         f"Generated HTML report for sensor /{sensor}/ with /{len(streams)}/ streams"
@@ -268,7 +270,10 @@ class AllsensorHdfParser(PersensorHdfParser):
         if header_path:
             scan_index = data_group[f"{header_path}/scan_index"][()]
         else:
-            scan_index = AllsensorHdfParser._infer_row_index(data_group)
+            scan_index = (
+                AllsensorHdfParser._header_scan_index(data_group)
+                or AllsensorHdfParser._infer_row_index(data_group)
+            )
 
         if scan_index is None:
             return
@@ -286,6 +291,32 @@ class AllsensorHdfParser(PersensorHdfParser):
         )
 
     @staticmethod
+    def _header_scan_index(data_group):
+        """Mirror the CAN KPI reader (HdfAttrReader.get_scan_index): prefer the
+        header group's HED_LOOK_INDEX / HED_SCAN_INDEX attributes when no
+        Stream_Hdr/scan_index dataset is present (CAN edge-case HDFs).
+
+        HED_LOOK_INDEX is preferred because some producers write
+        HED_SCAN_INDEX = HED_LOOK_INDEX - 1 (off-by-one) while the detection
+        payloads are indexed by the look index; aligning on HED_SCAN_INDEX then
+        shifts input vs output by one scan."""
+        parent = getattr(data_group, "parent", None)
+        if parent is None:
+            return None
+        for gname in sorted(parent.keys()):
+            if "HEADER" not in str(gname).upper():
+                continue
+            sibling = parent[gname]
+            if not isinstance(sibling, h5py.Group):
+                continue
+            for key in ("HED_LOOK_INDEX", "HED_SCAN_INDEX"):
+                if key in sibling.attrs:
+                    arr = np.asarray(sibling.attrs[key])
+                    if arr.ndim == 1 and arr.size > 0:
+                        return list(arr.astype(int))
+        return None
+
+    @staticmethod
     def _infer_row_index(data_group):
         for name, item in data_group.items():
             if not isinstance(item, h5py.Dataset):
@@ -294,8 +325,61 @@ class AllsensorHdfParser(PersensorHdfParser):
                 continue
             if len(item.shape) == 1:
                 return list(range(1, len(item) + 1))
+        # Attribute-based fallback: CAN edge-case HDFs store payloads as group
+        # attributes (mirror HdfAttrReader.get_scan_index fallback).
+        for name, value in data_group.attrs.items():
+            if name.startswith("id_") or name.startswith("timestamp_"):
+                continue
+            arr = np.asarray(value)
+            if arr.ndim == 1 and arr.size > 0:
+                return list(range(1, arr.size + 1))
         return None
 
+
+    def _write_sensor_sync_sidecar(self, base_name, sensor, streams_data):
+        """Write a small sidecar JSON per sensor recording the input/output
+        scan-index ranges so the HTML index pages can warn the user when the
+        input and output are not in sync (offset / missing scans)."""
+        try:
+            import json
+            in_keys = set()
+            out_keys = set()
+            for _stream, in_s, out_s in streams_data:
+                if in_s is not None and getattr(in_s, "_data_container", None):
+                    in_keys.update(int(k) for k in in_s._data_container.keys())
+                if out_s is not None and getattr(out_s, "_data_container", None):
+                    out_keys.update(int(k) for k in out_s._data_container.keys())
+            if not in_keys and not out_keys:
+                return
+            def _stats(keys):
+                return {
+                    "count": len(keys),
+                    "min": min(keys) if keys else None,
+                    "max": max(keys) if keys else None,
+                }
+            in_stats = _stats(in_keys)
+            out_stats = _stats(out_keys)
+            matched = sorted(in_keys & out_keys)
+            payload = {
+                "sensor": str(sensor),
+                "input": in_stats,
+                "output": out_stats,
+                "matched_scan_count": len(matched),
+                "offset": (
+                    (out_stats["min"] - in_stats["min"])
+                    if in_stats["min"] is not None and out_stats["min"] is not None
+                    else None
+                ),
+            }
+            sensor_dir = Path(self.output_dir) / base_name / str(sensor)
+            sensor_dir.mkdir(parents=True, exist_ok=True)
+            sidecar = sensor_dir / f"{base_name}_{sensor}_sync.json"
+            sidecar.write_text(
+                json.dumps(payload, indent=2), encoding="utf-8"
+            )
+            logging.info("Wrote scan-sync sidecar: %s", sidecar)
+        except Exception:
+            logging.exception("Failed to write scan-sync sidecar for sensor %s", sensor)
 
     def _write_read_error_placeholder_report(self, base_name: str, input_file: str, output_file: str, read_error: str) -> None:
         try:

@@ -838,13 +838,39 @@ class HtmlGenerator:
         return accuracy_map
 
     @classmethod
-    def _compute_sensor_scan_summary(cls, sensor_stream_data: dict) -> Dict[str, Dict[str, float]]:
+    def _compute_sensor_scan_summary(cls, sensor_stream_data: dict, anchor_dir: Optional[Path] = None) -> Dict[str, Dict[str, float]]:
         summary_map: Dict[str, Dict[str, float]] = {}
         for sensor_name, streams in sensor_stream_data.items():
             common_total = 0.0
             input_only_total = 0.0
             output_only_total = 0.0
             has_scan_data = False
+
+            # Prefer the plot-pipeline scan-sync sidecar (written per sensor as
+            # <base>_<sensor>_sync.json) — it carries the true input/output scan
+            # counts so the warning banner can report offsets/missing scans.
+            sync_data = None
+            if anchor_dir is not None:
+                try:
+                    pattern = f"*_{sensor_name}_sync.json"
+                    for candidate in anchor_dir.rglob(pattern):
+                        sync_data = json.loads(candidate.read_text(encoding="utf-8"))
+                        break
+                except Exception:
+                    sync_data = None
+            if sync_data:
+                try:
+                    summary_map[sensor_name] = {
+                        "matched_scans": float(sync_data.get("matched_scan_count") or float("nan")),
+                        "input_scans": float((sync_data.get("input") or {}).get("count") or float("nan")),
+                        "output_scans": float((sync_data.get("output") or {}).get("count") or float("nan")),
+                        "offset": sync_data.get("offset"),
+                        "input_min": (sync_data.get("input") or {}).get("min"),
+                        "output_min": (sync_data.get("output") or {}).get("min"),
+                    }
+                    continue
+                except Exception:
+                    pass
 
             for categories in streams.values():
                 for category_name, plots in categories.items():
@@ -896,6 +922,65 @@ class HtmlGenerator:
         return summary_map
 
     @classmethod
+    def _build_warning_banner(cls, sensor_accuracy: dict, sensor_scan_summary: dict) -> str:
+        """Build a red warning banner listing sensors with low accuracy or
+        input/output scan-index desync, so users immediately see why a sensor's
+        report looks wrong (e.g. a 1-2 scan offset between input and output)."""
+        warnings: List[str] = []
+        for sensor_name in sorted(sensor_accuracy.keys()):
+            acc = sensor_accuracy.get(sensor_name, float("nan"))
+            scan_summary = sensor_scan_summary.get(sensor_name, {}) or {}
+            input_scans = scan_summary.get("input_scans", float("nan"))
+            output_scans = scan_summary.get("output_scans", float("nan"))
+            matched_scans = scan_summary.get("matched_scans", float("nan"))
+
+            parts = [f"<b>{sensor_name}</b>"]
+
+            low_acc = not math.isnan(acc) and acc < 0.95
+            if low_acc:
+                parts.append(f"accuracy {acc * 100.0:.1f}% (below 95%)")
+
+            has_scan = (
+                not math.isnan(input_scans)
+                and not math.isnan(output_scans)
+                and not math.isnan(matched_scans)
+            )
+            if has_scan:
+                if int(input_scans) != int(output_scans):
+                    parts.append(
+                        f"input ({int(input_scans)} scans) vs output ({int(output_scans)} scans) "
+                        f"scan counts differ — input/output not fully in sync"
+                    )
+                elif int(matched_scans) < int(input_scans):
+                    parts.append(
+                        f"only {int(matched_scans)} of {int(input_scans)} scans matched "
+                        f"(offset / missing scans detected)"
+                    )
+
+            if low_acc or (has_scan and int(matched_scans) < int(input_scans)) or (
+                has_scan and int(input_scans) != int(output_scans)
+            ):
+                warnings.append("<li>⚠️ " + " — ".join(parts) + "</li>")
+
+        if not warnings:
+            return ""
+
+        return f"""
+        <div class="warning-banner" style="
+            background: linear-gradient(90deg, #7f1d1d, #b91c1c);
+            color: #ffffff; border: 1px solid #ef4444; border-radius: 8px;
+            padding: 14px 18px; margin: 0 0 18px 0; font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);">
+            <div style="font-weight: 700; font-size: 15px; margin-bottom: 6px;">
+                &#9888;&#65039; Attention: scan-index mismatch / low accuracy detected
+            </div>
+            <ul style="margin: 0; padding-left: 18px; line-height: 1.7;">
+                {''.join(warnings)}
+            </ul>
+        </div>
+        """
+
+    @classmethod
     def _find_can_kpi_index(cls, anchor_dir: Path) -> Optional[str]:
         """Locate can_kpi_index.html under anchor_dir and return its relative path
         (POSIX separators, suitable for href). Returns None if not found."""
@@ -915,7 +1000,8 @@ class HtmlGenerator:
         """Generate master index HTML with nested dropdowns."""
         generation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         sensor_accuracy = cls._compute_sensor_accuracy(sensor_stream_data)
-        sensor_scan_summary = cls._compute_sensor_scan_summary(sensor_stream_data)
+        sensor_scan_summary = cls._compute_sensor_scan_summary(sensor_stream_data, anchor_dir)
+        warning_banner = cls._build_warning_banner(sensor_accuracy, sensor_scan_summary)
         valid_sensor_acc = [v for v in sensor_accuracy.values() if not math.isnan(v)]
         avg_accuracy = (sum(valid_sensor_acc) / len(valid_sensor_acc)) if valid_sensor_acc else float("nan")
         avg_accuracy_text = f"{avg_accuracy:.4f}" if not math.isnan(avg_accuracy) else "NA"
@@ -947,6 +1033,7 @@ class HtmlGenerator:
                     <h1>📊 Master Interactive Plot Report</h1>
                     <div class="subtitle">Comprehensive Sensor and Stream Analysis</div>
                 </div>
+                {warning_banner}
                 <div class="content">
                     <div class="metadata">
                         <h3>📋 Report Information</h3>

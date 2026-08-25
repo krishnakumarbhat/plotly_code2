@@ -145,9 +145,16 @@ def resolve_signal_name(stream_name: str, item_name: str, stream_config: Optiona
 
     bordnet_prefixes = {
         "det_range": "ran",
+        "det_range_err": "ran_error",
         "det_range_velocity": "vel",
+        "det_range_velocity_err": "vel_error",
         "det_azimuth": "theta",
+        "det_azimuth_err": "theta_error",
         "det_elevation": "phi",
+        "det_elevation_err": "phi_error",
+        "det_snr": "snr",
+        "det_rcs": "rcs",
+        "det_super_res_target": "f_superres_target",
     }
     base_name = re.sub(r"_\d{3}$", "", item_lower)
     canonical_name = bordnet_prefixes.get(base_name)
