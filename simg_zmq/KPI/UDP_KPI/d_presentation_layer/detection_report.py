@@ -88,6 +88,22 @@ detection_html = """<html>
         <div>Scans processed / with matches: <span class="kpi-value">{scans_processed} / {scans_with_matches}</span></div>
     </div>
 
+    <div class="kpi-box">
+        <div class="kpi-header">ScanIndex Match</div>
+        <div>ScanIndex Match % : <span class="kpi-value">{scan_match_pct_str}</span></div>
+        <div>Common / Input Total: <span class="kpi-value">{common_count} / {input_total}</span></div>
+        <div>Input Only: <span class="kpi-value">{input_only_count}</span> | Output Only: <span class="kpi-value">{output_only_count}</span></div>
+        <div>Common Scan Count: <span class="kpi-value">{common_scan_count}</span></div>
+        <!-- Hidden KPI table for machine extraction (e.g., master index) -->
+        <table style="display:none;">
+            <tr><td>common_scan_count</td><td>{common_count}</td></tr>
+            <tr><td>input_only_scan_count</td><td>{input_only_count}</td></tr>
+            <tr><td>output_only_scan_count</td><td>{output_only_count}</td></tr>
+            <tr><td>avg_scan_match_pct</td><td>{avg_scan_match_pct_raw}</td></tr>
+            <tr><td>matched_scan_index_count</td><td>{common_count}</td></tr>
+        </table>
+    </div>
+
     <div class="thresholds">
         <b>Thresholds Used:</b>
         <ul>

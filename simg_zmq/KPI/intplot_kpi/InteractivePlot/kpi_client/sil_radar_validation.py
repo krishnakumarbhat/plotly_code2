@@ -764,6 +764,10 @@ def sensors_in_file(path: Path) -> List[str]:
             k = str(key).upper()
             if k in SENSOR_TOKENS:
                 sensors.append(k)
+            else:
+                parts = k.rsplit("_", 1)
+                if len(parts) == 2 and parts[1] in SENSOR_TOKENS:
+                    sensors.append(k)
         return sorted(set(sensors))
 
 

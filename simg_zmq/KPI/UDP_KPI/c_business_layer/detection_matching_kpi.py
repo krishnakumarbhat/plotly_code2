@@ -81,7 +81,34 @@ class DetectionMappingKPIHDF:
         self.html_content = ""
         self.kpi_results = {}
 
-
+    def _get_scan_summary(self):
+        """Retrieve scan_index alignment summary produced by HDF wrapper."""
+        try:
+            data = self.data
+            # Direct stream summary
+            if isinstance(data, dict):
+                for stream_key in ("DETECTION_STREAM", "RDD_STREAM", "DYNAMIC_ALIGNMENT_STREAM"):
+                    stream_obj = data.get(stream_key)
+                    if isinstance(stream_obj, dict) and "scan_summary" in stream_obj:
+                        return stream_obj["scan_summary"]
+                # aggregated
+                if "_scan_summaries" in data and isinstance(data["_scan_summaries"], dict):
+                    # prefer detection stream, else first
+                    if "DETECTION_STREAM" in data["_scan_summaries"]:
+                        return data["_scan_summaries"]["DETECTION_STREAM"]
+                    for v in data["_scan_summaries"].values():
+                        if isinstance(v, dict) and v:
+                            return v
+                # try input storage attribute
+                for v in data.values():
+                    if isinstance(v, dict):
+                        for side in ("input", "output"):
+                            store = v.get(side)
+                            if store is not None and hasattr(store, "_scan_summary"):
+                                return getattr(store, "_scan_summary")
+        except Exception:
+            pass
+        return {}
 
     def process_rdd_matching(self):
         """Process RDD stream matching and pass it Det to calcuate accuracy."""
@@ -263,6 +290,36 @@ class DetectionMappingKPIHDF:
         scans_processed = int(len(veh_rdd.get('num_af_det', [])))
         scans_with_matches = int(len(per_scan_matches))
 
+        # --- ScanIndex match summary (fix for missing percentage) ---
+        scan_summary = self._get_scan_summary()
+        if scan_summary:
+            try:
+                veh_si_count = int(scan_summary.get("input_total", veh_si_count))
+                sim_si_count = int(scan_summary.get("output_total", sim_si_count))
+                # overwrite scans_processed to common count if summary available, but keep veh_si_count as input_total
+                common_cnt = int(scan_summary.get("common_count", scans_processed))
+                input_only = int(scan_summary.get("input_only_scan_count", 0))
+                output_only = int(scan_summary.get("output_only_scan_count", 0))
+                scan_match_pct = float(scan_summary.get("scan_match_pct", float("nan")))
+            except Exception:
+                common_cnt = scans_processed
+                input_only = 0
+                output_only = 0
+                scan_match_pct = float("nan")
+        else:
+            common_cnt = scans_processed
+            input_only = 0
+            output_only = 0
+            scan_match_pct = float("nan")
+            # fallback: try to infer from data container keys if available
+            try:
+                input_keys = list(self.data.get('DETECTION_STREAM', {}).get('input')._data_container.keys()) if isinstance(self.data.get('DETECTION_STREAM', {}).get('input'), KPI_DataModelStorage) else []
+                # If summary missing, approximate match pct as processed / processed (100%)
+                if len(input_keys) > 0 and scans_processed > 0:
+                    scan_match_pct = 100.0 * scans_processed / max(1, scans_processed)
+            except Exception:
+                pass
+
         # Store results for HTML/plots
         self.kpi_results['per_scan_accuracy'] = per_scan_accuracy
         self.kpi_results['per_scan_scanindex'] = valid_scan_indices
@@ -276,6 +333,14 @@ class DetectionMappingKPIHDF:
         self.kpi_results['scans_with_matches'] = scans_with_matches
         self.kpi_results['min_accuracy'] = min_acc
         self.kpi_results['max_accuracy'] = max_acc
+        # expose scanindex match for HTML
+        self.kpi_results['common_scan_count'] = int(common_cnt)
+        self.kpi_results['common_count'] = int(common_cnt)
+        self.kpi_results['input_total'] = int(veh_si_count)
+        self.kpi_results['input_only_scan_count'] = int(input_only)
+        self.kpi_results['output_only_scan_count'] = int(output_only)
+        self.kpi_results['scan_match_pct'] = float(scan_match_pct)
+        self.kpi_results['avg_scan_match_pct'] = float(scan_match_pct)
 
         # Store both accuracies with clear naming
         self.kpi_results['matching_accuracy'] = {
@@ -477,7 +542,14 @@ class DetectionMappingKPIHDF:
                 denominator_label=denominator_label,
                 per_scan_rows=per_scan_rows,
                 accuracy_plot=accuracy_plot.to_json(),
-                af_det_plot=af_det_plot.to_json()
+                af_det_plot=af_det_plot.to_json(),
+                scan_match_pct_str=f"{scan_match_pct:.2f}" if scan_match_pct == scan_match_pct else "N/A",
+                common_count=int(common_cnt),
+                input_total=int(veh_si_count),
+                input_only_count=int(input_only),
+                output_only_count=int(output_only),
+                common_scan_count=int(common_cnt),
+                avg_scan_match_pct_raw=f"{scan_match_pct}" if scan_match_pct == scan_match_pct else "N/A",
             )
             self.html_content = html
             

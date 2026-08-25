@@ -109,6 +109,28 @@ class KPIHDFWrapper:
         self.stream_output_model = KPI_DataModelStorage()
 
     @staticmethod
+    def _find_scan_index_fallback(group: h5py.Group):
+        """Fallback recursive search for scan_index dataset when header variant not found."""
+        target_leafs = {"scan_index", "stream_hdr_scan_index", "hed_scan_index", "hed_look_index"}
+        found = None
+        def _visit(name, obj):
+            nonlocal found
+            if found is not None:
+                return
+            if isinstance(obj, h5py.Dataset):
+                leaf = name.split("/")[-1].lower()
+                if leaf in target_leafs:
+                    try:
+                        found = obj[()]
+                    except Exception:
+                        pass
+        try:
+            group.visititems(_visit)
+        except Exception:
+            pass
+        return found
+
+    @staticmethod
     def _build_aligned_scan_plan(scan_index_in, scan_index_out):
         out_positions = {}
         for out_idx, scan_id in enumerate(scan_index_out):
@@ -196,6 +218,8 @@ class KPIHDFWrapper:
         
         # Initialize stream-specific models dictionary
         self.stream_models = {}
+        # Keep per-stream scan_index alignment summary for HTML reporting
+        self.scan_summaries = {}
 
         for stream_idx, stream in enumerate(streams):
             logger.info(f"Processing stream [{stream_idx}] {stream}")
@@ -228,6 +252,15 @@ class KPIHDFWrapper:
                         if idx_path in data_group_in:
                             scan_index_in = data_group_in[idx_path][()]
                             break
+                if scan_index_in is None:
+                    # Fallback: search recursively under stream group
+                    scan_index_in = self._find_scan_index_fallback(data_group_in)
+                # Also try direct dataset at stream level (some PCAN dumps store scan_index directly)
+                if scan_index_in is None and "scan_index" in data_group_in:
+                    try:
+                        scan_index_in = data_group_in["scan_index"][()]
+                    except Exception:
+                        pass
 
             if hdf_out is not None and streams:
                 data_group_out = hdf_out[group_path]
@@ -238,6 +271,13 @@ class KPIHDFWrapper:
                         if idx_path in data_group_out:
                             scan_index_out = data_group_out[idx_path][()]
                             break
+                if scan_index_out is None:
+                    scan_index_out = self._find_scan_index_fallback(data_group_out)
+                if scan_index_out is None and "scan_index" in data_group_out:
+                    try:
+                        scan_index_out = data_group_out["scan_index"][()]
+                    except Exception:
+                        pass
 
             # Skip if either scan_index is None
             if scan_index_in is None or scan_index_out is None:
@@ -267,6 +307,33 @@ class KPIHDFWrapper:
                 f"missing_in_indices={missing_in_indices}, missing_out_indices={missing_out_indices}"
             )
 
+            # Persist scan_index match summary for downstream KPI/HTML
+            try:
+                input_total = int(len(scan_index_in)) if scan_index_in is not None else 0
+                output_total = int(len(scan_index_out)) if scan_index_out is not None else 0
+                common_count = int(len(common_scan_index))
+                input_only_count = int(input_total - len(selected_in_indices))
+                output_only_count = int(output_total - len(selected_out_indices))
+                # Also account for duplicate scan ids that were deduped in _build_aligned_scan_plan
+                # selected_* length == common_count, so input_only/output_only already reflect unique miss
+                scan_match_pct = (100.0 * common_count / input_total) if input_total > 0 else float("nan")
+                self.scan_summaries[stream] = {
+                    "common_scan_count": float(common_count),
+                    "input_only_scan_count": float(input_only_count),
+                    "output_only_scan_count": float(output_only_count),
+                    "input_total": float(input_total),
+                    "output_total": float(output_total),
+                    "common_count": float(common_count),
+                    "scan_match_pct": float(scan_match_pct),
+                    "common_scan_indices": list(common_scan_index),
+                }
+                logger.info(
+                    f"Stream {stream} scanindex match: {common_count}/{input_total} = {scan_match_pct:.2f}% (input_only={input_only_count}, output_only={output_only_count})"
+                )
+            except Exception as e:
+                logger.debug(f"Failed to build scan summary for {stream}: {e}")
+                self.scan_summaries[stream] = {}
+
             # Initialize models with aligned common scan indices and per-side row selection.
             self.stream_models[stream]['input'].initialize(
                 common_scan_index,
@@ -284,6 +351,16 @@ class KPIHDFWrapper:
             # Set stream-specific parent 
             self.stream_models[stream]['input'].init_parent(stream)
             self.stream_models[stream]['output'].init_parent(stream)
+
+            # Attach scan summary to storages and stream_models for KPI layer
+            summary = self.scan_summaries.get(stream, {})
+            if summary:
+                try:
+                    self.stream_models[stream]['input']._scan_summary = summary
+                    self.stream_models[stream]['output']._scan_summary = summary
+                    self.stream_models[stream]['scan_summary'] = summary
+                except Exception:
+                    pass
 
 
             # # Expose per-stream storages on the wrapper for downstream access/debugging
@@ -361,6 +438,16 @@ class KPIHDFWrapper:
             if hasattr(self.stream_output_model, '_data_container') and hasattr(models['output'], '_data_container'):
                 self.stream_output_model._data_container.update(models['output']._data_container)
 
+
+        # Also expose aggregated scan_summaries via stream_models for global access
+        # e.g., detection KPI can read data['DETECTION_STREAM']['scan_summary']
+        # and overall results dict keeps it for debugging
+        results["scan_summaries"] = self.scan_summaries
+        # Attach as attribute on overall models dict
+        try:
+            self.stream_models["_scan_summaries"] = self.scan_summaries
+        except Exception:
+            pass
 
         kpi_model = KpiDataModel(
             self.stream_models,
