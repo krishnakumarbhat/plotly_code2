@@ -90,10 +90,18 @@ detection_html = """<html>
 
     <div class="kpi-box">
         <div class="kpi-header">ScanIndex Match</div>
-        <div>ScanIndex Match % : <span class="kpi-value">{scan_match_pct_str}</span></div>
-        <div>Common / Input Total: <span class="kpi-value">{common_count} / {input_total}</span></div>
+        <!-- Legacy row/unique mixed % keeps original value for backward compat -->
+        <div>ScanIndex Match % (legacy rows) : <span class="kpi-value">{scan_match_pct_str}</span></div>
+        <div>Common / Input Total (rows): <span class="kpi-value">{common_count} / {input_total}</span></div>
         <div>Input Only: <span class="kpi-value">{input_only_count}</span> | Output Only: <span class="kpi-value">{output_only_count}</span></div>
         <div>Common Scan Count: <span class="kpi-value">{common_scan_count}</span></div>
+        <!-- Isolated unbiased diff (separate function, does NOT affect alignment logic) -->
+        <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #ddd;">
+            <div>ScanIndex Match % (input-unique) : <span class="kpi-value">{input_match_pct_str}</span></div>
+            <div>ScanIndex Match % (output-unique): <span class="kpi-value">{output_match_pct_str}</span></div>
+            <div>Jaccard (IoU) % : <span class="kpi-value">{jaccard_pct_str}</span></div>
+            <div style="font-size:0.85em; color:#6b7280;">Unbiased unique/unique via isolated <code>scan_index_metrics.calculate_scanindex_match_metrics</code> (exclude_zero=True)</div>
+        </div>
         <!-- Hidden KPI table for machine extraction (e.g., master index) -->
         <table style="display:none;">
             <tr><td>common_scan_count</td><td>{common_count}</td></tr>
@@ -101,6 +109,12 @@ detection_html = """<html>
             <tr><td>output_only_scan_count</td><td>{output_only_count}</td></tr>
             <tr><td>avg_scan_match_pct</td><td>{avg_scan_match_pct_raw}</td></tr>
             <tr><td>matched_scan_index_count</td><td>{common_count}</td></tr>
+            <tr><td>input_unique</td><td>{input_unique_raw}</td></tr>
+            <tr><td>output_unique</td><td>{output_unique_raw}</td></tr>
+            <tr><td>input_match_pct</td><td>{input_match_pct_raw}</td></tr>
+            <tr><td>output_match_pct</td><td>{output_match_pct_raw}</td></tr>
+            <tr><td>jaccard_pct</td><td>{jaccard_pct_raw}</td></tr>
+            <tr><td>scan_match_pct_unique</td><td>{scan_match_pct_unique_raw}</td></tr>
         </table>
     </div>
 

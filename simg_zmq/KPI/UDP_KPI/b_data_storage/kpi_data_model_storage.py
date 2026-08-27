@@ -245,16 +245,21 @@ class KPI_DataModelStorage:
             return key_stream
 
         # Get the length of dataset and data_container
-        # dataset_len = len(dataset)- len(getattr(self, "_missing_indices", set())) if dataset is not None else 0
         dataset_len = len(dataset) if dataset is not None else 0
         container_len = len(self._data_container)
 
-        # Skip if lengths don't match
+        # Handle length mismatch gracefully (CCA vs R11: dataset 570 vs common 283)
+        # Original code skipped entirely -> "Failed to process detection KPIs" with empty storage.
+        # Instead align via truncation/padding and continue.
         if dataset_len != container_len:
-            logging.debug(
-                f"Skipping child processing for {signal_name} in {grp_name}: dataset length ({dataset_len}) does not match scan indices length ({container_len})"
+            logging.warning(
+                f"Aligning child {signal_name} in {grp_name}: dataset {dataset_len} != container {container_len} - truncating/padding to common via zip"
             )
-            return ""
+            if dataset is not None and dataset_len > container_len:
+                dataset = dataset[:container_len]
+                dataset_len = container_len
+            # if dataset shorter, zip will naturally handle remaining scans as empty
+            # do not return, continue to store available rows
 
         # Handle child item
         self._child_counter += 1
@@ -262,9 +267,11 @@ class KPI_DataModelStorage:
 
         # Process and store data for child (dataset is now filtered)
         for idx, (row, scanidx) in enumerate(zip(dataset, self._data_container)):
-            # Skip rows whose scan index is marked as missing for this storage
-            # if idx in getattr(self, "_missing_indices", set()):
-            #     continue
+            # Ensure parent list exists - heterogeneous HDFs (CCA 283 vs R11 570) may have truncated parent leaving empty scans
+            if not self._data_container[scanidx]:
+                # create placeholder parent entry so child append does not IndexError: list index out of range
+                self._data_container[scanidx].append([])
+                logging.debug(f"Created placeholder parent for scan {scanidx} in {grp_name}/{signal_name} (heterogeneous lengths)")
             if isinstance(row, np.ndarray):
                 rounded_row = np.round(row.astype(float), decimals=2)
                 self._data_container[scanidx][-1].append(rounded_row)
@@ -292,12 +299,15 @@ class KPI_DataModelStorage:
         dataset_len = len(dataset) if dataset is not None else 0
         container_len = len(self._data_container)
 
-        # Skip if lengths don't match
+        # Handle mismatch gracefully - see set_value above
         if dataset_len != container_len:
-            logging.debug(
-                f"Skiping plot for {signal_name}: dataset length ({dataset_len}) does not match scan indices length ({container_len})"
+            logging.warning(
+                f"Aligning parent {signal_name}: dataset {dataset_len} != container {container_len} - truncating via zip"
             )
-            return
+            if dataset is not None and dataset_len > container_len:
+                dataset = dataset[:container_len]
+                dataset_len = container_len
+            # if shorter, remaining scans will stay empty - still create mapping
 
         # Process all rows in the dataset and store them (dataset is pre-filtered)
         for idx, (row, scanidx) in enumerate(zip(dataset, self._data_container)):

@@ -27,6 +27,8 @@ from UDP_KPI.a_persistence_layer.kpi_hdf_parser import KPIHDFParser
 from UDP_KPI.c_business_layer.kpi_factory import KpiDataModel
 from UDP_KPI.d_presentation_layer.kpi_html_gen import generate_kpi_index
 from UDP_KPI.runtime_utils import normalize_fs_path, ensure_dir, set_default_umask
+# Separate pure diff helper for scan_index match % (does NOT affect _build_aligned_scan_plan)
+from UDP_KPI.a_persistence_layer.scan_index_metrics import calculate_scanindex_match_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -308,16 +310,22 @@ class KPIHDFWrapper:
             )
 
             # Persist scan_index match summary for downstream KPI/HTML
+            # --- keep original alignment for storage (no change to _build_aligned_scan_plan) ---
+            # Separate pure calculator for display % -> unbiased unique/unique metric
             try:
                 input_total = int(len(scan_index_in)) if scan_index_in is not None else 0
                 output_total = int(len(scan_index_out)) if scan_index_out is not None else 0
                 common_count = int(len(common_scan_index))
                 input_only_count = int(input_total - len(selected_in_indices))
                 output_only_count = int(output_total - len(selected_out_indices))
-                # Also account for duplicate scan ids that were deduped in _build_aligned_scan_plan
-                # selected_* length == common_count, so input_only/output_only already reflect unique miss
                 scan_match_pct = (100.0 * common_count / input_total) if input_total > 0 else float("nan")
+                # New isolated diff metrics (does not interfere with above legacy keys)
+                isolated_metrics = calculate_scanindex_match_metrics(
+                    scan_index_in, scan_index_out, exclude_zero=True
+                )
+                # Build summary preserving legacy keys for backward compat
                 self.scan_summaries[stream] = {
+                    # legacy keys (rows vs unique mixed) - kept for old HTML consumers
                     "common_scan_count": float(common_count),
                     "input_only_scan_count": float(input_only_count),
                     "output_only_scan_count": float(output_only_count),
@@ -326,26 +334,107 @@ class KPIHDFWrapper:
                     "common_count": float(common_count),
                     "scan_match_pct": float(scan_match_pct),
                     "common_scan_indices": list(common_scan_index),
+                    # isolated unbiased metrics (unique/unique) for new display
+                    "input_unique": float(isolated_metrics["input_unique"]),
+                    "output_unique": float(isolated_metrics["output_unique"]),
+                    "common_unique": float(isolated_metrics["common_unique"]),
+                    "union_unique": float(isolated_metrics["union_unique"]),
+                    "input_match_pct": float(isolated_metrics["input_match_pct"]),
+                    "output_match_pct": float(isolated_metrics["output_match_pct"]),
+                    "jaccard_pct": float(isolated_metrics["jaccard_pct"]),
+                    # prefer unbiased for new HTML titles
+                    "scan_match_pct_unique": float(isolated_metrics["input_match_pct"]),
+                    "avg_scan_match_pct_raw": float(isolated_metrics["input_match_pct"]),
+                    # also expose filtered common list from isolated calc for debugging
+                    "common_scan_indices_isolated": list(isolated_metrics["common_scan_indices"]),
                 }
                 logger.info(
-                    f"Stream {stream} scanindex match: {common_count}/{input_total} = {scan_match_pct:.2f}% (input_only={input_only_count}, output_only={output_only_count})"
+                    f"Stream {stream} scanindex match legacy: {common_count}/{input_total} = {scan_match_pct:.2f}% "
+                    f"| isolated unbiased: {isolated_metrics['common_unique']}/{isolated_metrics['input_unique']} = {isolated_metrics['input_match_pct']:.2f}% "
+                    f"(input_only_unique={isolated_metrics['input_only_unique']}, output_only_unique={isolated_metrics['output_only_unique']}, jaccard={isolated_metrics['jaccard_pct']:.2f}%)"
                 )
             except Exception as e:
                 logger.debug(f"Failed to build scan summary for {stream}: {e}")
                 self.scan_summaries[stream] = {}
+
+            # --- Adaptive selection for heterogeneous HDFs (CCA 283 vs R11 570) ---
+            # Datasets may be stored by raw scan_index length (1150) or by unique count (570).
+            # Raw selected indices (positions in 1150 array) fail when dataset is 570 (many >570).
+            # Detect dataset row count and remap to unique order if needed.
+            def _peek_dataset_len(group, header_path):
+                # try to find a representative signal dataset length for this stream
+                try:
+                    # search for first dataset under stream group excluding header
+                    for sub_name, sub_obj in group.items():
+                        if isinstance(sub_obj, h5py.Group) and sub_name != header_path:
+                            for ds_name, ds_obj in sub_obj.items():
+                                if isinstance(ds_obj, h5py.Dataset):
+                                    try:
+                                        return int(ds_obj.shape[0]) if len(ds_obj.shape) >=1 else 0
+                                    except Exception:
+                                        continue
+                    # fallback: scan_index length itself
+                    return 0
+                except Exception:
+                    return 0
+
+            try:
+                data_group_in_peek = hdf_in[group_path] if hdf_in is not None and group_path in hdf_in else None
+                data_group_out_peek = hdf_out[group_path] if hdf_out is not None and group_path in hdf_out else None
+                header_path_in_peek = next((v for v in self.header_variants if v in data_group_in_peek), None) if data_group_in_peek is not None else None
+                header_path_out_peek = next((v for v in self.header_variants if v in data_group_out_peek), None) if data_group_out_peek is not None else None
+                ds_len_in = _peek_dataset_len(data_group_in_peek, header_path_in_peek) if data_group_in_peek is not None else 0
+                ds_len_out = _peek_dataset_len(data_group_out_peek, header_path_out_peek) if data_group_out_peek is not None else 0
+                raw_len_in = int(len(scan_index_in)) if scan_index_in is not None else 0
+                raw_len_out = int(len(scan_index_out)) if scan_index_out is not None else 0
+                uniq_len_in = len(set(int(x) for x in scan_index_in)) if scan_index_in is not None else 0
+                uniq_len_out = len(set(int(x) for x in scan_index_out)) if scan_index_out is not None else 0
+
+                # Build unique order maps (first appearance order) for remapping
+                def _build_unique_order(scan_arr):
+                    seen = set()
+                    order = []
+                    mp = {}
+                    for v in scan_arr:
+                        iv = int(v)
+                        if iv not in seen:
+                            mp[iv] = len(order)
+                            order.append(iv)
+                            seen.add(iv)
+                    return order, mp
+
+                in_unique_order, in_map = _build_unique_order(scan_index_in) if scan_index_in is not None else ([], {})
+                out_unique_order, out_map = _build_unique_order(scan_index_out) if scan_index_out is not None else ([], {})
+
+                # Decide selection indices for storage (must match dataset row count)
+                # For each side, if dataset len == raw len -> keep raw selected, if == uniq len -> use unique-mapped
+                sel_in = selected_in_indices
+                sel_out = selected_out_indices
+                if ds_len_in and ds_len_in != raw_len_in and ds_len_in == uniq_len_in:
+                    # remap common -> unique indices for input
+                    sel_in = [in_map[c] for c in common_scan_index if c in in_map]
+                    logger.info(f"Stream {stream} input dataset {ds_len_in} == uniq {uniq_len_in} != raw {raw_len_in} -> remapped selected_in to unique indices len {len(sel_in)}")
+                if ds_len_out and ds_len_out != raw_len_out and ds_len_out == uniq_len_out:
+                    sel_out = [out_map[c] for c in common_scan_index if c in out_map]
+                    logger.info(f"Stream {stream} output dataset {ds_len_out} == uniq {uniq_len_out} != raw {raw_len_out} -> remapped selected_out to unique indices len {len(sel_out)}")
+                # If dataset len is neither, keep raw but storage will truncate gracefully
+            except Exception as _e:
+                logger.debug(f"Adaptive selection peek failed for {stream}: {_e}")
+                sel_in = selected_in_indices
+                sel_out = selected_out_indices
 
             # Initialize models with aligned common scan indices and per-side row selection.
             self.stream_models[stream]['input'].initialize(
                 common_scan_index,
                 sensor,
                 missing_idx=missing_in_indices,
-                selected_idx=selected_in_indices,
+                selected_idx=sel_in,
             )
             self.stream_models[stream]['output'].initialize(
                 common_scan_index,
                 sensor,
                 missing_idx=missing_out_indices,
-                selected_idx=selected_out_indices,
+                selected_idx=sel_out,
             )
 
             # Set stream-specific parent 
@@ -406,7 +495,8 @@ class KPIHDFWrapper:
                         b = time.time()
                         logger.debug(f"Parsed input stream {stream} in {b - a:.3f}s")
                     except Exception as e:
-                        logger.error(f"Error parsing input stream {stream}: {e}")
+                        import traceback as _tb
+                        logger.error(f"Error parsing input stream {stream}: {e}\n{_tb.format_exc()}")
                 
                 # Parse output stream
                 data_group_out = hdf_out[group_path]
@@ -421,7 +511,8 @@ class KPIHDFWrapper:
                         b = time.time()
                         logger.debug(f"Parsed output stream {stream} in {b - a:.3f}s")
                     except Exception as e:
-                        logger.error(f"Error parsing output stream {stream}: {e}")
+                        import traceback as _tb
+                        logger.error(f"Error parsing output stream {stream}: {e}\n{_tb.format_exc()}")
 
 
 

@@ -291,16 +291,32 @@ class DetectionMappingKPIHDF:
         scans_with_matches = int(len(per_scan_matches))
 
         # --- ScanIndex match summary (fix for missing percentage) ---
+        # Legacy path preserves original row-based % for backward compat.
+        # New isolated metrics (input_match_pct/output_match_pct/jaccard) are
+        # computed via standalone scan_index_metrics.calculate_scanindex_match_metrics
+        # and do NOT mutate alignment logic.
         scan_summary = self._get_scan_summary()
+        # defaults for isolated unbiased view
+        input_match_pct = float("nan")
+        output_match_pct = float("nan")
+        jaccard_pct = float("nan")
+        input_unique = float("nan")
+        output_unique = float("nan")
         if scan_summary:
             try:
                 veh_si_count = int(scan_summary.get("input_total", veh_si_count))
                 sim_si_count = int(scan_summary.get("output_total", sim_si_count))
-                # overwrite scans_processed to common count if summary available, but keep veh_si_count as input_total
                 common_cnt = int(scan_summary.get("common_count", scans_processed))
                 input_only = int(scan_summary.get("input_only_scan_count", 0))
                 output_only = int(scan_summary.get("output_only_scan_count", 0))
                 scan_match_pct = float(scan_summary.get("scan_match_pct", float("nan")))
+                # pull isolated unbiased metrics if wrapper injected them
+                # (wrapper calls scan_index_metrics.calculate_scanindex_match_metrics)
+                input_match_pct = float(scan_summary.get("input_match_pct", scan_summary.get("scan_match_pct_unique", float("nan"))))
+                output_match_pct = float(scan_summary.get("output_match_pct", float("nan")))
+                jaccard_pct = float(scan_summary.get("jaccard_pct", float("nan")))
+                input_unique = float(scan_summary.get("input_unique", float("nan")))
+                output_unique = float(scan_summary.get("output_unique", float("nan")))
             except Exception:
                 common_cnt = scans_processed
                 input_only = 0
@@ -311,12 +327,39 @@ class DetectionMappingKPIHDF:
             input_only = 0
             output_only = 0
             scan_match_pct = float("nan")
-            # fallback: try to infer from data container keys if available
             try:
                 input_keys = list(self.data.get('DETECTION_STREAM', {}).get('input')._data_container.keys()) if isinstance(self.data.get('DETECTION_STREAM', {}).get('input'), KPI_DataModelStorage) else []
-                # If summary missing, approximate match pct as processed / processed (100%)
                 if len(input_keys) > 0 and scans_processed > 0:
                     scan_match_pct = 100.0 * scans_processed / max(1, scans_processed)
+            except Exception:
+                pass
+        # fallback: if isolated metrics not supplied (old HDF runs), compute locally via same standalone function
+        if (input_match_pct != input_match_pct):  # nan check
+            try:
+                from UDP_KPI.a_persistence_layer.scan_index_metrics import calculate_scanindex_match_metrics
+                # try to recover raw scan_index arrays from storages if summary lacked isolated keys
+                in_si = None
+                out_si = None
+                try:
+                    # prefer scan_summary isolated lists if present
+                    in_si = scan_summary.get("common_scan_indices_isolated")
+                    # fallback to data container keys (unique view)
+                    if in_si is None:
+                        in_si = list(self.data.get('DETECTION_STREAM', {}).get('input')._data_container.keys())
+                        out_si = list(self.data.get('DETECTION_STREAM', {}).get('output')._data_container.keys())
+                    else:
+                        # we already have common; need originals - use container keys as proxy
+                        in_si = list(self.data.get('DETECTION_STREAM', {}).get('input')._data_container.keys())
+                        out_si = list(self.data.get('DETECTION_STREAM', {}).get('output')._data_container.keys())
+                except Exception:
+                    in_si = []
+                    out_si = []
+                iso = calculate_scanindex_match_metrics(in_si, out_si, exclude_zero=True)
+                input_match_pct = float(iso.get("input_match_pct", float("nan")))
+                output_match_pct = float(iso.get("output_match_pct", float("nan")))
+                jaccard_pct = float(iso.get("jaccard_pct", float("nan")))
+                input_unique = float(iso.get("input_unique", float("nan")))
+                output_unique = float(iso.get("output_unique", float("nan")))
             except Exception:
                 pass
 
@@ -333,7 +376,7 @@ class DetectionMappingKPIHDF:
         self.kpi_results['scans_with_matches'] = scans_with_matches
         self.kpi_results['min_accuracy'] = min_acc
         self.kpi_results['max_accuracy'] = max_acc
-        # expose scanindex match for HTML
+        # expose scanindex match for HTML (legacy + isolated)
         self.kpi_results['common_scan_count'] = int(common_cnt)
         self.kpi_results['common_count'] = int(common_cnt)
         self.kpi_results['input_total'] = int(veh_si_count)
@@ -341,6 +384,12 @@ class DetectionMappingKPIHDF:
         self.kpi_results['output_only_scan_count'] = int(output_only)
         self.kpi_results['scan_match_pct'] = float(scan_match_pct)
         self.kpi_results['avg_scan_match_pct'] = float(scan_match_pct)
+        self.kpi_results['input_match_pct'] = float(input_match_pct)
+        self.kpi_results['output_match_pct'] = float(output_match_pct)
+        self.kpi_results['jaccard_pct'] = float(jaccard_pct)
+        self.kpi_results['input_unique'] = float(input_unique) if (input_unique == input_unique) else float("nan")
+        self.kpi_results['output_unique'] = float(output_unique) if (output_unique == output_unique) else float("nan")
+        self.kpi_results['scan_match_pct_unique'] = float(input_match_pct)
 
         # Store both accuracies with clear naming
         self.kpi_results['matching_accuracy'] = {
@@ -522,6 +571,27 @@ class DetectionMappingKPIHDF:
             accuracy_plot = self._create_accuracy_plot()
             af_det_plot = self._create_af_det_plot()
             
+            # pull isolated metrics for HTML (separate function, fallback to legacy)
+            input_match_pct = self.kpi_results.get('input_match_pct', float("nan"))
+            output_match_pct = self.kpi_results.get('output_match_pct', float("nan"))
+            jaccard_pct = self.kpi_results.get('jaccard_pct', float("nan"))
+            input_unique = self.kpi_results.get('input_unique', float("nan"))
+            output_unique = self.kpi_results.get('output_unique', float("nan"))
+            scan_match_pct_unique = self.kpi_results.get('scan_match_pct_unique', input_match_pct)
+            # legacy scan_match values also from kpi_results (were stored in process_rdd_matching)
+            scan_match_pct = self.kpi_results.get('scan_match_pct', float("nan"))
+            common_cnt = self.kpi_results.get('common_count', 0)
+            input_only = self.kpi_results.get('input_only_scan_count', 0)
+            output_only = self.kpi_results.get('output_only_scan_count', 0)
+            # veh counts already pulled above, keep common visuals consistent
+            try:
+                common_cnt = int(common_cnt)
+                input_only = int(input_only)
+                output_only = int(output_only)
+                if scan_match_pct != scan_match_pct:
+                    scan_match_pct = float("nan")
+            except Exception:
+                pass
             # Render HTML using imported template string
             html = detection_html.format(
                 sensor_id=self.sensor_id,
@@ -549,7 +619,16 @@ class DetectionMappingKPIHDF:
                 input_only_count=int(input_only),
                 output_only_count=int(output_only),
                 common_scan_count=int(common_cnt),
-                avg_scan_match_pct_raw=f"{scan_match_pct}" if scan_match_pct == scan_match_pct else "N/A",
+                avg_scan_match_pct_raw=f"{scan_match_pct_unique}" if scan_match_pct_unique == scan_match_pct_unique else f"{scan_match_pct}" if scan_match_pct == scan_match_pct else "N/A",
+                input_match_pct_str=f"{input_match_pct:.2f}" if input_match_pct == input_match_pct else "N/A",
+                output_match_pct_str=f"{output_match_pct:.2f}" if output_match_pct == output_match_pct else "N/A",
+                jaccard_pct_str=f"{jaccard_pct:.2f}" if jaccard_pct == jaccard_pct else "N/A",
+                input_unique_raw=f"{int(input_unique)}" if input_unique == input_unique else "N/A",
+                output_unique_raw=f"{int(output_unique)}" if output_unique == output_unique else "N/A",
+                input_match_pct_raw=f"{input_match_pct}" if input_match_pct == input_match_pct else "N/A",
+                output_match_pct_raw=f"{output_match_pct}" if output_match_pct == output_match_pct else "N/A",
+                jaccard_pct_raw=f"{jaccard_pct}" if jaccard_pct == jaccard_pct else "N/A",
+                scan_match_pct_unique_raw=f"{scan_match_pct_unique}" if scan_match_pct_unique == scan_match_pct_unique else "N/A",
             )
             self.html_content = html
             

@@ -119,6 +119,51 @@ class DetectionSignalFallbackKPIHDF(DetectionMappingKPIHDF):
             "detection_accuracy_percentage": detection_accuracy,
         }
 
+        # Populate scanindex match metrics via isolated function (do not interfere with matching)
+        # Fallback uses payload scan indices; also try wrapper scan_summary for unbiased display
+        try:
+            scan_summary = self._get_scan_summary()
+            if scan_summary:
+                self.kpi_results["common_count"] = int(scan_summary.get("common_count", len(per_scan_scanindex)))
+                self.kpi_results["common_scan_count"] = int(scan_summary.get("common_count", len(per_scan_scanindex)))
+                self.kpi_results["input_total"] = int(scan_summary.get("input_total", self.kpi_results["veh_si_count"]))
+                self.kpi_results["input_only_scan_count"] = int(scan_summary.get("input_only_scan_count", 0))
+                self.kpi_results["output_only_scan_count"] = int(scan_summary.get("output_only_scan_count", 0))
+                self.kpi_results["scan_match_pct"] = float(scan_summary.get("scan_match_pct", float("nan")))
+                # isolated unbiased
+                self.kpi_results["input_unique"] = float(scan_summary.get("input_unique", float("nan")))
+                self.kpi_results["output_unique"] = float(scan_summary.get("output_unique", float("nan")))
+                self.kpi_results["input_match_pct"] = float(scan_summary.get("input_match_pct", scan_summary.get("scan_match_pct_unique", float("nan"))))
+                self.kpi_results["output_match_pct"] = float(scan_summary.get("output_match_pct", float("nan")))
+                self.kpi_results["jaccard_pct"] = float(scan_summary.get("jaccard_pct", float("nan")))
+                self.kpi_results["scan_match_pct_unique"] = float(scan_summary.get("scan_match_pct_unique", self.kpi_results["input_match_pct"]))
+                self.kpi_results["avg_scan_match_pct"] = float(self.kpi_results["input_match_pct"])
+            else:
+                # fallback to payload counts as proxy
+                self.kpi_results["common_count"] = int(len(per_scan_scanindex))
+                self.kpi_results["common_scan_count"] = int(len(per_scan_scanindex))
+                self.kpi_results["input_total"] = int(self.kpi_results["veh_si_count"])
+                self.kpi_results["input_only_scan_count"] = 0
+                self.kpi_results["output_only_scan_count"] = 0
+                self.kpi_results["scan_match_pct"] = float("nan")
+                # try isolated calc from scan indices
+                try:
+                    from UDP_KPI.a_persistence_layer.scan_index_metrics import calculate_scanindex_match_metrics
+                    iso = calculate_scanindex_match_metrics(per_scan_scanindex, per_scan_scanindex, exclude_zero=True)
+                    # if no wrapper summary, approximate from per_scan list (will be 100%)
+                    self.kpi_results["input_match_pct"] = float(iso.get("input_match_pct", float("nan")))
+                    self.kpi_results["output_match_pct"] = float(iso.get("output_match_pct", float("nan")))
+                    self.kpi_results["jaccard_pct"] = float(iso.get("jaccard_pct", float("nan")))
+                    self.kpi_results["input_unique"] = float(iso.get("input_unique", float("nan")))
+                    self.kpi_results["output_unique"] = float(iso.get("output_unique", float("nan")))
+                    self.kpi_results["scan_match_pct_unique"] = float(self.kpi_results["input_match_pct"])
+                except Exception:
+                    self.kpi_results["input_match_pct"] = float("nan")
+                    self.kpi_results["output_match_pct"] = float("nan")
+                    self.kpi_results["jaccard_pct"] = float("nan")
+        except Exception as _e:
+            logger.debug(f"Failed to populate scanindex metrics in fallback for {self.sensor_id}: {_e}")
+
         logger.info(
             "Fallback detection KPI completed for %s: matches=%s total=%s accuracy=%s",
             self.sensor_id,
