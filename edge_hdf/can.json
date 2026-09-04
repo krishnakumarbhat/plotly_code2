@@ -1,0 +1,12 @@
+{
+  "OUTPUT_HDF": [
+    "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\edge_hdf\\can\\output\\CCA_9010_3100099_BUS_20260119_120641_0000_HDF.h5",
+    "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\edge_hdf\\can\\output\\CCA_9010_3100099_BUS_20260119_120711_0002_HDF.h5",
+    "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\edge_hdf\\can\\output\\IFV7XX_WBATR95060NC89209_20250919_083635_0000_b04_HDF.h5"
+  ],
+  "INPUT_HDF": [
+    "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\edge_hdf\\can\\input\\CCA_9010_3100099_BUS_20260119_120641_0000_rR00080104_HDF.h5",
+    "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\edge_hdf\\can\\input\\CCA_9010_3100099_BUS_20260119_120711_0002_rR00080104_HDF.h5",
+    "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\edge_hdf\\can\\input\\IFV7XX_WBATR95060NC89209_20250919_083635_0000_b04_rR00100012_HDF.h5"
+  ]
+}
