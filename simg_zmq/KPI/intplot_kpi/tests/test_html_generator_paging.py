@@ -94,6 +94,42 @@ def test_compute_sensor_scan_summary_from_kpi_html(tmp_path):
     assert summary["RR"]["output_scans"] == 10
 
 
+def test_compute_sensor_scan_summary_falls_back_to_detection_kpi(tmp_path):
+    kpi_file = tmp_path / "FL_detection_kpi.html"
+    kpi_file.write_text(
+        """
+        <table style="display:none;">
+            <tr><td>common_scan_count</td><td>280</td></tr>
+            <tr><td>input_only_scan_count</td><td>10</td></tr>
+            <tr><td>output_only_scan_count</td><td>12</td></tr>
+        </table>
+        """,
+        encoding="utf-8",
+    )
+
+    sensor_stream_data = {
+        "FL": {
+            "DETECTION_STREAM": {
+                "kpi": [
+                    {
+                        "path": kpi_file,
+                        "name": "CCA_FL_detection_kpi",
+                        "relative_path": str(kpi_file.name),
+                    }
+                ]
+            }
+        }
+    }
+
+    summary = HtmlGenerator._compute_sensor_scan_summary(sensor_stream_data)
+
+    assert summary["FL"] == {
+        "matched_scans": 280.0,
+        "input_scans": 290.0,
+        "output_scans": 292.0,
+    }
+
+
 def test_compute_sensor_accuracy_falls_back_to_avg_scan_match_pct(tmp_path):
     kpi_file = tmp_path / "FR_sil_validation_report.html"
     kpi_file.write_text(

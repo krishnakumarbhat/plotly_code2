@@ -810,7 +810,8 @@ class HtmlGenerator:
                     if category_name != "kpi":
                         continue
                     for plot_info in plots:
-                        if "sil_validation_report" not in plot_info["name"].lower():
+                        report_name = plot_info["name"].lower()
+                        if "sil_validation_report" not in report_name and "detection_kpi" not in report_name:
                             continue
                         file_path = Path(plot_info["path"])
                         common = cls._extract_kpi_metric_from_html(file_path, "common_scan_count")

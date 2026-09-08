@@ -12,7 +12,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import product
 from pathlib import Path
-from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 import h5py
 import numpy as np
@@ -2010,36 +2010,42 @@ def process_pair(pair: FilePair, output_dir: Path, gate: float, metric: str, max
     outputs: List[Path] = []
 
     for sensor in sensors:
-        phase_start = time.perf_counter()
-        veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
-        resim = load_radar_hdf(pair.resim_path, sensor=sensor, build_frame=False)
-        load_elapsed = time.perf_counter() - phase_start
+        try:
+            phase_start = time.perf_counter()
+            veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
+            resim = load_radar_hdf(pair.resim_path, sensor=sensor, build_frame=False)
+            load_elapsed = time.perf_counter() - phase_start
 
-        phase_start = time.perf_counter()
-        bundle = _build_comparison_bundle(veh, resim)
-        match = match_loaded_radars(bundle, metric=metric)
-        kpis = compute_loaded_kpis(bundle, match)
-        compare_elapsed = time.perf_counter() - phase_start
+            phase_start = time.perf_counter()
+            bundle = _build_comparison_bundle(veh, resim)
+            match = match_loaded_radars(bundle, metric=metric)
+            kpis = compute_loaded_kpis(bundle, match)
+            compare_elapsed = time.perf_counter() - phase_start
 
-        sensor_pair = FilePair(sensor=sensor, base_key=pair.base_key, veh_path=pair.veh_path, resim_path=pair.resim_path)
-        phase_start = time.perf_counter()
-        report_html = build_report_html(sensor_pair, veh, resim, bundle, match, kpis)
-        html_elapsed = time.perf_counter() - phase_start
+            sensor_pair = FilePair(sensor=sensor, base_key=pair.base_key, veh_path=pair.veh_path, resim_path=pair.resim_path)
+            phase_start = time.perf_counter()
+            report_html = build_report_html(sensor_pair, veh, resim, bundle, match, kpis)
+            html_elapsed = time.perf_counter() - phase_start
 
-        out_name = f"{pair.base_key}_{sensor}_sil_validation_report.html".replace(" ", "_")
-        out_path = output_dir / out_name
-        out_path.write_text(report_html, encoding="utf-8")
-        outputs.append(out_path)
-        logger.info(
-            "%s: load=%.2fs compare=%.2fs html=%.2fs matched=%d common_scans=%d output=%s",
-            sensor,
-            load_elapsed,
-            compare_elapsed,
-            html_elapsed,
-            match.matched_veh_idx.size,
-            match.common_scan_indices.size,
-            out_path.name,
-        )
+            out_name = f"{pair.base_key}_{sensor}_sil_validation_report.html".replace(" ", "_")
+            out_path = output_dir / out_name
+            out_path.write_text(report_html, encoding="utf-8")
+            outputs.append(out_path)
+            logger.info(
+                "%s: load=%.2fs compare=%.2fs html=%.2fs matched=%d common_scans=%d output=%s",
+                sensor,
+                load_elapsed,
+                compare_elapsed,
+                html_elapsed,
+                match.matched_veh_idx.size,
+                match.common_scan_indices.size,
+                out_path.name,
+            )
+        except Exception:
+            # A malformed or non-radar sensor must not prevent valid sensors
+            # from receiving SIL reports and scan-index summaries.
+            logger.exception("SIL validation skipped sensor %s", sensor)
+            continue
 
     if not outputs:
         raise ValueError(f"{pair.base_key}: no common sensor groups found in pair files")

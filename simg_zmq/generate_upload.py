@@ -25,7 +25,7 @@ SIMGG_SRC = {
     'kpi/can_intplot/canintplot_kpi.simg': [ROOT / 'KPI' / 'can_interactive_plot' / 'singularity_canintplot.def', ROOT / 'KPI' / 'can_interactive_plot', ROOT / 'KPI' / 'intplot_kpi' / 'ConfigInteractivePlots_bordnet.xml'],
 }
 
-SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh']
+SCRIPTS = ['bundle_common.sh', 'cleanup_memory.sh', 'kpi_runtime_launcher.sh', 'hpcc_runtime_5006.env']
 BUNDLE_DIRS = ['main_html', 'Hyperlink_tool', 'KPI']
 
 
@@ -739,6 +739,7 @@ def upload():
     # Runtime data dirs that must NOT be overwritten (exist cluster-side with real data)
     _RUNTIME_EXCLUDE_DIRS = {
         'store',
+        '.store',
         'bundle_src/main_html/simg/.cache_html',
         'bundle_src/main_html/__pycache__',
     }
@@ -846,23 +847,42 @@ def upload():
         sftp.get_channel().settimeout(timeout_s)
         ensured_dirs = {'/'}
         _sftp_ensure_dir(sftp, remote_root, ensured_dirs)
+        try:
+            sentinel_pairs = (
+                ('main_html.simg', GEN / 'main_html.simg'),
+                ('hpcc_main.pyz', GEN / 'hpcc_main.pyz'),
+                ('bundle_src/main_html/app.py', GEN / 'bundle_src' / 'main_html' / 'app.py'),
+            )
+            remote_has_bundle = True
+            for relative_path, local_path in sentinel_pairs:
+                remote_stat = sftp.stat(str(PurePosixPath(remote_root) / relative_path))
+                local_stat = local_path.stat()
+                if getattr(remote_stat, 'st_size', -1) != getattr(local_stat, 'st_size', -2):
+                    remote_has_bundle = False
+                    break
+        except FileNotFoundError:
+            remote_has_bundle = False
         print('connected')
-        return transport, sftp, ensured_dirs
+        return transport, sftp, ensured_dirs, remote_has_bundle
 
     def _upload_target(target_name, target_host, remote_root):
         nonlocal changed
         transport = None
         sftp = None
         ensured_dirs = None
+        remote_has_bundle = False
         try:
-            for index, (rel, local_path, sha) in enumerate(files_to_upload, start=1):
+            transport, sftp, ensured_dirs, remote_has_bundle = _connect_target(target_name, target_host, remote_root)
+            target_files = files_to_upload if remote_has_bundle else eligible_files
+            target_total = len(target_files)
+            for index, (rel, local_path, sha) in enumerate(target_files, start=1):
                 remote_path = str(PurePosixPath(remote_root) / rel)
                 remote_dir = str(PurePosixPath(remote_path).parent)
                 size = local_path.stat().st_size
                 started = time.perf_counter()
                 stage = 'ensure_dir'
                 print(
-                    f'[{target_name}] [{index}/{total}] START '
+                    f'[{target_name}] [{index}/{target_total}] START '
                     f'local={local_path} remote={remote_path} size={size}B',
                     flush=True,
                 )
@@ -870,7 +890,7 @@ def upload():
                     remote_attr = None
                     for upload_attempt in range(1, 6):
                         if sftp is None:
-                            transport, sftp, ensured_dirs = _connect_target(target_name, target_host, remote_root)
+                            transport, sftp, ensured_dirs, remote_has_bundle = _connect_target(target_name, target_host, remote_root)
                         try:
                             _sftp_ensure_dir(sftp, remote_dir, ensured_dirs)
                             stage = f'put attempt {upload_attempt}/5'
@@ -900,7 +920,7 @@ def upload():
                             if upload_attempt >= 5:
                                 raise
                             print(
-                                f'[{target_name}] [{index}/{total}] RETRY '
+                                f'[{target_name}] [{index}/{target_total}] RETRY '
                                 f'after connection loss; staged bytes will resume',
                                 flush=True,
                             )
@@ -910,7 +930,7 @@ def upload():
                     with changed_lock:
                         changed += 1
                     print(
-                        f'[{target_name}] [{index}/{total}] DONE '
+                        f'[{target_name}] [{index}/{target_total}] DONE '
                         f'local={local_path} remote={remote_path} '
                         f'size={size}B remote_size={getattr(remote_attr, "st_size", "?")}B '
                         f'elapsed={elapsed:.2f}s',

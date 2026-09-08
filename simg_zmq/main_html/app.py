@@ -4667,17 +4667,23 @@ def view_job_output(job_id):
     try:
         if os.path.isdir(output_path):
             for root, dirs, filenames in os.walk(output_path):
+                dirs[:] = [directory for directory in dirs if not os.path.islink(os.path.join(root, directory))]
                 for filename in filenames:
                     filepath = os.path.join(root, filename)
+                    if os.path.islink(filepath):
+                        continue
                     rel_path = os.path.relpath(filepath, output_path)
-                    file_info = {
-                        'name': filename,
-                        'rel_path': rel_path,
-                        'full_path': filepath,
-                        'size': os.path.getsize(filepath),
-                        'is_html': filename.lower().endswith('.html'),
-                        'modified': datetime.fromtimestamp(os.path.getmtime(filepath))
-                    }
+                    try:
+                        file_info = {
+                            'name': filename,
+                            'rel_path': rel_path,
+                            'full_path': filepath,
+                            'size': os.path.getsize(filepath),
+                            'is_html': filename.lower().endswith('.html'),
+                            'modified': datetime.fromtimestamp(os.path.getmtime(filepath))
+                        }
+                    except FileNotFoundError:
+                        continue
                     files.append(file_info)
             
             # Sort: HTML files first, then by name
