@@ -96,6 +96,51 @@ class HdfAttrReader:
                 signals.setdefault(prefix, {})[det_idx] = arr
         return signals
 
+    def extract_header_can_times(self, sensor_data: Dict[str, Any]) -> np.ndarray:
+        """Per-scan header CAN timestamp (e.g. ``timestamp_RDR_HEADER_001``).
+
+        These payloads are read by :meth:`_read_group_payload` but excluded
+        from signal extraction (``id_``/``timestamp_`` filter). They carry the
+        bus arrival time of the header frame and are needed to gate
+        input/output row pairs independently of ``HED_SCAN_INDEX``.
+        """
+        for attrs in sensor_data.get("header", {}).values():
+            if not isinstance(attrs, dict):
+                continue
+            for key, val in attrs.items():
+                if (
+                    key.startswith("timestamp_")
+                    and isinstance(val, np.ndarray)
+                    and val.ndim == 1
+                ):
+                    return np.asarray(val, dtype=np.float64)
+        return np.array([], dtype=np.float64)
+
+    def extract_detection_can_times(
+        self, sensor_data: Dict[str, Any]
+    ) -> Dict[str, np.ndarray]:
+        """Per-DET-group CAN timestamps keyed by group name.
+
+        Detection payloads may be paired with header rows from a neighbouring
+        scan (producer-dependent shift, possibly different per group). The
+        timestamps travel with their group's data, so equality of
+        ``timestamp_*_DETECTION_*`` across files identifies the correct rows
+        in O(1) via hash lookup (see ``KpiHdfParser._calibrate_det_shifts``).
+        """
+        out: Dict[str, np.ndarray] = {}
+        for gname, attrs in sensor_data.get("detection", {}).items():
+            if not isinstance(attrs, dict):
+                continue
+            for key, val in attrs.items():
+                if (
+                    key.startswith("timestamp_")
+                    and isinstance(val, np.ndarray)
+                    and val.ndim == 1
+                ):
+                    out[str(gname)] = np.asarray(val, dtype=np.float64)
+                    break
+        return out
+
     def extract_alignment_signals(
         self, sensor_data: Dict[str, Any]
     ) -> Dict[str, np.ndarray]:

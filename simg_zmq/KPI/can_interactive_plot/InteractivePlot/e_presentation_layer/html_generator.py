@@ -805,12 +805,20 @@ class HtmlGenerator:
                         name_lower = plot_info["name"].lower()
 
                         # CAN KPI reports write a small JSON sidecar with the
-                        # average overall match % (avoids parsing plotly binary).
+                        # average accuracy % (same metric as can_kpi index).
                         stats_path = cls._find_kpi_stats_json(file_path)
                         if stats_path:
                             try:
                                 data = json.loads(stats_path.read_text(encoding="utf-8"))
-                                score = float(data.get("score") or data.get("overall") or float("nan"))
+                                # Explicit None checks: a legit 0.0 must not
+                                # fall through to another field. "score" and
+                                # "accuracy" hold the same can_kpi metric;
+                                # never fall back to "overall" (different
+                                # formula: tp/max(in,out)).
+                                raw = data.get("score")
+                                if raw is None:
+                                    raw = data.get("accuracy")
+                                score = float(raw) if raw is not None else float("nan")
                                 if not math.isnan(score) and 0.0 <= score <= 100.0:
                                     accuracy_values.append(score / 100.0)
                                     continue

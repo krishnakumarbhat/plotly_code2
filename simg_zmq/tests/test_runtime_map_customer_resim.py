@@ -99,6 +99,16 @@ def _submit_resim(payload):
         return main.api_resim_run_submit.__wrapped__()
 
 
+def _resim_payload(**overrides):
+    payload = {
+        'input_txt': '/net/8k3/project/input.txt',
+        'simg_path': '/net/8k3/project/resim.simg',
+        'config_xml': '/net/8k3/project/resim.xml',
+    }
+    payload.update(overrides)
+    return payload
+
+
 def test_customer_accounts_are_unique_and_ignore_empty_values(monkeypatch):
     monkeypatch.setitem(main.app.config, 'SLURM_ACCOUNT', 'app-account')
     monkeypatch.setattr(main, '_SLURM_DEFAULTS', {'account': 'global-account'})
@@ -187,33 +197,40 @@ def test_runtime_map_route_supplies_profile_context(monkeypatch):
 def test_resim_defaults_to_normal_krakow_runtime(resim_boundary_mocks):
     session, thread_class, _tmp_path = resim_boundary_mocks
 
-    result = _submit_resim({
-        'input_txt': '/net/8k3/project/input.txt',
-        'simg_path': '/net/8k3/project/resim.simg',
-    })
+    result = _submit_resim(_resim_payload())
     status, data = _response_parts(result)
 
     assert status == 200
     assert data == {'ok': True, 'message': 'Submitted', 'job_id': 42}
     assert session.commits == 1
     assert session.jobs[0].parameters['profile'] == 'krakow'
+    assert session.jobs[0].parameters['config_xml'] == '/net/8k3/project/resim.xml'
     assert session.jobs[0].parameters['profile_label'] == 'Krakow Default'
     assert len(thread_class.instances) == 1
     command = thread_class.instances[0].kwargs['args'][1][-1]
     assert 'RESIM_SLURM_MODULE=slurm' in command
     assert 'srun -A' not in command
     assert '/net/8k3/project/input.txt /net/8k3/project/resim.simg highPrio' in command
+    assert thread_class.instances[0].kwargs['kwargs']['config_xml'] == '/net/8k3/project/resim.xml'
     assert thread_class.instances[0].started is True
+
+
+def test_resim_input_feeder_sends_xml_after_yes():
+    feeder = main._start_resim_input_feeder('/net/8k3/project/resim.xml')
+    try:
+        assert feeder.stdout.readline().decode().strip() == 'n'
+        assert feeder.stdout.readline().decode().strip() == '1'
+        assert feeder.stdout.readline().decode().strip() == '/net/8k3/project/resim.xml'
+        assert feeder.stdout.readline() == b''
+    finally:
+        feeder.kill()
+        feeder.wait()
 
 
 def test_resim_accepts_case_insensitive_profile_and_uses_athena(resim_boundary_mocks):
     _session, thread_class, _tmp_path = resim_boundary_mocks
 
-    result = _submit_resim({
-        'input_txt': '/net/8k3/project/input.txt',
-        'simg_path': '/net/8k3/project/resim.simg',
-        'profile': 'ATHENA',
-    })
+    result = _submit_resim(_resim_payload(profile='ATHENA'))
     status, _data = _response_parts(result)
 
     assert status == 200
@@ -229,11 +246,7 @@ def test_resim_accepts_case_insensitive_profile_and_uses_athena(resim_boundary_m
 def test_resim_supports_every_krakow_profile(profile_id, resim_boundary_mocks):
     _session, thread_class, _tmp_path = resim_boundary_mocks
 
-    result = _submit_resim({
-        'input_txt': '/net/8k3/project/input.txt',
-        'simg_path': '/net/8k3/project/resim.simg',
-        'profile': profile_id,
-    })
+    result = _submit_resim(_resim_payload(profile=profile_id))
     status, _data = _response_parts(result)
 
     assert status == 200
@@ -252,11 +265,12 @@ def test_resim_supports_every_krakow_profile(profile_id, resim_boundary_mocks):
 def test_resim_keeps_southfield_execution_unchanged(resim_boundary_mocks):
     session, thread_class, _tmp_path = resim_boundary_mocks
 
-    result = _submit_resim({
-        'input_txt': '/mnt/usmidet/project/input.txt',
-        'simg_path': '/mnt/usmidet/project/resim.simg',
-        'profile': 'cyfronet',
-    })
+    result = _submit_resim(_resim_payload(
+        input_txt='/mnt/usmidet/project/input.txt',
+        simg_path='/mnt/usmidet/project/resim.simg',
+        config_xml='/mnt/usmidet/project/resim.xml',
+        profile='cyfronet',
+    ))
     status, _data = _response_parts(result)
 
     assert status == 200
@@ -271,10 +285,7 @@ def test_resim_rejects_missing_cluster_password_without_starting_a_job(resim_bou
     session, thread_class, _tmp_path = resim_boundary_mocks
     monkeypatch.setattr(main, '_stored_cluster_password_for_current_user', lambda _net_id: '')
 
-    result = _submit_resim({
-        'input_txt': '/net/8k3/project/input.txt',
-        'simg_path': '/net/8k3/project/resim.simg',
-    })
+    result = _submit_resim(_resim_payload())
     status, data = _response_parts(result)
 
     assert status == 400
@@ -287,10 +298,7 @@ def test_resim_rejects_missing_script_without_starting_a_job(resim_boundary_mock
     session, thread_class, tmp_path = resim_boundary_mocks
     monkeypatch.setattr(main, '_resim_script_source_path', lambda: str(tmp_path / 'missing-rResim_Gen7.sh'))
 
-    result = _submit_resim({
-        'input_txt': '/net/8k3/project/input.txt',
-        'simg_path': '/net/8k3/project/resim.simg',
-    })
+    result = _submit_resim(_resim_payload())
     status, data = _response_parts(result)
 
     assert status == 500
@@ -307,9 +315,9 @@ def test_generated_dashboard_copies_include_the_runtime_map_changes():
         ('main_html/templates/runtime_map.html', 'generate_upload/bundle_src/main_html/templates/runtime_map.html'),
     ]
     markers = {
-        'main_html/app.py': ('_runtime_customer_accounts', 'Unknown Krakow Resim runtime profile.'),
+        'main_html/app.py': ('_runtime_customer_accounts', 'Unknown Krakow Resim runtime profile.', "data.get('config_xml')", 'RESIM_CONFIG_XML'),
         'main_html/templates/tools/kpi.html': ('Prepare the bundle', 'Customer Name', 'Other'),
-        'main_html/templates/runtime_map.html': ('resimProfile', 'Helios', 'profile:'),
+        'main_html/templates/runtime_map.html': ('resimProfile', 'Helios', 'profile:', 'config_xml'),
     }
 
     for source_name, generated_name in pairs:
@@ -323,9 +331,10 @@ def test_generated_dashboard_copies_include_the_runtime_map_changes():
     [
         ({}, 'Input file (input.txt) path is required.'),
         ({'input_txt': '/net/8k3/project/input.txt'}, 'Simg file path is required.'),
-        ({'input_txt': 'C:/project/input.txt', 'simg_path': 'C:/project/resim.simg'}, 'Input file path must start'),
-        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/mnt/usmidet/project/resim.simg'}, 'Both files must be in the same partition'),
-        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'profile': 'unknown'}, 'Unknown Krakow Resim runtime profile.'),
+        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg'}, 'XML configuration file path is required.'),
+        ({'input_txt': 'C:/project/input.txt', 'simg_path': 'C:/project/resim.simg', 'config_xml': 'C:/project/resim.xml'}, 'Input file path must start'),
+        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/mnt/usmidet/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml'}, 'Both files must be in the same partition'),
+        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml', 'profile': 'unknown'}, 'Unknown Krakow Resim runtime profile.'),
     ],
 )
 def test_resim_rejects_invalid_inputs_without_starting_a_job(payload, expected_error, resim_boundary_mocks):

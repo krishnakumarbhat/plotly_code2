@@ -544,15 +544,18 @@ echo "[$(date -Iseconds 2>/dev/null || date)] Starting HPCC bundle" | tee -a "$L
 
 def _fix_shell_scripts():
     count = 0
-    candidates = list(GEN.rglob('*.sh'))
+    candidates = list(GEN.rglob('*.sh')) + list(GEN.rglob('*.env'))
     bin_dir = GEN / 'bin'
-    if bin_dir.is_dir():
-        candidates.extend(f for f in bin_dir.iterdir() if f.is_file())
     for f in candidates:
         c = f.read_bytes()
         if b'\r\n' in c:
             f.write_bytes(c.replace(b'\r\n', b'\n'))
             count += 1
+
+    executable_candidates = list(GEN.rglob('*.sh'))
+    if bin_dir.is_dir():
+        executable_candidates.extend(f for f in bin_dir.iterdir() if f.is_file())
+    for f in executable_candidates:
         st = f.stat()
         if not (st.st_mode & 0o111):
             f.chmod(st.st_mode | 0o111)

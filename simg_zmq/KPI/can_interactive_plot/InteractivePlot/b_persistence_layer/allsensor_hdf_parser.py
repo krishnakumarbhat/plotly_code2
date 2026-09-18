@@ -293,13 +293,12 @@ class AllsensorHdfParser(PersensorHdfParser):
     @staticmethod
     def _header_scan_index(data_group):
         """Mirror the CAN KPI reader (HdfAttrReader.get_scan_index): prefer the
-        header group's HED_LOOK_INDEX / HED_SCAN_INDEX attributes when no
+        header group's HED_SCAN_INDEX / HED_LOOK_INDEX attributes when no
         Stream_Hdr/scan_index dataset is present (CAN edge-case HDFs).
 
-        HED_LOOK_INDEX is preferred because some producers write
-        HED_SCAN_INDEX = HED_LOOK_INDEX - 1 (off-by-one) while the detection
-        payloads are indexed by the look index; aligning on HED_SCAN_INDEX then
-        shifts input vs output by one scan."""
+        HED_SCAN_INDEX is preferred (same order as can_kpi): measured on
+        CEER logs, detection payloads are packed per SCAN row, so plots and
+        KPI pair the same rows."""
         parent = getattr(data_group, "parent", None)
         if parent is None:
             return None
@@ -309,7 +308,7 @@ class AllsensorHdfParser(PersensorHdfParser):
             sibling = parent[gname]
             if not isinstance(sibling, h5py.Group):
                 continue
-            for key in ("HED_LOOK_INDEX", "HED_SCAN_INDEX"):
+            for key in ("HED_SCAN_INDEX", "HED_LOOK_INDEX"):
                 if key in sibling.attrs:
                     arr = np.asarray(sibling.attrs[key])
                     if arr.ndim == 1 and arr.size > 0:

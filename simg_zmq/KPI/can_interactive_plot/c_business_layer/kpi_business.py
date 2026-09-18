@@ -15,8 +15,19 @@ logger = logging.getLogger(__name__)
 
 class KpiBusiness:
     MATCH_SIGNALS = ["DET_RANGE", "DET_RANGE_VELOCITY", "DET_AZIMUTH", "DET_ELEVATION"]
-    MATCH_EPSILON = 10.0
     TIME_MATCH_TOL_NS = 2_000_000
+
+    # Per-signal quantization buckets. A detection pair matches when all four
+    # signals fall within ±1 bucket of each other. Previous MATCH_EPSILON=10.0
+    # used a single bucket for all signals, making azimuth match within
+    # ±5 rad (286°!) — effectively no angular comparison at all.
+    MATCH_EPSILON = 10.0  # legacy fallback, kept for 1D velocity fallback
+    MATCH_EPSILON_PER_SIG = {
+        "DET_RANGE":          0.5,   # ±0.25 m — radar range resolution ~0.5 m
+        "DET_RANGE_VELOCITY": 1.0,   # ±0.5 m/s — velocity resolution ~0.1 m/s
+        "DET_AZIMUTH":        0.02,  # ±0.01 rad (~0.57°) — angular resolution
+        "DET_ELEVATION":      0.02,  # ±0.01 rad (~0.57°)
+    }
 
     SENSOR_ORDER = ["CEER_FL", "CEER_FLR", "CEER_FR", "CEER_RL", "CEER_RR"]
     FRIENDLY = {
@@ -60,7 +71,7 @@ class KpiBusiness:
                 "per_signal": empty_params,
             }
 
-        common_scan, in_rows, out_rows = self._hdf.align_storage_rows_by_scanindex(
+        common_scan, in_rows, out_rows, det_shifts = self._hdf.align_storage_rows_triple(
             in_store, out_store
         )
         n = len(common_scan)
@@ -113,7 +124,10 @@ class KpiBusiness:
             in_n_det = int(in_cnt[idx])
             out_n_det = int(out_cnt[idx])
             in_candidates = in_store.get_scan_detections(
-                self.MATCH_SIGNALS, int(in_rows[idx]), max(in_n_det, 0)
+                self.MATCH_SIGNALS,
+                int(in_rows[idx]),
+                max(in_n_det, 0),
+                det_idx_shifts=det_shifts,
             )
             out_candidates = out_store.get_scan_detections(
                 self.MATCH_SIGNALS, int(out_rows[idx]), max(out_n_det, 0)
@@ -143,7 +157,10 @@ class KpiBusiness:
             for sig in self.MATCH_SIGNALS:
                 in_vals = [row[sig] for row in in_candidates]
                 out_vals = [row[sig] for row in out_candidates]
-                tp_sig[sig] = self._match_1d_hashmap(in_vals, out_vals)
+                tp_sig[sig] = self._match_1d_hashmap(
+                    in_vals, out_vals,
+                    self.MATCH_EPSILON_PER_SIG.get(sig, self.MATCH_EPSILON),
+                )
 
             fp = max(0, out_n - tp_all)
             fn = max(0, in_n - tp_all)
@@ -180,18 +197,19 @@ class KpiBusiness:
             "per_signal": per_param,
         }
 
-    def _quantize(self, value: float) -> int:
-        return int(round(float(value) / self.MATCH_EPSILON))
+    def _quantize(self, value: float, epsilon: float = 0.0) -> int:
+        e = epsilon if epsilon > 0.0 else self.MATCH_EPSILON
+        return int(round(float(value) / e))
 
-    def _match_1d_hashmap(self, in_vals: List[float], out_vals: List[float]) -> int:
+    def _match_1d_hashmap(self, in_vals: List[float], out_vals: List[float], epsilon: float = 0.0) -> int:
         out_map: Dict[tuple[int], int] = {}
         for v in out_vals:
-            k = (self._quantize(v),)
+            k = (self._quantize(v, epsilon),)
             out_map[k] = out_map.get(k, 0) + 1
 
         matches = 0
         for v in in_vals:
-            base = self._quantize(v)
+            base = self._quantize(v, epsilon)
             used = False
             for off in self._offsets_1d:
                 key = (base + off[0],)
@@ -213,23 +231,24 @@ class KpiBusiness:
         in_candidates: List[Dict[str, float]],
         out_candidates: List[Dict[str, float]],
     ) -> int:
+        eps = self.MATCH_EPSILON_PER_SIG
         out_map: Dict[tuple[int, int, int, int], int] = {}
         for row in out_candidates:
             key = (
-                self._quantize(row["DET_RANGE"]),
-                self._quantize(row["DET_RANGE_VELOCITY"]),
-                self._quantize(row["DET_AZIMUTH"]),
-                self._quantize(row["DET_ELEVATION"]),
+                self._quantize(row["DET_RANGE"], eps["DET_RANGE"]),
+                self._quantize(row["DET_RANGE_VELOCITY"], eps["DET_RANGE_VELOCITY"]),
+                self._quantize(row["DET_AZIMUTH"], eps["DET_AZIMUTH"]),
+                self._quantize(row["DET_ELEVATION"], eps["DET_ELEVATION"]),
             )
             out_map[key] = out_map.get(key, 0) + 1
 
         matches = 0
         for row in in_candidates:
             base = (
-                self._quantize(row["DET_RANGE"]),
-                self._quantize(row["DET_RANGE_VELOCITY"]),
-                self._quantize(row["DET_AZIMUTH"]),
-                self._quantize(row["DET_ELEVATION"]),
+                self._quantize(row["DET_RANGE"], eps["DET_RANGE"]),
+                self._quantize(row["DET_RANGE_VELOCITY"], eps["DET_RANGE_VELOCITY"]),
+                self._quantize(row["DET_AZIMUTH"], eps["DET_AZIMUTH"]),
+                self._quantize(row["DET_ELEVATION"], eps["DET_ELEVATION"]),
             )
 
             for off in self._offsets_4d:
@@ -289,7 +308,7 @@ class KpiBusiness:
                 else np.array([], dtype=np.int64)
             )
             if in_store is not None and out_store is not None:
-                common, _, _ = self._hdf.align_storage_rows_by_scanindex(
+                common, _, _, _ = self._hdf.align_storage_rows_triple(
                     in_store, out_store
                 )
             else:
@@ -402,7 +421,7 @@ class KpiBusiness:
             in_time = in_store.get_time_ns()
             out_time = out_store.get_time_ns()
             if in_scan.size and out_scan.size:
-                common, in_rows, out_rows = self._hdf.align_storage_rows_by_scanindex(
+                common, in_rows, out_rows, _ = self._hdf.align_storage_rows_triple(
                     in_store, out_store
                 )
                 diag["common_scans"] = int(len(common))

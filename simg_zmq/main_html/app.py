@@ -1062,6 +1062,7 @@ def api_resim_run_submit():
     data = request.get_json(silent=True) or {}
     input_txt = (data.get('input_txt') or '').strip()
     simg_path = (data.get('simg_path') or '').strip()
+    config_xml = (data.get('config_xml') or data.get('xml_path') or '').strip()
     profile_id = (data.get('profile') or 'krakow').strip().lower()
     create_jira = data.get('create_jira') in (True, '1', 'true')
     jira_board = (data.get('jira_board') or '').strip() or 'FHW'
@@ -1072,17 +1073,26 @@ def api_resim_run_submit():
         return jsonify({'ok': False, 'error': 'Input file (input.txt) path is required.'}), 400
     if not simg_path:
         return jsonify({'ok': False, 'error': 'Simg file path is required.'}), 400
+    if not config_xml:
+        return jsonify({'ok': False, 'error': 'XML configuration file path is required.'}), 400
+    if not config_xml.lower().endswith('.xml'):
+        return jsonify({'ok': False, 'error': 'XML configuration path must point to a .xml file.'}), 400
     if profile_id not in KRAKOW_RUNTIME_PROFILES:
         return jsonify({'ok': False, 'error': 'Unknown Krakow Resim runtime profile.'}), 400
 
     cluster_txt = cluster_from_path(input_txt)
     cluster_simg = cluster_from_path(simg_path)
+    cluster_xml = cluster_from_path(config_xml)
     if not cluster_txt:
         return jsonify({'ok': False, 'error': 'Input file path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
     if not cluster_simg:
         return jsonify({'ok': False, 'error': 'Simg file path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
+    if not cluster_xml:
+        return jsonify({'ok': False, 'error': 'XML configuration path must start with /net/ (Krakow) or /mnt/ (Southfield).'}), 400
     if cluster_txt != cluster_simg:
         return jsonify({'ok': False, 'error': f'Both files must be in the same partition. Input is on {cluster_txt}, simg is on {cluster_simg}.'}), 400
+    if cluster_txt != cluster_xml:
+        return jsonify({'ok': False, 'error': f'All files must be in the same partition. XML is on {cluster_xml}, input is on {cluster_txt}.'}), 400
     if cluster_txt != 'krakow':
         profile_id = 'krakow'
 
@@ -1181,6 +1191,7 @@ def api_resim_run_submit():
         parameters={
             'input_txt': input_txt,
             'simg_path': simg_path,
+            'config_xml': config_xml,
             'create_jira': create_jira,
             'jira_board': jira_board,
             'jira_assignee': jira_assignee,
@@ -1198,7 +1209,7 @@ def api_resim_run_submit():
     t = threading.Thread(
         target=_run_ssh_job_background,
         args=(job.id, cmd, env, log_path),
-        kwargs={'askpass_path': askpass_path},
+        kwargs={'askpass_path': askpass_path, 'config_xml': config_xml},
         daemon=True,
     )
     t.start()
@@ -3715,7 +3726,31 @@ def _first_failure_marker_in_log(log_path: str) -> str:
     return ''
 
 
-def _run_ssh_job_background(job_id: int, cmd, env, log_path: str, askpass_path: str = ''):
+def _start_resim_input_feeder(config_xml: str):
+    # The vendor prompt asks whether to use the default Docker configuration.
+    # An external XML requires answering No, then supplying its path.
+    input_payload = 'n\n1\n' if config_xml else 'y\n'
+    if config_xml:
+        input_payload += f'{config_xml}\n'
+    feeder = (
+        "import sys\n"
+        "sys.stdout.write(sys.argv[1])\n"
+        "sys.stdout.flush()\n"
+    )
+    return subprocess.Popen(
+        [sys.executable, '-u', '-c', feeder, input_payload],
+        stdout=subprocess.PIPE,
+    )
+
+
+def _run_ssh_job_background(
+    job_id: int,
+    cmd,
+    env,
+    log_path: str,
+    askpass_path: str = '',
+    config_xml: str = '',
+):
     """Run a command via SSH as the logged-in user in the background and update JobHistory."""
     def _safe_read_text(path: str, limit: int = 4096) -> str:
         try:
@@ -3793,14 +3828,14 @@ def _run_ssh_job_background(job_id: int, cmd, env, log_path: str, askpass_path: 
             log_fp.write('CMD: ' + ' '.join([str(x) for x in cmd]) + '\n')
             log_fp.write('START: ' + datetime.utcnow().isoformat() + 'Z\n\n')
             _write_execution_context(log_fp)
+            if config_xml:
+                log_fp.write(f'RESIM_CONFIG_XML: {config_xml}\n')
             log_fp.flush()
 
-            # The remote vendor script prompts interactively (e.g. "Proceed
-            # with Default Docker Configuration (Y/N)"). Feed it a stream of
-            # "y" answers via the ssh client's stdin (like `yes | ssh ...`)
-            # so any confirmation prompt is auto-answered instead of hanging
-            # forever with no one to type a response.
-            yes_proc = subprocess.Popen(['yes', 'y'], stdout=subprocess.PIPE)
+            # The vendor prompt expects one confirmation followed by the XML
+            # path. Close stdin afterward so later prompts cannot be answered
+            # accidentally with an unbounded stream of "y" responses.
+            yes_proc = _start_resim_input_feeder(config_xml)
             proc = subprocess.Popen(
                 cmd,
                 cwd='/',
@@ -3916,7 +3951,7 @@ def submit_tool_job(tool_name: str):
     elif tool_name == 'resim_run':
         input_txt = parameters.get('input_txt', '').strip()
         input_path = input_txt
-        config_xml = ''
+        config_xml = parameters.get('config_xml', '').strip()
         output_path = ''
         if not input_txt:
             flash('Input file (input.txt) is required', 'error')
@@ -3924,6 +3959,9 @@ def submit_tool_job(tool_name: str):
         simg_path = parameters.get('simg_path', '').strip()
         if not simg_path:
             flash('Simg file path is required', 'error')
+            return redirect(request.referrer or url_for('dashboard'))
+        if not config_xml:
+            flash('XML configuration file is required', 'error')
             return redirect(request.referrer or url_for('dashboard'))
         
     else:

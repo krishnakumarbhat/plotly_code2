@@ -198,7 +198,7 @@
         </div>
         <div class="collapse show" id="resimFormBody">
             <div class="card-body">
-                <p class="lead-copy">Provide the <code>input.txt</code> and <code>.simg</code> paths. Krakow runs can use the default Slurm environment or the shared-storage Helios runtime.</p>
+                <p class="lead-copy">Provide the <code>input.txt</code>, <code>.simg</code>, and Resim <code>.xml</code> paths. The XML path is supplied after the vendor confirmation prompt.</p>
                 <form id="resimRunForm">
                     {% if detected_cluster == 'krakow' %}
                     <div class="row g-3 mb-2">
@@ -226,6 +226,13 @@
                             <div class="input-group">
                                 <input type="text" class="form-control" name="simg_path" id="simg_path" placeholder="/net/.../*.simg" required>
                                 <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('simg_path')">Browse</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Resim XML configuration</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="config_xml" id="config_xml" placeholder="/net/.../*.xml" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="openFileBrowser('config_xml', ['xml'])">Browse</button>
                             </div>
                         </div>
                     </div>
@@ -1429,7 +1436,7 @@ function showResimToast(message, isError) {
     toast.show();
 }
 
-function validateResimPaths(inputTxt, simgPath) {
+function validateResimPaths(inputTxt, simgPath, configXml) {
     if (!inputTxt) {
         showResimToast('Input file (input.txt) path is required.', true);
         return false;
@@ -1438,10 +1445,20 @@ function validateResimPaths(inputTxt, simgPath) {
         showResimToast('Simg file path is required.', true);
         return false;
     }
+    if (!configXml) {
+        showResimToast('XML configuration file path is required.', true);
+        return false;
+    }
+    if (!configXml.toLowerCase().endsWith('.xml')) {
+        showResimToast('XML configuration path must point to a .xml file.', true);
+        return false;
+    }
     const isNetTxt = inputTxt.startsWith('/net/');
     const isMntTxt = inputTxt.startsWith('/mnt/');
     const isNetSimg = simgPath.startsWith('/net/');
     const isMntSimg = simgPath.startsWith('/mnt/');
+    const isNetXml = configXml.startsWith('/net/');
+    const isMntXml = configXml.startsWith('/mnt/');
     if (!isNetTxt && !isMntTxt) {
         showResimToast('Input file path must start with /net/ (Krakow) or /mnt/ (Southfield).', true);
         return false;
@@ -1450,8 +1467,13 @@ function validateResimPaths(inputTxt, simgPath) {
         showResimToast('Simg file path must start with /net/ (Krakow) or /mnt/ (Southfield).', true);
         return false;
     }
-    if ((isNetTxt && isMntSimg) || (isMntTxt && isNetSimg)) {
-        showResimToast('Both files must be in the same partition (/net or /mnt).', true);
+    if (!isNetXml && !isMntXml) {
+        showResimToast('XML configuration path must start with /net/ (Krakow) or /mnt/ (Southfield).', true);
+        return false;
+    }
+    if ((isNetTxt && isMntSimg) || (isMntTxt && isNetSimg)
+        || (isNetTxt && isMntXml) || (isMntTxt && isNetXml)) {
+        showResimToast('All files must be in the same partition (/net or /mnt).', true);
         return false;
     }
     return true;
@@ -1461,12 +1483,13 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
     event.preventDefault();
     const inputTxt = document.getElementById('input_txt').value.trim();
     const simgPath = document.getElementById('simg_path').value.trim();
+    const configXml = document.getElementById('config_xml').value.trim();
     const createJira = document.getElementById('create_jira').checked;
     const jiraBoard = document.getElementById('jira_board').value.trim();
     const jiraAssignee = document.getElementById('jira_assignee').value.trim();
     const jiraNotes = document.getElementById('jira_notes').value.trim();
 
-    if (!validateResimPaths(inputTxt, simgPath)) {
+    if (!validateResimPaths(inputTxt, simgPath, configXml)) {
         return;
     }
 
@@ -1481,6 +1504,7 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
             body: JSON.stringify({
                 input_txt: inputTxt,
                 simg_path: simgPath,
+                config_xml: configXml,
                 profile: resimProfile ? resimProfile.value : 'krakow',
                 create_jira: createJira,
                 jira_board: jiraBoard || 'FHW',

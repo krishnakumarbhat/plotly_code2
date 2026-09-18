@@ -156,12 +156,20 @@ class CanKpiEngine:
             import json
 
             def _avg(arr) -> float:
-                arr = np.asarray(arr, dtype=np.float64)
-                return float(np.mean(arr)) if arr.size else float("nan")
+                # Mirror KpiBusiness._avg (can_kpi standard): 0.0 when empty,
+                # NaNs ignored via nanmean.
+                if not isinstance(arr, np.ndarray):
+                    try:
+                        arr = np.asarray(arr, dtype=np.float64)
+                    except Exception:
+                        return 0.0
+                if arr.size == 0:
+                    return 0.0
+                return float(np.nanmean(arr.astype(float)))
 
             stats = {
                 "sensor": sensor_id,
-                "score": _avg(result.get("overall")),
+                "score": _avg(result.get("accuracy")),
                 "overall": _avg(result.get("overall")),
                 "accuracy": _avg(result.get("accuracy")),
                 "precision": _avg(result.get("precision")),

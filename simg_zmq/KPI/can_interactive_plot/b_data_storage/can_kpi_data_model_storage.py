@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -14,6 +14,10 @@ class KPI_DataModelStorage:
         self._signal_stream: Dict[str, str] = {}
         self._scan_index = np.array([], dtype=np.int64)
         self._time_ns = np.array([], dtype=np.int64)
+        # CAN-bus timestamps: header (per-scan) + per-DET-group (per-scan).
+        # Empty when the producer did not write timestamp_* payloads.
+        self._hdr_can_t = np.array([], dtype=np.float64)
+        self._det_can_t: Dict[str, np.ndarray] = {}
         self._parent_counter = -1
         self._child_counter = -1
         self.stream_name = ""
@@ -85,6 +89,8 @@ class KPI_DataModelStorage:
         self._signal_stream.clear()
         self._scan_index = np.array([], dtype=np.int64)
         self._time_ns = np.array([], dtype=np.int64)
+        self._hdr_can_t = np.array([], dtype=np.float64)
+        self._det_can_t = {}
         self._parent_counter = -1
         self._child_counter = -1
 
@@ -93,6 +99,38 @@ class KPI_DataModelStorage:
 
     def get_time_ns(self) -> np.ndarray:
         return self._time_ns.copy()
+
+    def set_hdr_can_t(self, hdr_can_t: np.ndarray) -> None:
+        """Per-scan header CAN timestamp (float seconds). Truncated to scans."""
+        if isinstance(hdr_can_t, np.ndarray) and hdr_can_t.size > 0:
+            n = min(len(self._scan_index), len(hdr_can_t))
+            self._hdr_can_t = np.asarray(hdr_can_t[:n], dtype=np.float64)
+            if n < len(self._scan_index):
+                pad = np.full(len(self._scan_index) - n, np.nan, dtype=np.float64)
+                self._hdr_can_t = np.concatenate([self._hdr_can_t, pad])
+        else:
+            self._hdr_can_t = np.array([], dtype=np.float64)
+
+    def get_hdr_can_t(self) -> np.ndarray:
+        return self._hdr_can_t.copy()
+
+    def set_det_can_t(self, det_can_t: Dict[str, np.ndarray]) -> None:
+        """Per-DET-group CAN timestamps keyed by group name. Truncated to scans."""
+        self._det_can_t = {}
+        if not isinstance(det_can_t, dict):
+            return
+        n_scans = len(self._scan_index)
+        for grp, arr in det_can_t.items():
+            if isinstance(arr, np.ndarray) and arr.size > 0:
+                a = np.asarray(arr[:n_scans], dtype=np.float64)
+                if len(a) < n_scans:
+                    a = np.concatenate(
+                        [a, np.full(n_scans - len(a), np.nan, dtype=np.float64)]
+                    )
+                self._det_can_t[str(grp)] = a
+
+    def get_det_can_t(self) -> Dict[str, np.ndarray]:
+        return {k: v.copy() for k, v in self._det_can_t.items()}
 
     def get_signal(self, signal_name: str) -> Any:
         return self._signal_values.get(signal_name)
@@ -154,7 +192,16 @@ class KPI_DataModelStorage:
         signal_names: List[str],
         row_idx: int,
         max_det: int,
+        det_idx_shifts: Optional[Dict[int, int]] = None,
     ) -> List[Dict[str, float]]:
+        """Detections for one scan row.
+
+        ``det_idx_shifts`` maps detector-group index (``det_pos // 4``) to a
+        row delta applied when reading that group's values. It compensates
+        producers that pair header rows with detection payloads from a
+        neighbouring scan (see ``KpiHdfParser.align_storage_rows_triple``).
+        ``None``/empty preserves the legacy exact-row behaviour.
+        """
         if max_det <= 0:
             return []
 
@@ -162,16 +209,18 @@ class KPI_DataModelStorage:
             sig: self.get_detection_rows(sig) for sig in signal_names
         }
         detections: List[Dict[str, float]] = []
+        shifts = det_idx_shifts or {}
 
         for det_pos in range(max_det):
+            ridx = row_idx + int(shifts.get(det_pos // 4, 0))
             values: Dict[str, float] = {}
             valid = True
             for sig in signal_names:
                 sig_rows = rows_by_sig.get(sig, [])
-                if row_idx >= len(sig_rows):
+                if ridx < 0 or ridx >= len(sig_rows):
                     valid = False
                     break
-                row = sig_rows[row_idx]
+                row = sig_rows[ridx]
                 if not isinstance(row, np.ndarray) or det_pos >= len(row):
                     valid = False
                     break

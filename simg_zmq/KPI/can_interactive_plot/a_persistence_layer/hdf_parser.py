@@ -1,6 +1,7 @@
 """HDF parser that transforms raw HDF attributes into scan-index keyed storage."""
 
 import logging
+import re
 from typing import Any, Dict, Iterable, List, Optional, Set
 
 import numpy as np
@@ -108,6 +109,8 @@ class KpiHdfParser:
                     header_signals=header,
                     scan_count=len(scan_index),
                 )
+                hdr_can_t = self._reader.extract_header_can_times(sensor_data)
+                det_can_t = self._reader.extract_detection_can_times(sensor_data)
 
                 valid_cnt = self._extract_valid_detection_count(header, len(scan_index))
                 scan_dict = self._build_scan_dict(
@@ -122,6 +125,8 @@ class KpiHdfParser:
                     sensor_id=sensor_id,
                     scan_index=scan_index,
                     time_ns=time_ns,
+                    hdr_can_t=hdr_can_t,
+                    det_can_t=det_can_t,
                     header_signals=header,
                     alignment_signals=alignment,
                     detection_signals=detection,
@@ -132,6 +137,8 @@ class KpiHdfParser:
                     "friendly_name": sensor_data.get("friendly_name", sensor_id),
                     "scan_index": scan_index,
                     "time_ns": time_ns,
+                    "hdr_can_t": hdr_can_t,
+                    "det_can_t": det_can_t,
                     "scan_dict": scan_dict,
                     "storage": storage,
                     "header": header,
@@ -174,10 +181,16 @@ class KpiHdfParser:
         alignment_signals: Dict[str, np.ndarray],
         detection_signals: Dict[str, Dict[int, np.ndarray]],
         valid_detection_count: np.ndarray,
+        hdr_can_t: Optional[np.ndarray] = None,
+        det_can_t: Optional[Dict[str, np.ndarray]] = None,
     ) -> KPI_DataModelStorage:
         storage = KPI_DataModelStorage()
         storage.initialize(scan_index.tolist(), sensor_id)
         storage.set_time_ns(time_ns)
+        if hdr_can_t is not None:
+            storage.set_hdr_can_t(hdr_can_t)
+        if det_can_t is not None:
+            storage.set_det_can_t(det_can_t)
 
         if header_signals:
             storage.init_parent("HEADER_STREAM")
@@ -298,6 +311,324 @@ class KpiHdfParser:
             np.asarray(in_rows, dtype=np.int64),
             np.asarray(out_rows, dtype=np.int64),
         )
+
+    # Triple-key alignment tuning (see approach_compare.py results).
+    TRIPLE_HDR_TOL_NS = 2_000_000
+    TRIPLE_CAN_TOL_S = 0.002
+    TRIPLE_WINDOW = 5
+    TRIPLE_SHIFT_MIN = -5
+    TRIPLE_SHIFT_MAX = 5
+    # CAN timestamps are bus-relative seconds. Old producers leave
+    # timestamp_* payloads uninitialized (e.g. -1.4e91); such values must
+    # never steer gating or calibration.
+    TRIPLE_CAN_T_MAX_S = 1_000_000.0
+
+    @staticmethod
+    def _sane_can_t(arr: np.ndarray) -> np.ndarray:
+        a = np.asarray(arr, dtype=np.float64)
+        bad = ~np.isfinite(a) | (a < 0.0) | (a > KpiHdfParser.TRIPLE_CAN_T_MAX_S)
+        if np.any(bad):
+            a = a.copy()
+            a[bad] = np.nan
+        return a
+
+    def align_storage_rows_triple(
+        self,
+        input_storage: KPI_DataModelStorage,
+        output_storage: KPI_DataModelStorage,
+        hdr_tol_ns: int = TRIPLE_HDR_TOL_NS,
+        can_tol_s: float = TRIPLE_CAN_TOL_S,
+        window: int = TRIPLE_WINDOW,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, Dict[int, int]]:
+        """Align rows by SCAN + header time, with per-group DET shifts.
+
+        Stage 1: SCAN-equality candidates (same as legacy).
+        Stage 2: header gate — a pair is rejected only when BOTH header times
+          (HED ``time_ns`` and header CAN ``hdr_can_t``) are present AND both
+          disagree. Missing times pass (legacy behaviour, e.g. old loggers).
+          Pairs where both sides hold zero valid detections (header-only
+          scans, XML parity) are dropped.
+        Stage 3: per-detector-group row-shift calibration from DET-group CAN
+          timestamps via O(1) hash vote (see ``_calibrate_det_shifts``).
+          Returns ``det_shifts`` mapping group index (``det_pos // 4``) to the
+          row delta applied to the INPUT side in ``get_scan_detections``.
+
+        Falls back to legacy results (empty shifts) when timestamp payloads
+        are absent, so old logs behave exactly as before.
+        """
+        common, in_rows, out_rows = self.align_storage_rows_by_scanindex(
+            input_storage, output_storage
+        )
+        if len(common) == 0:
+            return common, in_rows, out_rows, {}
+
+        in_time = input_storage.get_time_ns()
+        out_time = output_storage.get_time_ns()
+        in_hdr = self._sane_can_t(input_storage.get_hdr_can_t())
+        out_hdr = self._sane_can_t(output_storage.get_hdr_can_t())
+        in_cnt = input_storage.get_valid_detection_counts()
+        out_cnt = output_storage.get_valid_detection_counts()
+
+        in_det = input_storage.get_det_can_t()
+        out_det = output_storage.get_det_can_t()
+        has_det_ts = any(
+            np.count_nonzero(~np.isnan(v)) > max(10, len(in_rows) // 2)
+            for v in in_det.values()
+        ) if in_det else False
+
+        kept_common: List[int] = []
+        kept_in: List[int] = []
+        kept_out: List[int] = []
+        for k in range(len(common)):
+            i, j = int(in_rows[k]), int(out_rows[k])
+            # Header gate: best-effort. Accept if either time source says OK,
+            # or when DET timestamps exist (shift calibration will fix it).
+            hed_ok: Optional[bool] = None
+            if (
+                i < len(in_time)
+                and j < len(out_time)
+                and int(in_time[i]) >= 0
+                and int(out_time[j]) >= 0
+            ):
+                hed_ok = abs(int(in_time[i]) - int(out_time[j])) <= int(hdr_tol_ns)
+            can_ok: Optional[bool] = None
+            if (
+                i < len(in_hdr)
+                and j < len(out_hdr)
+                and np.isfinite(in_hdr[i])
+                and np.isfinite(out_hdr[j])
+            ):
+                can_ok = abs(float(in_hdr[i]) - float(out_hdr[j])) <= float(can_tol_s)
+            # Reject only when both available times disagree AND no DET
+            # timestamps are available to compensate via shift calibration.
+            if hed_ok is False and can_ok is False and not has_det_ts:
+                continue
+            ic = int(in_cnt[i]) if i < len(in_cnt) else 0
+            oc = int(out_cnt[j]) if j < len(out_cnt) else 0
+            if max(ic, oc) <= 0:
+                continue  # header-only scan on both sides (XML parity)
+            kept_common.append(int(common[k]))
+            kept_in.append(i)
+            kept_out.append(j)
+
+        common_a = np.asarray(kept_common, dtype=np.int64)
+        in_a = np.asarray(kept_in, dtype=np.int64)
+        out_a = np.asarray(kept_out, dtype=np.int64)
+        det_shifts = self._calibrate_det_shifts(
+            input_storage, output_storage, in_a, out_a, window=window
+        )
+        return common_a, in_a, out_a, det_shifts
+
+    def _calibrate_det_shifts(
+        self,
+        input_storage: KPI_DataModelStorage,
+        output_storage: KPI_DataModelStorage,
+        in_rows: np.ndarray,
+        out_rows: np.ndarray,
+        window: int = TRIPLE_WINDOW,
+    ) -> Dict[int, int]:
+        """Vote per-detector-group INPUT row shifts from DET CAN timestamps.
+
+        For each DET group present in both files, an O(1) hash
+        (1 ms-quantized INPUT timestamp -> rows) finds, for every gated pair
+        ``(i, j)``, the INPUT row holding OUT[j]'s bus time. The shift
+        ``matched_in_row - i`` is voted; the winner in
+        ``[TRIPLE_SHIFT_MIN, TRIPLE_SHIFT_MAX]`` becomes that group's shift
+        (applied to the INPUT fetch in ``get_scan_detections``).
+        Groups without timestamps or without majority support keep shift 0,
+        which reproduces the legacy exact-row behaviour.
+        """
+        in_det = input_storage.get_det_can_t()
+        out_det = output_storage.get_det_can_t()
+        if not in_det or not out_det or len(in_rows) == 0:
+            return {}
+        shifts: Dict[int, int] = {}
+        lo, hi = self.TRIPLE_SHIFT_MIN, self.TRIPLE_SHIFT_MAX
+        for gname, t_out_raw in out_det.items():
+            t_out = self._sane_can_t(t_out_raw)
+            t_in_raw = in_det.get(gname)
+            if t_in_raw is None:
+                continue
+            t_in = self._sane_can_t(t_in_raw)
+            # Require mostly-sane coverage; uninitialized payloads vote junk.
+            if (
+                np.count_nonzero(~np.isnan(t_in)) < max(10, len(in_rows) // 2)
+                or np.count_nonzero(~np.isnan(t_out)) < max(10, len(out_rows) // 2)
+            ):
+                continue
+            if len(t_in) < 2 or len(t_out) < 2:
+                continue
+            gidx = self._det_group_index(gname)
+            if gidx is None:
+                continue
+            in_map: Dict[int, List[int]] = {}
+            for r, t in enumerate(t_in):
+                if np.isfinite(t):
+                    in_map.setdefault(int(round(float(t) * 1000.0)), []).append(r)
+            if not in_map:
+                continue
+            votes: Dict[int, int] = {}
+            for i, j in zip(in_rows.tolist(), out_rows.tolist()):
+                i, j = int(i), int(j)
+                if j >= len(t_out):
+                    continue
+                tj = t_out[j]
+                if not np.isfinite(tj):
+                    continue
+                best_c: Optional[int] = None
+                best_dt = float("inf")
+                q = int(round(float(tj) * 1000.0))
+                for dq in (-2, -1, 0, 1, 2):
+                    for c in in_map.get(q + dq, ()):
+                        if abs(c - i) > window:
+                            continue
+                        dt = abs(float(t_in[c]) - float(tj))
+                        if dt < best_dt:
+                            best_dt = dt
+                            best_c = c
+                if best_c is None:
+                    continue
+                d = best_c - i
+                if lo <= d <= hi:
+                    votes[d] = votes.get(d, 0) + 1
+            if not votes:
+                continue
+            best = min(votes.items(), key=lambda kv: (-kv[1], abs(kv[0]), kv[0]))[0]
+            if votes[best] >= max(10, len(in_rows) // 2) and best != 0:
+                shifts[gidx] = int(best)
+        if shifts:
+            logger.info(f"Triple align DET shifts (group->rows): {shifts}")
+        fallback = self._calibrate_det_shifts_signal_fallback(
+            input_storage, output_storage, in_rows, out_rows, skip=shifts
+        )
+        shifts.update(fallback)
+        return shifts
+
+    # Tight per-signal tolerances for shift calibration. Storage rounds rows
+    # to 2 decimals, so true-shift diffs stay <= ~0.01 while neighbouring
+    # scans normally differ by much more. Static scenes tie -> shift 0 wins.
+    _CAL_EPS = {
+        "DET_RANGE": 0.05,
+        "DET_RANGE_VELOCITY": 0.05,
+        "DET_AZIMUTH": 0.02,
+        "DET_ELEVATION": 0.02,
+    }
+    _CAL_SIGNALS = ("DET_RANGE", "DET_RANGE_VELOCITY", "DET_AZIMUTH", "DET_ELEVATION")
+    _CAL_MAX_GROUPS = 50
+
+    def _calibrate_det_shifts_signal_fallback(
+        self,
+        input_storage: KPI_DataModelStorage,
+        output_storage: KPI_DataModelStorage,
+        in_rows: np.ndarray,
+        out_rows: np.ndarray,
+        skip: Optional[Dict[int, int]] = None,
+    ) -> Dict[int, int]:
+        """Timestamp-free per-group shift vote from DET signal values.
+
+        Covers producers with missing/uninitialized ``timestamp_*`` payloads
+        (old loggers). For each group without a timestamp shift, every shift
+        ``n`` in ``[0,-1,+1,...]`` order is scored by position-wise joint
+        signal equality (tight eps) summed over pairs; the winner needs a
+        strict majority margin over ``n=0``. Ties/ambiguity keep shift 0,
+        i.e. legacy behaviour.
+        """
+        skip = skip or {}
+        if len(in_rows) == 0:
+            return {}
+        rows_in = {s: input_storage.get_detection_rows(s) for s in self._CAL_SIGNALS}
+        rows_out = {s: output_storage.get_detection_rows(s) for s in self._CAL_SIGNALS}
+        if not rows_in["DET_RANGE"] or not rows_out["DET_RANGE"]:
+            return {}
+        n_in, n_out = len(rows_in["DET_RANGE"]), len(rows_out["DET_RANGE"])
+        P = len(in_rows)
+        i_idx = np.asarray(in_rows, dtype=np.int64)
+        j_idx = np.asarray(out_rows, dtype=np.int64)
+        order = [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
+        order = [n for n in order if self.TRIPLE_SHIFT_MIN <= n <= self.TRIPLE_SHIFT_MAX]
+        margin = max(5, int(0.05 * P))
+        found: Dict[int, int] = {}
+        for g in range(self._CAL_MAX_GROUPS):
+            if g in skip:
+                continue
+            cols = range(4 * g, 4 * g + 4)
+            totals: Dict[int, int] = {}
+            for n in order:
+                ii = i_idx + n
+                # Majority vote per-pair: if >= 2 of 4 signals match,
+                # the pair votes for this shift. Handles dropped slots.
+                pair_votes = np.zeros(P, dtype=np.int32)
+                n_signals = 0
+                for sig in self._CAL_SIGNALS:
+                    rin, rout = rows_in[sig], rows_out[sig]
+                    if not rin or not rout:
+                        continue
+                    n_signals += 1
+                    eps = self._CAL_EPS[sig]
+                    hit = np.zeros(P, dtype=bool)
+                    for p, (i, j) in enumerate(zip(ii.tolist(), j_idx.tolist())):
+                        if i < 0 or i >= n_in or j < 0 or j >= n_out:
+                            continue
+                        a, b = rin[i], rout[j]
+                        if not isinstance(a, np.ndarray) or not isinstance(b, np.ndarray):
+                            continue
+                        pos_ok = True
+                        compared = False
+                        for c in cols:
+                            va = a[c] if c < len(a) else np.nan
+                            vb = b[c] if c < len(b) else np.nan
+                            if sig == "DET_RANGE":
+                                ea = bool(np.isfinite(va)) and va != 0.0
+                                eb = bool(np.isfinite(vb)) and vb != 0.0
+                            else:
+                                ea, eb = bool(np.isfinite(va)), bool(np.isfinite(vb))
+                            if not ea and not eb:
+                                continue
+                            if not ea or not eb:
+                                pos_ok = False
+                                break
+                            compared = True
+                            if abs(float(va) - float(vb)) > eps:
+                                pos_ok = False
+                                break
+                        if pos_ok and compared:
+                            hit[p] = True
+                    pair_votes += hit.astype(np.int32)
+                # Pair matches if >= half of available signals agree
+                min_sig = max(1, n_signals // 2)
+                totals[n] = int(np.sum(pair_votes >= min_sig))
+            base = totals.get(0, 0)
+            best_n, best_h = 0, base
+            for n in order[1:]:
+                if totals.get(n, 0) > best_h:
+                    best_n, best_h = n, totals[n]
+            # Conservative: winner needs an absolute majority of pairs AND
+            # a clear margin over legacy n=0. Reprocessed logs whose values
+            # genuinely differ (beyond eps) keep legacy behaviour instead of
+            # a noise-voted shift.
+            if (
+                best_n != 0
+                and best_h >= max(10, P // 2)
+                and best_h - base >= margin
+            ):
+                found[g] = int(best_n)
+        if found:
+            logger.info(f"Triple align fallback DET shifts (group->rows): {found}")
+        return found
+
+    @staticmethod
+    def _det_group_index(group_name: str) -> Optional[int]:
+        """Detector-group index from names like ``RDR_DETECTION_005_008``."""
+        m = re.search(r"(\d{3})_(\d{3})\s*$", str(group_name))
+        if not m:
+            return None
+        try:
+            start = int(m.group(1))
+        except ValueError:
+            return None
+        if start < 1:
+            return None
+        return (start - 1) // 4
 
     def _build_scan_dict(
         self,
