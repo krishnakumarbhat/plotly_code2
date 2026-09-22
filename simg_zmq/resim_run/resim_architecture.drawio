@@ -1,0 +1,148 @@
+<mxfile host="Electron" agent="GitHub Copilot">
+  <diagram id="resim-gen7" name="ReSim Gen7">
+    <mxGraphModel dx="1664" dy="1029" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=#363636;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#1f2937;" value="ReSim Gen7 Southfield execution architecture" vertex="1">
+          <mxGeometry height="40" width="780" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#f59e0b;fontColor=#7c2d12;" value="Snapshot of deployed all_services_7 launcher and connected ReSimAutoMng source. MUDP and KPI are separate platform stages, not direct children of rResim_Gen7.sh." vertex="1">
+          <mxGeometry height="60" width="760" x="40" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1" parent="1" style="swimlane;html=1;horizontal=0;rounded=1;fillColor=#363636;strokeColor=#60a5fa;fontStyle=1;" value="HPCC Runtime / user request" vertex="1">
+          <mxGeometry height="690" width="260" x="40" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" parent="lane1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#2563eb;" value="Runtime Map / API&lt;br&gt;input.txt + SIMG + XML" vertex="1">
+          <mxGeometry height="70" width="210" x="25" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" parent="lane1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#2563eb;" value="SSH -tt&lt;br&gt;finite stdin contract" vertex="1">
+          <mxGeometry height="60" width="210" x="25" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="lane1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#1d4ed8;" value="rResim_Gen7.sh&lt;br&gt;cluster bootstrap" vertex="1">
+          <mxGeometry height="70" width="210" x="25" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" parent="lane1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#1d4ed8;" value="External environment&lt;br&gt;gen7v2 virtualenv + modules" vertex="1">
+          <mxGeometry height="70" width="210" x="25" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="lane2" parent="1" style="swimlane;html=1;horizontal=0;rounded=1;fillColor=#363636;strokeColor=#4ade80;fontStyle=1;" value="ReSim Python control plane" vertex="1">
+          <mxGeometry height="690" width="300" x="330" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" parent="lane2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#16a34a;" value="resim_main.py&lt;br&gt;validate - prepare - invoke" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" parent="lane2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#16a34a;" value="resim_generic.py&lt;br&gt;argv, mode, XML, project/account" vertex="1">
+          <mxGeometry height="80" width="250" x="25" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" parent="lane2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#16a34a;" value="resim_splitter.py&lt;br&gt;session manifests, JSON, caches" vertex="1">
+          <mxGeometry height="80" width="250" x="25" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" parent="lane2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#16a34a;" value="resim_child.py + staticdata&lt;br&gt;generated SBATCH task templates" vertex="1">
+          <mxGeometry height="80" width="250" x="25" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="lane3" parent="1" style="swimlane;html=1;horizontal=0;rounded=1;fillColor=#363636;strokeColor=#facc15;fontStyle=1;" value="Generated Slurm orchestration" vertex="1">
+          <mxGeometry height="690" width="320" x="660" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" parent="lane3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#ca8a04;" value="rResim_main_highPrio.sh&lt;br&gt;parse positional CSV contract" vertex="1">
+          <mxGeometry height="80" width="270" x="25" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" parent="lane3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#ca8a04;" value="Slurm array submission&lt;br&gt;max 1000 tasks/chunk" vertex="1">
+          <mxGeometry height="70" width="270" x="25" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" parent="lane3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#ca8a04;" value="Dependent jobs&lt;br&gt;JB-min.py + stats_mining.py" vertex="1">
+          <mxGeometry height="70" width="270" x="25" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" parent="lane3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#ca8a04;" value="RESIM_details.txt&lt;br&gt;job IDs, paths, mode, config" vertex="1">
+          <mxGeometry height="70" width="270" x="25" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="lane4" parent="1" style="swimlane;html=1;horizontal=0;rounded=1;fillColor=#363636;strokeColor=#f472b6;fontStyle=1;" value="Compute task / container" vertex="1">
+          <mxGeometry height="690" width="300" x="1010" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" parent="lane4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#db2777;" value="Generated .resim.sh&lt;br&gt;array task" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" parent="lane4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#db2777;" value="Input session + splitter&lt;br&gt;SIL_Input_all / JSON" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" parent="lane4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#db2777;" value="SIMG execution&lt;br&gt;singularity exec /RUN_RESIM.sh" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" parent="lane4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#db2777;" value="Temporary output&lt;br&gt;/dev/shm -&gt; result tree" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="lane5" parent="1" style="swimlane;html=1;horizontal=0;rounded=1;fillColor=#363636;strokeColor=#a78bfa;fontStyle=1;" value="Post-processing and optional platform stages" vertex="1">
+          <mxGeometry height="690" width="300" x="1340" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" parent="lane5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#7c3aed;" value="Optional VIDEO converter&lt;br&gt;converter SIMG + config" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" parent="lane5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#7c3aed;" value="Mining / statistics&lt;br&gt;dependent post-processing" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" parent="lane5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#9333ea;" value="Separate HPCC stages&lt;br&gt;MUDP / UDP KPI / Interactive Plot&lt;br&gt;not called by current ReSim child" vertex="1">
+          <mxGeometry height="95" width="250" x="25" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" parent="lane5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#363636;strokeColor=#7c3aed;" value="Published artifacts&lt;br&gt;reports, logs, output manifest" vertex="1">
+          <mxGeometry height="70" width="250" x="25" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n2" value="paths + credentials">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n3" value="input.txt, SIMG, highPrio">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n4" value="source environment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n5" value="python resim_main.py">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="n5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n6" value="import">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="n6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n7" value="manifests / cache">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="n7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n8" value="generated scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="n8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n9" value="input_parameter CSV">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="n9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n10" value="sbatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n13" value="array tasks">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="n13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n14" value="task input">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="n14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n15" value="prepared JSON + XML">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="n15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n16" value="copy output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="n16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n17" value="optional">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n11" value="afterany dependency">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="n9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n12" value="metadata">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n20" value="artifacts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="n17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;fillColor=#363636;" target="n20" value="results">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="n16" style="edgeStyle=dashed;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;dashed=1;fillColor=#363636;" target="n19" value="separate broker workflow">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

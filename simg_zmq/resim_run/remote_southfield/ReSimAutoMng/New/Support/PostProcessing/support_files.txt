@@ -1,0 +1,29 @@
+# Tools Singularity
+html_simg:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/Tools/HTML_Plotter/resim_tool_html.simg
+bord_simg:/mnt/usmidet/projects/GPO-IFV7XX/2-Sim/USER_DATA/v0bivq/new_bordnet/resim_tool_bordnet.simg
+mudp_simg:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/resim_tool_mudp_hdf.simg
+converter_simg:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/Tools/CONVERTER_TOOL/resim_tool_converter.simg
+udp_kpi_simg:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/udp_kpi.simg
+
+# tools config files
+html_config_gen7:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/ReSimAutoMng/config/HTMLConfig_gen7.xml
+bord_config_small:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/ReSimAutoMng/config/bordnet_config_scale1.xml
+bord_config_v2:/mnt/usmidet/projects/GPO-IFV7XX/2-Sim/USER_DATA/v0bivq/new_bordnet/bordnet_config.xml
+mudp_config_gen7:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/MUDP_DATA_Extracter_config.xml
+mudp_config_mcip:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/Tools/Quality_Checker/MUDP_DATA_Extracter_config_UDP_CDC.xml
+mudp_config_dgps:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/MUDP_DATA_Extracter_config.xml
+converter_config:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/Mdf4_Converter_Config.xml
+converter_config_dgps:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/Mdf4_Converter_Config.xml
+
+#Additional Scripts
+json_creator:/mnt/usmidet/projects/GPO-IFV7XX/4-Checkout/ReSimAutoMng/Support/PostProcessing/pipeline_jsonCreator.py
+splitter:/mnt/usmidet/projects/GPO-IFV7XX/4-Checkout/ReSimAutoMng/Shell/splitter_highPrio.sh
+
+# KPI Scripts
+can_kpi:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/ReSimAutoMng/Support/PostProcessing/CompareXMLs/compareXMLs.py
+align_kpi:/mnt/usmidet/projects/RADARCORE/2-Sim/USER_DATA/z5daa9/Git/Core_RESIM_KPI/gen7v2_resim_kpi_scripts/alignment_matching_kpi_script.py
+det_kpi:/mnt/usmidet/projects/RADARCORE/2-Sim/USER_DATA/z5daa9/Git/Core_RESIM_KPI/gen7v2_resim_kpi_scripts/detection_matching_kpi_script.py
+downsel_kpi:/mnt/usmidet/projects/RADARCORE/2-Sim/USER_DATA/z5daa9/Git/Core_RESIM_KPI/gen7v2_resim_kpi_scripts/downSelection_matching_kpi_script.py
+idmat_kpi:/mnt/usmidet/projects/RADARCORE/2-Sim/USER_DATA/z5daa9/Git/Core_RESIM_KPI/gen7v2_resim_kpi_scripts/interferenceDetection_matching_kpi_script.py
+rcap_kpi:/mnt/usmidet/projects/RADARCORE/2-Sim/USER_DATA/z5daa9/Git/Core_RESIM_KPI/gen7v2_resim_kpi_scripts/radarCapability_matching_kpi_script.py
+meta_kpi:/mnt/usmidet/projects/RADARCORE/2-Sim/USER_DATA/z5daa9/Git/Core_RESIM_KPI/gen7v2_resim_kpi_scripts/meta_data.json
