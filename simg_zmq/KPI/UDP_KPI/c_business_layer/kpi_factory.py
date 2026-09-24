@@ -64,7 +64,7 @@ class KpiDataModel:
         """
         tasks = [
             ("alignment", _run_alignment, self.data, self.sensor),
-            # ("tracker", _run_tracker, self.data, self.sensor),
+            ("tracker", _run_tracker, self.data, self.sensor),
             ("detection", _run_detection, self.data, self.sensor),
         ]
             

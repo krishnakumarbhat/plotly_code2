@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import logging
 
 from UDP_KPI.b_data_storage.kpi_data_model_storage import KPI_DataModelStorage
-from UDP_KPI.b_data_storage.kpi_config_storage import KPI_VALIDATION_RULES
+from UDP_KPI.b_data_storage.kpi_config_storage import KPI_VALIDATION_RULES, STREAM_ALIASES
 from UDP_KPI.d_presentation_layer.alignment_report import alignment_html
 
 logger = logging.getLogger(__name__)
@@ -35,12 +35,25 @@ class AlignmentMappingKPIHDF:
         """Main processing function for alignment matching KPIs"""
         try:
             src = None
+            src_key = None
+            # Backward compatible: accept log variants (Dyn_Align_STREAM, ...).
+            candidates = list(dict.fromkeys(
+                ['DYNAMIC_ALIGNMENT_STREAM'] + list(STREAM_ALIASES.get('DYNAMIC_ALIGNMENT_STREAM', []))
+            ))
             # Some datasets don't contain alignment stream; skip cleanly instead of raising KeyError.
             if hasattr(self.data, 'get'):
-                src = self.data.get('DYNAMIC_ALIGNMENT_STREAM')
+                for key in candidates:
+                    src = self.data.get(key)
+                    if src:
+                        src_key = key
+                        break
             if src is None:
                 try:
-                    src = self.data['DYNAMIC_ALIGNMENT_STREAM']
+                    for key in candidates:
+                        src = self.data[key]
+                        if src:
+                            src_key = key
+                            break
                 except Exception:
                     src = None
             if not src:

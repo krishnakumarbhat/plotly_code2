@@ -10,10 +10,14 @@ def _normalize_signal_name(name):
 def _candidate_normalized_names(name):
     normalized = _normalize_signal_name(name)
     alias_groups = [
-        {"ran", "range", "detectionrange"},
-        {"vel", "velocity", "detectionvelocity", "rr", "rangerate"},
-        {"phi", "elevation", "eli"},
-        {"theta", "azimuth", "azi"},
+        {"ran", "range", "detectionrange", "afdetsran"},
+        {"vel", "velocity", "detectionvelocity", "rr", "rangerate", "afdetsvel"},
+        {"phi", "elevation", "eli", "afdetsphi"},
+        {"theta", "azimuth", "azi", "afdetstheta"},
+        {"rddidx", "afdetsrddidx"},
+        {"fsingletarget", "afdetsfsingletarget"},
+        {"fsuperrestarget", "afdetsfsuperrestarget"},
+        {"fbistatic", "afdetsfbistatic"},
     ]
     for group in alias_groups:
         if normalized in group:
@@ -76,26 +80,37 @@ class KPI_DataModelStorage:
         self._selected_indices = tuple(selected_idx) if selected_idx is not None else None
         self._missing_indices = set(missing_idx) if missing_idx is not None else set()
 
-        # Check if scan_index is sorted and sequential
+        # Scan-cycle diagnostics WITHOUT materializing range(min, max+1):
+        # corrupt headers (e.g. Dyn_Align garbage scan_index up to ~3.7e9)
+        # turned that list into tens of GB and OOM-killed the machine.
+        # Set arithmetic on actual values only is bounded by len(scan_index).
         if len(scan_index) > 0:
-            expected_scan_index = list(range(min(scan_index), max(scan_index) + 1))
-            freq = {}
-            duplicates = []
-            for idx in scan_index:
-                freq[idx] = freq.get(idx, 0) + 1
-            duplicates = sorted([k for k, v in freq.items() if v > 1])
+            try:
+                _vals = [int(v) for v in scan_index]
+            except Exception:
+                _vals = []
+            if _vals:
+                _uniq_sorted = sorted(set(_vals))
+                freq = {}
+                for idx in _vals:
+                    freq[idx] = freq.get(idx, 0) + 1
+                duplicates = sorted([k for k, v in freq.items() if v > 1])
 
-            # Find missing indices
-            missing_indices = [i for i in expected_scan_index if i not in scan_index]
+                # Count missing slots arithmetically (never materialize).
+                _span = _uniq_sorted[-1] - _uniq_sorted[0]
+                missing_count = _span + 1 - len(_uniq_sorted) if _span >= 0 else 0
 
-            if missing_indices:
-                logging.debug(
-                    f"Missing scan indices at this signal {sensor}: {missing_indices}"
-                )
-            if duplicates:
-                logging.debug(
-                    f"Duplicate scan indices at {sensor}: {duplicates}"
-                )
+                if missing_count > 0:
+                    logging.debug(
+                        f"Missing {missing_count} scan indices in span "
+                        f"[{_uniq_sorted[0]}, {_uniq_sorted[-1]}] at signal {sensor}"
+                    )
+                if duplicates:
+                    _dup_preview = duplicates[:20]
+                    logging.debug(
+                        f"Duplicate scan indices at {sensor}: {_dup_preview}"
+                        + ("..." if len(duplicates) > 20 else "")
+                    )
     
         # Use defaultdict to avoid checking if key exists later
         self._data_container = {j: [] for j in scan_index}
@@ -120,28 +135,40 @@ class KPI_DataModelStorage:
         # Convert scan_index to set for efficient lookup
         scan_index_set = set(scan_index)
         
-        # Check if scan_index is sorted and sequential
+        # Scan-cycle diagnostics WITHOUT materializing range(min, max+1):
+        # corrupt headers (e.g. Dyn_Align garbage scan_index up to ~3.7e9)
+        # turned that list into tens of GB and OOM-killed the machine.
         if len(scan_index) > 0:
-            expected_scan_index = list(range(min(scan_index), max(scan_index) + 1))
+            try:
+                _vals = [int(v) for v in scan_index]
+            except Exception:
+                _vals = []
+            _uniq_sorted = sorted(set(_vals)) if _vals else []
             freq = {}
-            duplicates = []
-            
+
             # Count frequency of each scan index
-            for idx in scan_index:
+            for idx in _vals:
                 freq[idx] = freq.get(idx, 0) + 1
             duplicates = sorted([k for k, v in freq.items() if v > 1])
 
-            # Find missing indices in the expected range
-            missing_indices = [i for i in expected_scan_index if i not in scan_index_set]
+            # Count missing slots arithmetically (never materialize the range)
+            if _uniq_sorted:
+                _span = _uniq_sorted[-1] - _uniq_sorted[0]
+                missing_count = _span + 1 - len(_uniq_sorted) if _span >= 0 else 0
+            else:
+                missing_count = 0
 
-            # Log validation results
-            if missing_indices:
+            # Log validation results (counts only; never log huge index lists)
+            if missing_count > 0:
                 logging.debug(
-                    f"Missing scan indices in expected range for sensor {sensor}: {missing_indices}"
+                    f"Missing {missing_count} scan indices in expected range "
+                    f"for sensor {sensor}"
                 )
             if duplicates:
+                _dup_preview = duplicates[:20]
                 logging.debug(
-                    f"Duplicate scan indices found for sensor {sensor}: {duplicates}"
+                    f"Duplicate scan indices found for sensor {sensor}: {_dup_preview}"
+                    + ("..." if len(duplicates) > 20 else "")
                 )
 
         # Validate data container keys against scan indices

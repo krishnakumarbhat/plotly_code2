@@ -68,14 +68,14 @@ KPI_ALIGNMENT_CONFIG = {
 KPI_DETECTION_CONFIG = {
     "DETECTION_STREAM": {
         "num_af_det": {"aliases": ["num_af_det"], "call": ["num_af_det"], "kpi_required": True},
-        "rdd_idx": {"aliases": ["rdd_idx"], "call": ["rdd_idx"], "kpi_required": True},
-        "ran": {"aliases": ["ran", "range"], "call": ["ran"], "unit": "m", "kpi_required": True},
-        "vel": {"aliases": ["vel", "velocity"], "call": ["vel"], "unit": "m/s", "kpi_required": True},
-        "theta": {"aliases": ["theta", "azimuth"], "call": ["theta"], "unit": "rad", "kpi_required": True},
-        "phi": {"aliases": ["phi", "elevation"], "call": ["phi"], "unit": "rad", "kpi_required": True},
-        "f_single_target": {"aliases": ["f_single_target"], "call": ["f_single_target"], "kpi_required": True},
-        "f_superres_target": {"aliases": ["f_superres_target"], "call": ["f_superres_target"], "kpi_required": True},
-        "f_bistatic": {"aliases": ["f_bistatic"], "call": ["f_bistatic"], "kpi_required": True},
+        "rdd_idx": {"aliases": ["rdd_idx", "af_dets_rdd_idx"], "call": ["rdd_idx"], "kpi_required": True},
+        "ran": {"aliases": ["ran", "range", "af_dets_ran"], "call": ["ran"], "unit": "m", "kpi_required": True},
+        "vel": {"aliases": ["vel", "velocity", "af_dets_vel"], "call": ["vel"], "unit": "m/s", "kpi_required": True},
+        "theta": {"aliases": ["theta", "azimuth", "af_dets_theta"], "call": ["theta"], "unit": "rad", "kpi_required": True},
+        "phi": {"aliases": ["phi", "elevation", "af_dets_phi"], "call": ["phi"], "unit": "rad", "kpi_required": True},
+        "f_single_target": {"aliases": ["f_single_target", "af_dets_f_single_target"], "call": ["f_single_target"], "kpi_required": True},
+        "f_superres_target": {"aliases": ["f_superres_target", "af_dets_f_superres_target"], "call": ["f_superres_target"], "kpi_required": True},
+        "f_bistatic": {"aliases": ["f_bistatic", "af_dets_f_bistatic"], "call": ["f_bistatic"], "kpi_required": True},
         "scan_index": {"aliases": ["scan_index"], "call": ["scan_index"], "kpi_required": True}
     },
     "RDD_STREAM": {
@@ -95,21 +95,76 @@ KPI_DETECTION_CONFIG = {
 }
 
 # KPI-specific configuration for tracker data
+# NOTE: tracker logs exist in two layouts:
+#   - classic "TRACKER_STREAM" with vcs_* signals, and
+#   - AshokLeyland-style "OBJECT_LIST_STREAM/F360_Object_Log" with object_* signals.
+# Both are kept backward compatible via STREAM_ALIASES + extended signal aliases below.
 KPI_TRACKER_CONFIG = {
     "TRACKER_STREAM": {
-        "trkID": {"aliases": ["trkID", "track_id"], "call": ["trkID"], "kpi_required": True},
-        "vcs_xposn": {"aliases": ["vcs_xposn", "x_position"], "call": ["vcs_xposn"], "unit": "m", "kpi_required": True},
-        "vcs_yposn": {"aliases": ["vcs_yposn", "y_position"], "call": ["vcs_yposn"], "unit": "m", "kpi_required": True},
-        "vcs_xvel": {"aliases": ["vcs_xvel", "x_velocity"], "call": ["vcs_xvel"], "unit": "m/s", "kpi_required": True},
-        "vcs_yvel": {"aliases": ["vcs_yvel", "y_velocity"], "call": ["vcs_yvel"], "unit": "m/s", "kpi_required": True},
-        "vcs_heading": {"aliases": ["vcs_heading"], "call": ["vcs_heading"], "unit": "rad", "kpi_required": True},
-        "len1": {"aliases": ["len1"], "call": ["len1"], "unit": "m", "kpi_required": True},
-        "len2": {"aliases": ["len2"], "call": ["len2"], "unit": "m", "kpi_required": True},
-        "wid1": {"aliases": ["wid1"], "call": ["wid1"], "unit": "m", "kpi_required": True},
-        "wid2": {"aliases": ["wid2"], "call": ["wid2"], "unit": "m", "kpi_required": True},
-        "f_moving": {"aliases": ["f_moving"], "call": ["f_moving"], "kpi_required": True}
+        "trkID": {"aliases": ["trkID", "track_id", "object_trkID"], "call": ["trkID"], "kpi_required": True},
+        "vcs_xposn": {"aliases": ["vcs_xposn", "x_position", "object_xposn"], "call": ["vcs_xposn"], "unit": "m", "kpi_required": True},
+        "vcs_yposn": {"aliases": ["vcs_yposn", "y_position", "object_yposn"], "call": ["vcs_yposn"], "unit": "m", "kpi_required": True},
+        "vcs_xvel": {"aliases": ["vcs_xvel", "x_velocity", "object_xvel"], "call": ["vcs_xvel"], "unit": "m/s", "kpi_required": True},
+        "vcs_yvel": {"aliases": ["vcs_yvel", "y_velocity", "object_yvel"], "call": ["vcs_yvel"], "unit": "m/s", "kpi_required": True},
+        "vcs_heading": {"aliases": ["vcs_heading", "heading", "object_heading"], "call": ["vcs_heading"], "unit": "rad", "kpi_required": True},
+        "len1": {"aliases": ["len1", "object_length"], "call": ["len1"], "unit": "m", "kpi_required": True},
+        "len2": {"aliases": ["len2", "object_length"], "call": ["len2"], "unit": "m", "kpi_required": True},
+        "wid1": {"aliases": ["wid1", "object_width"], "call": ["wid1"], "unit": "m", "kpi_required": True},
+        "wid2": {"aliases": ["wid2", "object_width"], "call": ["wid2"], "unit": "m", "kpi_required": True},
+        "f_moving": {"aliases": ["f_moving", "object_f_moving", "object_f_moveable"], "call": ["f_moving"], "kpi_required": True}
     }
 }
+
+
+# Canonical stream registry for backward-compatible log layouts.
+# Key = canonical name used across the KPI pipeline (wrapper, factory, reports).
+# Value = HDF stream names accepted for that canonical stream (first = preferred).
+# This is intentionally better than scattered `if a == X or a == Y` checks:
+# every layer resolves through canonical_stream_name()/resolve_actual_stream().
+STREAM_ALIASES = {
+    "DYNAMIC_ALIGNMENT_STREAM": ["DYNAMIC_ALIGNMENT_STREAM", "Dyn_Align_STREAM"],
+    "DETECTION_STREAM": ["DETECTION_STREAM"],
+    "RDD_STREAM": ["RDD_STREAM"],
+    "CDC_STREAM": ["CDC_STREAM"],
+    "VSE_STREAM": ["VSE_STREAM"],
+    "TRACKER_STREAM": ["TRACKER_STREAM", "OBJECT_LIST_STREAM"],
+}
+
+
+def canonical_stream_name(name):
+    """Map any known stream variant back to its canonical KPI name."""
+    if not name:
+        return name
+    for canonical, variants in STREAM_ALIASES.items():
+        if name == canonical or name in variants:
+            return canonical
+    lowered = str(name).lower()
+    for canonical, variants in STREAM_ALIASES.items():
+        if lowered == canonical.lower() or any(lowered == str(v).lower() for v in variants):
+            return canonical
+    return name
+
+
+def resolve_actual_stream(available_names, canonical):
+    """Pick the concrete HDF stream present for a canonical stream.
+
+    Prefers the canonical/preferred spelling, then any known variant,
+    then a case-insensitive match. Returns None when nothing matches.
+    """
+    if not available_names:
+        return None
+    available = list(available_names)
+    variants = STREAM_ALIASES.get(canonical, [canonical])
+    for candidate in variants:
+        if candidate in available:
+            return candidate
+    lowered = {str(a).lower(): a for a in available}
+    for candidate in variants:
+        if str(candidate).lower() in lowered:
+            return lowered[str(candidate).lower()]
+    if str(canonical).lower() in lowered:
+        return lowered[str(canonical).lower()]
+    return None
 
 
 

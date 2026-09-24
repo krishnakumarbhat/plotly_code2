@@ -80,6 +80,12 @@ class DetectionMappingKPIHDF:
         # Initialize result variables
         self.html_content = ""
         self.kpi_results = {}
+        # Memoized full-scan detection arrays. process_detection_matching()
+        # runs once per matched scan (up to ~775x); without this cache every
+        # call re-stacks ALL scans via KPI_DataModelStorage.get_value(),
+        # churning GBs of transient (775 x 680) float64 copies and driving
+        # peak RSS into OOM territory on 32GB machines.
+        self._det_cache = None
 
     def _get_scan_summary(self):
         """Retrieve scan_index alignment summary produced by HDF wrapper."""
@@ -87,7 +93,7 @@ class DetectionMappingKPIHDF:
             data = self.data
             # Direct stream summary
             if isinstance(data, dict):
-                for stream_key in ("DETECTION_STREAM", "RDD_STREAM", "DYNAMIC_ALIGNMENT_STREAM"):
+                for stream_key in ("DETECTION_STREAM", "RDD_STREAM", "DYNAMIC_ALIGNMENT_STREAM", "Dyn_Align_STREAM"):
                     stream_obj = data.get(stream_key)
                     if isinstance(stream_obj, dict) and "scan_summary" in stream_obj:
                         return stream_obj["scan_summary"]
@@ -425,22 +431,34 @@ class DetectionMappingKPIHDF:
                 return 0
 
             # Define detection parameters to extract
-            det_params = ['rdd_idx', 'ran', 'vel', 'theta', 'phi', 'f_single_target', 
+            det_params = ['rdd_idx', 'ran', 'vel', 'theta', 'phi', 'f_single_target',
                          'f_superres_target', 'f_bistatic', 'num_af_det']
             src = self.data['DETECTION_STREAM']
-            
+
+            # Build the full-scan arrays ONCE (memoized): per-scan calls must
+            # not re-stack all scans via get_value() (see _det_cache note).
+            if self._det_cache is None:
+                cache = {}
+                for param in det_params:
+                    veh_result, veh_status = KPI_DataModelStorage.get_value(src['input'], param)
+                    sim_result, sim_status = KPI_DataModelStorage.get_value(src['output'], param)
+                    cache[param] = (
+                        veh_result if veh_status == "success" else [],
+                        sim_result if sim_status == "success" else [],
+                    )
+                self._det_cache = cache
+
             # Initialize detection data structures
             veh_det = {param: [] for param in det_params}
             sim_det = {param: [] for param in det_params}
-            
-            # Get detection data for current scan
+
+            # Get detection data for current scan (cheap row views, no copies)
             for param in det_params:
-                veh_result, veh_status = KPI_DataModelStorage.get_value(src['input'], param)
-                sim_result, sim_status = KPI_DataModelStorage.get_value(src['output'], param)
-                
-                if veh_status == "success" and scan_gen_idx < len(veh_result):
+                veh_result, sim_result = self._det_cache[param]
+
+                if len(veh_result) > 0 and scan_gen_idx < len(veh_result):
                     veh_det[param] = veh_result[scan_gen_idx] if isinstance(veh_result[scan_gen_idx], (list, np.ndarray)) else [veh_result[scan_gen_idx]]
-                if sim_status == "success" and scan_gen_idx < len(sim_result):
+                if len(sim_result) > 0 and scan_gen_idx < len(sim_result):
                     sim_det[param] = sim_result[scan_gen_idx] if isinstance(sim_result[scan_gen_idx], (list, np.ndarray)) else [sim_result[scan_gen_idx]]
             
             # Initialize match counter
@@ -561,6 +579,19 @@ class DetectionMappingKPIHDF:
             scan_matches = self.kpi_results.get('per_scan_matches', [])
             scan_den = self.kpi_results.get('per_scan_den', [])
             scan_acc = self.kpi_results.get('per_scan_accuracy', [])
+
+            # Headline accuracy (generic): comparable scans only, i.e. scans
+            # where both sides had data to compare. Scans with no simulation
+            # counterpart lower the *overall* score but say nothing about
+            # match quality, so they are excluded here and reported
+            # separately as overall (coverage-inclusive) accuracy.
+            try:
+                comp_matches = int(sum(int(m) for m in scan_matches))
+                comp_den = int(sum(int(d) for d in scan_den))
+            except Exception:
+                comp_matches, comp_den = 0, 0
+            comp_acc = (comp_matches / comp_den * 100.0) if comp_den > 0 else None
+            comp_acc_str = "N/A" if comp_acc is None else f"{comp_acc:.2f}"
             rows = []
             for si, m, d, a in zip(scan_idxs, scan_matches, scan_den, scan_acc):
                 a_str = "N/A" if a is None else f"{a:.2f}"
@@ -595,9 +626,12 @@ class DetectionMappingKPIHDF:
             # Render HTML using imported template string
             html = detection_html.format(
                 sensor_id=self.sensor_id,
-                matches=matches,
-                total_detections=total_detections,
-                accuracy=accuracy_str,
+                matches=comp_matches,
+                total_detections=comp_den,
+                accuracy=comp_acc_str,
+                overall_matches=matches,
+                overall_total=total_detections,
+                overall_accuracy=accuracy_str,
                 ran_th=f"{self.RAN_THRESHOLD:.6f}",
                 vel_th=f"{self.VEL_THRESHOLD:.6f}",
                 theta_th=f"{self.THETA_THRESHOLD:.6f}",

@@ -71,19 +71,46 @@ detection_html = """<html>
 <body>
     <h1>Detection KPIs - {sensor_id}</h1>
 
-    <div class="kpi-box">
-        <div class="kpi-header">Matching Accuracy</div>
-        <div>Matched Detections: <span class="kpi-value">{matches}/{total_detections}</span></div>
-        <div>Accuracy: <span class="kpi-value">{accuracy}%</span></div>
+    <div class="kpi-box" style="border-left: 5px solid #2980b9;">
+        <div class="kpi-header">Matching Accuracy (headline score)</div>
+        <div style="font-size: 1.4em;">Matched Detections: <span class="kpi-value">{matches}/{total_detections}</span></div>
+        <div style="font-size: 1.4em;">Accuracy: <span class="kpi-value">{accuracy}%</span></div>
+        <div style="margin-top: 8px; font-size: 0.92em; color: #34495e;">
+            <b>What this means:</b> of all vehicle detections in scans where <b>both</b> sides
+            had data to compare, this share matched. A detection counts as matched only if
+            its RDD indices are identical <b>and</b> range / velocity / azimuth / elevation
+            are all within the thresholds below. Scans with no simulation counterpart are
+            excluded here — they say nothing about match quality.
+        </div>
+        <div style="margin-top: 8px; font-size: 0.92em; color: #34495e;">
+            <b>Overall, all scans included:</b> {overall_matches}/{overall_total} =
+            {overall_accuracy}%. This lower figure additionally counts every vehicle
+            detection in scans that could not be compared at all (see “Scans with matches”
+            below) — it measures <b>coverage + accuracy</b>, not match quality alone.
+        </div>
     </div>
 
-
+    <div class="kpi-box">
+        <div class="kpi-header">How to read this report</div>
+        <ul>    
+            <li><b>Headline denominator ({total_detections})</b> covers only comparable scans
+                ({scans_with_matches} of {scans_processed} processed). The overall figure above
+                uses the full denominator ({overall_total}).</li>
+            <li><b>Scans processed / with matches ({scans_processed} / {scans_with_matches})</b>
+                tells you how many scans could actually be compared. In RDD-assisted mode a scan
+                contributes matches only if both sides carry RDD index rows for it.</li>
+            <li><b>Best / worst single-scan accuracy</b> below are extremes over matched scans
+                only — consistent with the headline, not a second competing score.</li>
+            <li><b>Matching mode ({matching_mode})</b> shows whether matching used RDD indices
+                or the signal-only fallback.</li>
+        </ul>
+    </div>
 
     <div class="kpi-box">
         <div class="kpi-header">Summary</div>
         <div>Matching Mode: <span class="kpi-value">{matching_mode}</span></div>
-        <div>Min Accuracy: <span class="kpi-value">{min_accuracy}%</span></div>
-        <div>Max Accuracy: <span class="kpi-value">{max_accuracy}%</span></div>
+        <div>Best single-scan accuracy (scans with &ge;1 match only): <span class="kpi-value">{max_accuracy}%</span></div>
+        <div>Worst single-scan accuracy (scans with &ge;1 match only): <span class="kpi-value">{min_accuracy}%</span></div>
         <div>Scans (vehicle/simulation): <span class="kpi-value">{veh_si_count}/{sim_si_count}</span></div>
         <div>Scans processed / with matches: <span class="kpi-value">{scans_processed} / {scans_with_matches}</span></div>
     </div>

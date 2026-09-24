@@ -20,7 +20,13 @@ import gc
 from typing import List, Set
 from UDP_KPI.b_data_storage.kpi_data_model_storage import KPI_DataModelStorage
 
-from UDP_KPI.b_data_storage.kpi_config_storage import KPI_ALIGNMENT_CONFIG ,KPI_TRACKER_CONFIG,KPI_DETECTION_CONFIG
+from UDP_KPI.b_data_storage.kpi_config_storage import (
+    KPI_ALIGNMENT_CONFIG,
+    KPI_TRACKER_CONFIG,
+    KPI_DETECTION_CONFIG,
+    STREAM_ALIASES,
+    canonical_stream_name,
+)
 
 
 
@@ -110,16 +116,25 @@ class KPIHDFParser:
             KPI_DETECTION_CONFIG.keys(),
             KPI_TRACKER_CONFIG.keys()
         )
+        # Accept known log variants (Dyn_Align_STREAM, OBJECT_LIST_STREAM, ...)
+        # by mapping them to their canonical KPI stream name.
+        all_keys = all_keys.union(
+            {canonical_stream_name(k) for k in list(all_keys)}
+        )
+        for _variants in STREAM_ALIASES.values():
+            all_keys.update(_variants)
+
+        raw_stream = group.name.split("/")[2] if len(group.name.split("/")) > 1 else ""
+        current_stream = canonical_stream_name(raw_stream)
 
         is_second_layer = current_depth == 2
-        if is_second_layer and current_group_name not in all_keys:
+        if is_second_layer and canonical_stream_name(current_group_name) not in all_keys:
             return  # Skip this group and all its children
 
         # Process datasets immediately to avoid storing them all in memory
         # This processes items in a single pass rather than storing and then processing
         datasets_to_process = []
         child_groups = []
-        current_stream = group.name.split("/")[2] if len(group.name.split("/")) > 1 else ""
 
         # Build set of valid signal names (keys + aliases) for the current stream
         def _collect_names(config):
