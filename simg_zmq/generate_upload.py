@@ -347,15 +347,19 @@ def generate(no_rag=False):
     else:
         print('  WARNING: scripts/hpcc_bundle_templates/kpi not found; KPI launcher scripts will be missing from the bundle')
 
-    # Copy rResim_Gen7.sh from project root (parent directory)
-    resim_sh_src = ROOT / 'rResim_Gen7.sh'
+    # Copy trig_helios.sh (renamed from rResim_Gen7.sh) from project root
+    resim_sh_src = ROOT / 'trig_helios.sh'
+    legacy_resim_sh_src = ROOT / 'rResim_Gen7.sh'
     if resim_sh_src.exists():
-        shutil.copy2(resim_sh_src, GEN / 'rResim_Gen7.sh')
-        print('  copied rResim_Gen7.sh')
+        shutil.copy2(resim_sh_src, GEN / 'trig_helios.sh')
+        print('  copied trig_helios.sh')
+    elif legacy_resim_sh_src.exists():
+        shutil.copy2(legacy_resim_sh_src, GEN / 'trig_helios.sh')
+        print('  copied legacy rResim_Gen7.sh as trig_helios.sh')
     else:
-        print('  WARNING: rResim_Gen7.sh not found at project root')
+        print('  WARNING: trig_helios.sh not found at project root')
 
-    # rResim_Gen7.sh shells out to `xxd -p -r` to decode its embedded hex
+    # trig_helios.sh shells out to `xxd -p -r` to decode its embedded hex
     # commands, but the main_html.simg base image (python:3.10-slim) does not
     # ship xxd. Rebuilding/redeploying the 1.2GB image just for one binary is
     # expensive, so drop in a tiny xxd-compatible shim (python3 is always

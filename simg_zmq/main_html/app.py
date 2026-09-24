@@ -167,7 +167,7 @@ def _first_existing_file(*candidates) -> str:
 
 
 def _resim_script_source_path() -> str:
-    """Locate rResim_Gen7.sh across dev and deployed (Singularity) layouts.
+    """Locate trig_helios.sh across dev and deployed (Singularity) layouts.
 
     Inside the deployed container, `_repo_root()` resolves via the
     /app/main_html bind-mount (e.g. /app), so `_repo_root().parent` is just
@@ -176,14 +176,18 @@ def _resim_script_source_path() -> str:
     the SAME absolute path inside and outside the container, so they reliably
     point at the real deploy root (where generate_upload.py copies the
     script). Fall back to the local Windows dev layout (repo's parent dir).
+    The legacy rResim_Gen7.sh name is kept as a fallback for older deploys.
     """
     candidates = []
     bundle_root = (os.environ.get('HPCC_BUNDLE_ROOT') or '').strip()
     if bundle_root:
+        candidates.append(os.path.join(bundle_root, 'trig_helios.sh'))
         candidates.append(os.path.join(bundle_root, 'rResim_Gen7.sh'))
     project_root_env = (os.environ.get('HPCC_PROJECT_ROOT') or '').strip()
     if project_root_env:
+        candidates.append(os.path.join(os.path.dirname(project_root_env.rstrip('/\\')), 'trig_helios.sh'))
         candidates.append(os.path.join(os.path.dirname(project_root_env.rstrip('/\\')), 'rResim_Gen7.sh'))
+    candidates.append(str(_repo_root() / 'trig_helios.sh'))
     candidates.append(str(_repo_root() / 'rResim_Gen7.sh'))
     return _first_existing_file(*candidates)
 
@@ -1064,6 +1068,7 @@ def api_resim_run_submit():
     simg_path = (data.get('simg_path') or '').strip()
     config_xml = (data.get('config_xml') or data.get('xml_path') or '').strip()
     profile_id = (data.get('profile') or 'krakow').strip().lower()
+    bus_tag = (data.get('bus_tag') or 'b02').strip().lower()
     create_jira = data.get('create_jira') in (True, '1', 'true')
     jira_board = (data.get('jira_board') or '').strip() or 'FHW'
     jira_assignee = (data.get('jira_assignee') or '').strip()
@@ -1079,6 +1084,8 @@ def api_resim_run_submit():
         return jsonify({'ok': False, 'error': 'XML configuration path must point to a .xml file.'}), 400
     if profile_id not in KRAKOW_RUNTIME_PROFILES:
         return jsonify({'ok': False, 'error': 'Unknown Krakow Resim runtime profile.'}), 400
+    if bus_tag not in ('b02', 'b04'):
+        return jsonify({'ok': False, 'error': "Unknown bus tag. Choose 'b02' or 'b04'."}), 400
 
     cluster_txt = cluster_from_path(input_txt)
     cluster_simg = cluster_from_path(simg_path)
@@ -1114,7 +1121,7 @@ def api_resim_run_submit():
 
     resim_script_src = _resim_script_source_path()
     if not os.path.isfile(resim_script_src):
-        return jsonify({'ok': False, 'error': f'rResim_Gen7.sh not found (looked at: {resim_script_src}).'}), 500
+        return jsonify({'ok': False, 'error': f'trig_helios.sh not found (looked at: {resim_script_src}).'}), 500
 
     # Fetch the logged-in user's stored cluster password
     user_password = _stored_cluster_password_for_current_user(current_user.net_id)
@@ -1149,7 +1156,7 @@ def api_resim_run_submit():
     resim_invocation = (
         f"env RESIM_SLURM_MODULE={shlex.quote(profile['module'])} "
         f"{shlex.quote(resim_script_src)} {shlex.quote(input_txt)} "
-        f"{shlex.quote(simg_path)} highPrio"
+        f"{shlex.quote(simg_path)} highPrio {shlex.quote(bus_tag)}"
     )
     if cluster_txt == 'krakow' and profile_id != 'krakow':
         srun_command = shlex.quote(profile.get('srun') or 'srun')
@@ -1192,6 +1199,7 @@ def api_resim_run_submit():
             'input_txt': input_txt,
             'simg_path': simg_path,
             'config_xml': config_xml,
+            'bus_tag': bus_tag,
             'create_jira': create_jira,
             'jira_board': jira_board,
             'jira_assignee': jira_assignee,
@@ -3710,7 +3718,7 @@ _LOG_FAILURE_MARKERS = [
 
 def _first_failure_marker_in_log(log_path: str) -> str:
     """Return a human-readable reason if the log contains a known failure
-    signature, else ''. rResim_Gen7.sh has no `set -e` and always finishes
+    signature, else ''. trig_helios.sh has no `set -e` and always finishes
     with a trivial `deactivate`, so its process exit code is 0 even when the
     real work (source venv / run resim_main.py) failed — the exit code
     alone cannot be trusted for this tool.
@@ -3866,7 +3874,7 @@ def _run_ssh_job_background(
             job = JobHistory.query.get(job_id)
             if job:
                 job.completed_at = datetime.utcnow()
-                # rResim_Gen7.sh has no `set -e` and always ends on a trivial
+                # trig_helios.sh has no `set -e` and always ends on a trivial
                 # `deactivate`, so it exits 0 even when the real work (source
                 # venv / run resim_main.py) failed with "Permission denied"
                 # on a third-party project path — exit code alone is not

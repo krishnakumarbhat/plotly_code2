@@ -37,12 +37,12 @@ Large or runtime-only artifacts were deliberately excluded:
 
 ## Important Finding
 
-The current ReSim chain does not invoke the HPCC MUDP or KPI tools directly. The ReSim child script currently states that HTML, BORDNET, MUDP, and UDP KPI stages were removed from this pipeline. Those tools are separate broker/runtime tools in the surrounding `simg_zmq` platform and must be modeled as a downstream or parallel workflow, not as a direct child of `rResim_Gen7.sh`.
+The current ReSim chain does not invoke the HPCC MUDP or KPI tools directly. The ReSim child script currently states that HTML, BORDNET, MUDP, and UDP KPI stages were removed from this pipeline. Those tools are separate broker/runtime tools in the surrounding `simg_zmq` platform and must be modeled as a downstream or parallel workflow, not as a direct child of `trig_helios.sh` (renamed from `rResim_Gen7.sh`).
 
 ## Current Southfield Call Shape
 
 ```text
-rResim_Gen7.sh <input.txt> <resim.simg> highPrio
+trig_helios.sh <input.txt> <resim.simg> highPrio <b02|b04>
 ```
 
 The wrapper activates the Southfield Gen7 environment and calls `resim_main.py`. The Python entry point creates input manifests and generated Slurm scripts, then invokes `rResim_main.sh` or `rResim_main_highPrio.sh`. Those scripts submit the ReSim array and dependent mining/statistics jobs.

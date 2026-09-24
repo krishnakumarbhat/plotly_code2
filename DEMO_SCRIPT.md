@@ -17,7 +17,7 @@ Golden rule the audience should remember: **CAN KPI → CAN Interactive Plot · 
 
 ## 3–10 min · Resim Run — the focus
 
-> "Resim Run launches a customer resimulation. The user gives two paths: the scenario `input.txt` and the app `.simg`. The console validates they are on the same cluster partition, detects the project and account from the path, then runs the vendor script `rResim_Gen7.sh` as the logged-in user over SSH, under Slurm."
+> "Resim Run launches a customer resimulation. The user gives two paths: the scenario `input.txt` and the app `.simg`. The console validates they are on the same cluster partition, detects the project and account from the path, then runs `trig_helios.sh <input> <simg> highPrio <b02|b04>` as the logged-in user over SSH, under Slurm."
 
 **Demo steps:**
 1. Runtime Map → "Resim Run" form → fill `input.txt` + `.simg` → click **Detect** (shows cluster / project / partition).

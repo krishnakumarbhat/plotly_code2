@@ -6,7 +6,7 @@ The current Southfield ReSim flow is a layered, generated-script pipeline rather
 
 ```text
 Runtime Map / SSH
-  -> all_services_7/rResim_Gen7.sh
+  -> trig_helios.sh (renamed from all_services_7/rResim_Gen7.sh)
   -> ReSimAutoMng/Support/Resim/resim_main.py
   -> resim_generic.py user input and validation
   -> generated jobout manifests and generated Slurm scripts
@@ -20,11 +20,11 @@ Runtime Map / SSH
   -> dependent mining and statistics jobs
 ```
 
-The current HPCC wrapper passes only the input list, SIMG path, and `highPrio` mode. The XML/custom Docker choice is interactive inside `resim_main.py`; it is not a positional argument to `rResim_Gen7.sh`.
+The current HPCC wrapper passes the input list, SIMG path, `highPrio` mode, and bus tag (`b02`/`b04`). The XML/custom Docker choice is interactive inside `resim_main.py`; it is not a positional argument to `trig_helios.sh`.
 
 ## 2. Entry Point
 
-### `rResim_Gen7.sh`
+### `trig_helios.sh` (formerly `rResim_Gen7.sh`)
 
 The deployed wrapper is version `3.0`.
 
@@ -216,9 +216,9 @@ These jobs consume output references written by the task scripts. They are not p
 
 The current ReSim child template explicitly states that HTML, BORDNET, MUDP, and UDP KPI stages were removed from this pipeline. Therefore:
 
-- `rResim_Gen7.sh` does not call MUDP.
-- `rResim_Gen7.sh` does not call UDP KPI.
-- `rResim_Gen7.sh` does not call Interactive Plot.
+- `trig_helios.sh` does not call MUDP.
+- `trig_helios.sh` does not call UDP KPI.
+- `trig_helios.sh` does not call Interactive Plot.
 - Those tools are separate HPCC broker/runtime tools in `simg_zmq`.
 
 A future combined workflow should make the relationship explicit:

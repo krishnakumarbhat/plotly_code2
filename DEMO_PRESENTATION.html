@@ -299,7 +299,7 @@
               <tr><td><b>Optional</b></td><td>Create JIRA ticket</td><td>Auto-file a ticket with a Gemma-generated analysis of the run</td></tr>
             </table>
           </div>
-          <div class="callout" style="margin-top:20px;"><b>Key point for the tech lead:</b> the console executes <code>rResim_Gen7.sh</code> <i>as the logged-in user</i> via SSH (askpass-based, non-interactive), auto-answers vendor prompts, and writes everything to a per-job log.</div>
+          <div class="callout" style="margin-top:20px;"><b>Key point for the tech lead:</b> the console executes <code>trig_helios.sh</code> <i>as the logged-in user</i> via SSH (askpass-based, non-interactive), auto-answers vendor prompts, and writes everything to a per-job log.</div>
         </div>
       </section>
 
@@ -313,7 +313,7 @@
               <div class="step"><div><b>1 · Open Runtime Map → "Resim Run"</b>From the dashboard open <code>Runtime Map</code>; the Resim Run form is right on top. Click <b>Detect</b> to auto-fill cluster, project and partition from the paths.</div></div>
               <div class="step"><div><b>2 · Fill paths &amp; options</b>Paste the <code>input.txt</code> and <code>.simg</code> paths (or use the Browse picker), pick an execution profile, optionally check "Create JIRA ticket".</div></div>
               <div class="step"><div><b>3 · Submit</b>“Run Resim” → the app validates same-partition paths, writes a unique job log, and launches an SSH background worker.</div></div>
-              <div class="step"><div><b>4 · SSH as you</b>The worker runs <code>rResim_Gen7.sh input.txt image.simg highPrio</code> on your behalf (stored credentials via askpass), auto-answering “Y” prompts, with a 30-min safety timeout.</div></div>
+              <div class="step"><div><b>4 · SSH as you</b>The worker runs <code>trig_helios.sh input.txt image.simg highPrio b02/b04</code> on your behalf (stored credentials via askpass), auto-answering “Y” prompts, with a 30-min safety timeout.</div></div>
               <div class="step"><div><b>5 · Live console</b>You land on the <b>Runtime Console</b> page: the log tails every 3 seconds, and the owner can even send keystrokes (or Ctrl+C) into the running tmux-backed session.</div></div>
               <div class="step"><div><b>6 · Result</b>Status becomes COMPLETED (exit code + failure-marker sniffing, since the vendor script always exits 0). JIRA ticket auto-created if enabled.</div></div>
             </div>
@@ -591,7 +591,7 @@
             </div>
           </div>
           <pre class="code" style="margin-top:20px;"><span class="c"># what a live console tail looks like</span>
-CMD: ssh -tt user@127.0.0.1 bash -lc 'env RESIM_SLURM_MODULE=slurm ./rResim_Gen7.sh ... '
+CMD: ssh -tt user@127.0.0.1 bash -lc 'env RESIM_SLURM_MODULE=slurm ./trig_helios.sh ... '
 START: 2026-08-14T09:12:03Z
 [ver-3.0] : Starting Resim Execution
 module load slurm ... OK

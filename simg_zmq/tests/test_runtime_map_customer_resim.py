@@ -77,7 +77,7 @@ class _FakeThread:
 
 @pytest.fixture
 def resim_boundary_mocks(tmp_path, monkeypatch):
-    script_path = tmp_path / 'rResim_Gen7.sh'
+    script_path = tmp_path / 'trig_helios.sh'
     script_path.write_text('#!/usr/bin/env bash\n', encoding='utf-8')
     session = _FakeSession()
     _FakeThread.instances = []
@@ -167,6 +167,9 @@ def test_runtime_map_template_exposes_helios_and_updates_profile_metadata():
     assert 'value="athena"' in html
     assert 'id="detectedPartition"' in html
     assert 'profile: resimProfile ? resimProfile.value : \'krakow\'' in html
+    assert 'id="bus_tag"' in html
+    assert 'value="b02"' in html
+    assert 'value="b04"' in html
 
 
 def test_runtime_map_template_keeps_highprio_for_southfield():
@@ -204,15 +207,39 @@ def test_resim_defaults_to_normal_krakow_runtime(resim_boundary_mocks):
     assert data == {'ok': True, 'message': 'Submitted', 'job_id': 42}
     assert session.commits == 1
     assert session.jobs[0].parameters['profile'] == 'krakow'
+    assert session.jobs[0].parameters['bus_tag'] == 'b02'
     assert session.jobs[0].parameters['config_xml'] == '/net/8k3/project/resim.xml'
     assert session.jobs[0].parameters['profile_label'] == 'Krakow Default'
     assert len(thread_class.instances) == 1
     command = thread_class.instances[0].kwargs['args'][1][-1]
     assert 'RESIM_SLURM_MODULE=slurm' in command
     assert 'srun -A' not in command
-    assert '/net/8k3/project/input.txt /net/8k3/project/resim.simg highPrio' in command
+    assert '/net/8k3/project/input.txt /net/8k3/project/resim.simg highPrio b02' in command
     assert thread_class.instances[0].kwargs['kwargs']['config_xml'] == '/net/8k3/project/resim.xml'
     assert thread_class.instances[0].started is True
+
+
+def test_resim_passes_b04_bus_tag_through(resim_boundary_mocks):
+    _session, thread_class, _tmp_path = resim_boundary_mocks
+
+    result = _submit_resim(_resim_payload(bus_tag='b04'))
+    status, _data = _response_parts(result)
+
+    assert status == 200
+    command = thread_class.instances[0].kwargs['args'][1][-1]
+    assert 'highPrio b04' in command
+
+
+def test_resim_rejects_unknown_bus_tag(resim_boundary_mocks):
+    session, thread_class, _tmp_path = resim_boundary_mocks
+
+    result = _submit_resim(_resim_payload(bus_tag='b07'))
+    status, data = _response_parts(result)
+
+    assert status == 400
+    assert 'bus tag' in data['error'].lower()
+    assert session.jobs == []
+    assert thread_class.instances == []
 
 
 def test_resim_input_feeder_sends_xml_after_yes():
@@ -278,7 +305,7 @@ def test_resim_keeps_southfield_execution_unchanged(resim_boundary_mocks):
     command = thread_class.instances[0].kwargs['args'][1][-1]
     assert 'module load slurm/' not in command
     assert 'srun -A' not in command
-    assert '/mnt/usmidet/project/input.txt /mnt/usmidet/project/resim.simg highPrio' in command
+    assert '/mnt/usmidet/project/input.txt /mnt/usmidet/project/resim.simg highPrio b02' in command
 
 
 def test_resim_rejects_missing_cluster_password_without_starting_a_job(resim_boundary_mocks, monkeypatch):
@@ -296,13 +323,13 @@ def test_resim_rejects_missing_cluster_password_without_starting_a_job(resim_bou
 
 def test_resim_rejects_missing_script_without_starting_a_job(resim_boundary_mocks, monkeypatch):
     session, thread_class, tmp_path = resim_boundary_mocks
-    monkeypatch.setattr(main, '_resim_script_source_path', lambda: str(tmp_path / 'missing-rResim_Gen7.sh'))
+    monkeypatch.setattr(main, '_resim_script_source_path', lambda: str(tmp_path / 'missing-trig_helios.sh'))
 
     result = _submit_resim(_resim_payload())
     status, data = _response_parts(result)
 
     assert status == 500
-    assert 'rResim_Gen7.sh not found' in data['error']
+    assert 'trig_helios.sh not found' in data['error']
     assert session.jobs == []
     assert thread_class.instances == []
 
@@ -315,9 +342,9 @@ def test_generated_dashboard_copies_include_the_runtime_map_changes():
         ('main_html/templates/runtime_map.html', 'generate_upload/bundle_src/main_html/templates/runtime_map.html'),
     ]
     markers = {
-        'main_html/app.py': ('_runtime_customer_accounts', 'Unknown Krakow Resim runtime profile.', "data.get('config_xml')", 'RESIM_CONFIG_XML'),
+        'main_html/app.py': ('_runtime_customer_accounts', 'Unknown Krakow Resim runtime profile.', "data.get('config_xml')", 'RESIM_CONFIG_XML', 'bus_tag'),
         'main_html/templates/tools/kpi.html': ('Prepare the bundle', 'Customer Name', 'Other'),
-        'main_html/templates/runtime_map.html': ('resimProfile', 'Helios', 'profile:', 'config_xml'),
+        'main_html/templates/runtime_map.html': ('resimProfile', 'Helios', 'profile:', 'config_xml', 'bus_tag'),
     }
 
     for source_name, generated_name in pairs:
@@ -335,6 +362,7 @@ def test_generated_dashboard_copies_include_the_runtime_map_changes():
         ({'input_txt': 'C:/project/input.txt', 'simg_path': 'C:/project/resim.simg', 'config_xml': 'C:/project/resim.xml'}, 'Input file path must start'),
         ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/mnt/usmidet/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml'}, 'Both files must be in the same partition'),
         ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml', 'profile': 'unknown'}, 'Unknown Krakow Resim runtime profile.'),
+        ({'input_txt': '/net/8k3/project/input.txt', 'simg_path': '/net/8k3/project/resim.simg', 'config_xml': '/net/8k3/project/resim.xml', 'bus_tag': 'b07'}, 'Unknown bus tag'),
     ],
 )
 def test_resim_rejects_invalid_inputs_without_starting_a_job(payload, expected_error, resim_boundary_mocks):

@@ -198,7 +198,7 @@
         </div>
         <div class="collapse show" id="resimFormBody">
             <div class="card-body">
-                <p class="lead-copy">Provide the <code>input.txt</code>, <code>.simg</code>, and Resim <code>.xml</code> paths. The XML path is supplied after the vendor confirmation prompt.</p>
+                <p class="lead-copy">Provide the <code>input.txt</code>, <code>.simg</code>, and Resim <code>.xml</code> paths. The console runs <code>trig_helios.sh &lt;input&gt; &lt;simg&gt; highPrio &lt;b02|b04&gt;</code>. The XML path is supplied after the vendor confirmation prompt.</p>
                 <form id="resimRunForm">
                     {% if detected_cluster == 'krakow' %}
                     <div class="row g-3 mb-2">
@@ -210,6 +210,25 @@
                                 {% endfor %}
                             </select>
                             <small class="text-muted" id="resimProfileHelp">Krakow Default uses <code>module load slurm</code>. Helios uses the shared Krakow storage with <code>module load slurm/helios</code>.</small>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="bus_tag">Bus tag</label>
+                            <select class="form-select" id="bus_tag" name="bus_tag">
+                                <option value="b02" selected>b02</option>
+                                <option value="b04">b04</option>
+                            </select>
+                            <small class="text-muted">Passed as <code>highPrio &lt;bus-tag&gt;</code> to <code>trig_helios.sh</code>.</small>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-3">
+                            <label class="form-label" for="bus_tag">Bus tag</label>
+                            <select class="form-select" id="bus_tag" name="bus_tag">
+                                <option value="b02" selected>b02</option>
+                                <option value="b04">b04</option>
+                            </select>
+                            <small class="text-muted">Passed as <code>highPrio &lt;bus-tag&gt;</code> to <code>trig_helios.sh</code>.</small>
                         </div>
                     </div>
                     {% endif %}
@@ -1484,6 +1503,8 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
     const inputTxt = document.getElementById('input_txt').value.trim();
     const simgPath = document.getElementById('simg_path').value.trim();
     const configXml = document.getElementById('config_xml').value.trim();
+    const busTagEl = document.getElementById('bus_tag');
+    const busTag = busTagEl ? busTagEl.value : 'b02';
     const createJira = document.getElementById('create_jira').checked;
     const jiraBoard = document.getElementById('jira_board').value.trim();
     const jiraAssignee = document.getElementById('jira_assignee').value.trim();
@@ -1505,6 +1526,7 @@ document.getElementById('resimRunForm').addEventListener('submit', async functio
                 input_txt: inputTxt,
                 simg_path: simgPath,
                 config_xml: configXml,
+                bus_tag: busTag,
                 profile: resimProfile ? resimProfile.value : 'krakow',
                 create_jira: createJira,
                 jira_board: jiraBoard || 'FHW',
