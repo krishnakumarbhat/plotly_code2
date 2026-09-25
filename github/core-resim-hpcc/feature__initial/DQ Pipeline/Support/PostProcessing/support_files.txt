@@ -1,0 +1,22 @@
+#Tools Singularity
+html_simg:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/Tools/HTML_Plotter/resim_tool_html.simg
+bord_simg:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/Tools/Bordnet/resim_tool_bordnet.simg
+mudp_simg:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/Tools/Quality_Checker/resim_tool_mudp.simg
+
+
+# tools config files
+html_config_gen6:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/HTMLConfig_gen6.xml
+html_config_dc_gen6:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/HTMLConfig_gen6_dc.xml
+html_config_gen7:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/HTMLConfig_gen7.xml
+bord_config_scale1:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/bordnet_config_scale1.xml
+bord_config_scale3_srr6p:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/bordnet_config_scale3_SRR6P.xml
+bord_config_scale3_flr4p:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/bordnet_config_scale3_adcam.xml
+bord_config_scale3_mpad:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/bordnet_config_scale3_mpad.xml
+bord_config_honda_srr6p:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/bordnet_config_honda_SRR6P.xml
+bord_config_traton_srr6p:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/config/bordnet_config_traton_SRR6P.xml
+mudp_config_gen6:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/Tools/Quality_Checker/MUDP_DATA_Extractor_config_gen6.xml
+mudp_config_gen7:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/Tools/Quality_Checker/MUDP_DATA_Extractor_config_gen7.xml
+
+#Additional Scripts
+json_creator:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/Support/PostProcessing/pipeline_jsonCreator.py
+splitter:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/7-Tools/ReSimAutoMng/Shell/splitter_highPrio.sh

@@ -1,0 +1,6 @@
+# MUDP Singularity image
+mudp_simg:/mnt/usmidet/projects/GPO-IFV7XX/4-Checkout/MUDP_Kpi/resim_tool_mudp.simg
+mudp_config:/mnt/usmidet/projects/GPO-IFV7XX/4-Checkout/MUDP_Kpi/MUDP_DATA_Extractor_config_gen7.xml
+
+# UDP_KPI Singularity image
+udp_kpi_simg:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/udp_kpi.simg

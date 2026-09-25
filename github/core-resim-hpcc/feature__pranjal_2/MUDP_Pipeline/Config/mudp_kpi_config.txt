@@ -1,0 +1,10 @@
+# Paths to Singularity images and configuration files
+# Update these paths to point to your local MUDP/UDP_KPI tools
+
+# MUDP Singularity image
+mudp_simg:/net/8k3/e0fs01/users/xjfr08/Docker/MUDP/resim_tool_mudp.simg
+# MUDP configuration XML file
+mudp_config:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/v0bivq/R11/MUDP_DATA_Extracter_config_5sen.xml
+
+# UDP_KPI Singularity image
+udp_kpi_simg:udp_kpi_simg:/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/4-Checkout/all_service/kpi/udp/udp_kpi.simg

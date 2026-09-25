@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<DC_SMOKE_TEST>
+	<!-- XML File Version -->
+ 	<Version>
+	    <XML_Version>1.0</XML_Version>
+	</Version>
+	
+	<Execution_Request>
+            <simg>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/multi_config/resim_v2_platform_srr_mrr_dc_20251210151643.simg</simg>
+            <sil_engine_config>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/d1cse7/RESTRICTED/Smoketest/DC/SIL_Engine_Config.xml</sil_engine_config>
+            <input_txt>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/d1cse7/RESTRICTED/Smoketest/DC/input.txt</input_txt>
+            <multiplex_script>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/d1cse7/RESTRICTED/Smoketest/DC/smoketestdc_multiplex_silconfig.py</multiplex_script>
+        </Execution_Request>
+	
+</DC_SMOKE_TEST>

@@ -1,0 +1,11 @@
+# Tools Singularity
+mudp_simg:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/resim_tool_mudp_hdf.simg
+converter_simg:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/Tools/CONVERTER_TOOL/resim_tool_converter.simg
+udp_kpi_simg:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/udp_kpi.simg
+
+# tools config files
+mudp_config_gen7:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/MUDP_DATA_Extracter_config.xml
+mudp_config_mcip:/mnt/usmidet/projects/GPO-IFV7XX/7-Tools/Tools/Quality_Checker/MUDP_DATA_Extracter_config_UDP_CDC.xml
+mudp_config_dgps:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/UDP_KPI/MUDP_DATA_Extracter_config.xml
+converter_config:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/Mdf4_Converter_Config.xml
+converter_config_dgps:/mnt/usmidet/projects/GPO-IFV7XX/8-Users/pcmzxl/Mdf4_Converter_Config.xml

@@ -1,0 +1,74 @@
+name: HPCC flow
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+    types:
+      - opened
+      - synchronize
+      - reopened
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  issues: write
+  security-events: write
+  id-token: write
+
+run-name: >
+  ${{ (github.event_name == 'pull_request' &&
+        format('"{0}" → {1}',
+          github.event.pull_request.title,
+          github.base_ref)) ||
+      (github.event_name == 'push' &&
+        format('Push to {0} by {1}',
+          github.ref_name,
+          github.actor)) ||
+      (github.event_name == 'workflow_dispatch' &&
+        format('Manual Run [{0}] by {1}',
+          github.event.inputs.job-to-run,
+          github.actor))
+  }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-validation:
+    if: |
+      github.event_name == 'pull_request'
+    uses: Aptiv/workflows-library/.github/workflows/pr-validation.yml@v4
+    permissions:
+      pull-requests: write
+      contents: read
+      issues: write
+    with:
+      runner: gpo-linux-small
+      required-status: "${{ vars.JIRA_STATUS }}"
+      jira-project-keys: "${{ vars.RESIM_JIRA_KEYS }}"
+      commit-message-pattern: "([A-Z]{3,4}+-[0-9]+)"
+      send-feedback: true
+      jira-url: ${{ vars.JIRA_URL }}
+    secrets:
+      JIRA_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+  consolidate-report:
+    needs: [pr-validation]
+    if: always()
+    uses: Aptiv/workflows-library/.github/workflows/consolidate-report.yml@v4
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+    with:
+      runner: gpo-linux-small
+      enable-email-notification: true
+      enable-teams-notification: false
+      email-recipient: "sayuj.v.nair@aptiv.com"
+      success-labels: "pr-validation:pr-validation-passed"
+      failure-labels: "pr-validation:pr-validation-failed"
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}      
