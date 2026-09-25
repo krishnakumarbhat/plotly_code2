@@ -110,3 +110,5 @@ edge_hdf/udp/output/
 **/.pytest_cache/
 # Windows copy dupes like "file (1).h5"
 **/*(*).h5
+# GHE migration clones (local-only source of truth, nested .git per branch)
+github/
