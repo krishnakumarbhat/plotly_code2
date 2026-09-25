@@ -1,0 +1,2049 @@
+JiraTicket, JiraTitle, Date, Username, DoneForCustomer
+AGV-6,[AF] Connect the Embedded library for fusion in CDC Mode - OPL 87 ,17-01-23,lz7598,None
+AGV-7,[AF] Stitiching  Mode of SIL to Run RESIM on all logs in a folder ,16-11-14,jzwznt,None
+AGV-8,[HIL]  Audi Reported issue of HIL OH/Fences/Tracker Endianness,16-07-13,jz18z5,None
+AGV-10,[HIL] Audi Reported Issue of HIL plausibility,16-07-13,jz18z5,None
+AGV-11,[HIL] Integrate Vector CAN and Flexray Drivers into HIL ,16-11-10,jz18z5,None
+AGV-12,[HIL] HIl should be able to replay a DVL file into the sensors Using Canoe DLL ,16-11-10,jz18z5,None
+AGV-13,[AF] Build UDP frame grabber,16-11-02,qjmrfs,None
+AGV-14,HIL Bench should have capabilty to log UDP Data,17-05-09,jz18z5,None
+AGV-15,[AF] Integrate CAN and Fibex Parsers ,18-07-29,,None
+AGV-18,Audi PCR verification using Tracker CSV,17-12-12,djm3rb,None
+AGV-19,[AF]: Adding module to framework Track to Detection Converter in VC++,16-08-10,wztzkx,None
+AGV-21,[AF] Run time contol of CAN driver to inject the SIL outputs on CAN bus,18-06-05,wztzkx,None
+AGV-22,[AF] CAN only SIL for BMW SRR3,17-01-26,jzwznt,None
+AGV-23,[AF] Flexray only SIL for Audi SRR3 ,17-03-10,zzg23s,None
+AGV-24,[AF] DVL parsers and CAN messages Quality verification for BMW SRR3,18-07-29,,None
+AGV-28,[EL] Test Embedded library for Audi 85.3 Release,16-08-02,pzysy0,None
+AGV-31,Testing of 85.0 Audi SIL Delivery in ADTF Sandbox ,16-07-20,lz7598,None
+AGV-33,Test Embedded 85 with vehicle logs ,16-08-10,jz18z5,None
+AGV-36,Update UDP Decoder / Backward compatibity for 88 UDP streams ,16-08-30,pzbglx,None
+AGV-37,Handle UDP CDC 1 cycle Latch issue from XY88 log,16-08-30,jzwznt,None
+AGV-39,RESIM Release Package Delivery to Delphi Internal User - AUDI XY85.3 Compatible,16-08-10,zzg23s,None
+AGV-40,AUDI 88 Logging Structure for Backward Compatibility,16-07-20,lz7598,None
+AGV-41,Add Sensor Positions in Output of the decoder to Audi ADTF interface,16-10-26,lz7598,None
+AGV-42,[HIL] HIL Crash issue when stop button pressed ,16-07-13,jz18z5,None
+AGV-43,[HIL] Fences Not available on Flexray in  HIL ,16-07-13,jz18z5,None
+AGV-44,Testing of 88.0 Audi SIL in ADTF 85 Sandbox ,16-09-15,jzwznt,None
+AGV-45,[BMW_SRR3_SIL]SRR3 SIL Components compiled with GCC compiler,16-08-10,lz7598,None
+AGV-46,[BMW_SRR3_SIL]Verification of  input/output for the CAN bus (FAS/FASR/FASL),17-08-11,,None
+AGV-47,[BMW_SRR3_SIL]Objects-to-detections algorithm development,17-08-11,,None
+AGV-48,[BMW_SRR3_SIL]Verification of O2D algorithm on matlab env,17-08-11,,None
+AGV-49,Clean up Audi Customer  XML file and remove all the components not used .,16-07-21,jzwznt,None
+AGV-51,FASL FASR CAN DBC update to be carried over to the mapping of Matlab signals,16-08-10,pzysy0,None
+AGV-53,[AUDI_SRR3_SIL_DECODER] Update Interface for AUDI SIL/Decoder Output,16-08-10,lz7598,None
+AGV-54,SIL wrapper Modification to match embedded software ,16-07-14,pzysy0,None
+AGV-55,Add new Mode in XML for Default Calibration Loading to SIL,16-08-10,,None
+AGV-57,[AUDI_SRR3_SIL_DECODER],16-08-10,lz7598,None
+AGV-58,[AUDI_SRR3_SIL] Verify the backward compatibility block in SIL interface ,16-08-10,jzwznt,None
+AGV-59,[AUDI_SRR3_DECODER] Verify the backward compatibility block in Decoder interface ,16-07-22,pzbglx,None
+AGV-60,The input list needs to be sorted according to requirement zSDF_4110,16-08-10,jz18z5,None
+AGV-61,Update Framework to work for BMW SRR3 embedded library,16-08-10,lz7598,None
+AGV-62,UDP Stream Updates for I300,16-07-22,pzbglx,None
+AGV-63,Framework 1.6 testing using Matlab data ,16-08-10,kz6g2t,None
+AGV-64,Replace Framework 1.6 with 7.1 for VC++ Testing,16-08-10,lz7598,None
+AGV-65,Open Loop Matlab testing using VC++ 7.1,16-08-10,lz7598,None
+AGV-67,GCC build of Framework 7.1 ,16-08-10,zzg23s,None
+AGV-68,Test Matlab Open loop with GCC compiler,16-08-10,lz7598,None
+AGV-70,Not all logs are resimulated from file list,16-08-10,zzg23s,None
+AGV-71,Memory leak,16-08-30,jzwznt,None
+AGV-72,Not all data in BIN outputs,16-09-17,jzwznt,None
+AGV-80,DVSU Logger Creation and Data Verification of Audi Data,16-09-06,jz18z5,None
+AGV-81,Logger Creation,16-08-01,jz18z5,None
+AGV-82,IRadar Stream Modification,16-07-20,lz7598,None
+AGV-83,Decoder Module Modification,16-07-20,lz7598,None
+AGV-84,SIL Module Modification,16-07-20,lz7598,None
+AGV-85,HIL verification with XY85.3,16-07-20,jz18z5,None
+AGV-86,HIL verification with XY85.4,16-07-20,jz18z5,None
+AGV-87,[AUDI_SRR3_SIL] Fix:Issue with calibration decoder,16-08-01,jzwznt,None
+AGV-88,[AUDI_SRR3_SIL] Verification on sandbox from XY075 ,16-08-10,jzwznt,None
+AGV-89,[AUDI_SRR3_RESIM] Add resim error log file for every resim session,16-07-22,pzbglx,None
+AGV-90,[AUDI_SRR3_RESIM] Error handling in the Resim container,16-08-01,jzwznt,None
+AGV-91,[AUDI_SRR3_RESIM] Verification of Resim XY085 package,16-08-10,pzbglx,None
+AGV-92,Create a new thread in Audi HIL so that their thread is not Blocked ,16-08-10,jz18z5,None
+AGV-93,Improving HIL Engine to handle Power Cycle of ECU,16-09-06,jz18z5,None
+AGV-95,[RR_ADAS_DPH_RESIM] Support for sensor selection for resim operation,16-08-01,pzbglx,None
+AGV-96,BMW_SRR3_Hil_I-310,16-08-10,jz18z5,None
+AGV-97,[RR_ADAS_DPH_RESIM] Modify SIL engine to use sensor selection,16-10-07,jzwznt,None
+AGV-98,Build configiration for HIL component  for BMW SRR3,16-08-01,jz18z5,None
+AGV-99,Cannot queue resims because 'press any key to continue' feature,16-07-27,pzbglx,None
+AGV-100,For front radars boresight_angle is allways -+65 DEG,16-07-26,pzysy0,None
+AGV-101,Connect Delphi CAL XML files to the Embedded Library,16-11-14,,None
+AGV-102,Data handling in framework not robust leading to mis-match between embedded and SIL ouput,16-08-31,jzwznt,None
+AGV-103,Convert SRR3_HiL_Online AUDI API from blocking to unblocking,16-08-01,jz18z5,None
+AGV-104,Convert SRR3_HiL_Online AUDI API from blocking to unblocking,16-08-01,jz18z5,None
+AGV-105,Conversion of SRR3_HiL_Online API from Blocking to Unblock,16-08-01,jz18z5,None
+AGV-107,Crash issue in BMW_SRR3_SIL_Release_I300_ATS4P_20160804 release,16-08-30,zzg23s,None
+AGV-108,Latest Logging Structure from BMW I320 ATS to Backward Compatibility Block,16-08-22,pzbglx,None
+AGV-109,Decoder for XY88 Backward compatibility Included . ,16-08-22,pzbglx,None
+AGV-110,Backward compatibility block for 88,16-08-17,jz18z5,None
+AGV-112,Memory leak @ Audi HIL bench ,16-09-06,jz18z5,None
+AGV-113,HIL XY90 Testing - Backward Compatibilty,16-09-06,jz18z5,None
+AGV-114,Text file File Handling - Continuous File Replay Mode,16-12-12,jz18z5,None
+AGV-116,BMW Deliverable DSPACE GCC Activities Ptr,17-01-23,zzg23s,None
+AGV-117,Testing of 88.0 Audi Decoder in ADTF 85 Sandbox ,16-09-15,jzwznt,None
+AGV-118,Latest Logging Structure changes for XY90 software Backward Compatibility Block,16-08-30,pzbglx,None
+AGV-119,Down sampling of HIL Input Data ,16-11-14,,None
+AGV-120,UDP Socket API control from Matlab ,17-08-11,,None
+AGV-121,HIL Mode for BMW ,16-11-14,jz18z5,None
+AGV-122,Add Support on Framework to support JLR Logging structures ,16-10-25,pzbglx,None
+AGV-124,New Logging Streams for XY90 into Framework Backward Compatibility Block,16-08-30,pzbglx,None
+AGV-125,Update Framework to handle XY90 UDP logs ,16-09-06,pzbglx,None
+AGV-126,sensor mounting position was missing in XY090 Decoder (AUDI ADTF),16-09-06,pzbglx,None
+AGV-127,Incorrect version information from SIL reported in XY088_v0,16-08-31,jzwznt,None
+AGV-128,HIL Reinit to be protected against double call ,16-09-06,jz18z5,None
+AGV-129,XY95 SIL Audi ADTF Delivery +Subtasks,16-10-06,pzbglx,None
+AGV-130,RESIM XML Update,16-11-02,lz7598,None
+AGV-131,HIL 90 Stability issues seen in ADTF ,16-09-06,jz18z5,None
+AGV-132,Input - SW DSD ADTF Incompatibilty SIL Should Fail,16-11-02,jzwznt,None
+AGV-133,HIL Interface Definition,16-09-14,jz18z5,None
+AGV-134,Setup Initial HIL envinronment,16-09-21,zzg23s,None
+AGV-135,HiL Infrastructure Component Development,16-12-12,jz18z5,None
+AGV-136,Data Queue Manager Component Implmentation,16-10-12,jz18z5,None
+AGV-138,Integration of Object to Tracker Module in BMW HIL Mode1,16-11-10,jz18z5,None
+AGV-140,Update Existing HIL Core Components for BMW,16-11-10,jz18z5,None
+AGV-141,HIL Resimulator (Windows-VC++ Compiler),16-11-10,jz18z5,None
+AGV-142,Device Identification,16-11-10,jz18z5,None
+AGV-143,Create Tiny logger for HIL,16-11-14,qjmrfs,None
+AGV-144,Device configuration ,16-11-10,jz18z5,None
+AGV-145,Device communication ,16-11-10,jz18z5,None
+AGV-146,Transmit and Receive data,16-11-10,jz18z5,None
+AGV-147,MINI HIL ADTF Sandbox Verification ,17-06-08,jz18z5,None
+AGV-148,Create DPH_RR_ADAS_HIL_DQManager Library,16-10-12,jz18z5,None
+AGV-149,Add PCR_SensorStatus  and PCR_SensorStatus_02 into SRR3_RECW_Output_T,16-09-17,pzysy0,None
+AGV-150,Issues in ADTF 90 SIL,16-10-26,lz7598,None
+AGV-151,[BMW Delphi SIL]Impliment NULL mode in the Configuration which supports DVSU file generation,16-11-21,qjmrfs,None
+AGV-154,Integrate ADTF streaming library to Delphi SIL ,18-07-29,,None
+AGV-155,Integrate VIGEM logs read capabilty to Delphi SIL ,17-08-11,lz7598,None
+AGV-157,UDP Logs need to be calibration extractin,16-11-14,jzwznt,None
+AGV-159,ADTF did not check for DSD Incompatibilty issue raised by Embedded library ,16-10-07,jzwznt,None
+AGV-161,[AUDI SIL] Feature Function State Machine Input's Missed in Backward Compatibility,16-09-30,pzbglx,None
+AGV-162,Integrate RT Syncronizer into the RESIM ,18-07-29,,None
+AGV-164,XY100 ADTF Framework interface update ,16-10-26,lz7598,None
+AGV-165,[JLR _SRR3] Decoder update ,16-11-14,pzbglx,None
+AGV-166,XY105 Logging Streams to Backward Comaptibility,16-11-03,qjmrfs,None
+AGV-167,Pass MUX Errors /Calibrations from UDP Log from Framework to EMbedded library ,17-04-10,jzwznt,None
+AGV-168,Add Customer support for JLR in Framework / Decoder ,17-01-20,lz7598,None
+AGV-170,Decoder Capabilty to handle 4 Embedded library seperate,16-11-14,jzwznt,None
+AGV-171,Decoder to support Inter Customer Handling ,16-11-02,lz7598,None
+AGV-172,Make framework collect 4 Radar Cycles data and Call Single Radar Embedded library,17-01-19,zzg23s,None
+AGV-174,AUDI HIL XY105,16-11-02,jz18z5,None
+AGV-175,Data sync between object queue and HIL request,18-02-22,zzg23s,None
+AGV-176, Implementation of CAN replay for BMW SRR3 HIL,16-12-09,jz18z5,None
+AGV-178,Audi SIL ADTF Sandbox - release mode ,18-07-29,,None
+AGV-179,HIL TX to simulate Live Sensor in Loop Needed by Audi ,17-01-18,jz18z5,None
+AGV-182,[ReSIM Delivery] Fix Crash issue in continous mode.,16-11-14,jzwznt,None
+AGV-183,Populate Mounting offset - Delphi / Audi coordinates in UDP stream ,17-01-20,jzwznt,None
+AGV-184,Hil UDP Com Module Fix,16-11-02,jz18z5,None
+AGV-185,Core Hil Component Update to handle Sensor Shutdown - KL15 and KL30,16-11-02,jz18z5,None
+AGV-186,Hil Verification for XY105 SW,16-11-02,jz18z5,None
+AGV-189,JLR FF Hil V1,17-02-07,jz18z5,None
+AGV-190,New Build Configuration,16-11-10,jz18z5,None
+AGV-191,Modify INI File accept the Various input Config Details,16-11-17,jz18z5,None
+AGV-193,Add more variables to Audi interface for SIL ,16-12-14,lz7598,None
+AGV-194,Create and Verify getData and OverwriteStreamData  ,16-11-14,vjv7l4,None
+AGV-196,Implementation of S-Function MEX DLL for JLR SRR3 - old ticket,17-02-09,lz7598,None
+AGV-197,Review BMW MEX DLL on SIL openloop,16-12-08,lz7598,None
+AGV-198,Modify/Review the changes in SIL engine interface for JLR SIL,17-02-17,lz7598,None
+AGV-201,Audi XY110 Hil ,16-11-24,jz18z5,None
+AGV-204,Implement Continous File Parsing Option,16-12-12,vjv7l4,None
+AGV-205,Audi SIL/Decoder XY110 Release activities.,16-11-28,jzwznt,None
+AGV-206,Interface change DEBUG_OBJECT_CLASS_T structure,16-11-23,jzwznt,None
+AGV-209,Convert Track output from Delphi Coordinate to Audi Coordinate,16-11-23,jzwznt,None
+AGV-210,Design change of DPH_SIL module in order to fit BMW customer independent of Audi Component.,17-08-11,xj2qdq,None
+AGV-211,S-Function base interface for JLR SRR3,16-12-08,lz7598,None
+AGV-212,Testing SIL and Decoder in ADTF framework,16-11-23,jzwznt,None
+AGV-214,ChangAn Srr3 ResIM development.,16-12-08,jzwznt,None
+AGV-215,Create CAN interface which injects CAN buffer into Embedded lib from SIL.,16-11-24,lz7598,None
+AGV-216,FF HiL for BMW V2,16-12-09,jz18z5,None
+AGV-217,Implementation of CAN tinyLogger component,16-12-13,qjmrfs,None
+AGV-218,Add UDP logging component,16-11-18,qjmrfs,None
+AGV-219,Add CAN/FR logging component,16-12-07,qjmrfs,None
+AGV-220,Enable Autonomous Logging mode,16-12-13,qjmrfs,None
+AGV-221,Integrate Hil TX Component to the FF HIL ,16-11-21,jz18z5,None
+AGV-222,Initial Verification and Bug Fix/Improvements of FF Hil on 1.4.6,16-12-09,jz18z5,None
+AGV-224,DS1006 VIL - Feasibility of UDP/IP communication by using the xPC blockset ,17-08-11,,None
+AGV-225,Vigem converter creates very small dvsu files,16-12-14,vjv7l4,None
+AGV-226,Vigem Converter: dvsu files replay in ORCAS: No front sensor data,16-12-14,vjv7l4,None
+AGV-227,Vigem converter: dvsu files not usable for resim,16-12-14,vjv7l4,None
+AGV-228,Verification of HIL Package at Bench,16-11-24,jz18z5,None
+AGV-230,BMW Test Track Logs without CDC need to be RESIMable ,16-12-09,jzwznt,None
+AGV-232,Decoder Update to identify customer from UDP header,18-01-05,djm3rb,None
+AGV-233,XML Support to supress BIN / DVSU / DVL .,17-04-10,jzwznt,None
+AGV-237,RESIM built using GCC for LINUX ,18-07-29,,None
+AGV-238,[AUDI SRR3] Logging Structure Update for XY 130,16-12-13,lz7598,None
+AGV-239,Support various Resim log replay modes,17-09-19,lz7598,None
+AGV-240,Integration of ChangAn Embedded library and ReSIM.,16-12-08,jzwznt,None
+AGV-241,Audi HIL for XY120,16-12-09,jz18z5,None
+AGV-246,XY110 SIL Redelivery - Decoder and SIL ,17-01-20,lz7598,None
+AGV-247,Test XML Path in ADTF Delivery - OPL 86,16-12-08,qjmrfs,None
+AGV-248,HIL XY110 Flexray OH seen with STD dev as 0 ,16-12-16,jz18z5,None
+AGV-249,HIL XY110 OH Sorting Issue ,16-12-09,jz18z5,None
+AGV-250,AUDI SRR3 - XY130 Logging Structure updates,16-12-14,lz7598,None
+AGV-251,Replay XY56 logs through Latest Resim CDC mode ,17-01-02,jzwznt,None
+AGV-252,[BMW SRR3] - Request for Framework Decoder update for BMW I320 ATS+2,16-12-12,jzwznt,None
+AGV-253,[JLR SRR3] : Request for ORCAS Framework decoder update for 2_16,17-01-23,jzwznt,None
+AGV-255,Update Framework and Embedded lib interface file ,17-01-20,lz7598,None
+AGV-256,ADTF Framework interface to take alignment from XML file  - OPL 81,17-01-04,lz7598,None
+AGV-257,SIL ADTF XML file must have an option to run decoder only mode SIL should act as Decoder,17-02-24,xj2qdq,None
+AGV-258,ADTF XML option – SIL  options - UDP SIL / Flexray only SIL (Det) /Track Injection ,17-01-20,lz7598,None
+AGV-260,AUDI XY130 Interface Filling - OPL 83,17-01-20,lz7598,None
+AGV-262,CLONE - [JLR SRR3] : Request for ORCAS and LogLab update fro JLR SRR3 /2_16,17-01-19,jzwznt,None
+AGV-264,[CHANGAN SRR3] RESIM output are not created in the Input Log Folder,16-12-13,jzwznt,None
+AGV-265,Verification of the Package,16-12-09,vjv7l4,None
+AGV-266,Package Preparation,16-12-09,jz18z5,None
+AGV-267,Customer Deliverable Package Verification  ,16-12-09,qjmrfs,None
+AGV-268,Integrate and Verify Can TX Module with BMW FF HiL,16-12-09,jz18z5,None
+AGV-269,Bench Setup and Verification,17-02-07,vjv7l4,None
+AGV-270,Add Can Trigger Messages in Vehicle TX Application for JLR,17-02-06,jz18z5,None
+AGV-271,Sprint 1 HIL Activities,17-01-23,jz18z5,None
+AGV-272,SIL XY110 Re delivery Release activities,17-01-20,lz7598,None
+AGV-273,Radar UDP Dump Application support until XY130 Audi.,17-02-15,qjmrfs,None
+AGV-274,New HiL Engine Changes from BMW1.4.7,16-12-14,jz18z5,None
+AGV-275,Verification,16-12-14,vjv7l4,None
+AGV-279,XML - Configuration Updates,17-01-23,jzwznt,None
+AGV-281,XY56 CDC Mode Handling,17-01-20,jzwznt,None
+AGV-283,AUDI- SIL data reset not working properly (OPL 89 ),16-12-16,jzwznt,None
+AGV-284,SIL_Embedded_code_processing changes SIL behaviour change ,17-01-20,jzwznt,None
+AGV-285,AUTOCALIBRATION_SOURCE,17-01-17,jzwznt,None
+AGV-286,Calibration Algorithm to execute ,17-01-17,jzwznt,None
+AGV-287,Sprint 0 Decoder Updates,17-01-23,jzwznt,None
+AGV-288,Audi XY130 Logging Streams Update,17-01-20,jzwznt,None
+AGV-289,AUDI SRR3 - XY120 Logging Structure updates,17-01-20,jzwznt,None
+AGV-294,Sprint 1 DECODER Activities,17-01-23,jzwznt,None
+AGV-295,AUDI Xy140 Decoder Updated Needed ,17-01-20,jzwznt,None
+AGV-296,Audi Planned UDP streams - XY230.2,17-04-17,pj1q3g,None
+AGV-297,JLR Planned UDP streams ,17-02-27,pj1q3g,None
+AGV-298,Sprint 1 RESIM Modes ,17-01-23,lz7598,None
+AGV-299,Sprint 1 Customer to Delphi Data Converter Handling ,17-01-19,,None
+AGV-300,Sprint 1 Internal Raised Tickets,17-01-19,,None
+AGV-301,AUDI TRACK Injection Mode ,17-02-15,lz7598,None
+AGV-302,AUDI Detection Injection Mode ,17-02-02,xj2qdq,None
+AGV-303,Sprint 0 RESIM Modes ,17-01-20,jzwznt,None
+AGV-304,Sprint 0 Internal Development Activities,17-01-23,lz7598,None
+AGV-305,Sprint 0 Testing Activities,17-01-19,,None
+AGV-306,Sprint 0 Customer Deliverables,17-01-23,lz7598,None
+AGV-307,Audi ADTF XY130 Delivery,17-01-20,lz7598,None
+AGV-308,BMW HIL Bench Setup,17-01-26,vjv7l4,None
+AGV-310,Exicution of RESIM with older logs takes much longer than new logs ,17-08-11,zzg23s,None
+AGV-312,BMW HiL for 1.4.8,17-01-04,jz18z5,None
+AGV-313,Audi HiL XY130,17-01-04,jz18z5,None
+AGV-314,AUDI XY140 HiL Delivery,17-01-18,jz18z5,None
+AGV-315,BMW 1.4.8 HiL bench Setup for ITV,17-01-19,vjv7l4,None
+AGV-316,BMW Hil 1.4.8 issues,17-01-18,jz18z5,None
+AGV-317,MRR3 Dump Application ,17-02-09,pj1q3g,None
+AGV-318,JLR ReSim 2.17 stack overflow with default CAL mode,17-01-27,jzwznt,None
+AGV-319,CDC Fusion Mode Fix Needed for Internal Audi RESIM - OPL 95,17-09-26,pj1q3g,None
+AGV-321,AUDI SIL Test Case Preperation,17-02-15,lz7598,None
+AGV-322,ReSIM development to support DATA_Process_API,17-01-29,lz7598,None
+AGV-324,BMW ADTF Replay Filter Subtask Definition,17-02-15,lz7598,None
+AGV-325,XY140 Decoder shows wrong mounting positions .,17-01-31,lz7598,None
+AGV-326,Add output path in XML file ,17-02-28,jzwznt,None
+AGV-327,Add XML Enable / Disable capabilty in ADTF for Audi XY150,17-02-02,jzwznt,None
+AGV-328,ADTF chain to handle Flexray only DAT logs,17-04-03,jzwznt,None
+AGV-329,[AUDI SRR3] - Decoder update for XY200,17-02-13,pj1q3g,None
+AGV-330,Audi HiL Delivery for XY200,17-02-20,jz18z5,None
+AGV-331,SIL XY200 Internal RESIM Checkout ,17-02-09,lz7598,None
+AGV-332,EXT SENDER-SIL110rev5 crash ,17-01-30,lz7598,None
+AGV-333,Audi - EXT SENDER-single / two-sensor mode ,17-02-14,jzwznt,None
+AGV-334,JLR S function MEX delivery - Rahul to break Subtasks,17-02-17,lz7598,None
+AGV-335,JLR S function 32 bit delivery - ReSIM and Embedded library Support,17-02-15,lz7598,None
+AGV-336,AUDI TRACK INJECTION MODE ADTF VERIFICATION,17-04-18,lz7598,None
+AGV-337,AUDI TRACK INJECTION MODE RESIM VERIFICATION,17-02-01,pj1q3g,None
+AGV-338,Audi Decoder XY200 release activities,17-02-15,lz7598,None
+AGV-339,Audi SIL/Decoder XY150 release activities-XML configuration verification,17-02-15,lz7598,None
+AGV-340,Audi SIL/Decoder XY150 release activities - Single / two sensor mode verification,17-02-15,lz7598,None
+AGV-341,Audi SIL/Decoder XY150 release activities - Detection and Tracker mode verification,17-02-15,jzwznt,None
+AGV-342,ADTF ReSIM Preperation for Offline Mode-OPL 103,17-09-04,djm3rb,None
+AGV-343,JLR Data_Process_API verification,17-02-15,djm3rb,None
+AGV-345,ITV Deployment,17-02-07,vjv7l4,None
+AGV-346,Release Package,17-02-06,jz18z5,None
+AGV-350,HPCC Linux training ,17-08-29,,None
+AGV-351,UDP Frame handling of SRR4 UDP Data,18-06-05,,None
+AGV-353,Framework Update to support 5th Radar DLL in SIL,17-12-20,xj2qdq,None
+AGV-355,DPH SIL / DECODER Visual Studio Project setting Configuration mismatch,17-02-15,lz7598,None
+AGV-356,New Tracker Stream Integration to HIL ,17-02-21,vjv7l4,None
+AGV-358,ADTF - SIL and Decoder ADTF Signal output Audi Interface Dump ,17-03-03,pj1q3g,None
+AGV-361,[JLR_SRR3}Decode Update ,17-02-07,,None
+AGV-364,JLR S function interface update as per AUDI,17-02-15,lz7598,None
+AGV-365,JLR S function 32 bit delivery - ReSIM preperation,17-02-17,djm3rb,None
+AGV-367,ECU_Temp is not included / wrongly added in Decoder,17-02-15,lz7598,None
+AGV-370,Log Replay and Verification,17-03-02,vjv7l4,None
+AGV-371,HiL Update for XY200,17-02-20,jz18z5,None
+AGV-372,Delivery Package  ,17-02-20,jz18z5,None
+AGV-373,Verification for XY200,17-02-20,vjv7l4,None
+AGV-374,Update AUDI Decoder component with missing signals  defined in interface file,17-02-14,xj2qdq,None
+AGV-375,[AUDI_SRR3_HIL]: Vehicle Data during HIL Injection,17-03-03,vjv7l4,None
+AGV-377,Activities for BMW SRR3 HIL based on dSPACE SCALEXIO ,17-02-23,zzg23s,None
+AGV-378,Dump the data into a .dec file and extract the data by using the newly developed tool ,17-02-15,pj1q3g,None
+AGV-380,Symbol interface changes Needed in BMW / JLR for AGV 18 Testing ,17-09-05,xj2qdq,None
+AGV-381,Audi SILXY150 Patch 1 release activities,17-02-15,lz7598,None
+AGV-385,BMW FF HiL for I390PreVI ,17-03-07,jz18z5,None
+AGV-386,Symbol Interface Update for BMW SRR3,17-08-10,xj2qdq,None
+AGV-387,Symbol Interface Update for JLR SRR3,17-02-15,lz7598,None
+AGV-388,Symbol Interface Update for Changan SRR3,17-09-05,xj2qdq,None
+AGV-390,JLR_FF_HiL for 2_18,17-02-24,jz18z5,None
+AGV-391,Package and Document Preparation,17-02-24,jz18z5,None
+AGV-392,Verification at ITV Bench,17-02-24,vjv7l4,None
+AGV-393,Delivery of Replay Resim ADTF Filter,18-07-25,zzg23s,None
+AGV-394,Setup BMW SRR3 ADTF replay filter platform,17-03-24,qjd2jz,None
+AGV-395,Implementation of time synchronization module ,17-03-23,xj2qdq,None
+AGV-396,Generation of replay resim filter output interface,17-03-24,qjd2jz,None
+AGV-397,Integration of TimeSync module into replay filter,17-03-23,xj2qdq,None
+AGV-398,Verification/Validation of Replay Filter,17-04-07,zzg23s,None
+AGV-399,BMW SRR3 Resim FAS-L/FAS-R swap,17-04-18,zzg23s,None
+AGV-400,SIL_Embedded_code_processing data are wrongly updated in XmlParser::ReadXMLData function,17-03-08,djm3rb,None
+AGV-401,ADTF Detection injection verification activity.,17-03-14,lz7598,None
+AGV-402,Audi SIL XY 200 Delivery to customer,17-02-17,jzwznt,None
+AGV-403,Support 2x/4x radar HIL enable for BMW SRR3 HIL/VIL component,17-02-24,jz18z5,None
+AGV-404,Flexray Detection Injection / RESIM testing in XY200 Sandbox ,17-03-13,jzwznt,None
+AGV-405,Profile the RESIM to identify Execution Time bottleneck,17-03-24,pj1q3g,None
+AGV-406,RESIM to transmit UDP frames to loopback address for ORCAS ,17-04-18,pzysy0,None
+AGV-407,RESIM To Recieve UDP Frames and Process live ,17-06-09,lz7598,None
+AGV-408,JLR 4 Radar HIL Testing + New UDP Update,17-02-22,jz18z5,None
+AGV-409,HIL Rig Reports Diagnostic Error-14016,17-03-07,jz18z5,None
+AGV-410,Error code correction from the BMW SRR3 HIL- Scalexio library,17-02-24,jz18z5,None
+AGV-412,Tiny Logger Verification_Standalone Mode,17-05-03,jj5f4s,None
+AGV-413,Problem with XY095 Resim Reported by Brueckner,17-02-23,jzwznt,None
+AGV-414,New SDF UDP packet Data Injection ,17-02-28,jzwznt,None
+AGV-415,[AUDI SRR3] - Decoder update for XY210,17-02-28,pj1q3g,None
+AGV-416,SIL ADTF XML file must have an option to run decoder only mode SIL should act as Decoder Bug fix,17-02-24,xj2qdq,None
+AGV-417,JLR_FF_HiL_v3_3,17-03-17,jz18z5,None
+AGV-418,Pass CDC Frame header and Logging Frame Header to Embedded library ,17-04-04,pj1q3g,None
+AGV-420,SIL Connected to CAN Transmitters ,17-08-16,,None
+AGV-421,Build ADTF to DVSU Standalone converter ,18-07-29,,None
+AGV-422,Build ADTF to ASC & DVL file Generation,18-07-29,,None
+AGV-423,Build ADTF to DVL file Generation,17-04-24,pj1q3g,None
+AGV-424,Run RESIM with Loglab created CSV files as inputs ,17-04-26,jzwznt,None
+AGV-426,SIL compatible with SW 1.4.9 GCC,17-03-23,xj2qdq,None
+AGV-427,Seed & Key Protection to be added to HIL Engine ,17-03-31,jz18z5,None
+AGV-428,UDP Data Stitching Latching Module Improvements ,17-06-09,wztzkx,None
+AGV-429,AUDI HiL Release for XY210,17-03-10,jz18z5,None
+AGV-430,XY210 Initial Package Verification,17-03-03,vjv7l4,None
+AGV-432,Flexray Resim,17-04-07,zzg23s,None
+AGV-433,Convertor,17-03-14,pj1q3g,None
+AGV-434,flexray decoding to Z7B data,17-03-23,pj1q3g,None
+AGV-441,HiL Resim Core Engine Update ,17-03-10,jz18z5,None
+AGV-442,Provision for Invoking HiL Application from external Application,17-03-10,vjv7l4,None
+AGV-443,HiL package for Testing Tracker Mode in HiL,17-03-17,jz18z5,None
+AGV-444,Final Package Verification for JLR HiL V3_3,17-03-17,vjv7l4,None
+AGV-445,RESIM Must accept DVSU files without CDC Data ,17-04-05,jzwznt,None
+AGV-446,HiL Package Update,17-03-06,jz18z5,None
+AGV-447,JLR s Function Segmentation Fault ,17-04-24,sz9cyj,None
+AGV-448,XY210 Final Release Package Verification,17-03-09,vjv7l4,None
+AGV-449,Audi SIL/Decoder XY210 Release activities.,17-03-22,lz7598,None
+AGV-451,Review multi-threading approach used in HIL Scalexio Platform,17-03-10,jz18z5,None
+AGV-452,BMW Cutomer HiL - Non Thread S-Func Model,17-04-13,jz18z5,None
+AGV-453,SRR3 CAN Frame handling update in RESIM,17-04-18,pj1q3g,None
+AGV-454,Vector Canape  Delphi UDP Decoder DLL ,18-07-02,jzwznt,None
+AGV-456,JLR Matlab Delivery Decoder DLL API ,18-07-29,,None
+AGV-457,Merge all XCP commands into a single Config file,17-03-14,jz18z5,None
+AGV-458,Create New Config File and Parse the File,17-03-13,vjv7l4,None
+AGV-461,Changes in HiL Core Engine,17-03-29,vjv7l4,None
+AGV-463,[JLR SRR3] : Request for Decoder update,17-03-24,pj1q3g,None
+AGV-464,CStreamDataEncoderLib,17-03-22,vjv7l4,None
+AGV-465,Need to receive the z7b and z4 (Core+Custm)streams HIL DVSU Log Reply ,17-08-07,vjv7l4,None
+AGV-466,jlr s function interface validation,17-03-31,sz9cyj,None
+AGV-467,HiL Re-sim with Sequential Run ,17-04-13,jz18z5,None
+AGV-468,AUDI HiL Release for XY220,17-03-23,jz18z5,None
+AGV-469,AUDI XY220 Decoder Update,17-03-29,jzwznt,None
+AGV-470,AUDI XY220 SIL,17-03-29,jzwznt,None
+AGV-471,HIL Startup Time Investigation - OPL 79,17-04-13,jz18z5,None
+AGV-472,Initial XY220 Package Verification,17-03-23,vjv7l4,None
+AGV-473,JLR Data Process API Track Level Injection Verification,17-06-09,sz9cyj,None
+AGV-475,Audi XY210 Verification test with OH update ,17-03-29,jzwznt,None
+AGV-477,Sensor Selection issue in BMW and JLR RESIM,17-03-29,jzwznt,None
+AGV-478,AUDI XY230.1 HIL ,17-04-17,jz18z5,None
+AGV-479,JLR Windows Based Tool Chain to support S-function Delivery.,17-04-03,jzwznt,None
+AGV-480,JLR S Function Excel to MAT file generation for Open loop testing,17-06-12,sz9cyj,None
+AGV-481,JLR S function Testing in MATLAB enviroment.,17-03-31,sz9cyj,None
+AGV-482,AUDI XY220 SIL and Decoder Release Activities.,17-04-06,lz7598,None
+AGV-483,Debug the trace file provided by BMW for testing O2D and generation of FAS output,17-08-11,xj2qdq,None
+AGV-486,Incorrect Latching of UDP Streams in RESIM - OPL 95,17-05-18,djm3rb,None
+AGV-487,HiL package for Reduced Objects JLR,17-06-12,jz18z5,None
+AGV-488,Audi HiL - New Tracker Stream for Online Mode,17-05-04,jz18z5,None
+AGV-489,HiL package for Reduced Objects BMW,17-06-20,vjv7l4,None
+AGV-491,JLR HiL Release 3_9,17-06-12,vjv7l4,None
+AGV-492,BMW FF HiL 1.5.5,17-04-17,jz18z5,None
+AGV-496,JLR SIL Not Working for front radars,17-04-10,jzwznt,None
+AGV-497,Read the input trace and convert to tracks (*.dvsu),17-08-11,djm3rb,None
+AGV-498,Replay in ORCAS,17-08-11,djm3rb,None
+AGV-499,Review/debug to verify if the O2D is generating valid detection,17-06-01,xj2qdq,None
+AGV-500,AUDI HiL XY220 with Sensor Version Query Turned off,17-04-06,jz18z5,None
+AGV-501,DVSU Logger Application,17-04-10,vjv7l4,None
+AGV-502,HIL to use XCP User commands to learn UDP logging stream versions,17-05-24,vjv7l4,None
+AGV-504,BMW SRR3 Resim : Initial CAN timestamps ,17-06-07,qjd2jz,None
+AGV-505,XY231.1 HiL Release Package Verification,17-05-04,vjv7l4,None
+AGV-506,Final Package Verification for XY230.1,17-04-17,jz18z5,None
+AGV-507,HiL for XY230.1 Release,17-04-17,jz18z5,None
+AGV-508,XY 220 Decoder Re delivery.,17-04-13,jzwznt,None
+AGV-509,AUDI XY230 DSD Versions Incorrect - OPL 99 100106 ,17-04-24,jzwznt,None
+AGV-510,Dataset Verification incorrect - OPL 94,17-04-24,jzwznt,None
+AGV-511,VCS to USK polarity not filled - OPL 96 ,17-04-18,jzwznt,None
+AGV-513,AUDI ADTF Front Sensor Flexray Detection Injection Verificatation - OPL 73 ,17-05-03,pj1q3g,None
+AGV-514,[BMW/ JLR ]RESIM is not running in CDC Mode from Command Prompt,17-05-18,djm3rb,None
+AGV-515,Tiny Logger Integration with HiL and Verification,17-05-22,vjv7l4,None
+AGV-516,JLR HiL Package Verification for 3_9,17-06-09,vjv7l4,None
+AGV-518,BMW RESIM - Feature Function verification using Tracker CSV,18-05-25,pj1q3g,None
+AGV-519,JLR RESIM - Feature Function verification using Tracker CSV,18-01-03,djm3rb,None
+AGV-520,Changan RESIM - Feature Function verification using Tracker CSV,17-09-05,djm3rb,None
+AGV-522,[AUDI SRR3] - Decoder update for 230.2 release,17-04-13,djm3rb,None
+AGV-523,OPL-73 AUDI ADTF Rear Sensor Virtual Track Injection Verificatation,17-06-12,jzwznt,None
+AGV-524,ADTF Decoder Issue for Track Properties - OPL 74 ,17-04-26,jzwznt,None
+AGV-525,Audi ADTF - New API for Operation Mode Confirmation - OPL 88,17-06-06,djm3rb,None
+AGV-526,OPL- 93 ADTF - Wrong scan index number for first SIL output cycle,17-07-19,pj1q3g,None
+AGV-527,AUDI HiL Release for XY231.1,17-05-05,jz18z5,None
+AGV-528,Enable New Tracker Stream Ver No:5,17-05-04,vjv7l4,None
+AGV-529,Reprocessed DVL log correction for Stmb Timestamp Data,17-08-11,qjd2jz,None
+AGV-531,Add TD Blockage and MNR Bloackage Signals in Z7b stream,17-04-21,vjv7l4,None
+AGV-532,Add z4 stream to HiLOffline Mode for Audi,17-05-31,vjv7l4,None
+AGV-533,Add z7a stream to HiLOffline Mode for Audi,17-05-31,vjv7l4,None
+AGV-534,Fix issue with multiple instance of ViGEM Converter running parallel,17-08-11,djm3rb,None
+AGV-535,Modified channel swapping logic in converter to align with CAN bus id provided byViGEM logging library,17-05-16,djm3rb,None
+AGV-536,BMW_FF_HiL_1.5.10,17-05-09,jz18z5,None
+AGV-537,Audi XY231p1 SIL/Decoder ADTF delivery,17-05-04,jzwznt,None
+AGV-538,ViGEM Converter application broken using larger log,17-05-16,djm3rb,None
+AGV-539,Load Calibrations from UDP option for SRR3 Internal RESIM ,17-12-22,jzwznt,None
+AGV-540,BMW FF HiL Verification,17-05-09,vjv7l4,None
+AGV-541,OPL-79 Startup time Design Review for Audi HIL ,17-05-24,jz18z5,None
+AGV-542,OPL-80 Reference Point Handling of OH in HiL(FOV boundry),18-01-29,,None
+AGV-543,OPL-86 XY240 New HIL API for Connection Status ,17-06-02,jz18z5,None
+AGV-544,OPL- 88 Loaded Dataset / Operation Mode Confirmation,17-06-16,djm3rb,None
+AGV-545,OPL- 89 SIL data reset not working properly,17-05-18,pj1q3g,None
+AGV-546,OPL -91 Support for Coding ,17-06-14,djm3rb,None
+AGV-547,[BMW]Resim: Resim with default CALs only possible when RL-Sensor is activated,18-03-02,qjd2jz,None
+AGV-548,OPL- 99 ADTF SIL Crash incase of Dual Function calling ,17-05-09,jzwznt,None
+AGV-549,OPL- 101 Reload DSD based on RESET API,17-06-12,jzwznt,None
+AGV-550,OPL-108 Processed detection list output,18-03-26,wztzkx,None
+AGV-551,OPL 110- LookID Output from SIL ,17-06-14,jzwznt,None
+AGV-552,BMW SRR3 Resim : Continous_Replay can not be disabled,17-08-11,qjd2jz,None
+AGV-555,Handle DSD Varients and Inform RESIM User if wrong DSD chosen ,17-12-19,vjqv6l,None
+AGV-556,[JLR_SRR3]:Stream update for JLR SRR3/3_6,17-05-10,djm3rb,None
+AGV-558,AUDI XY230 DSD Versions Incorrect - OPL 99 100106,17-05-16,jzwznt,None
+AGV-559,Mapping FAS output messages to BMW S-Function output interface,17-08-09,xj2qdq,None
+AGV-560,AUDI XY235 HiL Release,17-05-16,jz18z5,None
+AGV-561,[JLR_SRR3]:Z4_Z7B_Cust_Logging_Data_T stream update ,17-05-18,djm3rb,None
+AGV-562,Remove dependency on Backward compatibilty module in Decoder ,18-01-02,djm3rb,None
+AGV-563,Update Audi ADTF Interface for XY235 Release ,17-06-14,jzwznt,None
+AGV-565,BMW SRR3 Resim : Wrong tracker behavior if continuous mode used,17-07-14,xj2qdq,None
+AGV-566,OPL 112 Crash on wrong config xml path,17-06-07,jzwznt,None
+AGV-568,BMW SRR3 Resim : UDP tracks and PCAN frames not synchronized,17-06-09,qjd2jz,None
+AGV-569,Decoder Update for Z7A_Z7B - All Programs ,17-06-06,djm3rb,None
+AGV-571,Audi XY231 ADTF Delivery fails with XY64 Logs - OPL 114,17-06-14,jzwznt,None
+AGV-572,AUDI ADTF XY235 Official Delivery Integration Checkout,17-06-14,jzwznt,None
+AGV-573,AUDI ADTF XY240 Official Delivery Integration Checkout,17-07-05,jzwznt,None
+AGV-575,ADTF Environment Setup ,17-06-08,jz18z5,None
+AGV-576,BMW SRR3 - RESIM DVSU 73 74 files empty after resim,17-08-09,tjq0p7,None
+AGV-579,BMW SCALEXIO Customer HiL Delivery,17-05-29,jz18z5,None
+AGV-580,Audi XY240.2 HiL Release,17-06-07,vjv7l4,None
+AGV-581,XY231 Needs to be Re delivered due to multiple failures ,17-05-30,jzwznt,None
+AGV-582,Add Config xml reading capability for SIL additional tags for new xml file.,17-06-14,djm3rb,None
+AGV-583,BMW SRR3 RESIM: Toggling front left radar ,17-07-14,xj2qdq,None
+AGV-585,BMW SRR3 Resim : Freespace freezed and working in a randomly ,17-07-14,xj2qdq,None
+AGV-586,BMW SRR3 RESIM: Target car with default speed,17-07-14,xj2qdq,None
+AGV-587,HiL Auto Connection Status Verification,17-06-02,vjv7l4,None
+AGV-590,BMW SRR3 RESIM: Drops in log after RESIM,17-07-14,xj2qdq,None
+AGV-591,JLR SRR3 Investigation of CTA issue ,17-06-21,tjq0p7,None
+AGV-592,OPL-94 Dataset check incomplete,17-06-12,jzwznt,None
+AGV-593,OPL-94 SIL_XY235 has new members in DSD_VERSIONS_T structure.,17-06-09,jzwznt,None
+AGV-594,Logging Steam version numbers to Embedded library,18-01-03,pj1q3g,None
+AGV-595,[AUDI SRR3] Logging Stream Updates for AUDI SRR3 250 release,17-06-12,vjv7l4,None
+AGV-597,BMW_SRR3 Mounting Positions to be accessed from Configuration Xml file,17-08-14,djm3rb,None
+AGV-598,BMW SRR3 Resim : Front Sensors Not Merging Tracks,17-08-14,djm3rb,None
+AGV-599,Update HIL S-Function compatible with Scalexio Ethernet Transmission component,17-07-04,zzg23s,None
+AGV-600,Handle Scalexio HIL S-Function idle/response wait processing,17-06-29,jz18z5,None
+AGV-601,Scalexio HIL S-Function update to support chunk stream to Tx Port,17-06-29,jz18z5,None
+AGV-602,JLR HiL Verification with 3_9 vehicle checkout logs,17-06-15,vjv7l4,None
+AGV-603,Support resim to run using data from connected sensor,17-06-16,jj5f4s,None
+AGV-604,Handling frame drops in real sensor mode Resim,17-08-09,jj5f4s,None
+AGV-605,Testing of coding parameters in updated Sandbox - OPL 91,17-06-28,jzwznt,None
+AGV-606,AUDI XY250.3 HIL Delivery,17-07-04,vjv7l4,None
+AGV-607,UDP Framing ORDER - OPL 115 ,17-10-13,jzwznt,None
+AGV-608,Resim behaviour in case of packet loss - OPL 116,17-07-05,jzwznt,None
+AGV-609,Update JLR Framework Deliverables for Customer 3_10 Release,17-07-19,tjq0p7,None
+AGV-610,JLR Matlab Interface update for JLR 3_10 Release,17-08-18,tjq0p7,None
+AGV-611,Update needed for JLR MAT to CSV converter tools,17-08-08,tjq0p7,None
+AGV-612,JLR Resim to replay single CSV file from the MATLAB converted data,17-08-08,tjq0p7,None
+AGV-613,JLR MATLAB AE Delivery Phase 1,17-08-11,sz9cyj,None
+AGV-617,Activities needed for HIL ,18-07-25,jz18z5,None
+AGV-618,Activities needed on the decoder,18-07-25,vjv7l4,None
+AGV-619,Activities related with SIL,18-07-25,jzwznt,None
+AGV-621,AUDI ADTF SIL / Decoder XY250 Official Delivery Integration Checkout,17-07-06,jzwznt,None
+AGV-622,Audi SIL XY235v2 pre delivery crashes in FR data injection,17-07-04,jzwznt,None
+AGV-623,Audi XY240 standalone decoder ADTF testing.,17-06-27,vjv7l4,None
+AGV-624,Rename Random Mode in XML file,17-10-25,pj1q3g,None
+AGV-625,Implementation of CRC error identification -OPL 116 ,18-02-14,vjqv6l,None
+AGV-626,BMW SRR3 logging structure change for release tag i400_ATS_0,17-08-24,djm3rb,None
+AGV-627,JLR Customer Delivery Needs to use XML file from Configuration,17-10-13,tjq0p7,None
+AGV-628,ADTF SIL Gives Wrong Results for XY057 and XY064 logs ,17-07-03,jzwznt,None
+AGV-629,Z7B Logging Stream Update for AUDI SRR3 v25 ,17-09-26,djm3rb,None
+AGV-630,BMW HiL i400_PDX 2.0.3,17-07-06,vjv7l4,None
+AGV-631,Profiling for each execution operations in RESIM,17-08-18,djm3rb,None
+AGV-632,Decoder update for UDP logging structures BMW SRR3,17-09-26,djm3rb,None
+AGV-633,Decoder update for UDP logging structures JLR SRR3,17-09-26,djm3rb,None
+AGV-634,HiL Customized Vehicle Data Injection from External Input ,17-07-18,jz18z5,None
+AGV-635,update Changan SIL frame work to trigger main function ,2019-04-02,,None
+AGV-636,SCANIA SRR3 HIL V1 _SW_Version,17-11-10,jj5f4s,None
+AGV-637,BMW SRR3 ADTF - Reprocessed logs has non-plausible stbm timestamp data.,17-08-11,qjd2jz,None
+AGV-638,Vehicle TX Updates and Verification in Canalyser,17-07-18,vjv7l4,None
+AGV-639,OPL-116 Missing UDP packet issue in SIL level ,18-03-27,jzwznt,None
+AGV-640,BMW SRR3 Resim : Option in config to not create bin output,17-09-19,qjd2jz,None
+AGV-641,JLR Matlab - SIL Interface update ,17-08-18,tjq0p7,None
+AGV-642,BMW SRR3 Resim: Support for PCAN only RESIM,17-10-04,xj2qdq,None
+AGV-643,JLR FF HiL v3_13,17-08-03,vjv7l4,None
+AGV-644,Build BMW package in gcc Eclipse KT,17-08-01,vjqv6l,None
+AGV-645,AUDI XY260 HiL Release,17-08-04,vjv7l4,None
+AGV-646,OPL - 122: DSD version from log to be populated in Decoder mode of SIL,17-08-04,pj1q3g,None
+AGV-647,OPL - 121: SIL/PIL comparison failed for SIL235 and SIL250,18-03-02,jzwznt,None
+AGV-650,Core update .Long Pathname/filename wil cause an assertion,17-09-19,qjd2jz,None
+AGV-652,AFTF Crash Issue investigation - OPL 124,18-03-26,jzwznt,None
+AGV-653,BMW Resim XML config update (DVL_ONLY),17-08-18,vjqv6l,None
+AGV-654,BMW Resim Validation (DVL_ONLY),17-09-20,xj2qdq,None
+AGV-655,BMW SIL Engine Update (DVL_ONLY),17-09-20,xj2qdq,None
+AGV-656,[CR499]DTC Output of SIL and LIVE-Decoder-kok_css2#42679 ,17-08-28,jzwznt,None
+AGV-657,OPL-116 Missing UDP packet issue in Decoder level,18-02-26,jzwznt,None
+AGV-658,AUDI_SRR3_SIL: Resim behaviour in case of packet loss (OPL#116),17-11-10,jzwznt,None
+AGV-659,AUDI_SRR3_SIL: ADTF Crashing (OPL#124),18-03-26,jzwznt,None
+AGV-660,AUDI_SRR3_SIL: No SIL Output for ScanIndex zero (OPL#123),17-08-21,pj1q3g,None
+AGV-661,AUDI SIL XY250v5p4 Patch Delivery Integration Checkout,17-09-07,pj1q3g,None
+AGV-662,Audi FF HIL Verification using Older Logs,17-08-17,jz18z5,None
+AGV-666,Building Internal JLR RESIM from Latest Framework Package - V3 interface,17-10-13,tjq0p7,None
+AGV-667,Create New Changan RESIM .exe ,17-09-05,zzg23s,None
+AGV-669,BMW SRR3 Resim : Freespace wrong behavior - RESIM  PDX 2.0.4,17-09-26,qjd2jz,None
+AGV-670,BMW_MATLAB_RESIM: Merge changes build for Matlab Resim to integration branch,17-10-17,xj2qdq,None
+AGV-671,OPL - 131: OH and Tracks are not populated for RL sensor in logs XY057 & XY064,17-08-18,jzwznt,None
+AGV-672,OPL -120 : Minor version missing from log output in silVersion,18-03-26,jzwznt,None
+AGV-673,OPL - 122 : DSD version from log to be popolated in decoder mode of SIL,17-09-01,pj1q3g,None
+AGV-674,OPL - 126 : SIL release test plan Audi doccumentation . ,17-09-07,pj1q3g,None
+AGV-675,OPL- 128 : DTC output from SIL and SIL as a Decoder (CR499),17-10-17,jzwznt,None
+AGV-677,OPL-129 : XY270 Interface update  ,17-09-26,jzwznt,None
+AGV-678,OPL- 132 : Path depth limitation for config xml,17-10-03,pj1q3g,None
+AGV-679,OPL - 133 : SIL250: Tracker output objekt ID not populated in Decode Mode for XY064/XY057 logs,17-09-04,vjqv6l,None
+AGV-680,JLR_OPL 1:SRR3 JLR Model release - LCMA Feature,17-11-09,tjq0p7,None
+AGV-681,JLR_OPL 2:SRR3 JLR Model release - RPC Feature,17-11-09,tjq0p7,None
+AGV-682,Audi FF HIL Verificationusing older logs,17-08-17,vjv7l4,None
+AGV-683,BMW FF HiL_ TD Blockage and Auto Alignment Verification,17-09-05,vjv7l4,None
+AGV-684,Latest SIL executable fails to run Flexray Data  injection when csv file is given as input,17-09-05,jj5f4s,None
+AGV-687,BMW CAN only Resim required MOUNTING_POSITION_SOURCE (CAN) in config,17-08-22,vjqv6l,None
+AGV-688,BMW CAN only resim mounting info read from DVL,17-09-18,xj2qdq,None
+AGV-689,BMW_SRR3_Resim- Resim crash when enabling BIN file generation on HPCC,17-08-31,qjd2jz,None
+AGV-691,BMW_SRR3_Resim:: Enable Ghost Detection Algorithm in PDX 2.0.4,17-09-05,qjd2jz,None
+AGV-692,BMW SRR3 Embedded Library update to support Ghost Detection Algorithm,17-08-31,pzysy0,None
+AGV-693,Geely SRR3 HiL V1,18-01-29,jj5f4s,None
+AGV-694,Integration comfortable with Embedded - Support for CAN only SIL ,17-09-20,xj2qdq,None
+AGV-695,AUDI SIL XY250v5p5 Patch testing in ADTF,17-09-07,vjqv6l,None
+AGV-696,Create SIL output dump to test and validate the UDP packet loss,17-08-31,jj5f4s,None
+AGV-697,CDC Fusion Fix carry over for BMW SRR3 Internal Resim,17-12-12,pj1q3g,None
+AGV-698,CDC Fusion Fix carry over for JLR SRR3 Internal Resim,17-12-19,pj1q3g,None
+AGV-699,Audi OPL - 137  : First Cycle Data in ADTF SIL incorrect,18-08-17,kjgnmd,None
+AGV-700,OPL - 136 : Tracker output dependent on replay time scale,18-05-02,jzwznt,None
+AGV-701,AUDI_HIL_XY261,17-09-11,jj5f4s,None
+AGV-702,JLR customer Release - MY20 Features,17-08-31,tjq0p7,None
+AGV-703,HiL Package Verification,17-09-11,jj5f4s,None
+AGV-704,JLR FF HIL_Enable All Stream Transmission,17-10-24,jj5f4s,None
+AGV-705,BMW FF HIL -I410-PDX_2_1_7,17-09-21,jj5f4s,None
+AGV-706,HIL Sync of UDP vs VCAN not working in BMW . ,18-07-29,,None
+AGV-707,JLR / Scania DSPACE HIL Solution_Initial Project Plan,17-09-06,jz18z5,None
+AGV-708,Review of HIL Testing Mechanism ,17-09-26,jj5f4s,None
+AGV-709,BMW SRR3 :  BMW SRR3 - Resim for 2.1.1 PDX,17-09-07,qjd2jz,None
+AGV-710,BMW Customer HiL- Debug S-Functions Delivery ,17-09-14,jz18z5,None
+AGV-711,SCANIA SRR3 Decoder update V1,17-10-12,vjv7l4,None
+AGV-712,UDP Stream Update for Scania Truck,17-09-19,vjv7l4,None
+AGV-713,SIL Suppport for Internal RESIM build ,18-05-29,vjv7l4,None
+AGV-714,HIL update to Transmit All Streams in BMW,17-09-26,jj5f4s,None
+AGV-715,OPL 103 -Improve Running Time in SIL  for XY57/XY64 and XY95 Audi logs ,18-01-03,djm3rb,None
+AGV-716,Vigem 2 Delphi Converter: extract video data which can be replayed in ORCAS,18-07-29,,None
+AGV-717,Decoder update to use Intercustomer Logs - Needed for JLR ,18-02-26,vjv7l4,None
+AGV-718,Framework- Embedded lib Interface Missmatch BMW_SRR,17-09-20,jzwznt,None
+AGV-719,BMW_SRR3_Resim_20170823_r00020004_support_ghost_detection with modification,17-09-07,qjd2jz,None
+AGV-720,BMW_ADTF_Filter: Filter stops to send out FAS R/L Data from vpcap merged log,17-10-31,qjd2jz,None
+AGV-722,Testing of Audi XY260_v1_p1 ADTF Delivery,17-09-26,vjqv6l,None
+AGV-723,Scan index is not populating for Flexray Data injection mode in ADTF.,17-09-07,vjqv6l,None
+AGV-724,BMW_SRR3_Resim_CDC_MODE_Crash_Isuue_with_2.0.4,17-09-07,qjd2jz,None
+AGV-725,BMW SRR3 : BMW SRR3 - Resim for 2.1.2 PDX,17-09-26,qjd2jz,None
+AGV-726,BIN_Writer handing of Continous Mode ,18-07-29,,None
+AGV-727,Audi - Load DSD From UDP option not working ,17-09-12,vjqv6l,None
+AGV-731,The implementation of target stream creation for AUDI in SIL in CDC mode fails for other customers,17-09-28,tjq0p7,None
+AGV-732,Framework - Embedded library interface to correct Incompatibility between framework and Embedded library,17-09-27,jzwznt,None
+AGV-733,CDC Mode to Pass latest Tracks between Embedded libraries ,17-12-12,pj1q3g,None
+AGV-734,Latch Calibration Data from PCAN,17-10-04,xj2qdq,None
+AGV-735,CDC Fusion Not working in ADTF,17-09-26,pj1q3g,None
+AGV-736,Audi - Crash observed in Detection Mode ,17-09-18,vjqv6l,None
+AGV-737,Alignment is zero in SIL_Library ,17-10-26,pj1q3g,None
+AGV-738,Add JLR build support to Framework   ,17-10-10,tjq0p7,None
+AGV-739,AUDI SRR3 Resim: Resim using FR log not functioning from XY250 on FER,17-09-22,pj1q3g,None
+AGV-740,Audi -  UDP_Log option is  not working in SIL250.4p2,17-10-03,vjqv6l,None
+AGV-742,SCANIA Streams and CanDB intergration,17-09-18,vjv7l4,None
+AGV-743,Latest SIL crashes ADTF,17-11-06,jj5f4s,None
+AGV-744,Is Ego yaw rate correctly read in Flexrey resim? ,17-09-21,pj1q3g,None
+AGV-745,Customer BLF file -> PCAN RESIM Failure,18-07-29,,None
+AGV-746,Customer XML to Supress BIN files individually ,17-11-07,qjd2jz,None
+AGV-747,OPL -139 : DSD UDP Not working in ADTF,18-01-29,vjqv6l,None
+AGV-748,OPL - 149 : DSD Signal Exterior Style Not Populated ,18-01-29,vjqv6l,None
+AGV-749,OPL -138 :  ADTF capabilty to create DVSU files (DEBUG Mode ADTF ),17-11-30,vjqv6l,None
+AGV-750,OPL 140 : Sensor ID to be returned In UDP Frame Process API,18-05-22,vjqv6l,None
+AGV-751,Reimulation is running infinitely in SIL_DV_CONTINUOUS mode.,17-09-28,pj1q3g,None
+AGV-752,OPL -139 : NO DSD option Not working correctly in ADTF,18-01-29,vjqv6l,None
+AGV-753,Framework Updates to handle Single DVSU file for all SRR Radars ,18-03-01,qjd2jz,None
+AGV-754,BMW SRR3: Converter VIGEM to ORCAS - incorrect timestamps,18-01-02,qjd2jz,None
+AGV-755,Testing of Audi XY261_v2_p0 ADTF Delivery,17-10-16,vjqv6l,None
+AGV-756,AUDI SIL XY261_v2_p0 Delivery Integration Checkout,17-10-13,jzwznt,None
+AGV-757,DSPace HiL- COM lib,18-06-05,tjq0p7,None
+AGV-758,Release of AUDI BMW JLR  Resim executables v3,17-10-06,jzwznt,None
+AGV-759,Problem with parsing the symbol '#',17-10-30,qjd2jz,None
+AGV-761,Data_FRAME_Process API Needed for all customers,18-02-27,tjq0p7,None
+AGV-762,Build JLR 32 Bit Matlab Deliverable Package from Main Branch,18-01-11,tjq0p7,None
+AGV-763,Z4_Z7B_core v17 to all customers . Z7B_Customer BMW v5 Update  ,18-04-27,vjv7l4,None
+AGV-764,Create New folder in Framework to archive EB Shared components ,18-01-08,jzwznt,None
+AGV-765,Update Decoder logic to utilize Core streams across customers,18-01-05,djm3rb,None
+AGV-766,BMW SRR3 Resim : Freespace wrong behavior- RESIM PDX 2.0.4,17-10-06,qjd2jz,None
+AGV-767,BMW Calibration from PCAN(dvl only mode) : verification,17-11-27,xj2qdq,None
+AGV-768,SCANIA HiL _wake up message for sensor ,17-11-10,jj5f4s,None
+AGV-769,Updation of PCAN resim to v3 comfortable  ,17-10-10,xj2qdq,None
+AGV-770,Verification of BMW Resim(CAN ONLY),17-10-23,xj2qdq,None
+AGV-771,Release of SCANIA Resim executables v3,17-10-26,vjv7l4,None
+AGV-772,AUDI_SRR_261.2 test software-Updated exe required including changes in z7b and z7a core streams,17-10-16,djm3rb,None
+AGV-773,Update BMW RESIM config XML file from V1 to latest v8.x,17-10-30,qjd2jz,None
+AGV-774,JLR Customer Delivery Needs IPG - load Mounting from XML Configuration file  ,17-12-12,tjq0p7,None
+AGV-775,Audi Verification of UDP vs Flexray - Internal + ADTF RESIM,17-12-19,kjgnmd,None
+AGV-777,JLR HiL Package v3_17,17-11-10,jj5f4s,None
+AGV-778,SCANIA SRR3 Decoder update z4_z7b_cust stream V4 and V5,17-10-13,vjv7l4,None
+AGV-779,Mounting Positions from Configuration Xml file into Extended Symbol Interface,17-11-13,pj1q3g,None
+AGV-780,Decoder Setup for Renault SRR5,18-06-06,vjv7l4,None
+AGV-781,SCANIA SRR3 Decoder update z4 V17  and Z7b V25 ,17-10-17,vjv7l4,None
+AGV-782,AUDI SIL / Decoder XY400_v1_p0 Delivery Integration Checkout,17-11-02,jzwznt,None
+AGV-783,Testing of Audi SIL/Decoder XY400_v1_p0 ADTF Delivery,17-10-26,vjqv6l,None
+AGV-784,Audi_XY400_HiL_Release,17-11-13,jj5f4s,None
+AGV-785,Update Customer_Configuraiton_XML file to V9 ,17-12-06,pj1q3g,None
+AGV-787,BMW Resim Release SW Version 2.1.7 ,17-10-27,qjd2jz,None
+AGV-788,Resimulation is not working for the latest Plastics Main branch(changeset no : 551) ,17-10-25,xj2qdq,None
+AGV-789,Update RESIM to generate output dvl logs,17-11-07,djm3rb,None
+AGV-790,Framework Working Branch NOT creating DVL files ,17-10-30,djm3rb,None
+AGV-791,Pass Radar Mounting Position to be passed via virtual Interface,17-12-12,pj1q3g,None
+AGV-792,Framework Needs to provide an Exit API to Embedded Library,18-03-02,vjv7l4,None
+AGV-793,Decoder Update for Geely SRR3 ,17-11-21,vjv7l4,None
+AGV-794,Decoder Update for Changan S302,18-04-27,vjv7l4,None
+AGV-795,Decoder Update for Z7B v9 Customer stream for JLR ,17-11-13,vjv7l4,None
+AGV-797,RESIM crashed with main plastic branch in CDC mode,17-11-17,djm3rb,None
+AGV-798,Verifying calib status for dsd_udp in adtf for sil250v5p4,17-10-30,kjgnmd,None
+AGV-799,Verifying exterior style populated  for dsd_xml option  in adtf for sil400v1p0,17-11-06,kjgnmd,None
+AGV-800,Verifying calib status for dsd_udp in adtf for sil400v1p0,17-10-31,kjgnmd,None
+AGV-802,BMW-HIL Release I420_VI_2 - Old decoder ,17-11-29,jjtyc8,None
+AGV-803,JLR_SRR3_HiL_All Streams_Tx - Old decoder .,17-12-08,jj5f4s,None
+AGV-804,SCANIA-HIL Release_v3-4_z7b-v27 ,18-01-22,jjtyc8,None
+AGV-805,Decoder Update for HKMC SRR3 ,18-01-04,vjv7l4,None
+AGV-806,Resim Preparation for PDX 2.2.1,17-11-13,qjd2jz,None
+AGV-807,Build JLR RESIM standalone package for 3_20 SW,17-11-13,tjq0p7,None
+AGV-808,Timestamp is zero in output DVL (SCANIA),17-11-08,djm3rb,None
+AGV-809,Need Embedded lib - Framework Interface update -v4,18-02-23,pj1q3g,None
+AGV-810,Create a Shared folder on PC to save logs for all customers ,17-12-11,pj1q3g,None
+AGV-811,BMW CDC Fusion Analysis needed . ,17-12-12,pj1q3g,None
+AGV-812,OPL -142 : Sandbox update not correcly showing Tracks  in Signal View / Plan view ,17-11-08,jzwznt,None
+AGV-813,OPL-139 : DSD UDP  NO DSD not working for the SIL,17-11-07,vjqv6l,None
+AGV-814,New Stream versions needs to be merged in CORE - DISCUSSION ,17-12-01,djm3rb,None
+AGV-815,Core Update of  z7b core stream -v26,17-11-14,vjv7l4,None
+AGV-816,Verifying CRC Computation API is working properly or not,17-11-10,vjqv6l,None
+AGV-817,Implement CRC computation for every chunk in MUDP_decoder,17-11-13,vjqv6l,None
+AGV-818,Integrate CRC Status to SIL & Decoder,18-01-08,vjqv6l,None
+AGV-819,Integrate XML config to Decoder(Make it configurable),18-01-17,vjqv6l,None
+AGV-820,The tracks are not matching ADTF and Internal Resim CDC Mode,18-02-07,jzwznt,None
+AGV-822,SCANIA Decoder  Framework Update,18-01-03,vjv7l4,None
+AGV-823,JLR SRR3 RESIM - Memory usage,17-11-24,tjq0p7,None
+AGV-824,AUDI SIL / Decoder XY270_v0_p0 Delivery Integration Checkout,17-11-14,jzwznt,None
+AGV-825,Testing of Audi SIL/Decoder XY270_v0_p0 ADTF Delivery,17-11-15,vjqv6l,None
+AGV-827,AUDI_HIL_SWA_ISSUE,18-01-09,jz18z5,None
+AGV-828,BMW RESIM update needed to resolve Bad vehicle logs ,17-12-12,pj1q3g,None
+AGV-829,BMW Resim - The resim is running but the output is invalid (missing Tracks Objects).,17-11-13,xj2qdq,None
+AGV-830,support - BMW SRR3 V02.01.07 (Release),17-11-13,xj2qdq,None
+AGV-831,support - BMW SRR3 V02.02.01 (Release),17-11-13,xj2qdq,None
+AGV-832,BMW SRR3 Resim: Issue in resim output w.r.t vehicle data in DVL only based resim ,17-11-17,xj2qdq,None
+AGV-833,BMW SRR3 Resim: Correct calibration data latching for PCAN based Resim,17-11-24,xj2qdq,None
+AGV-834,Testing of Audi Decoder XY270_v0_p0 ADTF Delivery,17-11-15,kjgnmd,None
+AGV-835,Decoder Update for z7b data (JLR_x1),17-11-16,vjv7l4,None
+AGV-836,Decoder Must verify Incomming streams Xsum before upconvertion to new streams ,18-09-12,qjd2jz,None
+AGV-838,Resim Release Preparation for PDX 2.3.1,17-12-07,qjd2jz,None
+AGV-839,Core Update of  z7b core stream -v27,17-11-15,vjv7l4,None
+AGV-840,BMW Replay Filter: handling missing sync frames in the reprocessed log in time sync module,18-01-09,qjd2jz,None
+AGV-842,JLR IPG Data giving Input XSUM Errors while running RESIM ,17-12-06,tjq0p7,None
+AGV-843,AUDI_HiL_RELEASE_XY261_XY270_XY400_1,17-11-15,jj5f4s,None
+AGV-844,Timestamp issue while running log XY064 in ADTF for the sensors RR & FR.,17-11-28,jzwznt,None
+AGV-845,BMW FF HIL- PDX v002_003_001- I420_ATS_0,17-11-23,jj5f4s,None
+AGV-847,Decoder Update for z7b Core v27 and Z7B Cust v7 data (JLR_MY20),17-11-21,vjv7l4,None
+AGV-848,Resim Release 2.2.1 Preparation with Update,17-11-28,qjd2jz,None
+AGV-849,[GWM_SRR3] Create a B-sample baseline for Core1-Core2,17-11-17,zz1ffd,None
+AGV-850,HIL Integration with new decoder - AUDI XY260 ,17-12-18,jj5f4s,None
+AGV-851,Vigem 2 Delphi Converter: Z4 detections of FL and FR not on the correct position,18-01-02,,None
+AGV-852,JLR RESIM 3_21: Resolve the issues identified in JLR RESIM Release(3_20),17-11-24,tjq0p7,None
+AGV-853,Verify Embedded build in CS 1768,17-11-17,sjgr8w,None
+AGV-854,BMW SRR3: Build HIL compatible with dSPACE RCPHIL 2017-A,17-11-23,zzg23s,None
+AGV-855,Vigem2DelphiLog_4.2.0 converter Release,17-12-12,qjd2jz,None
+AGV-856,Resim continuous mode is crashing in AUID SIL Wrapper,17-11-29,vjv7l4,None
+AGV-857,Update JLR z4 Customer stream v4,17-12-04,vjv7l4,None
+AGV-858,JLR cust streams hierarchy is broken ,17-11-23,vjv7l4,None
+AGV-859,Customer Configuration macro options were not properly handled,18-01-03,djm3rb,None
+AGV-860,Resim Release Verification for PDX 2.3.1,17-12-04,xj2qdq,None
+AGV-861,Audi HIL Release-XY400_2,17-12-22,jj5f4s,None
+AGV-862,Continous mode not working,17-11-29,vjv7l4,None
+AGV-863,Resim pauses after calibration fail,17-12-08,pj1q3g,None
+AGV-864,JLR_HiL_Release_v4.2_z7b-v27 ,17-12-18,jj5f4s,None
+AGV-865,Customer Enum interface to be common in RESIM and Embedded,18-01-03,djm3rb,None
+AGV-866,BMW SRR3 : Dauerlauf binary comparing r00020201,17-12-07,qjd2jz,None
+AGV-867,BMW-HIL Release_PDX2_3_3/4,17-12-19,jj5f4s,None
+AGV-868,DPH_RR_ADAS_RESIM_Mode is not working as intended.,17-12-07,vjv7l4,None
+AGV-869,Decoder Update for Audi Z7B customer stream v10,17-12-15,vjv7l4,None
+AGV-870,Logs proceded continously with Sequential_FILE_Input mode,17-12-07,vjv7l4,None
+AGV-871,BMW Customer configuration v9 update EXE failing for Latest Logs,17-12-12,pj1q3g,None
+AGV-872,OPL-145 Audi SIL XY400_F package integration and Release,17-12-12,jzwznt,None
+AGV-873,SIL continuous mode is broken in all projects ,17-11-30,vjv7l4,None
+AGV-876, Audi Framework - EB Output interface update for XY420 - TODS,18-02-06,jzwznt,None
+AGV-877,XY410 ADTF UDP Decoder Release,18-01-15,vjqv6l,None
+AGV-878,Audi SandBox Request Xy400 -interface update -TODS,18-02-06,jzwznt,None
+AGV-879,Continous Development and Release Branch ,18-01-15,jzwznt,None
+AGV-881,Verify Framework Stiching/ Latching works with CDC v3 logs ,17-12-22,jzwznt,None
+AGV-883,Decoder Z7B core stream update - v28,17-12-07,vjv7l4,None
+AGV-884,USC/SMC to Sensor Mode or CAlibration Mode ,18-01-03,djm3rb,None
+AGV-885,Calibration Validation load Checks to be removed ,18-01-03,djm3rb,None
+AGV-886,JLR SRR3: Resim works slowly,17-12-28,tjq0p7,None
+AGV-887,Changing UDP MUX for USC for BMW to 13 ,17-12-22,djm3rb,None
+AGV-889,Deliver Resim to AUDI for SW 270.1,17-12-11,jzwznt,None
+AGV-890,SIL deliver for Audi 265 SW release,17-12-18,jzwznt,None
+AGV-891,SIL delivery for 400.2 SW AUDI,17-12-19,vjqv6l,None
+AGV-892,JLR IPG CarMaker - RCTA interfaces require an update,18-07-29,tjq0p7,None
+AGV-893,JLR SRR3: RESIM memory leak in SW 3_22,17-12-08,tjq0p7,None
+AGV-894,Framework Delivery to AUDI 410.0,18-01-15,vjqv6l,None
+AGV-895,SIL Delivery for AUDI 420.0,18-02-22,vjqv6l,None
+AGV-896,SIL delivery for AUDI SW26X.0,18-03-14,vjqv6l,None
+AGV-897,Resim Release Preparation for PDX 2.3.3,17-12-12,qjd2jz,None
+AGV-898,Testing of Audi SIL/Decoder XY270_v1_p0 ADTF Delivery,17-12-11,vjqv6l,None
+AGV-899,verification of specially sorted logs for sil270v1 audi package,17-12-11,kjgnmd,None
+AGV-900,customer ID is not upddated in Target streams,18-01-03,djm3rb,None
+AGV-901,JLR resim fails with wrong checksum,17-12-28,tjq0p7,None
+AGV-902,Testing of Audi SIL/Decoder XY265_v0_p0 ADTF Delivery,17-12-12,vjqv6l,None
+AGV-903,Verification of standalone decoder in ADTF for 265v0p0 audi package,17-12-12,kjgnmd,None
+AGV-904,Resim Release Preparation for PDX 2.3.4,17-12-14,qjd2jz,None
+AGV-905,Support for Resim release 2.3.3 ,17-12-12,xj2qdq,None
+AGV-906,BMW Resim is not working with CTA logs,18-01-12,vjv7l4,None
+AGV-907,Create a packet grabber class for ethernet,17-12-11,gjcdh6,None
+AGV-908,Filter only specific packet based on the given IP address .,17-12-11,gjcdh6,None
+AGV-909,Filter only specific packets based on IP address given by end user.,17-12-18,gjcdh6,None
+AGV-910,OPL-144 : ADTF SIL Xy265 Needs to run with XY400.F Logs ,17-12-12,jzwznt,None
+AGV-911,EMBEDDED_LIB_CONFIGURATION Path to be passed to Embedded ,18-01-03,pj1q3g,None
+AGV-912,Bring CDC fusion / Tracks Fusion / Mounting Fusion ON all Customers - geely issue ,18-01-24,pj1q3g,None
+AGV-915,Core- Azimuth polarity with wrong value,18-01-03,vjv7l4,None
+AGV-916,Scania RR and FR radars are not running for highway logs,17-12-18,vjv7l4,None
+AGV-918,.Sil file Extraction tool has to be updated to the latest AUDI output structure.,17-12-18,pj1q3g,None
+AGV-919,Update Framework for JLR z4_z7b Customer stream- V5,17-12-19,vjv7l4,None
+AGV-920,Vigem 2 Delphi Converter upload in plastic,18-01-02,qjd2jz,None
+AGV-921,Issue in CDC fusion input(BMW),18-02-06,pj1q3g,None
+AGV-922,OPL-148 Audi has issue in running SIL as Decoder in SIL265 and SIL261.,18-01-08,jzwznt,None
+AGV-923,Verification of standalone decoder in ADTF for XY400v2p0 audi package,17-12-19,kjgnmd,None
+AGV-924,RESIM Update for all customers needed to pass Mounting positions through virtual interface,18-01-04,pj1q3g,None
+AGV-925,[GEELY_SRR3] B sample SW prep for NL-3B,17-12-19,zz1ffd,None
+AGV-926,JLR_RESIM: Update GetSILInput for handling missing streams in the input Log,18-01-11,tjq0p7,None
+AGV-927,BMW logs not resimulatable with BMW resim,18-01-05,djm3rb,None
+AGV-928,Audi HIL Release-XY410_z7b_v28,18-01-02,jj5f4s,None
+AGV-929,Framework is not calling wrapper API,17-12-28,tjq0p7,None
+AGV-930,Need to implement Convert data in Z4_CUSTOM for JLR,18-01-08,kjgnmd,None
+AGV-931,Implement  for Audi to return error status for logs which does not contains DSD in it.,17-12-21,vjqv6l,None
+AGV-932,AUDI SRR3 HiL Release XY420,18-02-22,jj5f4s,None
+AGV-934,BMW HiL Release_ 2.3.5/2.4.0_I420_ATSP4_z7b v28,18-01-11,jj5f4s,None
+AGV-935,JLR HiL Release_MY20_v5_2,18-01-29,jj5f4s,None
+AGV-936,JLR HiL Release _MY19_v3_25,18-01-29,jj5f4s,None
+AGV-937,SCANIA HiL Release_z7b-v28,18-01-29,jjtyc8,None
+AGV-938,Re-sim Understanding ,18-01-29,jjtyc8,None
+AGV-939,Detections are not matching for ADTF in UDP CDC mode and internal RESIM in UDP CDC mode,18-01-30,kjgnmd,None
+AGV-940,Tracks are not matching for ADTF and internal RESIM in detection mode,18-01-16,kjgnmd,None
+AGV-941,Detections are not matching for ADTF in flexray mode and internal RESIM in flexray mode,18-05-14,kjgnmd,None
+AGV-942,Mismatches in detections for ADTF detection mode and ADTF flexray mode,18-05-14,kjgnmd,None
+AGV-943,Tracks are not matching for ADTF detection mode and ADTF flexray mode,18-05-14,kjgnmd,None
+AGV-944,Detections are not matching for  internal RESIM UDP DET Mode and internal RESIM in flexray mode,18-04-04,kjgnmd,None
+AGV-945,Tracks are not matching for internal RESIM in UDP DET mode and internal RESIM in flexray mode,18-04-04,kjgnmd,None
+AGV-946,recode the application w.r.t PcapPlusPlus lib,17-12-29,gjcdh6,None
+AGV-947,Implement Filter Only for UDP packet along with specific port number,17-12-29,gjcdh6,None
+AGV-948,[BMW_SRR3]Z4_Z7B Customer Logging stream Update Version 1 to Version 2 ,18-01-08,vjv7l4,None
+AGV-949,Hyundai SRR3 HIL V1,18-01-29,jj5f4s,None
+AGV-950,main thread shall wait for the capturing thread when data is coming ,18-01-15,gjcdh6,None
+AGV-951,JLR to configure Mounting positions + Host car size in Matlab ,18-05-22,tjq0p7,None
+AGV-954,Load Loglab CSV data to RESIM ,18-02-21,vjv7l4,None
+AGV-956,[GEELY_SRR3] Perform integration checklist on the LR1.0 SW,18-01-04,zz1ffd,None
+AGV-957,Setting Up Hardware to Test the till date code ,18-01-10,gjcdh6,None
+AGV-958,JLR  IPG VCS velocities and VCS relative velocities have conflicting signs ,18-01-11,tjq0p7,None
+AGV-959,Verify IPG model with latest My19 SW,18-03-26,tjq0p7,None
+AGV-960,Embedded framework to load Mounting Positions from -V9_Customer_XML,18-01-08,pj1q3g,None
+AGV-961,Verification of CRC_mismatch for   final implementation ,18-01-22,vjqv6l,None
+AGV-962,DVL writer update to Support CAN FD - Data corruption,18-03-14,tjq0p7,None
+AGV-964,UDP latching logic based on Scan Index needs to be brought to main branch,18-01-30,pj1q3g,None
+AGV-965,Write Error Checking Mechanism to look for expected UDP packet ordering,18-03-01,pj1q3g,None
+AGV-966,BMW SRR3 Resim Package Preparation to test for software CS I425,18-01-15,qjd2jz,None
+AGV-967,HIL Continous Mode Setup / Verify Switching between logs is smooth ,18-03-09,jz18z5,None
+AGV-968,Core Z7B Decoder v29 update ,18-02-08,vjv7l4,None
+AGV-969,[GWM_SRR3] Decoder Update for GWM SRR3,18-02-26,vjv7l4,None
+AGV-971,BMW HPCC Test Release of BMW 4030 ,18-02-05,qjd2jz,None
+AGV-972,JLR HPCC MY19 Release testing ,18-02-05,qjd2jz,None
+AGV-973,Cleanup VIGEM Source code ,18-04-04,qjd2jz,None
+AGV-976,CurviTracks need to be populated in decoder output ,18-01-29,vjv7l4,None
+AGV-977,Vehicle Data not populated on 5th Radar Dll in RESIM,18-02-26,tjq0p7,None
+AGV-979,BMW SRR3 Resim: All CAN timestamps equal to 0,18-01-22,qjd2jz,None
+AGV-980, HIL Stream update - Z7B core v29,18-02-22,jz18z5,None
+AGV-981,HIL XML configuration ,18-04-03,jjtyc8,None
+AGV-982,A Signal Handler to Stop Capture,18-01-18,gjcdh6,None
+AGV-984,RR single sensor resim is not working,18-02-08,qjd2jz,None
+AGV-986,BMW I420 resim can reply only first 40% of the trace are covered by SRR resim data,18-02-05,qjd2jz,None
+AGV-987,BMW Resim assertion RadarECU Access violation reading location ,18-02-16,tjq0p7,None
+AGV-988,Upload bmw_resim_replay Filter Source code to Plastic,18-01-16,qjd2jz,None
+AGV-989,BMW SRR3 Resim: All CAN timestamps equal to 0,18-01-16,qjd2jz,None
+AGV-990,Craft Packet Vector to hold incoming packets,18-01-18,gjcdh6,None
+AGV-991,Preparation for BMW release i420ATSP4 and i425ATS,18-01-22,qjd2jz,None
+AGV-992,Audi Resim not working,18-02-01,pj1q3g,None
+AGV-993,Decoder Bug Fix - Z4 Custom ,18-01-22,jjtyc8,None
+AGV-995,Enhancement of data reception interface,18-01-24,gjcdh6,None
+AGV-996,Remove Backward compatibilty for Customer_Config.xml file ,18-03-09,qjd2jz,None
+AGV-997,BMW_Resim_Preparation for CS 4181,18-01-23,qjd2jz,None
+AGV-998,Implementation of Read interface,18-01-24,gjcdh6,None
+AGV-999,Enhancement of Send interface ,18-01-24,gjcdh6,None
+AGV-1000,CDC fusion input logic modification ,18-02-06,pj1q3g,None
+AGV-1001,OPL - 130 :Embedded Lib Fences Vertices StdDev wrong in SIL - Re- Release 410.1,18-02-06,vjqv6l,None
+AGV-1002, Alignment parameters are zero XML trace output file for all customers,18-01-31,vjv7l4,None
+AGV-1003,CDC Frame handling for Ultra Sensors < v3 - Bug  V4 is Good ,18-03-01,pj1q3g,None
+AGV-1004,BMW Decoder Update for SWW_Warning_Level and others,18-02-22,vjv7l4,None
+AGV-1005,BugFix & Test of the module ,18-02-13,gjcdh6,None
+AGV-1006,BMW vigem2delphi converter crashed with a specific vpcap file,18-03-01,qjd2jz,None
+AGV-1007,JLR RESIM not working with older logs,18-02-13,qjd2jz,None
+AGV-1008,[GEELY_SRR3] Issue w.r.t RECW cals extraction in UDP mode,18-03-01,vjv7l4,None
+AGV-1009,OPL150  : Testing of EOL Audi Alignment using RESIM,18-05-25,vjqv6l,None
+AGV-1010,OPL -149 : Audi SIde Sensors fusion in ADTF ,18-07-29,,None
+AGV-1011,Audi_SRR3_HiL_OPL-100_ Hil Testing of TJP object interface ,18-02-26,jj5f4s,None
+AGV-1012,Audi RESIM Crash for 70% of all logs - CS 5732 -Audi Golden Data set test ,18-05-09,kjgnmd,None
+AGV-1014,OPL -138 Audi wants XML configuration to save DVSU location ,18-03-09,vjqv6l,None
+AGV-1015,Scania RESIM Crash Issue ,18-02-06,vjv7l4,None
+AGV-1016,DEC update - FAS Offset logic not working correctly in Dauerlauft data,18-02-15,vjv7l4,None
+AGV-1017,Audi_SRR3_HiL_OPL -102 : SWA Objects in HIL Incorrect,18-05-23,jz18z5,None
+AGV-1019,OPL 97 : Audi HIL delivery for XY265 Line ,18-05-23,wztzkx,None
+AGV-1020,Need to verify Audi's TODS updated ADTF Sandbox,18-02-06,vjqv6l,None
+AGV-1021,Preparation for Resim Release for CS 4235 I425ATSP2,18-01-31,qjd2jz,None
+AGV-1022,Audi_SRR3_HiL_OPL-101_KPM-7393937_SWA_Test,18-02-13,jj5f4s,None
+AGV-1023,vigem2delphi converter: no RT_Range Data,18-03-07,qjd2jz,None
+AGV-1024,Alignment parameters are zero XML trace output file for BMW,18-01-31,vjv7l4,None
+AGV-1025,z7b core stream update V29 ,18-02-08,vjv7l4,None
+AGV-1027,[JLR SRR3] HiL Release_MY19_v3_26,18-02-02,jj5f4s,None
+AGV-1029,OPL-152 : KPM 7392032 [SIL] XY56 EGO Compensation Investigation ,18-07-29,,None
+AGV-1030,GWM SRR3 HiL V1,18-03-06,jj5f4s,None
+AGV-1031,VIGEM To ORCAS Converter - Convert only SRR specific and unique Ethernet frames,18-02-13,qjd2jz,None
+AGV-1032,BMW Resim is not possible without rear sensors ,18-02-20,qjd2jz,None
+AGV-1033,Release of Audi SIL XY410_v0_p1 ADTF Delivery,18-02-08,vjqv6l,None
+AGV-1034,Testing of Audi SIL XY410_v0_p1 ADTF Delivery,18-02-08,kjgnmd,None
+AGV-1035,Test ADTF filter for BMW Replay model,18-02-13,qjd2jz,None
+AGV-1036,Verify Detections performance Log Vs CDC - XY410.1 Patch delivery,18-02-26,jzwznt,None
+AGV-1037,Dauerlauft Issue - Framework failed to call 4 Radars in one cycle,18-02-12,jzwznt,None
+AGV-1038,Disable UTC based synch in Resim of BMW to run older logs,18-02-13,jzwznt,None
+AGV-1039,Framework Modifying FAS CAN 7A0 Message - To be removed . ,18-02-08,qjd2jz,None
+AGV-1040, Auffälligkeit in SRR Resimulation,18-02-10,qjd2jz,None
+AGV-1041,Issue reported in fences out in XY410 resim delivery.,18-07-29,fzdvx1,None
+AGV-1042,JLR DSPace HiL - Core Engine - Tracker Object Reader,18-03-01,gjcdh6,None
+AGV-1046,USC MUX Issue AGX-424 resim to fail,18-02-26,vjv7l4,None
+AGV-1047,Verification of PCAN only resim for latest BMW logs.,18-02-26,tjq0p7,None
+AGV-1048,Calibration Parsing to be disabled for smaller Dauerlauft logs,18-02-26,jzwznt,None
+AGV-1049,Build Configuration Modification for Decoder ,18-03-15,vjv7l4,None
+AGV-1050,DSPACE Decoder Module ,18-03-14,vjv7l4,None
+AGV-1051,BMW resim Dauerlauf delivery failed in calibration for some of the smaller files.,18-02-26,jzwznt,None
+AGV-1052,BMW Dauerlauf resim package crashes for some of the logs.,18-02-26,jzwznt,None
+AGV-1053,Issue in ADTF Replay Filter input stmbm time  ahead of start time of reprocessed log.,18-02-20,qjd2jz,None
+AGV-1054,Generic Logger Mechanism,18-04-13,vjv7bc,None
+AGV-1055,Log Tracing - SIL sub-project in SIL framework,18-04-13,sjv1gm,None
+AGV-1056,Implement PugiXml parser in adas config in SIL framework,18-06-28,hj6my2,None
+AGV-1058,Testing of Audi SIL XY420_v0_p0 ADTF Delivery,18-02-22,kjgnmd,None
+AGV-1059,SIL Delivery for AUDI 425.0,18-03-09,vjqv6l,None
+AGV-1060,BMW RESIM I490_ATS+2 Release for Daurelauft Logs,18-02-28,qjd2jz,None
+AGV-1061,Embedded config XML path to be available on INIT API,18-02-26,jzwznt,None
+AGV-1063,OPL-152[SIL 460]: Pass Vehicle Data from the ADTF interface through Symbol Data into EB,18-07-23,vjqv6l,None
+AGV-1066,HKMC Gen2 Srr3: z4_z7b cust logging stream and z7b logging stream changes,18-03-14,vjv7l4,None
+AGV-1067,Deviation from Resim results from original Logfiles,18-02-24,qjd2jz,None
+AGV-1068,RESIM embedded delivery to AUDI for SW450,18-04-12,vjqv6l,None
+AGV-1069,RESIM embedded delivery to AUDI for SW460,18-05-22,vjqv6l,None
+AGV-1070,UDP Header Info not passed to embedded library,18-03-09,jzwznt,None
+AGV-1071,BMW z4_z7b_customer_logging stream v4 update needed ,18-02-26,vjv7l4,None
+AGV-1074,Epic to handle CMAKE Scripts for multi build environments ,18-07-25,,None
+AGV-1077,Verify PCAN only RESIM for Geely  JLR ,18-03-14,tjq0p7,None
+AGV-1078,Update EB Output Interface for CAN FD Frames - All Customers ,18-04-09,tjq0p7,None
+AGV-1081,FW : Symbol Interface v5 ,18-03-09,jzwznt,None
+AGV-1083,BMW ADTF Replay filter issue with short .dvl ,18-02-27,qjd2jz,None
+AGV-1086,ProcessSILOutput function needs to be changed into modules based on the customers.,18-03-09,pj1q3g,None
+AGV-1087,Resim 3_27_1 does not provide correct calibration data,18-05-29,,None
+AGV-1088,The Audi plastic code has build issue in Windows 7.1 sdk toolset.,18-04-05,pj1q3g,None
+AGV-1089,Upload All HiL Deliveries and Sandbox to Plastics project ,18-03-29,jj5f4s,None
+AGV-1090,Upload Audi SIL ADTF sandbox and deliveries to Plastics project,18-03-07,vjqv6l,None
+AGV-1091,[BMW_SRR3] HIL Release - Stream Update Z4 customer v4,18-03-06,jj5f4s,None
+AGV-1092,z4_z7b_logging structure Core v18,18-03-14,vjv7l4,None
+AGV-1093,Run a HIL checkout of BMW SRR3 with Miramas test log ,18-03-09,jz18z5,None
+AGV-1095,Resim exits when only one dvsu file exists in the folder and all sensors are selected in the config file.,18-03-16,pj1q3g,None
+AGV-1096,XML Traces op files  not getting generated ,18-03-14,jzwznt,None
+AGV-1097,Revert the calib structure  parameter MAX_CALIB value to 20 from 150,18-03-01,vjv7l4,None
+AGV-1098,LOAD_DEFAULT_CAL mode is not working ,18-03-07,jzwznt,None
+AGV-1101,Run HIL 2_5_1 Checkout on Monaco files ,18-03-06,jjtyc8,None
+AGV-1102,BMW SRR3: PCan only Resim for PDX 2.5.7 required(framework DVL),18-03-09,tjq0p7,None
+AGV-1103,verification of single Build Configuration for Decoder ,18-03-09,pj1q3g,None
+AGV-1104,SRR3 HKMC HiL Release,18-04-25,jj5f4s,None
+AGV-1105,Hil Release: Z4 Core stream V18,18-03-27,jj5f4s,None
+AGV-1106,HIL should write log all errors during HIL Execution ,18-03-09,jz18z5,None
+AGV-1108,Verification of XML trace - HPCC vs Windows PC,18-04-10,qjd2jz,None
+AGV-1110,Bring the framework code changes done for Dauerlauf to Cont_Dev branch,18-03-15,jzwznt,None
+AGV-1111,ADTF testing for AUDI SIl XY425,18-03-09,kjgnmd,None
+AGV-1112,Build EXE to load DVL files as start to create META data file ,18-03-12,tjq0p7,None
+AGV-1113,Decoder setup HKMC SRR5,18-06-06,vjv7l4,None
+AGV-1114,OPL_ID_152_KPM 7392032 : Print the order of trigger calls to APIs UDP frame process and Data frame process,18-04-04,kjgnmd,None
+AGV-1115,ADTF Replay filter - Bug - 3 cycles older data provided ,18-04-10,qjd2jz,None
+AGV-1116,Reply_Filter_Code_Updation,18-03-09,qjd2jz,None
+AGV-1118,PCAN resim having lots of scan drops,18-03-26,tjq0p7,None
+AGV-1119,Static Code analysis of the RESIM code,18-06-28,hj6my2,None
+AGV-1120,Scania Resim Terminates immediately without simulation,18-03-13,pj1q3g,None
+AGV-1121,GetSILExtInput function has to be divided baased on the customer,18-03-27,pj1q3g,None
+AGV-1122,OPL-151: 1.Resim And Decoder fails for 410 and 420 logs in SIL XY420,18-04-03,vjqv6l,None
+AGV-1123,OPL-154:- Fences Vertex Confidence not populated for all logs in SIL XY420 Sw,18-05-18,vjqv6l,None
+AGV-1124,OPL-130:Fences not shape consistent due to SIL PIL differences Fence Vertices std dev wrong in SIL Mode,18-05-18,vjqv6l,None
+AGV-1125,AUDI SRR3 XY 425FER/426HR HiL Check Out,18-03-15,jj5f4s,None
+AGV-1126,Reduce config xml file open/close operations to one in Resim config read.,18-03-14,jzwznt,None
+AGV-1129,JLR resim process detections incoorrectly,18-03-16,pj1q3g,None
+AGV-1130,UDP: Z7A_Z7B_logging v18 and Z7B_logging versions v30 updated,18-03-16,vjv7l4,None
+AGV-1131,Vehicle data fusion from Framework to Embedded.,18-04-10,pj1q3g,None
+AGV-1132,Create XML trace for  ADTF  symbol interface ,18-07-16,kjgnmd,None
+AGV-1133,Update the test procedure manual ,18-04-06,vjqv6l,None
+AGV-1134,collecting adtf logs from bench,18-07-29,kjgnmd,None
+AGV-1136,Resim does not run due to a null pointer,18-03-15,jj4w8q,None
+AGV-1137,AUDI SRR3 HIL OH_FENCE_TRACKS Verification,18-03-27,jj5f4s,None
+AGV-1138,End of calibration fails for XY250 log D5_HN_GP3180_002_74.dvsu,18-03-22,vjqv6l,None
+AGV-1139,GWM Decoder update ,18-04-02,vjv7l4,None
+AGV-1140,SRR3 HIL - Get HiL Error Count from  Radar,18-03-23,jjtyc8,None
+AGV-1141,SIL Suppport for Internal RESIM build Verification ,18-05-15,pj1q3g,None
+AGV-1143,Integrate XML trace to dump CAN messages in BMW ADTF filter,18-05-24,jzwznt,None
+AGV-1144,JLR PCAN ONLY RESIM run with front sensors FR and FL.,18-07-16,qjd2jz,None
+AGV-1145,Verification of UDP vs Flexray -Internal Resim +ADTF,18-07-29,,None
+AGV-1146,PCAN resim RECW result deviates from UDP resim,18-05-24,tjq0p7,None
+AGV-1147,RESIM embedded delivery to AUDI for SW426,18-04-03,vjqv6l,None
+AGV-1148,[BMW] PDX 2.5.12 RESIM Crashing in USC Calibration with LOAD_UDP_CAL option,18-03-27,jzwznt,None
+AGV-1149,Testing of Audi SIL XY426 ADTF Delivery,18-04-03,kjgnmd,None
+AGV-1150,BMW SRR3 HiL v11 Release,18-04-03,jjtyc8,None
+AGV-1152,The output DVL file should have the same timestamp as input DVL file.,18-04-23,jzwznt,None
+AGV-1153,GEELY_SRR3_HiL_v12_Release,18-04-23,jjtyc8,None
+AGV-1154,ADTF Replay filter - Improvement of filter with separate out the logic of FASL and FASR channel dada,18-05-23,jzwznt,None
+AGV-1155,SRR3 HiL Design Document,18-03-29,jj5f4s,None
+AGV-1156,Interface update for OPL ID-116,18-05-22,vjqv6l,None
+AGV-1157,CDC resim is very slow and unable to run as ,2019-04-02,,None
+AGV-1158,ADTF Replay filter - Enable the three cycles prior data,18-05-11,qjd2jz,None
+AGV-1159,PCan-Only Resim for BMW SRR3 release 2.5.12 required,18-05-24,tjq0p7,None
+AGV-1161,[GEELY_SRR3] Compare PCAN Resim performance vs UDP Resim,18-04-03,tjq0p7,None
+AGV-1163,The unsupported stream error status is overridden by ProcessSILUdpError needs to be fixed.,18-04-06,jzwznt,None
+AGV-1164,BMW_SRR3_CUST_HIL Resim Building Block,18-04-25,jj5f4s,None
+AGV-1165,SRR3 HiL Vehicle Data Input Options through XCP,18-06-29,jjtyc8,None
+AGV-1166,Validation of latest Resim ADTF filter for BMW logs,18-04-04,jzwznt,None
+AGV-1168,Require Decoders for symbol tracker fusion datas,18-05-29,vjv7l4,None
+AGV-1169,Testing of Audi SIL XY451 ADTF Delivery,18-04-12,kjgnmd,None
+AGV-1170,BMW-PDX_v002_010_001  I430_ATS_1-HiL-Checkout,18-04-11,jjtyc8,None
+AGV-1171,AUDI_SRR3_HiL_OPL-99_RCTA_Verification,18-05-23,jjtyc8,None
+AGV-1172,OPL-154 Vertex confidence [SIL 460 release],18-04-09,vjqv6l,None
+AGV-1173,Z4 Logging Data v18 is not getting updated in BMW 2.10 SW,18-04-10,vjv7l4,None
+AGV-1174,HIL KT,18-07-25,vjv7bc,None
+AGV-1175,HIL KT,18-05-11,sjv1gm,None
+AGV-1176,HIL KT,18-04-19,vjv7bc,None
+AGV-1177,HIL KT,18-07-25,hj6my2,None
+AGV-1178,Creating Understanding Document for HIL,18-05-11,sjv1gm,None
+AGV-1179,Study on .mdf4 file,18-09-14,hj6my2,None
+AGV-1180,Development setup using Eclipse,18-11-13,vjv7bc,None
+AGV-1181,Development setup using Eclipse,18-09-12,sjv1gm,None
+AGV-1182,Development setup using Eclipse,18-06-13,vjv7bc,None
+AGV-1183,Development setup using Eclipse,18-11-13,hj6my2,None
+AGV-1184,JLR_SRR3_HiL_Release_v12,18-04-11,jjtyc8,None
+AGV-1185,Analysis of PDX 2.5.12 BMW resim processed dvl files in ADTF filter.,18-04-12,jzwznt,None
+AGV-1186,RESIM SIL Requirement Specification document,18-04-13,vjv7bc,None
+AGV-1187,RESIM SIL Understanding document,18-04-13,sjv1gm,None
+AGV-1188,ADTF FILTER : Update date time month for every release of filter,18-04-12,qjd2jz,None
+AGV-1189,[JLR_SRR3]: Bring the BMW HIL bug fixes to JLR,18-04-12,jzp91l,None
+AGV-1190,BMW SRR3 PDX 2.10 read access violation Radar ECU SIL.dll,18-04-23,vjv7l4,None
+AGV-1192,Order of entries in CAL-Arrays is flipped at some point during Resim,18-05-29,,None
+AGV-1193,Geely SRR3 : Decoder update for Geely DNL5 LS 1.0 release,18-04-24,vjv7l4,None
+AGV-1195,HKMC Gen2 SRR3: z4 z7b cust stream changed,18-04-27,vjv7l4,None
+AGV-1196,Design Decompose for ADAS_CONFIG SIL,18-05-08,vjv7bc,None
+AGV-1197,Creating CMake files for linux environment,18-07-05,vjv7bc,None
+AGV-1198,AUDI_SRR3_HiL_XY460_Release,18-05-23,jj5f4s,None
+AGV-1199,Testing of ADTF Sandbox with  SIl 460 interface update,18-05-18,vjqv6l,None
+AGV-1200,Design Decompose for MUDP_LOGDvlFile,18-05-11,sjv1gm,None
+AGV-1201,GWM_SRR3_HiL_Release_v12,18-05-14,jjtyc8,None
+AGV-1202,Update Framework with z7b_cust_logging_structure Version 3 for CHANGAN,18-04-27,vjv7l4,None
+AGV-1203,BMW ADTF filter validation for the reprocessed dvl files from PDX_2_10_2,18-04-27,jzwznt,None
+AGV-1204,SCANIA_SRR3_HiL_Release_v12,18-05-14,jjtyc8,None
+AGV-1206,SRR3_Core_HiL_TestingBlock,18-07-29,jj5f4s,None
+AGV-1207,CMake for MUDP_LOG DVLFILE MODULE,18-06-01,sjv1gm,None
+AGV-1208,SCANIA HiL Bench Setup,18-06-27,jz18z5,None
+AGV-1209,Resim/SW CS6149 is not working for Rear sensors.,18-05-29,qjd2jz,None
+AGV-1210,Extract Calibrations from HiL Checkout Logs from AGV-1170,18-05-23,jjtyc8,None
+AGV-1211,BMW_CUST_HIL_SEED_KEY_RELEASE,18-05-23,jz18z5,None
+AGV-1212,GWM SRR3 : Decoder Update,18-05-16,vjv7l4,None
+AGV-1213,SCANIA_SRR3_DSPace_HiL_Reader/Decoder,18-07-16,tjq0p7,None
+AGV-1214,Geely HIL frame work is send 0 data in many of the sent frames. Need to fix the issue,18-05-17,jj5f4s,None
+AGV-1216,Design approach and HLD for cross-platform solution,18-05-24,vjv7bc,None
+AGV-1217,Generate 32 bit framework and verify Embedded library DLLs for JLR MY_20 software (Win 32),18-05-24,tjq0p7,None
+AGV-1218,CMake for Mudp_Decoder RESIM and Radar_Stream_Decoder,18-06-28,hj6my2,None
+AGV-1219,Handling of use cases in BMW ADTF Filter for Filter Improvement,18-05-23,qjd2jz,None
+AGV-1220,Flexray is not working.,18-05-16,jzwznt,None
+AGV-1221,Testing of Audi SIL XY460_v0_p0 ADTF Delivery,18-05-22,kjgnmd,None
+AGV-1222,ChangAn SRR3 : Decoder Update,18-05-17,vjv7l4,None
+AGV-1223,SCANIA_SRR3_DSPace_HiL_Tracker_Mode,18-06-04,jj5f4s,None
+AGV-1224,CLONE - Not possible to run resim on one sensor,18-05-24,pj1q3g,None
+AGV-1225,Generate 32 bit framework and verify Embedded library DLLs for JLR MY19 software (Win 32),18-05-22,tjq0p7,None
+AGV-1226,Analysis of PDX 2.11.0 BMW resim processed dvl files in ADTF filter.,18-05-18,jzwznt,None
+AGV-1228,MultiThreading Approach For SIL ,18-06-28,hj6my2,None
+AGV-1229,TODS output in AUDI stand alone decoder is wrong.,18-05-22,jzwznt,None
+AGV-1230,CLONE - New logs in Scania can't be resimed,18-05-25,jzwznt,None
+AGV-1231,HKMC Gen2 SRR3: UDP Framework Updates needed,18-05-30,vjv7l4,None
+AGV-1233,[SRR5]: Z7A_Z7B_logging structure update,18-06-05,vjv7l4,None
+AGV-1235,BMW Srr3:Core stream version change to support BMW PCAN Detection layout changes,18-05-30,vjv7l4,None
+AGV-1236,Changes for Cross platform Resim application,18-06-04,vjv7bc,None
+AGV-1237,Knowldge Sharing on the SIL topics,18-06-14,pj1q3g,None
+AGV-1238,Cmake Build script for CAF_CONFIGVEHICLE_CONFIGRADAR_CONFIGDVL_FILEMudp_decoder_calibObjToDetUDP_XMLLoggerptpCalibreader on Both Windows and Linux environment,18-08-22,sjv1gm,None
+AGV-1239,Approach of Muti-Threaded RESIM,19-03-08,jzwznt,None
+AGV-1240,Implement of frame lists for input file,19-03-08,jzwznt,None
+AGV-1246,Use of correct configuration file : Resim should accept only V9 configuration or greater,18-06-05,qjd2jz,None
+AGV-1248,SCANIA_DSPACE_HiL_Resim_Integration,18-06-05,tjq0p7,None
+AGV-1249,SRR3_HiL_CommonDelivery_Feasibility_Study- Europe Customers,18-06-29,jjtyc8,None
+AGV-1250,Decoder Shall identify Platform based on Source Info field in UDP Header,18-06-25,vjv7l4,None
+AGV-1251,Z7a_Logging Stream has to be reverted to SRR3 stream enum for SRR5,18-07-13,vjv7l4,None
+AGV-1252,SCANIA_DSpace_HiL_Release_v1,18-06-04,jz18z5,None
+AGV-1253, Resimulation Sync using utc time and timestamp with code walk through Explanation.,18-05-29,qjd2jz,None
+AGV-1254,CDC Fusion for AUDIBMWJLR etc with Code walk through Explanation.,18-06-14,qjd2jz,None
+AGV-1255,Overview of CDC fusion concept,18-05-29,qjd2jz,None
+AGV-1256, Preparation for BMW HPCC RESIM SW 2.11.1,18-05-29,qjd2jz,None
+AGV-1257,BMW HPCC RESIM for SW 2.11.1,18-06-05,qjd2jz,None
+AGV-1258,SCANIA:CDC mode Virtual fusion Detection Mistmatch,18-06-01,vjv7l4,None
+AGV-1259,Analysis of PDX 2.11.1 BMW resim processed dvl files in ADTF filter.,18-06-04,jzwznt,None
+AGV-1260,HIL Framework for Renault_SRR5,18-07-04,jj5f4s,None
+AGV-1261,OPL-161:Reset and Cleanup in Error state in SIL (Resim),18-06-05,vjqv6l,None
+AGV-1262,[DSPACE]: Framework to decode DSPACE logs and pass it to Embedded library,18-10-19,qjd2jz,None
+AGV-1263,Z7B_logging_structure updated for SRR5 RNA,18-06-05,vjv7l4,None
+AGV-1264,BMW:CDC mode Virtual fusion Detection Mistmatch,18-06-05,vjv7l4,None
+AGV-1265,Verify PCAN only ReSim for GWM Changan,18-07-25,tjq0p7,None
+AGV-1267,HKMC SRR5 SIL Framework,18-06-06,vjv7l4,None
+AGV-1162,PCAN DVL to XML writer ,18-07-29,,None
+V 1391 Integrate Version Control Wizard to Framework,,2019-04-05,kjgnmd,none
+AGV-1266,Renault SRR5 SIL Frame Work ,18-06-06,vjv7l4,None
+AGV-1268,Resim framework bug fixes for SRR5.,18-06-06,vjv7l4,None
+AGV-1269,Integration testing of Embedded library changes in RESIM with CMake build Windows,18-09-06,sjv1gm,None
+AGV-1270,Version control for Resim framework release packages and maintain the history,18-06-05,jzwznt,None
+AGV-1271,Resim runs for wrong file name input in FList.,18-06-18,qjd2jz,None
+AGV-1272,XML Config Options for Tracker HiL,18-06-13,jj5f4s,None
+AGV-1273,SCANIA HiL Tracker Mode - Tracker v5 Integration,18-07-04,tjq0p7,None
+AGV-1274,SCANIA Tracker HiL - Most Recent Scene data Capture,18-07-04,tjq0p7,None
+AGV-1275,Resim framework Xlink single building block for all customers,18-07-02,jzwznt,None
+AGV-1276,SCANIA DSPACE HIL Radar Data Sync,18-07-04,tjq0p7,None
+AGV-1277,Update Framework Decoder  for UDP Z4 customer stream update,18-06-11,vjv7l4,None
+AGV-1278,Issue observed in RESIM for Scania 5.4.0 s/w.,18-06-12,vjv7l4,None
+AGV-1279,Z7A_Z7B logging structure version number changed & Xsum issue fixed,18-06-11,vjv7l4,None
+AGV-1281,Configuration xml file reading and decoding needs to be made foolproof.,18-06-12,jzwznt,None
+AGV-1282,BMW 19/03 I430 PCAN only resim throwing exception,18-06-18,qjd2jz,None
+AGV-1283,Profile Resim to get data on which tasks take most time,18-06-28,hj6my2,None
+AGV-1284,ADTF Sandbox Verification,18-06-25,vjqv6l,None
+AGV-1285,HPCC Release BMW PDX 2_11_2,18-06-18,qjd2jz,None
+AGV-1286,AUDI_SRR3_HiL_OPL-106,18-07-02,jj5f4s,None
+AGV-1287,Cmake and code cleanup for embedded library,19-02-11,tjr68b,None
+AGV-1288,CMake configuration list and include clean up for Z2 core module,18-12-13,tjr68b,None
+AGV-1289,Create cmake files for Z1 customer,18-11-16,gjdwf9,None
+AGV-1290,CMake configuration list and include clean up for Z2 SRR  module,18-12-13,tjr68b,None
+AGV-1291,CMake and header file cleanup for Z2 customer,18-11-16,gjdwf9,None
+AGV-1292,Modify and integrate CMake for Core 1 and Core 2 Modules,18-12-13,tjr68b,None
+AGV-1293,CMake configuration list and include clean up for Z2_SRR_ANGLE_FINDING,18-12-13,tjr68b,None
+AGV-1294,CMake configuration list and include clean up for Z2_SRR_DYNAMIC_ALIGNMENT,18-12-13,tjr68b,None
+AGV-1295,CMake configuration list and include clean up for Z2_SRR_HIL_BB,18-12-13,tjr68b,None
+AGV-1296,CMake configuration list and include clean up for Z2_SRR_PCAN module,18-12-13,tjr68b,None
+AGV-1297,CMake configuration list and include clean up for Z2_SRR_PARTIAL_BLOCKAGE module,18-12-13,tjr68b,None
+AGV-1298,CMake configuration list and include clean up for Z2_SRR_MNR_BLOCKAGE,18-12-13,tjr68b,None
+AGV-1299,[JLR SRR3] bug fix: Vehicle data not updating for software version 3.29.1,18-06-26,jj5f4s,None
+AGV-1300,Not possible to run resim on one sensor(With logs having data for two sensors),18-06-12,lzf3xh,None
+AGV-1301,CLONE - Not possible to run resim on one sensor(With logs having data for two sensors),18-06-13,pj1q3g,None
+AGV-1302,BMW Pcan-only resim for PDX 2.13.1 needed which is backwards compatible for logs recorded with PDX 2.3.4,18-08-09,qjd2jz,None
+AGV-1303,RNA SIL verification with four sensors ,18-06-18,vjv7l4,None
+AGV-1304,Cross Platform RESIM targeting,18-06-28,hj6my2,None
+AGV-1305,Building Resim Framework in Linux and Windows with CMake build Scripts,18-07-19,vjv7bc,None
+AGV-1306,SRR3: Core stream version change to support 0th and last rbin logging,18-06-19,vjv7l4,None
+AGV-1307,SRR3_HiL_CommonDelivery_Verification_For_BMW,18-06-26,jjtyc8,None
+AGV-1308,Update DSPACE Transmitter,18-07-03,tjq0p7,None
+AGV-1309,Review,18-07-03,gzvcb3,None
+AGV-1310,Unifying of AUDI APIs for all customers in Resim framework.,18-08-10,jzwznt,None
+AGV-1312,Scania Tracker HiL Release v2,18-07-04,tjq0p7,None
+AGV-1313,SCANIA : The sequence of the dll called by RESIM exe,18-07-13,jzwznt,None
+AGV-1314,Audi - Log camera signals BV1_LIN_01_Typ need to be logged with UDP,18-06-25,vjv7l4,None
+AGV-1315,SCANIA_SRR3_HiL_SW_v6.0,18-06-27,jjtyc8,None
+AGV-1316,BMW_SRR3_v2_5_8/12_HiL_Checkout,18-06-21,jjtyc8,None
+AGV-1318,Plot Graphs needed for OPL 152 fix,18-06-29,kjgnmd,None
+AGV-1319,OPL-152[SIL 426]: Pass Vehicle Data from the ADTF interface through Symbol Data into EB,18-09-17,vjqv6l,None
+AGV-1320,OPL-152[SIL 265]: Pass Vehicle Data from the ADTF interface through Symbol Data into EB,18-07-27,vjqv6l,None
+AGV-1321,Build and Verification of SIL 426 package in ADTF to be delivered to AUDI,18-06-22,vjqv6l,None
+AGV-1322,Verification with SCANIA,18-06-29,jjtyc8,None
+AGV-1323,Verification with JLR,18-06-26,jjtyc8,None
+AGV-1324,HiL Release for All SRR3 Programs ,18-06-26,jj5f4s,None
+AGV-1325,Verification of AUdi Internal HIL using SIngle Build ,18-06-26,jjtyc8,None
+AGV-1326,Single HIL Build - ASIA Customers,18-07-10,jjtyc8,None
+AGV-1327,CLONE - SRR3_HiL_CommonDelivery_Verification_For_Geely,18-07-04,jjtyc8,None
+AGV-1328,CLONE - Verification with GWM,18-07-10,jjtyc8,None
+AGV-1329,CLONE - Verification with Changan ,18-07-10,jjtyc8,None
+AGV-1330,Verification of Internal HIL using SIngle Build Hyundai Gen2 ,18-07-10,jjtyc8,None
+AGV-1332,Unit Testing for code changes done in Resim Framework CrossPlatformUT.,18-07-02,sjv1gm,None
+AGV-1333,BMW_SRR3_HiL_Run_2_11_1 VCO Logs,18-06-21,jjtyc8,None
+AGV-1335,SIL 470 Resim Delivery[AUDI],18-07-13,vjqv6l,None
+AGV-1336,The CAN timestamp in the original and resimmed logs should be the same,18-06-22,zjpwq7,None
+AGV-1337,CMake and header file cleanup for Z2 SRR - UDP module,18-12-13,gjdwf9,None
+AGV-1338,Integration of all the core 1 and core 2 modules,18-12-13,gjdwf9,None
+AGV-1339,CMake and header file cleanup for Z2 SRR - Static Alignment,18-11-16,gjdwf9,None
+AGV-1340,CMake configuration list and include clean up for Z1 SRR module,18-12-13,tjr68b,None
+AGV-1341,Testing of Audi SIL XY426_v1_p1 ADTF Delivery,18-06-22,kjgnmd,None
+AGV-1342,Update input symbol version 6,18-08-09,qjd2jz,None
+AGV-1343,Update input symbol version 6,18-06-22,qjd2jz,None
+AGV-1344,ChangAn 302 SRR3: Framework update needed,18-07-03,vjv7l4,None
+AGV-1345,GWM SRR3: Framework update needed,18-07-03,vjv7l4,None
+AGV-1346,RNA MDF library integration,18-09-14,,None
+AGV-1347,RNA CDC mode verification,18-09-14,,None
+AGV-1348,1 cycle delay between flexray and detection info timestamp,18-07-23,vjqv6l,None
+AGV-1349,CDC Fusion bug(BMW),18-07-02,vjv7l4,None
+AGV-1351,DVSU is not created in latest BMW RESIM,18-06-29,vjv7l4,None
+AGV-1359,Z7B_Pcan_dbc_Major-Minor version update,18-06-26,vjv7l4,None
+AGV-1360,Bug in Z4 core data decoding(BMW),18-07-02,vjv7l4,None
+AGV-1361,SRR3_CHANGAN_HiL_Release,18-06-28,jjtyc8,None
+AGV-1362,BMW PCan only Resim for every SW release needed,18-08-09,qjd2jz,None
+AGV-1363, new customer_config_file 9.3  is not working for HKMC customer ,18-06-28,jzwznt,None
+AGV-1364,The NUMBER_OF_OBJECTS_Z7B_CUST_TRACKER should be made same as NUMBER_OF_OBJECT,18-06-28,jzp91l,None
+AGV-1365,JLR MY 20 Opposite detection missing ,18-06-28,vjv7l4,None
+AGV-1368,GEELY SRR3: SIL decoder Update for GEELY UDP version 30 update,18-07-03,vjv7l4,None
+AGV-1369,User interface Design,18-09-12,sjv1gm,None
+AGV-1370,Request HIL analysis,18-07-13,jjtyc8,None
+AGV-1372,[RNA SRR5]: Z7A logging structure update for 210 Range bins,18-07-13,vjv7l4,None
+AGV-1373,Decoder Bug Fix for BMW for SW 2.13.2 ,18-06-29,jjtyc8,None
+AGV-1374,RNA CUSTOMER REPORTED CRASH ISSUE ,18-07-02,vjv7l4,None
+AGV-1375,BMW - HiL Data Injection to Radar in Free Run Mode- Case Study ,19-03-08,zjpwq7,None
+AGV-1376,[Scania] Request for HIL package for v6.1 ,18-07-04,jjtyc8,None
+AGV-1377,[Scania] Request for SIL framework exe for latest UDP CS,18-07-02,xzpv39,None
+AGV-1380,Integration of all the core 1 and core 2 modules - Linux,19-03-25,gjdwf9,None
+AGV-1381,Deliver decoder dlls and pdb files to Vector.,18-07-09,jzwznt,None
+AGV-1382,OPL-162 Dat to csv export,18-07-16,kjgnmd,None
+AGV-1383,AUDI SRR3 HiL KPM-7544553,18-07-25,jj5f4s,None
+AGV-1384,[SRR5]: Updated exe required for changed Z7a core stream ,18-07-18,vjv7l4,None
+AGV-1385,Analyze MDF4 library,18-08-13,vjv7l4,None
+AGV-1386,Read the MDF log and write it as ORCAS playable format to verify the parser ,18-09-14,,None
+AGV-1387,Write MDF log verify the CAN data in CANape ,18-09-14,,None
+AGV-1388,Validate UDP data with ORCAS after 3rd Phase of ORCAS integration task ,18-09-14,,None
+AGV-1389,Framework to create IQ data CSV Dump like Loglab,18-07-16,tjq0p7,None
+AGV-1390,Update CDC Stitching logic to handle SRR3 / SRR5 based on UDP header ,18-09-17,vjv7l4,None
+AGV-1391,Integrate Version Control Wizard to Framework,19-04-09,kjgnmd,None
+AGV-1393,Ensure Radar Cube is cleared every Scan Cycle ,18-07-27,tjq0p7,None
+AGV-1394,GWM SRR3 HiL Release,18-07-09,jjtyc8,None
+AGV-1395,Changan SRR3  HiL Release,18-07-09,jjtyc8,None
+AGV-1396,Update HIL Engine to communicate with 6 BMW Sensors ,19-03-13,tjq0p7,None
+AGV-1398,GEELY SRR3 HiL Release for UDP version 30 update,18-07-09,jjtyc8,None
+AGV-1399,HIL Sequence file mode to RESET Sensors between Logs ,18-09-07,jjtyc8,None
+AGV-1400,Customer config XML should use Alignment from UDP as starting point,18-08-27,vjqv6l,None
+AGV-1401,RESIM branch to handle Single DVSU file - not 4 DVSU,18-09-12,vjqv6l,None
+AGV-1405,Generic HiL Resim to Support DSPACE Live mode for all SRR3,18-09-28,tjq0p7,None
+AGV-1406,[CDC_RESIM]: Need CSV dumps with Beam Vectors,18-10-17,vjqv6l,None
+AGV-1407,Virtual Object Fusion Logic has to be moved to EB from RESIM,18-09-04,tjq0p7,None
+AGV-1408,AUdi asked to do analysis on ghost Ohs for the logs available at aptiv side,18-07-06,vjqv6l,None
+AGV-1410,Re-Enable 5th Radar (Radar_ECU_SIL.dll) injection capability on RESIM,18-07-16,jzwznt,None
+AGV-1411,BMW HPCC RESIM for SW 2.13.2,18-07-16,qjd2jz,None
+AGV-1412,HKMC SRR5 : logs with new  Cust Logging structure ,18-09-17,vjv7l4,None
+AGV-1413,SIL/PIL Comparison Analysis and Verification for OH,18-07-27,vjqv6l,None
+AGV-1415,Needs to Update the Output Symbol Structure for Virtual object fusion implementation,18-09-04,tjq0p7,None
+AGV-1416,[HKMCSRR5]updated Z4_Z7b _cust Logging  and z7B cust logging stream ,18-09-17,vjv7l4,None
+AGV-1417,Testing of Audi SIL/Decoder XY470_v0_p0 ADTF Delivery,18-07-13,kjgnmd,None
+AGV-1418,BMW -Need last id the tracker used for a new object,18-07-16,jzwznt,None
+AGV-1419,sfunction for creating data for UDP packages,18-07-27,tjq0p7,None
+AGV-1420,Audi_XY_470_HiL_Release,18-07-18,jjtyc8,None
+AGV-1421,Decoder update for UDP logging Z7B structures SCANIA SRR3,18-07-27,vjv7l4,None
+AGV-1423,RESIM: Separate implementation of Audi and Non Audi Structure,18-08-09,qjd2jz,None
+AGV-1424,Run latest resim for BMW Dauerlauf logs in HPCC,18-07-16,qjd2jz,None
+AGV-1425,BMW z7b_customer_logging stream v6 and z7b_core_logging stream v32 updated needed frame work updates,18-07-16,vjv7l4,None
+AGV-1426,Testing of Audi SIL XY460_v0_p1 ADTF Delivery,18-07-23,kjgnmd,None
+AGV-1427,Create XML trace for ADTF symbol interface in stand alone decoder,18-07-23,kjgnmd,None
+AGV-1430,[HKMC_SRR5]: Updated SIL package required for changed enum UDPSource ,18-09-13,vjv7l4,None
+AGV-1433,RENAULT SRR5 HiL Release v1,18-08-08,jj5f4s,None
+AGV-1434,[JLR_SRR3]: Decoder update for UDP logging Z7A and Z7B structures in JLR SRR3,18-07-20,vjv7l4,None
+AGV-1435,RNA UDP stream Updated : Framework Update needed,18-08-22,vjv7l4,None
+AGV-1436, Testing of Audi SIL XY265_v0_p1 ADTF Delivery,18-07-27,kjgnmd,None
+AGV-1437,Complete testing of resim framework for the unified API's,18-09-18,kjgnmd,None
+AGV-1438,BMW Resim only provides dvl/dvsu files with strange customer_configuration settings,18-07-31,jzwznt,None
+AGV-1439,BMW Resim working only for front sensors,18-07-31,jzwznt,None
+AGV-1441,BMW SRR5 LOW VARIANT  : FRAMEWORK UPDATE NEEDED,18-09-05,vjv7l4,None
+AGV-1442,BMW SRR5 MID VARIANT : FRAMEWORK UPDATE NEEDED,18-09-21,vjv7l4,None
+AGV-1443,Package loss SRR3_Common_Build_HiL_Release_V14,18-07-30,jjtyc8,None
+AGV-1444,Build Stand Alone MDF4 Converter for DVSU,18-09-14,jzwznt,None
+AGV-1445,Build Stand Alone MDF4 Converter for DVL Data,18-09-20,vjv7l4,None
+AGV-1446,Integrate MDF4 Writer into RESIM - CAN only ,18-10-15,jzwznt,None
+AGV-1447,Create Stand Alone MDF4 Writer - UDP ,18-09-24,jzwznt,None
+AGV-1448,Replay RESIM MDF4 UDP file in Vector tool chain ,19-03-04,vjqv6l,None
+AGV-1449,Integrate MDF4 Reader into RESIM ,18-11-13,vjqv6l,None
+AGV-1450,Verify MDf4 LIB full testing - Read and Write ,18-12-05,kjgnmd,None
+AGV-1451,Canape MDF4 replay Module - DVSU Generator,18-09-07,jzwznt,None
+AGV-1453,Vector Audi Decoder DLL Design Update ,18-09-25,jzwznt,None
+AGV-1455,Add VCAN FD output capability to SIL,19-03-04,zjpwq7,None
+AGV-1456,Renault SRR5 RESIM needs VCAN Signals for Customer ,18-09-21,jjyr0p,None
+AGV-1457,Hyundai SRR5 RESIM needs VCAN Signals for Customer ,18-09-21,jjyr0p,None
+AGV-1459,Integrate MDF4 Reader into HIL,18-12-21,vjqv6l,None
+AGV-1460,Decoder update for UDP logging Z7B structures SCANIA SRR3 KAE 4_1,18-08-08,vjv7l4,None
+AGV-1461,KT on RESIM-SIL tool,18-12-13,fj6pzt,None
+AGV-1462,UDP Resim failed on specified logs,18-07-27,tjq0p7,None
+AGV-1463,Testing of Audi SIL XY426_v1_p2 ADTF Delivery with OPL _152,18-12-05,kjgnmd,None
+AGV-1464,JLR: Change in SRR3_Input_Data.cpp required,18-07-27,pzysy0,None
+AGV-1465,SIL/PIL Comparison Analysis and Verification for OH for XY470 dat file,18-09-05,kjgnmd,None
+AGV-1468,Develop CMAKE for all Framework SIL components,18-10-01,sjv1gm,None
+AGV-1469,Testing of SIL FW CMAKE 64 bit SIL in Windows & Release ,19-03-26,tjr68b,None
+AGV-1470,Testing of SIL FW CMAKE 32 bit SIL in Windows & Release ,19-03-25,tjr68b,None
+AGV-1471,Testing of SIL CMAKE 64 bit SIL in LINUX & Release ,19-01-29,fj6pzt,None
+AGV-1472,Testing of SIL FW CMAKE 32 bit SIL in LINUX  & Release ,19-03-25,vjfnq4,None
+AGV-1478,Setup  Builds Environment for WIN/LINUX for all Engineers,19-03-26,tjr68b,None
+AGV-1492,Testing of HIL CMAKE 64 bit HIL in Windows ,19-02-04,vjv7bc,None
+AGV-1493,Building of of HIL CMAKE 64 bit in Windows ,18-10-10,vjv7bc,None
+AGV-1494,Building of of HIL CMAKE 64 bit in Linux,19-03-19,vjv7bc,None
+AGV-1501,Profile File Write Optimized RESIM on HPCC ,19-03-08,qjd2jz,None
+AGV-1502,Profile File Read Optimized RESIM on HPCC ,19-03-08,qjd2jz,None
+AGV-1503,HiL Run with Single DVSU Input File for All Sensors,18-09-11,jj5f4s,None
+AGV-1504,RESIM Mutithread Increment3 -  load different decoder versions ,19-03-25,sjdpct,None
+AGV-1508,BMW SRR3 HiL I490- 19/03 ,18-08-09,jjtyc8,None
+AGV-1509,Update SIL files to enable PCAN population in resim,18-08-02,tjq0p7,None
+AGV-1510,AUDI SRR Hil XY475 Release,18-08-09,jj5f4s,None
+AGV-1512,BMW SRR3 HiL I490- 19/03 - Verification,18-08-02,jjtyc8,None
+AGV-1513,Performance measure for BMW I490,18-08-08,jjtyc8,None
+AGV-1514,Not correctly working HIL for SW470 SRR3 Audi,18-07-31,jjtyc8,None
+AGV-1515,Remove latest PCAN message changes from UDP,18-07-31,zjfskq,None
+AGV-1516,BMW SRR5 : LOW VARIANT - ReSim solution needed,18-09-21,zjpwq7,None
+AGV-1518,BMW Pcan-only resim which is backwards compatible for older logs having more drops in O/P DVL,18-08-03,qjd2jz,None
+AGV-1519,HPCC Test Release for BMW I490,18-08-20,qjd2jz,None
+AGV-1520,SIL 475 Release To AUDI,18-08-09,kjgnmd,None
+AGV-1521,JLR SRR3: Wheelbase equal ZERO in Resim SW5_14_1,18-08-02,vjv7l4,None
+AGV-1522,BMW_SRR3: Z4 Logging Decoder Timestamp consistency issue,18-08-03,jzwznt,None
+AGV-1523,Geely SRR3 : HIL package for UDP 32,18-08-02,jjtyc8,None
+AGV-1524,Geely SRR3 : SIL decoder update for UDP 32,18-08-01,vjv7l4,None
+AGV-1525,Make file changes for 105 range bins,18-08-01,gjf603,None
+AGV-1526,ChangAn 302 SRR3: Framework update needed,18-08-02,vjv7l4,None
+AGV-1527,Changan SRR3 HiL Package Update needed,18-08-02,jjtyc8,None
+AGV-1528,Package loss SCANIA Common_Build_HiL_Release_V15,18-08-10,jjtyc8,None
+AGV-1529,ECU Read HIL Error Count Reporting ,18-09-19,jjtyc8,None
+AGV-1530,DVSU Reader Modifications Required,18-08-31,jj5f4s,None
+AGV-1531,HiL Statemeachine Modification,18-08-31,jj5f4s,None
+AGV-1532,Integration of Updated Reader and HiL Engine,18-09-05,jj5f4s,None
+AGV-1533,Endurance Test to Observe any Packet Loss,18-09-07,jj5f4s,None
+AGV-1536,Decoder update for UDP logging Z4_Z7B structures SCANIA SRR3 KAE 4_1,18-08-08,vjv7l4,None
+AGV-1537,For rear left sensor the HIL exe will stop sending the HIL frames after particular scanindex,18-08-06,jj5f4s,None
+AGV-1538,The timing analysis need for the alignment module with the vehicle logs provided by Ulrich,18-08-03,cjwd0w,None
+AGV-1539,CLONE - The timing analysis need for the alignment module with the vehicle logs provided by Ulrich,18-08-03,cjwd0w,None
+AGV-1540,Getting RUN_MODE as Zero from frame work which should be non Zero,18-08-06,qjd2jz,None
+AGV-1541,Integrating & Testing the Embedded libraries and Resim frame work in Linux platform,19-01-29,fj6pzt,None
+AGV-1545,Test CMAKE Windows Hil for all SRR3 customers ,19-03-25,vjv7bc,None
+AGV-1546,Test CMAKE Windows Hil Engine,19-04-08,vjv7bc,None
+AGV-1547,Testing HIL With DSPACE Application CMAKE Windows ,18-11-07,vjv7bc,None
+AGV-1548,Testing of Single Build Windows HIL.exe,18-10-23,vjv7bc,None
+AGV-1552,SRR5 - HIL Windows/Linux for RNA SRR5 Low,19-03-18,vjv7bc,None
+AGV-1557,Geely PCAN ReSim vehicle length&width were filled with zeros,18-08-10,tjq0p7,None
+AGV-1558,Vector license for final delivery,18-09-20,rz2qnl,None
+AGV-1559,Getting assertions after some cycles running for SCANIA,18-08-08,qjd2jz,None
+AGV-1560,Getting Assertions for RUN_Mode in JLR,18-08-08,qjd2jz,None
+AGV-1561,Updates needed in RESIM framework exe for Down select UDP structure update,18-08-08,vjv7l4,None
+AGV-1563,JLR SRR3: host vehicle dimension equal ZERO in Resim 3_30 in CDC mode,18-09-24,zjpwq7,None
+AGV-1564,[Scania] RESIM Issues observed in replaying older logs in Scania. ,18-08-27,vjqv6l,None
+AGV-1566,Build 64-bit S-function for converting radar input data into UDP frames,18-09-03,tjq0p7,None
+AGV-1567,SCANIA SRR3 HiL Release for Customer logging stream,18-08-10,jjtyc8,None
+AGV-1568,GWM SRR3: SIL decoder Update for GWM UDP version 32 update,18-08-20,vjv7l4,None
+AGV-1569,GWM SRR3 HiL Release for UDP version 32 update,18-08-13,jjtyc8,None
+AGV-1570,BMW SRR3 - Vehicle parameters not updated properly in PCan only resim,18-08-27,qjd2jz,None
+AGV-1573,Autoclose Command window after HiL Execution,18-08-14,jjtyc8,None
+AGV-1574,HiL_Crossplotform_Toolchain_Setup_Windows,18-09-11,jjtyc8,None
+AGV-1576,Assert error in RESIM,18-08-21,vjv7l4,None
+AGV-1578,Testing of cmake generated embedded dll's with resim framework,18-12-13,tjr68b,None
+AGV-1582,[Scania] RESIMed dvl cannot be replayed in ORCAS.,18-08-21,tjq0p7,None
+AGV-1583,Future features for HIL engine,18-09-07,jjtyc8,None
+AGV-1585,Undefined symbols in the radar Dll's,18-12-13,tjr68b,None
+AGV-1586,RESIM Application portability to Linux,18-11-05,fj6pzt,None
+AGV-1587,CMAKE Assert error in RESIM,18-09-17,kjgnmd,None
+AGV-1588,CDC Fusion Detections are not populated from the Latest RESIM Release Xlink,18-08-23,tjq0p7,None
+AGV-1589,BMW HPCC RELEASE FOR PDX 2.14.1,18-08-31,qjd2jz,None
+AGV-1591,Scania RESIM release 6.1.2 crashes,18-08-22,vjv7l4,None
+AGV-1592,Geely SRR5 Resim package needs to be developed,18-09-20,xzcr1h,None
+AGV-1593,The new HIL tool for RNA required with z4_logging v18,18-08-23,jjtyc8,None
+AGV-1594,SCANIA - CS4713 resim only runs when built as release not debug,18-08-23,zjpwq7,None
+AGV-1595,Single batch file should run two HIL modes(DSPACE and LOG_DETS) for SCANIA SRR3,18-08-24,tjq0p7,None
+AGV-1596,[RNA_SRR5]: SIL Package needed for CDC RESIM,18-09-05,vjv7l4,None
+AGV-1597,HiL Package for GWM,18-08-24,jjtyc8,None
+AGV-1598,[RNA SRR5]: Z7A Logging structure update to version 5,18-08-31,vjv7l4,None
+AGV-1599,Verification of HiL Application with Single DVSU Input File for All SRR3 and SRR5 ,18-09-21,jj5f4s,None
+AGV-1601,Bring RNA CDC changes(SIL) to BMW SRR5,18-08-28,jj4w8q,None
+AGV-1602,Adding XMl tag for enabling single dvsu,18-08-28,vjqv6l,None
+AGV-1603,Modification in reading part for single dvsu,18-09-05,vjqv6l,None
+AGV-1605,HIL PDD requirement review,19-03-15,jjtyc8,None
+AGV-1607,generating single output dvsu file,18-08-30,vjqv6l,None
+AGV-1608,create Stand alone exe For single dvsu,18-08-31,vjqv6l,None
+AGV-1609,Bug fix for Logging structure RNA V8,18-08-31,vjv7l4,None
+AGV-1612,Analysis for HIL AUDI XY475 release with new scenario,18-09-07,jj5f4s,None
+AGV-1613,BMW HPCC RELEASE FOR PDX 2.14.3,18-09-05,qjd2jz,None
+AGV-1615,BMW HPCC RELEASE : Deliverable should run on HPCC successfully ,18-09-05,qjd2jz,None
+AGV-1616,verify HIL Application is working fine for the dvsu's generated by Single dvsu standalone exe,18-09-11,jj5f4s,None
+AGV-1618,BMW_SRR3_HiL_CUST_Trace_Analysis,18-09-24,jz18z5,None
+AGV-1619,Logs are not replaying ,18-09-04,vjv7l4,None
+AGV-1620,Detections not loaded in FlexRey Resim mode,18-09-17,vjqv6l,None
+AGV-1621,create single dvsu+4 dvsu output files for 4 dvsu input,18-09-04,vjqv6l,None
+AGV-1622,PCAN_ONLY resim: SRR3 Scania ,18-11-07,qjd2jz,None
+AGV-1623,create single dvsu+4 dvsu output files for 4 dvsu input,18-09-05,vjqv6l,None
+AGV-1624,PCAN_ONLY resim:SRR3 Hyundai,18-09-26,qjd2jz,None
+AGV-1625,SCANIA TRACKER HIL Release V5,18-09-07,tjq0p7,None
+AGV-1626,Integration of single dvsu in Resim,18-09-06,vjqv6l,None
+AGV-1627,Frame work code has to be changed for new UDP building block,18-09-21,vjv7l4,None
+AGV-1628,[RNA SRR5]: Bypass z7a core stream versions 23 and 4,18-09-17,vjv7l4,None
+AGV-1630,CMake for Resim framework SRR5 64bit - Windows,19-02-11,tjr68b,None
+AGV-1631,RNA : Z7B_Cust_logging_structure.h  stream is changed : FRAMEWORK update needed,18-09-20,vjv7l4,None
+AGV-1633,CDC fusion implementation for HKMC GEN2 on Frame work side,18-09-19,vjqv6l,None
+AGV-1634,Framework code changes for new UDP building block,18-11-19,vjv7l4,None
+AGV-1635,RESIM embedded delivery to AUDI for SW476.C,18-09-26,kjgnmd,None
+AGV-1636,Provide document with detailed resim output,18-10-22,kjgnmd,None
+AGV-1637,Merge SRR5 branches to continous main branch ,18-10-22,vjv7l4,None
+AGV-1638,[JLR] CDC resimulation issue,18-09-26,vjqv6l,None
+AGV-1639,[RNA_SRR5]: Scan index mismatch between log and decoded z7a stream data,18-09-13,vjqv6l,None
+AGV-1641,GWM SRR3::Verify PCAN Based RESIM Behaviour,18-10-05,qjd2jz,None
+AGV-1642,DSPACE HIL Engine for all customers,18-10-17,tjq0p7,None
+AGV-1643,DSPACE TRACKER HIL implementaion for ITV,18-10-05,tjq0p7,None
+AGV-1644,Continuous mode enable and disable through xml file,18-09-17,jjtyc8,None
+AGV-1645,Vehicle Data for all 4 sensors needed for Radar ECU dll,19-04-22,qjd2jz,None
+AGV-1646,CDC Fusion needs to be Enabled for All SRR3  Customers ,18-09-25,vjqv6l,None
+AGV-1647,CDC Fusion needs to be Enabled for GWM SRR3,18-09-13,zjpwq7,None
+AGV-1649,CDC Fusion needs to be Enabled for GEELY SRR3,18-09-13,zjpwq7,None
+AGV-1650,HiL Tracker Data Extraction from Wireshark Trace,18-09-13,jj5f4s,None
+AGV-1651,Framework to change the calibration decoding method,19-01-30,kjgnmd,None
+AGV-1652,[RNA_SRR5]: BV_scale_per_range_bin is not decoded from z7a stream data,18-09-13,vjqv6l,None
+AGV-1653,Framework code to pass the new calibration UDP frame via symbol interface,19-02-11,kjgnmd,None
+AGV-1654,HIL BB building issues in JLR_MY20,18-09-18,jj3scf,None
+AGV-1655,Unicast/Broadcast behavior HIL mode,18-09-24,jzp91l,None
+AGV-1656,Refix the tracker mode issue for scania which was missed in the latest release code,18-09-18,jzp91l,None
+AGV-1658,Random Values observed for HiL Error Status,18-09-18,jzp91l,None
+AGV-1659,The timing analysis need for the alignment module with the vehicle logs provided by Ulrich,18-09-18,jj3scf,None
+AGV-1660,HIL Sequence file mode to RESET Sensors between Logs ,18-09-18,jzp91l,None
+AGV-1661,AU00SR [HIL] :Build error due to HiL BB,18-09-17,jzp91l,None
+AGV-1662,Run Full Verification loop on all SRR3 Projects ,19-02-21,fj5y98,None
+AGV-1663,Print the error count in HiL execution Command window,18-09-19,jjtyc8,None
+AGV-1664,Print feedback of HiL execution,18-09-25,jjtyc8,None
+AGV-1666,Scania DEC update Z7B cust,18-09-27,kjgnmd,None
+AGV-1667,HiL Release for All Customers ,18-09-28,jj5f4s,None
+AGV-1668,RNA HIL update for new UDP building block,18-10-22,jjtyc8,None
+AGV-1669,BMW - low / mid HIL update for new UDP building block,18-11-02,jjtyc8,None
+AGV-1670,HKMC HIL update for new UDP building block,18-11-02,jj5f4s,None
+AGV-1671,RNA HIL update for new UDP building block,18-09-21,jj5f4s,None
+AGV-1672,Assertion error in RESIM ,18-10-05,qjd2jz,None
+AGV-1673,Updated CDC Version number for RESIM.exe,18-10-22,vjv7l4,None
+AGV-1674,RNA WK 44 RESIM Performance Verification ,18-10-25,qjd2jz,None
+AGV-1675,RNA WK 50 HIL Performance Verification ,19-01-24,jjtyc8,None
+AGV-1676,[CDC_SRR5]: Decode First_pass_rdd_output buffer of z7a core stream.,18-09-18,vjqv6l,None
+AGV-1677,[RNA_SRR5]: Updated SIL Package required for CDC RESIM,18-09-18,vjv7l4,None
+AGV-1678,[HKMCSRR5] :fully validated DET mode resim ,18-11-29,qjd2jz,None
+AGV-1679,Performance analysis from Wireshark Log,18-09-18,jjtyc8,None
+AGV-1680,FRAMEWORK UPDATE NEEDED : BMW SRR3,18-09-19,zjpwq7,None
+AGV-1681,Document creation CMake - folder wise case sensitive changes BMW SRR3,18-09-18,tjr68b,None
+AGV-1682, BMW SRR5 low variant - Old UDP,18-10-08,jjtyc8,None
+AGV-1683,FRAMEWORK UPDATE NEEDED : JLR SRR3,18-09-19,vjv7l4,None
+AGV-1684,FRAMEWORK UPDATE NEEDED :GEELY SRR3,18-09-19,vjv7l4,None
+AGV-1685,FRAMEWORK UPDATE NEEDED :GWM,18-09-19,vjv7l4,None
+AGV-1686,FRAMEWORK UPDATE NEEDED :CHANGAN,18-09-19,vjv7l4,None
+AGV-1687,FRAMEWORK UPDATE NEEDED :HKMC SRR3,18-09-19,vjv7l4,None
+AGV-1688, FRAMEWORK UPDATE NEEDED :SCANIA,18-09-19,vjv7l4,None
+AGV-1689,FRAMEWORK UPDATE NEEDED : HKMC SRR5,18-09-19,vjv7l4,None
+AGV-1690,FRAMEWORK UPDATE NEEDED : RNA SRR5,18-09-19,vjv7l4,None
+AGV-1691,OPL-168:SiL output problem with logs recorded with 0475,18-09-24,kjgnmd,None
+AGV-1693, FRAMEWORK UPDATE NEEDED : BMW MID/LOW/BPIL,18-09-19,vjv7l4,None
+AGV-1694,[RNA SRR5]: Z7B Core(v28) and Z7B customer(v11) logging structure update,18-09-21,vjv7l4,None
+AGV-1695,Bug fix for unified APIs,19-01-31,jzwznt,None
+AGV-1696,DSPACE Tracker HIL should work with either right or left sensors or all 4 sensors,18-10-03,tjq0p7,None
+AGV-1697,RNA SRR5 HIL Stability,18-09-24,jj5f4s,None
+AGV-1698,Audi OPL's discussion,18-09-21,vjqv6l,None
+AGV-1699,RNA : DEC Z7B_Cust / z7B  update,18-09-26,vjv7l4,None
+AGV-1700,AUDI- Error Creating the Directory from the SiL frame work for test version softwares,18-09-20,vjqv6l,None
+AGV-1701,RNA SRR5 - SW1.1.2_SUV_V2 Resim release,18-09-20,vjv7l4,None
+AGV-1702,RNA SRR5 - SW2.0.0_SUV_V1 Resim release,18-09-21,kjgnmd,None
+AGV-1704,RNA SRR5 - SW2.0.0_SUV_V2 Resim release,18-09-21,qjd2jz,None
+AGV-1706,Resim output path selection not working,18-10-18,kjgnmd,None
+AGV-1708,[SCANIA SRR3T] Logs replaying in RESIM in CDC mode is not happening,18-09-28,qjd2jz,None
+AGV-1709,[Scania] Logs collected with SW6.0.2 can't be resimed with earlier SW,18-10-01,kjgnmd,None
+AGV-1710,PDX 2.14.6 HPCC Test,18-09-26,qjd2jz,None
+AGV-1711,Integrate MDF4 Writer into RESIM - UDP ,18-10-01,jzwznt,None
+AGV-1713,Vector RNA Decoder DLL Design Update ,19-02-22,vjqv6l,None
+AGV-1718,Test MDF Signal Writer Concept Design ,18-12-07,jzwznt,None
+AGV-1719,Extend MDF Lib access to EB ,18-12-17,jzwznt,None
+AGV-1723,Code study to identify the windows dependent code,18-09-28,vjv7bc,None
+AGV-1724,Review for CMake Resim framework SRR5 64bit - Windows,18-12-10,vjv7bc,None
+AGV-1726,Analysis of frame drops in hil application running with single dvsu file input for RNA,18-10-10,jj5f4s,None
+AGV-1729,Design Changes for Hil SW Blocks,18-10-03,jz18z5,None
+AGV-1730,HKMC SRR5 HIL solution need to be developed ,18-10-22,jjtyc8,None
+AGV-1731,BMW SRR3 TRACKER HiL_FAS OBJECTS Verification,18-10-08,jz18z5,None
+AGV-1732,Resim application taking more memory,19-03-25,sj6ql1,None
+AGV-1734,[RNA_SRR5]: Updated SIL package needed for UDP stream update,18-10-03,vjv7l4,None
+AGV-1735,Testing SIL in ADTF Live  mode with sensor connected,18-11-28,kjgnmd,None
+AGV-1736,OPL_165:Short Track Calibration with SIL,18-11-02,kjgnmd,None
+AGV-1738,Vigem2DelphiLog: Scan indices/time stamps equal to zero for several cycles after conversion,18-10-29,qjd2jz,None
+AGV-1740,JLR HiL application issue,18-09-28,jjtyc8,None
+AGV-1741,Creating HIL Porting approach documnet,18-10-09,vjv7bc,None
+AGV-1742,Bug fix is required in Audi standalone Decoder,18-10-03,jzwznt,None
+AGV-1743,[AUDI] Unable to run few log files in 476.C sil release,18-10-05,vjqv6l,None
+AGV-1744,Add video frame information to the resimmed logs as available in the original logs,19-03-08,zjpwq7,None
+AGV-1745,AUDI OPL-108 Logs Verification,18-10-16,jj5f4s,None
+AGV-1746,Set up docker Environment for CMake RESIM testing,18-12-13,vjfnq4,None
+AGV-1749,Changing Unsigned long to int in EMbedded code,18-11-13,wj468l,None
+AGV-1752,Additional Config option for Resim mode needed,18-10-18,zjpwq7,None
+AGV-1753,Calibration decoding fails to decode USC for some of the JLR logs.,18-10-08,jzwznt,None
+AGV-1754,Creating CMake build scripts for HIL modules,19-02-04,vjv7bc,None
+AGV-1755,Visual Studio 2017 Features Analysis,18-11-05,vjfnq4,None
+AGV-1756,z7b cust logging stream fails. Expected stream version: 11,19-01-22,jzwznt,None
+AGV-1758,[SCANIA SRR3T] v6.4.0 S/W Release Vehicle logs are not replaying in latest S/W CS:5515  ,18-10-08,vjv7l4,None
+AGV-1760,RESIM embedded delivery to AUDI for SW476.0,18-10-18,kjgnmd,None
+AGV-1761,PCAN_ONLY resim:SRR3 Hyundai 4-corner configuration,18-10-12,qjd2jz,None
+AGV-1763,Dspace Decoder integration into HIL,19-03-22,tjq0p7,None
+AGV-1764,Integrate MDF4 Reader into RESIM - CAN only,18-10-19,jzwznt,None
+AGV-1765,Pseudocode Walkthrough - OPL152,18-10-08,vjqv6l,None
+AGV-1766,RNA SRR5 VCAN FD,18-10-19,vjv7l4,None
+AGV-1767,Convert dat to dvsu,18-10-22,kjgnmd,None
+AGV-1769,Integrate MDF4 writer into RNSS SRR5 branch,18-10-09,vjqv6l,None
+AGV-1771,Update HIL Executive module to communicate with 6 BMW sensors,19-03-13,tjq0p7,None
+AGV-1772,Update COMM module to communicate with 6 BMW sensors,19-03-13,tjq0p7,None
+AGV-1773,update Decoder to communicate with 6 BMW sensors,19-03-13,tjq0p7,None
+AGV-1774,Update SRR3_MUDP LOG module to communicate with 6 BMW sensors,19-03-13,tjq0p7,None
+AGV-1775,Update radar_stream_decoder module to communicate with 6 BMW sensors,19-03-13,tjq0p7,None
+AGV-1776,Porting XCPSEEDKEY DLL to Linux,18-10-10,vjv7bc,None
+AGV-1778,Porting ENET_TX module to build Linux,18-11-16,vjv7bc,None
+AGV-1779,Understanding the HIL flow to  implement MDF4 reader part into HIL,18-10-18,vjqv6l,None
+AGV-1780,Need Stand alone single dvsu Exe to be updated for NEW BB ,18-10-11,vjqv6l,None
+AGV-1781,HKMC_SRR5 MQ4 Ticket for Resim udpate ,18-11-13,vjv7l4,None
+AGV-1784,BMW5_MID: HIL Support for BMW MID Variant ,18-11-02,jjtyc8,None
+AGV-1786,Integration of Framework for RESIM execution SRR5,18-11-13,fj6pzt,None
+AGV-1787,Resim Performance Profiling Tools ,19-04-05,mjfh9b,None
+AGV-1788,[JLR_SRR3]Update framework for DSD CAL MUX logging,19-03-27,vjv7l4,None
+AGV-1789,RNA SRR5: Need UDP Log Up Converter Standalone Executable for Older Logs,18-11-05,jzwznt,None
+AGV-1790,HKMC SRR5: Need UDP Log Up Converter Standalone Executable for Older Logs,18-11-14,jzwznt,None
+AGV-1791,Execution of HiL Application with BMW logs for SW 2.5.8 and 2.5.12,18-10-22,jj5f4s,None
+AGV-1792,Required fix for frame drops in Renault Srr5 with new UDP building block,18-10-19,jjtyc8,None
+AGV-1793,BMW SRR3 - required track mode hil application to verify FAS objects ,18-10-19,jj5f4s,None
+AGV-1794,HKMC SRR3 Gen 2  z4_z7b_cust_logging Z7B Customer stream updated : Framework Update needed,18-10-30,vjv7l4,None
+AGV-1795,Scania DSPACE S function Update v2 ,18-10-31,tjq0p7,None
+AGV-1797,DSPACE Scania - Update HIL engine + SIL decoder to version 2 ,19-03-08,vjv7l4,None
+AGV-1799,RESIM delivery to AUDI for SW476.1,18-10-24,kjgnmd,None
+AGV-1800,RNA SRR5 : decoder for Z7a core stream update,18-10-18,vjv7l4,None
+AGV-1801,Decoder update for UDP core logging structures JLR SRR3,18-11-12,vjv7l4,None
+AGV-1802, HKMC SRR5 :HIL UPDATE needed,18-10-22,jj5f4s,None
+AGV-1803, HKMC SRR5 :SIL UPDATE needed,18-11-13,vjv7l4,None
+AGV-1804,bug fix :FF,18-11-13,vjv7l4,None
+AGV-1806,Verification of HiL Application with MDF4 Input File for RNA SRR5,18-12-28,jj5f4s,None
+AGV-1807,Z7B_TRACKER_OUTPUT stream update - V6,18-10-31,tjq0p7,None
+AGV-1808,SCANIA DSPACE TRACKER HIL Release V3,18-10-31,tjq0p7,None
+AGV-1809,Analysis on time taken for application execute on windows and linux,19-03-25,gjdwf9,None
+AGV-1810,PCAN_ONLY resim fix request,19-01-14,qjd2jz,None
+AGV-1811,Intergrate mf4 reader into Audi and srr3 resim,18-10-26,vjqv6l,None
+AGV-1812,RESIM delivery to AUDI for SW477.1,18-10-29,kjgnmd,None
+AGV-1813,Verification of hil application with MD4 input logs for SRR3 customer,18-12-17,jj5f4s,None
+AGV-1814,Integrate MDF4 code changes to HiL application for all Srr3 customer,18-12-17,jj5f4s,None
+AGV-1815,Resim to create mdf4+4 dvsu+single dvsu +dvl files irrespective of given any input,18-10-24,vjqv6l,None
+AGV-1816,SIL framework update for Scania customer stream v17 ,18-10-30,vjv7l4,None
+AGV-1817,HIL frame work update of Scania customer stream v17 ,18-11-02,jjtyc8,None
+AGV-1818,PCAN_ONLY resim:SRR3 Hyundai 4-corner configuration,18-10-26,qjd2jz,None
+AGV-1819,HKMC SRR5 : FRAMEWORK Update needed - HIL and SIL ,18-11-13,vjv7l4,None
+AGV-1820,Standalone decoder testing of AUDI SW477.1,18-10-29,bj84lg,None
+AGV-1821,Resim is crashing at second pass while running BMW logs and Audi logs,18-10-29,vjqv6l,None
+AGV-1822,RNA-Issue in Log injection for a sensor and Continuous mode run,18-10-26,jjtyc8,None
+AGV-1823,Stand alone MF4 to  single dvsu converter,18-10-29,vjqv6l,None
+AGV-1824,RNA SRR5 : Decoder for core streams update,18-11-16,vjv7l4,None
+AGV-1825,AUDI header timestamp differences analysis,18-10-30,vjqv6l,None
+AGV-1826,create a text file and dump packet losses into it,18-10-26,vjqv6l,None
+AGV-1827,Framework code merge with main branch,19-01-29,fj6pzt,None
+AGV-1828,RESIM delivery to AUDI for SW477.2,18-11-02,kjgnmd,None
+AGV-1829,[SRR5_NEW_UDP]: Loglab equivalent csv dump needed for CDC datas,18-11-13,vjqv6l,None
+AGV-1830,[SRR5_NEW_UDP]: Loglab equivalent csv dumps needed for UDP streams,18-11-14,vjqv6l,None
+AGV-1831,Standalone decoder testing of AUDI SW477.2,19-01-31,bj84lg,None
+AGV-1833,Scanindex overlap observed in the trace Front LEFT Output,19-03-26,vjqv6l,None
+AGV-1835,AUDI XY477 Hil Verification,18-10-30,jj5f4s,None
+AGV-1836,PDX 2.16.2 HPCC RELEASE,18-11-06,qjd2jz,None
+AGV-1838,HIL Request,18-11-05,jjtyc8,None
+AGV-1839,update resim for communication between left and right sensors for KAE 4_4,18-10-31,zjpwq7,None
+AGV-1840,ORCAS UDP stream update,18-10-31,qz164d,None
+AGV-1841,Freespace VCAN output does not update in resim,19-01-03,vjv7l4,None
+AGV-1842,DOCKER DOCUMENT,18-12-04,vjfnq4,None
+AGV-1843,Verification of HiL Application with new UDP BB for HKMC SRR5,18-11-29,jj5f4s,None
+AGV-1844,ReSim: missing information in error message ,19-03-04,vjv7l4,None
+AGV-1845,Review for Framework CMake code,19-02-01,jzwznt,None
+AGV-1846,Merge the SRR5 resim to the SRR3 reim branch.,18-11-30,vjv7l4,None
+AGV-1847,HIL Performance issue,19-03-12,jjtyc8,None
+AGV-1848,Batch Script For Docker,18-12-04,vjfnq4,None
+AGV-1849,[MAXUS_SRR3] Provide HIL executables for MAXUS,18-11-23,jjtyc8,None
+AGV-1850,[MAXUS_SRR3] Provide SIL executables for MAXUS,19-01-22,vjv7l4,None
+AGV-1851,Negative Range values after decoding (FlexRay Resim with XY47X SW),18-11-09,vjqv6l,None
+AGV-1853,Dump SIl input data into csv for AUDI in ADTF,18-11-09,vjqv6l,None
+AGV-1855,Review for MDF_LOG library porting on Linux,18-12-11,jzwznt,None
+AGV-1856,[SRR5_NEW_UDP]: Updated radar_dump_tool  to dump new udp header,18-11-09,vjqv6l,None
+AGV-1857,HIL Request,18-11-21,jjtyc8,None
+AGV-1858,SIL code cleanup is required,19-04-01,fj5y98,None
+AGV-1859,HKMC_SRR5:FRAMEWORK  update is needed for Z7_B Customer_Stream update.,19-01-24,vjv7l4,None
+AGV-1861,[JLR SRR3_ITV] : HIL Reduced Number of Alerts and ScanIndex Flickering,19-03-13,jjtyc8,None
+AGV-1865,[AUDI] Sil delivery 478.0,18-11-26,kjgnmd,None
+AGV-1866,RNA-HiL framework for SW 3.0.0,18-11-16,jjtyc8,None
+AGV-1867,Integrate single dvsu for new udp building block  srr5 branch,18-11-14,vjqv6l,None
+AGV-1870,communication protocol between canoe and hil engine using the fdx protocol ,19-02-27,vjv7bc,None
+AGV-1872,MDF_LOG update for Linux,18-12-11,fj6pzt,None
+AGV-1874,Understanding the code base of Framework,19-01-25,wj468l,None
+AGV-1875,STANDALONE DECODER TESTING OF AUDI SW478.0,18-11-26,bj84lg,None
+AGV-1877,FRAMEWORK UPDATE NEEDED,18-12-10,vjv7l4,None
+AGV-1879,Workshop SIL X056 Resim,18-12-03,vjqv6l,None
+AGV-1880,Support - Workshop SIL X056 Resim,18-12-07,jzwznt,None
+AGV-1881,Support Verification- Workshop SIL X056 Resim,18-12-07,kjgnmd,None
+AGV-1882,GEELY SRR HIL Support ,19-01-25,tjq0p7,None
+AGV-1883,DPSACE HIL Support for MAN and SCANIA,18-12-13,tjq0p7,None
+AGV-1884,Build SW2.0.0_SUV_V2 Resim and release,18-12-11,vjv7l4,None
+AGV-1886,OPL-152_XY056 EBDL Traces Resim issue to be fixed,18-12-03,vjqv6l,None
+AGV-1889,Need 32bit version,19-03-27,qjd2jz,None
+AGV-1890,To update the CDC Extraction tool for CDV variant for CDC validation,18-11-23,vjv7l4,None
+AGV-1896,Print The HiL framework version in Execution Window ,18-11-30,jjtyc8,None
+AGV-1897,Print HiL Stream version in Executable window ,18-11-30,jjtyc8,None
+AGV-1898,Validate Input Log before HiL injection,18-12-03,jjtyc8,None
+AGV-1899,HKMC : Z7A_Z7B_IPC_SRR5_116RBIN_CORE changed to v2,19-01-24,vjv7l4,None
+AGV-1900,32 bit framework Execution in Windows,19-01-17,fj6pzt,None
+AGV-1901,CMake for Resim framework SRR5 64bit - Linux,19-02-11,tjr68b,None
+AGV-1905,Framework update for UDP_Cal_Source changes,18-11-30,vjv7l4,None
+AGV-1909,[DSPACE]: Dspace enum number(DSPACE_DATA) needs to change to 2 in framework,18-12-24,qjd2jz,None
+AGV-1910,[HKMC SRR3 Gen2] : Z7b Customer Logging update,18-12-13,vjv7l4,None
+AGV-1911,Dspace HIL injection - Offline mode,19-01-25,jjtyc8,None
+AGV-1912,Create .dvsu file from dspace whireshark logs ,18-12-27,bj84lg,None
+AGV-1913,CHANGAN S311 SRR3:: RESIM SIL Error running the logs,18-11-30,vjv7l4,None
+AGV-1914,AUDI SIL XY478v0p1 release for OPL_152 ebdl TRACES,18-12-06,vjqv6l,None
+AGV-1915,week 49 : Workshop for SIL XY056 Resim,18-12-06,vjqv6l,None
+AGV-1916,CLONE - [HKMC SRR3 Gen2] : Z7b Customer Logging update,18-12-14,jjtyc8,None
+AGV-1917,[Scania_SRR3] UDP Stream update for Scania customer stream.,19-03-27,vjv7l4,None
+AGV-1918,CLONE - [HIL framwork] Stream update for Scania customer stream.,19-03-28,jjtyc8,None
+AGV-1921,The checksum is sent wrongly for random scan indexes from the HIL tool,19-01-03,jjtyc8,None
+AGV-1922,Installing Ubuntu OS with code blocks and docker  in Virtual box ,18-12-04,vjfnq4,None
+AGV-1923,Creating Repository for Docker images on Local PC,18-12-04,vjfnq4,None
+AGV-1924,PDX 2.17.0 HPCC Release,18-12-06,qjd2jz,None
+AGV-1926,ORCAS mf4 log validation in Resim,19-01-29,kjgnmd,None
+AGV-1927,Validate resim generated output mf4 logs.,19-01-28,kjgnmd,None
+AGV-1928,Validate ORCAS generated MF4 log and inject UDP frames to HIL,19-03-01,zjpwq7,None
+AGV-1929,RNA HiL Backward compatiblity for SUV V2,18-12-10,jjtyc8,None
+AGV-1930,Integrate FDX CAPL into BMW config to transmit(TX) 3 signals to FDX client application,19-01-08,vjv7bc,None
+AGV-1931,Rename SIL deliverable files from SRR3 to SRR5,19-03-08,vjv7l4,None
+AGV-1932,mdf4 resim need to be updated for newer udp building block,18-12-14,vjqv6l,None
+AGV-1933,LiME Setup,19-03-08,vjfnq4,None
+AGV-1934,HIL - Decoder update Required for UDP core logging structures JLR SRR3,18-12-11,jjtyc8,None
+AGV-1935,MDf4 LIB full testing for SRR5 logs,18-12-17,kjgnmd,None
+AGV-1937,Performance validation for HiL,18-12-18,bj84lg,None
+AGV-1938,Update UDP transmitter for Dspace HIL,18-12-19,bj84lg,None
+AGV-1939,GWM SRR3:: RESIM PCAN failed while running dvl logs,18-12-19,qjd2jz,None
+AGV-1940,GWM SRR3:: RESIM PCAN failed while running dvl logs,19-01-09,qjd2jz,None
+AGV-1944,Multiple drops on Scan index during the HIL application ,19-01-04,jjtyc8,None
+AGV-1945,Changan S311 B.2.0&B.1.0 SW cannot resim,18-12-24,zjpwq7,None
+AGV-1946,AUDI SRR3 : Analysis on EBDL traces where SIL is not executed,18-12-24,vjqv6l,None
+AGV-1947,[SRR5_CDC_RESIM]: SMC decoding gives higher values in EB,19-01-08,vjv7l4,None
+AGV-1948,[AUDI SRR3] Resim for PCR and Fences 478 issues,18-12-24,vjqv6l,None
+AGV-1949,KT for the new Embedded Test Engineers,18-12-26,tjr68b,None
+AGV-1950,Update SRR3-vigem-log-converter to take input from user to dump the data from specific port number,18-12-26,jj5f4s,None
+AGV-1952,Performance analysis for MDF4 integration with HiL,19-01-28,jj5f4s,None
+AGV-1953,DSPACE HIL Engine should transmit latest tobject data to SRRs when ever the SRR is triggered,19-02-12,tjq0p7,None
+AGV-1956,AUDI RESIM Delivery SIL479.0,19-01-10,kjgnmd,None
+AGV-1958,STANDALONE DECODER TESTING AUDI SIL479v0p0,19-01-07,bj84lg,None
+AGV-1959,Resim is crashing while using new output path for single dvsu mode,19-01-07,vjqv6l,None
+AGV-1960,RNA_SRR5_ITV: HIL tool issue on SUV V2 2.0.0 FC Sw- Auto Close,19-01-23,jjtyc8,None
+AGV-1963,Load and Execute Radar ECU Embedded Library,19-03-22,vjqv6l,None
+AGV-1964,Implement Decoder for Mid Variant Corner Radar,19-01-28,vjv7l4,None
+AGV-1965,Implement Decoder for Bpillar Radar,19-01-28,vjv7l4,None
+AGV-1966, Implement Decoder for Radar ECU,19-02-20,vjv7l4,None
+AGV-1970,XML update to handle Mid-High Variants,19-03-12,fj5y98,None
+AGV-1971,UDP stitch & latch logic for ECU streams.,19-02-20,jzwznt,None
+AGV-1972,Data consistency checks (CRC timestamp scan index),19-02-21,jzwznt,None
+AGV-1973,RAR- HIL Framework,19-01-18,jjtyc8,None
+AGV-1975,Generate csv dumps for logging signals,19-03-04,vjqv6l,None
+AGV-1976,MD4 Logs Input- VIGEM,19-04-02,vjqv6l,None
+AGV-1978,Validate HIL Failure/pass performance,19-04-23,jjtyc8,None
+AGV-1979,Update Decoder code for DSPACE stream,19-04-23,bj84lg,None
+AGV-1981, Verification by using constant logging data,19-03-05,jzwznt,None
+AGV-1982,Verification ECU by using running logging data,19-04-03,jzwznt,None
+AGV-1983,Verification of Radar ECU Embedded library mudp outputs,19-04-05,sj6ql1,None
+AGV-1984,Update framework to create Vector Timestamps on generated CAN output to emulate System latency.,19-02-18,jzwznt,None
+AGV-1986,Framework update for Radar B-pillar,19-03-26,jzwznt,None
+AGV-1998,Integrate BMW B Pillar Radar supported decoder into HIL Engine,19-02-05,jjtyc8,None
+AGV-1999,Add Mid Variant Radar Module to HIL Engine,19-02-05,jjtyc8,None
+AGV-2000,Add Bpillar Module to HIL Engine,19-05-03,jj5f4s,None
+AGV-2001,SRR3 - Check for Performance Impact on HIL Engine - Additional Load (6 Radars),19-05-03,jj5f4s,None
+AGV-2003,Update FDX VS to receive BMW Signals - Timestamp / Scan index ,19-01-17,vjv7bc,None
+AGV-2005,Test BMW Replay in Canoe Communication with HIL Engine using FDX protocol,19-03-19,vjv7bc,None
+AGV-2006,Validate Signals communication between Canoe and HIL engine,19-03-19,vjv7bc,None
+AGV-2007,Integrate ORCAS MDF4 capability,19-04-11,vjqv6l,None
+AGV-2008, MD4 Logs Input- ORCAS,19-02-05,jj5f4s,None
+AGV-2009,MD4 Logs Input- CANAPE ,19-02-05,jj5f4s,None
+AGV-2011,Verify DSPACE Track Injection Mode ,19-05-03,jjtyc8,None
+AGV-2012,Verify DSPACE Detection Injection Mode,19-03-25,tjq0p7,None
+AGV-2013, Verify backward compatibility in Radars,19-04-03,jzwznt,None
+AGV-2014, Run each embedded library as parallel thread,19-03-25,mjfh9b,None
+AGV-2015,Implement separated decoder instances for each Embedded library.,19-03-26,mjfh9b,None
+AGV-2016,Extend design to run 7 Embedded libraries.,19-03-26,gjdwf9,None
+AGV-2017,Run Separate Threads for Stitch/Latch operations for each Radar instance - Analysis,19-05-07,mjfh9b,None
+AGV-2020,Verification of Framework design updates in Windows and Linux.,19-03-26,jzwznt,None
+AGV-2024,Scania/MAN Customer has requested a special HIL delivery sw based on 6p8p0,19-01-14,tjq0p7,None
+AGV-2025,[JLR_SRR3] Logs replaying in CDC mode is not happening,19-01-10,qjd2jz,None
+AGV-2027,Input symbol structure Update for CAN based virtual fusion,19-02-01,vjqv6l,None
+AGV-2028,SRR3T Scania/MAN - No UDP or VCAN track output from injected objects in HIL mode,19-01-14,tjq0p7,None
+AGV-2029,Create Check list for Resim  SIL,19-01-09,bj84lg,None
+AGV-2031,EB- FW Symbol Interface update -200 det + CAN FD,19-03-25,jzwznt,None
+AGV-2036,Develop PCAN interface to embedded library.,19-04-08,jzwznt,None
+AGV-2040,This is to check the virtual latency in FW.,19-03-04,zjpwq7,None
+AGV-2041,Update framework to create Vector Timestamps on generated CAN output to emulate System latency.,19-02-27,jzwznt,None
+AGV-2042,ECU Calibration Handling.,19-04-03,kjgnmd,None
+AGV-2046,Framework update for B pillar ,19-03-26,jzwznt,None
+AGV-2054,HiL verification for MAXUS,19-01-11,jjtyc8,None
+AGV-2055,Radar_Logging_Data structure update,19-01-11,xjs5nd,None
+AGV-2057,Bring the capability in Resim to read UDP frames from ORCAS generated MF4 logs.,19-01-25,jzwznt,None
+AGV-2058,Write Radar Embedded library processed UDP data to frame MD4 format.,19-03-26,jzwznt,None
+AGV-2059,Verify Radar Embedded library processed PCAN/VCAN data to frame MD4 format.,19-03-26,jzwznt,None
+AGV-2060,Write ECU Embedded library processed UDP data (ORCAS debug data) to frame MD4 format.,19-04-08,sj6ql1,None
+AGV-2063,Set up Docker Server,19-04-22,zjydnx,None
+AGV-2064,Make Docker Container,19-04-22,zjydnx,None
+AGV-2065,Test BMW Low Docker Container in local linux machine,19-04-16,zjydnx,None
+AGV-2068,RNA SRR5: UDP stream Updated: Framework Update Needed,19-01-23,vjv7l4,None
+AGV-2069,Integration of FDX protocaol to HIL code base.,19-01-24,vjv7bc,None
+AGV-2070,PCAN Resim Design Document Preparation,19-01-22,qjd2jz,None
+AGV-2071,Resim Multithreading Increment 1: Make no of Threads in Thread pool configurable,19-04-26,fj6pzt,None
+AGV-2072,Correct Vector timestamp from the input mf4 log needs to be used in the resim output logs.,19-01-30,vjqv6l,None
+AGV-2073,Resim Multithreading Increment 1,19-02-27,mjfh9b,None
+AGV-2074,Analysis and Design,19-01-17,mjfh9b,None
+AGV-2075, Implementation using std::async,19-01-17,mjfh9b,None
+AGV-2076, Implementation using Boost Library Thread Pool,19-01-17,mjfh9b,None
+AGV-2077,Testing collection of performance data for 4 DVSU file configuration on Windows,19-01-17,mjfh9b,None
+AGV-2078,Testing collection of performance data for 4 DVSU file configuration on Linux,19-01-25,mjfh9b,None
+AGV-2079,Creation of 4 AS-bin-writer-lib dlls,19-01-21,mjfh9b,None
+AGV-2080,Resim Multithreading Increment 2,19-03-25,mjfh9b,None
+AGV-2081,Resim Multithreading Increment 3,19-03-19,mjfh9b,None
+AGV-2082,HIL CODE BUILD ISSUE,19-03-01,vjfnq4,None
+AGV-2083,Integrate FDX CAPL into BMW config to transmit(TX) 3 signals to FDX client application,19-01-24,vjv7bc,None
+AGV-2084,[Scania] Calibration decoding failed for FR FL & RR sensors,19-01-18,qjd2jz,None
+AGV-2085,Support in the HIL FW for the Blockage and Alignment Fault injection -In HIL DVSU Mode,19-02-07,jjtyc8,None
+AGV-2086,Fixing linux issues due to latest framework code merge ,19-01-29,fj6pzt,None
+AGV-2088,[HKMC_SRR5]Stream update in Z4 structure,19-01-24,vjv7l4,None
+AGV-2089,[Scania] The generated logs cannot be played in ORCAS,19-02-11,qjd2jz,None
+AGV-2090,HIL OPL 108 - RCTA Warning Analysis,19-02-05,jj5f4s,None
+AGV-2093,The Scan index are discontinuous and resetting to zero after HIL data injection for Maxus,19-02-13,jjtyc8,None
+AGV-2094,[RNA SRR5]: SW_4.0.0_CDV_V1 Delivery: Resim Update for FF Integration ,19-02-18,vjv7l4,None
+AGV-2095,[MAXUS_SRR3] delivery,19-01-22,vjv7l4,None
+AGV-2096,AUDI_SIL_479v0p1 RELEASE,19-01-24,kjgnmd,None
+AGV-2098,[BMW_SRR5_CDC_RESIM]: SIL Package needed for CDC RESIM,19-01-24,vjv7l4,None
+AGV-2100,Test for BMW,19-02-21,qjd2jz,None
+AGV-2101,JLR Tracker mode - Tracker object number mismatch fix ,19-01-24,zjpwq7,None
+AGV-2102,Test BMW Replay in Canoe Communication with HIL Engine using FDX protocol,19-02-27,vjv7bc,None
+AGV-2103,Testing collection of performance data for MF4 file configuration on Windows,19-01-28,wj468l,None
+AGV-2104,Code review for AGV-1651 (Framework to change calibration decoding method),19-01-30,jzwznt,None
+AGV-2105,Code review for AGV-1653(Framework code to pass the new calibration UDP frame via symbol interface),19-02-11,jzwznt,None
+AGV-2106,Peer review for the task AGV-2057,19-01-25,vjqv6l,None
+AGV-2118,Write output data for MF4 and single DVSU sequentially,19-02-11,mjfh9b,None
+AGV-2119,Code review for Dspace Offline injection,19-01-25,tjq0p7,None
+AGV-2122,Kok_css2#47829: AUDI SCR should be updated forSIL-PIL differences,19-01-25,vjqv6l,None
+AGV-2124,Testing collection of performance data for single DVSU file configuration on Windows,19-01-29,wj468l,None
+AGV-2125,Undefined symbols and Segmentation fault on Linux with the latest changes in embedded code,19-02-21,gjdwf9,None
+AGV-2126,Peer Review for AGV-2072,19-01-30,jzwznt,None
+AGV-2127,GEELY FW UPDATE NEEDED : CORE STREAMS UPDATED ,19-03-15,vjv7l4,None
+AGV-2128,Verify DSPACE Tracker HIL mode,19-02-12,bj84lg,None
+AGV-2129,Set up CMake for RESIM Mid-High variant,19-03-25,tjr68b,None
+AGV-2130,Build SIL Framework -Windows - Mid High Variant,19-03-18,zjpwq7,None
+AGV-2131,Build SIL Framework -Linux- Mid High Variant,19-03-19,zjpwq7,None
+AGV-2134,Set up CMake for RESIM - Low variant,19-03-26,tjr68b,None
+AGV-2135,Build SIL Framework using CMake - Windows,19-03-26,tjr68b,None
+AGV-2136,Build SIL Framework using CMake - Linux,19-03-26,tjr68b,None
+AGV-2139,RNA_CDV_V1 SW4.0.0 HIL Release,19-01-31,jjtyc8,None
+AGV-2140,Build Docker Container for Low Variant,19-03-12,vjfnq4,None
+AGV-2141,BMW_LOW : FW Update Needed,19-03-12,vjqv6l,None
+AGV-2142,BMW MID: FW Update Needed,19-03-12,vjqv6l,None
+AGV-2143,BMW BPIL : FW Update Needed,19-03-12,vjqv6l,None
+AGV-2144,update OpenUDPmdfFile function to allow multithreading for hil,19-02-01,vjqv6l,None
+AGV-2145,Generate a tool to convert the data from orcas mdf4 input file to single dvsu four dvsu and csv file,19-03-18,jj5f4s,None
+AGV-2146,Testing collection of performance data for MF4 file configuration on Linux,19-02-11,wj468l,None
+AGV-2147,Testing collection of performance data for single DVSU file configuration on Linux,19-02-11,wj468l,None
+AGV-2148,Make changes to handle Frame loss,19-02-14,mjfh9b,None
+AGV-2149,Test for HKMC,19-02-21,qjd2jz,None
+AGV-2150,Test for AUDI,19-02-21,qjd2jz,None
+AGV-2151,Support for PCAN Resim for Maxus SRR3 Project,19-03-15,vjv7l4,None
+AGV-2152,Unifying of SIL AUDI APIs for all customers in the framework,19-04-30,kjgnmd,None
+AGV-2153,[RNA_SRR5]: Update symbol interface with mf4 structure for mat file output,19-02-08,vjqv6l,None
+AGV-2154,Peer Review  AGV_2144,19-02-01,jzwznt,None
+AGV-2158,Bug Fixing Review & Documentation,19-03-19,zjpwq7,None
+AGV-2161,Review and documentation,19-03-19,zjpwq7,None
+AGV-2163,Testing  Review and documenation,19-03-19,zjpwq7,None
+AGV-2165,Integrate Linux Specific changes to Windows  SIL Framework,19-03-25,sjdpct,None
+AGV-2166,Synchronize HIL Engine start of Injection Frame to Canoe FDX timestamp,19-03-11,vjv7bc,None
+AGV-2167,Integrate FDX application for all Sensors,19-03-11,vjv7bc,None
+AGV-2168,Review of HIL code merge and Cmake scripts and chekcin to main continuous dev branch,19-03-11,zjpwq7,None
+AGV-2170,Resim Multithreading Increment 1 - Live Sensor data handling - Testing and Bug fixing,19-03-25,mjfh9b,None
+AGV-2171,HIL execution for BMW SRR3 SW 2.16.3,19-02-20,bj84lg,None
+AGV-2172,Resolve sort issues between windows and linux,19-02-11,wj468l,None
+AGV-2173,Understanding of Resim Multithreading Increment 1,19-02-08,fj6pzt,None
+AGV-2174,AGV_2027_Code_review,19-02-01,jzwznt,None
+AGV-2175,DTC output verification for latest AUDI software,19-02-08,kjgnmd,None
+AGV-2176,Verify DSPACE HIL injection for SW V7.1.1,19-02-08,tjq0p7,None
+AGV-2177,[JLR_SRR3] Update HIL/SIL framework for new UDP BB,19-02-12,vjv7l4,None
+AGV-2178,[JLR_SRR3]: Provide HIL executable for NEW UDP BB,19-02-14,jjtyc8,None
+AGV-2179,Output DVSU files not getting created with the latest embedded code changes,19-02-21,gjdwf9,None
+AGV-2180,Segmentation fault in Linux with MDF4 logs,19-02-05,gjdwf9,None
+AGV-2182,mf4 second pass is not executing,19-02-05,vjqv6l,None
+AGV-2183,[RNA_SRR5]:verify resim decoding calibration for the 90sec log ,19-02-08,kjgnmd,None
+AGV-2185,Peer Review  AGV_2153,19-02-08,qjd2jz,None
+AGV-2186,RESIM crashes while log is not having all sensors data ,19-02-08,vjqv6l,None
+AGV-2187,Cmake changes for mdf4 integration with hil,19-02-08,jj5f4s,None
+AGV-2188,Cmake changes for mdf4 integration with hil,19-02-05,jj5f4s,None
+AGV-2189,Run Full Verification loop on BMW_ SRR3,19-02-13,fj5y98,None
+AGV-2191,Create Cmake script for fdx protocol sources,19-02-06,vjv7bc,None
+AGV-2192,BMW:HPCC RESIM RELEASE for SW 2.17.2,19-02-21,qjd2jz,None
+AGV-2193,Azimuth polarity is coming zero from decoer,19-02-06,vjqv6l,None
+AGV-2194,MDF write operation of UDP needs to have timestamp data type 8 byte to accommodate the timestamp from the input mf4 log.,19-02-12,jzwznt,None
+AGV-2195,Continuous_FILE_Input mode not working in RESIM,19-02-13,kjgnmd,None
+AGV-2197,Performance analysis and Requirement Changes,19-02-07,jjtyc8,None
+AGV-2198,HIL Package Release for JLR MY19 SW 3.31.1,19-02-15,jj5f4s,None
+AGV-2199,Run Full Verification loop on MAXUS_ SRR3,19-02-13,fj5y98,None
+AGV-2200,BMW SRR3 FF HIL Release for PDX 2.017.003,19-02-13,jjtyc8,None
+AGV-2201,peer review :AGV 2201,19-02-08,qjd2jz,None
+AGV-2202,peer review:AGV:2195,19-02-08,qjd2jz,None
+AGV-2203,Group all HIL configuration parameters into a common structure,19-02-20,jjtyc8,None
+AGV-2204,GEELY_SRR3:-Full loop verification ,19-02-13,fj5y98,None
+AGV-2205,Implement Continuous file mode input  for MF4,19-02-11,vjqv6l,None
+AGV-2206,Add Boost Headers and Libraries to Framework Repository,19-02-18,wj468l,None
+AGV-2207,Update Cmake script of DPH_RR_ADAS_SIL Library to specify Boost Headers libraries,19-02-15,wj468l,None
+AGV-2208,Testing of updated Cmake script on Windows,19-02-18,wj468l,None
+AGV-2209,Testing of updated Cmake script on Linux,19-02-18,wj468l,None
+AGV-2210,JLR SRR3_ITV : Warnings are not visible after injection of the vehicle log,19-02-22,jj3scf,None
+AGV-2211,JLR_SRR3:-Full loop verification,19-02-13,fj5y98,None
+AGV-2212,AUDI_SRR3:-Full loop verification,19-02-13,fj5y98,None
+AGV-2213,SCANIA_SRR3:-Full loop verification,19-02-13,fj5y98,None
+AGV-2214,HKMC_SRR3:-Full loop verification ,19-02-21,fj5y98,None
+AGV-2215,Peer review for the task AGV-2194,19-02-11,vjqv6l,None
+AGV-2216,Peer review for the task AGV-2194,19-02-11,vjqv6l,None
+AGV-2217,generate a hil validator tool for analysis the log and validate the hil performance,19-02-28,jj5f4s,None
+AGV-2218,Hil Code cleanup and function optimization,19-03-20,jj5f4s,None
+AGV-2219,Analysis of application hang issue in multi threading scenario,19-02-25,fj6pzt,None
+AGV-2221,[JLR_SRR3] update framework for Z4_Z7B_cust stream V6 ,19-02-12,vjv7l4,None
+AGV-2222,[JLR_SRR3] update HIL for Z4_Z7B_cust stream V6,19-02-18,jjtyc8,None
+AGV-2226,Hil changes required for calling MDF4 lib function read_MDF ,19-02-15,jj5f4s,None
+AGV-2227,Verify HIL functionality using cmake builds instead of VS solution.,19-02-15,bj84lg,None
+AGV-2228,CHANGAN_SRR3:-Full loop verification,19-02-13,fj5y98,None
+AGV-2229,[RNA SRR5]: SW_4.0.0_CDV_V1 system delivery,19-02-12,vjqv6l,None
+AGV-2232,Build SIL S-Function for SRR,19-02-25,tjq0p7,None
+AGV-2234,[SIL]RAM increases while running RESIM,19-02-26,kjgnmd,None
+AGV-2236,BMW: Daurlauf logs are not working in CDC mode,19-02-25,qjd2jz,None
+AGV-2237,Make changes to handle end of file for 4 DVSU configuration,19-02-25,mjfh9b,None
+AGV-2238,HKMC SRR3: z4_z7b_cust_logging_structure stream updated :Framework update required,19-02-25,sj6ql1,None
+AGV-2239,HKMC_SRR5 : APT_SRR_RESIM.exe crashes during Run-time,19-03-01,zjpwq7,None
+AGV-2240,Identify and fix in Framework code for slash issues,19-02-27,fj6pzt,None
+AGV-2244,Implement Decoder for Radar ECU updated streams,19-02-21,vjv7l4,None
+AGV-2245,SRR5_RNA: Update RNA software version in resimulated file,19-02-21,vjqv6l,None
+AGV-2246,Resim framework update is required to run standalone SIL for ECU.,19-03-12,jzwznt,None
+AGV-2247,GEELY SRR3:: SIL stopped running at start Scan index,19-03-15,vjv7l4,None
+AGV-2248,[Scania] Stream update of z4_z7B stream v9,19-02-20,vjv7l4,None
+AGV-2249,HPCC:Issue Resim windows build is Hanging in Wine Environment,19-02-20,vjv7bc,None
+AGV-2250,Design Document for FDX Synchronization,19-03-11,sjdpct,None
+AGV-2251,Design Document for Multi-threading approach,19-03-26,fj6pzt,None
+AGV-2254,AUDI SIL480v0p0 RELEASE,19-03-04,kjgnmd,None
+AGV-2255,STANDALONE DECODER TESTING OF AUDI SIL480v0p0,19-02-25,bj84lg,None
+AGV-2256,Latest UDP Building Block Implemented ,19-03-11,vjv7l4,None
+AGV-2257,HIL framework to support SCANIA New UDP changes,19-02-21,bj84lg,None
+AGV-2258,Add Track object signals(Confidence and Ref_pos) in DSPACE HIL Injection,19-03-08,tjt6xv,None
+AGV-2259,BMW HPCC RELEASE FOR PDX 2.18.0,19-03-01,qjd2jz,None
+AGV-2260,Resolve build errors in radar dump tool,19-03-07,sj6ql1,None
+AGV-2261,CORE Streams updated : FW update needed,19-03-11,vjqv6l,None
+AGV-2262,radar ecu decoder update for csv dump,19-02-28,vjqv6l,None
+AGV-2263,HIL framework optimization to support Old and New UDP BB,19-03-06,jjtyc8,None
+AGV-2264,XML traces mismatch in CDC Mode,19-02-27,mjfh9b,None
+AGV-2265,XML traces mismatch in CDC Mode - 2,19-02-27,fj6pzt,None
+AGV-2266,SCANIA: Disable single dvsu in case of 4 dvsu sensors configuration selected in customer_config.xml,19-02-27,qjd2jz,None
+AGV-2267,BMW_SRR3 Linux support with latest changes to test Multithreading Increment 1,19-02-26,wj468l,None
+AGV-2270,Analysis of CDC Mode trace Mismatch,19-02-27,vjfnq4,None
+AGV-2271,Verifying XML traces for Multi threading implementation,19-02-26,vjfnq4,None
+AGV-2272,[SCANIA] Resim no longer possible to run through resim,19-02-27,sjdpct,None
+AGV-2273,Remove unnecessary resim DVSU output ,19-03-14,fj5y98,None
+AGV-2274,Synchronization of time stamp between dvsu file and canoe time from dvl file in hil code base,19-03-12,vjv7bc,None
+AGV-2275,Test BMW Replay in Canoe Communication with HIL Engine using FDX protocol,19-02-28,vjv7bc,None
+AGV-2276,Resim Multithreading Increment 1 Part 2,19-03-27,mjfh9b,None
+AGV-2277,Analysing segmentation fault in Linux with latest framework code,19-03-01,fj6pzt,None
+AGV-2278,CMAKe for CodeBlocks,19-03-11,vjfnq4,None
+AGV-2279,CMAKe for Eclipse,19-03-20,vjfnq4,None
+AGV-2280,Testing of Continuous Mode for MF4 on Windows,19-02-28,mjfh9b,None
+AGV-2281,Testing of Continuous Mode for single DVSU on Windows,19-02-28,mjfh9b,None
+AGV-2286,Code Blocks Setup in Virtual Box with Ubuntu OS,19-02-28,vjfnq4,None
+AGV-2287,BMW_SRR3 : run HIL to verify GhostFix enable is working ,19-03-01,jjtyc8,None
+AGV-2288,Setting up Renault SRR5 Environment and building code,19-03-04,wj468l,None
+AGV-2289,Testing of Renault SRR5 logs - MF4 Sequential Input,19-03-05,wj468l,None
+AGV-2290,Testing of Renault SRR5 logs - Single DVSU Sequential Input,19-03-05,wj468l,None
+AGV-2291,Testing of Renault SRR5 logs - MF4 Continuous Input,19-03-05,wj468l,None
+AGV-2292,Testing of Renault SRR5 logs - Single DVSU Continuous Input,19-03-05,wj468l,None
+AGV-2293,Creating workaround to narrow down cause of segmentation fault,19-03-01,fj6pzt,None
+AGV-2294,Fixing Segmentation fault,19-03-01,fj6pzt,None
+AGV-2295,Testing of Sequential mode Single DVSU input for DETECTIONS in Linux,19-03-05,wj468l,None
+AGV-2296,Testing of Sequential mode Single DVSU input for CDC in Linux,19-03-05,wj468l,None
+AGV-2297,Testing of Sequential mode MF4 input for DETECTIONS in Linux,19-03-20,fj6pzt,None
+AGV-2298,Testing of Sequential mode MF4 input for CDC in Linux,19-03-22,fj6pzt,None
+AGV-2299,Testing of Continuous mode Single DVSU input for DETECTIONS in Linux,19-03-22,fj6pzt,None
+AGV-2300,Testing of Continuous mode Single DVSU input for CDC in Linux,19-03-27,gjdwf9,None
+AGV-2301,Testing of Continuous mode MF4 input for DETECTIONS in Linux,19-03-27,gjdwf9,None
+AGV-2302,Testing of Continuous mode MF4 input for CDC in Linux,19-03-27,gjdwf9,None
+AGV-2304,Cross-Platform IDEs,19-04-09,vjfnq4,None
+AGV-2305,ECU Only RESIM - Framework design ,19-04-23,jzwznt,None
+AGV-2306,SIL Decoder update required for Maxus SRR3,19-03-04,vjv7l4,None
+AGV-2307,CDC Fusion sync issue need to be fixed in the SIL framework.,19-04-04,jzwznt,None
+AGV-2308,Geely SRR5 Core stream update : FW update needed ,19-03-11,vjv7l4,None
+AGV-2309,XML traces is overwritten in Single dvsu and mf4 Continuous mode file ,19-02-27,vjqv6l,None
+AGV-2310,[RNA_SRR5]: Exit API is required to dump out VCAN datas to MAT files,19-03-27,vjqv6l,None
+AGV-2311,Changes to comply with Coding guidelines,19-03-12,mjfh9b,None
+AGV-2312,CMAKE For QT Creator,19-03-01,vjfnq4,None
+AGV-2313,HIL Framework update required for Maxus SRR3,19-03-04,jjtyc8,None
+AGV-2315,Intergrating FDX code changes for RL FR FL sensors in HIL code,19-03-07,vjv7bc,None
+AGV-2316,Integration of FDX code changes to Single dvsu files,19-03-06,vjv7bc,None
+AGV-2317,Design Document for FDX protocol,19-03-12,vjv7bc,None
+AGV-2318,[HiL FW] Add additional tracker signal to HiL interface - AUDI,19-03-14,jj5f4s,None
+AGV-2319,Decoder update for Z7B_Tracker_output structure v7,19-03-12,jj5f4s,None
+AGV-2320,BMW HPCC RELEASE FOR PDX 2.18.1,19-03-08,qjd2jz,None
+AGV-2321,JLR_SRR3: JLR App Data values are decoded with Zeros in the Z4_Z7b_Logging Structure,19-03-04,vjv7l4,None
+AGV-2323,Analysis of QT Creator IDE,19-03-01,vjfnq4,None
+AGV-2324,Design document update for Multithreading Increment 1,19-03-26,fj6pzt,None
+AGV-2325,OPL 174:[AUDI_SRR3]FXR SIL Resimulation with object injection,19-04-29,kjgnmd,None
+AGV-2327,RNA SUV CW1911 HIL Release,19-03-08,jjtyc8,None
+AGV-2328,Verify SCANIA SRR3 SW V7.2.1 using DSPACE HIL,19-03-05,tjq0p7,None
+AGV-2329,[JLR_SRR3_MY20]: Update SIL and HIL framework for Z7B CUST version 8,19-03-27,vjv7l4,None
+AGV-2330,[JLR_SRR3:MY20]Verify HIL for update from AGV-2329,19-03-15,jjtyc8,None
+AGV-2331,BMW_SRR5_HIL_Update,19-03-06,jjtyc8,None
+AGV-2332,Analysing Eclipse using sample CMake,19-03-11,vjfnq4,None
+AGV-2333,Verifying XY260 HiL Released package is compatible for XY267 SW release,19-03-05,jj5f4s,None
+AGV-2334,Radar ECU Stream definition changes,19-03-18,vjqv6l,None
+AGV-2335,Verify SCANIA SRR3 SW V7.4.0 using DSPACE HIL,19-03-08,bj84lg,None
+AGV-2336,Remove radar ecu dll dependency in SRR5_RNA for RNA_CDV patch release,19-03-06,vjqv6l,None
+AGV-2337,Resimulated logs through Checksum failure while injected using HIL ,19-03-15,jjtyc8,None
+AGV-2338,Geely SRR5 Core stream update : FW update needed ,19-03-11,vjv7l4,None
+AGV-2339,parameters are coming zero in  version 3 z4 core stream for rna ,19-03-06,vjqv6l,None
+AGV-2340,OPL-108 RCTA_Analysis,19-03-25,jj5f4s,None
+AGV-2341,Reproducing ASW behavior on HiL,19-03-08,jj5f4s,None
+AGV-2342,SW4.0.1_CDV_V1_PatchRelease_06_MAR_2019 Preparation,19-03-07,qjd2jz,None
+AGV-2343,Validate and Test splitpath issue for MF4 in Linux,19-03-14,fj6pzt,None
+AGV-2344,Fixing segmentation fault for Continuous File Input in Linux,19-03-22,fj6pzt,None
+AGV-2345,Fixing splitpath issue for MF4 in Linux,19-03-12,fj6pzt,None
+AGV-2346,Testing collection of performance data in Continuous mode for SINGLE DVSU DETECTIONS_UDP on Windows using the same log file 10 times in a loop,19-05-02,hjpp71,None
+AGV-2347,Resim Multithreading Increment 1 - Renault SRR5 issues,19-03-26,mjfh9b,None
+AGV-2348,Differences in ASW_Obj_Counter values in XML trace,19-03-26,fj6pzt,None
+AGV-2349,Update radar dump tool for all srr5 customers,19-03-22,sj6ql1,None
+AGV-2350,Resim Multithreading Increment 1 - Linux issues,19-03-22,fj6pzt,None
+AGV-2351,RNA_SRR5:RNA CDV logs should not run when RNA_SUV customer is selected in config xml ,19-03-13,qjd2jz,None
+AGV-2353,SIL S-function RESIM files(64-bit) should build from single build solution. ,19-03-27,tjq0p7,None
+AGV-2355,PCAN RESIM Fusion Issue ,19-04-09,vjqv6l,None
+AGV-2356,To test the RESIM SIL package with multi threading implementation,19-04-16,sj6ql1,None
+AGV-2357,HIL Bench setup - BMW LoW,19-04-24,jjtyc8,None
+AGV-2358,Bench setup - BMW 6 Sensor HIL,19-03-22,bj84lg,None
+AGV-2359,Resim Multithreading Increment 1 - Add multithreading support for Data Frame Process - Part1,19-03-26,mjfh9b,None
+AGV-2360,Analyze changes needed for adding multithreading support to DataFrameProcess,19-03-18,mjfh9b,None
+AGV-2361,Verify Multithreading in PCAN only RESIM,19-04-03,hjpp71,None
+AGV-2362,Changing CMake scripts and Compiler flags in Resim code for Eclipse support.,19-03-12,vjfnq4,None
+AGV-2364,Core streams are updated:BMW : FW update needed,19-03-20,vjqv6l,None
+AGV-2365,BMW HPCC RELEASE FOR PDX 2.18.2,19-03-18,qjd2jz,None
+AGV-2369,Resim Multithreading Increment 1 - Testing collection of performance data in Continuous mode using the same log file 10 times in a loop- Linux,19-03-25,sjdpct,None
+AGV-2370, Fix for RAM increase while running RESIM for all customers,19-03-22,kjgnmd,None
+AGV-2371,Verify DataFrameProcess workflow,19-03-26,mjfh9b,None
+AGV-2372,BMW MID Customer stream update,19-03-19,vjqv6l,None
+AGV-2373,Build in Ubuntu using cmake and identify the issues for radar_stream_decoder,19-03-19,tjt6xv,None
+AGV-2374,Testing collection of performance data in Continuous mode for SINGLE DVSU DETECTIONS_UDP on Linux using the same log file 10 times in a loop,19-05-09,zjydnx,None
+AGV-2375,Testing collection of performance data in Continuous mode for MF4 DETECTIONS_UDP on Windows using the same log file 10 times in a loop,19-05-02,hjpp71,None
+AGV-2376,Testing collection of performance data in Continuous mode for MF4 CDC on Windows using the same log file 10 times in a loop,19-05-02,zjydnx,None
+AGV-2377,Build in Ubuntu using cmake and identify the issues for IniConfig,19-04-03,jj5f4s,None
+AGV-2378,Build in Ubuntu using cmake and identify the issues for SRR3_Comm,19-05-07,bj84lg,None
+AGV-2379,Build in Ubuntu using cmake and identify the issues for SRR3_Hil_Exe,19-04-09,tjt6xv,None
+AGV-2381,Testing collection of performance data in Continuous mode for SINGLE DVSU DETECTIONS_UDP on Linux using the same log file 10 times in a loop,19-05-02,zjydnx,None
+AGV-2382,Testing collection of performance data in Continuous mode for SINGLE DVSU CDC on Linux using the same log file 10 times in a loop,19-05-02,zjydnx,None
+AGV-2383,Build in Ubuntu using cmake and identify the issues for Mudp_log,19-04-10,jj5f4s,None
+AGV-2384,Testing collection of performance data in Continuous mode for MF4 DETECTIONS_UDP on Linux using the same log file 10 times in a loop,19-05-02,zjydnx,None
+AGV-2385,Testing collection of performance data in Continuous mode for MF4 CDC on Linux using the same log file 10 times in a loop,19-05-02,zjydnx,None
+AGV-2386,Build in Ubuntu using cmake and identify the issues for srr3_decoder_dph/Mudp_Decoder,19-04-10,jj5f4s,None
+AGV-2387,Build in Ubuntu using cmake and identify the issues for EthernetGrabber,19-04-04,jj5f4s,None
+AGV-2388,Build in Ubuntu using cmake and identify the issues for Dph_logger,19-04-10,tjt6xv,None
+AGV-2389,Build in Ubuntu using cmake and identify the issues for CrossPlatform,19-04-10,jj5f4s,None
+AGV-2390,Build in Ubuntu using cmake and identify the issues for MDFLog,19-04-10,tjt6xv,None
+AGV-2391,Build in Ubuntu using cmake and identify the issues for SRR3_HiL_Exec,19-05-07,tjq0p7,None
+AGV-2392,Build in Ubuntu using cmake and identify the issues for SRR3_HiL_Resim,19-04-10,tjt6xv,None
+AGV-2393,Build in Ubuntu using cmake and identify the issues for DPH_RR_ADAS_LOGGER,19-04-10,jj5f4s,None
+AGV-2394,Build in Ubuntu using cmake and identify the issues for mdf_log,19-04-10,jj5f4s,None
+AGV-2395,Solving CMake Eclipse Issues,19-03-20,vjfnq4,None
+AGV-2396,Solving Build Issues in Eclipse ,19-03-14,vjfnq4,None
+AGV-2397,FW : Update needed,19-03-14,vjqv6l,None
+AGV-2398,Verify after deleting feedback  in process SIL output /sil_demux.cpp map is corrupted or not,19-03-21,kjgnmd,None
+AGV-2399,RNA_SRR5:SW3.0.0_SUV_V2_Release_3rd_April_2019 Preparation,19-04-08,qjd2jz,None
+AGV-2400,AUDI SIL XY485.A release ,19-03-26,kjgnmd,None
+AGV-2401,CDC FUSION is not implemented for RNA_SRR5 in framework ,19-04-03,fj5y98,None
+AGV-2402,Create separate SIL framework branches for SRR3 and SRR5 programs.,19-04-09,jzwznt,None
+AGV-2403,Comparing XML Traces Visual Studio VS Eclipse,19-03-20,vjfnq4,None
+AGV-2404,[JLR_SRR3]Update for Z7B_Cust_logging V9 logging structure,19-03-27,vjv7l4,None
+AGV-2405,ECLIPSE LINUX ISSUES,19-03-20,vjfnq4,None
+AGV-2406,ECLIPSE LINUX,19-03-20,vjfnq4,None
+AGV-2407,Integration of Radar ECU Stream definition changes into framework ,19-03-20,vjqv6l,None
+AGV-2408,Move Increment 1 changes from dph_rr_adas_sil.cpp to sil_demux.cpp,19-03-25,mjfh9b,None
+AGV-2409,Resim Multithreading - Renault SRR5 single DVSU issue,19-04-02,mjfh9b,None
+AGV-2410,[JLR_SRR3]Resim backward incompatibility,19-03-20,qjd2jz,None
+AGV-2411,Provide Windows & Linux Releases to Wupp Systems bench ,19-03-27,fj6pzt,None
+AGV-2412,Cmake build issue for HIL,19-03-19,vjv7bc,None
+AGV-2413,Integrate FDX protocol into HIL Engine ,19-03-19,vjv7bc,None
+AGV-2414,ECLIPSE USER MANUAL,19-03-25,vjfnq4,None
+AGV-2415,Peer review,19-03-22,vjqv6l,None
+AGV-2416,Need Updated frame work for HKMC SRR5 and HKMC SRR3,19-04-03,kjgnmd,None
+AGV-2417,Geely SRR5 - HIL framework to be implemented,19-03-27,jjtyc8,None
+AGV-2418,Verify DSPACE HIL Injection for SW V8.0.0,19-03-26,bj84lg,None
+AGV-2419,Add radar dump tool capability for mf4 files,19-04-02,sj6ql1,None
+AGV-2420,HKMC SRR5 : Z7A Core stream update,19-03-27,vjqv6l,None
+AGV-2421,STANDALONE DECODER TESTING AUDI SIL485A,19-03-26,bj84lg,None
+AGV-2422,Provide Release binaries for windows and linux build,19-03-27,gjdwf9,None
+AGV-2424,HIL Engine Linux Build,19-05-07,tjt6xv,None
+AGV-2426,Resim Multithreading - Application hang in Continuous mode,19-04-02,mjfh9b,None
+AGV-2429,Wireshark to MDF format Converter,19-04-03,vjqv6l,None
+AGV-2430,Build Audi SRR3 and verify existing workflow,19-03-27,fj6pzt,None
+AGV-2431,Implement additional changes needed for adding multithreading support,19-04-10,fj6pzt,None
+AGV-2436,BMW_SRR3: PCAN RESIM not executing for BMW Vehicle Log,19-04-02,qjd2jz,None
+AGV-2437,Application hang in Continuous mode - Analysis,19-04-02,mjfh9b,None
+AGV-2438,Cmake solution of Visual studio ECU framework built in release config is crashing in run time.,19-04-09,jzwznt,None
+AGV-2439,Testing collection of performance data in Sequential mode for SINGLE DVSU DETECTIONS_UDP on Windows,19-04-01,hjpp71,None
+AGV-2441,Testing collection of performance data in Sequential mode for SINGLE DVSU CDC on Windows,19-04-01,hjpp71,None
+AGV-2442,Testing collection of performance data in Sequential mode for MF4 DETECTIONS_UDP on Windows ,19-04-01,gjnbyc,None
+AGV-2443,Testing collection of performance data in sequential mode for MF4 CDC on Windows ,19-04-01,gjnbyc,None
+AGV-2444,Testing collection of performance data in Sequential mode for SINGLE DVSU DETECTIONS_UDP on Linux,19-04-01,qj4jv7,None
+AGV-2445,Testing collection of performance data in Sequential mode for SINGLE DVSU CDC on Linux ,19-04-01,qj4jv7,None
+AGV-2446,Testing collection of performance data in Sequential mode for MF4 DETECTIONS_UDP on Linux,19-04-02,zjydnx,None
+AGV-2447,Testing collection of performance data in Sequential mode for MF4 CDC on Linux ,19-04-02,zjydnx,None
+AGV-2448,Peer Review,19-04-02,vjqv6l,None
+AGV-2449,Latest HiL Release for All Customers,19-04-04,bj84lg,None
+AGV-2450,[SCANIA SRR3 ] Calibration data is not getting updated properly,19-04-04,kjgnmd,None
+AGV-2451,Verify BMW  logs Collected - VIGEM / ORCAS ,19-04-23,vjqv6l,None
+AGV-2452,ORCAS low variant Logs from Vehicle - DVSU - Working,19-04-10,jzwznt,None
+AGV-2453,ORCAS Mid Variant DVSU logs - Not tested ,19-04-22,vjqv6l,None
+AGV-2454,BMW MID variant Vigem MDF4 Logs ,19-04-22,vjqv6l,None
+AGV-2455,BMW Low variant VIGEM logs ,19-04-22,vjqv6l,None
+AGV-2456,[RNA_SRR5]:Decode unsigned8_T fp_idx[ELEV_MAX_TARGET_REPORTS_L]; of Z7B_Logging_Data_T,19-04-03,vjqv6l,None
+AGV-2457,Understanding the RESIM SIL and multithreading codebase,19-05-09,gjdwf9,None
+AGV-2459,Resim Multithreading - Queue mechanism to handle latch completion of a Sensor's data occurring more than once in a cycle ,19-04-23,mjfh9b,None
+AGV-2460,Customer header added in CDC logging : corresponding changes needed in FW,19-04-03,qjd2jz,None
+AGV-2461,CDC Fusion Implementation needed for BMW SRR5,19-04-05,fj5y98,None
+AGV-2462,BMW ORCAS dvsu files from VIGEM MDF4 ,19-04-22,vjqv6l,None
+AGV-2463,Resim Multithreading - Queue mechanism - Analysis,19-04-05,mjfh9b,None
+AGV-2464,Resim Multithreading - Queue mechanism - Implementation,19-04-23,mjfh9b,None
+AGV-2466,Verify CMAKE on CS 710 ,19-04-09,tjr68b,None
+AGV-2467,BMW Low CMAKE Windows -CS710,19-04-09,gjdwf9,None
+AGV-2468,BMW Mid CMAKE windows CS710,19-04-09,tjr68b,None
+AGV-2469,BMW Low CMAKE Linux,19-04-09,gjdwf9,None
+AGV-2470,BMW Mid CMAKE Linux,19-04-09,tjr68b,None
+AGV-2471,Code review for AGV 2416 -UPDATED FRAMEWORK FOR HKMC SRR5,19-04-02,vjqv6l,None
+AGV-2472,[RNA_SRR5]: Test logs needs to be analysed for not replaying,19-04-02,qjd2jz,None
+AGV-2473,Create VIGEM MD4 to ORCAS DVSU / DVL Stand Alone ,19-04-03,sj6ql1,None
+AGV-2475,Verify DSPACE HIL performance with the latest DSPACE Detection stream,19-04-03,bj84lg,None
+AGV-2476,peer review :AGV 2355,19-04-09,jzwznt,None
+AGV-2477,Intergrate BMW low DSPACE stream to decoder,19-04-23,bj84lg,None
+AGV-2478,Integrate BMW MID DSPACE stream to decoder,19-04-23,bj84lg,None
+AGV-2479,Integrate BMW HIGH DSPACE stream to decoder,19-04-23,bj84lg,None
+AGV-2485,Add DSPACE Low BMW live mode to HIL engine,19-05-07,tjq0p7,None
+AGV-2486,Design for BMW DSPACE live mode injection,19-05-07,tjq0p7,None
+AGV-2490,HIL perfomance analysis tool ,19-04-15,jjtyc8,None
+AGV-2491,Test HIL engine with VIGEM BMW LOW MDF4 file,19-04-30,jjtyc8,None
+AGV-2492,Develop customer config file for SRR5,19-04-23,fj5y98,None
+AGV-2493,New xml tags to be supported,19-04-12,fj5y98,None
+AGV-2494,[RNA_SRR5] FRAME_WORK_UPDATE  to support PCAN_64_Byte_Payload,19-04-16,zjpwq7,None
+AGV-2495,Support multiple output formats.,19-04-23,fj5y98,None
+AGV-2496,Link sensor options with customer name,19-04-23,fj5y98,None
+AGV-2497,Virtual validation overrides user configuration.,19-04-22,fj5y98,None
+AGV-2498,[RNA SRR5]: Provide framework support VCAN messages,19-04-16,zjpwq7,None
+AGV-2499,Remove HIL Engine Legacy VS solution ,19-04-17,tjq0p7,None
+AGV-2513,Resim Multithreading - Implement and Verify multithreading support for DSPACE UDP Frame Process on Windows,19-04-23,fj6pzt,None
+AGV-2514,[Geely SRR5] Buffersize modification requirement in v2 streams,19-04-11,kjgnmd,None
+AGV-2515,Z7B core stream update : FW update ,19-04-24,kjgnmd,None
+AGV-2516,SRR3 AUDI XY485A HiL Analysis,19-04-22,jj5f4s,None
+AGV-2517,AUDI SIL485B RELEASE,19-04-09,kjgnmd,None
+AGV-2518,STANDALONE DECODER TESTING AUDI SIL485B,19-04-09,bj84lg,None
+AGV-2519,Application hang in Linux for Multithreading application,19-04-09,fj6pzt,None
+AGV-2522,The config xml file updated for SRR5 needs the implementation changes in the framework,19-04-12,fj5y98,None
+AGV-2523,Peer Review,19-04-08,jzwznt,None
+AGV-2524,[JLR_SRR3:MY20] Calibration decoding error,19-04-29,qjd2jz,None
+AGV-2525,BMW SRR3 Pcan Resim : Assert found in the specific log,19-04-15,qjd2jz,None
+AGV-2526,Radar ECU Stream changes need to be updated in framework,19-04-22,vjqv6l,None
+AGV-2527,[SRR3] Update SIL & HIL framework for core stream update (V_33 to V_34) ,19-04-12,qjd2jz,None
+AGV-2528,SRR5 branch of framework needs to be optimized.,19-04-24,qjd2jz,None
+AGV-2530,Setup for DSPACE workflow and verify the existing workflow,19-04-17,fj6pzt,None
+AGV-2531,Implement additional changes required for MultiThr support for DSPACE ,19-04-17,fj6pzt,None
+AGV-2532,Test MultiThr changes done for DSPACE workflow in Windows,19-04-23,fj6pzt,None
+AGV-2536,Implement hil tracker/ Live mode injection for BMW LOW SRR5,19-04-22,jj5f4s,None
+AGV-2539, Migrate Logging Interface tool to CMAKE ,19-05-06,vjfnq4,None
+AGV-2540,Migrate CAL Gen tool to CMAKE ,19-05-08,gjdwf9,None
+AGV-2542,Create a separate repo for Radar stream decoder Xlink,19-04-16,sj6ql1,None
+AGV-2543,Update Latest Framework SRR5 code to support Linux,19-04-11,fj6pzt,None
+AGV-2544,Migrate threads and events from windows to cross platform,19-05-02,tjt6xv,None
+AGV-2545,Build in Ubuntu using cmake and identify the issues for SRR3_HiL_Resim,19-05-08,tjt6xv,None
+AGV-2546,RNA Streams are updated : FW update required ,19-04-22,vjqv6l,None
+AGV-2547,BWM LOW: Integrate PCAN BB X link into FW,19-04-10,vjqv6l,None
+AGV-2548,BMW LOW: Feed Raw Frames into the PCAN BB.,19-04-10,vjqv6l,None
+AGV-2549,integrate Vigem mf4 writer  into SIL,19-04-24,vjqv6l,None
+AGV-2550,peer review,19-04-11,vjqv6l,None
+AGV-2551,Peer review: AGV-2007,19-04-11,jzwznt,None
+AGV-2552,BMW SRR5_P :LOW :FW Update needed for z4_z7b customer stream,19-04-24,bj84lg,None
+AGV-2557,Integrate MDF4 reader into Radar ECU,19-04-15,vjqv6l,None
+AGV-2558,Calibration Logging changes for all platforms,19-05-06,kjgnmd,None
+AGV-2560,RESIM app not running successfully for DSPACE mode,19-04-15,qjd2jz,None
+AGV-2561,Check Sensor Reinit functionality  with latest SCANIA DSPACE HIL package,19-04-17,tjq0p7,None
+AGV-2564,Issue seen in MDF to DVSU converter tool ,19-04-23,vjqv6l,None
+AGV-2565,JLR 7_14_5 logs are not resimulable,19-04-26,fj5y98,None
+AGV-2568,Merge standalone ECU changes to the SIL SRR5 single threaded framework.,19-05-07,vjqv6l,None
+AGV-2569,Update B-pillar stream decoder.,19-05-06,vjqv6l,None
+AGV-2575,Integrate Vigem MDF4 Log reader in HiL Application,19-04-23,jjtyc8,None
+AGV-2576,Virtual validation overrides user configuration,19-05-03,fj5y98,None
+AGV-2580,Resim Multithreading - Handing application hang issue in case of DSPACE workflow,19-04-24,fj6pzt,None
+AGV-2581,Analysis on application hang in DSPACE,19-04-24,fj6pzt,None
+AGV-2582,Implementation for handling application hang in DSPACE,19-04-24,fj6pzt,None
+AGV-2584,Update Radar udp dump tool for srr3 customer,19-05-08,sj6ql1,None
+AGV-2585,Verify BMW SRR5 HIL with VIGEM Logs,19-04-23,jjtyc8,None
+AGV-2586,SW3.0.x SUV V1/V2 Resim Release,19-05-07,zjpwq7,None
+AGV-2589,SRR3 AUDI XY485A HiL Analysis - ASW issue,19-05-07,jj5f4s,None
+AGV-2590,VIGEM Logs not supported by HIL Framework,19-04-26,jj5f4s,None
+AGV-2591,RNA:WI-49947 - Configuration file shall accept relative path of reference file such as output generation file path.,19-04-26,qjd2jz,None
+AGV-2592,[RNA_SRR5]: Update header dump tool ,19-05-02,fj5y98,None
+AGV-2593,Verify Hil with Vigem MDF4 Log ,19-04-24,jjtyc8,None
+AGV-2594,Review for AGV-2528,19-04-24,jzwznt,None
+AGV-2595,Code Review for AGV-2492,19-04-25,jzwznt,None
+AGV-2596,GWM SRR3:: SIL decoder Update ,19-04-30,bj84lg,None
+AGV-2597,Code review for AGV 2515 Z7B CORE STREAM UPDATE,19-04-24,vjqv6l,None
+AGV-2598,Code review for AGV_2552 BMW SRR5_P :LOW :FW Update needed for z4_z7b customer stream,19-04-24,vjqv6l,None
+AGV-2599,ADTF has to be tested with two filters,19-04-26,kjgnmd,None
+AGV-2601,Peer Review,19-04-24,vjqv6l,None
+AGV-2602,Analysis,19-04-24,bj84lg,None
+AGV-2603,Analysis,19-04-24,jjtyc8,None
+AGV-2604,Analysis,19-04-24,jjtyc8,None
+AGV-2605,Update MultiThr code with latest SRR5 code and Verify on Windows,19-04-24,fj6pzt,None
+AGV-2606,Analysis,19-04-24,jj5f4s,None
+AGV-2607,Analysis,19-04-24,jj5f4s,None
+AGV-2608,Analysis,19-04-24,kjgnmd,None
+AGV-2609,Analysis,19-04-24,kjgnmd,None
+AGV-2610,Analysis,19-04-24,kjgnmd,None
+AGV-2611,Analysis,19-04-24,vjqv6l,None
+AGV-2612,Analysis,19-04-24,vjqv6l,None
+AGV-2613,Analysis,19-04-24,vjqv6l,None
+AGV-2614,Analysis,19-04-24,fj5y98,None
+AGV-2615,Analysis,19-04-24,fj5y98,None
+AGV-2616,Analysis,19-04-24,qjd2jz,None
+AGV-2620,Analysis,19-04-24,qjd2jz,None
+AGV-2621,BMW SRR5  Z7B core stream V2 ,19-05-09,kjgnmd,None
+AGV-2622,Verify latest updated MultThr code on Linux,19-05-07,fj6pzt,None
+AGV-2623,Resim RNA Release: SW4.1.0_CDV_V1,19-05-07,qjd2jz,None
+AGV-2624,Analysis,19-04-24,qjd2jz,None
+AGV-2628,RNA:File naming of .mat shall have same filename as input file + SiL Resim Version number.,19-04-29,qjd2jz,None
+AGV-2629,Analysis,19-04-24,qjd2jz,None
+AGV-2630,Analysis,19-04-24,sj6ql1,None
+AGV-2631,Analysis,19-04-24,sj6ql1,None
+AGV-2632,Analysis,19-04-25,tjq0p7,None
+AGV-2633,Analysis,19-04-24,fj5y98,None
+AGV-2634,FlexRay-Resim does not work with configuration file version 9.6,19-05-07,kjgnmd,None
+AGV-2642,Analysis and Implementation of configuring size of ThreadPool,19-04-26,fj6pzt,None
+AGV-2643,Testing of configurable threadPoolSize ,19-04-26,fj6pzt,None
+AGV-2650,Radar ECU Stream changes need to be updated in framework,19-05-04,vjqv6l,None
+AGV-2656,Merge latest framework code from SRR5 to Multithr and verify,19-04-30,fj6pzt,None
+AGV-2657,EBDL TRACES COMPARISON FOR 478 AND 480 AUDI RESIM SOFTWARES,19-04-30,kjgnmd,None
+AGV-2658,Merge threads into cross platform enabled SRR3_Hil_Exec project,19-05-07,bj84lg,None
+AGV-2659,SW4.1.0_CDV_V1 sw validation,19-05-02,qjd2jz,None
+AGV-2660,Peer Review,19-04-30,vjqv6l,None
+AGV-2661,Port the Logging interface tool to linux,19-05-06,vjfnq4,None
+AGV-2663,Geely SRR5  RESIM issue,19-05-06,fj5y98,None
+AGV-2665,Testing collection of performance data in Sequential mode for SINGLE DVSU DETECTIONS_UDP on Windows,19-05-02,fj6pzt,None
+AGV-2666,[RNA_SRR5]: RWUP Logs CDV4.1.0 does not resim for separate sensor position ,19-05-06,qjd2jz,None
+AGV-2669,CODE REVIEW OF AGV 2558,19-05-06,jzwznt,None
+AGV-2675,Calibration decoded from z7b stream is wrong ,19-05-08,kjgnmd,None
+AGV-2676,Analysis,19-05-09,gjdwf9,None
+AGV-2677,Merge latest SRR5 code to MultiThr task Branch and verify,19-05-07,fj6pzt,None
+AGV-2696,Analysis of application crash in Linux in Continuous_File_input mode,19-05-08,fj6pzt,None

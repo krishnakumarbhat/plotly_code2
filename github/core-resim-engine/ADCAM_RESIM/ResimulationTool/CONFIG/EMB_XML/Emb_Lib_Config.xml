@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Aptiv SIL component configuration -->
+
+<Embedded_Library_Output_Control>
+	<!-- SIL Embedded_Library Configuration Control XML Version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+	<SIL_Embedded_Library_Output_Control_XML_Version>7.3</SIL_Embedded_Library_Output_Control_XML_Version>
+
+	<!-- XML Configuration Control for statistical report -
+		STATISTICAL_REPORT - Enable statistical report.
+		STATISTICAL_REPORT - Disable statistical report. -->
+    <STATISTICAL_REPORT>0</STATISTICAL_REPORT>
+
+	<!-- XML Configuration Control for CDC_SATURATION_CHECK -
+		CDC_SATURATION_CHECK - Enable CDC_SATURATION_CHECK.
+		CDC_SATURATION_CHECK - Disable CDC_SATURATION_CHECK. -->
+    <CDC_SATURATION_CHECK>0</CDC_SATURATION_CHECK>
+
+	<!-- XML Configuration Control for the Transmission of CAN Data -
+			CAN_TX_ENABLED - Send RESIM outputs to CANoe(in Live mode)
+			CAN_TX_DISABLED-Don't send RESIM outputs to CANoe -->
+    <CAN_TRANSMISSION>CAN_TX_DISABLED</CAN_TRANSMISSION>
+
+  	<!-- Provide the complete path for the CSV file with Tracker Core here
+				This reads Veh data for DET Mode, required when ONLY DETECTION Stream data used for RESIM-->
+    <Veh_Data_CSV_Path>NONE</Veh_Data_CSV_Path>
+
+	<!-- XML Configuration Control for Tracker internals
+				TRACKER_INTERNALS_ENABLED - Use tracker internals sent by SiL engine
+				TRACKER_INTERNALS_DISABLED - Don't use tracker internals sent by SiL engine -->
+    <TRACKER_INTERNALS>TRACKER_INTERNALS_ENABLED</TRACKER_INTERNALS>
+
+	<!-- XML Configuration Control for Alignment internals
+				ALIGNMENT_INTERNALS_ENABLED - Use Alignment internals sent by SiL engine
+				ALIGNMENT_INTERNALS_DISABLED - Don't use Alignment internals sent by SiL engine -->
+    <ALIGNMENT_INTERNALS>ALIGNMENT_INTERNALS_ENABLED</ALIGNMENT_INTERNALS>
+
+	<!-- XML Configuration Control for PSP modules
+				PSP_MODULES_ENABLED - Run PSP modules
+				PSP_MODULES_DISABLED - Don't Run PSP modules -->
+    <PSP_MODULES>PSP_MODULES_ENABLED</PSP_MODULES>
+
+	<!-- XML Configuration Control for the Transmission of UDP Data-
+				UDP_TX_ENABLED - Send RESIM outputs to Orcas(in Live mode)
+				UDP_TX_DISABLED-Don't send RESIM outputs to Orcas -->
+    <UDP_TRANSMISSION>UDP_TX_DISABLED</UDP_TRANSMISSION>
+
+	<!-- XML Configuration Control for Embedded_Library Output XML Trace Files-
+				XML_TRACE_ENABLED - GENERATE Embedded_Library Output XML Trace Files
+				XML_TRACE_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+    <XML_Trace_Files>XML_TRACE_ENABLED</XML_Trace_Files>
+
+    <!--XML Configuration Control for Embedded_Library plp synchronization
+				ENABLE_TRACKER_MODE_INIT - Enable tracker only in Init
+	            ENABLE_TRACKER_MODE_EVERYCYCLE- Emable tracker for evry cycle
+                DISABLE_TRACKER_MODE- SUPPRESS Synchronize plp timestamp to output -->
+    <LOAD_TRACKER_INTERNALS>ENABLE_TRACKER_MODE_INIT</LOAD_TRACKER_INTERNALS>
+
+ 	<!-- External Error via XML Configuration Control for Embedded_Library Output XML Trace Files-
+				EXTERNAL_ERROR_XML_ENABLED - GENERATE Embedded_Library Output XML Trace Files
+				EXTERNAL_ERROR_XML_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+    <LOAD_ANERMA_ERROR>EXTERNAL_ERROR_XML_DISABLED</LOAD_ANERMA_ERROR>
+
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files-
+				USC_NORMAL - Loads the USC from the UDP logs
+				USC_READ_FROM_XML - Loads the USC from the XML file -->
+	<USC_XML_Control>USC_NORMAL</USC_XML_Control>
+
+	<!--XML Configuration Control for Embedded_Library USC CSV Mode extraction
+					ENABLE_USC_CSV_MODE Genearate usc csv to output
+					DISABLE_USC_CSV_MODE SUPPRESS  usc csv to output -->
+	<Suppress_Usc_Csv_log>DISABLE_USC_CSV_MODE</Suppress_Usc_Csv_log>
+
+	<!--XML Configuration Control for Embedded_Library USC XML mode extraction
+					ENABLE_USC_XML_MODE Generate usc xml to output
+					DISABLE_USC_XML_MODE SUPPRESS usc xml to output -->
+	<Suppress_Usc_Xml_log>DISABLE_USC_XML_MODE</Suppress_Usc_Xml_log>
+
+	 <!-- XML Configuration Control for Embedded_Library Output XML Trace Files-
+					SMC_NORMAL - Loads the SMC from the UDP logs
+					SMC_READ_FROM_XML - Loads the SMC from the XML file -->
+	<SMC_XML_Control>SMC_NORMAL</SMC_XML_Control>
+
+	<!--XML Configuration Control for Embedded_Library SMC CSV Mode extraction
+					ENABLE_SMC_CSV_MODE Genearate smc csv to output
+					DISABLE_SMC_CSV_MODE SUPPRESS  smc csv to output -->
+	<Suppress_Smc_Csv_log>DISABLE_SMC_CSV_MODE</Suppress_Smc_Csv_log>
+
+	<!--XML Configuration Control for Embedded_Library SMC XML mode extraction
+					ENABLE_SMC_XML_MODE Generate smc xml to output
+					DISABLE_SMC_XML_MODE SUPPRESS smc xml to output -->
+	<Suppress_Smc_Xml_log>DISABLE_SMC_XML_MODE</Suppress_Smc_Xml_log>
+
+	<!-- Calibration sources -->
+	<!-- LOG: Read calibration from log -->
+	<!-- DEFAULT: Use default values from C files -->
+	<USC_Calibration_Source>LOG</USC_Calibration_Source>
+	<SMC_Calibration_Source>LOG</SMC_Calibration_Source>
+	<PSC_Calibration_Source>LOG</PSC_Calibration_Source>
+
+	<PLP_Resim>
+    <!-- plp_algorithems: Set to 0 to ENABLE the PLP synchronization algorithm, 1 to DISABLE -->
+    <plp_algorithms>0</plp_algorithms>
+    <!-- plp_analysis: Set to 1 to ENABLE PLP analysis/debug output, 0 to DISABLE -->
+    <plp_analysis>0</plp_analysis>
+	</PLP_Resim>
+
+
+    <!-- Parts of XML Prints: 1 => Generate XML Print
+							  0 => Suppress XML Print -->
+	<XML_Prints>
+		<Vehicle_Info>1</Vehicle_Info>
+		<Mounting_Info>1</Mounting_Info>
+		<MNR_blockage>0</MNR_blockage>
+		<TD_blockage>0</TD_blockage>
+		<Self_Dets>1</Self_Dets>
+		<Opp_Dets>1</Opp_Dets>
+        <scan_prints>1</scan_prints>
+        <Cal_Error_Files>0</Cal_Error_Files>
+        <Active_Faults>0</Active_Faults>
+        <UDP_Datas>0</UDP_Datas>
+		<Curvi_Tracks>0</Curvi_Tracks>
+		<Alignment_Info>0</Alignment_Info>
+		<PATH_Tracking_Info>0</PATH_Tracking_Info>
+		<LCDA_Info>0</LCDA_Info>
+		<CTA_Info>0</CTA_Info>
+		<RECW_Info>0</RECW_Info>
+		<ASW_Info>0</ASW_Info>
+		<ABA_Info>0</ABA_Info>
+		<CDC_Errors_Info>0</CDC_Errors_Info>
+		<IPC_Error_Infor>0</IPC_Error_Infor>
+		<PCAN_Error_Info>0</PCAN_Error_Info>
+		<ENET_Frame_Error_Info>0</ENET_Frame_Error_Info>
+		<HIL_BB_Erors_Info>0</HIL_BB_Erors_Info>
+		<OCG_info>0</OCG_info>
+		<roadmodel_info>0</roadmodel_info>
+		<Static_Objects>0</Static_Objects>
+		<Moving_Objects>0</Moving_Objects>
+		<VSE_Data>0</VSE_Data>
+		<Interference_Dets>0</Interference_Dets>
+		<Radar_Capability_Info>0</Radar_Capability_Info>
+		<Det_Data_Info>0</Det_Data_Info>
+		<Det_Debug_Data_Info>0</Det_Debug_Data_Info>
+    </XML_Prints>
+
+	<!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-
+				1 - GENERATE Embedded_Library input CSV Files for all logging streams
+				0 - SUPPRESS Embedded_Library Output CSV Files for all logging streams -->
+	<UDP_Log_Data_CSV>0</UDP_Log_Data_CSV>
+
+	<!-- XML Configuration Control for Embedded_Library CDC CSV Files-
+			1 - GENERATE Embedded_Library CSV Files for CDC logging stream
+			0 - SUPPRESS Embedded_Library CSV Files for CDC logging stream -->
+	<CDC_Log_Data_CSV>0</CDC_Log_Data_CSV>
+
+	<!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-
+				1 - GENERATE Embedded_Library PCAN_DECODER_XML  Files
+				0 - SUPPRESS Embedded_Library PCAN_DECODER_XML  Files-->
+	<PCAN_DECODER_XML>0</PCAN_DECODER_XML>
+
+	<!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-
+				1 - GENERATE Embedded_Library input XML Trace Files for all logging streams
+				0 - SUPPRESS Embedded_Library Output XML Trace Files for all logging streams -->
+	<UDP_Log_Data_XML_TRACE>0</UDP_Log_Data_XML_TRACE>
+
+	<!-- XML Configuration Control for Embedded_Library Output BIN Files-
+				BIN_FILES_ENABLED - GENERATE Embedded_Library Output BIN Files
+				BIN_FILES_DISABLED - SUPPRESS Embedded_Library Output BIN Files -->
+    <BIN_FILES>BIN_FILES_DISABLED</BIN_FILES>
+
+  	<!-- XML Configuration Control for Embedded_Library Output XTRK Files-
+				XTRK_FILES_ENABLED - GENERATE Embedded_Library Output XTRK Files
+				XTRK_FILES_DISABLED - SUPPRESS Embedded_Library Output XTRK Files -->
+    <XTRK_ENABLE>XTRK_FILES_DISABLED</XTRK_ENABLE>
+
+	<!-- XML Configaration for Embedded_Library Output HDF Files
+					HDF_FILES_ENABLED  Generate HDF files in Output_Path
+					HDF_FILES_DISABLED Supress HDF files in Output_Path -->
+	<HDF_FILES>HDF_FILES_DISABLED</HDF_FILES>
+
+	<!-- XML Configuration Control for Embedded Library Console Prints-
+				CONSOLE_PRINTS_ENABLED - Enable Console Prints while execution
+				CONSOLE_PRINTS_DISABLED - Disable Console Prints while execution -->
+    <CONSOLE_PRINTS>CONSOLE_PRINTS_DISABLED</CONSOLE_PRINTS>
+
+	<!-- XML Configuration Control for Enabling / Disabling the Auto Alignment BMW_SRR5-
+				AUTO_ALIGN_ENABLED - INITIALIZE_AUTO_ALIGNMENT_FROM_INTERNALS
+				AUTO_ALIGN_DISABLED - AUTO_ALIGNMENT_USE_VALUE_FROM_UDP
+				AUTO_HARD_CODED_VALUES_ENABLED - AUTO_ALIGNMENT USE HARD CODED VALUES FORM XML CONFIG FILE -->
+	<Auto_Align_Option>AUTO_ALIGN_DISABLED</Auto_Align_Option>
+
+	<!-- Add Additional XML options - for AA angle and for AA Quality factor to be entered by the user .
+	     Add Options to load the AA values for 6 SRR sensors . 4 Corner radars and 2 B Pillar sensors .
+		  Align angle and  Align Quality 6 SRR sensors . 4 Corner radars and 2 B Pillar sensors
+                                                		  Note: Align_Angle Hardcoded values are in radians format -->
+	<Align_Angle_Quality_Values>
+		<Front_Left_Align_Angle>0.0523599</Front_Left_Align_Angle>
+		<Front_Left_Align_QF>2</Front_Left_Align_QF>
+		<Front_Right_Align_Angle>0.0523599</Front_Right_Align_Angle>
+		<Front_Right_Align_QF>1</Front_Right_Align_QF>
+		<Left_Center_Align_Angle>0.0523599</Left_Center_Align_Angle>
+		<Left_Center_Align_QF>2</Left_Center_Align_QF>
+		<Rear_Left_Align_Angle>0.0523599</Rear_Left_Align_Angle>
+		<Rear_Left_Align_QF>0</Rear_Left_Align_QF>
+		<Rear_Right_Align_Angle>0.0523599</Rear_Right_Align_Angle>
+		<Rear_Right_Align_QF>1</Rear_Right_Align_QF>
+		<Right_Center_Align_Angle>0.0523599</Right_Center_Align_Angle>
+		<Right_Center_Align_QF>1</Right_Center_Align_QF>
+    </Align_Angle_Quality_Values>
+
+	<!-- XML Configuration Control for Enabling / Disabling the Seep Compensation Factor Value BMW_SRR5-
+				SPEED_COMPENSATION_FACTOR_HARD_CODED_VALUE_ENABLED - SPEED_COMPENSATION_FACTOR_VALUE_FROM_CONFIG_FILE
+				SPEED_COMPENSATION_FACTOR_HARD_CODED_VALUE_DISABLED - SPEED_COMPENSATION_FACTOR_VALUE_FROM_LOG  -->
+	<Speed_Compensation_Factor>SPEED_COMPENSATION_FACTOR_HARD_CODED_VALUE_DISABLED</Speed_Compensation_Factor>
+
+	<!-- Add Additional XML options -
+	                for speed_compensation_factor value to be entered by the user.  -->
+	<Speed_Compensation_Factor_Sensors_Values>
+		<Front_Left_Speed_Compensation_Factor>1.12</Front_Left_Speed_Compensation_Factor>
+		<Front_Right_Speed_Compensation_Factor>2.34</Front_Right_Speed_Compensation_Factor>
+		<Rear_Left_Speed_Compensation_Factor>3.56</Rear_Left_Speed_Compensation_Factor>
+		<Rear_Right_Speed_Compensation_Factor>4.78</Rear_Right_Speed_Compensation_Factor>
+    </Speed_Compensation_Factor_Sensors_Values>
+
+
+</Embedded_Library_Output_Control>

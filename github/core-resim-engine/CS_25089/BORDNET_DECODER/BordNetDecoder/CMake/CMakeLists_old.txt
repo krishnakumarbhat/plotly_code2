@@ -1,0 +1,84 @@
+##########################
+### Project definition ###
+##########################
+cmake_minimum_required(VERSION 3.2)
+
+set(PROJECTNAME  "BordNetDecoder")
+project(${PROJECTNAME})
+
+#Linking directories
+link_directories(${OUTPUT_PATH})
+
+#include custom specific
+list(APPEND SOURCE_ALL "${BORDNET_DECODER_PROJ}/Source.cpp")
+list(APPEND SOURCE_ALL "${BORDNET_DECODER_PROJ}/Resource.rc")
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    # 64 bits
+	SET(CONF_DIR "x64")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    # 32 bits
+	SET(CONF_DIR "x86")
+endif(CMAKE_SIZEOF_VOID_P EQUAL 8) 
+
+add_executable (${PROJECTNAME} "") 
+
+set(BOOST_INC "${BORDNET_DECODER_PROJ}/../BOOST/Include")
+
+#link libraries
+if(TARGET PCAN_Decoder)
+	target_link_libraries (${PROJECTNAME} PRIVATE PCAN_Decoder)
+endif(TARGET PCAN_Decoder)
+
+if(TARGET SCAN_Decoder)
+	target_link_libraries (${PROJECTNAME} PRIVATE SCAN_Decoder)
+endif(TARGET SCAN_Decoder)
+
+if(TARGET VCAN_Decoder)
+	target_link_libraries (${PROJECTNAME} PRIVATE VCAN_Decoder)
+endif(TARGET VCAN_Decoder)
+
+if(TARGET SOME_IP_Extractor)
+	#target_link_libraries (${PROJECTNAME} PRIVATE SOME_IP_Extractor CCA_ViGEM) 
+	target_link_libraries (${PROJECTNAME} PRIVATE SOME_IP_Extractor) 
+endif(TARGET SOME_IP_Extractor)
+
+#link include directories
+target_include_directories(${PROJECTNAME} PUBLIC ${COMMON_INC})
+target_include_directories(${PROJECTNAME} PRIVATE ${COMMON_INC}/pugixml ${BOOST_INC})
+
+target_sources(${PROJECTNAME} PRIVATE ${SOURCE_ALL})
+
+set_target_properties(${PROJECTNAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+if(OUTPUT_PATH)
+set_target_properties(${PROJECTNAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_PATH}") 				
+endif(OUTPUT_PATH)
+
+
+# Multi Byte Character Set
+if(MSVC)
+	target_compile_definitions(${PROJECTNAME} PRIVATE _MBCS) 
+endif(MSVC)
+
+# Structure Alignment
+if(MSVC)
+	target_compile_options(${PROJECTNAME} PRIVATE "/Zp2")
+endif(MSVC)
+
+if(UNIX)
+	#For Debugging in Linux...
+	target_compile_options(${PROJECTNAME} PRIVATE "$<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:-g>")
+endif(UNIX)
+
+set(PUGIXML_LIB_PATH "${COMMON_INC}/pugixml/binaries")
+find_library(pugixml_debug pugixml_dbg HINTS "${PUGIXML_LIB_PATH}/${CONF_DIR}")
+find_library(pugixml_release pugixml HINTS "${PUGIXML_LIB_PATH}/${CONF_DIR}")
+
+target_link_libraries(${PROJECTNAME} PRIVATE debug "${pugixml_debug}"
+									 optimized "${pugixml_release}"
+									 )
+
+target_compile_definitions(${PROJECTNAME} PRIVATE LOW)

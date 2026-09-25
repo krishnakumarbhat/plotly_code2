@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR5 APTIV SIL component configuration -->
+<SIL_ENGINE_Configuration>
+  <!-- SIL SRR5 Configuration XML version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+	<SIL_ENGINE_Config_XML_Version>4.7</SIL_ENGINE_Config_XML_Version>
+
+	<Customer_Name>STLA_SCALE4</Customer_Name>
+	  
+  <!-- SIL_Injection Mode  - 
+		VEHICLE_EXPEDITION_FILE - SIL Input is vehicle collected Files
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+		VIRTUAL_SIMULATION_FILE - SIL Input is Virtual Simulation Tools IPG/VTD/DSPACE ASM created Virtual simulation files.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)
+		VIRTUAL_SIMULATION_LIVE - SIL Input is Live streams from Virtual Simulation tools IPG/VTD/DSPACE ASM.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)
+		VEHICLE_EXPEDITION_LIVE - SIL Input is live data from DSpace transmitter or HIL bench
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)-->
+	<SIL_INJECTION_MODE>VIRTUAL_SIMULATION_LIVE</SIL_INJECTION_MODE>
+
+  <!-- SIL_Entrypoint -
+		CDC					- CDC Data processing
+							  The SIL component receives Front-End data over a reference parameter of the SIL function call.
+							  The SIL component processes Front-End data to raw targets, object hypotheses, Fences.
+							  NOTE: Input Logs should be of larger size as USC Calibrations need to be extracted from UDP MUX Message
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  [This can be selected for LOW/MID variant]
+							  
+		DETECTIONS_UDP		- Data processing of raw target detections
+							  The SIL component receives UDP data via a reference parameter of the SIL function call,
+							  SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs.
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  [This can be selected for LOW/MID variant]
+
+		AF_MODE         	- Running SIL from Angle Finding. 
+							  Inputs are FLR4P UDP streams. 
+							  
+		DSPACE_MODE         - Running dSPACE data BMW_LOW, BMW_MID & BMW_HIGH closed loop SIL. 
+							  Inputs are dSPACE UDP streams & SOME IP. 
+							  Decoded Detections from dSPACE stream are fed to radar emb libraries and 
+							  processed PCAN detections are fed to ECU lib through Symbol interface. 
+							  
+		IGNORE_RESIM_KPI_BAD_LOGS_DETECTION_MODE 
+		
+							- Developers can use this mode to execute resim on Poor Logs collected from road.
+							  This mode of execution ignores all the bad logs check(Queue Size 50).
+							  This Mode runs Detection Mode Only.
+							  Resim Team DOES NOT Recommend this mode to be used.
+							  This mode should NOT be used for any Resim Performance analysis.
+							  This mode should NOT be used for any customer deliverables.
+							  Resim Performance is Very POOR in this mode.
+							  Results from this mode are INACCURATE 
+							  Tickets CANNOT be created if developers are using this mode 
+							  
+		RDD_MODE			- Running SIL in RDD Mode.	-->
+	<SIL_Entrypoint>DSPACE_MODE</SIL_Entrypoint>
+ 
+	<RESIM_LOG_INFO>
+		<!-- 	LogLevel
+				to genrate the error log traces
+				Set the log levels to get printed on log tracing file
+                    0 - DisableLogTrace, log tracing will be disabled
+                    1 - Critical
+                    2 - Error
+                    3 - Warnings and Error
+                    4 - Info, Warnings and Error -->		
+		<LogLevel>1</LogLevel>
+		
+		<!-- LogTracingPath selection. 
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT and 
+				valid folder path with below Supported file formats 
+						.xml
+                        .txt
+                        .log -->
+		<LogTracingPath>SAME_AS_OUTPUT</LogTracingPath>
+		
+		<!-- TimestampTracePath - Create a Debug information / report containing Timestamp information. 
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT -->
+		<TimestampTracePath>SAME_AS_INPUT</TimestampTracePath> 
+		
+		<!-- ResimErrorTracepath - Create a Debug information / report containing Errors in RESIM.
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT -->
+		<ResimErrorTracepath>SAME_AS_INPUT</ResimErrorTracepath>
+		
+		<!-- LogScanDropTracePath - Create a debug information / Report for Scan drops in the input log. 
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT -->
+		<LogScanDropTracePath>SAME_AS_INPUT</LogScanDropTracePath>				
+		
+		<!-- TIMING_PROFILE_PATH selection. Options are SAME_AS_INPUT, NONE , SAME_AS_OUTPUT and valid folder path
+			TIMING_PROFILE_PATH tag to enter valid folder path only if options such as SAME_AS_INPUT OR NONE ,SAME_AS_OUTPUT is not selected
+			Provide the path to generate log timing profile files.-->	
+		<TIMING_PROFILE_PATH>SAME_AS_OUTPUT</TIMING_PROFILE_PATH>
+		
+		<!-- STATISTIC_REPORT_PATH selection. Options are SAME_AS_INPUT , NONE , SAME_AS_OUTPUT and valid folder path
+			If STATISTIC_REPORT_PATH selection is neither SAME_AS_INPUT or NONE , SAME_AS_OUTPUT then use STATISTIC_REPORT_PATH tag to enter valid folder path
+			Provide the path to generate Statistic Report	
+			Warning Note:- Statistic Report feature is currently available for LINUX platform
+				In WINDOWS use NONE.
+				If want to avail this feature in windows, Please make sure to use same configured built dlls from all the libraries
+				FW:- RELEASE SENSORS:- RELEASE RECU:- RELAESE
+				FW:- DEBUG SENSORS:- DEBUG RECU:- DEBUG -->
+		<STATISTIC_REPORT_PATH>SAME_AS_INPUT</STATISTIC_REPORT_PATH>
+
+	</RESIM_LOG_INFO>		
+
+</SIL_ENGINE_Configuration>

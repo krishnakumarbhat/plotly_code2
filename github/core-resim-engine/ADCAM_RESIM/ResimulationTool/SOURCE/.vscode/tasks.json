@@ -1,0 +1,62 @@
+{
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "buildType",
+            "type": "pickString",
+            "description": "Select build type",
+            "options": [
+                "Debug",
+                "Release"
+            ],
+            "default": "Release"
+        }
+    ],
+    "tasks": [
+        {
+            "label": "Build APT_SRR_RESIM Debug",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/CMake/build",
+                "--config",
+                "Debug",
+                "--target",
+                "APT_SRR_RESIM"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build APT_SRR_RESIM Release",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/CMake/build",
+                "--config",
+                "Release",
+                "--target",
+                "APT_SRR_RESIM"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build APT_SRR_RESIM",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/CMake/build",
+                "--config",
+                "${input:buildType}",
+                "--target",
+                "APT_SRR_RESIM"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}

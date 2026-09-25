@@ -1,0 +1,17 @@
+
+get_index_from_decoding_table -> this function has to be manually added,
+where in a for a loop, user finds out the index of the decoding table which matches the CAN/Eth message
+
+int index = get_index_from_decoding_table(/*send CAN message ID here*/);
+table_ptr_NCOM = NCOM_message_obj_Target.get_NCOM_decoding_function_table();
+
+/*destination to copy is encoded data, which is fetched from decoding table*/
+/*source is raw payload from log file*/
+
+memcpy(table_ptr_NCOM[index].source, (uint8_t*)&DGPS_Ethernet_class::accumulated_DGPS_data[i].payload, table_ptr_NCOM[index].message_length);
+
+
+/*invoke function pointer present inside class definition*/
+NCOM_message_obj_Target.invoke_function(table_ptr_NCOM[index].decode_function,
+										(void*)table_ptr_NCOM[index].destination, 
+										(void*)table_ptr_NCOM[index].source);

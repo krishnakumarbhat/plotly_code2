@@ -1,0 +1,85 @@
+{
+	"reprocessingInputFileStreams": [
+		{
+			"key": "INPUT_BN_CALIFR",
+			"files": [			
+					
+			]
+		},
+		{
+			"key": "INPUT_BN_FASETH",
+			"files": [	
+			
+			
+			]
+		},
+		{
+			"key":"INPUT_SRR_DEBUG",
+			"files": [
+				
+				
+				
+			]
+ 
+		},
+		{
+			"key":"INPUT_SRR50_RAW",
+			"files": [
+				
+				
+				
+			]
+ 
+		},
+		{
+			"key":"INPUT_MRR40_RAW",
+			"files": [
+				
+				
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_BN_CALIFR",
+			"files": [
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_BN_FASETH",
+			"files": [
+				
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_SRR_DEBUG",
+			"files": [
+				
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_SRR50_RAW",
+			"files": [
+				
+				
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_MRR40_RAW",
+			"files": [
+				
+				
+				
+			]
+ 
+		}
+	]
+}

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+<SIL_SRR3_Configuration>
+	<!-- SIL SRR3 Configuration XML version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->				
+    <SIL_SRR3_Configuration_XML_Version>8.4</SIL_SRR3_Configuration_XML_Version>
+	
+	<Customer_Name>JLR</Customer_Name>
+	
+	<!-- Resim execution user is entered here. Options available are: Developer or ASATE -->
+	<RESIM_Execution_User>Developer</RESIM_Execution_User>
+	
+	<!-- Resim output path selection. Options are SAME_AS_INPUT or NEW_OUTPUT_PATH -->
+	<Output_Path_Options>SAME_AS_INPUT</Output_Path_Options>
+	
+	<!-- If resim output path selection is NEW_OUTPUT_PATH use Output_Path_Location tag to enter valid folder path -->
+	<Output_Path_Location>C:\SIL_LOG\</Output_Path_Location>
+	
+	<!-- SIL_Embedded_code_Processing Enabled - 
+		SIL_ENABLED - SIL MODE ACTIVATED - data is decoded from UDP log and passed through Embedded library to give reprocessed results 
+		DECODER_ENABLED - DECODER MODE ACTIVATED- data is decoded from UDP log -->
+	<SIL_Embedded_code_processing>SIL_ENABLED</SIL_Embedded_code_processing>
+
+	<!-- Sensor selection values: 1 => sensor selected for Resim and 0 => sensor NOT selected -->
+	<SENSOR_STATUS>
+		<REAR_LEFT>1</REAR_LEFT>
+		<REAR_RIGHT>1</REAR_RIGHT>
+		<FRONT_RIGHT>1</FRONT_RIGHT>
+		<FRONT_LEFT>1</FRONT_LEFT>
+	</SENSOR_STATUS>
+	
+	<!-- SIL_Injection Mode  - 
+		UDP - SIL Input is UDP Frames - SIL / Decoder using API- SIL_SRR3_UDP_Frame_process
+		Detections - SIL Input is Decoded data from Flexray Frames - SIL using API- SIL_SRR3_DATA_Frame_process
+		Tracks - SIL Input is object and vehicle data from virtual environment - SIL using API- SIL_SRR3_DATA_Frame_process -->
+	<SIL_INJECTION_MODE>Tracks</SIL_INJECTION_MODE>
+	<!-- 
+	"Operating mode CDC: CDC Data processing
+		The SIL component receives Front-End data over a reference parameter of the SIL function call.
+		The SIL component processes Front-End data to raw targets, object hypotheses, Fences."
+	"Operating mode Detections: Data processing of raw target detections
+		The SIL component receives UDP data via a reference parameter of the SIL function call,
+		SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs. "
+	-->
+	<!-- SIL entry point valid values: CDC, Detections -->
+    <SIL_Entrypoint>Detections</SIL_Entrypoint>
+
+	<!-- ALIGNMENT ALGORITHM To Execute (ONLY AUTO IS SUPPORTED AT THE MOMENT DO NOT USE OTHER OPTIONS )
+		 AUTO_ALIGNMENT - Execute Auto Alignment in SIL 
+		 SHORT_TRACK_ALIGNMENT - Execute SHORT TRACK Alignment in SIL   
+		 KD_ALIGNMENT - Execute KD Alignment in SIL 
+		 EOL_ALIGNMENT - Execute END OF LINE Auto Alignment in SIL   -->
+	<CALIBRATION__ALGORITHM_TO_EXECUTE>AUTO_ALIGNMENT</CALIBRATION__ALGORITHM_TO_EXECUTE>	
+	
+	<!-- LOG REPLAY mode selection: SIL_DV_CONTINUOUS = Allow Replay all log from a session
+   	      For eg: Input Log : canlog_001.dvl , if mode is set to "SIL_DV_CONTINUOUS" then next log resim replay will be canlog_002.dvl,canlog_003.dvl, ..canlog_XXX.dvl where XXX = untill 999. The replay will break when there is a discontinuity   -->
+	<DPH_RR_ADAS_RESIM_Mode>SIL_DV_RANDOM</DPH_RR_ADAS_RESIM_Mode>
+	<!--Enabling of Coding Parameters for the ReSim to use signals passed via the Data Process API -->
+	<CODING_CONFIG_PARAMETERS>
+		<MOUNTING_POSITION_SIGNAL_AVAILABILITY>1</MOUNTING_POSITION_SIGNAL_AVAILABILITY>
+		<TRAILER_SIGNAL_AVAILABILITY>0</TRAILER_SIGNAL_AVAILABILITY>
+		<CAMERA_SIGNAL_AVAILABILITY>0</CAMERA_SIGNAL_AVAILABILITY>
+		<LDW_SYSTEM_SIGNAL_AVAILABILITY>0</LDW_SYSTEM_SIGNAL_AVAILABILITY>
+		<REAR_AXLE_STEERING_SIGNAL_AVAILABILITY>0</REAR_AXLE_STEERING_SIGNAL_AVAILABILITY>
+	</CODING_CONFIG_PARAMETERS>
+	
+	<!-- Mounting Position Source. Possible options:
+		UDP - using Mounting from UDP stream - Recommended Option
+		XML - using Mounting from Config XML
+		CAN - using Mounting from PCAN -->
+	<MOUNTING_POSITION_SOURCE>XML</MOUNTING_POSITION_SOURCE>
+	
+	<!-- Mounting Position Values from XML File 
+			if XML - option is chosen in MOUNTING_SOURCE Tag,Boresight Angle need to be entered in Degrees Only -->
+	<USE_MOUNTING_VALUES_USE_FROM_XML>
+		<AZIMUTH_POLARITY_REAR_LEFT>-1</AZIMUTH_POLARITY_REAR_LEFT>
+		<BORESIGHT_ANGLE_REAR_LEFT>-120</BORESIGHT_ANGLE_REAR_LEFT>
+		<VCS_LAT_POSITION_REAR_LEFT>-0.7970001</VCS_LAT_POSITION_REAR_LEFT>	
+		<VCS_LON_POSITION_REAR_LEFT>-4.828</VCS_LON_POSITION_REAR_LEFT>
+		<VEHICLE_WIDTH_REAR_LEFT>1.9</VEHICLE_WIDTH_REAR_LEFT>
+		<VEHICLE_LENGTH_REAR_LEFT>5.097</VEHICLE_LENGTH_REAR_LEFT>
+		<VCS_OFFSET_LAT_POSITION_REAR_LEFT>0</VCS_OFFSET_LAT_POSITION_REAR_LEFT>
+		<VCS_OFFSET_LON_POSITION_REAR_LEFT>3.95</VCS_OFFSET_LON_POSITION_REAR_LEFT>
+		
+		<AZIMUTH_POLARITY_REAR_RIGHT>1</AZIMUTH_POLARITY_REAR_RIGHT>
+		<BORESIGHT_ANGLE_REAR_RIGHT>120</BORESIGHT_ANGLE_REAR_RIGHT>
+		<VCS_LAT_POSITION_REAR_RIGHT>0.7970001</VCS_LAT_POSITION_REAR_RIGHT>
+		<VCS_LON_POSITION_REAR_RIGHT>-4.828</VCS_LON_POSITION_REAR_RIGHT>
+		<VEHICLE_WIDTH_REAR_RIGHT>1.9</VEHICLE_WIDTH_REAR_RIGHT>
+		<VEHICLE_LENGTH_REAR_RIGHT>5.097</VEHICLE_LENGTH_REAR_RIGHT>
+		<VCS_OFFSET_LAT_POSITION_REAR_RIGHT>0</VCS_OFFSET_LAT_POSITION_REAR_RIGHT>
+		<VCS_OFFSET_LON_POSITION_REAR_RIGHT>3.95</VCS_OFFSET_LON_POSITION_REAR_RIGHT>
+		
+		<AZIMUTH_POLARITY_FRONT_LEFT>1</AZIMUTH_POLARITY_FRONT_LEFT>
+		<BORESIGHT_ANGLE_FRONT_LEFT>-60</BORESIGHT_ANGLE_FRONT_LEFT>
+		<VCS_LAT_POSITION_FRONT_LEFT>-0.8650001</VCS_LAT_POSITION_FRONT_LEFT>
+		<VCS_LON_POSITION_FRONT_LEFT>-0.327</VCS_LON_POSITION_FRONT_LEFT>
+		<VEHICLE_WIDTH_FRONT_LEFT>1.9</VEHICLE_WIDTH_FRONT_LEFT>
+		<VEHICLE_LENGTH_FRONT_LEFT>5.082</VEHICLE_LENGTH_FRONT_LEFT>
+		<VCS_OFFSET_LAT_POSITION_FRONT_LEFT>0</VCS_OFFSET_LAT_POSITION_FRONT_LEFT>
+		<VCS_OFFSET_LON_POSITION_FRONT_LEFT>3.944</VCS_OFFSET_LON_POSITION_FRONT_LEFT>
+				
+		<AZIMUTH_POLARITY_FRONT_RIGHT>-1</AZIMUTH_POLARITY_FRONT_RIGHT>
+		<BORESIGHT_ANGLE_FRONT_RIGHT>60</BORESIGHT_ANGLE_FRONT_RIGHT>
+		<VCS_LAT_POSITION_FRONT_RIGHT>0.8650001</VCS_LAT_POSITION_FRONT_RIGHT>
+		<VCS_LON_POSITION_FRONT_RIGHT>-0.327</VCS_LON_POSITION_FRONT_RIGHT>
+		<VEHICLE_WIDTH_FRONT_RIGHT>1.9</VEHICLE_WIDTH_FRONT_RIGHT>
+		<VEHICLE_LENGTH_FRONT_RIGHT>5.082</VEHICLE_LENGTH_FRONT_RIGHT>
+		<VCS_OFFSET_LAT_POSITION_FRONT_RIGHT>0</VCS_OFFSET_LAT_POSITION_FRONT_RIGHT>
+		<VCS_OFFSET_LON_POSITION_FRONT_RIGHT>3.944</VCS_OFFSET_LON_POSITION_FRONT_RIGHT>
+	</USE_MOUNTING_VALUES_USE_FROM_XML>
+	
+	<!-- Autocalibration  Source Possible options:
+		 XML_FIXED - use Auto Alignment values as constant provided in XML option - USE_ALIGNMENT_VALUES_USE_FROM_XML
+		 UDP_LOG - use Auto Alignment values saved from vehicle testing from UDP stream
+		 SIL_START_FROM_UDP - use Auto Alignment values provided from Auto alignment running in SIL using the value from the Log as a starting value
+		 SIL_START_FROM_XML - use Auto Alignment values provided from Auto alignment running in SIL using the value from the XML as a starting value -->
+	<AUTOCALIBRATION_SOURCE>XML_FIXED</AUTOCALIBRATION_SOURCE>	
+
+	<!-- Autocalibration Values from XML File 
+			if XML - option in chosen in Autocalibration insert values in degrees including sign limit , between -2 and 2 degrees -->
+	<USE_ALIGNMENT_VALUES_USE_FROM_XML>
+		<ALIGNMENT_REAR_LEFT>0.5</ALIGNMENT_REAR_LEFT>
+		<ALIGNMENT_REAR_RIGHT>3.7</ALIGNMENT_REAR_RIGHT>
+		<ALIGNMENT_FRONT_RIGHT>2.11</ALIGNMENT_FRONT_RIGHT>
+		<ALIGNMENT_FRONT_LEFT>-0.23</ALIGNMENT_FRONT_LEFT>
+	</USE_ALIGNMENT_VALUES_FROM_XML>
+	
+	<!-- KD / EOL Autocalibration Execution Routine - values to fill if  
+			if XML - option in chosen in Autocalibration insert values in degrees including sign limit , between -2 and 2 degrees -->
+	<KD_EOL_CONFIG_PARAMETERS>
+		<DOPPLER_GENERATOR_ACTIVATED_REAR_LEFT>2.90</DOPPLER_GENERATOR_ACTIVATED_REAR_LEFT>
+		<DOPPLER_GENERATOR_RANGE_REAR_LEFT>4.06</DOPPLER_GENERATOR_RANGE_REAR_LEFT>
+		<DOPPLER_GENERATOR_ANGLE_REAR_LEFT>-3.440</DOPPLER_GENERATOR_ANGLE_REAR_LEFT>
+		<DOPPLER_GENERATOR_ACTIVATED_REAR_RIGHT>-2.70</DOPPLER_GENERATOR_ACTIVATED_REAR_RIGHT>
+		<DOPPLER_GENERATOR_RANGE_REAR_RIGHT>6.80</DOPPLER_GENERATOR_RANGE_REAR_RIGHT>
+		<DOPPLER_GENERATOR_ANGLE_REAR_RIGHT>3.5</DOPPLER_GENERATOR_ANGLE_REAR_RIGHT>
+		<DOPPLER_GENERATOR_ACTIVATED_FRONT_LEFT>2.4</DOPPLER_GENERATOR_ACTIVATED_FRONT_LEFT>
+		<DOPPLER_GENERATOR_RANGE_FRONT_LEFT>6.0</DOPPLER_GENERATOR_RANGE_FRONT_LEFT>
+		<DOPPLER_GENERATOR_ANGLE_FRONT_LEFT>8.20</DOPPLER_GENERATOR_ANGLE_FRONT_LEFT>
+		<DOPPLER_GENERATOR_ACTIVATED_FRONT_RIGHT>3.30</DOPPLER_GENERATOR_ACTIVATED_FRONT_RIGHT>
+		<DOPPLER_GENERATOR_RANGE_FRONT_RIGHT>4.08</DOPPLER_GENERATOR_RANGE_FRONT_RIGHT>
+		<DOPPLER_GENERATOR_ANGLE_FRONT_RIGHT>8.25</DOPPLER_GENERATOR_ANGLE_FRONT_RIGHT>		
+
+	</KD_EOL_CONFIG_PARAMETERS>	
+
+	<!-- Source of Calibrations. Possible options:
+		DSD_XML - using DSD directly from provided XML config file, stated below
+		DSD_UDP - using DSD from UDP stream 
+		NO_DSD - using Calibrations from Delphi C files
+		LOAD_UDP_CAL - using all calibrations from UDP -->
+	<DSD_CALIBRATION_SOURCE>NO_DSD</DSD_CALIBRATION_SOURCE>
+		
+</SIL_SRR3_Configuration>

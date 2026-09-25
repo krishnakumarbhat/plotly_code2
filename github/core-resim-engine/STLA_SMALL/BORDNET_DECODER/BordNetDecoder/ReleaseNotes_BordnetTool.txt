@@ -1,0 +1,55 @@
+---------------------------------------------------
+	BORDNET TOOL   Release Notes 
+---------------------------------------------------
+This document provides a summary of BORDNET TOOL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 4.0.0.0
+Release Date	: 22-07-2020
+
+Features:
+- Supports the decoding of below protocols in Windows & linux
+- SOMIP     - A410
+- SCAN      - A410
+- VCAN LOW  - A390,A410
+- VCAN ECU  - A410
+- VCAN BPIL - A390,A410.
+- PCAN LOW  - A390
+- PCAN MID  - A390
+Known issues:
+-issue in reading the SCAN Resimulated logs for A350,A370,A390
+-Someip and VCANECU not verified with Resimulated logs (410).
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 3.0.0.0
+Release Date	: 16-06-2020
+
+Features:
+- Supports the decoding of below protocols in Windows & linux
+- SOMIP     - A310,A330,A350,A370,A390
+- SCAN      - A310,A330,A350,A370,A390
+- VCAN LOW  - A310,A330,A350,A370
+- VCAN ECU  - A310,A330,A350,A370,A390
+- VCAN BPIL - A310,A330,A350,A370
+- PCAN LOW  - A310
+- PCAN MID  - A310
+- Updated the new config xml version 9.0
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.0.0.0
+Release Date	: 17-04-2020
+
+Features:
+- Linux support	added
+
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	:
+
+Features:
+- Supports the decoding of below protocols in Windows only
+  - SCAN
+  - VCAN
+	- VCAN LOW
+	- VCAN ECU
+	- VCAN BPIL(Left & Right)
+  - PCAN
+  - SOMIP 
+--------------------------------------------------------------------------------------------------------------

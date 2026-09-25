@@ -1,0 +1,74 @@
+Versionshinweise zur CCA-Framework 1.2.2
+========================================
+
+Installation
+------------
+Setup Datei ausführen. Frühere Versionen des CCA-Frameworks müssen nicht deinstalliert werden. 
+
+
+
+Releaselog 
+==========
+Version 1.2.2 Release-Datum: 15.09.2015
+---------------------------------------
+- Filtern einzelner Dateien innerhalb einer Session mit Cca_downloadData() integriert. Bisher konnten nur ganze Sessions gefiltert werden.
+  Diese Option kann über den "filterFilesInSessions" Bool-Wert der CcaSessionFilter-Struktur aktiviert werden.
+- Callback der Cca_downloadData()-Funktion erweitert, um auch den aktuellen Scanfortschritt zurückzugeben.
+  Der Fortschritt wird nach jedem gefundenen Ordner und nach jeder gescannten Datei aktualisiert.    
+
+
+Version 1.2.1 Release-Datum: 11.09.2015
+---------------------------------------
+- Beschreibung der Fehlerausgabe der Cca_downloadData()-Funktion erweitert.
+- Bestehende Projekte, die das CCA-Framework nutzen, benötigen die zusätzliche Präprozessordefinition "WINDOWS". 
+
+
+Version 1.2.0 Release-Datum: 29.06.2015
+---------------------------------------
+### Änderungen ###
+- Auslieferung einer 64-Bit DLL und 64-Bit statischen Bibliothek. Dadurch entstanden Änderung der Bezeichnung der Bibliotheken. 
+  ccalib.dll heißt nun bspw. ccalib_x86_1-2-0.dll. Beim Kompilieren von vorhandenen Projekten muss die Linker-Eingabe entsprechend angepasst werden.
+- CcaReaderOptions wird nicht mehr unterstützt. Stattdessen CcaSessionReaderOptions verwenden.
+- In der Umgebungsvariable, die während der Installation gesetzt wird, ist nun auch die Versionsnummer enthalten; bspw. "CCA_FRAMEWORK_HOME_1_2_0".
+
+
+### Neue Funktionen ###
+- Cca_downloadDataEx() hinzugefügt, mit dem das komprimierte Kopieren (in .gz-Format) möglich ist.
+- Cca_getCopyFileSize() hinzugefügt. Damit ist das Ermitteln des benötigten Speichers für das Kopieren von Sessions möglich.
+- CcaDevice_checkBusspec() und CcaDevice_uploadLocalBusspec() zum Überprüfen und Updaten der Busspec.xml-Datei auf dem CCA integriert. 
+  Diese Funktionen benötigen eine CCA-Firmware-Version 2.5.0 oder höher.   
+- CcaSessionReader_createByStream() integriert. Damit ist das Lesen von Nachrichten, die ein CCA während einem Logvorgang aufzeichnet,
+  über einen TCP-Stream möglich. Benötigt CCA-Firmware-Version 2.5.0 oder höher.	
+- Das Property-Interface wurde hinzugefügt. Damit ist die Manipulation von Eigenschaften des CCAs (bspw. Einstellungen im Webinterface)
+  über das CCA-Framework möglich. Ein entsprechendes Beispiel im example-Verzeichnis stellt die Nutzung der neuen Funktionen dar.
+- CcaMessage_flagsStruct() und CcaMessageFlags Struct integriert zur Ermittelung der Statusflags einer CcaMessage.
+- CcaDevice_sendMarkerEventWithString() hinzugefügt mit dem ein Marker-Event mit einem zusätzlichen Text an einen CCA gesendet werden kann. 
+  Diese Funktion benötigt eine CCA-Firmware-Version 2.5.0 oder höher.
+- CcaDevice_sendTriggerStop() integriert, mit dem ein Tigger Stop Ereignisse an einen CCA gesendet werden kann.
+- CcaMessage_createInfoMessage() integriert entsprechende Funktionen, um Daten aus der CcaInfoMessage zu erhalten.
+
+ 
+### Verbesserungen ###
+- Cca_downloadData() Fortschrittsanzeige in der Callback-Funktion überarbeitet. Benutzung wird im mitgelieferten Example dargestellt.
+- Cca_convert() bietet über das CcaConversionOptions Struct neue Funktion zum Splitten der Ausgabedateien und vorgabe eines Ausgabenamens. 
+- Neue Beispiele hinzugefügt zur Darstellung der Nutzung des CCA-Frameworks. 
+- Bug gefixed, bei dem das Makro CCA_SET_ARRAY_VALUES(type, arr, ...) in einem Anweisungsblock nur ein mal genutzt werden konnte.
+
+
+### Bekannte Fehler ###
+- Der Fortschritt in der Callback-Funktion beim Konvertieren mit Cca_convert() und Cca_convertEx() spiegelt beim Nutzen der Merge-Option
+  unter Umständen nicht den exakten Konversionsfortschritt wieder.
+- Cca_convert() und Cca_convertEx() unterstüzen nur die Konvertierung in PCAP/VPCAP. 
+
+
+
+Version 1.1.1 Release-Datum: 07.01.2015
+---------------------------------------
+- Verbesserung des Scann-Vorgangs bezüglich kaputte Daten.
+- Download Funktion lädt nur Ordner, die im Zeitfenster liegen.
+- Weitere Nachrichtenklassen implementieret (FlexRay, LIN, Ethernet, RS232, MOST150).
+- Fehlerbehandlung überarbeitet.
+- Exception von der lib entfernet.
+- Finder bugfixing.
+- Diese Version kann mit älterer Versionen koexistieren.
+- Beispiele und Doku angepasst.

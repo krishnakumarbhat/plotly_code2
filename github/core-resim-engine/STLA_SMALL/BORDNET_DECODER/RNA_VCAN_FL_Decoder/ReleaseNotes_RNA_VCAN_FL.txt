@@ -1,0 +1,11 @@
+---------------------------------------------------
+	VCAN MAN FC Decoder   Release Notes
+---------------------------------------------------
+This document provides a summary of RNA VCAN RR Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 05-04-2024
+
+Features:
+- Dll supports the decoding of the alert messages cycle by cycle.
+-------------------------------------------------------------------------------------------------------------

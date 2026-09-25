@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E5E60646-7D37-4407-84F1-255DE4673E4A}|project.vcxproj|C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\datatype_parsing.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E5E60646-7D37-4407-84F1-255DE4673E4A}|project.vcxproj|solutionrelative:datatype_parsing.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E5E60646-7D37-4407-84F1-255DE4673E4A}|project.vcxproj|C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E5E60646-7D37-4407-84F1-255DE4673E4A}|project.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "datatype_parsing.cpp",
+              "DocumentMoniker": "C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\datatype_parsing.cpp",
+              "RelativeDocumentMoniker": "datatype_parsing.cpp",
+              "ToolTip": "C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\datatype_parsing.cpp",
+              "RelativeToolTip": "datatype_parsing.cpp",
+              "ViewState": "AQIAAMQAAAAAAAAAAAAswMUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-26T06:31:55.479Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\main.cpp",
+              "RelativeDocumentMoniker": "main.cpp",
+              "ToolTip": "C:\\Projects\\Mahindra\\Python_Scripts\\C\u002B\u002B_Scripts\\ARXML_to_structure_generator\\Code\\project\\main.cpp",
+              "RelativeToolTip": "main.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-26T06:22:08.485Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

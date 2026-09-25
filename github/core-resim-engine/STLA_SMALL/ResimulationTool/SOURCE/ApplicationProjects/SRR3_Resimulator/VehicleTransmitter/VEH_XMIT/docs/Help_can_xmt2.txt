@@ -1,0 +1,51 @@
+ 
+-----------------------------------------------------------------------
+ NAME:  CANX_XMT2.EXE  [SW Version: 21.00]                        
+                                                                      
+ USAGE: can_xmt -f <DvCanLog> [Options]                               
+                                                                      
+ DESCR: Retransmit selected CAN messages from the input DVLog         
+        back out on the CANBus in real-time.                          
+                                                                      
+        User specified option switches are used to select             
+        the CAN transmit options for various Sensor and test          
+        configurations.                                               
+                                                                      
+       * SUPPORTED DVLog CAN formats (2.0 to 3.1)                     
+                                                                      
+     **  SUPPORTED CANCARDS (Softing, Kavasar, Vector):               
+         CanCard, CanCard2, CanCardX, CanCardXL, CanCase, Kvasar      
+         Vector CAN HW VN1610, VN1611, VN1630, and VN1640             
+                                                                      
+CAN HW SETup Options:                                                 
+-nbuses   - specify the # of CAN BUSES els (1..8) to initialize at 500K.
+            (Two channels are initialized by DEFAULT).                 
+-bus_125k - specify bus ID to configure at 125K speed (DEFAULT is 500K).
+                                                                      
+CONTROL OPTIONS:                                                      
+ -loop N    = Loop & Retransmit data from input log 'N' times         
+ -swap A:B  = Swap CAN Channels A and B.                              
+                                                                      
+GENERAL CAN TRANSMIT SELECTION OPTIONS:                               
+ -all            = Retransmit all CAN Messages from DVLog (DEFAULT).  
+ -ch  <M>        = Only Retransmit CAN data from CHANNEL M).          
+ -ch  <M:N>      = Only Retransmit CAN data from CHANNELS M throug N. 
+ -nch <M>        = Bypass CAN Channel 'M'.                            
+ -nch <M:N>      = Bypass CAN Channles M through N.                   
+ -canidx <hexID> = Retransmit the specified CAN message ID from DVLog.
+                                                                      
+ESR TRANSMIT OPTIONS:                                                 
+  When any ESR related option is selected, the ESR Sensor type present
+  in DVlog (e.g. DV2/DV3/PV/2.5) is automatically detected, and the   
+  corresponding ESR CAN IDs are identified).                          
+                                                                      
+ -esr  = Output all ESR Sensor OUTPUT Messages on the                 
+         on the ESR Radar CANbus)                                     
+ -nesr = Config (Output all messages,  EXCEPT the ESR Radar           
+         OUTPUT CAN messages).                                        
+                                                                      
+EXAMPLES:                                                             
+can_xmt2 -f canlog10.dvl -swap 1:4 -swap 2:5 -nbuses 4 -loop 10       
+can_xmt2.exe -f RSDS_20120201_RWUP_002.dvl -ch 1:2 -bus_125k 2  -loop 2 
+ 
+-----------------------------------------------------------------------

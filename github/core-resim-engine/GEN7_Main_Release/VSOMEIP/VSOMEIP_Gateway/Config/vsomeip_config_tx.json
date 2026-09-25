@@ -1,0 +1,301 @@
+{
+    "unicast" : "160.48.199.102",
+    "logging" :
+    { 
+        "level" : "trace",
+        "console" : "true",
+        "file" : { "enable" : "false", "path" : "/tmp/vsomeip.log" },
+        "dlt" : "false"
+    },
+    "applications" : 
+    [
+        {
+            "name" : "srr_master_tx",
+            "id" : "0x1277"
+        }
+    ],
+    "services" :
+    [
+        {
+            "service" : "0x3556",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x001",
+                    "events" : [ "0x8001" ]
+                }
+            ]
+        },
+		{
+            "service" : "0x3053",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+			"someip-tp" :
+			{
+				"service-to-client" :
+				[
+					"0x8004"
+				]
+			},
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                },
+				{
+                    "event" : "0x8002",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                },
+				{
+                    "event" : "0x8003",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                },
+		{
+		    "event" : "0x8004",
+		    "is_field" : "true",
+		    "is_reliable" : "false"
+		}
+				
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x002",
+                    "events" : [ "0x8001", "0x8002", "0x8003" ]
+                }
+            ]
+        },
+		{
+            "service" : "0xD081",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x001",
+                    "events" : [ "0x8001"]
+                }
+            ]
+        },
+		{
+            "service" : "0x355F",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+				{
+                    "event" : "0x8002",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+				{
+                    "event" : "0x8004",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+								{
+                    "event" : "0x8005",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+								{
+                    "event" : "0x8006",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+								{
+                    "event" : "0x8007",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                }
+				
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x001",
+                    "events" : [ "0x8001", "0x8002", "0x8004", "0x8005", "0x8006", "0x8007" ]
+                }
+            ]
+        },
+		{
+            "service" : "0x3017",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                },
+				{
+                    "event" : "0x8002",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x001",
+                    "events" : [ "0x8001", "0x8002"]
+                }
+            ]
+        },
+		{
+            "service" : "0xD101",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+            "events" : 
+            [
+                {
+                    "event" : "0x8050",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x0001",
+                    "events" : [ "0x8050"]
+                }
+            ]
+        },
+		{
+            "service" : "0x3398",
+            "instance" : "0x0042",
+            "unreliable" : "30490",
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x001",
+                    "events" : [ "0x8001"]
+                }
+            ]
+        },
+		{
+            "service" : "0xD082",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+			"someip-tp": {
+                "service-to-client": [
+                    "0x8001"
+                ],
+				 "client-to-service": [
+                    "0x8001"
+                ]
+            }
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "true",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                    "eventgroup" : "0x001",
+                    "events" : [ "0x8001"]
+                }
+            ]
+        },
+		{
+            "service" : "0xD080",
+            "instance" : "0x0001",
+            "unreliable" : "30490",
+			"someip-tp": {
+                "service-to-client": [
+                    "0x8001", "0x8002", "0x8003", "0x8004"
+                ],
+				 "client-to-service": [
+                    "0x8001", "0x8002", "0x8003", "0x8004"
+                ]
+            }
+            "events" : 
+            [
+                {
+                    "event" : "0x8001",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+				                {
+                    "event" : "0x8002",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+				                {
+                    "event" : "0x8003",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                },
+				                {
+                    "event" : "0x8004",
+                    "is_field" : "false",
+                    "is_reliable" : "false"
+                }
+            ],
+            "eventgroups" :
+            [
+                {
+                   "eventgroup" : "0x001",
+                   "events" : [ "0x8001", "0x8002", "0x8003", "0x8004" ],
+                }
+            ]
+        }
+    ],
+	"max-payload-size" : "5000",
+	"max-payload-size-unreliable" : "5000",
+    "routing" : "srr_master_tx",
+    "service-discovery" :
+    {
+        "enable" : "true",
+        "port" : "30490",
+        "protocol" : "udp",
+        "initial_delay_min" : "100",
+        "initial_delay_max" : "200",
+        "repetitions_base_delay" : "200",
+        "repetitions_max" : "15",
+        "ttl" : "100",
+        "cyclic_offer_delay" : "2000",
+        "request_response_delay" : "1500"
+    }
+}

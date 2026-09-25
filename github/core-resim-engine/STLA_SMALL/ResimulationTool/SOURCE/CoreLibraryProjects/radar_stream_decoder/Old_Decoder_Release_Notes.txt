@@ -1,0 +1,361 @@
+----------------------------------------------------------------------------------------------
+								APT_SRR_DECODER_DLL v20.24.26.0
+----------------------------------------------------------------------------------------------
+	
+APT_SRR_DECODER_DLL Version number : 20.24.26.0
+Plastics project Name : 10030156_03_Analysis_Framework_Suite
+Changeset number : 
+Build Date : 
+
+
+Jira tickets covered in this release:
+CYW-561 - Z7a Stream update for Dolphin DIagnostics
+CYW-599 -CHANGAN SRR5 Z7B new stream created : FW update needed
+CYW-595 -[Geely SRR5]Decoder update for stream version 13
+CYW-616 -Resim : A370 - PD D-5 : FW Build and Stream Updates with Verification's on Windows and Linux
+CYW-650 -Radar ECU Core 2 - v17 stream updates
+CYW-661 -[RNA_SRR5] Z4 Z7B Logging Stream update based on RESIM
+CYW-690 -[BMW_SRR5] UDP stream update A370 FH
+CYW-705 -Changan_SRR5 Z7B stream update
+CYW-708 BMW SRR5: Z7B customer stream update for low variant V11
+CYW-701 [Geely SRR5]:FW update required for Z7B_FRNT_128D_SAT_CORE_VERSION 8
+CYW-751 BMW SRR5 : Core Stream Update for all variants
+CYW-781 Radar ECU Core 1( stream number 91) - v10 stream updates	
+CYW–754 [BMW_SRR5] UDP stream update A390_PD
+CYW-776 Decoder - Changan - Z7B_customer V2
+CYW-787 [BMW_SRR5] UDP Stream update for A390 ATS
+CYW-822 Radar ECU Core 3( stream number 92) - v21 stream updates
+CYW-821 [RNA_SRR5]:Z7A_Z7B_210_RBIN_CORE stream update (v13) for SW7.0.0_CDV_F1
+CYW-814 [BMW_SRR5]Resim update for stream update on A390_FH
+CYW-849 A390FH Radar ECU Core 3( stream number 92) - v22 stream updates
+CYW-784 [HKMC_SRR5] Z7A_Core stream update for Dolphin versions and OSM error reg info
+CYW-820 [Geely SRR5]: Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION (15)
+CYW-870 A370BF3 Eng Drop - Radar ECU Core 1( stream number 91) - v11 stream updates
+CYW-867 CLONE - Changan_SRR5 :Free Space for Frame work Development
+CYW-769 PSA SRR5: Stream development version 1
+CYW-770 PSA MRR Streams development version 1
+CYW-876 [BMW_SRR5][All] RESIM update for UDP stream update for A390_BF Release
+CYW-884 A390 BF- Radar ECU Core 3( stream number 92) - v23 stream updates
+CYW-858 [Geely SRR5]:FW update required for Z7B_FRNT_128D_SAT_CORE_VERSION 9
+CYW-882 UDP stream update for Chang'An F.2.0 release
+CYW-873 PSA SRR5 : Z7A core stream update v2
+CYW-888 [BMW][SRR5][Low]Customer stream update for A410 PD
+
+BMW_SRR5_LOW			
+--------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream number			Version Number			Jira ticket number
+---------------------------------------------------------------------------------------------------------------------------------------------
+CDC				            CDC_LOGGING_STRUCTURE_VERSION					15						4
+Z7A_Core					Z7A_Z7B_SRR5P_116RBIN_64D_CORE_VERSION			27						11						CYW-876
+Z7B_Core					Z7B_64SD_64FD_64TRK_STAND_CORE_VERSION			43						11 						CYW-751
+Z4B_Core					Z4_Z7B_CORE_VERSION								50						5				
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						13						CYW-888
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						15						CYW-888
+DSPACE						DSPACE_INPUT_STRUCTURE_BMW_LOW_VERSION			10						2
+CALIBRATION 																						2
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+BMW_SRR5_MID
+--------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+--------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15						4
+Z7A_Core					Z7A_Z7B_SRR5P_116RBIN_200D_CORE_VERSION			29						11						CYW-876	
+Z7B_Core					Z7B_SIDE_200D_SAT_CORE_VERSION					41						8						CYW-751
+Z4B_Core					Z4_Z7B_CORE_VERSION							    50						5
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						5						CYW-787 
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						6						CYW-754
+DSPACE						DSPACE_INPUT_STRUCTURE_BMW_MID_VERSION			10						2
+CALIBRATION 																						2				
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+BMW_SRR5_BPIL
+-------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name					Stream Name 								Stream  Number			Version Number			Jira ticket number
+-------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15						4
+Z7A_Core					Z7A_Z7B_SRR5P_116RBIN_150D_CORE_VERSION 		28						11						CYW-876
+Z7B_Core					Z7B_BPIL_150D_64T_CORE_VERSION					45						9						CYW-751
+Z4B_Core					Z4_Z7B_CORE_VERSION								50						5
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						5						CYW-787	
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						7						CYW-814			
+DSPACE						DSPACE_INPUT_STRUCTURE_BMW_BP_VERSION			10						2
+CALIBRATION		 																					2 
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+BMW_SRR5_Radar_ECU
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream number			Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+Ecu_Core0_Streams			RADAR_ECU_CORE0_VERSION							 90						10
+Ecu_Core1_Streams			RADAR_ECU_CORE1_VERSION							 91						11						CYW-870
+Ecu_Core3_Streams			RADAR_ECU_CORE3_VERSION							 92						23						CYW-884							
+CALIBRATION 																						2
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+RNA_SRR5
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					 15						4
+Z7A_Core					Z7A_Z7B_IPC_SRR5_210RBIN_CORE_VERSION			 21						13						CYW-821
+Z7B_Core					Z7B_64SD_64T_STAND_CORE_VERSION					 44						9 
+Z4B_Core					Z4_Z7B_64_FD_CORE_VERSION						 51						4 				
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				 70						6 
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			 80						3						CYW-661
+CALIBRATION 																						2				
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+HKMC_SRR5
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+-----------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					 15						4
+Z7A_Core					Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION			 20						14						CYW-784									
+Z7B_Core					Z7B_64SD_64FD_64TRK_STAND_CORE_VERSION			 43						9 
+Z4B_Core					Z4_Z7B_CORE_VERSION								 50						5	
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				 70						3 
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			 80						2
+CALIBRATION 																						2
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+GEELY_SRR5
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15						4
+Z7A_Core					Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION			20						15							CYW-820
+Z7B_Core					Z7B_FRNT_128D_SAT_CORE_VERSION					42						9							CYW-858						  
+Z4B_Core	       			Z4_Z7B_CORE_VERSION								50						5
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						1
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						2
+DSPACE						DSPACE_INPUT_STRUCTURE_VERSION					10						2
+CALIBRATION 																						2
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Changan_SRR5
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream number			Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							
+Z7A_Core					Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION			20						13						CYW-599
+Z7B_Core					SIZE_OF_RESIM_Z7B_FRNT_64SD_64FD_SAT_CORE		46						3						CYW-882
+Z4B_Core	       			Z4_Z7B_CORE_VERSION								50						5						CYW-599
+Z7B_CUSTOM	                Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						3						CYW-867
+Z4_CUSTOM	                Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						1						CYW-599
+DSPACE		
+CALIBRATION 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+SCANIA_SRR3
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+--------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					6						2
+Z7A_Core					Z7A_Z7B_LOGGING_STRUCTURE_VERSION				0						16
+Z7B_Core					Z7B_LOGGING_STRUCTURE_VERSION					1						23
+Z4B_Core					Z4_Z7B_LOGGING_STRUCTURE_VERSION				3						16
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				7						20
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			9						10
+DSPACE						DSPACE_INPUT_STRUCTURE_VERSION				    0						8	
+CALIBRATION 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+PSA_SRR5			
+--------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream number			Version Number			Jira ticket number
+---------------------------------------------------------------------------------------------------------------------------------------------
+CDC				            CDC_LOGGING_STRUCTURE_VERSION					15						4
+Z7A_Core					Z7A_Z7B_IPC_SRR5_SAT_CORE_VERSION				31						2						CYW-873
+Z7B_Core					Z7B_64SD_64FD_64TRK_STAND_CORE_VERSION			47						1 						CYW-769
+Z4B_Core					Z4_Z7B_SRR5_SAT_CORE_VERSION					52						1						CYW-769
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						1						CYW-769
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						1						CYW-769
+DSPACE						DSPACE_INPUT_STRUCTURE_BMW_LOW_VERSION			10						2
+CALIBRATION 																						2
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+PSA_MRR3			
+--------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream number			Version Number			Jira ticket number
+---------------------------------------------------------------------------------------------------------------------------------------------
+CDC				            CDC_LOGGING_STRUCTURE_VERSION					15						4
+Z7A_Core					Z7A_Z7B_IPC_MRR_CORE_VERSION					32						1						CYW-770
+Z7B_Core					Z7B_MRR_SAT_CORE_VERSION						48						1 						CYW-770
+Z4B_Core					Z4_Z7B_MRR_SAT_CORE_VERSION						53						1						CYW-770
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70						1						CYW-770
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80						3						CYW-770
+DSPACE						DSPACE_INPUT_STRUCTURE_BMW_LOW_VERSION			10						2
+CALIBRATION 																						2
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+##################################################################################################################################################################################################################################################
+----------------------------------------------------------------------------------------------
+								APT_SRR_DECODER_DLL v18.00.00.0
+----------------------------------------------------------------------------------------------
+	
+APT_SRR_DECODER_DLL Version number : 18.00.00.0
+Plastics project Name : 10030156_03_Analysis_Framework_Suite
+Changeset number : 6221
+Build Date : 24-Sep-2019
+
+
+Jira tickets covered in this release:
+CYW-335 - Check for non-zero exit codes in case of Resim fails
+CYW-337 - Resim to handle newer BUS spec IDs of SOMEIP ETH channel in BMW log files
+
+BMW_SRR5_LOW			
+--------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream number			Version Number			Jira ticket number
+---------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15	
+Z7A_Core					Z7A_Z7B_SRR5P_116RBIN_64D_CORE_VERSION			27	
+Z7B_Core					Z7B_64SD_64FD_64TRK_STAND_CORE_VERSION			43	
+Z4B_Core					Z4_Z7B_CORE_VERSION								50	
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70	
+Z4_CUSTOM	                Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80	
+DSPACE                      DSPACE_INPUT_STRUCTURE_BMW_LOW_VERSION			10	
+CALIBRATION 		
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+BMW_SRR5_MID
+--------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+--------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15	
+Z7A_Core					Z7A_Z7B_SRR5P_116RBIN_200D_CORE_VERSION			29	
+Z7B_Core					Z7B_SIDE_200D_SAT_CORE_VERSION					41	
+Z4B_Core					Z4_Z7B_CORE_VERSION							    50	
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70	
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80	
+DSPACE		                DSPACE_INPUT_STRUCTURE_BMW_MID_VERSION			10	
+CALIBRATION 
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+BMW_SRR5_BPIL
+-------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name					Stream Name 								Stream  Number			Version Number			Jira ticket number
+-------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15		
+Z7A_Core					Z7A_Z7B_SRR5P_116RBIN_150D_CORE_VERSION 		28		
+Z7B_Core					Z7B_BPIL_150D_64T_CORE_VERSION					45		
+Z4B_Core	                Z4_Z7B_CORE_VERSION								50		
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				70		
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			80		
+DSPACE						DSPACE_INPUT_STRUCTURE_BMW_BP_VERSION			10		
+CALIBRATION 
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+BMW_SRR5_Radar_ECU
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number			Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+Ecu_Core0_Streams			RADAR_ECU_CORE0_VERSION							    90					v10
+Ecu_Core1_Streams			RADAR_ECU_CORE1_VERSION							    91					v9
+Ecu_Core3_Streams			RADAR_ECU_CORE3_VERSION							    92					v16						CYW-453
+CALIBRATION 
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+RNA_SRR5
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number		Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					 15	
+Z7A_Core					Z7A_Z7B_IPC_SRR5_210RBIN_CORE_VERSION			 21	
+Z7B_Core					Z7B_64SD_64T_STAND_CORE_VERSION					 44	
+Z4B_Core					Z4_Z7B_64_FD_CORE_VERSION						 51	
+Z7B_CUSTOM					Z7B_CUST_LOGGING_STRUCTURE_VERSION				 70	
+Z4_CUSTOM					Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			 80	
+CALIBRATION 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+HKMC_SRR5
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number		Version Number			Jira ticket number
+-----------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					 15	
+Z7A_Core				    Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION			 20	
+Z7B_Core	                Z7B_64SD_64FD_64TRK_STAND_CORE_VERSION			 43	
+Z4B_Core	                Z4_Z7B_CORE_VERSION								 50	
+Z7B_CUSTOM	                Z7B_CUST_LOGGING_STRUCTURE_VERSION				 70	
+Z4_CUSTOM	                Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			 80	
+DSPACE		
+CALIBRATION 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+GEELY_SRR5
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number		Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							CDC_LOGGING_STRUCTURE_VERSION					15	
+Z7A_Core					Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION			20	
+Z7B_Core					Z7B_FRNT_128D_SAT_CORE_VERSION					42	
+Z4B_Core	       			Z4_Z7B_CORE_VERSION								50	
+Z7B_CUSTOM	                Z7B_CUST_LOGGING_STRUCTURE_VERSION				70	
+Z4_CUSTOM	                Z4_Z7B_CUST_LOGGING_STRUCTURE_VERSION			24	
+DSPACE		                DSPACE_INPUT_STRUCTURE_VERSION					10	
+CALIBRATION 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Changan_SRR5
+------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number		Version Number			Jira ticket number
+------------------------------------------------------------------------------------------------------------------------------------------------
+CDC							
+Z7A_Core					
+Z7B_Core					
+Z4B_Core	       			
+Z7B_CUSTOM	
+Z4_CUSTOM	
+DSPACE		
+CALIBRATION 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+SCANIA_SRR3
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Stream_Name						Stream									stream  number				Version Number			Jira ticket number
+--------------------------------------------------------------------------------------------------------------------------------------------------
+CDC								
+Z7A_Core	
+Z7B_Core	
+Z4B_Core	
+Z7B_CUSTOM	
+Z4_CUSTOM	
+DSPACE		
+CALIBRATION 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+

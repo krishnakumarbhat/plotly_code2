@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+<SIL_SRR3_Configuration>
+	<!-- SIL SRR3 Configuration XML version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->				
+    <SIL_SRR3_Configuration_XML_Version>7.0</SIL_SRR3_Configuration_XML_Version>
+	
+	<!-- SIL_Embedded_code_processing Enabled - input log data will be reprocessed
+		Disabled - only reading data from log - faster processing
+		Pass through Mode and SIL Processing Mode-->
+	<SIL_Embedded_code_processing>Enabled</SIL_Embedded_code_processing>
+	
+	<!-- 
+	"Operating mode CDC: CDC Data processing
+		The SIL component receives Front-End data over a reference parameter of the SIL function call.
+		The SIL component processes Front-End data to raw targets, object hypotheses, Fences."
+	"Operating mode Detections: Data processing of raw target detections
+		The SIL component receives UDP data via a reference parameter of the SIL function call,
+		SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs. "
+	-->
+	<!-- SIL entry point valid values: CDC, Detections -->
+    <SIL_Entrypoint>CDC</SIL_Entrypoint>
+
+	<!-- End-of-Line tests -->
+	<!-- NOT AVAILABLE-->
+	<EOL>Disabled</EOL>
+	
+	<!-- Autocalibration  - NOT AVAILABLE-->
+	<Autocalibration>Disabled</Autocalibration>
+		
+	<!-- Source of Calibrations. Possible options:
+		 XML - using DSD directly from provided XML config file, stated below
+		 UDP - using DSD from UDP stream 
+		 DEFAULT - using Calibrations from Delphi C files -->
+	<Calibration_Source>XML</Calibration_Source>
+		
+	<!-- Data set download XML file paths -->
+	<!-- Specified paths should be absolute or relative to SIL exe file -->
+	<!-- RL-HL, RR-HR, FR-VR, FL-VL-->
+	<Dataset_download>
+        <DSD_RL>..\..\..\share\Dataset\D5TT\DA_0CF_7200_4N4_LWI5_AT6510HX0403_AU6510000000001100110004.xml</DSD_RL>
+        <DSD_RR>..\..\..\share\Dataset\D5TT\DA_03C_7200_4N4_LWI5_AT6510HX0403_AU6510000000001100110004.xml</DSD_RR>
+        <DSD_FR>..\..\..\share\Dataset\D5TT\DA_0DB_7200_4N4_LWI5_AT6510VX0400_AU6510000000001100000004.xml</DSD_FR>
+        <DSD_FL>..\..\..\share\Dataset\D5TT\DA_0DC_7200_4N4_LWI5_AT6510VX0400_AU6510000000001100000004.xml</DSD_FL>
+	</Dataset_download>
+	
+</SIL_SRR3_Configuration>

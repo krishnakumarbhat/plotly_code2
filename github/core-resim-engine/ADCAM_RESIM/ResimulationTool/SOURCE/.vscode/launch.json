@@ -1,0 +1,190 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "(gdb) Launch as root",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug/APT_SRR_RESIM",
+            "args": [
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimConf/SIL_XML/SIL_Engine_Config_Adcam.xml",
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimConf/silFileLists/SIL_Flist_Adcam.txt",
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimOutput"
+            ],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug"
+            }, {
+                "name": "DEBUGINFOD_URLS",
+                "value": ""
+            }],
+            "MIMode": "gdb",
+            "miDebuggerPath": "${workspaceFolder}/.vscode/gdb-wrapper.sh",
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+        {
+            "name": "(gdb) Attach to root process",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug/APT_SRR_RESIM",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug/APT_SRR_RESIM",
+            "args": [
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimConf/SIL_XML/SIL_Engine_Config_dSPACE.xml",
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimConf/silFileLists/SIL_Flist_dSPACE.txt",
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimOutput"
+            ],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Debug"
+            }, {
+                "name": "DEBUGINFOD_URLS",
+                "value": ""
+            }],
+            "miDebuggerPath": "${workspaceFolder}/.vscode/gdb-wrapper.sh",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "logging": {
+                "engineLogging": true,
+                "programOutput": true,
+                "exceptions": true
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+        {
+            "name": "(gdb) Launch Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Release/APT_SRR_RESIM",
+            "args": [
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimConf/SIL_XML/SIL_Engine_Config_Adcam.xml",
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimConf/silFileLists/file_list_adcam.json",
+                "/home/kiran22ns1b/wkspUbuntu24/wslResimOutput"
+            ],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Release",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/Linux/Release"
+            }, {
+                "name": "DEBUGINFOD_URLS",
+                "value": ""
+            }],
+            "miDebuggerPath": "${workspaceFolder}/.vscode/gdb-wrapper.sh",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+        {
+            "name": "(Windows) Launch Debug",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "Build APT_SRR_RESIM Debug",
+            "program": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/x64/Debug/APT_SRR_RESIM.exe",
+            "args": [
+                "C:\\Kiran_KR_Sys\\Resim_CONFIG\\SIL_XML\\SIL_Engine_Config_Adcam.xml",
+                "C:\\Kiran_KR_Sys\\Resim_File_List\\file_list_adcam.json",
+                "C:\\Kiran_KR_Sys\\Resim_Out"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/x64/Debug",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/x64/Debug;${env:PATH}"
+                }
+            ],
+            "console": "integratedTerminal"
+        },
+
+        {
+            "name": "(Windows) Launch Release",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "Build APT_SRR_RESIM Release",
+            "program": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/x64/Release/APT_SRR_RESIM.exe",
+            "args": [
+                "C:\\Kiran_KR_Sys\\Resim_CONFIG\\SIL_XML\\SIL_Engine_Config_Adcam.xml",
+                "C:\\Kiran_KR_Sys\\Resim_File_List\\file_list_adcam.json",
+                "C:\\Kiran_KR_Sys\\Resim_Out"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/x64/Release",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${workspaceFolder}/ApplicationProjects/APT_SRR_RESIM/output/x64/Release;${env:PATH}"
+                }
+            ],
+            "console": "integratedTerminal"
+        },
+
+        {
+            "name": "(Windows) Attach to process",
+            "type": "cppvsdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+
+    ]
+}

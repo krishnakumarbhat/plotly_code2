@@ -1,0 +1,43 @@
+##########################
+### Project definition ###
+##########################
+cmake_minimum_required(VERSION 3.2)
+
+set(PROJECTNAME  "VCANECU_Decoder")
+project(${PROJECTNAME})
+
+
+set(VCANECU_DECODER_ROOT_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+
+set(SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECU_Decoder_A310.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/IVCANECUDecoder.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VcanEcuDecoderBase.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/IVCANECUDecoderAPI.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/Resource.rc")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/Version.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/ReleaseNotes_VCANECU.txt")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECU_Decoder_A310.cpp")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECUDecoderAPI.cpp")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECU_Decoder_A390.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECU_Decoder_A390.cpp")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECU_Decoder_A480.h")
+list(APPEND SOURCE_ALL "${VCANECU_DECODER_ROOT_PATH}/VCANECU_Decoder_A480.cpp")
+
+set(target_name ${PROJECTNAME})
+add_library(${target_name} SHARED "")
+
+
+target_include_directories(${target_name} PRIVATE ${COMMON_STRUCTURES})
+
+target_sources(${target_name} PRIVATE ${SOURCE_ALL})
+
+if(OUTPUT_PATH)
+set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												) 				
+endif(OUTPUT_PATH)
+
+if(MSVC)
+	target_compile_definitions(${target_name} PRIVATE  _WIN_PLATFORM) 
+endif(MSVC)

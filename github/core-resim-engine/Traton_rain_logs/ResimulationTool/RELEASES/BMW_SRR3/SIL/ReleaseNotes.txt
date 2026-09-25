@@ -1,0 +1,364 @@
+------------------------------------
+BMW SRR3Tools Release Notes
+------------------------------------
+This document provides a high level summary of changes since the previous Release, Patch, or
+Update. For detailed change history, please refer to release notes in each directory.
+
+Contents:
+  The SRR3 components of this release/patch/update are provided in the following directories:
+        ./BMW_SRR3Tools                   Tools
+        + LIB                             ; Libraries (64-bi and 32-bit)
+        + MATLAB                          ; SIL S-Function and script
+        + INC                             ; API headers
+        + doc                             ; API description
+
+Components added/changed in this package will be denoted with (New) or (Updated).
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20161020_Release
+--------------------------------------------------------------------------------------------------------------
+The package is primarily address compatibility of SIL libraries build for VEOS (32-bit) dSPACE SIL platform
+The current SIL package is built from BMW I300_ATSP4(v1.3.9) SW release. 
+Major components of this Release include:
+
+
+
+ BMW_SRR3Tools\Matlab\gcc_x64
+
+     + SRR_tObjects_SrrFasCanOutBus.mexw64  	 3.3         ; Software-in-Loop S-Function (64-bit - GCC for Windows compiled)
+
+  BMW_SRR3Tools\LIB\gcc_x64
+
+     + DPH_RR_ADAS_SIL.dll                       3.3         ; Software-in-Loop Resimulation Engine Library (64-bit)
+
+  BMW_SRR3Tools\LIB\gcc_x32
+
+     + DPH_RR_ADAS_SIL.dll                       3.3  (New)  ; Software-in-Loop Resimulation Engine Library (32-bit)
+
+ BMW_SRR3Tools\doc
+
+     + DPH_SRR3_SIL_API.doc  	                 3.3         ; Software-in-Loop S-Function API Documentation
+
+ BMW_SRR3Tools\inc
+
+     + dph_rr_adas_sil_iface.h  	         3.1         ; Software-in-Loop S-Function API
+
+
+       
+Changes:
+       
+  [SIL]:
+
+      - Added: 32-bit GCC build SIL components compatible with VEOS dSPACE SIL platform
+            32bit MINGW - GCC 4.8.1 provided by VEOS dSPACE platform compiler
+      - Support Object to detection module to converts BMW simulation Objects to detections.
+
+
+Note:
+    - The matlab component in the package is build from MATLAB 64-bit 2013b  (Win64) environment
+    - First load('SRR_Workspace_Traces.mat') and second open SRR_With_Traces_L_and_R.slx simulink model, Run the model
+    - The package has been verified on the open loop Matlab environment (SRR_With_Traces_L_and_R.slx) shared from BMW.
+    - The S-Function gateway library (SRR_tObjects_SrrFasCanOutBus.mexw64) required following support DLL to be in the same location:
+     DPH_RR_ADAS_SIL.dll,srr3_decoder_dph.dll ,SRR3_MUDP_LOG.dll, SRR3_SiL_FL.dll, SRR3_SiL_FR.dll, SRR3_SiL_RL.dll,SRR3_SiL_RR.dll
+    - Updated S-Function gateway source (ObjlLst_SFUNC.c) and also the CompileCode script for your reference to use GCC compiler.
+    - The latest S-Function source/include for development/debugging has beencopied to Matlab\s-function-gcc-dev
+
+Known Issues:
+    - Improvements required for the Object to Detection algorithm. During our testing, the current package generate the tracks with an offset which might not yield the valid warnings from the feature function algorithms. We are ongoing with the modification for O2D module to provide better input for our tracker algorithm to generate valid tracks. Also need to review algorithm with the test data for various road scenarios like curve etc.
+    - The current package support Only SIL in Detection mode, in our next release we will incorporate SIL mode configuration to run Detection or Feature function mode.
+    - we have following components (SRR3_SiL_FL.dll,SRR3_SiL_FR.dll,SRR3_SiL_RL.dll,SRR3_SiL_RR.dll) has been build out from Cygwin GCC v5.4 64-bit for Windows and hence we have copied the dependent Cygwin redistributable libraries along with the package. In our future release we will port all of these module will be build out using MINGW TDM compiler 5.1.
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20160819_Release
+--------------------------------------------------------------------------------------------------------------
+The package is primarily to add Object to Detection module which converts BMW simulation input objects to Detections allowing Detection mode SIL.
+The current SIL package is built from BMW I300_ATSP4(v1.3.9) SW release. 
+Major components of this Release include:
+
+
+
+ BMW_SRR3Tools\Matlab\gcc_x64
+
+     + SRR_tObjects_SrrFasCanOutBus.mexw64  	 3.3  (Updated)      ; Software-in-Loop S-Function (64-bit - GCC for Windows compiled)
+
+  BMW_SRR3Tools\LIB
+
+     + DPH_RR_ADAS_SIL.dll                       3.3  (Updated)  ; Software-in-Loop Resimulation Engine Library (64-bit)
+
+ BMW_SRR3Tools\doc
+
+     + DPH_SRR3_SIL_API.doc  	                 3.3  (Updated)      ; Software-in-Loop S-Function API Documentation
+
+ BMW_SRR3Tools\inc
+
+     + dph_rr_adas_sil_iface.h  	         3.1                 ; Software-in-Loop S-Function API
+
+
+       
+Changes:
+       
+  [MATLAB]:
+
+      - Added: Object to detection module to converts BMW simulation Objects to detections.
+               The detection is the primary input data along with vehicle data (FAS-bus), CAF –G05, radar parameters required by the tracker module.               
+    - Added: Support new SIL mode - Detection Mode
+        - Execute TRACKER Algorithm using the detection data from O2D module
+        - Execute Freespace algorithm 
+        - Feature Function (CTA/LCDA/RECW) will be populated in the FAS CAN bus output structure [SrrFasCanOutBus Matlab S-Function output struct]
+        - Down-selected tracks and Freespace data will be populated in the FASL/FASR CAN bus output structure [SrrFaslCanOutBus and SrrFasrCanOutBus Matlab S-Function output struct]
+
+      - Tested S-Function (MEX) component build in 64-bit MATLAB 2013b (Win64) environment.
+        - MEX build environment:
+             64bit MINGW - GCC v5.1 [TDM-GCC-64 compiler]
+
+
+Note:
+    - The matlab component in the package is build from MATLAB 64-bit 2013b  (Win64) environment
+    - First load('SRR_Workspace_Traces.mat') and second open SRR_With_Traces_L_and_R.slx simulink model, Run the model
+    - The package has been verified on the open loop Matlab environment (SRR_With_Traces_L_and_R.slx) shared from BMW.
+    - The S-Function gateway library (SRR_tObjects_SrrFasCanOutBus.mexw64) required following support DLL to be in the same location:
+     DPH_RR_ADAS_SIL.dll,srr3_decoder_dph.dll ,SRR3_MUDP_LOG.dll, SRR3_SiL_FL.dll, SRR3_SiL_FR.dll, SRR3_SiL_RL.dll,SRR3_SiL_RR.dll
+    - Updated S-Function gateway source (ObjlLst_SFUNC.c) and also the CompileCode script for your reference to use GCC compiler.
+    - The latest S-Function source/include for development/debugging has beencopied to Matlab\s-function-gcc-dev
+
+Known Issues:
+    - Improvements required for the Object to Detection algorithm. During our testing, the current package generate the tracks with an offset which might not yield the valid warnings from the feature function algorithms. We are ongoing with the modification for O2D module to provide better input for our tracker algorithm to generate valid tracks. Also need to review algorithm with the test data for various road scenarios like curve etc.
+    - The current package support Only SIL in Detection mode, in our next release we will incorporate SIL mode configuration to run Detection or Feature function mode.
+    - we have following components (SRR3_SiL_FL.dll,SRR3_SiL_FR.dll,SRR3_SiL_RL.dll,SRR3_SiL_RR.dll) has been build out from Cygwin GCC v5.4 64-bit for Windows and hence we have copied the dependent Cygwin redistributable libraries along with the package. In our future release we will port all of these module will be build out using MINGW TDM compiler 5.1.
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20160811_Release
+--------------------------------------------------------------------------------------------------------------
+The package is primarily to address SIL delivery compatible for BMW I300_ATSP4(v1.3.9) SW release and support Feature Function SIL mode.
+Major components of this Release include:
+
+
+
+ BMW_SRR3Tools\Matlab\gcc_x64
+
+     + SRR_tObjects_SrrFasCanOutBus.mexw64  	 3.2  (Updated)      ; Software-in-Loop S-Function (64-bit - GCC for Windows compiled)
+
+  BMW_SRR3Tools\LIB
+
+     + DPH_RR_ADAS_SIL.dll                       3.2  (Updated)  ; Software-in-Loop Resimulation Engine Library (64-bit)
+
+ BMW_SRR3Tools\doc
+
+     + DPH_SRR3_SIL_API.doc  	                 3.2  (Updated)      ; Software-in-Loop S-Function API Documentation
+
+ BMW_SRR3Tools\inc
+
+     + dph_rr_adas_sil_iface.h  	         3.1                 ; Software-in-Loop S-Function API
+
+
+       
+Changes:
+       
+  [MATLAB]:
+
+    - Fixed crash  issue reported in S-Function while multiple start/stop of Simulink model
+    - Fixed memory leaks
+    - Fixed S-Function Stability issues
+    - S-Function headers has been modified to use implicit structure padding of 8 
+    - Tested S-Function (MEX) component build in 64-bit MATLAB 2013b (Win64) environment.
+      - MEX build environment:
+         64bit MINGW - GCC v5.1 [TDM-GCC-64 compiler]
+
+
+Note:
+    - The matlab component in the package is build from MATLAB 64-bit 2013b  (Win64) environment
+    - First load('SRR_Workspace_Traces.mat') and second open SRR_With_Traces_L_and_R.slx simulink model, Run the model
+    - The package has been verified on the open loop Matlab environment (SRR_With_Traces_L_and_R.slx) shared from BMW.
+    - The S-Function gateway library (SRR_tObjects_SrrFasCanOutBus.mexw64) required following support DLL to be in the same location:
+     DPH_RR_ADAS_SIL.dll,srr3_decoder_dph.dll ,SRR3_MUDP_LOG.dll, SRR3_SiL_FL.dll, SRR3_SiL_FR.dll, SRR3_SiL_RL.dll,SRR3_SiL_RR.dll
+    - Updated S-Function gateway source (ObjlLst_SFUNC.c) and also the CompileCode script for your reference to use GCC compiler.
+    - The latest S-Funtion source/include for development/debugging has beencopied to Matlab\s-function-gcc-dev
+
+Known Issues:
+    - we have followwing components (SRR3_SiL_FL.dll,SRR3_SiL_FR.dll,SRR3_SiL_RL.dll,SRR3_SiL_RR.dll) has been build out from Cygwin GCC v5.4 64-bit for Windows and hence we have copied the dependent Cygwin redistributable libraries along with the package. In our future release we will port all of these module will be build out using MINGW TDM compiler 5.1.
+
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20160804_Release
+--------------------------------------------------------------------------------------------------------------
+The package is primarily to address SIL delivery compatible for BMW I300_ATSP4(v1.3.9) SW release and support Feature Function SIL mode.
+Major components of this Release include:
+
+
+
+ BMW_SRR3Tools\Matlab\gcc_x64
+
+     + SRR_tObjects_SrrFasCanOutBus.mexw64  	 3.1  (Updated)      ; Software-in-Loop S-Function (64-bit - GCC compiled)
+
+  BMW_SRR3Tools\LIB
+
+     + DPH_RR_ADAS_SIL.dll                       3.1  (Updated)  ; Software-in-Loop Resimulation Engine Library (64-bit)
+
+ BMW_SRR3Tools\doc
+
+     + DPH_SRR3_SIL_API.doc  	                 3.1  (Updated)      ; Software-in-Loop S-Function API Documentation
+
+ BMW_SRR3Tools\inc
+
+     + dph_rr_adas_sil_iface.h  	         3.1  (Updated)      ; Software-in-Loop S-Function API
+
+
+       
+Changes:
+       
+  [MATLAB]:
+    - Added: SIL component compatible with BMW I300_ATSP4(v1.3.9) SW release
+    - Added S-Function (MEX) component build in 64-bit MATLAB environment.
+      - MEX build environment:
+         64bit MINGW - GCC v5.1 [TDM-GCC-64 compiler]
+
+    - Added: Support SIL mode - Feature Function Mode
+        - TRACKER NOT Running
+        - Feature Function (CTA/LCDA/RECW) will be populated in the FAS CAN bus output structure [SrrFasCanOutBus Matlab S-Function output struct]
+        - Downselected tracks will be populated in the FASL/FASR CAN bus output structure [SrrFaslCanOutBus and SrrFasrCanOutBus Matlab S-Function output struct]
+  
+    - Added 64-bit SIL libraries build from GCC v5.1 MINGW compiler
+    - Added S-Function helper source file (dph_bmw_sfun_iface.c) to explicit load the SIL engine (DPH_RR_ADAS_SIL.dll) GCC DLL  and initialize the required interfaces to be invokded by the S-Function.
+
+
+
+Note:
+    - The matlab component in the package is build from MATLAB 64-bit 2013b environment
+    - The package has been verified on the open loop Matlab environment (SRR_With_Traces_L_and_R.slx) shared from BMW.
+    - The S-Function gateway library (SRR_tObjects_SrrFasCanOutBus.mexw64) required following support DLL to be in the same location:
+     DPH_RR_ADAS_SIL.dll,srr3_decoder_dph.dll ,SRR3_MUDP_LOG.dll, SRR3_SiL_FL.dll, SRR3_SiL_FR.dll, SRR3_SiL_RL.dll,SRR3_SiL_RR.dll
+    - Updated S-Function gateway source (ObjlLst_SFUNC.c) and also the CompileCode script for your reference to use GCC compiler.
+    - The latest S-Funtion source/include for development/debugging has beencopied to Matlab\s-function-gcc-dev
+
+Known Issues:
+    - we have few components (SRR3_SiL_FL.dll,SRR3_SiL_FR.dll,SRR3_SiL_RL.dll,SRR3_SiL_RR.dll) has been build out from Cygwin GCC v5.4 64-bit for Windows and hence we have copied the dependent Cygwin redistributable libraries along with the package. In our future release we will port all of these module will be build out using MINGW TDM compiler 5.1.
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20160509_Release
+--------------------------------------------------------------------------------------------------------------
+The package has support for SRR3 updated SIL library and S-Function compatible for SW I290
+Major components of this Release include:
+
+  BMW_SRR3Tools\LIB
+
+     + DPH_RR_ADAS_SIL.lib                       3.0  (Updated)  ; Software-in-Loop Resimulation Library (32-bit + 64-bit)
+
+ BMW_SRR3Tools\Matlab
+
+     + SRR_tObjects_SrrFasCanOutBus.mexw32  	 3.0  (Updated)  ; Software-in-Loop S-Function (32-bit)
+
+
+       
+Changes:
+       
+  [MATLAB]:
+    - Added new S-Function "SRR_tObjects_SrrFasCanOutBus" to accept SRR FAS CAN Bus input, Object data (used by Object to Detection converter module) for each sensor and return FAS CAN BUS output (warning)
+      S-Funtion name: 'SRR_tObjects_SrrFasCanOutBus'
+      [IN]SrrFasCanInBus            : FAS CAN BUS Input to decode the vehicle bus parameter.
+      [IN]tObjects [0]		    : Input object data for Rear Left
+      [IN]tObjects [1]		    : Input object data for Rear Right
+      [IN]tObjects [2]		    : Input object data for Front Right
+      [IN]tObjects [3]		    : Input object data for Front Left
+      [OUT]SrrFasCanOutBus_sfun_out : FAS CAN BUS output decoded signals for CTA,PCSH_RERA and LNCH Warnings.
+
+*** Refer Matlab\ObjLSt_SFUNC.c sample S-Function source has been updated to list the various SIL API usage :
+
+
+  [LIB]:
+    - Added Object to Detection Converter module, for the converting the input object[50] to detections[64] to run the tracker and feature function algorithm.
+    - Added S-Function compatible FAS CAN Input and Output interfaces.
+
+
+Known Issues:
+    - The simulink model \Matlab\tObjectsSimEnv.slx is not connected to Trace  MAT file.
+    - The current package yet to support decoding for "Diag_type" and "SVC_type" FAS CAN Output frames
+    - The current package yet to support decoding for FASL and FASR BUS data
+    - Next package we will provide the 64-bit version of MEX S-Function
+
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20160311_Release
+--------------------------------------------------------------------------------------------------------------
+The package has support for SRR3 updated SIL library and S-Function to support simulation env objects injection
+Major components of this Release include:
+
+  BMW_SRR3Tools\LIB
+
+     + SRR3_SIL_STUB.lib       		 2.2  (Updated)  ; Software-in-Loop Resimulation Library
+
+ BMW_SRR3Tools\Matlab
+
+     + DELPHI_SRR3_SIL.mexw64  		 2.2  (Updated)  ; Software-in-Loop S-Function (64-bit)
+
+
+       
+Changes:
+       
+  [MATLAB]:
+    - Added SIL S-Function interface : "DELPHI_SRR3_SIL" accepts test input data from each sensor and provide output CAN messages.
+      S-Funtion name: 'DELPHI_SRR3_SIL'
+      [IN]TestInputSRR u1[4]:Input test vector from four sensors(in the order (0)RL-(1)RR-(2)FR-(3)FL)***
+      [OUT]int32 y1[1]: Return status
+      [OUT]srr3Output y2[1]: Structure hold generated CAN messages and Valid CAN message count
+
+*** Refer Matlab\srrBusDataTypes.h header for the structure declaration of :
+   -TestInputSRR
+   - srr3Output
+
+
+  [LIB]:
+    - Support replay of test input data and generates Tracks,Free space and warning messages.
+    - Support  PCAN, FAS, and B2CAN messages
+
+Notes:
+    - The Matlab\dev\createBusObjects.m Simulink-BusObject has been updated with reference to srrBusDataTypes and srrBusTypes.h to specify the structure of Input and Output Bus of the S-Function
+    - Provided simulink model \Matlab\DELPI_SRR3_SIL.mdl file.
+
+Known Issues:
+    - The simulink model \Matlab\DELPI_SRR3_SIL.mdl is not connected to test vector signal.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------
+     BMW_SRR3Tools_20160301_Release
+--------------------------------------------------------------------------------------------------------------
+The package has support for SRR3 updated SIL library and S-Function 
+Major components of this Release include:
+
+  BMW_SRR3Tools\LIB
+
+     + SRR3_SIL_STUB.lib       		 2.1  (Updated)  ; Software-in-Loop Resimulation Library
+
+ BMW_SRR3Tools\Matlab
+
+     + DELPHI_SRR3_SIL.mexw64  		 2.1  (New)  ; Software-in-Loop S-Function (64-bit)
+
+
+       
+Changes:
+       
+  [MATLAB]:
+    - Added SIL S-Function interface : "DELPHI_SRR3_SIL" accepts test input data from each sensor and provide output CAN messages.
+      S-Funtion name: 'DELPHI_SRR3_SIL'
+      [IN]TestInputSRR u1[4]:Input test vector from four sensors(in the order (0)RL-(1)RR-(2)FR-(3)FL)***
+      [OUT]int32 y1[1]: Return status
+      [OUT]srr3Output y2[1]: Structure hold generated CAN messages and Valid CAN message count
+
+*** Refer Matlab\srrBusDataTypes.h header for the structure declaration of :
+   -TestInputSRR
+   - srr3Output
+
+
+  [LIB]:
+    - Support replay of test input data and generates Tracks,Free space and warning messages.
+    - Support  PCAN, FAS, and B2CAN messages
+
+Notes:
+    - The Matlab\dev\createBusObjects.m Simulink-BusObject has been updated with reference to srrBusDataTypes and srrBusTypes.h to specify the structure of Input and Output Bus of the S-Function
+    - Provided simulink model \Matlab\DELPI_SRR3_SIL.mdl file.
+
+Known Issues:
+    - The simulink model \Matlab\DELPI_SRR3_SIL.mdl is not connected to test vector signal.
+
+

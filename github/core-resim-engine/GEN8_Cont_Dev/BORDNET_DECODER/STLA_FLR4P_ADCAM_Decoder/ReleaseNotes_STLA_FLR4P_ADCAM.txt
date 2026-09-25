@@ -1,0 +1,11 @@
+---------------------------------------------------
+	STLA FLR4P SOMEIP Decoder   Release Notes
+---------------------------------------------------
+This document provides a summary of STLA FLR4P SOMEIP Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 04-08-2023
+
+Features:
+- Dll supports the decoding of the alert messages cycle by cycle.
+-------------------------------------------------------------------------------------------------------------

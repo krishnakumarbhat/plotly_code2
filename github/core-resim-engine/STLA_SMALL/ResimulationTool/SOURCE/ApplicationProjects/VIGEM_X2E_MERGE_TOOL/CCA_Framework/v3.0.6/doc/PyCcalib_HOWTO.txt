@@ -1,0 +1,176 @@
+
+CCA FRAMEWORK Python Libray
+===============================================
+
+Getting Started
+---------------
+CCA FRAMEWORK Python Libray is compatible only with Python 3.6.
+The provided python library files are :
+
+	* In Windows:
+		- bin/_PyCcalib.pyd
+		- bin/PyCcalib.py
+		if MDF is supported :
+		- bin/_PyCcalib_mdf.pyd
+		- bin/PyCcalib_mdf.py
+	* In Linux:
+		- lib/_PyCcalib.so
+		- lib/PyCcalib.py
+		if MDF is supported :
+		- lib/_PyCcalib_mdf.so
+		- lib/PyCcalib_mdf.py
+		
+In order to use it, the provided python library needs either to be in your path or in the same directory.
+Please also refer to the provided python Examples.
+
+------------------------
+Difference from C Libray:
+------------------------
+
+The following comparison shows how the Python library can be used compared to C Libray:
+
+1. CcaObjects and primitive C types:
+-----------------------------------
+When the paramter is an input _IN_, it will be used as in C Libray:
+Example:
+
+	can = CcaCanMessage_create()
+	CcaCanMessage_setId(can, 52)
+	CcaCanMessage_setBrs(can, False)
+    CcaCanMessage_setCrc(can, 12345)
+	
+	attachment =CcaAttachmentMessage_create()
+	CcaAttachmentMessage_setName(attachment, "test.xml")
+
+When the parameter is an output _OUT_ (pointers in general), then it will follow Python rules and will be returned as return parameter.
+Example:
+	
+	res, msg = CcaSessionReader_read(sessReader)
+	res, timestamp = CcaMessage_timestamp(msg)
+	res, busid = CcaMessage_busid(msg)
+	res, msgClass = CcaMessage_class(msg)
+
+2. _OUT_ char*:
+---------------
+In this case, a bytearray will be used as the following:
+ 
+    ip_string = bytearray(30)
+    CcaDevice_getIpAddress(dev, ip_string, len(ip_string))
+	
+	
+3. _OUT_ char**:
+----------------
+This will follow Python rules.
+Example:
+
+	res, name = ccalib.CcaAttachmentMessage_name(attachment)
+
+
+4. _OUT_ uint8_t**:
+------------------
+This will follow also Python rules. This is currently only used for mac-addresses and will therefore be formatted as string
+Example:
+
+	res, address= CcaEthernetMessage_destinationAddress(ethMsg)
+
+5. CcaArrays (exept const char * CcaArray):
+-------------------------------------------
+
+They are presented as python classes. In order to deal with the elements of an array, a second class is created for every array having the same name with postfix Element:
+Example:
+ CcaMessagePayload --> CcaMessagePayloadElement
+
+Input and output arrays(pointers) will be treated as input parameter but with different ways.
+
+Example:
+
+If it is an uutput parameter:
+
+	pl = CcaMessagePayload()
+	res = CcaMessage_payload(msg, pl)
+	count = pl.Count
+	element = pl.Elements
+
+	payload = CcaMessagePayloadElement_frompointer(element)
+	print('First 10 payload Elements: ')
+		for i in range(10):
+			print(payload[i], end=" ")
+
+If it is an input parameter:
+
+	pl = CcaADCMessagePayload()
+    pl.Count = 5
+    buf = CcaADCMessagePayloadElement(pl.Count)
+    for i in range(pl.Count):
+        buf[i] = i
+    pl.Elements = buf.cast()
+	CcaADCMessage_setSamples(analog, pl)
+
+If it is an input payload :
+
+	pl_count = 50
+	pl = CcaMessagePayloadElement(pl_count)
+    for i in range(pl_count):
+        pl[i] = i
+	CcaCanMessage_setPayload(can, pl.cast(), pl_count)
+
+
+6. CCA_INVALID_HANDLE:
+--------------------- 
+To check if a CcaObject is a valid handle, use IsInvalidHandle()
+Example:
+
+	ccaFileHandle = CcaFile_create("filePath");
+    if IsInvalidHandle(ccaFileHandle):
+        print('CcaFile_create failed: '+ str(CcaLib_getLastError()))
+        sys.exit(1)
+
+7. INOUT parameters:
+--------------------
+INOUT parameter are treated as a bytearray:
+	array = bytearray(6)
+    res = ccalib.CcaDltMessage_getDestinationMac(dlt, array, len(array))
+
+
+8. Callback functions:
+----------------------
+For every ccalib callback function a pyhton class is created as following:
+
+CCA_PROGRESS_CALLBACK 			--> CcaProgressCallBack
+CCA_ABORT_CALLBACK 				--> CcaAbortCallback
+CCA_FILE_COPY_STATE_CALLBACK 	--> CcaFileCopyStateCallback
+
+In Python side we need to derive a class from the created class and override a methon named handle.
+
+Example:
+
+#PythonCcaProgressCallBack class is defined and derived from class CcaProgressCallBack
+class PythonCcaProgressCallBack(CcaProgressCallBack):
+    def __init__(self):
+        CcaProgressCallBack.__init__(self)
+
+    # Override C++ method: void handle(CcaTask action, CcaObject ccaObject, uint32_t progress, const char* actionDescription) = 0
+    def handle(self, action, ccaObject, progress, actionDescription):
+        if action == DownloadData:
+            print("Description: " + actionDescription)
+            res, downloadStats = CcaCallbackStatisticFromCcaObject(ccaObject)
+            if not res:
+                print('CcaCallbackStatisticFromCcaObject failed: '+ str(CcaLib_getLastError()))
+                sys.exit(1)
+
+            if downloadStats.ds_state == DS_DOWNLOADSESSION:
+                print('skipped files: ' + str(downloadStats.curr_files_skip) )
+                print('current file: ' + downloadStats.curr_name)
+
+            if downloadStats.ds_state == DS_DELETESESSION:
+                print('Deleting folder: ' + downloadStats.curr_name)
+			print('Progress: ' + str(progress)+ '%')
+			
+Then it needs to be called in the following way:
+	handler = PythonCcaProgressCallBack()
+    if not CcaSessionCollection_downloadData("path", col, filt, False, False, False, handler, 0):
+       sys.exit(1)
+	   
+9. const char* CcaArray are not yet supported.
+----------------------------------------------
+

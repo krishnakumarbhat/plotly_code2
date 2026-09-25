@@ -1,0 +1,818 @@
+// srr3_container.cpp : Defines the entry point for the console application.
+//
+#include <io.h>
+#include <conio.h>
+#include <string>
+#include <stdio.h>
+#include <iterator>
+#include <time.h>
+#include <stdlib.h>
+#include <map>
+#include "../../../CommonFiles/helper/genutil.h"
+
+
+
+#include "dph_rr_adas_resim_audi.h"
+#include "../../../CommonFiles/helper/verbose_options.h"
+#include "../../../CommonFiles/CommonHeaders/dph_rr_adas_config.h"
+#include "../../../CommonFiles/CommonHeaders/dph_rr_adas_shared_types.h"
+#include "../../../CommonFiles/CommonHeaders/dph_rr_adas_config_mode.h"
+
+#include "audi_fr\FR_Resim_Proxy.h"
+
+typedef enum e_dph_rr_adas_resim_Tag{
+	DPH_RR_ADAS_RESIM_NOK = -1,
+	DPH_RR_ADAS_RESIM_OK = 0,
+	DPH_RR_ADAS_RESIM_EOF,
+	DPH_RR_ADAS_SIL_NOT_FOUND,
+	DPH_RR_ADAS_RESIM_INIT,
+	DPH_RR_ADAS_MISSING_CAL,
+	DPH_RR_ADAS_CONFIG_ERROR,
+	DPH_RR_ADAS_RESIM_CALIB_DONE
+}e_dph_rr_adas_resim_T;
+
+typedef enum Logging_Propeties_eTag{
+	VEH_DATA = 0,
+	OBJECT_RL = 1,
+	OBJECT_RR = 2,
+	OBJECT_FR = 3,
+	OBJECT_FL = 4
+}Logging_Properties_e;
+
+#pragma comment(lib,"DPH_RR_ADAS_Config.lib")
+
+////////////////// Modifiy Release scope for all releases ///////////////////////
+static unsigned char release_inf      = 1;  
+static unsigned char release_op       = 0;   
+static unsigned char release_minor    = 5;   
+////////////////////////////////////////////////////////////////////////////////
+
+//Global
+int Run_Resim_Log(char* fLog);
+e_dph_rr_adas_resim_T FR_Resim_Run(char* fLog);
+e_dph_rr_adas_resim_T Veh_Trk_Resim_Run(char* fLog);
+void Get_All_CSV_fileNames(char *fLog);
+void fill_log_status_file(char* status,char* log_fname, char*  comments);
+FILE *Statusfp = NULL;
+FILE *fpVeh = NULL;
+FILE *fpTrk_RL = NULL;
+FILE *fpTrk_RR = NULL;
+
+/* Static Member variables*/
+static SIL_SRR3_AUDI_OUTPUT_T m_sil_audi_output = { 0 };
+static SRR3_Decoder_Interface_T*    m_pSILPlugin = NULL;
+static DPH_RR_ADAS_CONFIG_T *m_pdph_master_config = NULL;
+static UDP_FRAME_PAYLOAD_T m_Udp_Payload[4] = { 0 };
+static void*       g_pDVSUFile[SRR3_MAX_COUNT] = { NULL };
+static unsigned char f_ExitOnEOF[SRR3_MAX_COUNT] = {0};
+static unsigned char Calib_Check[SRR3_MAX_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF};
+const char* RdrTag[] = {"SRR3_RL", "SRR3_RR", "SRR3_FR", "SRR3_FL"};
+const char* tag[4] = { "_71", "_72", "_73", "_74" };
+static long scan_idx_current[SRR3_MAX_COUNT] = {0};
+static long scan_idx_first[SRR3_MAX_COUNT] = {0};
+static long scan_idx_count[SRR3_MAX_COUNT] = {0};
+static char udp_frame_missed_idx[6][10000];
+//unsigned char g_CalibDoneFlag = 0;
+enRadarSensorId Now_Sensor = SRR3_RL;
+static unsigned char RewindAll = 0;
+using namespace std;
+static int once[MAX_SRR3_SOURCE] = {0};
+static boolean_T g_calibComplete = FALSE;
+static float time_stamp = 0.0;
+
+boolean_T f_ResimCmplt = 1;
+char  g_master_file[1024] = { 0 };
+//char  g_logname[1024] = { 0 };
+char  g_fileName[1024] = { 0 };
+char  xml_file_path[1024] = { 0 };
+
+static char*GetNextLogname(char* LogFName )
+{
+	char nextlog[1024] ={0};
+	char prefix[1024];
+	char extn[50] = "_71.dvsu";
+	char basename[1024] = { 0 };
+
+	char drvName[_MAX_DRIVE]; 
+	char dir[_MAX_DIR]; 
+	char fName[_MAX_FNAME]; 
+	char ext[_MAX_EXT]; 
+	split_path(LogFName, drvName, dir, fName, ext); 
+
+	GetBaseLogname(LogFName, basename);
+	int len = lstrlen(basename);
+	int LogNum = atoi(&basename[len - 3]);
+	lstrcpyn(prefix,basename, (len - 2));
+	if(lstrcmp(ext, ".dvl") == 0)
+		lstrcpy(extn,".dvl");	
+
+	sprintf(nextlog,"%s%03u%s",prefix,++LogNum,extn);
+	return nextlog;
+}
+
+void ResimCopyright(FILE *fptr) 
+{ 
+	printf("%%                                                              %%\n");
+	printf("%%    DELPHI CORPORATION PROPRIETARY,  Copyright © 2015,2016    %%\n");
+	printf("%%                                                              %%\n");
+}
+
+int ReadLogs(char* inp_file)
+{
+	int ret = 0;
+	char basename[512] = { 0 };
+	const char* EXT = ".dvsu";
+	char dvsu_fname[1024] = {0};
+
+	GetBaseLogname(inp_file, basename);
+	//read dvl here..
+
+
+	return ret;
+
+}
+
+static void FreePlugin()
+{
+	if(m_pSILPlugin){
+		if(m_pSILPlugin->hModule)
+		{
+			::FreeLibrary(m_pSILPlugin->hModule);
+			memset(&m_pSILPlugin, 0, sizeof(m_pSILPlugin));
+		}
+	}
+	if (m_pdph_master_config){
+		delete m_pdph_master_config;
+		m_pdph_master_config = NULL;
+	}
+}
+
+void usage(void)
+{
+	printf( "\n"
+		"----------------------------------------------------------------------------------------------------------------\n"
+		"USAGE:\n"
+		"DPH_RR_ADAS_RESIM.exe DPH_RR_ADAS_RESIM_Configuration.xml f_logs.txt\n"
+		"f_logs contains input log argument listed as column [Input Log argument](.dvsu)/(.dvl) with no delimiter\n"
+		"----------------------------------------------------------------------------------------------------------------\n"
+		);
+}
+
+int ReadArguments(int argc, char* argv[])
+{
+	int count = 1;
+
+	if (argc < 2)
+	{
+		usage();
+		return -1;
+	}
+
+	if (argc == 2)
+	{
+		do
+		{
+			if (argc > count)
+			{
+				lstrcpy(g_fileName, argv[count]);
+
+			}
+			++count;
+
+		} while (0);
+	}
+	else
+	{
+		usage();
+		return -1;
+	}
+
+	return 0;
+}
+
+int Run_Resim_Log(char* fLog)
+{
+	int retval = -1;
+	char  NextLog[1024] = { 0 };
+	char basename[512] = { 0 };
+	char Scan_Info[10000] = {0};
+	char *radar;
+
+	char  f_continous = 1; //read from the resim config..
+
+	e_dph_rr_adas_resim_T nStatus = DPH_RR_ADAS_RESIM_INIT;
+
+	lstrcpy(NextLog, fLog);
+	memset(&m_sil_audi_output, 0, sizeof(m_sil_audi_output));
+
+//	nStatus = FR_Resim_Run(NextLog);
+	
+	nStatus = Veh_Trk_Resim_Run(NextLog);
+
+	m_pSILPlugin->SIL_SRR3_reset();
+	m_pSILPlugin->SIL_SRR3_cleanup();
+	retval = 0;
+
+	return retval;
+}
+
+void ReadFRSILInput(SIL_Data_Input_T &FR_Data_Obj , const AUDI_SRR3_FR_DATA_T  c_audi_fr_data)
+{
+
+
+	FR_Data_Obj.detection_rl_radar.dets_info.Count = c_audi_fr_data.hl.dets.det_info.Count;
+	FR_Data_Obj.detection_rl_radar.dets_info.LookID = c_audi_fr_data.hl.dets.det_info.LookID;
+	FR_Data_Obj.detection_rl_radar.dets_info.LookType = c_audi_fr_data.hl.dets.det_info.LookType;
+	FR_Data_Obj.detection_rl_radar.dets_info.ScanIndex = c_audi_fr_data.hl.dets.det_info.ScanIndex;
+	FR_Data_Obj.detection_rl_radar.dets_info.timestamp = c_audi_fr_data.hl.dets.det_info.timestamp;
+	FR_Data_Obj.detection_rl_radar.dets_info.AutoAlign = c_audi_fr_data.hl.dets.det_info.AutoAlign;
+
+	for(int i = 0 ; i < NUMBER_OF_DETECTIONS_PER_SRR3;i++ ){
+		FR_Data_Obj.detection_rl_radar.dets_input[i].amplitude = c_audi_fr_data.hl.dets.det[i].amplitude;
+		FR_Data_Obj.detection_rl_radar.dets_input[i].azimuth_raw = c_audi_fr_data.hl.dets.det[i].azimuth_raw;
+		FR_Data_Obj.detection_rl_radar.dets_input[i].range = c_audi_fr_data.hl.dets.det[i].range;
+		FR_Data_Obj.detection_rl_radar.dets_input[i].range_rate_raw = c_audi_fr_data.hl.dets.det[i].range_rate_raw;
+		FR_Data_Obj.detection_rl_radar.dets_input[i].valid_level = c_audi_fr_data.hl.dets.det[i].valid_level;
+	}
+
+	FR_Data_Obj.detection_rr_radar.dets_info.Count = c_audi_fr_data.hr.dets.det_info.Count;
+	FR_Data_Obj.detection_rr_radar.dets_info.LookID = c_audi_fr_data.hr.dets.det_info.LookID;
+	FR_Data_Obj.detection_rr_radar.dets_info.LookType = c_audi_fr_data.hr.dets.det_info.LookType;
+	FR_Data_Obj.detection_rr_radar.dets_info.ScanIndex = c_audi_fr_data.hr.dets.det_info.ScanIndex;
+	FR_Data_Obj.detection_rr_radar.dets_info.timestamp = c_audi_fr_data.hr.dets.det_info.timestamp;
+	FR_Data_Obj.detection_rr_radar.dets_info.AutoAlign = c_audi_fr_data.hr.dets.det_info.AutoAlign;
+
+	for(int i = 0 ; i < NUMBER_OF_DETECTIONS_PER_SRR3;i++ ){
+		FR_Data_Obj.detection_rr_radar.dets_input[i].amplitude = c_audi_fr_data.hr.dets.det[i].amplitude;
+		FR_Data_Obj.detection_rr_radar.dets_input[i].azimuth_raw = c_audi_fr_data.hr.dets.det[i].azimuth_raw;
+		FR_Data_Obj.detection_rr_radar.dets_input[i].range = c_audi_fr_data.hr.dets.det[i].range;
+		FR_Data_Obj.detection_rr_radar.dets_input[i].range_rate_raw = c_audi_fr_data.hr.dets.det[i].range_rate_raw;
+		FR_Data_Obj.detection_rr_radar.dets_input[i].valid_level = c_audi_fr_data.hr.dets.det[i].valid_level;
+	}
+
+
+	memcpy(&FR_Data_Obj.vehicle_inputs, &c_audi_fr_data.vehicle_data, sizeof(Vehicle_Data_Input_T));
+
+}
+
+void Log_Vehicle_data(Vehicle_Data_Input_T* pVehData)
+{
+	if(fpVeh){
+	fprintf(fpVeh,"%f,%d,%f,%f,%f,%f,%d,%d,%f,%d,%f,%d,%d,%f,%f,%f,%f,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%d\n",
+				  time_stamp,pVehData->SC_FASIS_SyncCounter,
+				  pVehData->Veh_Speed_mps,
+				  pVehData->long_accel,
+				  pVehData->lat_accel,
+				  pVehData->Yaw_Rate,
+				  pVehData->Veh_ReverseGear,
+				  pVehData->Steering_Angle_Offset,
+				  pVehData->HAL_Radwinkel,
+				  pVehData->HAL_VZ_Radwinkel,
+				  pVehData->EPS_Zahnstangen_Pos,
+				  pVehData->EPS_VZ_Zahnstangenposition,
+				  pVehData->LDW_Enabled,
+				  pVehData->LDW_distance_to_line,
+				  pVehData->LDW_time_to_line,
+				  pVehData->LDW_Side,
+				  pVehData->BH_Blinker_li,
+				  pVehData->BH_Blinker_re,
+				  pVehData->BV1_LIN_01_AbstandY,
+				  pVehData->BV1_LIN_01_ExistMass,
+				  pVehData->BV1_LIN_02_AbstandY,
+				  pVehData->BV1_LIN_02_ExistMass,
+				  pVehData->BV1_LIN_03_AbstandY,
+				  pVehData->BV1_LIN_03_ExistMass,
+				  pVehData->BV1_LIN_04_AbstandY,
+				  pVehData->BV1_LIN_04_ExistMass,
+				  pVehData->BV1_FahrSzen_Baustelle,
+				  pVehData->trailer_connected,
+				  pVehData->Steering_Side);
+	}
+}
+void Log_Object_data(unsigned char Radar_pos_i, SIL_SRR3_AUDI_OUTPUT_T* pObjects)
+{
+	unsigned int scan_index = 0;
+	for(unsigned int nIdx = 0;nIdx<15;nIdx++){
+	if(fpTrk_RL){
+	fprintf(fpTrk_RL,"%f,%f,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d\n",
+					 time_stamp,
+					 time_stamp,
+					 15,
+					 scan_index,
+					 pObjects->tracker[Radar_pos_i].id[nIdx],
+					 true,
+					 pObjects->tracker[Radar_pos_i].age[nIdx],
+					 pObjects->tracker[Radar_pos_i].age[nIdx],
+					 pObjects->tracker[Radar_pos_i].status[nIdx],
+					 pObjects->tracker[Radar_pos_i].object_class_probability[nIdx],
+					 pObjects->tracker[Radar_pos_i].existence_probability[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_long_posn[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_long_vel[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_long_accel[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_lat_posn[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_lat_vel[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_lat_accel[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_long_vel_rel[nIdx],
+					 pObjects->tracker[Radar_pos_i].vcs_lat_vel_rel[nIdx],
+					 pObjects->tracker[Radar_pos_i].speed[nIdx],
+					 pObjects->tracker[Radar_pos_i].tangential_accel[nIdx],
+					 pObjects->tracker[Radar_pos_i].heading[nIdx],
+					 pObjects->tracker[Radar_pos_i].heading_rate[nIdx],
+					 pObjects->tracker[Radar_pos_i].length[nIdx],
+					 pObjects->tracker[Radar_pos_i].width[nIdx],
+					 pObjects->tracker[Radar_pos_i].object_class[nIdx]);
+		}
+	}
+}
+
+void Log_matlab_data(char* fLog, int8 Radar_pos_i, Logging_Properties_e property_i, void* pData_i)
+{
+	static unsigned char f_once = 0;
+	if(f_once == 0){
+		char sil_file_name[1024] = { 0 };
+		char fname[1024] = {0};		
+		int nlength = strlen(fLog);
+		sprintf(fname, "%s", fLog);
+			if(nlength != 0)
+			{
+				fname[nlength-4] = '\0';
+				sprintf(sil_file_name,"%s_VEH.csv", fname);
+				fpVeh = fopen(sil_file_name, "w");
+				if(fpVeh){
+					fprintf(fpVeh, "Time,SC_FASIS_SyncCounter,Veh_Speed_mps,long_accel,lat_accel,Yaw_Rate,Veh_ReverseGear,Steering_Angle_Offset,HAL_Radwinkel,HAL_VZ_Radwinkel,EPS_Zahnstangen_Pos,EPS_VZ_Zahnstangenposition,LDW_Enabled,LDW_distance_to_line,LDW_time_to_line,LDW_Side,BH_Blinker_li,BH_Blinker_re,BV1_LIN_01_AbstandY,BV1_LIN_01_ExistMass,BV1_LIN_02_AbstandY,BV1_LIN_02_ExistMass,BV1_LIN_03_AbstandY,BV1_LIN_03_ExistMass,BV1_LIN_04_AbstandY,BV1_LIN_04_ExistMass,BV1_FahrSzen_Baustelle,trailer_connected,Steering_Side\n");
+				}
+				sprintf(sil_file_name,"%s_TRK_71.csv", fname);
+				fpTrk_RL = fopen(sil_file_name, "w");
+				if(fpTrk_RL){
+					fprintf(fpTrk_RL,"Time,timestamp,nObjectCount,objScanIndex,nObjectID,bExists,age,stage_age,status,eMode,existence_probability,vcs_long_posn,vcs_long_vel,vcs_long_accel,vcs_lat_posn,vcs_lat_vel,vcs_lat_accel,vcs_long_vel_rel,vcs_lat_vel_rel,speed,tangential_accel,heading,heading_rate,length,width,object_class\n");
+				}
+				sprintf(sil_file_name,"%s_TRK_72.csv", fname);
+				fpTrk_RR = fopen(sil_file_name, "w");
+				if(fpTrk_RR){
+					fprintf(fpTrk_RR,"Time,timestamp,nObjectCount,objScanIndex,nObjectID,bExists,age,stage_age,status,eMode,existence_probability,vcs_long_posn,vcs_long_vel,vcs_long_accel,vcs_lat_posn,vcs_lat_vel,vcs_lat_accel,vcs_long_vel_rel,vcs_lat_vel_rel,speed,tangential_accel,heading,heading_rate,length,width,object_class\n");
+				}
+		
+			}
+		f_once = 1;
+	}
+	else{
+		switch(property_i)
+		{
+		case VEH_DATA:
+			Log_Vehicle_data((Vehicle_Data_Input_T*)pData_i);
+			break;
+		case OBJECT_RL:
+		case OBJECT_RR:
+		case OBJECT_FR:
+		case OBJECT_FL:
+			Log_Object_data(Radar_pos_i,(SIL_SRR3_AUDI_OUTPUT_T*)pData_i);
+			break;
+		default:
+			break;
+		}
+	}
+
+}
+
+void close_CSV(void){
+		
+	if(fpVeh){
+			fclose(fpVeh);
+			fpVeh = NULL;
+		}
+	if(fpTrk_RL){
+			fclose(fpTrk_RL);
+			fpTrk_RL = NULL;
+		}	
+	if(fpTrk_RR){
+			fclose(fpTrk_RR);
+			fpTrk_RR = NULL;
+		}
+}
+//e_dph_rr_adas_resim_T FR_Resim_Run(char* fLog)
+//{
+//	e_dph_rr_adas_resim_T ret = DPH_RR_ADAS_RESIM_NOK;
+//	SIL_SRR3_AUDI_XML_CONFIG_T *psil_srr3_audi_xml_config = 0;
+//	SIL_SRR3_AUDI_XML_CONFIG_READ_RESULT sil_srr3_audi_xml_config_result = SIL_SRR3_AUDI_XML_CONFIG_READ_RESULT_ERROR;
+//	
+//	if( 0 != OpenDVL(fLog)){
+//		//failed
+//		return DPH_RR_ADAS_RESIM_NOK;
+//	}
+//
+//	
+//	if (0xFF == Calib_Check[0] && 0xFF == Calib_Check[1] && 0xFF == Calib_Check[2] && 0xFF == Calib_Check[3]){
+//		// Test 
+//		DPH_RR_ADAS_SIL_OUTPUT_TYPES::DPH_SRR3_SIL_VERSION_T ver = {0};
+// 		m_pSILPlugin->SIL_SRR3_get_version(&ver);
+//
+//		if (m_pSILPlugin->SIL_SRR3_initialize())
+//		{
+//			ret = DPH_RR_ADAS_SIL_NOT_FOUND;
+//			return ret;
+//		}
+//		psil_srr3_audi_xml_config = new SIL_SRR3_AUDI_XML_CONFIG_T;
+//		psil_srr3_audi_xml_config->xml_config_file_path = xml_file_path;
+//		m_pSILPlugin->SIL_SRR3_configure(*psil_srr3_audi_xml_config, &sil_srr3_audi_xml_config_result);
+//		if(sil_srr3_audi_xml_config_result == SIL_SRR3_AUDI_XML_CONFIG_READ_RESULT_ERROR){
+//			return DPH_RR_ADAS_CONFIG_ERROR;
+//		}
+//	}
+//	
+//	m_pSILPlugin->SIL_SRR3_Set_VerboseBaseName(fLog);
+//
+//	AUDI_SRR3_FR_DATA_T  c_audi_fr_data = {0};
+//	int ret_fr = 0;
+//
+//	do{
+//		static SIL_Data_Input_T Flexray_Data_Obj = {0};
+//		
+//
+//		ret_fr = readNextInteresting(c_audi_fr_data);
+//
+//		if(ret_fr == -1)
+//		{
+//			fprintf(stderr,"Error reading DVL log\n");
+//			break;
+//		}
+//		else if(ret_fr > 0){
+//			fprintf(stderr,"End of DVL log\n");
+//			break;
+//		}
+//		else{}
+//
+//		memset(&Flexray_Data_Obj, 0, sizeof(Flexray_Data_Obj));
+//		memset(&m_sil_audi_output, 0, sizeof(m_sil_audi_output));
+//
+//		ReadFRSILInput(Flexray_Data_Obj,c_audi_fr_data);
+//		c_audi_fr_data.hl.f_msgs_rcvd = 0;
+//		c_audi_fr_data.hr.f_msgs_rcvd = 0;
+//		//Rear left Resim
+//		Flexray_Data_Obj.Radar_Position = SRR3_RL+1;
+//		m_pSILPlugin->SIL_SRR3_DATA_Frame_process(&Flexray_Data_Obj, &m_sil_audi_output);
+//
+//		Log_matlab_data(fLog, Flexray_Data_Obj.Radar_Position, VEH_DATA,  &Flexray_Data_Obj.vehicle_inputs);
+//		Log_matlab_data(fLog, Flexray_Data_Obj.Radar_Position, OBJECT_RL, &m_sil_audi_output);
+//		//Rear Right Resim
+//		Flexray_Data_Obj.Radar_Position = SRR3_RR+1;
+//		m_pSILPlugin->SIL_SRR3_DATA_Frame_process(&Flexray_Data_Obj, &m_sil_audi_output);
+//		Log_matlab_data(fLog, Flexray_Data_Obj.Radar_Position, OBJECT_RR, &m_sil_audi_output);
+//		ret = DPH_RR_ADAS_RESIM_OK;
+//
+//	} while (ret != DPH_RR_ADAS_RESIM_EOF);
+//
+//	printf("\r\n");
+//	
+//
+//	if (psil_srr3_audi_xml_config)
+//	{
+//		delete psil_srr3_audi_xml_config;
+//		psil_srr3_audi_xml_config = 0;
+//	}
+//	closeDVL();
+//	close_CSV();
+//	return ret;
+//}
+unsigned int ObjCount = 15;
+char csv_RL[1024] = {0};
+char csv_RR[1024] = {0};
+char csv_FR[1024] = {0};
+char csv_FL[1024] = {0};
+char csv_Veh[1024] = {0};
+std::ifstream inputfile_Veh;
+std::ifstream inputfile_Trk_RL;
+std::ifstream inputfile_Trk_RR;
+//std::string csvLine_Veh, csvLine_Trk_RL, csvLine_Trk_RR, str_ch;
+
+void Get_All_CSV_fileNames(char *fLog){
+	unsigned int StrLen = 0;
+	char fname[1024] = {0};
+	StrLen = strlen(fLog);
+	strcpy(csv_Veh, fLog);
+	if(StrLen != 0)
+	{
+		strcpy(fname, fLog);
+		fname[StrLen - 7] = '\0';
+		sprintf(csv_RL,"%sTRK_71.csv", fname);
+		sprintf(csv_RR,"%sTRK_72.csv", fname);
+		sprintf(csv_FR,"%sTRK_73.csv", fname);
+		sprintf(csv_FL,"%sTRK_74.csv", fname);
+	}
+}
+void FillVehData(SIL_Data_Input_T *pVeh_Track_Obj, char *Line){
+	const unsigned int MAX_MEMBERS = 35; // Max required are 28 members for Veh data.
+	char param[100] = {0};
+	unsigned int i = 0, j = 0,LineLen = strlen(Line);
+	uint8 Index = 0;
+	float fVEHparam[MAX_MEMBERS] = {0.0};
+	do{
+		j = 0;
+		memset(param, 0, sizeof(param));
+		if( Line[i] == '\n') break;
+		while(Line[i] != ','){
+			param[j] = Line[i];
+			i++;
+			j++;
+			if(i >= LineLen) break;
+		}
+		param[j]  = '\0';
+		fVEHparam[Index] = (float)(atof(param));
+		Index++;
+		i++;
+		if(i >= LineLen) break;
+	}while(1);
+
+	pVeh_Track_Obj->vehicle_inputs.SC_FASIS_SyncCounter = (uint8)fVEHparam[1];		
+	pVeh_Track_Obj->vehicle_inputs.Veh_Speed_mps = (float)fVEHparam[2]; 			
+	pVeh_Track_Obj->vehicle_inputs.long_accel = (float)fVEHparam[3];				
+	pVeh_Track_Obj->vehicle_inputs.lat_accel = (float)fVEHparam[4];					
+	pVeh_Track_Obj->vehicle_inputs.Yaw_Rate = (float)fVEHparam[5];					
+	pVeh_Track_Obj->vehicle_inputs.Veh_ReverseGear = (int8)fVEHparam[6];			
+	pVeh_Track_Obj->vehicle_inputs.Steering_Angle_Offset = (float)fVEHparam[7];		
+	pVeh_Track_Obj->vehicle_inputs.HAL_Radwinkel = (float)fVEHparam[8];				
+	pVeh_Track_Obj->vehicle_inputs.HAL_VZ_Radwinkel = (int8)fVEHparam[9];			
+	pVeh_Track_Obj->vehicle_inputs.EPS_Zahnstangen_Pos = (float)fVEHparam[10];		
+	pVeh_Track_Obj->vehicle_inputs.EPS_VZ_Zahnstangenposition = (int8)fVEHparam[11];
+	pVeh_Track_Obj->vehicle_inputs.LDW_Enabled = (int8)fVEHparam[12];				
+	pVeh_Track_Obj->vehicle_inputs.LDW_distance_to_line = (float)fVEHparam[13];		
+	pVeh_Track_Obj->vehicle_inputs.LDW_time_to_line = (float)fVEHparam[14];			
+	pVeh_Track_Obj->vehicle_inputs.LDW_Side = (float)fVEHparam[15];					
+	pVeh_Track_Obj->vehicle_inputs.BH_Blinker_li = (int8)fVEHparam[16];;			
+	pVeh_Track_Obj->vehicle_inputs.BH_Blinker_re = (int8)fVEHparam[17];;			
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_01_AbstandY = (float)fVEHparam[18];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_01_ExistMass = (float)fVEHparam[19];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_02_AbstandY = (float)fVEHparam[20];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_02_ExistMass = (float)fVEHparam[21];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_03_AbstandY = (float)fVEHparam[22];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_03_ExistMass = (float)fVEHparam[23];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_04_AbstandY = (float)fVEHparam[24];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_LIN_04_ExistMass = (float)fVEHparam[25];		
+	pVeh_Track_Obj->vehicle_inputs.BV1_FahrSzen_Baustelle = (float)fVEHparam[26];	
+	pVeh_Track_Obj->vehicle_inputs.trailer_connected = (int8)fVEHparam[27];;		
+	pVeh_Track_Obj->vehicle_inputs.Steering_Side = (int8)fVEHparam[28];				
+}
+void FillTrackerData(SIL_Data_Input_T *pVeh_Track_Obj, unsigned int idx){
+
+}
+e_dph_rr_adas_resim_T Veh_Trk_Resim_Run(char* fLog)
+{
+	std::string csvLine_Veh, csvLine_Trk_RL, csvLine_Trk_RR, str_ch;
+	e_dph_rr_adas_resim_T ret = DPH_RR_ADAS_RESIM_NOK;
+	SIL_SRR3_AUDI_XML_CONFIG_T *psil_srr3_audi_xml_config = 0;
+	SIL_SRR3_AUDI_XML_CONFIG_READ_RESULT sil_srr3_audi_xml_config_result = SIL_SRR3_AUDI_XML_CONFIG_READ_RESULT_ERROR;
+	printf("\n[INFO]: Input file name:%s\n", fLog);
+	{
+		// Test 
+		DPH_RR_ADAS_SIL_OUTPUT_TYPES::DPH_SRR3_SIL_VERSION_T ver = {0};
+ 		m_pSILPlugin->SIL_SRR3_get_version(&ver);
+
+		if (m_pSILPlugin->SIL_SRR3_initialize())
+		{
+			ret = DPH_RR_ADAS_SIL_NOT_FOUND;
+			return ret;
+		}
+		psil_srr3_audi_xml_config = new SIL_SRR3_AUDI_XML_CONFIG_T;
+		psil_srr3_audi_xml_config->xml_config_file_path = xml_file_path;
+		m_pSILPlugin->SIL_SRR3_configure(*psil_srr3_audi_xml_config, &sil_srr3_audi_xml_config_result);
+		if(sil_srr3_audi_xml_config_result == SIL_SRR3_AUDI_XML_CONFIG_READ_RESULT_ERROR){
+			return DPH_RR_ADAS_CONFIG_ERROR;
+		}
+	}
+	Get_All_CSV_fileNames(fLog);
+
+	inputfile_Veh.open(csv_Veh);
+	inputfile_Trk_RL.open(csv_RL);
+	inputfile_Trk_RR.open(csv_RR);
+
+	
+	m_pSILPlugin->SIL_SRR3_Set_VerboseBaseName(fLog);
+	
+	if (inputfile_Veh.good() && inputfile_Trk_RL.good() & inputfile_Trk_RR.good()){
+		
+		getline(inputfile_Veh, csvLine_Veh);
+		getline(inputfile_Trk_RL, csvLine_Trk_RL);
+		getline(inputfile_Trk_RR, csvLine_Trk_RR);
+
+		while(inputfile_Veh.good() && inputfile_Trk_RL.good() & inputfile_Trk_RR.good()){
+			
+			SIL_Data_Input_T CSV_Veh_Track_Obj = {0};
+			char CSVLine[1000] = {0};
+			getline(inputfile_Veh, csvLine_Veh);
+			strcpy(CSVLine, csvLine_Veh.c_str());
+			FillVehData(&CSV_Veh_Track_Obj, CSVLine);
+			for(unsigned int i = 0; i < ObjCount; i++){
+				getline(inputfile_Trk_RL, csvLine_Trk_RL);
+				getline(inputfile_Trk_RR, csvLine_Trk_RR);
+				FillTrackerData(&CSV_Veh_Track_Obj, i);
+			}
+
+			//Rear left Resim
+			CSV_Veh_Track_Obj.Radar_Position = SRR3_RL + 1;
+		//	m_pSILPlugin->SIL_SRR3_DATA_Frame_process(&CSV_Veh_Track_Obj, &m_sil_audi_output);
+
+			//Rear Right Resim
+			CSV_Veh_Track_Obj.Radar_Position = SRR3_RR + 1;
+			//m_pSILPlugin->SIL_SRR3_DATA_Frame_process(&CSV_Veh_Track_Obj, &m_sil_audi_output);
+
+			ret = DPH_RR_ADAS_RESIM_OK;
+
+		} 
+
+	}
+	else{
+		fprintf(stderr,"Error reading DVL log\n");
+		return DPH_RR_ADAS_RESIM_NOK;
+	}
+
+	inputfile_Veh.close();
+	inputfile_Trk_RL.close();
+	inputfile_Trk_RR.close();
+
+	printf("\r\n");
+	
+
+	if (psil_srr3_audi_xml_config)
+	{
+		delete psil_srr3_audi_xml_config;
+		psil_srr3_audi_xml_config = 0;
+	}
+
+	return ret;
+}
+
+class line : public string {};
+
+std::istream &operator>>(std::istream &is, line &l)
+{
+	std::getline(is, l);
+	return is;
+}
+int default_master_config()
+{
+	if (m_pdph_master_config){
+		m_pdph_master_config->Product_Name = RR_ADAS_RESIM;
+		m_pdph_master_config->Product_Major_Version = SIL_MAJOR_VER;
+		m_pdph_master_config->Product_Minor_Version = SIL_MINOR_VER;
+		m_pdph_master_config->Sensor_Type = SRR;
+		m_pdph_master_config->Sensor_Config_Version = 1;
+		memset(&m_pdph_master_config->Sensor_Config_Path[0], '\0', 1024);
+		m_pdph_master_config->Customer_Name = AUDI;
+		m_pdph_master_config->Cusomter_config_Ver = 1;
+		memset(&m_pdph_master_config->Customer_Config_file_Name[0], '\0', 1024);
+		m_pdph_master_config->Vehcile_Config_Version = 1;
+		memset(&m_pdph_master_config->Vehcile_Config_File_Name[0], '\0', 1024);
+		m_pdph_master_config->Sensor_Mode = CDC_MODE;
+		m_pdph_master_config->Sensor_Calibration_Ver = 1;
+		memset(&m_pdph_master_config->Sensor_Calibration_file_Name[0], '\0', 1024);
+		m_pdph_master_config->DPH_SRR_RESIM_Config_Version = 1;
+		m_pdph_master_config->DPH_SRR_RESIM_Mode = SIL_DV_CONTINUOUS;
+		m_pdph_master_config->Verbose_Enable_status = VEBOSE_ENABLE;
+		memset(&m_pdph_master_config->Verbose_Mode_Licence_Number[0], '\0', 1024);
+		m_pdph_master_config->Verbose_Mode_level = LEVEL_3;
+		memset(&m_pdph_master_config->Verbose_Dump_file_Path[0], '\0', 1024);
+		m_pdph_master_config->calibration_mode = CALIB_XML;
+		m_pdph_master_config->Select_Sensor_Status[SRR3_RL] = 1;
+		m_pdph_master_config->Select_Sensor_Status[SRR3_RR] = 1;
+		m_pdph_master_config->Select_Sensor_Status[SRR3_FR] = 1;
+		m_pdph_master_config->Select_Sensor_Status[SRR3_FL] = 1;
+	}
+	return 0;
+}
+
+void create_log_status_file()
+{
+
+	char fpath[1024];
+
+	char drvName[_MAX_DRIVE]; 
+	char dir[_MAX_DIR]; 
+	char fName[_MAX_FNAME]; 
+	char fName_2[_MAX_FNAME]; 
+	char ext[_MAX_EXT];
+
+	/*split_path(g_fileName, drvName, dir, fName_2, ext);
+
+	sprintf_s(fpath,"%s%s%s",drvName,dir,"dph_rr_adas_resim_log.csv");*/
+	strcpy(fpath,"dph_rr_adas_resim_log.csv");
+	Statusfp=fopen(fpath, "a");
+
+	if(Statusfp==NULL) {	
+		perror("Error in opening Error_Log file...\n");		
+	}
+	else {
+		time_t now = time(NULL);
+		struct tm *t = localtime(&now);
+
+		fprintf(Statusfp, "\n");
+		fprintf(Statusfp, "*****************************************************\n");
+		fprintf(Statusfp, "%%               DPH_RR_ADAS_RESIM v%02u.%02u.%02u   \t\t      %%\n",release_inf,release_op,release_minor);
+		fprintf(Statusfp, "Resimulation Started\n");
+		fprintf(Statusfp, "Date: %d-%d-%d %d:%d:%d\n",t->tm_mon+1,t->tm_mday,t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
+		fprintf(Statusfp, "*****************************************************\n");
+		fprintf(Statusfp, ",Date,Time,Status,LogName,Description");
+		fprintf(Statusfp, "\n");
+	}	
+}
+
+void fill_log_status_file(char* status,char* log_fname, char*  comments)
+{
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	fprintf(Statusfp,",%d/%d/%d,",t->tm_mon+1,t->tm_mday,t->tm_year+1900);
+	fprintf(Statusfp,"%d:%d:%d,",t->tm_hour,t->tm_min,t->tm_sec);
+	fprintf(Statusfp,"%s,%s,%s\n",status,log_fname,comments);
+}
+
+
+void close_log_status_file()
+{
+	if(Statusfp!=NULL) {
+		fprintf(Statusfp,"\nResimulation Operation Completed...\n");
+		fclose(Statusfp);
+		Statusfp = NULL;
+	}
+}
+
+
+int main(int argc, char* argv[])
+{
+	char  logname[1024] = { 0 };
+//	char ListFileName[1024] = "C:\\Users\\jzwznt\\Desktop\\AUDI_Test\\AUDI_RELEASE_260716\\Config\\Log_List.txt";
+//	char xmlFinename[1024] = "C:\\Users\\jzwznt\\Desktop\\AUDI_Test\\AUDI_RELEASE_260716\\Config\\Audi_config_v8p3.xml";
+	const char* master_config_file_name = NULL;
+	printf( "**************************************************************** \n");
+	printf( "%%                                                              %%\n"); 
+	printf( "%%                 DPH_RR_ADAS_RESIM v%02u.%02u.%02u   \t       %%\n",release_inf,release_op,release_minor);
+	ResimCopyright(stdout);
+	printf( "**************************************************************** \n");
+
+	do
+	{
+	//	strcpy(xml_file_path, xmlFinename);
+		if ( ReadArguments(argc,argv))
+		{
+			return -1;
+		}
+		
+		
+		{
+			m_pdph_master_config = new DPH_RR_ADAS_CONFIG_T;
+			dph_rr_adas_sil_status_e xml_status = dph_rr_adas_resim_read_master_config(m_pdph_master_config, (const char*)xml_file_path);
+			// Reading Master configuration file from ReSIM.
+
+			if (DPH_SIL_OK != xml_status){
+				printf( "[INFO] Reading configuration file fails. Please provide correct XML Configuration file with needed Tags and try again.\n\nPress any key to exit" );
+				fill_log_status_file("DPH_XML_FILE_TAG_NOT_FOUND",xml_file_path,"Please provide correct Configuration XML File with needed Tags.");
+				while(!_kbhit());
+				return -1;
+			}
+/*
+			else{
+			default_master_config();
+			}*/
+		}
+		if((m_pdph_master_config->Select_Sensor_Status[SRR3_RL] == 0) && (m_pdph_master_config->Select_Sensor_Status[SRR3_RR] == 0) &&
+			(m_pdph_master_config->Select_Sensor_Status[SRR3_FR] == 0) && (m_pdph_master_config->Select_Sensor_Status[SRR3_FL] == 0))
+		{
+			printf( "[INFO] Sensor Status is not selected. Please change Sensor_Status in Master XMl and try again..\n\nPress any key to exit" );
+			fill_log_status_file("SENSOR_STATUS_MASTER_XML_NOT_SELECTED",xml_file_path,"Please set sensor status in Master xml and try again.");
+			return -1;
+		}
+		if (!m_pSILPlugin){
+			if (LIB_FAIL == PluginLoader::GetPluginLoader()->Load_AUDI_SRR3_Decoder("sil-srr3-jlr.dll", &m_pSILPlugin)){
+				return DPH_RR_ADAS_RESIM_EOF;
+			}
+		}
+
+		printf("Resimulation Started...\n");
+		
+		std::ifstream inputFile(g_fileName);
+	//	std::ifstream inputFile(ListFileName);
+		istream_iterator<line> itFname(inputFile);
+		istream_iterator<line> end;
+		e_dph_rr_adas_resim_T nStatus = DPH_RR_ADAS_RESIM_INIT;
+
+		if(!inputFile)
+		{
+			perror("[INFO] Error in Reading Log List...\n Exiting Resimulation...\n\n");
+			fill_log_status_file("LOG_LIST_FILE_NOT_FOUND",g_fileName,"Log_list file not found");
+		} 
+
+		for(; itFname != end; ++itFname)
+		{
+			lstrcpy(logname,(*itFname).c_str());
+			if (Run_Resim_Log(logname)){
+				f_ResimCmplt = 0;
+				break;
+			}
+		}	
+
+	}while(0);
+	FreePlugin();
+	close_log_status_file();
+	if(f_ResimCmplt)
+	printf("\nResimulation Operation Completed...");
+	else
+	printf("\nResimulation Operation stopped...");
+	return 0;
+}

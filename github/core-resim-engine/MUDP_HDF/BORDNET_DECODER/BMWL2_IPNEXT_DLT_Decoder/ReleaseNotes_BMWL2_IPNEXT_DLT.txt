@@ -1,0 +1,114 @@
+---------------------------------------------------
+	SOMEIP   Release Notes 
+---------------------------------------------------
+This document provides a summary of SOMEIP.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.7.0.0
+Release Date	: 15-03-2021
+
+Features:
+-Dll supports A_480 software.
+-Added New Enum value(A_480) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.6.0.0
+Release Date	: 18-01-2021
+
+Features:
+-Dll supports A_470 software.
+-Added New Enum value(A_470) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.5.0.0
+Release Date	: 21-07-2020
+
+Features:
+-Dll supports A_450 software.
+-Added New Enum value(A_450) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.4.0.0
+Release Date	: 21-07-2020
+
+Features:
+-Dll supports A_410 software.
+-Added New Enum value(A_410) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.3.1.0
+Release Date	: 10-06-2020
+
+Features:
+-  SOMIPSpecInfo_T structure members(size and msginfo) have been interchanged in SOMIPCommonHeader.h file. 
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.3.0.0
+Release Date	: 09-06-2020
+
+Features:
+- Provided support for A390.
+- Added New Enum value(A_390) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.1.2
+Release Date	: 21-05-2020
+
+Bug Fix:
+- Fix for CYB-1096 : [SOMIP_Decoder.dll]: Returns corrupted data according to the latest known out structures 
+- Interchanged Detection FL & FR in the SOMIPPayLoadA370_T structure
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.1.1
+Release Date	: 21-05-2020
+
+Bug Fix:
+- Fix for CYB-1096 : [SOMIP_Decoder.dll]: Returns corrupted data according to the latest known out structures
+- Provided clean build
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.1.0
+Release Date	: 14-05-2020
+
+Bug Fix:
+- Fix for CYB-1076 : BOARDNet spec messages map returned isnt compatible with the BOARDnet selection
+- Fix for CYB-1086 : Returns out of date BusSpecId
+- Fix for CYB-1085 : Returns DECODER_RESULT_INPUT_DATA_ERROR when packets collected passed to decode func
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.0.1
+Release Date	: 30-03-2020
+
+Features:
+-Version details for DLL is updated.
+- Further information will be available in the design document.	
+
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.0.0
+Release Date	: 24-03-2020
+
+Features:
+- Implemented decoding of freespace in A350 & A370.
+- Further information will be available in the design document.	
+Known Issue:
+
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.1.1.2
+Release Date	: 20-03-2020
+
+Features:
+- Implemented decoding of A350 & A370.
+- Further information will be available in the design document.	
+Known Issue:
+- Freespace not supported for A350 & A370
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.1
+Release Date	: 09-03-2020
+
+Features:
+- Added version in SOMEIP Dll.
+-API names have been changed.
+- Further information will be available in the design document.	
+Known Issue:
+ 
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 3-3-2020
+
+Features:
+- Dll will supports the decoding of the some ip messages.
+- Further information will be available in the design document.	
+Known Issue:      
+--------------------------------------------------------------------------------------------------------------
+
+

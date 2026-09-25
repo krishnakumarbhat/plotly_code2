@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+<SIL_SRR3_Configuration>
+	<!-- SIL SRR3 Configuration XML version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->				
+    <SIL_SRR3_Configuration_XML_Version>8.1</SIL_SRR3_Configuration_XML_Version>
+
+	<!-- SIL_Embedded_code_processing Enabled - 
+		SIL_ENABLED - SIL MODE ACTIVATED - data is decoded from UDP log and passed through Embedded library to give reprocessed results 
+		DECODER_ENABLED - DECODER MODE ACTIVATED- data is decoded from UDP log -->
+	<SIL_Embedded_code_processing>SIL_ENABLED</SIL_Embedded_code_processing>
+
+	<!-- SIL_Injection Mode  - 
+		UDP - SIL Input is UDP Frames - SIL / Decoder using API- SIL_SRR3_UDP_Frame_process
+		Detections - SIL Input is Decoded data from Flexray Frames - SIL using API- SIL_SRR3_DATA_Frame_process
+		Tracks - SIL Input is object and vehicle data from virtual environment - SIL using API- SIL_SRR3_DATA_Frame_process -->
+	<SIL_INJECTION_MODE>UDP</SIL_INJECTION_MODE>
+	<!-- 
+	"Operating mode CDC: CDC Data processing
+		The SIL component receives Front-End data over a reference parameter of the SIL function call.
+		The SIL component processes Front-End data to raw targets, object hypotheses, Fences."
+	"Operating mode Detections: Data processing of raw target detections
+		The SIL component receives UDP data via a reference parameter of the SIL function call,
+		SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs. "
+	-->
+	<!-- SIL entry point valid values: CDC, Detections -->
+    <SIL_Entrypoint>CDC</SIL_Entrypoint>
+
+	<!-- ALIGNMENT ALGORITHM To Execute (ONLY AUTO IS SUPPORTED AT THE MOMENT DO NOT USE OTHER OPTIONS )
+		 AUTO_ALIGNMENT - Execute Auto Alignment in SIL 
+		 SHORT_TRACK_ALIGNMENT - Execute SHORT TRACK Alignment in SIL   
+		 KD_ALIGNMENT - Execute KD Alignment in SIL 
+		 EOL_ALIGNMENT - Execute END OF LINE Auto Alignment in SIL   -->
+	<CALIBRATION__ALGORITHM_TO_EXECUTE>AUTO_ALIGNMENT</CALIBRATION__ALGORITHM_TO_EXECUTE>	
+	
+	<!-- Autocalibration  Source Possible options:
+		 XML_FIXED - use Auto Alignment values as constant provided in XML option - USE_ALIGNMENT_VALUES_USE_FROM_XML
+		 UDP_LOG - use Auto Alignment values saved from vehicle testing from UDP stream
+		 SIL_START_FROM_UDP - use Auto Alignment values provided from Auto alignment running in SIL using the value from the Log as a starting value
+		 SIL_START_FROM_XML - use Auto Alignment values provided from Auto alignment running in SIL using the value from the XML as a starting value -->
+	<AUTOCALIBRATION_SOURCE>UDP_LOG</AUTOCALIBRATION_SOURCE>	
+
+	<!-- Autocalibration Values from XML File 
+			if XML - option in chosen in Autocalibration insert values in degrees including sign limit , between -2 and 2 degrees -->
+	<USE_ALIGNMENT_VALUES_USE_FROM_XML>
+		<ALIGNMENT_REAR_LEFT>0</ALIGNMENT_REAR_LEFT>
+		<ALIGNMENT_REAR_RIGHT>0</ALIGNMENT_REAR_RIGHT>
+		<ALIGNMENT_FRONT_RIGHT>0</ALIGNMENT_FRONT_RIGHT>
+		<ALIGNMENT_FRONT_LEFT>0</ALIGNMENT_FRONT_LEFT>
+	</USE_ALIGNMENT_VALUES_FROM_XML>
+	
+	<!-- KD / EOL Autocalibration Execution Routine - values to fill if  
+			if XML - option in chosen in Autocalibration insert values in degrees including sign limit , between -2 and 2 degrees -->
+	<KD_EOL_CONFIG_PARAMETERS>
+		<DOPPLER_GENERATOR_ACTIVATED_REAR_LEFT>0</DOPPLER_GENERATOR_ACTIVATED_REAR_LEFT>
+		<DOPPLER_GENERATOR_RANGE_REAR_LEFT>0</DOPPLER_GENERATOR_RANGE_REAR_LEFT>
+		<DOPPLER_GENERATOR_ANGLE_REAR_LEFT>0</DOPPLER_GENERATOR_ANGLE_REAR_LEFT>
+		<DOPPLER_GENERATOR_ACTIVATED_REAR_RIGHT>0</DOPPLER_GENERATOR_ACTIVATED_REAR_RIGHT>
+		<DOPPLER_GENERATOR_RANGE_REAR_RIGHT>0</DOPPLER_GENERATOR_RANGE_REAR_RIGHT>
+		<DOPPLER_GENERATOR_ANGLE_REAR_RIGHT>0</DOPPLER_GENERATOR_ANGLE_REAR_RIGHT>
+		<DOPPLER_GENERATOR_ACTIVATED_FRONT_LEFT>0</DOPPLER_GENERATOR_ACTIVATED_FRONT_LEFT>
+		<DOPPLER_GENERATOR_RANGE_FRONT_LEFT>0</DOPPLER_GENERATOR_RANGE_FRONT_LEFT>
+		<DOPPLER_GENERATOR_ANGLE_FRONT_LEFT>0</DOPPLER_GENERATOR_ANGLE_FRONT_LEFT>
+		<DOPPLER_GENERATOR_ACTIVATED_FRONT_RIGHT>0</DOPPLER_GENERATOR_ACTIVATED_FRONT_RIGHT>
+		<DOPPLER_GENERATOR_RANGE_FRONT_RIGHT>0</DOPPLER_GENERATOR_RANGE_FRONT_RIGHT>
+		<DOPPLER_GENERATOR_ANGLE_FRONT_RIGHT>0</DOPPLER_GENERATOR_ANGLE_FRONT_RIGHT>		
+
+	</KD_EOL_CONFIG_PARAMETERS>	
+
+	<!-- Source of Calibrations. Possible options:
+		 DSD_XML - using DSD directly from provided XML config file, stated below
+		 DSD_UDP - using DSD from UDP stream 
+		 NO_DSD - using Calibrations from Delphi C files -->
+	<DSD_CALIBRATION_SOURCE>DSD_XML</DSD_CALIBRATION_SOURCE>
+
+	<!-- Sensor selection values: 1 => sensor selected for Resim and 0 => sensor NOT selected -->
+	<SENSOR_STATUS>
+		<REAR_LEFT>1</REAR_LEFT>
+		<REAR_RIGHT>1</REAR_RIGHT>
+		<FRONT_RIGHT>1</FRONT_RIGHT>
+		<FRONT_LEFT>1</FRONT_LEFT>
+	</SENSOR_STATUS>	
+	
+	<!-- Data set download XML file paths -->
+	<!-- Specified paths should be absolute or relative to SIL exe file -->
+	<!-- RL-HL, RR-HR, FR-VR, FL-VL-->
+	<Dataset_download>
+        <DSD_RL>..\..\..\share\Dataset\D5_AU651\XY150\DA_0CF_7200_4N4_LWI9_AS6511HX1410_AU651BASIS00001100110010.xml</DSD_RL>
+        <DSD_RR>..\..\..\share\Dataset\D5_AU651\XY150\DA_03C_7200_4N4_LWI9_AS6511HX1410_AU651BASIS00001100110010.xml</DSD_RR>
+        <DSD_FR>..\..\..\share\Dataset\D5_AU651\XY150\DA_0DB_7200_4N4_LWI9_AS6511VX1400_AU651BASIS00001100000010.xml</DSD_FR>
+        <DSD_FL>..\..\..\share\Dataset\D5_AU651\XY150\DA_0DC_7200_4N4_LWI9_AS6511VX1400_AU651BASIS00001100000010.xml</DSD_FL>
+	</Dataset_download>
+	
+</SIL_SRR3_Configuration>

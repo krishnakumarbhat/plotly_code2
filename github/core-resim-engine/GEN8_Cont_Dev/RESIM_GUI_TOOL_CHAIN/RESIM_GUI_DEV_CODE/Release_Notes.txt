@@ -1,0 +1,12 @@
+Python GUI Version: 1.0.0
+*************************
+Release Date: 10/05/2021
+*************************
+ChangeLog:
+**********
+1. Added Support to MUDP Extractor
+2. Added Support to Data Crawler 
+3. Added Support to SIL RESIM
+4. Added Support to Bordnet Tool
+5. Added Support to Converter Tool
+6. Added Support to Packetloss Tool

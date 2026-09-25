@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{46490EF9-4F7A-4CD9-AFA9-C7EE4CFF09A7}|Project1.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{46490EF9-4F7A-4CD9-AFA9-C7EE4CFF09A7}|Project1.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46490EF9-4F7A-4CD9-AFA9-C7EE4CFF09A7}|Project1.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\header_parser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{46490EF9-4F7A-4CD9-AFA9-C7EE4CFF09A7}|Project1.vcxproj|solutionrelative:header_parser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "header_parser.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\header_parser.cpp",
+              "RelativeDocumentMoniker": "header_parser.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\header_parser.cpp",
+              "RelativeToolTip": "header_parser.cpp",
+              "ViewState": "AQIAAJEBAAAAAAAAAAAAAJwBAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-06T06:16:52.929Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\main.cpp",
+              "RelativeDocumentMoniker": "main.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\Header_file_to_code_gen_tool\\source_code\\main.cpp",
+              "RelativeToolTip": "main.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-06T06:04:05.945Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

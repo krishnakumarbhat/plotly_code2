@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DPH_RR_ADAS_RESIM_CONFIGURATION xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Product_Name>RR_ADAS_RESIM</Product_Name>
+	<Product_Major_Version>1</Product_Major_Version>
+	<Product_Minor_Version>0</Product_Minor_Version>
+	<Sensor_Type>SRR</Sensor_Type>
+	<Sensor_Config_Version>1</Sensor_Config_Version>
+	<Customer_Name>AUDI</Customer_Name>
+	<Customer_Config_Version>1</Customer_Config_Version>
+	<Customer_Config_File_Name>C:\WORKSPACE\18_JULY_2016\ResimulationTool\DOCS\Addl\udp_config_xml.xml</Customer_Config_File_Name>
+	<Sensor_Mode>TRACKER</Sensor_Mode>
+	<DPH_RR_ADAS_RESIM_Mode>SIL_DV_CONTINUOUS</DPH_RR_ADAS_RESIM_Mode>
+	<Verbose_Enable_Status>Enable</Verbose_Enable_Status>
+	<Verbose_Licence>Default</Verbose_Licence>
+	<Verbose_Mode>LEVEL_3</Verbose_Mode>
+	<Calibration_Mode>XML</Calibration_Mode>
+	<SENSOR_STATUS>
+		<REAR_LEFT>1</REAR_LEFT>
+		<REAR_RIGHT>1</REAR_RIGHT>
+		<FRONT_RIGHT>1</FRONT_RIGHT>
+		<FRONT_LEFT>1</FRONT_LEFT>
+	</SENSOR_STATUS>
+</DPH_RR_ADAS_RESIM_CONFIGURATION>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+
+<Embedded_Library_Output_Control>
+	<!-- SIL SRR3 Embedded_Library Configuration Control XML Version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->		
+	<SIL_SRR3_Embedded_Library_Output_Control_XML_Version>1.8</SIL_SRR3_Embedded_Library_Output_Control_XML_Version>
+	
+	<!-- To define the CUSTOMER for which the Embedded_Library is Executed. 
+		 Options available are: SRR3: AUDI, BMW, JLR, SCANIA, GEELY, HKMC_GEN2 -->
+	<Customer_Name>BMW</Customer_Name>
+  <!-- Only for BMW .
+       NORMAL -  will take the pcan timestamp from the UDP logs
+       DAUERLAUFT - will correct the timestamp generated from the files
+       NOTE: Keep this as NORMAL for normal run-->
+	<Customer_Logs>NORMAL</Customer_Logs>
+	<!-- XML Configuration Control for Embedded_Library Output DVL Files- 
+				DVL_FILES_ENABLED - GENERATE Embedded_Library Output DVL Files 
+				DVL_FILES_DISABLED - SUPPRESS Embedded_Library Output DVL Files -->
+	<Suppress_DVL_Files>DVL_FILES_ENABLED</Suppress_DVL_Files>
+	
+	<!-- XML Configuration Control for Embedded_Library Output DVSU Files- 
+				DVSU_FILES_ENABLED - GENERATE Embedded_Library Output DVSU Files 
+				DVSU_FILES_DISABLED - SUPPRESS Embedded_Library Output DVSU Files -->
+	<Suppress_DVSU_Files>DVSU_FILES_ENABLED</Suppress_DVSU_Files>
+	
+		<!-- XML Configuration Control for the Transmission of CAN Data - 
+				CAN_TX_ENABLED - Send RESIM outputs to CANoe(in Live mode) 
+				CAN_TX_DISABLED-Don't send RESIM outputs to CANoe -->
+	<Suppress_CAN_Transmission>CAN_TX_DISABLED</Suppress_CAN_Transmission>
+	
+	<!-- XML Configuration Control for the Transmission of UDP Data- 
+				UDP_TX_ENABLED - Send RESIM outputs to Orcas(in Live mode) 
+				UDP_TX_DISABLED-Don't send RESIM outputs to Orcas -->
+	<Suppress_UDP_Transmission>UDP_TX_DISABLED</Suppress_UDP_Transmission>
+				
+	<!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				XML_TRACE_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				XML_TRACE_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+	<Suppress_XML_Trace_Files>XML_TRACE_ENABLED</Suppress_XML_Trace_Files>
+	
+	<!-- XML Configuration Control for Embedded_Library Output XML Trace Files for BMW_LOW- 
+				CDC_CHECK_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				CDC_CHECK_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+	<CDC_CHECK_Files>CDC_CHECK_DISABLED</CDC_CHECK_Files>
+	
+	<!-- Sensor_CAN XML Configuration Control for Embedded_Library Output XML Trace Files for BMW_LOW- 
+				SCAN_TRACE_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				SCAN_TRACE_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+	<Suppress_SCAN_Trace_Files>SCAN_TRACE_DISABLED</Suppress_SCAN_Trace_Files>
+	
+	<!--XML Configuration Control for Embedded_Library plp synchronization 
+	             PLP_SYNC_ENABLED - Synchronize plp timestamp to output 
+                 PLP_SYNC_DISABLED - SUPPRESS Synchronize plp timestamp to output -->
+	<Suppress_plp_synchronization>PLP_SYNC_ENABLED</Suppress_plp_synchronization>
+	
+  <!--XML Configuration Control for Embedded_Library plp synchronization 
+	             ENABLE_TRACKER_MODE- Synchronize plp timestamp to output 
+               DISABLE_TRACKER_MODE- SUPPRESS Synchronize plp timestamp to output -->
+  <Suppress_Tracker_internal_log>ENABLE_TRACKER_MODE</Suppress_Tracker_internal_log>
+  
+ 	<!-- External Error via XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				EXTERNAL_ERROR_XML_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				EXTERNAL_ERROR_XML_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+	<Load_Exteranl_Error_XML>EXTERNAL_ERROR_XML_ENABLED</Load_Exteranl_Error_XML>
+	
+  <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				USC_NORMAL - Loads the USC from the UDP logs 
+				USC_READ_FROM_XML - Loads the USC from the XML file -->
+ <USC_XML_Control>USC_NORMAL</USC_XML_Control>
+ 
+ <USC_FILE_FL>/mnt/plkra/projects/BMW-SRR3/7-Tools/resim_HPCC/bin/x64/TCI_gzvcb3_Resim_test/713360/Config/USC_Calibration/USC_XML_FL.xml</USC_FILE_FL>
+ <USC_FILE_FR>/mnt/plkra/projects/BMW-SRR3/7-Tools/resim_HPCC/bin/x64/TCI_gzvcb3_Resim_test/713360/Config/USC_Calibration/USC_XML_FR.xml</USC_FILE_FR>
+ <USC_FILE_RL>/mnt/plkra/projects/BMW-SRR3/7-Tools/resim_HPCC/bin/x64/TCI_gzvcb3_Resim_test/713360/Config/USC_Calibration/USC_XML_RL.xml</USC_FILE_RL>
+ <USC_FILE_RR>/mnt/plkra/projects/BMW-SRR3/7-Tools/resim_HPCC/bin/x64/TCI_gzvcb3_Resim_test/713360/Config/USC_Calibration/USC_XML_RR.xml</USC_FILE_RR>
+  
+  <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- -->
+  <Tracker_Fix_Algorithm>
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				LOAD_VALUES_FROM_UDP - Updates the values from the UDP logs 
+				LOAD_VALUES_FROM_XML - Updated the values from the below tags -->
+  <Algorithm_Control>LOAD_VALUES_FROM_UDP</Algorithm_Control>
+  
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				DISABLE_ALGORITHM - Disables the fix Algorithm 
+        ENABLE_ALGO_WITH_PARAMETER_SET1 - Enables the fix Algorithm.
+        ENABLE_ALGO_WITH_PARAMETER_SET2 - Enables the fix Algorithm -->
+  <Ghost_Detections_Enable>DISABLE_ALGORITHM</Ghost_Detections_Enable>
+  
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				ENABLE_ALGORITHM - Enables the fix Algorithm 
+				DISABLE_ALGORITHM - Disables the fix Algorithm  -->
+  <Tram_Fix_Enable>DISABLE_ALGORITHM</Tram_Fix_Enable>
+  
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				ENABLE_ALGORITHM - Enables the fix Algorithm 
+				DISABLE_ALGORITHM - Disables the fix Algorithm  -->
+  <Kerbstone_Fix_Enable>DISABLE_ALGORITHM</Kerbstone_Fix_Enable>
+  
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				ENABLE_ALGORITHM - Enables the fix Algorithm 
+				DISABLE_ALGORITHM - Disables the fix Algorithm  -->
+  <SWW_Enable_ConcreteGuardrailSuppression>DISABLE_ALGORITHM</SWW_Enable_ConcreteGuardrailSuppression>
+  
+    <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				ENABLE_ALGORITHM - Enables the fix Algorithm 
+				DISABLE_ALGORITHM - Disables the fix Algorithm  -->
+  <SWW_Enable_KerbstoneSuppression>DISABLE_ALGORITHM</SWW_Enable_KerbstoneSuppression>
+  </Tracker_Fix_Algorithm>
+	    
+	<!-- Embedded_Library Output XML Trace files for all Customers
+	    XML Trace File selection values: UDP_Datas: 	1 => Generates XML Prints of Embedded_Library In and Out UDP datas
+														0 => Suppress XML Prints of Embedded_Library In and Out UDP datas
+											      
+										 Active Faults: 1 => Generates XML Prints of  Active Faults 
+														0 => Suppress XML Prints of  Active Faults  --> 
+	<XML_Trace_Files>
+		<Cal_Error_Files>0</Cal_Error_Files>
+		<Active_Faults>1</Active_Faults>
+		<UDP_Datas>1</UDP_Datas>
+	</XML_Trace_Files>
+	
+	<!-- Parts of XML Prints: 1 => Generate XML Print 
+							  0 => Suppress XML Print -->
+	<XML_Prints>
+		<Vehicle_Info>1</Vehicle_Info>
+		<Mounting_Info>1</Mounting_Info>
+		<MNR_blockage>1</MNR_blockage>
+		<TD_blockage>1</TD_blockage>
+		<Self_Dets>1</Self_Dets>
+		<Opp_Dets>1</Opp_Dets>
+		<Curvi_Tracks>1</Curvi_Tracks>
+		<OH_Info>0</OH_Info>
+		<Fences_Info>0</Fences_Info>
+		<Alignment_Info>1</Alignment_Info>
+		<Z4_Z7B_Cust_Data>0</Z4_Z7B_Cust_Data>
+		<ADC_Physical_Data>1</ADC_Physical_Data>
+		<kd_eol>0</kd_eol>
+		<Algo_Z7B_core>1</Algo_Z7B_core> <!-- Algo Timing Info of Z7B core -->
+		<Algo_Z7A_core>1</Algo_Z7A_core> <!-- Algo Timing Info of Z7A core -->
+		<Algo_Z4_core>1</Algo_Z4_core> <!-- Algo Timing Info of Z4 core -->
+		<PATH_Tracking_Info>0</PATH_Tracking_Info>
+		<LCDA_Info>1</LCDA_Info> 
+		<CTA_Info>1</CTA_Info>
+		<RECW_Info>1</RECW_Info>
+		<ASW_Info>1</ASW_Info>
+		<ABA_Info>1</ABA_Info>
+	</XML_Prints>
+	
+	<!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				1 - GENERATE Embedded_Library input CSV Files for all logging streams
+				0 - SUPPRESS Embedded_Library Output CSV Files for all logging streams -->
+	<UDP_Log_Data_CSV>1</UDP_Log_Data_CSV>
+	
+	<!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				1 - GENERATE Embedded_Library PCAN_DECODER_XML  Files 
+				0 - SUPPRESS Embedded_Library PCAN_DECODER_XML  Files-->
+	<PCAN_DECODER_XML>1</PCAN_DECODER_XML>
+	
+	<!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				1 - GENERATE Embedded_Library input XML Trace Files for all logging streams
+				0 - SUPPRESS Embedded_Library Output XML Trace Files for all logging streams -->
+	<UDP_Log_Data_XML_TRACE>1</UDP_Log_Data_XML_TRACE>
+	
+	<!-- XML Configuration Control for Embedded_Library Output BIN Files-   
+				BIN_FILES_ENABLED - GENERATE Embedded_Library Output BIN Files 
+				BIN_FILES_DISABLED - SUPPRESS Embedded_Library Output BIN Files -->
+	<Suppress_BIN_Files>BIN_FILES_DISABLED</Suppress_BIN_Files>
+	<!-- XML Configuration Control for Embedded_Library Output BIN Files-   
+				CONSOLE_PRINTS_ENABLED - GENERATE Embedded_Library Output BIN Files 
+				CONSOLE_PRINTS_DISABLED - SUPPRESS Embedded_Library Output BIN Files -->
+	<Suppress_Console_Prints>CONSOLE_PRINTS_ENABLED</Suppress_Console_Prints>
+		
+	<!-- Embedded_Library Output BIN Files for all Customers
+	    BIN File selection values: 1 => Generate Embedded_Library Output BIN Files for Enabled BIN Files
+								   0 => Suppress Embedded_Library Output BIN Files for Disabled BIN Files -->		
+    <BIN_Files>	
+		<DETECTIONS>1</DETECTIONS>
+		<FENCES>1</FENCES>
+		<OH_OBJECT>1</OH_OBJECT>
+		<TRACKER_OUT>1</TRACKER_OUT>
+		<RADAR_PARAM>1</RADAR_PARAM>
+		<VEHICLE_DATA>1</VEHICLE_DATA>
+		<GROUPED_TRACKLETS>1</GROUPED_TRACKLETS>
+		<OH_LOGGED>1</OH_LOGGED>
+		<DEBUG_OH_OBJECTS>1</DEBUG_OH_OBJECTS>
+		<DEBUG_DETECTION_GROUPS>1</DEBUG_DETECTION_GROUPS>
+		<FEATURES>1</FEATURES>
+		<LCDA>1</LCDA>
+		<RECW>1</RECW>
+		<CTA>1</CTA>
+		<ASW>1</ASW>
+		<VISOB>1</VISOB>
+		<Freespace>1</Freespace>
+		<ABA>1</ABA>
+		<Timing_Info>1</Timing_Info>
+		<TODS>1</TODS>
+	</BIN_Files>
+
+
+<!-- Angular Error Manipulation (ANERMA) - 
+Path for test and reference files which stores the required parameters to simulate angular error noise (for testing and analysis) -->
+
+<ANERMA_PARAMETER_FILE_REFERENCE>C:/anerma/AU536</ANERMA_PARAMETER_FILE_REFERENCE>
+<ANERMA_PARAMETER_FILE_TEST>C:/anerma/PO513</ANERMA_PARAMETER_FILE_TEST>
+
+</Embedded_Library_Output_Control>
+

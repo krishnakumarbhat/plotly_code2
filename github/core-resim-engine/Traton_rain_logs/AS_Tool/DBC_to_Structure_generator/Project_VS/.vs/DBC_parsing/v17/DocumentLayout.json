@@ -1,0 +1,166 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\print_operations.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\print_operations.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\generate_CPP_file.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\generate_CPP_file.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\datatype_analysis.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\datatype_analysis.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\DBC_parser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\DBC_parser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\DBC_parser.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\DBC_parser.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\signal_encoding.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\signal_encoding.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\Vector_operations.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\Vector_operations.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\string_operations.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5DD2028C-2984-4BC9-BD3F-CCE7E36CCF66}|DBC_parsing\\DBC_parsing.vcxproj|solutionrelative:DBC_parsing\\string_operations.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DBC_parser.h",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\DBC_parser.h",
+              "RelativeDocumentMoniker": "DBC_parsing\\DBC_parser.h",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\DBC_parser.h",
+              "RelativeToolTip": "DBC_parsing\\DBC_parser.h",
+              "ViewState": "AQIAAE4AAAAAAAAAAAAiwFwAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-26T18:17:02.719Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "generate_CPP_file.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\generate_CPP_file.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\generate_CPP_file.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\generate_CPP_file.cpp",
+              "RelativeToolTip": "DBC_parsing\\generate_CPP_file.cpp",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAAABgAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-26T18:08:01.53Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\main.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\main.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\main.cpp",
+              "RelativeToolTip": "DBC_parsing\\main.cpp",
+              "ViewState": "AQIAAD0AAAAAAAAAAAAowEkAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-26T17:47:25.385Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "print_operations.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\print_operations.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\print_operations.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\print_operations.cpp",
+              "RelativeToolTip": "DBC_parsing\\print_operations.cpp",
+              "ViewState": "AQIAAKQBAAAAAAAAAAASwLIBAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-12T10:05:05.991Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DBC_parser.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\DBC_parser.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\DBC_parser.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\DBC_parser.cpp",
+              "RelativeToolTip": "DBC_parsing\\DBC_parser.cpp",
+              "ViewState": "AQIAAM4BAAAAAAAAAADwv+YBAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-09T05:28:29.44Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "signal_encoding.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\signal_encoding.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\signal_encoding.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\signal_encoding.cpp",
+              "RelativeToolTip": "DBC_parsing\\signal_encoding.cpp",
+              "ViewState": "AQIAADMAAAAAAAAAAAAIwEAAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-09T05:28:18.729Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "datatype_analysis.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\datatype_analysis.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\datatype_analysis.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\datatype_analysis.cpp",
+              "RelativeToolTip": "DBC_parsing\\datatype_analysis.cpp",
+              "ViewState": "AQIAAJMAAAAAAAAAAAAowKsAAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-09T05:27:53.089Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "string_operations.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\string_operations.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\string_operations.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\string_operations.cpp",
+              "RelativeToolTip": "DBC_parsing\\string_operations.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-09T05:29:17.429Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Vector_operations.cpp",
+              "DocumentMoniker": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\Vector_operations.cpp",
+              "RelativeDocumentMoniker": "DBC_parsing\\Vector_operations.cpp",
+              "ToolTip": "C:\\Analysis_Framework_Suite\\AS_Tool\\DBC_to_Structure_generator\\Project_VS\\DBC_parsing\\Vector_operations.cpp",
+              "RelativeToolTip": "DBC_parsing\\Vector_operations.cpp",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-09T05:29:19.58Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

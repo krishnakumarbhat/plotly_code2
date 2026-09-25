@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CONFIGURATION>
+<!-- The VsomeIp Application Name -->
+<VSOMEIP_APPLICATION_NAME>srr_master_rx</VSOMEIP_APPLICATION_NAME>
+<VSOMEIP_CONFIGURATION_FILE_PATH>C:/Plastic/10030156_03_Analysis_Framework_Suite/VSOMEIP/VSOMEIP_Gateway/Config/vsomeip_config_srr_master.json</VSOMEIP_CONFIGURATION_FILE_PATH>
+<A_STEP_VERSION>A430</A_STEP_VERSION>
+<CUSTOMER>BMW_SRR5</CUSTOMER>
+
+</CONFIGURATION>

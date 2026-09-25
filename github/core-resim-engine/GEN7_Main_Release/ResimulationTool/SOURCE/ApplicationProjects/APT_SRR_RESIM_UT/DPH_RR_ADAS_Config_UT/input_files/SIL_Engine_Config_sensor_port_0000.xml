@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR5 APTIV SIL component configuration -->
+<SIL_ENGINE_Configuration>
+  <!-- SIL SRR5 Configuration XML version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+	<SIL_ENGINE_Config_XML_Version>4.5</SIL_ENGINE_Config_XML_Version>
+
+  <!-- To define the CUSTOMER for which the RESIM is Executed. 
+		 Options available are: 
+		 SRR3: 	MAN_SRR3 
+		 SRR5: 	RNA_SUV, RNA_CDV, GEELY_SRR5, GEELY_SRR5_INTERNAL, CHANGAN_SRR5, SGM_358_SRR5,GWM_SRR5, BMW_LOW, BMW_MID, BMW_HIGH, BMW_MID_LOW, TML_SRR5
+		 SRR6:	NISSAN_GEN5, PLATFORM_GEN5, HONDA_GEN5
+		 FLR4P: MOTIONAL_FLR4P
+		 BMW_SP25: BMW_SP25_L2, BMW_SP25_L3
+		 STLA:  STLA_SCALE1, STLA_SCALE3, STLA_SCALE4************************************ -->
+	<Customer_Name>STLA_SCALE1</Customer_Name>
+	
+<!-- Temporary flag to enable testing only for DC for STLA Scales -->
+	<ENABLE_DC_ONLY>0</ENABLE_DC_ONLY>
+	
+   <!--  To disable badlog checks in CDC Mode
+	      TRUE: To Ignore BAD LOG Scenarios Found in the Log and Conitnue the Execution in SIL ENGINE 
+	      FALSE: To Reject the LOG if any BAD LOG Cases are found in the Log -->
+    <BAD_LOG_DISABLE>FALSE</BAD_LOG_DISABLE>
+	
+  <!-- Resim output path selection. Options are SAME_AS_INPUT  or SAME_AS_OUTPUT or NEW_OUTPUT_PATH
+	   If resim output path selection is NEW_OUTPUT_PATH use Output_Path_Location tag to enter valid folder path -->
+	<RESIM_OUTPUT_PATH>
+		<Output_Path_Options>SAME_AS_INPUT</Output_Path_Options>	
+	</RESIM_OUTPUT_PATH>
+
+   <!--Additional DEBUG Data can be enabled using the EB Configuration file
+		Options are NONE or Name of the EB config .xml file including full File Path 
+		Read independent of options selected in RESIM_Execution_User -->
+	<EMBEDDED_LIB_CONFIG_PATH>
+     	<SENSOR_CONFIG>NONE</SENSOR_CONFIG>
+	    <RECU_CONFIG>NONE</RECU_CONFIG>
+    </EMBEDDED_LIB_CONFIG_PATH>
+  <!-- Output Mode Options available are 
+	SINGLE_DVSU_OUTPUT: Single dvsu enabled to handle Single input DVSU file , proceed resim with Single dvsu file
+	FOUR_DVSU_OUTPUT : FOUR dvsu enabled to handle four  input DVSU file ,proceed  resim with 4 dvsu's file.(default option)
+	ORCAS_MDF4: To Handle ORCAS Logs
+	CANAPE_MDF4: To Handle Canape Logs
+	AUTERA_MDF4 : To generate Autera MDF4 Logs as Resim output.
+	VIGEM_VPCAP: To handle ViGEM VPCAP logs
+	X2E_VECTOR_MDF4: To handle X2E / Magna Logs
+	CANOE_VECTOR_MF4: To handle CANOE Logs -->
+	<RESIM_OUTPUT_FILE_FORMAT>
+		<SINGLE_DVSU>1</SINGLE_DVSU>
+	</RESIM_OUTPUT_FILE_FORMAT>
+	
+  <!-- Sensor selection values: 
+	1: Resim is executed for that Sensor Position
+	0: Resim is not executed for that Sensor Position -->
+	<SENSOR_STATUS>
+		<SENSOR_00>0</SENSOR_00> <!-- SENSOR RL -->
+		<SENSOR_01>0</SENSOR_01> <!-- SENSOR RR -->
+		<SENSOR_02>0</SENSOR_02> <!-- SENSOR FR -->
+		<SENSOR_03>0</SENSOR_03> <!-- SENSOR FL -->
+		<SENSOR_04>0</SENSOR_04> <!-- SENSOR RC -->
+		<SENSOR_05>1</SENSOR_05> <!-- SENSOR FC -->
+		<SENSOR_06>0</SENSOR_06> <!-- SENSOR BP_R -->
+		<SENSOR_07>0</SENSOR_07> <!-- SENSOR BP_L -->
+		<SENSOR_08>0</SENSOR_08> <!-- SENSOR 08 -->
+		<SENSOR_09>0</SENSOR_09> <!-- SENSOR 09 -->
+		<SENSOR_10>0</SENSOR_10> <!-- SENSOR 10 -->
+		<SENSOR_11>0</SENSOR_11> <!-- SENSOR 11 -->
+		<SENSOR_19>0</SENSOR_19> <!-- SENSOR ECU -->
+	</SENSOR_STATUS>
+	  
+ <OUTPUT_FILE_FOLDER>
+		<!-- CUSTOMER_CAN_OUTPUT_ENABLE - BMW CANFD Folder BN_CALIFR to generate FAS CAN & SENSOR CAN Output Files.
+				1:  To enable the output BN_CALIFR folder creation and CAN data written to  CALIFR files
+				0: To disable the BN_CALIFR folder creation-->
+	<CUSTOMER_CAN_OUTPUT_ENABLE>0</CUSTOMER_CAN_OUTPUT_ENABLE>
+		<!-- APTIV_INTERNAL_OUTPUT_ENABLE - To enable or disable the RAW_DEBUG_UDP Data files 
+				1.  to enable the output SRR_RAW_DEBUG folder creation and APTIV raw debug UDP data written to SRR_DEBUG files
+				0.  disable the creation of SRR_RAW_DEBUG folder-->
+	<APTIV_INTERNAL_OUTPUT_ENABLE>1</APTIV_INTERNAL_OUTPUT_ENABLE>
+ </OUTPUT_FILE_FOLDER>
+  
+	<!-- CDC_WRITE_OUTPUT_ENABLE - To write CDC data to output Files.
+				1:  To enable the option of writing CDC data to resimulated output UDP files
+				0:  To Disable the writing of CDC data to resimulated output UDP files--> 
+	<CDC_WRITE_OUTPUT_ENABLE>0</CDC_WRITE_OUTPUT_ENABLE>
+	
+ <TRACKER_INTERNAL_PERIODIC_INJECTION>
+ <!-- GDSR_F360_PERIODIC_INJECTION_ENABLE - To inject periodic injection of GDSR for the customers BMW_LOW and BMW_HIGH and F360 injection for radar ecu 
+				1:  To enable the periodic injection of GDSR/F360 tracker internals + init  during resimulation 
+				0:  To disable the periodic injection of GDSR/F360 tracker internals + init during resimulation -->
+	<GDSR_F360_INIT_INJECTION_ENABLE>0</GDSR_F360_INIT_INJECTION_ENABLE>
+	<!--GDSR_F360_INIT_INJECTION_ENABLE - To inject f360/gdsr injection at the init API
+				1:  To enable the injection of gdsr/F360 at init during resimulation 
+				0:  To disable the injection of gdsr/F360 at init during resimulation -->
+	<GDSR_F360_PERIODIC_INJECTION_ENABLE>0</GDSR_F360_PERIODIC_INJECTION_ENABLE>
+ </TRACKER_INTERNAL_PERIODIC_INJECTION>
+ 
+  <!-- SIL_Injection Mode  - 
+		VEHICLE_EXPEDITION_FILE - SIL Input is vehicle collected Files
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+		VIRTUAL_SIMULATION_FILE - SIL Input is Virtual Simulation Tools IPG/VTD/DSPACE ASM created Virtual simulation files.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)
+		VIRTUAL_SIMULATION_LIVE - SIL Input is Live streams from Virtual Simulation tools IPG/VTD/DSPACE ASM.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)
+		VEHICLE_EXPEDITION_LIVE - SIL Input is live data from DSpace transmitter or HIL bench
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)-->
+	<SIL_INJECTION_MODE>VEHICLE_EXPEDITION_FILE</SIL_INJECTION_MODE>
+  
+  <!-- LOG REPLAY mode selection: User shall provide the list of filenames the RESIM should execute in the Input_Log.txt file 
+		Sequential_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed uniquely by resetting the memory after each file.
+								 Hence history is not maintained between the input files.
+								 
+   	    Continuous_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed in continuity between the files.
+								 The memory is NOT reset after each file. Hence history is maintained between the input files.  
+								 Please ensure that the Logs are collected in a continuous manner from the Vehicle Expedition to use this mode 
+								 This Mode provides results with more correlation with actual Sensor behaviour 
+								 User is responsible to make sure that the file list is sequential the RESIM shall not check this. 
+								 USE THIS MODE WITH CAUTION -->
+	<LOG_REPLAY_MODE>Continuous_FILE_Input</LOG_REPLAY_MODE>
+  <!-- SIL_Entrypoint -
+		CDC					- CDC Data processing
+							  The SIL component receives Front-End data over a reference parameter of the SIL function call.
+							  The SIL component processes Front-End data to raw targets, object hypotheses, Fences.
+							  NOTE: Input Logs should be of larger size as USC Calibrations need to be extracted from UDP MUX Message
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  [This can be selected for LOW/MID variant]
+							  
+		DETECTIONS_UDP		- Data processing of raw target detections
+							  The SIL component receives UDP data via a reference parameter of the SIL function call,
+							  SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs.
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  [This can be selected for LOW/MID variant]
+
+		AF_MODE         	- Running SIL from Angle Finding. 
+							  Inputs are FLR4P UDP streams. 
+							  
+		DSPACE_MODE         - Running dSPACE data BMW_LOW, BMW_MID & BMW_HIGH closed loop SIL. 
+							  Inputs are dSPACE UDP streams & SOME IP. 
+							  Decoded Detections from dSPACE stream are fed to radar emb libraries and 
+							  processed PCAN detections are fed to ECU lib through Symbol interface. 
+							  
+		IGNORE_RESIM_KPI_BAD_LOGS_DETECTION_MODE 
+		
+							- Developers can use this mode to execute resim on Poor Logs collected from road.
+							  This mode of execution ignores all the bad logs check(Queue Size 50).
+							  This Mode runs Detection Mode Only.
+							  Resim Team DOES NOT Recommend this mode to be used.
+							  This mode should NOT be used for any Resim Performance analysis.
+							  This mode should NOT be used for any customer deliverables.
+							  Resim Performance is Very POOR in this mode.
+							  Results from this mode are INACCURATE 
+							  Tickets CANNOT be created if developers are using this mode 
+							  
+		RDD_MODE			- Running SIL in RDD Mode.	-->
+	<SIL_Entrypoint>DETECTIONS_UDP</SIL_Entrypoint>
+  
+	<RESIM_UDP_FRAME_TRANSMISSION  STATUS = "FALSE">
+	<!-- UDP_OUTPUT_TRANSMISSION
+			1> ENABLE = When selected, FRAMES will get transmitted 
+			2> DISABLE = When selected, FRAMES will not get transmitted -->
+		<RESIM_OUTPUT_UDP_TRANSMISSION>DISABLE</RESIM_OUTPUT_UDP_TRANSMISSION>
+	<!-- UDP_INPUT_TRANSMISSION
+			1> ENABLE = When selected, FRAMES will get transmitted 
+			2> DISABLE = When selected, FRAMES will not get transmitted
+			Note:- INPUT UDP frame transmission is not valid for DSPACE MODE-->
+		<RESIM_INPUT_UDP_TRANSMISSION>DISABLE</RESIM_INPUT_UDP_TRANSMISSION>
+	<!-- When using two PCs
+			Set Destination IP :- 192.168.1.41
+	        PORT number :- 5555 -->
+	<!-- In case of loop back mode (Using only one PC)
+			Set Destination IP :- 127.0.0.1
+	        Output PORT number :- 5555 
+	        Input PORT number :- 5556 -->
+		<DESTINATION_IP>127.0.0.1</DESTINATION_IP>	
+		<DESTINATION_OUTPUT_PORT>5555</DESTINATION_OUTPUT_PORT>
+		<DESTINATION_INPUT_PORT>5556</DESTINATION_INPUT_PORT>
+	</RESIM_UDP_FRAME_TRANSMISSION>
+	
+	<!-- SIL_LIVE_MODE_CONFIGURATION
+			1> AS_DSPACE_TX = Select and Configure socket for Data Reception from AS DSPACE TRANSMITTER
+							  Set Destination IP :- 127.0.0.1
+	                          Set Sensor port 	 :- 5555
+							  Tranmission will happen for both Sensor/ECU from single ip and port
+			2> BENCH        = Select and Configure socket for Data Reception from BENCH HARDWARE
+							  Set Destination IP :- 0.0.0.0
+	                          Set MULTICAST_IP	 :- 239.255.42.99
+							  Set Sensor port 	 :- 5555
+							  Set ECU port 		 :- 3490
+							  Tranmission from happen for Sensor and ECU on different ports-->
+	<SIL_LIVE_MODE_CONFIGURATION>
+		<SIL_LIVE_MODE_TX_CONFIGURATION>AS_DSPACE_TX</SIL_LIVE_MODE_TX_CONFIGURATION>
+		<DESTINATION_IP>127.0.0.1</DESTINATION_IP>	
+		<MULTICAST_IP>239.255.42.99</MULTICAST_IP>
+		<SENSOR_PORT>0000</SENSOR_PORT>
+		<ECU_PORT>3490</ECU_PORT>
+	</SIL_LIVE_MODE_CONFIGURATION>
+
+  <!-- Source of Calibrations. Possible options:
+		LOAD_DEFAULT_CAL - Load calibrations from Source Code (All Customers)
+		LOAD_UDP_CAL     - using all calibrations from UDP -->
+	<CALIBRATION_SOURCE>LOAD_UDP_CAL</CALIBRATION_SOURCE>
+ 
+	<RESIM_LOG_INFO>
+		<!-- 	LogLevel
+				to genrate the error log traces
+				Set the log levels to get printed on log tracing file
+                    0 - DisableLogTrace, log tracing will be disabled
+                    1 - Critical
+                    2 - Error
+                    3 - Warnings and Error
+                    4 - Info, Warnings and Error -->		
+		<LogLevel>4</LogLevel>
+		
+		<!-- LogIncludeDateTime. 
+				Options are 
+					1. Include Date time
+					2. Doesn't include date time.-->
+		<LogIncludeDateTime>1</LogIncludeDateTime>
+		
+		<!-- LogTracingPath selection. 
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT and 
+				valid folder path with below Supported file formats 
+						.xml
+                        .txt
+                        .log -->
+		<LogTracingPath>SAME_AS_INPUT</LogTracingPath>
+		
+		<!-- TimestampTracePath - Create a Debug information / report containing Timestamp information. 
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT -->
+		<TimestampTracePath>NONE</TimestampTracePath> 
+		
+		<!-- ResimErrorTracepath - Create a Debug information / report containing Errors in RESIM.
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT -->
+		<ResimErrorTracepath>NONE</ResimErrorTracepath>
+		
+		<!-- LogScanDropTracePath - Create a debug information / Report for Scan drops in the input log. 
+				Options are 
+				SAME_AS_INPUT, 
+				NONE,
+				SAME_AS_OUTPUT -->
+		<LogScanDropTracePath>NONE</LogScanDropTracePath>	
+
+		<!--PLP_TIMESTAMP Selection : Options Are SAME_AS_INPUT, NONE , SAME_AS_OUTPUT and valid folder path 
+			PLP_TIMESTAMP tag to enter valid folder path only if options such as SAME AS INPUT OR NONE , SAME_AS_OUTPUTis not selected  -->
+        <PLP_TIMESTAMP>NONE</PLP_TIMESTAMP>	
+		
+		<!--  To get SCanIndex/checksum/crc error text file 
+				Options are  
+					1. A text file will be created with Packet loss Info
+					0. NO text file with packet loss info is created
+				This is applicable only for RNA_SRR5
+				
+				Enable or Disable Timing profile
+					1 – Enable Timing profile
+					0 – Disable Timing profile  -->			
+		<TIMING_PROFILE>0</TIMING_PROFILE>		
+		
+		<!-- TIMING_PROFILE_PATH selection. Options are SAME_AS_INPUT, NONE , SAME_AS_OUTPUT and valid folder path
+			TIMING_PROFILE_PATH tag to enter valid folder path only if options such as SAME_AS_INPUT OR NONE ,SAME_AS_OUTPUT is not selected
+			Provide the path to generate log timing profile files.-->	
+		<TIMING_PROFILE_PATH>NONE</TIMING_PROFILE_PATH>
+		
+		<!-- STATISTIC_REPORT_PATH selection. Options are SAME_AS_INPUT , NONE , SAME_AS_OUTPUT and valid folder path
+			If STATISTIC_REPORT_PATH selection is neither SAME_AS_INPUT or NONE , SAME_AS_OUTPUT then use STATISTIC_REPORT_PATH tag to enter valid folder path
+			Provide the path to generate Statistic Report	
+			Warning Note:- Statistic Report feature is currently available for LINUX platform
+				In WINDOWS use NONE.
+				If want to avail this feature in windows, Please make sure to use same configured built dlls from all the libraries
+				FW:- RELEASE SENSORS:- RELEASE RECU:- RELAESE
+				FW:- DEBUG SENSORS:- DEBUG RECU:- DEBUG -->
+		<STATISTIC_REPORT_PATH>NONE</STATISTIC_REPORT_PATH>
+		
+		  <!-- Create Signal MF4 File
+				Options are 
+					1. ENABLE -Create Signal MF4 File
+					2. DISABLE - No Signal File creation-->
+		<SIGNAL_CREATION>DISABLE</SIGNAL_CREATION>
+	</RESIM_LOG_INFO>		
+
+</SIL_ENGINE_Configuration>

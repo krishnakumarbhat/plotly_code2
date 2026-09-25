@@ -1,0 +1,207 @@
+Release-notes for CCA-Framework 1.5.2
+=====================================
+Installation
+------------
+Execute "CCA-Framework-Setup.exe" and follow the directions on the screen. 
+Previous versions of the CCA-Framework do not have to be de-installed.
+
+
+Release-log
+===========
+Version: 1.5.2, Release-date: 22.09.2016, Compatibility with CCA-Firmware 2.6.5 and higher unless otherwise noted.
+-----------------------------------------------------------------------------------------------
+### Bug-fix ###
+- When compiled with C, we defined bool as int. But the functions actually return uint8_t. The definition was adjusted accordingly.
+- Cca_convertConfigToXML: If the function returned successfully, an error code was set anyway.
+
+Version: 1.5.1, Release-date: 01.09.2016, Compatibility with CCA-Firmware 2.6.5 and higher unless otherwise noted.
+-----------------------------------------------------------------------------------------------
+### Enhancements ###
+- Added a python example
+
+### New functions ###
+- Cca_convertConfigToXML: Convert a CCA configuration file (".cca") to XML
+
+Version: 1.5.0, Release-date: 24.08.2016, Compatibility with CCA-Firmware 2.6.5 and higher unless otherwise noted.
+-----------------------------------------------------------------------------------------------
+### Enhancements ###
+- Added "vgm_errors.h". This file contains error code defines and documentation.
+- Documentation for supported devices
+- Documentation for supported firmware versions per function.
+- Added support for handling of new Digital-I/O-Messages.
+- Added last trigger id information to CcaDeviceStateSummary (Only supported on CCA-Firmware 2.9.3 and higher).
+- Add macro to compare version.
+ 
+### Changes ###
+- CcaDevice_sendMarkerEventEx: markerId is only incremented for ids where inc_id_event* is enabled. See Config->Events in the web interface.
+- Enum "CcaImageFrameFormat" has new value "CCA_FRAME_TYPE_12B_12B_LE", which replaced "CCA_RESERVED1".
+- Changed naming convention: MarkerID is the ongoing UserEventNumber, TriggerId is the UserEventID 
+
+### New functions ###
+- CcaSession_getSystemInfo: Get system information about the logger used to create the session.
+- Cca_getUserDataPath: Used to get a path on the data module where user data can be stored.
+- CcaInfoMessage_frameWidth: Gets the frame width of a CcaInfoMessage
+- CcaInfoMessage_frameHeight: Gets the frame height of a CcaInfoMessage
+
+For devices with Firmware 2.9.0+
+- CcaDevice_getConfiguration: Get device configuration and user provided configuration
+- CcaDevice_setConfiguration: Set device configuration using *.cca files.
+- CcaDevice_setUserConfiguration: Set device user provided Configuration. This includes BusSpec.
+- Cca_getSyslog: Download the cca syslog.
+
+For sessions created with Firmware 2.9.0+
+- CcaSession_getStateSummary: Get state summary from a session. See CcaDevice_getStateSummary.
+- CcaSession_getBusInterfaceStatistics: Get bus interface statistics from a session. See CcaDevice_getBusInterfaceStatistic.
+- CcaSession_getFormat: Get file type of the data files of the session.
+- CcaSession_getCopyInfo: Get information about the device the data was synced with.
+- CcaFile_getBusInterfaceStatistics:  Get bus interface statistic of a file. See CcaDevice_getBusInterfaceStatistic. 
+
+Version: 1.4.3, Release-date: 11.07.2016, Full compatibility with CCA-Firmware 2.6.6 and higher
+-----------------------------------------------------------------------------------------------
+### Bug-fix ###
+- Fix crash if number of folders in sessions wasn't calculated correctly.
+
+
+Version: 1.4.2, Release-date: 27.06.2016, Full compatibility with CCA-Firmware 2.6.6 and higher
+-----------------------------------------------------------------------------------------------
+### Bug-fix ###
+- Fixed an issue where big files couldn't be opened.
+
+
+Version: 1.4.1, Release-date: 27.06.2016, Full compatibility with CCA-Firmware 2.6.6 and higher
+-----------------------------------------------------------------------------------------------
+### Bug-fix ###
+- Fixed an issue where progress of files bigger than 4GB wasn't correct.
+- Fixed an issue with CcaDevice_shutdown and CcaDevice_reboot. On Copystations with firmware older than 2.8.3 they would always return false, even if they succeded.
+
+
+Version: 1.4.0, Release-date: 11.05.2016, Full compatibility with CCA-Firmware 2.6.6 and higher
+-----------------------------------------------------------------------------------------------
+### Changes ###
+- The signature of CcaDevice_writePrelabel() changed to allow more specific definition of the Prelabel-message.
+  See included Help-file for more information.
+
+### Bug-fix ###
+- Fixed a bug that slowed down property access.
+- Fixed memoryleak in CcaMessage_createEthernetMessage()
+
+### New functions ###
+- CcaEvent_getTriggerId(): Extract TriggerId of a CcaEvent.
+- CcaDevice_sendMarkerEventEx(): Function to send a marker with a specific ID, a comment and specifying if marker should be handled as manual or automatic trigger.
+  This function returns the absolute trigger ID as one of the output parameters.
+
+### Enhancements ###
+- TCP receive buffer for streaming increased to 16MB
+
+
+Version: 1.3.1, Release-date: 05.02.2016, Full compatibility with CCA-Firmware 2.6.6 and higher
+-----------------------------------------------------------------------------------------------
+### Bug-fix ###
+- Fixed bug with the CcaDevice_getBusInterfaceStatistic() function.
+
+### Enhancements ###
+- New example-project "cca-stream", which shows how the TCP stream of the CCA device can be used to receive messages
+  during recording.
+
+
+Version: 1.3.0, Release-date: 08.12.2015, Full compatibility with CCA-Firmware 2.6.0 and higher
+-----------------------------------------------------------------------------------------------
+### Changes ###
+- CcaTrace_setDebugLevel()-function now uses the new CcaTraceDebugLevel-Enumerator-Values to set the trace-level.
+
+### New functions ###
+- CcaDevice_getBusIdFromInterface(): Query the currently set bus-id of an interface given by interface-class and instance.
+- CcaDevice_getBusIdFromSlot(): Query the currently set bus-id of an interface given by interface-class and slot numbers.
+- CcaDevice_getStateSummery(): Query a summary of the current logger state. See CcaDeviceStateSummary data-structure for the 
+  returned values.
+- CcaDevice_getBusInterfaceStatistic(): Query the statistic of a bus-interface given by a bus-id.
+- CcaDevice_getComponentInfo(): Query the complete current component-information of a device. The information is stored 
+  in a CcaComponentCollection. The Information can be accessed with the CcaComponent-Interface.
+- CcaEvent_getEventString(): Extract the string of a CcaEvent.
+- New functions to access the following message-classes: CcaImageFrameMessage, CcaImageFragmentMessage, CcaMETAPIMessage, 
+  CcaDltMessage, CcaMarkerMessage, CcaDIOMessage, CcaADCMessage.
+- CcaLib_ErrorCodeToString(): Function to get a string for an error code that is returned by the CcaLib_getLastError()-function.
+- CcaDevice_writePreLabel(): Function to write a PreLabel-State or event. Currently (Firmware 2.6.2) this is only used if CCA 
+  records in the "ADTF-DAT-File (KaFas4)".
+
+### Enhancements ###
+- New example-project "cca-state", that shows how the current state of a CCA can be received. It also shows, how the trace-
+  output of the CCA-Framework can be redirected.
+- Support for copystation (CS-9100). Functions which are not supported by the copystation return false and CcaLib_getLastError()
+  returns CCA_ERR_FUNCTION_NOT_SUPPORTED_BY_DEVICE (0x200000018).
+- New combineContSessions-Option in the CcaSessionFilter. If this option is true, all continuous sessions will be combined and 
+  treated as one session. If this option is false, each continuous sessions will be treated as a separate sessions. After initialization
+  with CCA_INIT_SESSION_FILTER() this option is set to true, so the function is the same as in previous versions.
+  
+### Bug-fix ###
+- Fixed several bugs with the example-projects.
+- CcaConvert now also accepts name-macros in the destination-directory.
+- Fixed issue with Streamreader, if a packet with a corrupted header is received.
+
+### Know issues ###
+- The CcaDevice_getStateSummery()-function returns a invalid value for the diskSizeInBytes with CCA-Firmware 2.6.2. This is an issue with 
+  the Firmware that is fixed in the next firmware release.
+
+
+Version: 1.2.2, Release-date: 15.09.2015
+----------------------------------------
+- New option to filter single files in a session with the CcaSessionFilter integrated. This option is activated by setting the 
+  filterFilesInSessions-Value of the CcaSessionFilter.
+- Callback of Cca_downloadData()-function now also returns the progress while scanning the sessions on the CCA. The progress is returned after
+  every scanned file and every found directory.
+
+
+Version: 1.2.1, Release-date: 11.09.2015
+----------------------------------------
+- Extended error-reporting of the Cca_downloadData()-function.
+- Windows-Projects, which used a previous version of the CCA-Framework need the additional preprocessor-definition "WINDOWS"
+
+
+Version: 1.2.0, Release-date: 29.06.2015, Full compatibility with CCA-Firmware 2.5.0 and higher
+-----------------------------------------------------------------------------------------------
+### Changes ###
+- Delivery know also contains a 64 bit DLL and static library. This did lead to changes in the names of the libraries. The 32 bit version of the
+  CCA-Framework is now called "ccalib_x86_1-2-0.dll" and the 64 bit version is called "ccalib_x64_1-2-0.dll". Existing projects need adaptation to the 
+  new names.
+- CcaReaderOptions is deprecated. Use CcaSessionReaderOptions instead.
+- The Windows environmental variable, that is set during installation, now also contains a version-number, e.g. "CCA_FRAMEWORK_HOME_1_2_0".
+- The destinationFolder-parameter in Cca_convert() and Cca_convertEx() now only specifies the directory where the output-file will be created. The 
+  name of the output-file is given in the CcaConversionOptions.
+
+### New functions ###
+- Cca_downloadDataEx(): Enables compressed copy of data (in *.gz-format).
+- Cca_getCopyFileSize(): Get the data-size of sessions in a specific directory without starting a copy-process.
+- CcaDevice_checkBusspec() and CcaDevice_uploadLocalBusspec(): Compare "busspec.xml"-file of logger with a local file and upload the local file 
+  to logger.
+- CcaSessionReader_createByStream(): Enables reading from the CCA-Streamwriter during recording. Also see the CcaSessionReader_read() description.
+- Added the Property-Interface. Enables the manipulation of properties of the CCA (e.g. settings in the web-interface). An example-project shows how
+  this interface can be used.  
+- CcaMessage_flagsStruct(): Get the status-flags of a CcaMessage and write them into a CcaMessageFlags structure.  
+- CcaDevice_sendMarkerEventWithString(): Send a marker-event-message to the CCA with an additional string.  
+- CcaDevice_sendTriggerStop(): Send a trigger-stop-event to the CCA.
+- New functions to access the InfoMessage-Class.
+ 
+### Enhancements ###
+- Cca_downloadData(): Reworked progress-notification of the callback-function. See example-project for details.
+- Cca_convert(): CcaConversionOptions has new option to split output-files (only for VPCAP).
+- New example-projects to show how the CCA-Framework can be used.
+
+### Bug-fix ###
+- Fixed bug with CCA_SET_ARRAY_VALUES(type, arr, ...)-Macro. It can now be used more than once in a execution-block.
+
+### Known issues ###
+- The progress of the callback-function during conversion with Cca_convert() and Cca_convertEx() does under certain circumstances not reflect the 
+  progress accurately when using the Merge-option 
+- Cca_convert() and Cca_convertEx() only support conversion in VPCAP/PCAP-format.
+
+
+Version: 1.1.1, Release-date: 07.01.2015
+----------------------------------------
+- Improvement for the scanning of corrupted data.
+- Download-function only copies folder which are in the specified time-window.
+- New message-classes: FlexRay, LIN, Ethernet, RS232, MOST150.
+- Reworked error-handling.
+- Removed exception from library.
+- Fixed bugs in finder.
+- This version can coexist with older versions of the CCA-Framework.
+- Improved examples and documentation.

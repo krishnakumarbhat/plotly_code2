@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<adtf:project xmlns:adtf="adtf">
+    <general_settings>
+        <property name="active_configuration" value="Recording" />
+    </general_settings>
+    <configurations>
+        <configuration description="" name="Live">
+            <graph />
+        </configuration>
+        <configuration description="" name="Playback">
+            <graph />
+        </configuration>
+        <configuration description="" name="Recording">
+            <graph>
+                <connection connection_priority="50" dest="Demo_Filter.input" source="Harddisk_Player.NESTED_STRUCT" />
+                <connection connection_priority="50" dest="Demo_Media_Description_Display.output" source="Demo_Filter.output" />
+                <filter alias="Demo_Filter" idref="adtf.example.demo_empty" priority="3" />
+                <filter alias="Harddisk_Player" idref="adtf.stg.harddisk_player" priority="4">
+                    <settings>
+                        <property name="filename" type="String" value="..\..\..\..\..\..\..\bin\templates\example_test_file.dat" />
+                    </settings>
+                </filter>
+                <filter alias="Demo_Media_Description_Display" idref="adtf.example.demo_media_description_display" priority="5" />
+            </graph>
+        </configuration>
+    </configurations>
+    <fileinfo adtfversion="2.10.0" configversion="1.3" />
+    <configuration_settings />
+</adtf:project>

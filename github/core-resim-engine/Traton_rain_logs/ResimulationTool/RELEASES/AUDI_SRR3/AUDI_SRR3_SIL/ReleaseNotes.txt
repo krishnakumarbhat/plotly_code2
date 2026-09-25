@@ -1,0 +1,325 @@
+------------------------------------
+AUDI SRR3 SIL Release Notes
+------------------------------------
+This document provides a high level summary of changes since the previous Release, Patch, or
+Update. For detailed change history, please refer to release notes in each directory.
+
+Contents:
+  The SRR3 components of this release/patch/update are provided in the following directories:
+        ./AUDI_SRR3_SIL                    Software-in-Loop Binaries
+        + LIB                             ; Libraries (32-bit and 64-bit)
+        + INC                             ; API headers
+        + DOC                             ; API description
+        + CONFIG                          ; SIL configuration, DSD Calibration files, SRR3 sensor configuration etc
+
+Components added/changed in this package will be denoted with (New) or (Updated).
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160819
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY085 v3 SIL with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 45  (Updated)  ; Software-in-Loop Resimulation Library (64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 3.2  (Updated)  ; API documentation and sequence
+
+ AUDI_SRR3SIL\CONFIG
+
+     + DSD             		         7.1.1  (New)     ; DSD Calibration data
+     + config_udp_frames.xml              7.0   (Updated) ; SRR3 SIL configuration file
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Fix: Exception thrown from SIL_SRR3_cleaup() API
+    - Fix: Correction in Detection data decoding.
+    - TEST: verified using ADTF XY085 Sandbox (20160810_Sbx_SRR_Analyse_SIL085v2)
+
+
+Notes:
+    - The SIL component has been tested on AUDI provided XY085 v3 sandbox
+    - The SIL component has been tested with logs from XY085 and logs from previous sensor versions.
+    - Replay of Logs/UDP stream from sensor SW prior XY085 version  will stop with an ERROR (due to mismatch in DSD version). The XY085 SIL package requires DSD data set version to be "7".Hence for the older data stream you need to set use the DSD only from XML [<Calibration_Source>XML</Calibration_Source>] and provide the version 7 DSD (the package has 7.1 DSD under Config\DSD\)
+    - Enabled dumping OH and Track data from the SIL output to a CSV file (C:\SIL_LOG folder) only in DEBUG build SIL binaries(AUDI_SRR3_SIL\LIB\debug\x64)
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind only for the very first log (from a continuous mode log) once SIL engine has read all the calibration required for  
+embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+    - There is a limitation on running SIL prior to XY058 using the current delivery.The CDC mode replay will NOT be functioning with the latest SIL delivery due to mismatch in the calibration required which is mandatory to generate valid Detection. And DETECTION mode replay WILL BE support though (with the usage of correct DSD configuration).
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160726
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY085 SIL with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 44  (Updated)  ; Software-in-Loop Resimulation Library (64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 3.1  (Updated)  ; API documentation and sequence
+
+ AUDI_SRR3SIL\CONFIG
+
+     + DSD             		         7.1.1  (New)     ; DSD Calibration data
+     + config_udp_frames.xml              7.0   (Updated) ; SRR3 SIL configuration file
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY085 SW release ,RTE interface version IF 0.7.5.
+    - Support Customer Function output available from  sensor logging interface to AUDI SIL output										- RECW, LCDA, CTA, ASW, ABA
+    - Modify SIL version structure to include SIL component revision number (SIL_SRR3_AUDI_VERSION_T::resim_version)					   	 
+    - Added new signal "signal to noise ratio" for Detection interface.
+    - Added new status flags  host vehicle clutter , suspected angle error and low SNR for Detection interface.
+    - Modified the SIL Configuration file version 7.0.
+        - Removed unused configuration nodes
+        - Added <Calibration_Source> tag to define calibration source mode [XML/UDP/DEFAULT]
+    - Fix: SIL to return  error when mismatch in DSD calibration between input and defined by the software under test binary. 
+    - Fix: Valid Radar sensor position interface update.
+
+
+Notes:
+    - The SIL component has been tested with logs from XY085 and logs from previous sensor versions.
+    - Replay of Logs/UDP stream from sensor SW prior XY085 version  will stop with an ERROR (due to mismatch in DSD version). The XY085 SIL package requires DSD data set version to be "7".Hence for the older data stream you need to set the 
+    - Enabled dumping OH and Track data from the SIL output to a CSV file (C:\AUDI_SIL_TEST folder) only in DEBUG build SIL binaries(AUDI_SRR3_SIL\LIB\debug\x64)
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind only for the very first log (from a continuous mode log) once SIL engine has read all the calibration required for  
+embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+    - Testing pending on XY085 ADTF sandbox
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160714
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY085 SIL with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 4.03  (Updated)  ; Software-in-Loop Resimulation Library (64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 3.1  (Updated)  ; API documentation and sequence
+
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY085 SW release ,RTE interface version IF 0.7.5.
+    - Fix: Updated SIL_SRR3_get_version() API to return sensor SW version in AUDI format.
+           SIL_SRR3_AUDI_VERSION_T.embedded_library_version = 'X' for FER and 'Y' for HR
+           SIL_SRR3_AUDI_VERSION_T.major = Application major version (like 8, for XY085 SW)
+           SIL_SRR3_AUDI_VERSION_T.minor = Application major version (like 5 , for XY085 SW)
+    - Fix: Correction in Fence/OH down casting for backward compatibility
+
+Notes:
+    - Tested on the latest AUDI provided ADTF sandbox (20160627_SBX_SIL_083_v1.1)
+    - Enabled dumping OH and Track data from the SIL output to a CSV file (C:\AUDI_SIL_TEST folder) only in DEBUG build SIL binaries(AUDI_SRR3_SIL\LIB\debug\x64)
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind only for the very first log (from a continuous mode log) once SIL engine has read all the calibration required for  
+embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+    - Fences data not displayed in 3D scene/ signal view when using 20160627_SBX_SIL_083_v1.1 sandbox. But decoded values are available in AUDI SIL output structure.
+
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160630
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY083 SIL (SW Version 83.0.0) with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 4.03  (Updated)  ; Software-in-Loop Resimulation Library (32/64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 3.0  (Updated)  ; API documentation and sequence
+
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY083 SW release ,RTE interface version IF 0.7.5.
+    - Added debug binaries for 64-bit build
+    - Fix: Data copy issue for OH/FENCES.
+    - Fix: Populate UDP_CUSTOM_HEADER in the SIL output data from every cycle.
+    - Fix: Redundant tracks output in CDC SIL replay mode.
+    - Fix: usage of SIL XML configuration <Mounting_Position_Source> to identify the source of DSD.
+           - <Mounting_Position_Source>UDP</Mounting_Position_Source> : Read DSD from input UDP stream
+           - <Mounting_Position_Source>XML</Mounting_Position_Source> : Read DSD from input configuration file(*.dsd)
+
+Notes:
+    - Enabled dumping OH and Track data from the SIL output to a CSV file (C:\AUDI_SIL_TEST folder) only in DEBUG build SIL binaries(AUDI_SRR3_SIL\LIB\debug\x64)
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind only for the very first log (from a continous mode log) once SIL engined has read all the calibration required for  
+embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160624
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY83 SIL (SW Version 80.6.0) with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 4.02  (Updated)  ; Software-in-Loop Resimulation Library (32/64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 2.9  (Updated)  ; API documentation and sequence
+
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY83 SW release (SW Version 80.6.0) using RTE interface version IF 0.7.5.
+    - Added debug binaries for 32/64-bit build
+    - Fix: Clear previous SIL Output data.
+
+Notes:
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind only for the very first log (from a continous mode log) once SIL engined has read all the calibration required for  
+embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160621
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY83 SIL (SW Version 80.6.0) with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 4.02  (Updated)  ; Software-in-Loop Resimulation Library (32/64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 2.9  (Updated)  ; API documentation and sequence
+
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY83 SW release (SW Version 80.6.0) using RTE interface version IF 0.7.5.
+    - Added debug binaries for 32/64-bit build
+
+Notes:
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind only for the very first log (from a continous mode log) once SIL engined has read all the calibration required for  
+embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160610
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY80 SIL (SW Version 80.3.0) with RTE headers based on IF 0.7.5
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 4.01  (Updated)  ; Software-in-Loop Resimulation Library (32/64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 2.8  (Updated)  ; API documentation and sequence
+
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY80 SW release (SW Version 80.3.0) using RTE interface version IF 0.7.5.
+    - Added debug binaries for 32/64-bit build
+
+Notes:
+    - Tested the SIL component using AUDI provided ADTF Sandbox with one dat file.
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind of log once SIL engined has read all the calibration required for embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_SIL_20160602
+--------------------------------------------------------------------------------------------------------------
+The package primarily support for AUDI SRR3 SW XY80 SIL 
+Major components of this Release include:
+
+  AUDI_SRR3_SIL\LIB
+
+     + sil-srr3-audi.dll       		 4.00  (Updated)  ; Software-in-Loop Resimulation Library (32/64-bit)
+
+ AUDI_SRR3SIL\DOC
+
+     + AUDI_SRR3_SIL.doc  		 2.7  (Updated)  ; API documentation and sequence
+
+ 
+       
+Changes:
+       
+  
+  [LIB]:
+    - Added Support for SIL compatible with AUDI XY80 SW release.
+    - Added Backward compatibility for SIL replay of sensor stream data logged from XY50 till XY79
+
+Notes:
+    - Provided sample source file "TestSILAPI.cpp" for the API sequence
+    - SIL replay via Log would need a rewind of log once SIL engined has read all the calibration required for embedded SW under test
+    - The package is build out from VS2010 with Windows7.1 SDK
+
+Known Issues:
+    - Please refer to \Doc\AUDI_SRR3_SIL.doc section 17.0 for Known Issues
+
+

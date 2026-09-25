@@ -1,0 +1,43 @@
+<CONVERTOR_TOOL_RELEASE_CS_786>
+		<RELEASE_DESCRIPTION>
+			<RELEASE_NAME>CONVERTOR_TOOL</RELEASE_NAME>
+			<SIL_ENGINE_Version> 
+				Major version:    3 
+				Minor version:    1
+				Release week :    31
+				Release year :    2020
+			</SIL_ENGINE_Version>
+			<Release_Date> 28-07-2020 </Release_Date>
+			<Convertor_tool_Plastic_Repo>10030156_03_Analysis_Framework_Suite</Convertor_tool_Plastic_Repo>
+			<Convertor_tool_Plastic_Repo_CS>10711</Convertor_tool_Plastic_Repo_CS>
+			<Convertor_tool_Release_Plastic_Repo>10028634_01_SRR_RESIM_Release</Convertor_tool_Release_Plastic_Repo>
+			<Convertor_tool_Release_CS>786</Convertor_tool_Release_CS>
+			
+			<ChangeLog_Details>
+				-  Bug fix in ORCAS to CANAPE conversion
+			</ChangeLog_Details>
+			
+			<JIRA_Tickets>
+				CYW-1063: ORCAS to CANAPE verification
+			</JIRA_Tickets>
+			
+			<Existing_convertors>
+			VPCAP to ORCAS 
+			VPCAP to ViGEM
+			ViGEM to PCAP
+			VPCAP to CANoe
+			ViGEM to CANoe
+			CANAPE to ORCAS
+			ORCAS to CANAPE
+			ViGEM to ORCAS
+			ORCAS to CANAPE
+			ViGEM to DVSU(SINGLE AND FOUR DVSU)
+			ORCAS to DVSU(SINGLE AND FOUR DVSU)
+			CANoe to DVSU(SINGLE AND FOUR DVSU)
+			ViGEM to SOMEIP
+			RESIM ViGEM to SOMEIP
+
+			</Existing_convertors>
+			
+		</RELEASE_DESCRIPTION> 
+</CONVERTOR_TOOL_RELEASE_CS_786>

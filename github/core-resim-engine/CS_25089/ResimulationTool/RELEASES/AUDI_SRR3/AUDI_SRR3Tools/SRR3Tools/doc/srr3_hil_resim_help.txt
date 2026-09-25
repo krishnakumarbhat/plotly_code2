@@ -1,0 +1,35 @@
+
+----------------------------------------------------------------------------------------------
+SRR3 HiL Resim Application ve2.4.3 for Audi XY83 software 
+
+Tested for AUDI XY83 Software \n\t Replay mode => Data Injected from log file for all streams \n\t Livemode => sample data Injected for Tracker,OH,Fences  
+---------------------------------------------------------------------------------------------- 
+
+USAGE:
+
+   >> SRR3_HiL_Resim.exe -m [0/1]  -s [0/1]  -f [Input Log (.dvsu) log]  
+
+	   "-m [0/1]  Injection mode, use [0 :Audi_Tracker_OH/Fences Mode /1 :Detection Level Mode]"
+
+	   "-s [0/1]  Sensor mode use [0 :SINGLE /1: FOUR] "
+
+ 	   "-f  [Input Internal dvsu(*.dvsu) log ]  =>  Input dvsu log filename "
+	   
+	   "Optional Arguments.. \n"
+	   "-e [0/1]  Stop on error [0 :Disable /1: Enable] "
+	   "-v [0/1]  Additional Data Printing Option [0 :Disable /1: Enable] "
+	  
+
+   For Multisensor HiL, provide any one single sensor log and HiL tool will load all the logs for sensors ( provider all the logs are located in the same folder)
+
+EXAMPLES:
+     
+       SRR3_HiL_Resim.exe -m 0 -s 1 , will Inject Tracker,OH/Fences data to the to port 6001 over UDP/IP to All sensors.
+       SRR3_HiL_Resim.exe -m 1 -s 1  -f  ****_NN.dvsu   , NN can be either 71/72/73/74 and tool will Inject All the streams data to Corresponding Sensor based on file extension
+
+
+   >> Off Line/Replay Mode will terminate automatically after completing the Data injection from input Log
+
+   >> Live mode will be injecting the sample data continously till user presses a "ENTER" key
+
+

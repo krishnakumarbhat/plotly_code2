@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+  <FILEVERSION>10.1</FILEVERSION>
+
+  <!-- Only JSON File is Supported -->
+  <INPUTFILEPATH>C:\PI1_23\SP6\CYW_3184_Bordnet_STLA_SRR6P\BORDNET_fList.json</INPUTFILEPATH>
+
+  <!--XML files will be generated to the user specified Output path -->
+  <OUTPUTPATH>C:\PI1_23\SP6\CYW_3184_Bordnet_STLA_SRR6P\Bordnet_output</OUTPUTPATH>
+
+  <!--To define the EXECUTION_TYPE for which Bordnet is executing.
+          Options are : SEQUENTIAL, CONTINUOUS -->
+  <EXECUTIONTYPE>SEQUENTIAL</EXECUTIONTYPE>
+
+  <!-- Options available are : BMW_SRR5, MAN_SRR3, NISSAN_SRR6,HONDA_SRR6P, STLA_SRR6P -->
+  <CUSTOMER KEY="STLA_SRR6P">
+    <INFO KEY="BMW_SRR5">
+      <!-- Options available are A_310, A_330, A_350, A_370, A_390, A_410, A_430, A_450, A_470, A_480, A_430_SOP3  -->
+      <VERSION>A_480</VERSION>
+
+      <!-- Options available are : BMW_LOW,BMW_MID,BMW_HIGH -->
+      <VARIANT KEY="BMW_LOW">
+        <INFO KEY="BMW_LOW">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant LOW  - RADAR_PCAN, RADAR_SCAN, RADAR_VCAN, ALL
+                  Option ALL to generate XML files for all CAN decoders in that variant -->
+          <CANDECODER>RADAR_VCAN</CANDECODER>
+        </INFO>
+        <INFO KEY="BMW_MID">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant MID  - RADAR_PCAN, ECU_VCAN, ECU_ETHERNET, ALL 
+							    Option ALL to generate XML files for all CAN decoders in that variant -->
+          <CANDECODER>ECU_VCAN</CANDECODER>
+        </INFO>
+        <INFO KEY="BMW_HIGH">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			           Options available for variant HIGH - RADAR_B_PIL -->
+          <CANDECODER>RADAR_B_PIL</CANDECODER>
+        </INFO>
+      </VARIANT>
+    </INFO>
+	<INFO KEY="MAN_SRR3">
+	 <!-- Options available are MAN -->
+     <VERSION>MAN</VERSION>
+	   <!-- Options available are : SRR3_MAN -->
+     <VARIANT KEY="SRR3_MAN">
+        <INFO KEY="SRR3_MAN">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant MAN  - RADAR_VCAN_FC, RADAR_VCAN_LEFT, RADAR_VCAN_RIGHT
+                  Option ALL to generate XML files for all CAN decoders in that variant -->
+          <CANDECODER>RADAR_VCAN_FC</CANDECODER>
+        </INFO>
+	 </VARIANT>
+	 </INFO>
+	<INFO KEY="NISSAN_SRR6">
+	 <!-- Options available are MAN -->
+      <VERSION>NISSAN</VERSION>
+	   <!-- Options available are : SRR6_NISSAN -->
+      <VARIANT KEY="SRR6_NISSAN">
+        <INFO KEY="SRR6_NISSAN">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant NISSAN  - RADAR_NISSAN -->
+          <CANDECODER>RADAR_NISSAN</CANDECODER>
+        </INFO>
+	 </VARIANT>
+	 </INFO>
+	<INFO KEY="HONDA_SRR6P">
+	 <!-- Options available are HONDA -->
+      <VERSION>HONDA</VERSION>
+	   <!-- Options available are : SRR6P_HONDA -->
+      <VARIANT KEY="SRR6P_HONDA">
+        <INFO KEY="SRR6P_HONDA">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant HONDA  - RADAR_HONDA_PCAN -->
+          <CANDECODER>RADAR_HONDA_PCAN</CANDECODER>
+        </INFO>
+	 </VARIANT>
+	 </INFO>
+	<INFO KEY="STLA_SRR6P">
+	 <!-- Options available are STLA -->
+      <VERSION>STLA</VERSION>
+	   <!-- Options available are : SRR6P_STLA -->
+      <VARIANT KEY="SRR6P_STLA">
+        <INFO KEY="SRR6P_STLA">
+          <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant STLA  - RADAR_STLA_VCAN -->
+          <CANDECODER>RADAR_STLA_VCAN</CANDECODER>
+        </INFO>
+	 </VARIANT>
+	 </INFO>
+  </CUSTOMER>
+
+  <!-- To define the LOG_TYPE for which the Bordnet is Executed. 
+			    Options available are : MAGNA_X2E, BMW_VIGEM ,BMW_CANOE,ORCAS, AUTERA-->
+  <LOGTYPE KEY="BMW_CANOE">
+    <INFO KEY="BMW_CANOE">
+      <!--Options available are :
+					  DEFAULT - Default channel value from attribte Default will be used
+					  USER    - User defined channel value will be used -->
+      <BUSCHANNEL TYPE="USER">
+        <SCANLOW DEFAULT="4">8</SCANLOW>
+        <BPILLEFT DEFAULT="5">10</BPILLEFT>
+        <BPILRIGHT DEFAULT="6">11</BPILRIGHT>
+        <ECUETHERNET DEFAULT="12">1</ECUETHERNET>
+		<PCANLOWREAR DEFAULT="2">2</PCANLOWREAR>
+		<PCANLOWFRONT DEFAULT="2">1</PCANLOWFRONT>
+		<PCANMIDRL DEFAULT="2">4</PCANMIDRL>
+		<PCANMIDRR DEFAULT="2">5</PCANMIDRR>
+		<PCANMIDFR DEFAULT="2">7</PCANMIDFR>
+		<PCANMIDFL DEFAULT="2">6</PCANMIDFL>
+		<VCANLOW DEFAULT="2">9</VCANLOW>
+		<VCANECU DEFAULT="2">9</VCANECU>
+		<VCANMANFC DEFAULT="2">3</VCANMANFC>
+		<VCANMANLEFT DEFAULT="2">4</VCANMANLEFT>
+		<VCANMANRIGHT DEFAULT="2">4</VCANMANRIGHT>
+		<VCANSTLAREAR DEFAULT="2">1</VCANSTLAREAR>
+		<VCANSTLAFRONT DEFAULT="2">2</VCANSTLAFRONT>
+      </BUSCHANNEL>
+    </INFO>
+    <INFO KEY="MAGNA_X2E">
+    </INFO>
+    <INFO KEY="BMW_VIGEM">
+    </INFO>
+	<INFO KEY="ORCAS">
+    </INFO>
+	<INFO KEY="AUTERA">
+    </INFO>
+  </LOGTYPE>
+
+  <EXECUTIONINFO>
+
+    <!--Options available are :
+          1 to Enable Old XML print
+		      0 to Disable Old XML print-->
+    <OLDXMLPRINT>0</OLDXMLPRINT>
+
+    <!-- To Enable Timestamp Decoding in milisecond. 
+			      1 - use Timestamp logic for Decoding
+			      0 - Not to use Timestamp logic for Decoding-->
+    <TIMESTAMPDECODING>
+      <SCAN timestampinms="40">1</SCAN>
+      <SOMIP timestampinms="10">0</SOMIP>
+      <VCANBPIL timestampinms="15">0</VCANBPIL>
+      <VCANECU timestampinms="2000">1</VCANECU>
+      <VCANLOW timestampinms="14">1</VCANLOW>
+      <PCAN timestampinms="25">1</PCAN>
+    </TIMESTAMPDECODING>
+
+    <!--Options available are :
+          1 to Enable BPIL sorting logic
+		      0 to Disable BPIL sorting logic-->
+    <SORT>
+      <SCAN>0</SCAN>
+      <BPIL>0</BPIL>
+    </SORT>
+
+    <GENERATEFILE>
+
+      <!-- XML Configuration Control for CAN ID and Timestamp CSV & TXT traces -   
+					    1 - GENERATE CSV & TXT Trace containing Diagnostic Information
+					    0 - SUPPRESS CSV & TXT Trace containing Diagnostic Information -->
+      <TIMESTAMPDIAGNOSTICS>0</TIMESTAMPDIAGNOSTICS>
+
+      <!-- XML Configuration Control for CAN ID and Timestamp XML traces -   
+					    1 - GENERATE XML Trace containing only CAN Ids and Timestamps
+					    0 - SUPPRESS XML Trace containing only CAN Ids and Timestamps -->
+      <CANIDTIMESTAMP>0</CANIDTIMESTAMP>
+
+      <!-- XML Configuration Control for CAN ID and Timestamp XML traces -   
+					    1 - GENERATE XML Trace containing Diagnostic Information
+					    0 - SUPPRESS XML Trace containing Diagnostic Information -->
+      <DIAGNOSTICS>0</DIAGNOSTICS>
+
+
+      <!-- Based on RESIM Framework JSON file, Timing Profile will be created. Options are :
+              1 to Enable CSV file generation for timing profile
+	            0 to Disable CSV file generation for timing profile -->
+      <FRAMEWORKTIMINGPROFILE>0</FRAMEWORKTIMINGPROFILE>
+
+      <!-- This tag should be enabled to Create CSV -
+			        1 to Enable CSV file to generate SOMEIP decoded messages
+			        0 to Disable CSV file to generate SOMEIP decoded messages -->
+
+      <!--Only for SOMIP -->
+      <CREATECSV>
+        <OBJECTLIST>0</OBJECTLIST>
+        <DETECTIONRR>0</DETECTIONRR>
+        <DETECTIONRL>0</DETECTIONRL>
+        <DETECTIONFR>0</DETECTIONFR>
+        <DETECTIONFL>0</DETECTIONFL>
+		<FREESPACE>0</FREESPACE>
+        <RESTMESSAGE>0</RESTMESSAGE>
+        <DETECTIONBPILLEFT>0</DETECTIONBPILLEFT>
+        <DETECTIONBPILRIGHT>0</DETECTIONBPILRIGHT>
+        <VCANALERTSHR>0</VCANALERTSHR>
+        <VCANALERTSVL>0</VCANALERTSVL>
+      </CREATECSV>
+
+      <!--Options available are :
+              1 to Enable XML file to generate SOMEIP decoded messages
+		          0 to Disable XML file to generate SOMEIP decoded messages -->
+      <CREATEXML>
+        <OBJECTLIST>0</OBJECTLIST>
+        <DETECTIONRR>0</DETECTIONRR>
+        <DETECTIONRL>0</DETECTIONRL>
+        <DETECTIONFR>0</DETECTIONFR>
+        <DETECTIONFL>0</DETECTIONFL>
+        <FREESPACE>0</FREESPACE>
+        <RESTMESSAGE>0</RESTMESSAGE>
+      </CREATEXML>
+    </GENERATEFILE>
+	
+	<!--Options available are :
+          1 to Enable RT Range/DGPS Data
+		      0 to Disable RT Range/DGPS Data-->
+    <RT_RANGE>0</RT_RANGE>
+	
+	<!--create CSV file for PCAN, MAN_SRR3 :
+		 1 to Enable CSV file to generate PCAN & MAN SRR3 decoded messages
+		         0 to Disable CSV file to generate PCAN decoded messages -->
+	
+		<PCAN_CSV>0</PCAN_CSV>
+		<VCAN_ECU_CSV>0</VCAN_ECU_CSV>
+		<VCAN_LOW_CSV>0</VCAN_LOW_CSV>
+		<MAN_SRR3_CSV>0</MAN_SRR3_CSV>
+		<NISSAN_SRR6_CSV>0</NISSAN_SRR6_CSV>
+		<HONDA_SRR6_CSV>0</HONDA_SRR6_CSV>
+		<STLA_SRR6P_CSV>0</STLA_SRR6P_CSV>
+	<!-- To Decode SCAN Input and Output CANID's -->
+	
+	 <!-- A390 -> INPUTCANID  : 1914	
+							    	
+				  OUTPUTCANID :  	 	 
+							    	     
+						 
+	 <!-- A370 -> INPUTCANID  : 1914	
+						           
+				  OUTPUTCANID :  
+						           
+						 
+	 <!-- A350 -> INPUTCANID  : 1914	
+							       
+				  OUTPUTCANID :     
+						           
+						 
+	 <!-- A310 -> INPUTCANID  : 1900	
+						           
+				  OUTPUTCANID : 1900    
+						           -->
+	
+	<DECODESCANCANID>
+		<SCAN>
+			<INPUTCANID>1900</INPUTCANID>
+			<OUTPUTCANID>1900</OUTPUTCANID>
+		</SCAN>
+	</DECODESCANCANID>
+
+<!-- To Decode BPillar Input and Output CANID's -->
+	 <!-- A390 -> INPUTCANID  : 	1600 Left
+							  :  	1500 Right
+				  OUTPUTCANID :  	1338 Left
+							  :  	1138 Right-->
+						 
+	 <!-- A370 -> INPUTCANID  : 	1600 Left
+						      :     1500 Right
+				  OUTPUTCANID :     1338 Left
+						      :     1138 Right-->
+						 
+	 <!-- A350 -> INPUTCANID  : 	1220 Left
+							  :     1138 Right
+				  OUTPUTCANID :     1600 Left
+						      :     1500 Right-->
+						 
+	 <!-- A310 -> INPUTCANID  : 	1330 Left
+						      :     1130 Right
+				  OUTPUTCANID :     1338 Left
+						      :     1138 Right-->
+    <DECODEBPILLARCANID>
+      <BUSSPECLEFT>
+        <INPUTCANID>1600</INPUTCANID>
+        <OUTPUTCANID>1338</OUTPUTCANID>
+      </BUSSPECLEFT>
+      <BUSSPECRIGHT>
+        <INPUTCANID>1500</INPUTCANID>
+        <OUTPUTCANID>1138</OUTPUTCANID>
+      </BUSSPECRIGHT>
+    </DECODEBPILLARCANID>
+  </EXECUTIONINFO>
+</Configuration>

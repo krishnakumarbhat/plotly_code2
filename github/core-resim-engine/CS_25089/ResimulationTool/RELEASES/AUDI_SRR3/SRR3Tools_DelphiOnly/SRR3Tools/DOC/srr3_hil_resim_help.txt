@@ -1,0 +1,26 @@
+
+-------------------------------------------------------------------------------------
+SRR3_HiL_Resim.exe version 2.4.2 For Offline Log, Customer Specific Data Injection
+-------------------------------------------------------------------------------------- 
+USAGE:
+
+   >> SRR3_HiL_Resim.exe  -f [Input Log (.dvsu) log]  -m [0/1]  -s [0/1] 
+
+	   "-f  [Input Internal dvsu(*.dvsu) log ]  =>  Input dvsu log filename "
+
+	   "-m [0/1]  Injection mode, use [0 :Audi_Tracker_OH/Fences Mode /1 :Detection Level Mode]"
+
+	   "-s [0/1]  Sensor mode use [0 :SINGLE /1: FOUR] "
+	   
+	   "Optional Arguments.. \n"
+	   "-e [0/1]  Stop on error [0 :Disable /1: Enable] "
+	   "-v [0/1]  Additional Data Printing Option [0 :Disable /1: Enable] "
+	   "-c [0/1]  Continous Replay [0 :Disable /1: Enable] "
+	   
+
+   For Multisensor HiL, provide any one single sensor log and HiL tool will load all the logs for sensors ( provider all the logs are located in the same folder)
+
+EXAMPLES:
+     
+       SRR3_HiL_Resim.exe -m 0 -s 1 , will Inject Tracker,OH/Fences data to the to port 6001 over UDP/IP to All sensors.
+       SRR3_HiL_Resim.exe -m 1 -s 1  -f  ****_NN.dvsu   , NN can be either 71/72/73/74 and tool will Inject All the streams data to Corresponding Sensor based on file extension

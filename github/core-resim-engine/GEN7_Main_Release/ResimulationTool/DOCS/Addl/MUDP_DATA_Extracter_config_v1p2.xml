@@ -1,0 +1,61 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ?>
+<!-- Delphi SIL component configuration -->
+<DATA_Extracter_Configuration>
+	<!--DATA_Extracter_Config_XML_Version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+	<DATA_Extracter_Config_XML_Version>1.2</DATA_Extracter_Config_XML_Version>
+	<!-- Sensor selection values: 
+	1: Resim is executed for that Sensor Position
+	0: Resim is not executed for that Sensor Position -->
+  <SENSOR_STATUS>
+    <REAR_LEFT>1</REAR_LEFT>
+    <REAR_RIGHT>1</REAR_RIGHT>
+    <FRONT_RIGHT>1</FRONT_RIGHT>
+    <FRONT_LEFT>1<FRONT_LEFT>
+    <BP_RIGHT>0</BP_RIGHT>
+    <BP_LEFT>0</BP_LEFT>
+	<RADAR_ECU>0</RADAR_ECU>
+  </SENSOR_STATUS>
+	<!-- Output_Stream_Options available are :
+		HDR : dump mudp stream header information
+		CDC: dump cdc stream output data
+		z4 Core: dump z4(Core0) stream output data 
+		Z7A Core: dump z7A(Core1) stream output data 
+		Z7B Core: dump z7B(Core2) stream output data
+		Z4 Customer: dump z4(Customer) stream output data
+		Z7B Customer: dump z7b(Customer) stream output data --> 
+	<Output_Stream_Option>
+	    <HDR>1</HDR>
+		<CDC>0</CDC>
+		<Z4_Core>0</Z4_Core>
+		<Z7A_Core>0</Z7A_Core>
+		<Z7B_Core>0</Z7B_Core>
+	    <Z4_Customer>0</Z4_Customer>
+	    <Z7B_Customer>0</Z7B_Customer>
+	</Output_Stream_Option>
+	
+	
+	<!--RADAR_ECU_Stream_Options available are -
+		ECU_Coreo:dump ECU0 output data
+		ECU_Core1: dump ECU1 output data
+		ECU_Core3: dump ECU3 output data -->
+	<RADAR_ECU_Stream_Option>
+		<ECU0>0</ECU0>
+		<ECU1>0</ECU1>
+		<ECU3>0</ECU3>
+	</RADAR_ECU_Stream_Option>
+	
+	<!-- Resim output path selection. Options are SAME_AS_INPUT or NEW_OUTPUT_PATH -->
+         <Output_Path_Options>SAME_AS_INPUT</Output_Path_Options>
+    <!-- If resim output path selection is NEW_OUTPUT_PATH use the below tag to enter valid folder path -->
+		 <Output_Path_Location>C:\Workspaces\SRR5_logs\RNA_MF41</Output_Path_Location>
+	
+    <!-- Extractor User Options : 
+         0 : Extractor Tool only Checks for Packet loss Information 
+         1 : Extractor Tool Extracts MUDP Signals from the streams chosen -->
+
+        <DATA_Extracter_MODE>1</DATA_Extracter_MODE>
+			
+</DATA_Extracter_Configuration>

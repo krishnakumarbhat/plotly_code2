@@ -1,0 +1,173 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR5 Delphi SIL component configuration -->
+<SIL_SRR5_Configuration>
+  <!-- SIL SRR5 Configuration XML version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <SIL_SRR5_Configuration_XML_Version>1.5</SIL_SRR5_Configuration_XML_Version>
+
+  <!-- To define the CUSTOMER for which the RESIM is Executed. 
+		 Options available are: SRR5: RNA_SUV,RNA_CDV,GEELY_SRR5,BMW_LOW, BMW_SAT, BMW_BPIL -->
+  <Customer_Name>BMW_LOW</Customer_Name>
+
+  <!-- Resim output path selection. Options are SAME_AS_INPUT or NEW_OUTPUT_PATH -->
+  <Output_Path_Options>SAME_AS_INPUT</Output_Path_Options>
+			<!-- If resim output path selection is NEW_OUTPUT_PATH use Output_Path_Location tag to enter valid folder path -->
+			<Output_Path_Location>C:\APTIV\BMW_Closed_Loop\Output</Output_Path_Location>
+
+   <!--Additional DEBUG Data can be enabled using the EB Configuration file
+		Options are NONE or Name of the EB config .xml file including full File Path 
+		Read independent of options selected in RESIM_Execution_User -->
+	<EMBEDDED_LIB_CONFIGURATION>C:\APTIV\BMW_Release\Emb_Lib_Config_v1p7.xml</EMBEDDED_LIB_CONFIGURATION>
+	<ECU_EMBEDDED_LIB_CONFIGURATION>C:\APTIV\BMW_Release\RECU_Emb_Lib_Output_Control_v1p5.xml</ECU_EMBEDDED_LIB_CONFIGURATION>
+
+  <!-- Output Mode Options available are -
+	SINGLE_DVSU_OUTPUT: Single dvsu enabled to handle Single input DVSU file , proceed resim with Single dvsu file
+	FOUR_DVSU_OUTPUT : FOUR dvsu enabled to handle four  input DVSU file ,proceed  resim with 4 dvsu's file.(default option)
+	ORCAS_MDF4_OUTPUT:
+	CANAPE_MDF4_OUTPUT:
+	VIGEM_MDF4_OUTPUT :  VIGEM_MDF4_DVSU_ENABLED to handle MDF4 file proceed resim with mdf4 file -->
+
+	<RESIM_OUTPUT_FILE_FORMAT>
+		<SINGLE_DVSU_OUTPUT_ENABLE>0</SINGLE_DVSU_OUTPUT_ENABLE>
+		<FOUR_DVSU_OUTPUT_ENABLE>0</FOUR_DVSU_OUTPUT_ENABLE>
+		<ORCAS_MDF4_OUTPUT_ENABLE>0</ORCAS_MDF4_OUTPUT_ENABLE>
+		<CANAPE_MDF4_OUTPUT_ENABLE>0</CANAPE_MDF4_OUTPUT_ENABLE>
+		<VIGEM_MDF4_OUTPUT_ENABLE>0</VIGEM_MDF4_OUTPUT_ENABLE>
+		<CCA_VIGEM_MDF4_OUTPUT_ENABLE>1</CCA_VIGEM_MDF4_OUTPUT_ENABLE>
+	</RESIM_OUTPUT_FILE_FORMAT>
+	
+  <!-- Sensor selection values: 
+	1: Resim is executed for that Sensor Position
+	0: Resim is not executed for that Sensor Position -->
+  <SENSOR_STATUS>
+    <REAR_LEFT>1</REAR_LEFT>
+    <REAR_RIGHT>1</REAR_RIGHT>
+    <FRONT_RIGHT>1</FRONT_RIGHT>
+    <FRONT_LEFT>1</FRONT_LEFT>
+    <BP_RIGHT>0</BP_RIGHT>
+    <BP_LEFT>0</BP_LEFT>
+	<RADAR_ECU>0</RADAR_ECU>
+  </SENSOR_STATUS>
+  
+ <!-- OUTPUT FILE FOLDER:
+		BN_CALIFR_FOLDER_STATUS - BMW CANFD Folder BN_CALIFR to generate FAS CAN & SENSOR CAN Output Files.
+									1: To enable the the BN_CALIFR folder creation
+									0: To disable the BN_CALIFR folder creation 
+		RAW_DEBUG_FOLDER_STATUS - To create SRR_RAW_DEBUG folder or not ,This tag applicable only for BMW_SRR5
+									1.  enable the creation of SRR_RAW_DEBUG folder
+									0.  disable the creation of SRR_RAW_DEBUG folder-->
+ <OUTPUT_FILE_FOLDER>
+	<BN_CALIFR_FOLDER_STATUS>1</BN_CALIFR_FOLDER_STATUS>
+	<RAW_DEBUG_FOLDER_STATUS>1</RAW_DEBUG_FOLDER_STATUS>
+ </OUTPUT_FILE_FOLDER>
+ 
+  <!-- SIL_Injection Mode  - 
+		VEHICLE_EXPEDITION_FILE - SIL Input is vehicle collected Files
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+		VIRTUAL_SIMULATION_FILE - SIL Input is Virtual Simulation Tools IPG/VTD/DSPACE ASM created Virtual simulation files.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)
+		VIRTUAL_SIMULATION_LIVE - SIL Input is Live streams from Virtual Simulation tools IPG/VTD/DSPACE ASM.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)-->
+  <SIL_INJECTION_MODE>VEHICLE_EXPEDITION_FILE</SIL_INJECTION_MODE>
+  
+  <!-- LOG REPLAY mode selection: User shall provide the list of filenames the RESIM should execute in the Input_Log.txt file 
+		Sequential_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed uniquely by resetting the memory after each file.
+								 Hence history is not maintained between the input files.
+								 
+   	    Continuous_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed in continuity between the files.
+								 The memory is NOT reset after each file. Hence history is maintained between the input files.  
+								 Please ensure that the Logs are collected in a continuous manner from the Vehicle Expedition to use this mode 
+								 This Mode provides results with more correlation with actual Sensor behaviour 
+								 User is responsible to make sure that the file list is sequential the RESIM shall not check this. 
+								 USE THIS MODE WITH CAUTION -->
+  <DPH_RR_ADAS_RESIM_Mode>Continuous_FILE_Input</DPH_RR_ADAS_RESIM_Mode>
+  <!-- SIL_Entrypoint -
+		CDC					- CDC Data processing
+							  The SIL component receives Front-End data over a reference parameter of the SIL function call.
+							  The SIL component processes Front-End data to raw targets, object hypotheses, Fences.
+							  NOTE: Input Logs should be of larger size as USC Calibrations need to be extracted from UDP MUX Message
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  [This can be selected for LOW/MID variant]
+							  
+		DETECTIONS_UDP		- Data processing of raw target detections
+							  The SIL component receives UDP data via a reference parameter of the SIL function call,
+							  SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs.
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  [This can be selected for LOW/MID variant]
+							  
+		OBJECT_MODE			- Stand alone ECU object mode data injection
+
+		DSPACE_MODE         - Running dSPACE data BMW_LOW, BMW_MID & BMW_HIGH closed loop SIL. 
+							  Inputs are dSPACE UDP streams & SOME IP. 
+							  Decoded Detections from dSPACE stream are fed to radar emb libraries and 
+							  processed PCAN detections are fed to ECU lib through Symbol interface. -->
+  <SIL_Entrypoint>CDC</SIL_Entrypoint>
+  
+ 	 <!--This will send UDP frames when RUN_MODE =  E_LIME_SIL_FRAMEWORK and for other mode the functionality remains uneffected if ENABLED or DISABLED
+	   1> ENABLE = When selected, FRAMES will transmitted 
+	   2> DISABLE = When selected, FRAMES will not get transmitted ,-->
+	<!--Set Destination IP and PORT number-->
+  <UDP_OUTPUT_FRAME_TRANSMISSION>
+	<UDP_OUTPUT_TRANSMISSION>DISABLE</UDP_OUTPUT_TRANSMISSION>
+	<DESTINATION_IP>192.168.1.41</DESTINATION_IP>	
+	<DESTINATION_PORT>5555</DESTINATION_PORT>
+  </UDP_OUTPUT_FRAME_TRANSMISSION>
+
+  <!-- Source of Calibrations. Possible options:
+		LOAD_DEFAULT_CAL - Load calibrations from Source Code (All Customers)
+		LOAD_UDP_CAL     - using all calibrations from UDP -->
+  <CALIBRATION_SOURCE>LOAD_UDP_CAL</CALIBRATION_SOURCE>
+  
+   <!--  To get SCanIndex/checksum/crc error text file 
+	Options are  1. A text file will be created with Packet loss Info
+	0. NO text file with packet loss info is created
+	 This is applicable only for RNA_SRR5-->
+	<DEBUG_TRACE>0</DEBUG_TRACE>
+	
+  <!--  To get TimeStamp Info csv file 
+	Options are  1. A csv file will be created with TimeStamp Info
+	0. N0 CSV file with TimeStamp loss info is created-->
+	<TS_TRACE>0</TS_TRACE>
+	
+  <!-- to genrate the error log traces>
+  <!-- Set the log levels to get printed on log tracing file
+                        0 - DisableLogTrace, log tracing will be disabled
+                        1 - Critical
+                        2 - Error
+                        3 - Warnings and Error
+                        4 - Info, Warnings and Error -->
+  <LogLevel>4</LogLevel>
+            
+  <!-- Provide the path to generate log tracing file.
+		Supported file formats are .xml
+                                   .txt
+                                   .log -->
+  <LogTarcingPath>C:\APTIV\BMW_Closed_Loop\Log.txt</LogTarcingPath>
+            
+  <!-- To enable/disable date and time in Log tracing files
+                       0 Disable Date and time in log file
+                       1 Enable Date and time in log file-->
+  <LogIncludeDateTime>0</LogIncludeDateTime>  
+   
+  <!-- To set the size of Boost Thread Pool. -->
+  	<BOOST_THREAD_POOL_SIZE>6</BOOST_THREAD_POOL_SIZE>
+	
+  <!-- Enable or Disable Multithread flow
+	1 – Enable Multithread flow
+	0 – Disable Multithread flow  -->
+<ENABLE_MULTITHREAD_EXECUTION>1</ENABLE_MULTITHREAD_EXECUTION>
+
+<!-- Enable or Disable Timing profile
+	1 – Enable Timing profile
+	0 – Disable Timing profile  -->
+<TIMING_PROFILE>0</TIMING_PROFILE>
+
+<!-- Provide the path to generate log timing profile files.-->
+
+<TIMING_PROFILE_PATH>C:\APTIV\BMW_Closed_Loop\</TIMING_PROFILE_PATH> 
+ 
+</SIL_SRR5_Configuration>

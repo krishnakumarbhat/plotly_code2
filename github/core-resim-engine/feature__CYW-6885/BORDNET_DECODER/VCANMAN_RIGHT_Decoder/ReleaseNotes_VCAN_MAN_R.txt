@@ -1,0 +1,51 @@
+---------------------------------------------------
+	VCAN MAN Right Decoder   Release Notes
+---------------------------------------------------
+This document provides a summary of VCAN MAN RIGHT Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.5.0.0
+Release Date	: 29-11-2023
+
+Features:
+- Added New Busspec ID Support for resimulated output MAN logs in VCAN MAN
+-------------------------------------------------------------------------------------------------------------
+Release Version	: 1.4.0.0
+Release Date	: 30-10-2023
+
+Features:
+- Added New Busspec ID support in VCAN MAN
+-------------------------------------------------------------------------------------------------------------
+Release Version	: 1.3.0.0
+Release Date	: 31-05-2022
+
+Features:
+- Fixed incorrected RT range values in VCAN MAN
+-------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.0.0
+Release Date	: 04-05-2022
+
+Features:
+- Improved execution time for VCAN MAN
+------------------------------------------------------------------------------------------------------------- 
+Release Version	: 1.1.0.0
+Release Date	: 11-04-2022
+
+Features:
+- Improved execution time for VCAN MAN
+------------------------------------------------------------------------------------------------------------- 
+Release Version	: 1.0.0.0
+Release Date	: 11-01-2022
+
+Features:
+- Dll supports the decoding of the alert messages cycle by cycle.
+- VCAN-MAN supports only MAN_SRR3 VARIANT.
+- Error codes supported are
+	DECODER_RESULT_OK 
+	DECODER_INTERNAL_ERROR
+	DECODER_INPUT_DATA_ERROR
+- Will be adding the error codes in future releases.
+- Further information will be available in the design document.
+Known Issue:	
+-------------------------------------------------------------------------------------------------------------  
+
+

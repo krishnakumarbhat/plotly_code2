@@ -1,0 +1,70 @@
+------------------------------------
+JLR SRR3 Resim Release Notes
+------------------------------------
+This document provides a high level summary of changes since the previous Release, Patch,
+or Update.
+
+Contents:
+  The following resim components are provided with this release/patch/update:
+  .\bin (64-bit package)
+       DPH_RR_ADAS_RESIM.exe 	        - Resim executable
+       DPH_RR_ADAS_SIL.dll              - Frame software wrapper	
+       SRR3_SiL_xx.dll
+         SRR3_SiL_RL.dll                - Rear Left SRR3 implementation library (runs RDD through Feature function)
+         SRR3_SiL_RR.dll                - Rear Right SRR3 implementation library (runs RDD through Feature function)
+         SRR3_SiL_FL.dll                - Front Left implementation library (runs RDD through Feature function)
+         SRR3_SiL_FR.dll                - Front Right implementation library (runs RDD through Feature function)
+
+   .\Config
+      JLR_config_cdc.xml              - Resim configuration file for CDC mode
+	  JLR_config_det.xml              - Resim configuration file for Detection mode
+
+ --------------------------------------------------------------------------------------------
+   JLR_SRR3_Resim_20171108_r00032000
+ --------------------------------------------------------------------------------------------
+
+The package support Resim compatible with JLR sensor SW 03.20
+
+ JLR SRR3 V3.20 (Release)
+
+ Components of package:
+   DPH_RR_ADAS_RESIM.exe         01.02.00                   (New)     
+   SRR3_SiL_xx.dll               3.20.00                 	(New)
+
+ Changes:
+ 
+- V3.20 compatible software-in-loop
+- Support replay of logs collected until sensor SW version 3.20
+
+ Resim Instructions:
+
+    To run a full resim on logs supplied in "Log_List.txt" in folder C:\Data: 
+
+      DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_cdc.xml C:\Data\Log_List.txt -- CDC mode
+	  DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_det.xml C:\Data\Log_List.txt -- Detection mode
+
+    or, to run a resim beginning with the RDD Pass 1 (CDC mode)(when USC cals available in the UDP log), edit the config file as below:
+        <SIL_Entrypoint>CDC</SIL_Entrypoint>
+        <Calibration_Source>UDP</Calibration_Source>		
+
+      DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_cdc.xml C:\Data\Log_List.txt
+
+    or, to run a resim beginning with Detections (Detections mode)(when USC cals available in the UDP log), edit the config file as below:
+        <SIL_Entrypoint>Detections</SIL_Entrypoint>
+        <Calibration_Source>UDP</Calibration_Source>		
+
+      DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_det.xml C:\Data\Log_List.txt
+
+    or, to run a resim beginning with Detections (Detections mode)(when calibration is NOT available in the UDP log), edit the config file as below:
+        <SIL_Entrypoint>Detections</SIL_Entrypoint>
+        <Calibration_Source>DEFAULT</Calibration_Source>		
+
+      DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_det.xml C:\Data\Log_List.txt
+
+
+  - Running a full resim manually:
+
+      DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_cdc.xml C:\Data\Log_List.txt -- CDC mode
+	  DPH_RR_ADAS_RESIM.exe c:\Config\JLR_config_det.xml C:\Data\Log_List.txt -- Detection mode
+  
+      Final result will be tagged: r00032000

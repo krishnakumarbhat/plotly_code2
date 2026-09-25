@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR5 APTIV HIL component configuration -->
+<HIL_SRR_Configuration>
+	<!-- HIL SRR5 Configuration XML version -->
+	<!-- Version X.Y where:
+		 X - major change where some new parameters were added
+		 Y - minor change with no influence on parsing (comment or value change) -->	
+    <HIL_SRR_Configuration_XML_Version>9.5</HIL_SRR_Configuration_XML_Version>
+	
+	<!-- To define the CUSTOMER for which the HIL is Executed. 
+		 Options available are: SRR5: GWM_SRR5,GEELY_SRR5,HKMC_SRR5,RNA_SUV,RNA_CDV,BMW_LOW,BMW_SAT,BMW_BPIL,BMW_HIGH, SGM_358_SRR5
+                                      SRR6_ADP, FLR4_ADP,CHANGAN_SRR5,TML_SRR5
+		 Options available are: SRR3: SCANIA_MAN 
+		 Options available for SRR6 : NISSAN_GEN5,PLATFORM_GEN5,HONDA_GEN5, STLA_FLR4, STLA_FLR4P, STLA_SRR6P -->
+	<!-- Defined in enum Customer_T in Radar_Config.h -->
+	<CUSTOMER_NAME>HONDA_GEN5</CUSTOMER_NAME>
+	
+	<!--UDP_REC_VER_INFO>A318</UDP_REC_VER_INFO> <!--A318 or A218 or A118-->
+	
+	<!-- Sensor selection values: 1 => Sensor Connected , Resim is executed for that Sensor 
+	                              0 => Sensor is not connected to bench,Resim is not executed for that Sensor Position -->
+	<SENSOR_CONNECTION_STATUS>
+		<REAR_LEFT>1</REAR_LEFT>
+		<REAR_RIGHT>0</REAR_RIGHT>
+		<FRONT_RIGHT>0</FRONT_RIGHT>
+		<FRONT_LEFT>0</FRONT_LEFT>
+		<FRONT_CENTER>0</FRONT_CENTER>
+		<BPR_RIGHT>0</BPR_RIGHT> <!-- BPILLAR RIGHT CENTER IP 77-->			
+		<BPR_LEFT>0</BPR_LEFT> <!-- BPILLAR LEFT CENTER IP 78-->	
+		<RADAR_ECU>0</RADAR_ECU>
+	</SENSOR_CONNECTION_STATUS>
+
+	<!-- Input Mode Options available are -
+	SIX_DVSU_INPUT   : SIX dvsu enabled to handle six  input DVSU file ,proceed hil with 6 dvsu's file.(default option)
+	FOUR_DVSU_INPUT  : FOUR dvsu enabled to handle four  input DVSU file ,proceed hil with 4 dvsu's file.(default option)
+	SINGLE_DVSU_INPUT: Single dvsu enabled to handle Single input DVSU file , proceed hil with Single dvsu file
+	MDF4_INPUT       : MDF4_DVSU_ENABLED to handle MDF4 file proceed hil with mdf4 file -->
+	<INPUT_OPTIONS>MDF4_INPUT</INPUT_OPTIONS>
+
+	<!--To define whether the HiL execution should happen in a continuous mode(i.e Executing series of log) or execution of single set of log
+		The option's available are :  YES=> Runs all the series of log in the folder based on the path provided
+									  NO => Runs only one log even though there is series of logs-->
+	<CONTINUOUS_RUN_MODE>NO</CONTINUOUS_RUN_MODE>
+
+	<!-- To define the number of times the LOG must be Executed.-->
+	<LOG_REPEAT_COUNT>1</LOG_REPEAT_COUNT>
+	
+	<!-- RADAR_RADIATION_MODE
+	ON => SRR's are radiating during HiL execution
+	OFF => SRR's are not radiating during HiL execution-->
+   <RADAR_RADIATION_MODE>ON</RADAR_RADIATION_MODE>
+   
+	<HIL_MODE_ENABLE>
+	<!--To define whether the HiL  Engine should send vehicle dynamics from UDP log ot not .
+	The option's available are : UDP => Sensor software/HIL BB will be receiving vehicle dynamics from HIL on UDP.
+								 CAN => Sensor software/HIL BB will be fetch vechicle dynamics from CAN bus. -->
+	<VEHICLE_DYNAMIC_SOURCE>UDP</VEHICLE_DYNAMIC_SOURCE>
+	<!--To define whether the HiL  Engine should send vehicle timestamp from UDP log ot not .
+	The option's available are : UDP => Sensor software/HIL BB will be receiving vehicle timestamp from HIL on UDP.
+								 CAN => Sensor software/HIL BB will be fetch vechicle timestamp from CAN bus. -->
+	<VEHICLE_TIMESTAMP_SOURCE>UDP</VEHICLE_TIMESTAMP_SOURCE>
+	
+	<!--Whether the HiL execution should Run Radar Algorithms without Fusion or With Fusion
+		The option's available are : YES => Runs Radar Algorithms with Fusion
+									  NO => Runs Radar Algorithms without Fusion -->
+	<RADAR_FUSION_ENABLED>YES</RADAR_FUSION_ENABLED>
+	
+	<!--To define whether the HiL  Engine should sends Opposite Detection data from UDP or CAN .
+	The option's available are : UDP => Sensor software/HIL BB will be receiving Opposite Detection data from HIL on UDP.
+								 CAN => Sensor software/HIL BB will be fetch Opposite Detection data from CAN bus. -->
+	<FUSION_DETECTION_SOURCE>UDP</FUSION_DETECTION_SOURCE>		
+	
+	<!-- To define the CUSTOMER for which the HIL MODE is Executed.  
+	Available Options are : LOG_SIMULATION, LIVE_SIMULATION_DETECTION, LIVE_SIMULATION_TRACKER   -->
+    <INPUT_DATA_TYPE>LOG_SIMULATION</INPUT_DATA_TYPE>
+	</HIL_MODE_ENABLE>
+	
+	<!--To define whether to close Command window automatically after HiL Execution : YES => Close Command window automatically after execution
+																				    : NO  => Wait for user to Press Enter-->
+	<AUTOCLOSE_COMMAND_WIN>NO</AUTOCLOSE_COMMAND_WIN>
+	
+	<!--FDX_SYNCH -- To define whether to HIL Engine run with FDX Protocol. 
+	ENABLED   => With FDX Synchronisation hil application will be executed
+	DISABLED  => Without FDX Synchronisation hil application will be executed-->
+	<FDX_SYNCH>DISABLED</FDX_SYNCH>
+	
+	<!-- KPI_OUTPUT -- To enable statistics for HiL execution, available options are
+		DISABLED: KPI will not be printed after successful HiL execution
+		321KPI 	: KPI will be printed after successful HiL execution -->
+	<KPI_OUTPUT>321KPI</KPI_OUTPUT> 
+	
+	<!-- DEBUGGING_HIL
+		ENABLED : Resim.exe creates text file named as "HiL_Debugging.txt" and starts writing, debugging info to the file
+		DISABLED: Resim.exe will not be create a "HiL_Debugging.txt" text file   -->
+	<DEBUGGING_HIL>ENABLED</DEBUGGING_HIL>
+	
+	<!-- Configured Port in HiL for HiL_DATA/XCP/UDP_Logging. Don't Modify  -->
+	<UDP_PORT_DATA>6001</UDP_PORT_DATA>
+	<UDP_PORT_XCP>4410</UDP_PORT_XCP>
+	<UDP_PORT_LOGGING>5555</UDP_PORT_LOGGING>
+	                                              	
+	<!-- To define the CUSTOMER for which IP Address and port number the JSON INTERFACE, HIL_Engine is running. -->
+	<INTERFACE_HIL_IP>192.168.1.42</INTERFACE_HIL_IP>
+	<JSON_INTERFACE_IP>192.168.1.43</JSON_INTERFACE_IP>
+	<INTERFACE_PORT>5544</INTERFACE_PORT>
+	
+	<!-- TOBJECT_INJECTION_TYPE parameter can be used to select the track injection based on the user input
+		DSPACE: DSPACE ASM objects Injection
+		INTERNAL: Objects injection from csv -->
+	<TOBJECT_INJECTION_TYPE>DSPACE</TOBJECT_INJECTION_TYPE>	
+	
+	<!-- To define the CUSTOMER for which IP Address and port number the SCALEXIO/Scene Generator,HIL_Engine is running. -->
+     <HIL_ENGINE_IP>127.0.0.1</HIL_ENGINE_IP>
+	 
+    <SCALEXIO_IP>127.0.0.1</SCALEXIO_IP>
+	
+	<SCALEXIO_PORT>5556</SCALEXIO_PORT>
+	
+	<!-- LIVE_DATA_SOURCE parameter can be used to select the data injection based on the user input
+		DISABLED: DSPACE DATA Injection received DSPACE application
+		ENABLED: Zero data injection till connecting DSPACE application-->
+	<LIVE_ZERO_DATA_SOURCE>ENABLED</LIVE_ZERO_DATA_SOURCE>	
+	
+	<!--SRR6 Component Based HIL Injection. Component Based HIL Injection are 
+		1. Detection Component Based HIL Injection
+		2. Tracker Component Based HIL Injection
+		3. RDD Component Based HIL Injection
+		ENABLED   => which Enables the component in hil application will be executed
+		DISABLED  => which Enables the component in hil application will be executed-->
+		<DETECTION_COMPONENT>ENABLED</DETECTION_COMPONENT>
+		<TRACKER_COMPONENT>DISABLED</TRACKER_COMPONENT>
+		<RDD_COMPONENT>DISABLED</RDD_COMPONENT>
+	
+	<!-- SPECIAL_MODE_SENSORS_OFF parameter can be used to send the data injection even if the sensors are not connected to HIL
+		DISABLED: Default mode which is normal run for injecting to the actual sensors
+		ENABLED: Enables the special mode when sensors are not present, starts data injection to verify the data validity and test HIL-->
+	<SPECIAL_MODE_SENSORS_OFF>DISABLED</SPECIAL_MODE_SENSORS_OFF>
+	
+	<!--To define which fault has to be injected :BLOCKAGE =>  Set the sensors to blockage
+												 :ALIGNMENT => Injects Alignment fault to the sensors 
+												 :NOTE      => Make the field empty if no faults need to be injected -->
+	<FAULT_INJECTION></FAULT_INJECTION>
+	
+		<SET_FAULT_FROM>35200</SET_FAULT_FROM> <!-- Provide the scan-index from which fault has to be injected -->
+		<SET_FAULT_TILL>35350</SET_FAULT_TILL> <!-- Provide the scan-index till which fault has to be injected -->
+			
+		<INJECT_FAULT_SENSOR_RL>1</INJECT_FAULT_SENSOR_RL> <!-- Provide 1 to enable fault injection for Rear Left sensor or make it empty-->
+		<INJECT_FAULT_SENSOR_RR>1</INJECT_FAULT_SENSOR_RR> <!-- Provide 1 to enable fault injection for Rear Left sensor or make it empty-->	
+
+</HIL_SRR_Configuration>

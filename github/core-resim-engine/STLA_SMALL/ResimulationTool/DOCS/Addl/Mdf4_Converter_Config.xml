@@ -1,0 +1,36 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ?>
+<!--  APTIV SIL component configuration -->
+<CONVERTER_Configuration>
+  <!-- SIL SRR5 Configuration XML version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <CONVERTER_Configuration_XML_Version>1.0</CONVERTER_Configuration_XML_Version>
+
+<!-- Input Mode Options available are -
+	SINGLE_DVSU_INPUT:  Input to the converter will be single DVSU
+	FOUR_DVSU_INPUT :   Input to the converter will be FOUR DVSU
+	CANAPE_MDF4_INPUT:   Input to the converter will be CANAPE_MDF4
+	VIGEM_MDF4_INPUT : Input to the converter will be VIGEM_MDF4 -->
+	
+	<CONVERTER_INPUT_FILE_OPTION>
+		<ORCAS_MDF4_INPUT_ENABLE>1</ORCAS_MDF4_INPUT_ENABLE>
+		<CANAPE_MDF4_INPUT_ENABLE>0</CANAPE_MDF4_INPUT_ENABLE>
+		<VIGEM_MDF4_INPUT_ENABLE>0</VIGEM_MDF4_INPUT_ENABLE>
+	</CONVERTER_INPUT_FILE_OPTION>
+	
+	<!-- Output Mode Options available are -
+	SINGLE_DVSU_OUTPUT: Output will be single_dvsu file
+	FOUR_DVSU_OUTPUT : Output will be Four file
+	ORCAS_MDF4_OUTPUT:  Output will be ORCAS_MDF4_OUTPUT file
+	CANAPE_MDF4_OUTPUT:
+	VIGEM_MDF4_OUTPUT :   -->
+
+	<CONVERTER_OUTPUT_FILE_OPTION>
+		<SINGLE_DVSU_OUTPUT_ENABLE>0</SINGLE_DVSU_OUTPUT_ENABLE>
+		<FOUR_DVSU_OUTPUT_ENABLE>0</FOUR_DVSU_OUTPUT_ENABLE>
+		<ORCAS_MDF4_OUTPUT_ENABLE>0</ORCAS_MDF4_OUTPUT_ENABLE>
+		<CANAPE_MDF4_OUTPUT_ENABLE>1</CANAPE_MDF4_OUTPUT_ENABLE>
+		<VIGEM_MDF4_OUTPUT_ENABLE>0</VIGEM_MDF4_OUTPUT_ENABLE>
+		<CANOE_OUTPUT_ENABLE>0<CANOE_OUTPUT_ENABLE>
+	</CONVERTER_OUTPUT_FILE_OPTION>

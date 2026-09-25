@@ -1,0 +1,140 @@
+------------------------------------
+AUDI SRR3Tools Release Notes
+------------------------------------
+This document provides a high level summary of changes since the previous Release, Patch, or
+Update. For detailed change history, please refer to release notes in each directory.
+
+Contents:
+  The SRR3 components of this release/patch/update are provided in the following directories:
+        ./SRR3Tools                   Tools
+        + LIB                             ; Libraries (32-bit and 64-bit)
+        + INC                             ; API headers
+        + doc                             ; API description
+        + etc                             ; Configuration files
+
+Components added/changed in this package will be denoted with (New) or (Updated).
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_HIL_20160713_Release
+--------------------------------------------------------------------------------------------------------------
+The package primarily address for SRR3 sensor HIL compatible with XY083 SW Release.
+Major components of this Release include:
+
+  SRR3Tools\LIB
+
+     + SRR3_HiL_Exec.dll       		 4.4   (Updated)  ; HIL Executive component responsible for online+offline HiL Resimulation
+
+  SRR3Tools\bin
+
+     + SRR3_HiL_Resim.exe  		 2.4.3  (Updated) ; HIL application (64-bit) for replay of Delphi Sensor Logs (*.dvsu)
+
+ SRR3Tools\doc
+     + DPH_SRR3_HIL_API.doc		 0.9    (Updated) ; HIL API description
+
+
+       
+Changes:
+                   
+       - Add: HIL injection support for sensor SW until XY083
+       - Add: Log replay backward compatibilty
+       - Fix: Endianness conversion issue with OH/Fences.
+       - Fix: Fences data Not available on Flexray bus during HIL injection
+       - Fix: HIL Crash issue while invoking stop API during live injection mode
+
+
+Note:
+ - The package has been tested on sensor SW until XY083 release
+ - The package has libraries build for 64-bit windows platform
+ - The package is build from Visual C++ 2010 , Windows SDK7.1
+ - Track object injection is unsupported during log replay(only supported HiL_DETECTION mode during replay log)
+
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_HIL_20160530_Release
+--------------------------------------------------------------------------------------------------------------
+The package primarily address for SRR3 sensor HIL compatible with XY80 SW Release and Track Object injection.
+Major components of this Release include:
+
+  SRR3Tools\LIB
+
+     + SRR3_HiL_Exec.dll       		 4.3   (Updated)  ; Hil Executive component responsible for online+offline HiL Resimulation
+
+  SRR3Tools\bin
+
+     + SRR3_HiL_Resim.exe  		 2.4.2   (Updated) ; HIL application (64-bit) for replay of Delphi Sensor Logs (*.dvsu)
+
+
+       
+Changes:
+                   
+       - Add: HIL replay of XY80 SW logs
+       - Add: Log replay backward compatibilty
+
+
+Note:
+ - The package has libraries build for 32-bit and 64-bit windows platform
+ - The package is build from Visual C++ 2010 , Windows SDK7.1
+ - Track object injection is unsupported during log replay(only supported HiL_DETECTION mode during replay log)
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_HIL_20160329_Release
+--------------------------------------------------------------------------------------------------------------
+The package primarily address for SRR3 sensor HIL compatible with XY75 SW release and Track Object injection.
+Major components of this Release include:
+
+  SRR3Tools\LIB
+
+     + SRR3_HiL_Exec.dll       		 4.2   (Updated)  ; Hil Executive component responsible for online+offline HiL Resimulation
+
+  SRR3Tools\bin
+
+     + SRR3_HiL_Resim.exe  		 2.4.1    ; HIL application (64-bit) for replay of Delphi Sensor Logs (*.dvsu,*.dvl)
+
+
+       
+Changes:
+       - Add: Track Object injection.
+              - HIL API initialization :
+                     SRR3_HiL_Infrastructure_T::running_mode = HiL_AUDI (enable the HIL library to allow track object injection)
+                     SRR3_HiL_Infrastructure_T::strm_mode    = STRM_LIVE
+              - Supported replay of max:31 track object for each sensor
+              - Each track object is represented as TrackObject_T structure (part of HIL_AUDI_INPUTS_T). The HIL input supports OH, Fences and Track objects.
+              - The AUDI HIL input (HIL_AUDI_INPUTS_T) has to be populated in the HIL InjectProc callback which wis registered for every sensor.(Usage has been mentioned in the doc\DPH_SRR3_HIL_API.doc)
+              - Sensor will read the Vehicle parameter from the flexray bus.
+                      
+       - Add: HIL replay of XY75 SW logs
+       - Add: Log replay backward compatibilty
+
+
+Note:
+ - The package has libraries build for 32-bit and 64-bit windows platform
+ - The package is build from Visual C++ 2010 , Windows SDK7.1
+ - Track object injection is unsupported during log replay(only supported HiL_DETECTION mode during replay log)
+
+
+--------------------------------------------------------------------------------------------------------------
+     AUDI_SRR3_HIL_20160209_Release
+--------------------------------------------------------------------------------------------------------------
+The package has support for SRR3 sensor HIL compatible with XY60 SW release.
+Major components of this Release include:
+
+  SRR3Tools\LIB
+
+     + SRR3_HiL_Exec.dll       		 4.1   (Updated)  ; Hil Executive component responsible for online+offline HiL Resimulation
+
+  SRR3Tools\bin
+
+     + SRR3_HiL_Resim.exe  		 2.4.1  (Updated)  ; HIL application (64-bit) for replay of Delphi Sensor Logs (*.dvsu,*.dvl)
+
+
+       
+Changes:
+       
+       - Add: Supported HIL replay of XY60 SW logs
+       - Add: Supported log replay backward compatibilty
+       - Fix: Support continous HiL replay without needing power cycle of sensor   
+
+
+Note:
+ - The package has libraries build for 32-bit and 64-bit windows platform
+ - The package is build from Visual C++ 2010 , Windows SDK7.1

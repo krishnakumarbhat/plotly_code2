@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BMW_VEHICLE_CONFIGURATION xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Configuration_Version>1</Configuration_Version>
+	<Vehical_Value>G005</Vehical_Value>
+	<Radar_Type>2SensorSystem</Radar_Type>
+	<Function>unknown</Function>
+	<Region>default</Region>
+	<HUD>withHUD</HUD>
+	<KAFAS>withoutKAFAS</KAFAS>
+	<Trailer_TOW>withoutTrailer</Trailer_TOW>
+</BMW_VEHICLE_CONFIGURATION>

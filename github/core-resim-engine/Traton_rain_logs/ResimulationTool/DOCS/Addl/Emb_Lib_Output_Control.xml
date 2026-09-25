@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+
+<Embedded_Library_Output_Control>
+	<!-- SIL SRR3 Embedded_Library Configuration Control XML Version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->		
+	<SIL_SRR3_Embedded_Library_Output_Control_XML_Version>1.1</SIL_SRR3_Embedded_Library_Output_Control_XML_Version>
+	
+	<!-- To define the CUSTOMER for which the Embedded_Library is Executed. 
+		 Options available are: SRR3: AUDI, BMW, JLR, SCANIA, GEELY, HKMC_GEN2 -->
+	<Customer_Name>RNA_CDV</Customer_Name>
+	
+	<!-- XML Configuration Control for Embedded_Library Output DVL Files- 
+				DVL_FILES_ENABLED - GENERATE Embedded_Library Output DVL Files 
+				DVL_FILES_DISABLED - SUPPRESS Embedded_Library Output DVL Files -->
+	<Suppress_DVL_Files>DVL_FILES_ENABLED</Suppress_DVL_Files>
+	
+	<!-- XML Configuration Control for Embedded_Library Output DVSU Files- 
+				DVSU_FILES_ENABLED - GENERATE Embedded_Library Output DVSU Files 
+				DVSU_FILES_DISABLED - SUPPRESS Embedded_Library Output DVSU Files -->
+	<Suppress_DVSU_Files>DVSU_FILES_ENABLED</Suppress_DVSU_Files>
+	
+	<!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				XML_TRACE_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				XML_TRACE_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+	<Suppress_XML_Trace_Files>XML_TRACE_ENABLED</Suppress_XML_Trace_Files>
+	    
+	<!-- Embedded_Library Output XML Trace files for all Customers
+	    XML Trace File selection values: UDP_Datas: 	0 => Generates XML Prints of Embedded_Library In and Out UDP datas
+														1 => Suppress XML Prints of Embedded_Library In and Out UDP datas
+											      
+										 Active Faults: 0 => Generates XML Prints of  Active Faults 
+														1 => Suppress XML Prints of  Active Faults  --> 
+	<XML_Trace_Files>
+		<Active_Faults>0</Active_Faults>
+		<UDP_Datas>0</UDP_Datas>
+	</XML_Trace_Files>
+	
+	<!-- Parts of XML Prints: 0 => Generate XML Print 
+							  1 => Suppress XML Print -->
+	<XML_Prints>
+		<Vehicle_Info>0</Vehicle_Info>
+		<Mounting_Info>0</Mounting_Info>
+		<MNR_blockage>0</MNR_blockage>
+		<TD_blockage>0</TD_blockage>
+		<Self_Dets>0</Self_Dets>
+		<Opp_Dets>0</Opp_Dets>
+		<Curvi_Tracks>0</Curvi_Tracks>
+		<OH_Info>1</OH_Info>
+		<Fences_Info>1</Fences_Info>
+		<Alignment_Info>0</Alignment_Info>
+		<Z4_Z7B_Cust_Data>1</Z4_Z7B_Cust_Data>
+		<ADC_Physical_Data>0</ADC_Physical_Data>
+		<kd_eol>1</kd_eol>
+		<Algo_Z7B_core>0</Algo_Z7B_core> <!-- Algo Timing Info of Z7B core -->
+		<Algo_Z7A_core>0</Algo_Z7A_core> <!-- Algo Timing Info of Z7A core -->
+		<Algo_Z4_core>0</Algo_Z4_core> <!-- Algo Timing Info of Z4 core -->
+		<LCDA_Info>0</LCDA_Info> 
+		<CTA_Info>0</CTA_Info>
+		<RECW_Info>0</RECW_Info>
+		<ASW_Info>1</ASW_Info>
+		<ABA_Info>1</ABA_Info>
+	</XML_Prints>
+									 
+	<!-- XML Configuration Control for Embedded_Library Output BIN Files-   
+				BIN_FILES_ENABLED - GENERATE Embedded_Library Output BIN Files 
+				BIN_FILES_DISABLED - SUPPRESS Embedded_Library Output BIN Files -->
+	<Suppress_BIN_Files>BIN_FILES_ENABLED</Suppress_BIN_Files>
+		
+	<!-- Embedded_Library Output BIN Files for all Customers
+	    BIN File selection values: 0 => Generate Embedded_Library Output BIN Files for Enabled BIN Files
+								   1 => Suppress Embedded_Library Output BIN Files for Disabled BIN Files -->		
+    <BIN_Files>	
+		<DETECTIONS>0</DETECTIONS>
+		<FENCES>0</FENCES>
+		<OH_OBJECT>0</OH_OBJECT>
+		<TRACKER_OUT>0</TRACKER_OUT>
+		<RADAR_PARAM>0</RADAR_PARAM>
+		<VEHICLE_DATA>0</VEHICLE_DATA>
+		<GROUPED_TRACKLETS>0</GROUPED_TRACKLETS>
+		<OH_LOGGED>0</OH_LOGGED>
+		<DEBUG_OH_OBJECTS>0</DEBUG_OH_OBJECTS>
+		<DEBUG_DETECTION_GROUPS>0</DEBUG_DETECTION_GROUPS>
+		<FEATURES>0</FEATURES>
+		<LCDA>0</LCDA>
+		<RECW>0</RECW>
+		<CTA>0</CTA>
+		<ASW>0</ASW>
+		<VISOB>0</VISOB>
+		<Freespace>0<Freespace>
+		<ABA>0</ABA>
+		<Timing_Info>0</Timing_Info>
+		<TODS>0</TODS>
+	</BIN_Files>	
+					
+</Embedded_Library_Output_Control>
+

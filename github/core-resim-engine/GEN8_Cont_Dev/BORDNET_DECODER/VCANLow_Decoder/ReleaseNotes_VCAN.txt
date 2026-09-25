@@ -1,0 +1,94 @@
+---------------------------------------------------
+	VCAN Decoder   Release Notes
+---------------------------------------------------
+This document provides a summary of VCAN Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.7.0.0
+Release Date	: 07-09-2021
+
+Features:
+-Dll supports A_470_SOP3 software.
+-Added New Enum value(A_470_SOP3) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.6.0.0
+Release Date	: 15-03-2021
+
+Features:
+-Dll supports A_480 software.
+-Added New Enum value(A_480) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.5.0.0
+Release Date	: 18-01-2021
+
+Features:
+-Dll supports A_470 software.
+-Added New Enum value(A_470) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.4.0.0
+Release Date	: 27-10-2020
+
+Features:
+-Dll supports A_450 software.
+-Added New Enum value(A_450) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.3.0.0
+Release Date	: 21-07-2020
+
+Features:
+-Dll supports A_410 software.
+-Added New Enum value(A_410) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.2.0.0
+Release Date	: 22-06-2020
+
+Features:
+-Dll supports A_390 software.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.1.0.0
+Release Date	: 24-04-2020
+
+Features:
+-Dll supports A_350 and A_370 software.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.0.0.1
+Release Date	: 30-03-2020
+
+Features:
+-Version details for DLL is updated. 
+- More information is available in design document.
+
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2.0.0.0
+Release Date	: 09-03-2020
+
+Features: 
+- Removed pointers in VCANLow Dll.
+-API names have been changed.
+- More information is available in design document.
+Known Issue:
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.1.0
+Release Date	: 21-2-2020
+
+Features: 
+- Removed zP2 flag
+- Added CAN ID & BUSSPEC ID in the output structure
+- Release note format changed.
+Known Issue:
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 2020.7.1.0
+Release Date	: 12-2-2020
+
+Features:
+- Dll supports the decoding of the alert messages cycle by cycle.
+- VCAN-Low supports only LOW VARIANT.
+- Error codes supported are
+	DECODER_RESULT_OK 
+	DECODER_INTERNAL_ERROR
+	DECODER_INPUT_DATA_ERROR
+- Will be adding the error codes in future releases.
+- Further information will be available in the design document.
+Known Issue:	
+-------------------------------------------------------------------------------------------------------------  
+
+

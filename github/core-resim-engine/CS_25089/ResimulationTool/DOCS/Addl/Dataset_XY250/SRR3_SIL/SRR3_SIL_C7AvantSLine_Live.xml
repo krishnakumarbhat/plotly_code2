@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+<SIL_SRR3_Configuration>
+	<!-- SIL SRR3 Configuration XML version -->
+	<!-- Version X.Y where:
+		X mean major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->				
+    <SIL_SRR3_Configuration_XML_Version>6.2</SIL_SRR3_Configuration_XML_Version>
+	
+	<!-- 	
+	"Operating mode 1: Read TCP/UDP Socket, data processing (former Ethernet_Socket)
+		The SIL component reads Front-End data over the Socket.
+		The SIL component processes Front-End data to raw targets, object hypotheses, Fences, Tracks."
+		Operating mode 1b: Read TCP/UDP socket, data processing of raw target detections	
+	"Operating mode 1b: Read TCP/UDP socket, data processing of raw target detections
+		SIL component is processing raw targets to object hypotheses, fences, tracks, function outputs, and issues via the SW interface: object hypotheses, tracks, fences, functional output"
+	"Operating mode 1c: Read TCP/UDP socket, data processing of tracks
+		SIL component reads the track data from the socket
+		SIL component is processing raw targets to object hypotheses, fences, tracks, function outputs, and issues via the SW interface: tracks of sensors, functional output"
+	"Operating mode 2: Data processing (former Ethernet_UDP_Frames)
+		The SIL component receives Front-End data over a reference parameter of the SIL function call.
+		The SIL component processes Front-End data to raw targets, object hypotheses, Fences."
+	"Operating mode 2b: Data processing of raw target detections
+		The SIL component receives Front-End data via a reference parameter of the SIL function call, as part of UDP packages
+		SIL component is processing raw targets to object hypotheses, fences, function outputs, and issues via the SW interface: object hypotheses, tracks, fences, functional output"
+	"Operating mode 2c: Data processing of tracks
+		SIL component receives raw target detection data via a reference parameter of the SIL function call, as part of UDP packages
+		SIL component is processing tracks to functional outputs and issues via the SW interface: tracks of the sensors,  functional output"
+	"Operating mode 2d: Data processing of raw target detections
+		SIL component receives raw target-detection data via a reference parameter of the SIL function call as a structure of type SRR3_DETECTION_T, as well as Ego data of type SRR3_EGO_MOTION_T.
+		SIL component is processing raw targets to object hypotheses, fences, function outputs, and issues via the SW interface: object hypotheses, tracks, fences, functional output
+	"Operating mode 3: Write OBH, Fences, EML to sensor (PIL/HIL parametrization)
+		The SIL component receives OBH, Fences, EML over a reference parameter of a function call.
+		The SIL component transmits the received data over the measuring technique interface to the sensor.
+		The sensor processes the data starting from the logical feed-in point and produces resulting outputs on the vehicle buses."
+	"Operating mode 4: Write Front End data to sensor (PIL/HIL parametrization)
+		The SIL component receives recorded Front-End data over a reference parameter of a function call.
+		The SIL component transmits the received data over the measuring technique interface to the sensor.
+		The sensor processes the data starting from the logical feed-in point and produces resulting outputs on the vehicle buses."
+	"Operating mode 5: End-of-Line test mode calibrating state (EOL test mode)
+		The SIL component receives measuring data made of UDP data and control data from calibration routines.
+		The SIL component performs the calibration based on the received measured values and outputs the determined error of the mounting angle as calibration result."
+	"Operating mode 6: End-of-Line test mode Short-Track
+		The SIL component receives Front-End measuring data made of UDP data and control data from calibration routines.
+		The SIL component performs the calibration based on the received measured values and outputs the determined error of the mounting angle as calibration result." 
+	-->
+	<SIL_Input_Mode>2</SIL_Input_Mode>
+	
+	<!-- SIL_Embedded_code_processing Enabled - input log data will be reprocessed
+		Disabled - only reading data from log - faster processing-->
+	<SIL_Embedded_code_processing>Disabled</SIL_Embedded_code_processing>
+	
+	<!-- SIL Ethernet Port Number for input mode  -->
+	<SIL_Input_Ethernet_Port>5555</SIL_Input_Ethernet_Port>
+	
+	<!-- SIL Ethernet IP address for input mode -->
+	<SIL_Input_Ethernet_IP>255.255.255.255</SIL_Input_Ethernet_IP>
+	
+	<!-- SIL Timeout for input Ethernet connection in [ms] -->
+	<SIL_Input_Ethernet_Timeout>40</SIL_Input_Ethernet_Timeout>
+	
+	<!-- SIL output mode valid values: Ethernet_Socket, Data_Structures -->
+	<!-- Currently Ethernet_Socket output mode is not available -->
+	<SIL_Output_Mode>Data_Structures</SIL_Output_Mode>
+	
+	<!-- SIL Ethernet Port Number for output mode  -->
+	<SIL_Output_Ethernet_Port>5555</SIL_Output_Ethernet_Port>
+	
+	<!-- SIL Ethernet IP address for output mode -->
+	<SIL_Output_Ethernet_IP>192.168.1.71</SIL_Output_Ethernet_IP>
+
+	<!-- SIL entry point valid values: CDC, Detections -->
+    <SIL_Entrypoint>Detections</SIL_Entrypoint>
+	
+	<!-- End-of-Line tests -->
+	<!-- values: Disabled, Enabled_RL, Enabled_RR, Enabled_FR, Enabled_FL-->
+	<EOL>Disabled</EOL>
+	
+	<!-- Doppler Generator position in USK coordinate system 
+		Target_Range_Rate - A floating point value indicating the expected 
+		radial range rate from the Doppler Generator
+		Trust_Angle - see release note
+		Sample_Num_Req - An integer value indicating the maximum number 
+		of scans processed for the algorithm to converge.
+																											-->
+	<Doppler_Generator_Position>
+		<X>5.000</X>
+		<Y>-1.900</Y>
+		<Target_Range_Rate>6.3</Target_Range_Rate>
+		<Trust_Angle>0</Trust_Angle>
+		<Sample_Num_Req>100</Sample_Num_Req>
+	</Doppler_Generator_Position>
+	
+	<!-- Autocalibration -->
+	<Autocalibration>Disabled</Autocalibration>
+	
+	<!-- Fusion -->
+	<Fusion>Enabled</Fusion>
+	
+	<!-- Side on which steering wheel is mounted - used for feature functions -->
+	<!-- Left - Steering wheel on left like in Germany or Poland -->
+	<!-- Right - Steering wheel on right like in UK -->
+	<Steering_Wheel_Mounting_Side>Left</Steering_Wheel_Mounting_Side>
+	
+	<!-- Using Mounting Position Data for C7 Avant SLine -->
+	<SRR_Mounting_Position>
+		<!-- Source of mounting positions. Possible options:
+			 XML - reading mounting positions directly from this XML config file, stated below
+			 UDP - reading mounting positions from UDP stream -->
+		<Mounting_Position_Source>UDP</Mounting_Position_Source>
+		<!-- Distance from Front Bumper to Rear Axle [m] -->
+		<Distance_From_Rear_Axle>3.824</Distance_From_Rear_Axle>
+		
+		<!-- Audi Vehicle coordinate system (USK from DOORS module Koordinatensysteme) -->
+		<!-- The origin is located on the ground below the middle of the rear axle. 
+			 The x-axis extends along the projected onto the ground plane chassis longitudinal axis 
+			 towards the front and is in forward direction is positive (dynamic driving axis).
+			 The y-axis extends to the bottom plane and is perpendicular to the projected onto the ground 
+			 plane chassis longitudinal axis. It is defined positive in forward direction to the left.
+			 
+			 Polarity should be negative (-1) for upside down mounting, otherwise positive (1).
+			 X, Y: [m], Yaw: Degree			 
+																											-->
+		<!-- Mounting position of the Rear Left SRR3 -->
+        <RL>
+			<X>-0.834</X>
+			<Y>0.764</Y>
+			<Yaw>120.00</Yaw>
+			<Polarity>-1</Polarity>
+		</RL>
+
+		<!-- Mounting position of the Rear Right SRR3 -->
+        <RR>
+			<X>-0.834</X>
+			<Y>-0.764</Y>
+			<Yaw>-120.00</Yaw>
+			<Polarity>1</Polarity>
+		</RR>
+
+		<!-- Mounting position of the Front Right SRR3 -->
+        <FR>
+			<X>3.441</X>
+			<Y>-0.829</Y>
+			<Yaw>-65.00</Yaw>
+			<Polarity>1</Polarity>
+		</FR>
+
+		<!-- Mounting position of the Front Left SRR3 -->
+        <FL>
+			<X>3.441</X>
+			<Y>0.829</Y>
+			<Yaw>65.00</Yaw>
+			<Polarity>-1</Polarity>
+		</FL>
+
+    </SRR_Mounting_Position>
+	
+	<!-- Data set download XML file paths -->
+	<!-- Specified paths should be absolute or relative to SIL exe file -->
+	<Dataset_download>
+        <DSD_RL>..\..\..\share\Dataset\C7AvantSLine\DA_0CF_7200_4M0_0023_AS5720HL0023_AU572SLINE00000500040004.xml</DSD_RL>
+        <DSD_RR>..\..\..\share\Dataset\C7AvantSLine\DA_03C_7200_4M0_0023_AS5720HR0023_AU572SLINE00000500040004.xml</DSD_RR>
+        <DSD_FR>..\..\..\share\Dataset\C7AvantSLine\DA_0DB_7200_4M0_0023_AS5720VR0023_AU572SLINE00000500000004.xml</DSD_FR>
+        <DSD_FL>..\..\..\share\Dataset\C7AvantSLine\DA_0DC_7200_4M0_0023_AS5720VL0023_AU572SLINE00000500000004.xml</DSD_FL>
+	</Dataset_download>
+	
+</SIL_SRR3_Configuration>

@@ -1,0 +1,13 @@
+---------------------------------------------------
+	NISSAN RL Decoder   Release Notes
+---------------------------------------------------
+This document provides a summary of NISSAN RL Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 20-06-2022
+
+Features:
+- Dll supports the decoding of the alert messages cycle by cycle.
+- NISSAN supports NISSAN VARIANT.
+Known Issue:	
+-------------------------------------------------------------------------------------------------------------  

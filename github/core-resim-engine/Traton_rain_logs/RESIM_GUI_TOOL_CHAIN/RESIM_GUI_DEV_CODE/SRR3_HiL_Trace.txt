@@ -1,0 +1,77 @@
+
+-------------------------------------------------------------------------
+
+              * *     * * *   * * * * * *  * * * * *  *       *              
+             *   *    *    *       *           *       *     *               
+            * *** *   * * *        *           *        *   *                
+           *       *  *            *       * * * * *     * *                 
+
+			SRR HiL Resimulation			2020
+
+-------------------------------------------------------------------------
+
+	     Info  :     Now          : 
+			 Released     :   2/ 6/2020
+			 Build Date   :   2/ 6/2020
+			 Changeset No :  9629
+------------------------------------------------------------------------------
+
+			 HIL Release Info  :   20
+			 HIL Release Major :   11
+			 HIL Release Minor :   9
+------------------------------------------------------------------------------
+Supported Streams  : 
+			 Core   Z4  streams :   5
+			 Core   Z7B streams :   11
+			 Custom Z4  streams :   14
+			 Custom Z7B streams :   12
+------------------------------------------------------------------------------
+	   Config  :     Customer Name	    :   BMW_LOW 
+			 Input Options	    :   MDF4_INPUT
+			 Continuous_run_mode:   YES
+			 Vehicle_data_Source:   UDP
+			 Fusion_Det_Source  :   UDP
+			 Radar_Fusion_Enable:   YES
+			 Radar_Radiation_Mode:   ON
+			 Debuging_Hil_Enable:   DISABLED
+			 eInputSrcType	    :   LOG_SIMULATION
+			 ResimExecution_Mode:   NORMAL
+			 XmlValue_RL	    :   Connected
+			 XmlValue_RR	    :   Connected
+			 XmlValue_FR	    :   DisConnected
+			 XmlValue_FL	    :   DisConnected
+			 XmlValue_BPR_Left  :   DisConnected
+			 XmlValue_BPR_Right :   DisConnected
+			 XmlValue_Radar_ECU :   DisConnected
+			 Log Path	    :   C:/Users/vjqv6l/Desktop/logs/LOW_LOGS/20191216T112402_20191216T112412_LB14647_536153_SRR_DEBUG.MF4
+			 Used Network driver:   WinPcap
+			 NW Driver Available:   Yes
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+ PORT reading failure  !!!
+ HIL Interface creation error  !!!
+ HIL Resimulatioin Failed with Error Code - 008 for IP : 192.168.1.40, Port : 6001 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!
+	 HIL Resimulatioin Failed with Error Code - 011,IP: 192.168.1.40, Port: 4410 !!!

@@ -1,0 +1,11 @@
+---------------------------------------------------
+	VCAN MAN FC Decoder   Release Notes 
+---------------------------------------------------
+This document provides a summary of TRATON VCAN FC Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 24-10-2024
+
+Features:
+- Dll supports the decoding of the alert messages cycle by cycle.
+-------------------------------------------------------------------------------------------------------------

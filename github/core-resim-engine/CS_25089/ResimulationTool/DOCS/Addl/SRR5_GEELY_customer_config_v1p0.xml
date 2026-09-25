@@ -1,0 +1,106 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ? -->
+<!-- SRR5 Delphi SIL component configuration -->
+<SIL_SRR5_Configuration>
+  <!-- SIL SRR5 Configuration XML version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <SIL_SRR5_Configuration_XML_Version>1.2</SIL_SRR5_Configuration_XML_Version>
+
+  <!-- To define the CUSTOMER for which the RESIM is Executed. 
+		 Options available are: SRR5: RNA_SUV,RNA_CDV, BMW_LOW, BMW_SAT, BMW_HIGH -->
+  <Customer_Name>GEELY_SRR5</Customer_Name>
+
+  <!-- Resim output path selection. Options are SAME_AS_INPUT or NEW_OUTPUT_PATH -->
+  <Output_Path_Options>SAME_AS_INPUT</Output_Path_Options>
+			<!-- If resim output path selection is NEW_OUTPUT_PATH use Output_Path_Location tag to enter valid folder path -->
+			<Output_Path_Location>C:\SIL_LOG\</Output_Path_Location>
+
+   <!--Additional DEBUG Data can be enabled using the EB Configuration file
+		Options are NONE or Name of the EB config .xml file including full File Path 
+		Read independent of options selected in RESIM_Execution_User -->
+	<EMBEDDED_LIB_CONFIGURATION>C:\Users\qjd2jz\Desktop\Veirication\GEELY_SRR5_RESIM\Emb_Lib_Config_v1p5.xml</EMBEDDED_LIB_CONFIGURATION>
+
+  <!-- Output Mode Options available are -
+	SINGLE_DVSU_OUTPUT: Single dvsu enabled to handle Single input DVSU file , proceed resim with Single dvsu file
+	FOUR_DVSU_OUTPUT : FOUR dvsu enabled to handle four  input DVSU file ,proceed  resim with 4 dvsu's file.(default option)
+	ORCAS_MDF4_OUTPUT:
+	CANAPE_MDF4_OUTPUT:
+	VIGEM_MDF4_OUTPUT :  VIGEM_MDF4_DVSU_ENABLED to handle MDF4 file proceed resim with mdf4 file -->
+
+	<RESIM_OUTPUT_FILE_FORMAT>
+		<SINGLE_DVSU_OUTPUT_ENABLE>0</SINGLE_DVSU_OUTPUT_ENABLE>
+		<FOUR_DVSU_OUTPUT_ENABLE>0</FOUR_DVSU_OUTPUT_ENABLE>
+		<ORCAS_MDF4_OUTPUT_ENABLE>1</ORCAS_MDF4_OUTPUT_ENABLE>
+		<CANAPE_MDF4_OUTPUT_ENABLE>0</CANAPE_MDF4_OUTPUT_ENABLE>
+		<VIGEM_MDF4_OUTPUT_ENABLE>1</VIGEM_MDF4_OUTPUT_ENABLE>
+		<CCA_VIGEM_MDF4_OUTPUT_ENABLE>0</CCA_VIGEM_MDF4_OUTPUT_ENABLE>
+		<VPCAP_VCAN_OUTPUT_ENABLE>1</VPCAP_VCAN_OUTPUT_ENABLE>
+	</RESIM_OUTPUT_FILE_FORMAT>
+	
+  <!-- Sensor selection values: 
+	1: Resim is executed for that Sensor Position
+	0: Resim is not executed for that Sensor Position -->
+  <SENSOR_STATUS>
+    <REAR_LEFT>1</REAR_LEFT>
+    <REAR_RIGHT>1</REAR_RIGHT>
+    <FRONT_RIGHT>0</FRONT_RIGHT>
+    <FRONT_LEFT>0</FRONT_LEFT>
+    <BP_RIGHT>0</BP_RIGHT>
+    <BP_LEFT>0</BP_LEFT>
+	<RADAR_ECU>0</RADAR_ECU>
+  </SENSOR_STATUS>
+ 
+  <!-- SIL_Injection Mode  - 
+		VEHICLE_EXPEDITION_FILE - SIL Input is vehicle collected Files
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+		VIRTUAL_SIMULATION_FILE - SIL Input is Virtual Simulation Tools IPG/VTD/DSPACE ASM created Virtual simulation files.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)
+		VIRTUAL_SIMULATION_LIVE - SIL Input is Live streams from Virtual Simulation tools IPG/VTD/DSPACE ASM.
+													(Internally RESIM uses SIL_SRR_VV_Frame_process API)-->
+  <SIL_INJECTION_MODE>VEHICLE_EXPEDITION_FILE</SIL_INJECTION_MODE>
+  
+  <!-- LOG REPLAY mode selection: User shall provide the list of filenames the RESIM should execute in the Input_Log.txt file 
+		Sequential_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed uniquely by resetting the memory after each file.
+								 Hence history is not maintained between the input files.
+								 
+   	    Continuous_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed in continuity between the files.
+								 The memory is NOT reset after each file. Hence history is maintained between the input files.  
+								 Please ensure that the Logs are collected in a continuous manner from the Vehicle Expedition to use this mode 
+								 This Mode provides results with more correlation with actual Sensor behaviour 
+								 User is responsible to make sure that the file list is sequential the RESIM shall not check this. 
+								 USE THIS MODE WITH CAUTION -->
+  <DPH_RR_ADAS_RESIM_Mode>Sequential_FILE_Input</DPH_RR_ADAS_RESIM_Mode>
+  <!-- SIL_Entrypoint -
+		CDC					- CDC Data processing
+							  The SIL component receives Front-End data over a reference parameter of the SIL function call.
+							  The SIL component processes Front-End data to raw targets, object hypotheses, Fences.
+							  NOTE: Input Logs should be of larger size as USC Calibrations need to be extracted from UDP MUX Message
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  
+		DETECTIONS_UDP		- Data processing of raw target detections
+							  The SIL component receives UDP data via a reference parameter of the SIL function call,
+							  SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs.
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+		OBJECT_MODE			- ECU object mode data injection		  	-->
+  <SIL_Entrypoint>DETECTIONS_UDP</SIL_Entrypoint>
+
+
+  <!-- Source of Calibrations. Possible options:
+		LOAD_DEFAULT_CAL - Load calibrations from Source Code (All Customers)
+		LOAD_UDP_CAL     - using all calibrations from UDP -->
+  <CALIBRATION_SOURCE>LOAD_UDP_CAL</CALIBRATION_SOURCE>
+  
+  <!--  To get SCanIndex/checksum/crc error text file 
+	Options are  1. A text file will be created with Packet loss Info
+	0. NO text file with packet loss info is created -->
+	<DEBUG_TRACE>0</DEBUG_TRACE>
+ 
+ <!--  To create SRR_RAW_DEBUG folder or not ,This tag applicable only for BMW_SRR5
+    1.  enable the creation of SRR_RAW_DEBUG folder
+	0.  disable the creation of SRR_RAW_DEBUG folder-->
+	<DEBUG_TRACE>0</DEBUG_TRACE>
+ 
+</SIL_SRR5_Configuration>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+<SIL_SRR3_Configuration>
+  <!-- SIL SRR3 Configuration XML version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <SIL_SRR3_Configuration_XML_Version>9.6</SIL_SRR3_Configuration_XML_Version>
+
+  <!-- To define the CUSTOMER for which the RESIM is Executed. 
+		 Options available are: SRR3: AUDI, BMW, JLR, SCANIA, GEELY_GWM, CHANGAN, GWM, HKMC_GEN2  
+		                        SRR5: RNA, HKMC_SRR5 -->
+  <Customer_Name>BMW</Customer_Name>
+
+
+  <!-- Resim execution user is entered here. Options available are: Developer or ASATE
+		 If the Option is Developer, the RESIM Outputs shall be placed in the same folder as Inputs
+		 If the Option is ASATE, the RESIM Outputs shall be placed as per the configuration options -->
+  <RESIM_Execution_User>Developer</RESIM_Execution_User>
+
+  <!--Additional DEBUG Data can be enabled using the EB Configuration file
+	 Options are NONE or Name of the EB config .xml file including full File Path 
+	 Read independent of options selected in RESIM_Execution_User -->
+  <EMBEDDED_LIB_CONFIGURATION>NONE</EMBEDDED_LIB_CONFIGURATION>
+
+  <!-- Resim output path selection. Options are SAME_AS_INPUT or NEW_OUTPUT_PATH -->
+  <Output_Path_Options>SAME_AS_INPUT</Output_Path_Options>
+
+  <!-- If resim output path selection is NEW_OUTPUT_PATH use Output_Path_Location tag to enter valid folder path -->
+  <Output_Path_Location>C:\Projects\006_2line_street_55kmh_r00475000.dvsu</Output_Path_Location>
+
+  <!--Audi Output path selection. Options are CREATE_DVSU or NO_DVSU -->
+  <Audi_Output_Path_Options>NO_DVSU</Audi_Output_Path_Options>
+
+  <!-- If Audi Output path  selection is CREATE_DVSU use Audi_DVSU_Path tag to enter valid folder path-->
+  <Audi_DVSU_Path>C:\SIL_LOG\Create_dvsu</Audi_DVSU_Path>
+
+  <!-- SIL_Embedded_code_Processing Enabled - 
+		SIL_ENABLED - SIL MODE ACTIVATED - data is decoded from UDP log and passed through Embedded library to give reprocessed results 
+		DECODER_ENABLED - DECODER MODE ACTIVATED- data is decoded from input UDP log without running the RESIM with new software -->
+  <SIL_Embedded_code_processing>SIL_ENABLED</SIL_Embedded_code_processing>
+
+  <!-- Input Mode Options available are -
+	SINGLE_DVSU_INPUT: Single dvsu enabled to handle Single input DVSU file , proceed resim with Single dvsu file
+	FOUR_DVSU_INPUT : FOUR dvsu enabled to handle four  input DVSU file ,proceed  resim with 4 dvsu's file.(default option)
+	MDF4_INPUT :  MDF4_DVSU_ENABLED to handle MDF4 file proceed resim with mdf4 file --->
+	<Input_Options>FOUR_DVSU_INPUT</Input_Options> 
+
+  <!-- Sensor selection values: 
+	1: Resim is executed for that Sensor Position
+	0: Resim is not executed for that Sensor Position -->
+  <SENSOR_STATUS>
+    <REAR_LEFT>1</REAR_LEFT>
+    <REAR_RIGHT>1</REAR_RIGHT>
+    <FRONT_RIGHT>1</FRONT_RIGHT>
+    <FRONT_LEFT>0</FRONT_LEFT>
+  </SENSOR_STATUS>
+
+  <!-- SIL_Injection Mode  - 
+		VEHICLE_EXPEDITION_DVSU - 		 SIL Input is vehicle collected DVSU Files
+													(Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+		
+		VEHICLE_EXPEDITION_DVSU_DVL -
+		
+		VEHICLE_EXPEDITION_DVL_ONLY - 
+		
+		VEHICLE_EXPEDITION_FLEXRAY_CSV - SIL Input is vehicle collected Flexray (DVL->CSV) Files.
+													(Internally RESIM uses SIL_SRR3_DATA_Frame_process API)
+		VIRTUAL_SIMULATION_TRACK_CSV - 	 SIL Input is Virtual Simulation Tools IPG/VTD/DSPACE ASM created Virtual Tracks CSV for FF verification.
+													(Internally RESIM uses SIL_SRR3_DATA_Frame_process API)
+		VIRTUAL_SIMULATION_TRACK_DVSU -  SIL Input is Virtual Simulation Tools IPG/VTD/DSPACE ASM created Virtual Tracks DVSU from SIL/HIL.
+													(Internally RESIM uses SIL_SRR3_DATA_Frame_process API)-->
+  <SIL_INJECTION_MODE>VEHICLE_EXPEDITION_DVSU</SIL_INJECTION_MODE>
+
+  <!-- SIL_Entrypoint -
+		CDC					- CDC Data processing
+							  The SIL component receives Front-End data over a reference parameter of the SIL function call.
+							  The SIL component processes Front-End data to raw targets, object hypotheses, Fences.
+							  NOTE: Input Logs should be of larger size as USC Calibrations need to be extracted from UDP MUX Message
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  
+		DETECTIONS_UDP		- Data processing of raw target detections
+							  The SIL component receives UDP data via a reference parameter of the SIL function call,
+							  SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs.
+							  (Internally RESIM uses SIL_SRR3_UDP_Frame_process API)
+							  
+		DETECTIONS_VEH_BUS	- Data processing of Flexray Data
+							  The SIL component will receive Flexray Data via DVL converted CSV file through SIL function call,
+							  The DVL has to be Exported to CSV with SRR3 XY080 configuration using LogLab
+							  SIL component is processing raw targets to Tracks, object hypotheses, fences, function outputs.
+							  (Internally RESIM uses SIL_SRR3_DATA_Frame_process API)-->
+  <SIL_Entrypoint>DETECTIONS_UDP</SIL_Entrypoint>
+
+  <!-- LOG REPLAY mode selection: User shall provide the list of filenames the RESIM should execute in the Input_Log.txt file 
+		Sequential_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed uniquely by resetting the memory after each file.
+								 Hence history is not maintained between the input files.
+								 
+   	    Continuous_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed in continuity between the files.
+								 The memory is NOT reset after each file. Hence history is maintained between the input files.  
+								 Please ensure that the Logs are collected in a continuous manner from the Vehicle Expedition to use this mode 
+								 This Mode provides results with more correlation with actual Sensor behaviour 
+								 User is responsible to make sure that the file list is sequential the RESIM shall not check this. 
+								 USE THIS MODE WITH CAUTION -->
+  <DPH_RR_ADAS_RESIM_Mode>Sequential_FILE_Input</DPH_RR_ADAS_RESIM_Mode>
+
+  <!-- ALIGNMENT ALGORITHM To Execute (ONLY AUTO IS SUPPORTED AT THE MOMENT DO NOT USE OTHER OPTIONS )
+		 AUTO_ALIGNMENT - Execute Auto Alignment in SIL 
+		 SHORT_TRACK_ALIGNMENT - Execute SHORT TRACK Alignment in SIL   
+		 KD_ALIGNMENT - Execute KD Alignment in SIL 
+		 EOL_ALIGNMENT - Execute END OF LINE Auto Alignment in SIL   -->
+  <CALIBRATION__ALGORITHM_TO_EXECUTE>AUTO_ALIGNMENT</CALIBRATION__ALGORITHM_TO_EXECUTE>
+
+  <!-- Autocalibration  Source Possible options:
+		 XML_FIXED - Auto Alignment values as constants provided in XML TAG - <USE_ALIGNMENT_VALUES_USE_FROM_XML>
+		 UDP_LOG   - Auto Alignment values saved from vehicle testing from UDP stream every cycle.
+		 SIL_START_FROM_UDP - Auto Alignment Algorithm is Executed in RESIM using the init value from UDP Log
+		 SIL_START_FROM_XML - Auto Alignment Algorithm is Executed in RESIM using the init value from XML TAG - <USE_ALIGNMENT_VALUES_USE_FROM_XML>
+		 -->
+  <AUTOCALIBRATION_SOURCE>UDP_LOG</AUTOCALIBRATION_SOURCE>
+
+  <!-- Autocalibration Values are set from XML File 
+				If <AUTOCALIBRATION_SOURCE> is set as XML_FIXED/SIL_START_FROM_XML 
+					Values should be set in degrees including sign limit , between -2 and 2 degrees -->
+  <USE_ALIGNMENT_VALUES_USE_FROM_XML>
+    <ALIGNMENT_REAR_LEFT>0.5</ALIGNMENT_REAR_LEFT>
+    <ALIGNMENT_REAR_RIGHT>3.7</ALIGNMENT_REAR_RIGHT>
+    <ALIGNMENT_FRONT_RIGHT>2.11</ALIGNMENT_FRONT_RIGHT>
+    <ALIGNMENT_FRONT_LEFT>-0.23</ALIGNMENT_FRONT_LEFT>
+  </USE_ALIGNMENT_VALUES_USE_FROM_XML>
+
+  <!-- KD / EOL Autocalibration Execution Routine - values to fill if  
+			If <CALIBRATION__ALGORITHM_TO_EXECUTE> is set as KD_ALIGNMENT/EOL_ALIGNMENT
+				NOT AVAILABLE ON ALL CUSTOMER PROGRAMS. TO BE USED WITH CAUTION -->
+  <KD_EOL_CONFIG_PARAMETERS>
+    <DOPPLER_GENERATOR_ACTIVATED_REAR_LEFT>2.90</DOPPLER_GENERATOR_ACTIVATED_REAR_LEFT>
+    <DOPPLER_GENERATOR_RANGE_REAR_LEFT>4.06</DOPPLER_GENERATOR_RANGE_REAR_LEFT>
+    <DOPPLER_GENERATOR_ANGLE_REAR_LEFT>-3.440</DOPPLER_GENERATOR_ANGLE_REAR_LEFT>
+    <DOPPLER_GENERATOR_ACTIVATED_REAR_RIGHT>-2.70</DOPPLER_GENERATOR_ACTIVATED_REAR_RIGHT>
+    <DOPPLER_GENERATOR_RANGE_REAR_RIGHT>6.80</DOPPLER_GENERATOR_RANGE_REAR_RIGHT>
+    <DOPPLER_GENERATOR_ANGLE_REAR_RIGHT>3.5</DOPPLER_GENERATOR_ANGLE_REAR_RIGHT>
+    <DOPPLER_GENERATOR_ACTIVATED_FRONT_LEFT>2.4</DOPPLER_GENERATOR_ACTIVATED_FRONT_LEFT>
+    <DOPPLER_GENERATOR_RANGE_FRONT_LEFT>6.0</DOPPLER_GENERATOR_RANGE_FRONT_LEFT>
+    <DOPPLER_GENERATOR_ANGLE_FRONT_LEFT>8.20</DOPPLER_GENERATOR_ANGLE_FRONT_LEFT>
+    <DOPPLER_GENERATOR_ACTIVATED_FRONT_RIGHT>3.30</DOPPLER_GENERATOR_ACTIVATED_FRONT_RIGHT>
+    <DOPPLER_GENERATOR_RANGE_FRONT_RIGHT>4.08</DOPPLER_GENERATOR_RANGE_FRONT_RIGHT>
+    <DOPPLER_GENERATOR_ANGLE_FRONT_RIGHT>8.25</DOPPLER_GENERATOR_ANGLE_FRONT_RIGHT>
+  </KD_EOL_CONFIG_PARAMETERS>
+
+  <!--Enabling of Coding Parameters for the ReSim to use signals passed via the Data Process API -->
+  <CODING_CONFIG_PARAMETERS>
+    <MOUNTING_POSITION_SIGNAL_AVAILABILITY>0</MOUNTING_POSITION_SIGNAL_AVAILABILITY>
+    <TRAILER_SIGNAL_AVAILABILITY>0</TRAILER_SIGNAL_AVAILABILITY>
+    <CAMERA_SIGNAL_AVAILABILITY>0</CAMERA_SIGNAL_AVAILABILITY>
+    <LDW_SYSTEM_SIGNAL_AVAILABILITY>0</LDW_SYSTEM_SIGNAL_AVAILABILITY>
+    <REAR_AXLE_STEERING_SIGNAL_AVAILABILITY>0</REAR_AXLE_STEERING_SIGNAL_AVAILABILITY>
+  </CODING_CONFIG_PARAMETERS>
+
+  <!-- Radar Mounting Positions. Possible options:
+		 MOUNTING_XML_FILE  - USE Mounting Position values as constants provided in XML TAG - <RADAR_MOUNTING_VALUES_SET_FROM_XML>
+		 MOUNTING_UDP_LOG   - USE Mounting Position values saved from vehicle testing from UDP stream every cycle.
+		 User should use only MOUNTING_UDP_LOG option to ensure correct functionality of the RESIM. 
+		 The option MOUNTING_XML_FILE should be used only if there is a known issue with UDP Mounting Information in UDP Log
+		 USE THIS MODE WITH CAUTION -->
+  <MOUNTING_POSITION_SOURCE>MOUNTING_UDP_LOG</MOUNTING_POSITION_SOURCE>
+
+  <!-- Radar Mounting Position Values read from XML File 
+				If MOUNTING_XML_FILE - option is chosen in <MOUNTING_POSITION_SOURCE> Tag,Boresight Angle need to be entered in Degrees Only	
+				This value is expected to be in Delphi Coordinate System. RESIM does not check validity of these values.
+				Performance shall be degraded if the values are incorrectly set. USE THIS MODE WITH CAUTION-->
+  <RADAR_MOUNTING_VALUES_SET_FROM_XML>
+    <VEHICLE_WIDTH>0</VEHICLE_WIDTH>
+    <VEHICLE_LENGTH>0</VEHICLE_LENGTH>
+    <VCS_OFFSET_LAT>0</VCS_OFFSET_LAT>
+    <VCS_OFFSET_LONG>0</VCS_OFFSET_LONG>
+    <REAR_AXLE_POS>0</REAR_AXLE_POS>
+
+    <AZIMUTH_POLARITY_REAR_LEFT>0</AZIMUTH_POLARITY_REAR_LEFT>
+    <BORESIGHT_ANGLE_REAR_LEFT>0</BORESIGHT_ANGLE_REAR_LEFT>
+    <VCS_LAT_POSITION_REAR_LEFT>0</VCS_LAT_POSITION_REAR_LEFT>
+    <VCS_LON_POSITION_REAR_LEFT>0</VCS_LON_POSITION_REAR_LEFT>
+
+    <AZIMUTH_POLARITY_REAR_RIGHT>0</AZIMUTH_POLARITY_REAR_RIGHT>
+    <BORESIGHT_ANGLE_REAR_RIGHT>0</BORESIGHT_ANGLE_REAR_RIGHT>
+    <VCS_LAT_POSITION_REAR_RIGHT>0</VCS_LAT_POSITION_REAR_RIGHT>
+    <VCS_LON_POSITION_REAR_RIGHT>0</VCS_LON_POSITION_REAR_RIGHT>
+
+    <AZIMUTH_POLARITY_FRONT_LEFT>0</AZIMUTH_POLARITY_FRONT_LEFT>
+    <BORESIGHT_ANGLE_FRONT_LEFT>0</BORESIGHT_ANGLE_FRONT_LEFT>
+    <VCS_LAT_POSITION_FRONT_LEFT>0</VCS_LAT_POSITION_FRONT_LEFT>
+    <VCS_LON_POSITION_FRONT_LEFT>0</VCS_LON_POSITION_FRONT_LEFT>
+
+    <AZIMUTH_POLARITY_FRONT_RIGHT>0</AZIMUTH_POLARITY_FRONT_RIGHT>
+    <BORESIGHT_ANGLE_FRONT_RIGHT>0</BORESIGHT_ANGLE_FRONT_RIGHT>
+    <VCS_LAT_POSITION_FRONT_RIGHT>0</VCS_LAT_POSITION_FRONT_RIGHT>
+    <VCS_LON_POSITION_FRONT_RIGHT>0</VCS_LON_POSITION_FRONT_RIGHT>
+  </RADAR_MOUNTING_VALUES_SET_FROM_XML>
+
+  <!--- options to enable CRC check:
+		CRC_ENABLED - capable of checking each UDP packet for CRC errors
+		CRC_DISABLED - no check for CRC errors -->
+  <CRC_Check>CRC_DISABLED</CRC_Check>
+
+  <!-- Source of Calibrations. Possible options:
+		DSD_XML  - using DSD directly from provided XML config file, stated below (AUDI only)
+		DSD_UDP  - using DSD from UDP stream (AUDI only)
+		NO_DSD   - using Calibrations from Source Code (AUDI only)
+		LOAD_DEFAULT_CAL - Load calibrations from Source Code (All Customers)
+		LOAD_UDP_CAL     - using all calibrations from UDP -->
+  <CALIBRATION_SOURCE>LOAD_DEFAULT_CAL</CALIBRATION_SOURCE>
+
+  <!-- Data set download XML file paths -->
+  <!-- Specified paths should be absolute or relative to SIL exe file -->
+  <!-- RL-HL, RR-HR, FR-VR, FL-VL-->
+	<Dataset_download>
+		<DSD_RL>C:\AUDI\dataset\XY460_D5AU651\DA_0CF_7200_4N4_L1B1_AS6511LW0202_AU651BASIS00001300140002.xml</DSD_RL>
+        <DSD_RR>C:\AUDI\dataset\XY460_D5AU651\DA_03C_7200_4N4_L1B1_AS6511LW0202_AU651BASIS00001300140002.xml</DSD_RR>
+        <DSD_FR>C:\AUDI\dataset\XY460_D5AU651\DA_0DB_7200_4N4_L1B1_AS6511LW0200_AU651BASIS00001300000002.xml</DSD_FR>
+        <DSD_FL>C:\AUDI\dataset\XY460_D5AU651\DA_0DC_7200_4N4_L1B1_AS6511LW0200_AU651BASIS00001300000002.xml</DSD_FL>
+	</Dataset_download>
+
+  <!--DSD Vehicle Type Checks control in RESIM
+	    ENABLE_VEHICLE_TYPE_CHECKS  -  Executes only if vehicle types from DSD UDP matches Vehicle type in DSD XML Input file
+		DISABLE_VEHICLE_TYPE_CHECKS -  Executes even if the vehicle types from DSD UDP does not match DSD XML Input file -->
+  <VEHICLE_TYPE_CHECK_UDP_VS_DSD_XML>DISABLE_VEHICLE_TYPE_CHECKS</VEHICLE_TYPE_CHECK_UDP_VS_DSD_XML>
+
+  <!--Enabling or disabling of only USC cal decoding in the case of Default cal (LOAD_DEFAULT_CAL or NO_DSD) option for smaller logs 
+		1: for enabling the USC decoding
+		0: for disabling the USC decoding -->
+  <CDC_MODE_USC_ENABLE>0</CDC_MODE_USC_ENABLE>
+
+  <!--Number of bits used for logging transmission detection valid level
+		bits_4 - 4 bits used to store TX detection valid level 
+		bits_3 - 3 bits used to store TX detection valid level-->
+  <CAN_TX_DETECT_VALID_LEVEL>bits_4</CAN_TX_DETECT_VALID_LEVEL>
+  
+  <!-- To enable or disable the SIL execution for 5th radar ecu.
+  	1: for enabling.
+	0: for disabling. -->
+  <ENABLE_RADAR_ECU>0</ENABLE_RADAR_ECU>
+  
+  	<!-- to genrate the error log traces>
+  	<!-- Set the log levels to get printed on log tracing file
+		0 - DisableLogTrace, log tracing will be disabled
+		1 - Critical
+		2 - Error
+		3 - Warnings and Error
+		4 - Info, Warnings and Error -->
+	<LogLevel>4</LogLevel>
+	
+	<!-- Provide the path to generate log tracing file.
+		 Supported file formats are .xml
+								   .txt
+								   .log -->
+	<LogTarcingPath>C:\Users\vjv7bc\Desktop\logTracer.log</LogTarcingPath>
+	
+	<!-- To enable/disable date and time in Log tracing files
+			0 Disable Date and time in log file
+			1 Enable Date and time in log file-->
+	<LogIncludeDateTime>1</LogIncludeDateTime>
+	
+	<!-- Provide string in the below tag to configure output suffix name  
+	Options are  1. NONE  and  empty string  will be not appendingto output log name
+	2. String provided in this tag to be concatenate with output file before tag extension 
+	 This is applicable only for RNA_SRR5-->
+	<OUTPUT_LOG_SUFFIX>NONE</OUTPUT_LOG_SUFFIX>
+	
+	  <!-- To set the size of Boost Thread Pool. -->
+  	<BOOST_THREAD_POOL_SIZE>0</BOOST_THREAD_POOL_SIZE>
+	
+</SIL_SRR3_Configuration>

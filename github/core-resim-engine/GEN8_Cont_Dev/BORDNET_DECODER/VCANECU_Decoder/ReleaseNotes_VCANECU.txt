@@ -1,0 +1,49 @@
+---------------------------------------------------
+	VCAN Decoder   Release Notes
+---------------------------------------------------
+This document provides a summary of VCANECU Decoder DLL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.5.0.0
+Release Date	: 07-09-2021
+
+Features: 
+-Dll supports  A_470_SOP3 software.
+-Added New Enum value(A_470_SOP3) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.4.0.0
+Release Date	: 15-03-2021
+
+Features: 
+-Dll supports  A_480 software.
+-Added New Enum value(A_480) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.3.0.0
+Release Date	: 18-01-2021
+
+Features: 
+-Dll supports  A_470 software.
+-Added New Enum value(A_470) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.2.0.0
+Release Date	: 27-10-2020
+
+Features: 
+-Dll supports  A_450 software.
+-Added New Enum value(A_450) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.1.0.0
+Release Date	: 21-07-2020
+
+Features: 
+-Dll supports  A_410 software.
+-Added New Enum value(A_410) for BnVersion_T.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 22-06-2020
+
+Features: 
+-Dll supports A_310,A_350,A-370 and A_390 software.
+--------------------------------------------------------------------------------------------------------------
+
+
+

@@ -1,0 +1,56 @@
+
+#define MPS2KPH          (3.6f)
+#define KPH2MPS          (1.0f/MPS2KPH)
+
+void rr_adas_audiSIL::openFile(){
+	char fpath[1024];
+	strcpy(fpath,"C:\\SIL_LOG\\FXR_Timestamp_log.csv");
+	Sfp=fopen(fpath, "w+");
+
+	if(Sfp==NULL) {	
+		perror("Error in opening Error_Log file...\n");		
+	}
+	else {
+		fprintf(Sfp, "Radar_position,Scan_Index,Flexray_TimeStamp,Flexray_Yawrate, Flexray_Speed,UDP_TimeStamp,UDP_Yawrate,UDP_Speed");
+		fprintf(Sfp, "\n");
+	}
+}
+
+void  rr_adas_audiSIL::closeFile(){
+	if(Sfp!=NULL) {
+		fclose(Sfp);
+		Sfp = NULL;
+	}
+}
+
+void  rr_adas_audiSIL::writeFile( int8 sens_id, unsigned int scan_id, unsigned int fxr_ts, float fxr_yawrate, float fxr_speed,unsigned int udp_ts, float udp_yawrate, float udp_speed){
+	
+	if(Sfp!=NULL) {
+		fprintf(Sfp,"%d,%u,%u,%f,%f,%u,%f,%f\n",sens_id,scan_id,fxr_ts,fxr_yawrate,fxr_speed,udp_ts,udp_yawrate,udp_speed);
+	}
+}
+
+
+inside get silinput
+
+VEHICLE_DATA_T VehicleParam = {0};
+	float speed=0, yaw_rate = 0;
+	
+	
+	
+	 m_pTargetStreams[pos]->m_pStreams[Z7B_LOGGING_DATA]->getData((unsigned char*)&VehicleParam, VEH);
+		speed = VehicleParam.abs_speed;
+		yaw_rate = VehicleParam.yawrate;
+		unsigned int fxr_ts  = m_pIn_Extended->vehicle_inputs[pos].UTC_Sil;
+		float fxr_speed = m_pIn_Extended->vehicle_inputs[pos].Veh_Speed_mps * KPH2MPS;
+		float fxr_yawrate =(( m_pIn_Extended->vehicle_inputs[pos].Yaw_Rate))*0.0174532925199433f;
+		writeFile(pos,m_pTargetStreams[pos]->m_pStreams[strmSrc]->getScanIndex(),fxr_ts,fxr_yawrate,fxr_speed,m_pTargetStreams[pos]->m_pStreams[strmSrc]->m_proc_info.cust_frame_header.timestamp,yaw_rate,speed);
+		return E_SIL_FRAME_LOSS_DETECTED;*/
+		
+		
+		
+		In header file
+		void openFile();
+	void closeFile();
+    void writeFile( int8 sens_id, unsigned int scan_id, unsigned int fxr_ts, float fxr_yawrate, float fxr_speed,unsigned int udp_ts, float udp_yawrate, float udp_speed);
+		
