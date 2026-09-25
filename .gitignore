@@ -112,3 +112,5 @@ edge_hdf/udp/output/
 **/*(*).h5
 # GHE migration clones (local-only source of truth, nested .git per branch)
 github/
+# Edge-case measurement corpus (local-only binaries, manifest pushed separately)
+mf4_data/
