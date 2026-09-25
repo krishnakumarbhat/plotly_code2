@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Releases>
+	<Repo>10028634_01_Radar_Logic_Model</Repo>
+	<Radar_Logic_Model>
+	<V_4.1>
+			<Sprint>22 PI3 DRP DUF</Sprint>
+			<Version>4.1</Version>
+			<Date format="dd-mm-YYYY">26-09-2022</Date>
+			<Changeset>125</Changeset>
+			<ChangeLog>
+			- Release Repo CS updated to 2320 for Radar DLL
+			- Changes for Groundtruth mapping for FOV based Track data input added
+			</ChangeLog> 		
+			<JIRATickets>
+			- DUF-1304 - [LM2] Correct the OSI Object mapping in the LM2 side to FOV based once the corrected data from the SM2 is available
+			</JIRATickets>
+			<KnownIssues>
+			- Linux FMU support for BMW and STLA only available as of now
+			- MAN SRR3 support is depricated and not maintained.
+			</KnownIssues>       
+	</V_4.1>
+	<V_4.0>
+			<Sprint>DUF_22PI3_SP2_Jul6_Jul19</Sprint>
+			<Version>3.0</Version>
+			<Date format="dd-mm-YYYY">07-07-2022</Date>
+			<Changeset>101</Changeset>
+			<ChangeLog>
+			- Release Repo CS updated to 2320 for Radar DLL
+			- Nissan SRR6 Windows FMU updated with latest software 3.2.2 binaries
+			- Nissan SRR6 Customer Repo CS 2247
+			</ChangeLog> 		
+			<JIRATickets>
+			
+			</JIRATickets>
+			<KnownIssues>
+			- Linux FMU support for BMW and STLA only available as of now
+			- MAN SRR3 support is depricated and not maintained.
+			</KnownIssues>       
+	</V_4.0>
+	<V_3.0>
+			<Sprint>DUF_22PI2_SP5_May25_Jun7 </Sprint>
+			<Version>3.0</Version>
+			<Date format="dd-mm-YYYY">06-06-2022</Date>
+			<Changeset>28</Changeset>
+			<ChangeLog>
+			- Release Repo CS updated to 2273
+			- BMW Windows and Linux FMU's for 22_11_A490_ATS-2_SOP4_PDXVer.3_59_001
+			- Nissan SRR6 Windows FMU updated with latest binaries
+			- Honda SRR6p Windows FMU updated with EB version 1.0.0
+			- STLA SRR5  Windows and Linux intial release version updated with BMW MID dll's integrated
+			- RNA SWEET 400 Windows FMU with latest binaries 
+			</ChangeLog> 		
+			<JIRATickets>
+			
+			</JIRATickets>
+			<KnownIssues>
+			- Linux FMU support for BMW and STLA only available as of now
+			- MAN SRR3 support is depricated and not maintained.
+			</KnownIssues>       
+	</V_3.0>
+	<V_2.0>
+			<Sprint>DUF_22PI2_SP4_May11_May24</Sprint>
+			<Version>2.0</Version>
+			<Date format="dd-mm-YYYY">23-05-2022</Date>
+			<Changeset>17</Changeset>
+			<ChangeLog>
+			- Release Repo CS updated to 2241
+			- BMW Windows FMU for 22_07_A510_ATS_SOP3_PDXVer.3_58_001
+			- Nissan SRR6 Windows FMU updated with EB version 100.0.0
+			- Honda SRR6p Windows FMU updated with EB version 1.0.0
+			- STLA SRR5 intial release version updated with BMW MID dll's integrated
+			- RNA SWEET 400 Windows FMU
+			- LM2 updates for Mounting position integrated for all customer programs
+			- Config files updated for SIL Engine to latest
+			- MODEL CONFIG updates for STLA SRR5 program and Nissan SRR6
+			</ChangeLog> 		
+			<JIRATickets>
+			
+			</JIRATickets>
+			<KnownIssues>
+			- Linux FMU support for BMW and STLA only available as of now
+			- MAN SRR3 support is depricated and not maintained.
+			</KnownIssues>       
+	</V_2.0>
+	</Radar_Logic_Model>
+</Releases>

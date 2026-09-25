@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug VV Engine",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/x64/SensorModelSilEngine",
+            "args": [
+                "/home/pulaksamui/GIT_WSL/VV_Config/VVEngineConfig.yaml",
+                "/home/pulaksamui/GIT_WSL/VV_Config/Blist_file.txt"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
+
