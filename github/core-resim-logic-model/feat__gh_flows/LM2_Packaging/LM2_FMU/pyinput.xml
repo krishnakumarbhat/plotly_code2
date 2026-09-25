@@ -1,0 +1,43 @@
+<fmiModelDescription fmiVersion="2.0" modelName="@FMU_Model_Name@" guid="@FMUGUID@" description="" author="@fmuAuthor@" version="1.0" generationTool="BMW LiME Framework" generationDateAndTime="@FMUTIMESTAMP@" variableNamingConvention="structured">
+  <CoSimulation modelIdentifier="@FMU_Model_Name@" canHandleVariableCommunicationStepSize="true" canNotUseMemoryManagementFunctions="true">
+    <SourceFiles>
+      <File name="LogicModel2.cpp" />
+    </SourceFiles>
+  </CoSimulation>
+  <LogCategories>
+    <Category name="FMI" description="Enable logging of all FMI calls" />
+    <Category name="TEMP" description="Enable TEMP-related logging" />
+    <Category name="OSI" description="Enable OSI-related logging" />
+  </LogCategories>
+  <ModelVariables>
+ <!-- Integer Variables  -->
+<ScalarVariable name="_ECU_.LM2.Customer" valueReference="6" causality="parameter" variability="fixed" initial="exact"> <Integer start="0" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.InputOutput" valueReference="7" causality="parameter" variability="fixed" initial="exact"> <Integer start="0" />     </ScalarVariable>
+ <!-- Boolean Variables  -->
+<ScalarVariable name="_ECU_.LM2.EnableCANoverUDPTransmission" valueReference="0" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.EnableMUDPTransmission" valueReference="1" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.EnableDspaceFileWrite" valueReference="2" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.EnableSensorDataFileWrite" valueReference="3" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable> 
+ <!-- String Variables  -->
+<ScalarVariable name="_ECU_.LM2.DebugOutputPath" valueReference="0" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.SrcIpAddressMUDP" valueReference="1" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.SrcPortCAN" valueReference="2" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.SrcPortMUDP" valueReference="3" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstIpAddressCAN" valueReference="4" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstPortCAN" valueReference="5" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstIPAddressMUDP" valueReference="6" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstPortMUDP" valueReference="7" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.Variant" valueReference="8" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.FmuType" valueReference="9" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DataInjectionMode" valueReference="10" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+  </ModelVariables>
+  <ModelStructure>
+    <Outputs>
+      <Unknown index="4" />
+      <Unknown index="5" />
+      <Unknown index="6" />
+      <Unknown index="7" />
+      <Unknown index="8" />
+    </Outputs>
+  </ModelStructure>
+</fmiModelDescription>

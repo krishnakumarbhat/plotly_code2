@@ -1,0 +1,316 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<FILE_NAME>mux_logging_structure</FILE_NAME>
+<STRUCTURE_VERSION>1</STRUCTURE_VERSION>
+<HASH_KEY>1da11</HASH_KEY>
+<MACRO_LIST>
+	<!--record-->
+		<ARRAY_LENGTH>MAX_CAL_LOGGING_DATA_SIZE,236</ARRAY_LENGTH>
+	<!--/record-->
+	<!--record-->
+		<ARRAY_LENGTH>NUM_OF_LOOKS_USED_L,4</ARRAY_LENGTH>
+	<!--/record-->
+</MACRO_LIST>
+<STRUCTURE_LIST>
+	<!--record-->
+		<STRUCTURE_NAME>RAMXSum_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>FlashXSum_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>XSum_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>AngleFinding_Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>Tracker_Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>MNRBlockage_Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>TDBlockage_Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>Alignment_Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>YawRate_Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>Algo_Info_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>IPC_Failure_Count_Logging</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>Diagnostics_Logging</STRUCTURE_NAME>
+	<!--/record-->
+</STRUCTURE_LIST>
+<SUB_MODULE_RAMXSum_Logging>
+	<!--record-->
+		<VARIABLE_NAME>Calibration_Init_RAMXSum</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>RAMXSum_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Calibration_Runtime_RAMXSum</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>RAMXSum_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_RAMXSum_Logging>
+<SUB_MODULE_FlashXSum_Logging>
+	<!--record-->
+		<VARIABLE_NAME>App_FlashXSum</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>FlashXSum_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_FlashXSum_Logging>
+<SUB_MODULE_XSum_Logging>
+	<!--record-->
+		<VARIABLE_NAME>FlashXSum</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>FlashXSum_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>XSum_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>RAMXSum</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>RAMXSum_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>XSum_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+</SUB_MODULE_XSum_Logging>
+<SUB_MODULE_AngleFinding_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>Angle_Finding_Major_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>AngleFinding_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Angle_Finding_Minor_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>AngleFinding_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_AngleFinding_Algo_Info_Logging>
+<SUB_MODULE_Tracker_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>Tracker_Major_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Tracker_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Tracker_Minor_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Tracker_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_Tracker_Algo_Info_Logging>
+<SUB_MODULE_MNRBlockage_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>MNRBlockage_Major_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>MNRBlockage_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>MNRBlockage_Minor_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>MNRBlockage_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_MNRBlockage_Algo_Info_Logging>
+<SUB_MODULE_TDBlockage_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>TDBlockage_Major_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>TDBlockage_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>TDBlockage_Minor_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>TDBlockage_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_TDBlockage_Algo_Info_Logging>
+<SUB_MODULE_Alignment_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>Alignment_Major_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Alignment_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Alignment_Minor_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Alignment_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_Alignment_Algo_Info_Logging>
+<SUB_MODULE_YawRate_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>YawRate_Major_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>YawRate_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>YawRate_Minor_Version</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>YawRate_Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_YawRate_Algo_Info_Logging>
+<SUB_MODULE_Algo_Info_Logging>
+	<!--record-->
+		<VARIABLE_NAME>AngleFinding_Algo_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>AngleFinding_Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Tracker_Algo_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>Tracker_Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>MNRBlockage_Algo_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>MNRBlockage_Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>TDBlockage_Algo_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>TDBlockage_Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Alignment_Algo_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>Alignment_Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>YawRate_Algo_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>YawRate_Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Algo_Info_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+</SUB_MODULE_Algo_Info_Logging>
+<SUB_MODULE_IPC_Failure_Count_Logging>
+	<!--record-->
+		<VARIABLE_NAME>C1_to_C0_IPC_Fail_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>IPC_Failure_Count_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>C2_to_C0_IPC_Fail_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>IPC_Failure_Count_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>C0_to_C1_IPC_Fail_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>IPC_Failure_Count_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>C2_to_C1_IPC_Fail_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>IPC_Failure_Count_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>C0_to_C2_IPC_Fail_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>IPC_Failure_Count_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>C1_to_C2_IPC_Fail_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>IPC_Failure_Count_Logging</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_IPC_Failure_Count_Logging>
+<SUB_MODULE_Diagnostics_Logging>
+	<!--record-->
+		<VARIABLE_NAME>IPC_Failure_Count</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>IPC_Failure_Count_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Diagnostics_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>XSum</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>XSum_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Diagnostics_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Algorithm_Info</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>Algo_Info_Logging</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Diagnostics_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>LookID_Table_Default</VARIABLE_NAME>
+		<ARRAY_LENGTH>NUM_OF_LOOKS_USED_L</ARRAY_LENGTH>
+		<COMPONENT_TYPE>ARRAY</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned8</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Diagnostics_Logging</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+</SUB_MODULE_Diagnostics_Logging>

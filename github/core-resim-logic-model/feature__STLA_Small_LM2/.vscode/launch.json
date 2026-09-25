@@ -1,0 +1,118 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "compounds": [
+        {
+            // Starts both Python (debugpy) and GDB together so you can set
+            // breakpoints in both the Python script and the native C++ .so.
+            "name": "Debug LogicModel2.fmu (Python + GDB)",
+            "configurations": [
+                "Python: run_fmu_udp.py",
+                "(gdb) LogicModel2.fmu via Python"
+            ],
+            "stopAll": true
+        }
+    ],
+    "configurations": [
+
+        // ─── STLA Small LM2 — FMU debugging ──────────────────────────────────
+
+        {
+            // Pure Python debugging — step through run_fmu_udp.py with debugpy.
+            // Breakpoints set in the .py file will be hit; the native .so runs
+            // without C++ breakpoints.
+            "name": "Python: run_fmu_udp.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts/run_fmu_udp.py",
+            "args": [
+                "--fmu",              "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Build/LogicModel2.fmu",
+                "--mf4file",          "/home/aptiv/Downloads/Logs/SW6.23/DEBUG_DATA/STLASMALL_RWUP_LABCAR3_20260602_130110_0120_p01.MF4",
+                "--verbose-basename", "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts/SIL_Output/mf4/virtual.mf4",
+                "--output-mf4",         "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts/SIL_Output/script/virtuallm2output.mf4"
+            ],
+            "cwd": "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts",
+            "console": "integratedTerminal"
+        },
+
+        {
+            // Native C++ debugging — launches Python under GDB so that
+            // breakpoints set in LogicModel2.cpp / LogicModel2.h are hit.
+            //
+            // How it works:
+            //   1. GDB starts Python 3 with run_fmu_udp.py as its argument.
+            //   2. Python loads LogicModel2.fmu; the .so inside the zip is
+            //      extracted to a temp dir and dlopen()ed by ctypes.
+            //   3. GDB intercepts the dlopen and searches solib-search-path for
+            //      a .so whose build-id matches → finds Build/LogicModel2.so
+            //      (which carries the full debug symbols) and loads them.
+            //   4. Any breakpoint you set in LogicModel2.cpp is now live.
+            //
+            // Tip: use --dummy to drive the FMU with synthetic frames so you
+            // don't need a live UDP sender to hit breakpoints.
+            "name": "(gdb) LogicModel2.fmu via Python",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/usr/bin/python3",
+            "args": [
+                "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts/run_fmu_udp.py",
+                "--fmu",              "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Build/LogicModel2.fmu",
+                "--mf4file",          "/home/aptiv/Downloads/Logs/SW6.23/DEBUG_DATA/STLASMALL_RWUP_LABCAR3_20260602_130110_0120_p01.MF4",
+                "--verbose-basename", "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts/SIL_Output/mf4/virtual.mf4",
+                "--output-mf4",         "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts/SIL_Output/script/virtuallm2output.mf4"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/STLA_Small_LM2/Development/fmu/Scripts",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Search Build/ for LogicModel2.so debug symbols",
+                    "text": "set solib-search-path ${workspaceFolder}/STLA_Small_LM2/Development/fmu/Build",
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "Stop on dlopen so GDB can load symbols immediately",
+                    "text": "set stop-on-solib-events 0",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+        // ─── Legacy configs ───────────────────────────────────────────────────
+
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Windows/SensorModelSilEngine.exe",
+            "args": ["C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/VVEngineConfig.yaml", "C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/Flist_file.txt"],
+            "stopAtEntry": false,
+            "cwd": "C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Windows",
+            "environment": [],
+            "externalConsole": true,
+        },
+        {
+            "name": "(gdb) Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Linux/SensorModelSilEngine",
+            "args": ["/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/VVEngineConfig.yaml", "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/Flist_file.txt", "/home/aptiv/Git/Core_RESIM_Logic_Model/LM2_Packaging/LM2_FMU/build/Debug"],
+            "stopAtEntry": false,
+            "cwd": "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Linux",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Linux",
+            }],
+            "externalConsole": false,
+        }
+    ]
+}

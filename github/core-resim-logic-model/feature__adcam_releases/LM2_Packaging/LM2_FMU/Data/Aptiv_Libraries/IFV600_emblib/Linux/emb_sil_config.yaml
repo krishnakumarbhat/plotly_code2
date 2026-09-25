@@ -1,0 +1,96 @@
+version: {major: 1, minor: 0}
+
+project: {name: ifv600_emb_lib}
+
+# The following parameters control the flow of execution inside ifv600_emb_sil
+parameters:
+  # Selects the input data source for CAN receive processing
+  # MUDP_STREAM : Collects CAN messages from a UDP stream
+  # CANRX_STREAM : Collects CAN messages from a CAN RX stream provided externally as a structure
+  # CANRX_FILE   : Reads CAN messages from a CAN mf4 file and runs PLP sync
+  can_rx_source: "MUDP_STREAM"  
+  # enable or disable the debug messages in the console output
+  print_debug_messages: true
+  # Selects the execution mode: 0 for Live mode, 1 for Dspace mode
+  execution_mode: 1
+  # copy IW outputs from mudp : true if you want to copy the IW outputs from mudp, false if you want to use the Rte buffers
+  copy_iw_outputs_from_mudp: false
+  # enable or disable writing binary files
+  bin_file_write: true
+
+variant_manager_inputs:
+  # The following variables are required for the flow if copy_iw_outputs_from_mudp is set to false
+  # But these values will be populated regarless of the copy_iw_outputs_from_mudp value
+  # The below vars were not found from MUDP stream, hence by default update is set to true 
+  AEB_Rating_Program: {value: 0, update: true, type: "int"}
+  AEB_Regulation: {value: 1, update: true, type: "int"}
+  AEB_Turning_VEH: {value: 0, update: true, type: "int"}
+  AEB_Turning_VRU: {value: 0, update: true, type: "int"}
+  Type_AEB: {value: 1, update: true, type: "int"}
+  Type_AEB_Detection: {value: 2, update: true, type: "int"}
+  Type_Front_AEB_Contrary_Traffic: {value: 0, update: true, type: "int"}
+  L1_Lateral_Assist: {value: 2, update: true, type: "int"}
+  L2_Lateral_Assist: {value: false, update: true, type: "boolean"}
+  Type_Front_Cross_Traffic: {value: 0, update: true, type: "int"}
+  Vehicle_Category: {value: 4, update: true, type: "int"}
+  NAV_Presence: {value: false, update: true, type: "boolean"}
+  De_KA_Feature_Status: {value: false, update: true, type: "boolean"}
+  Speed_Compensation_factor: {value: 1.0, update: true, type: "float"}
+  Speed_Compensation_factor_QF: {value: 3, update: true, type: "int"}
+
+  # The below vars were found from MUDP stream, hence by default update is set to false
+  Blind_Spot_Monitoring: {value: false, update: false, type: "boolean"}
+  ACC_Variant: {value: 0, update: false, type: "int"}
+  AHBM: {value: 0, update: false, type: "int"}
+  Autonomy_Level: {value: 0, update: false, type: "int"}
+  Cruise_Control: {value: 0, update: false, type: "int"}
+  Cruise_Control_Logic: {value: 0, update: false, type: "int"}
+  Drive_Type_Variant: {value: 0, update: false, type: "int"}
+  Driver_Side: {value: 1, update: false, type: "int"}
+  Engine_Type: {value: 0, update: false, type: "int"}
+  Final_Ratio: {value: 0, update: false, type: "int"}
+  Fuel_Type: {value: 0, update: false, type: "int"}
+  Gear_Box_Type: {value: 0, update: false, type: "int"}
+  Gear_Box_Type_Variant: {value: 0, update: false, type: "int"}
+  Hybrid_Type: {value: 0, update: false, type: "int"}
+  Market_Area: {value: 0, update: false, type: "int"}
+  Parking_Brake_Type: {value: 0, update: false, type: "int"}
+  SRT: {value: false, update: false, type: "boolean"}
+  Country_Code: {value: 0, update: false, type: "int"}
+  Glare_Free_Feature: {value: false, update: false, type: "boolean"}
+  Assist_Braking_Reverse_Gear: {value: 1, update: true, type: "int"}
+  Option_Dynamic_Road_View: {value: false, update: false, type: "boolean"}
+  Oversight_Lateral_Way: {value: 2, update: true, type: "int"}
+  Regulation_Type: {value: 0, update: false, type: "int"}
+  Rough_Road_Cruise_Control: {value: 0, update: false, type: "int"}
+  Smart_eCoasting_Feature: {value: false, update: false, type: "boolean"}
+  Speed_Limiter: {value: 0, update: false, type: "int"}
+  Steering_Ratio_Rack_Pinion_Type: {value: 0, update: false, type: "int"}
+  Stop_And_Start: {value: false, update: false, type: "boolean"}
+  Tyre_Size: {value: 0, update: false, type: "int"}
+  Vehicle_Line_Configuration: {value: 0, update: false, type: "int"}
+  eCoasting_Feature: {value: false, update: false, type: "boolean"}
+  Vehicle_Architecture_Scale: {value: 0, update: false, type: "int"}
+  De_ALMStatus_KA: {value: false, update: false, type: "boolean"}
+  De_FSFCWPlusSetting_Req_KA: {value: 0, update: false, type: "int"}
+  De_FSFCWPlusActivationMode_KA: {value: 0, update: false, type: "int"}
+  De_DDD_SystemSts_KA: {value: false, update: false, type: "boolean"}
+  De_TSI_SystemSts_KA: {value: 0, update: false, type: "int"}
+  De_Ped_EM_Brk_Warn_Act_Req_KA: {value: 0, update: false, type: "int"}
+  De_TSI_EntryGPSLong_KA: {value: 0.0, update: false, type: "float"} 
+  De_TSI_EntryGPSLat_KA: {value: 0.0, update: false, type: "float"}
+  De_TSI_countrycode_KA: {value: 0, update: false, type: "int"}
+  De_BSDEnable_KA: {value: 0, update: false, type: "int"}
+  De_TSI_SignSpeedLimit_KA: {value: 0, update: false, type: "int"}
+  De_TSI_SpdUnitsCam_KA: {value: false, update: false, type: "boolean"}
+  De_TSI_SpdSignShape_KA: {value: 0, update: false, type: "int"}
+  De_TSI_SourceFusedSpdLmt_KA: {value: 0, update: false, type: "int"}
+  De_ACCHdwyStg_KA: {value: 0, update: false, type: "int"}
+  De_Ka_Steering_Angle_Bias_Deg: {value: 0.0, update: false, type: "float"}
+  De_Ka_F_Consider_Swa_Bias_Conv: {value: false, update: false, type: "boolean"}
+  CAN_node_63_TTM: {value: false, update: false, type: "boolean"}
+  CAN_node_95_ITBM: {value: false, update: false, type: "boolean"}
+  Speedometer_Tolerance: {value: 0, update: false, type: "int"}
+  Increasing_Speed_Constant: {value: 0, update: false, type: "int"}
+
+  

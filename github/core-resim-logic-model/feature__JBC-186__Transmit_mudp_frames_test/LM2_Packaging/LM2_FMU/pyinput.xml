@@ -1,0 +1,55 @@
+<fmiModelDescription fmiVersion="2.0" modelName="@FMU_Model_Name@" guid="@FMUGUID@" description="" author="@fmuAuthor@" version="1.0" generationTool="BMW LiME Framework" generationDateAndTime="@FMUTIMESTAMP@" variableNamingConvention="structured">
+  <CoSimulation modelIdentifier="@FMU_Model_Name@" canHandleVariableCommunicationStepSize="true" canNotUseMemoryManagementFunctions="true">
+    <SourceFiles>
+      <File name="LogicModel2.cpp" />
+    </SourceFiles>
+  </CoSimulation>
+  <LogCategories>
+    <Category name="FMI" description="Enable logging of all FMI calls" />
+    <Category name="TEMP" description="Enable TEMP-related logging" />
+    <Category name="OSI" description="Enable OSI-related logging" />
+  </LogCategories>
+  <ModelVariables>
+ <!-- Integer Variables  -->
+<ScalarVariable name="_ECU_.LM2.Customer" valueReference="6" causality="parameter" variability="fixed" initial="exact"> <Integer start="0" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.InputOutput" valueReference="7" causality="parameter" variability="fixed" initial="exact"> <Integer start="0" />     </ScalarVariable>
+<!-- CoreProtocol OSMP pointer-triplet input. VRs 32/33/34 are fixed: they follow
+     Customer(30) and InputOutput(31) which the generator assigns sequentially.
+     Host writes these from CAMERAECU_LM2 CP output VRs 1001/1002/1003 before
+     each fmi2DoStep(srr_master_lm2). LogicModel2::doCalc reads them via
+     FMI_INTEGER_CP_IN_BASELO/HI/SIZE_IDX and calls Interface_Set_CP_Stream. -->
+<ScalarVariable name="CoreProtocolIn.base.lo" valueReference="32" causality="input" variability="discrete" description="[CP-RX] Lower 32 bits of 64-bit pointer to CoreProtocol flat buffer (OSMP convention)"> <Integer start="0" /> </ScalarVariable>
+<ScalarVariable name="CoreProtocolIn.base.hi" valueReference="33" causality="input" variability="discrete" description="[CP-RX] Upper 32 bits of 64-bit pointer to CoreProtocol flat buffer (OSMP convention)"> <Integer start="0" /> </ScalarVariable>
+<ScalarVariable name="CoreProtocolIn.size" valueReference="34" causality="input" variability="discrete" description="[CP-RX] Valid byte count of CoreProtocol flat buffer (0 = no data this step)"> <Integer start="0" /> </ScalarVariable>
+<ScalarVariable name="Eth_TX.base.lo" valueReference="35" causality="output" variability="discrete" initial="exact"> <Integer start="0" /> </ScalarVariable>
+<ScalarVariable name="Eth_TX.base.hi" valueReference="36" causality="output" variability="discrete" initial="exact"> <Integer start="0" /> </ScalarVariable>
+<ScalarVariable name="Eth_TX.size" valueReference="37" causality="output" variability="discrete" initial="exact"> <Integer start="0" /> </ScalarVariable>
+ <!-- Boolean Variables  -->
+<ScalarVariable name="_ECU_.LM2.EnableCANoverUDPTransmission" valueReference="0" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.EnableMUDPTransmission" valueReference="1" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.EnableDspaceFileWrite" valueReference="2" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.EnableSensorDataFileWrite" valueReference="3" causality="parameter" variability="fixed" initial="exact"> <Boolean start="false" />     </ScalarVariable> 
+ <!-- String Variables  -->
+<ScalarVariable name="_ECU_.LM2.DebugOutputPath" valueReference="0" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.SrcIpAddressMUDP" valueReference="1" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.SrcPortCAN" valueReference="2" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.SrcPortMUDP" valueReference="3" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstIpAddressCAN" valueReference="4" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstPortCAN" valueReference="5" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstIPAddressMUDP" valueReference="6" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DstPortMUDP" valueReference="7" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.Variant" valueReference="8" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.FmuType" valueReference="9" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+<ScalarVariable name="_ECU_.LM2.DataInjectionMode" valueReference="10" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+  </ModelVariables>
+  <ModelStructure>
+    <Outputs>
+      <Unknown index="4" />
+      <Unknown index="5" />
+      <Unknown index="6" />
+      <Unknown index="7" />
+      <Unknown index="8" />
+      <Unknown index="9" />
+    </Outputs>
+  </ModelStructure>
+</fmiModelDescription>

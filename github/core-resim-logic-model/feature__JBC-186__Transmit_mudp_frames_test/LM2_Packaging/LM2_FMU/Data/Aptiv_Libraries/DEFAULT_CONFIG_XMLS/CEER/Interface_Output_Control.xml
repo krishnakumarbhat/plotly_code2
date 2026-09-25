@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+
+<Interface_Output_Control>
+	<!--version of XML file : main version to be changed when new tag is added else decimal point to increased-->
+	<XML_Version>2.0</XML_Version>
+
+	<!-- Depending on the customer the data structure choosen will differ.Available Customer
+	   1> BMW_LOW 
+	   2> BMW_MID 
+	   3> BMW_HIGH -->
+	<Customer_Name>BMW_LOW</Customer_Name>
+	
+	<!--1> E_LIME_SIL_FRAMEWORK =  The Framework API gets called passing the whole datastructure to the FRAMEWORK API,
+	    2> E_LIME_HIL_FRAMEWORK
+        3> E_READ_VEHICLE_LOG_N_TRANSMIT = This will enable to read the vehicle logged data from the file given in Input_File_Location and transmit as UDP frame 
+		4> E_READ_DSPACE_LOG_N_TRANSMIT = This will enable to read the DSPACE logged data ,-->
+	<RUN_MODE>E_LIME_SIL_FRAMEWORK</RUN_MODE>
+	
+		<!--if RUN_MODE = E_LOG_N_TRANSMIT. Specify the complete path along with the file name-->
+			<Binary_Path_Location>./</Binary_Path_Location>
+                             			                                                                          
+		<Input_File_Location>C:\Users\4nogo6\Documents\From_Hitesh\xyz_dspace_output.7z</Input_File_Location>
+	
+	<!-- This DEBUG_MODE will create debug files for lib/application 
+	   1> E_DEBUG_NONE
+	   1> E_DEBUG_XML_WRITER  = This will enable the data passed from LiME/stubbed to be written to XML files,
+	   2> E_DEBUG_ORCAS_SCENE_WRITER = This will enable to write the data passed from LiME/stubbed values in a format that can be visualised on ORCAS in either .dvsu/mdf file,
+	   3> E_DEBUG_DSPACE_WRITER = This will enable to write the data passed from LiME/stubbed directly to .dvsu/mdf file-->
+	<DEBUG_MODE>E_DEBUG_DSPACE_WRITER</DEBUG_MODE>
+	
+		<!-- This DEBUG_MODE is E_DEBUG_ORCAS_SCENE_WRITER or E_DEBUG_DSPACE_WRITER mode output file format is DVSU/MF4
+		   1> E_DEBUG_DVSU = dvsu library will be used for reading and writing. NOTE: The file should be .dvsu when you specify file for read 
+		   2> E_DEBUG_MDF4 = mdf library will be used for reading and writing. NOTE: The file should be .dvsu when you specify file for read   --> 
+		<Debug_File_Type>E_DEBUG_MDF4</Debug_File_Type>
+		
+		<!-- This DEBUG_MODE is equal to E_DEBUG_XML_WRITER or E_DEBUG_ORCAS_SCENE_WRITER or E_DEBUG_DSPACE_WRITER mode output file format is DVSU/MF4-->
+		<Output_Path_Location>./</Output_Path_Location>
+		
+		<Output_File_Name>Overtaking_from_left</Output_File_Name>
+		
+	<!--This DATA_INJECTION_MODE will enable whether to overwrite data with stub data while running or pass the actual value
+	   1> TEST_DATA = When selected, predefined test data will sent as input to SIL/HIL
+	   2> INPUT_DATA = When selected, real values are passed as input to SIL/HIL ,-->
+	<DATA_INJECTION_MODE>INPUT_DATA</DATA_INJECTION_MODE>
+
+	<!--This GENERATE_DIAGNOSTICS_REPORT will generated diagnostics report 
+	   1> NONE = When selected, no report is generated
+	   2> XML_REPORT = When selected, xml report is generated ,-->
+	<GENERATE_DIAGNOSTICS_REPORT>NONE</GENERATE_DIAGNOSTICS_REPORT>
+	<!--This Output_File_Generation will generated resim output files  
+	   1> ENABLE = When selected, resim output files will be generated
+	   2> DISABLE = When selected, resim output files will not be generated ,-->
+	<Output_File_Generation>ENABLE</Output_File_Generation>
+	<!--This DUMP_TIMING_INFO will decide whether to dump timing info 
+	   1> ENABLE = When selected, timing info csv will be generated
+	   2> DISABLE = When selected, timing info csv will not be generated ,-->
+	<DUMP_TIMING_INFO>ENABLE</DUMP_TIMING_INFO>	
+
+	<!--This will send UDP frames when RUN_MODE =  E_LIME_SIL_FRAMEWORK and for other mode the functionality remains uneffected if ENABLED or DISABLED
+	   1> ENABLE = When selected, FRAMES will transmitted 
+	   2> DISABLE = When selected, FRAMES will not get transmitted ,-->
+	<UDP_FRAME_TRANSMISSION>ENABLE</UDP_FRAME_TRANSMISSION>
+		<!--Set Destination IP and PORT number-->
+	<DESTINATION_IP>192.168.1.41</DESTINATION_IP>	
+	<DESTINATION_PORT>5556</DESTINATION_PORT>	
+</Interface_Output_Control>

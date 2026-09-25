@@ -1,0 +1,77 @@
+<?xml version="1.0" ?><fmiModelDescription fmiVersion="2.0" modelName="SRR_Master_LogicModel2" guid="9494610662b55c3d9c5a12c02164e5af" description="" author="" version="1.0" generationTool="BMW LiME Framework" generationDateAndTime="2026-07-29T13:47:37Z" variableNamingConvention="structured">	
+  	<CoSimulation modelIdentifier="SRR_Master_LogicModel2" canHandleVariableCommunicationStepSize="true" canNotUseMemoryManagementFunctions="true">		
+    		<SourceFiles>			
+      			<File name="LogicModel2.cpp"/>			
+    		</SourceFiles>		
+  	</CoSimulation>	
+  	<LogCategories>		
+    		<Category name="FMI" description="Enable logging of all FMI calls"/>		
+    		<Category name="TEMP" description="Enable TEMP-related logging"/>		
+    		<Category name="OSI" description="Enable OSI-related logging"/>		
+  	</LogCategories>	
+  	<ModelVariables>		
+ 
+		<ScalarVariable name="SensorDataIn.base.lo" valueReference="0" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn.base.hi" valueReference="1" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn.size" valueReference="2" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn1.base.lo" valueReference="3" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn1.base.hi" valueReference="4" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn1.size" valueReference="5" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn2.base.lo" valueReference="6" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn2.base.hi" valueReference="7" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn2.size" valueReference="8" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn3.base.lo" valueReference="9" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn3.base.hi" valueReference="10" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn3.size" valueReference="11" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn4.base.lo" valueReference="12" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn4.base.hi" valueReference="13" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataIn4.size" valueReference="14" causality="input" variability="discrete">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut.base.lo" valueReference="15" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut.base.hi" valueReference="16" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut.size" valueReference="17" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut1.base.lo" valueReference="18" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut1.base.hi" valueReference="19" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut1.size" valueReference="20" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut2.base.lo" valueReference="21" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut2.base.hi" valueReference="22" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut2.size" valueReference="23" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut3.base.lo" valueReference="24" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut3.base.hi" valueReference="25" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut3.size" valueReference="26" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut4.base.lo" valueReference="27" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut4.base.hi" valueReference="28" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="SensorDataOut4.size" valueReference="29" causality="output" variability="discrete" initial="exact">			<Integer start="0"/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.Customer" valueReference="30" causality="parameter" variability="fixed" initial="exact">			 			<Integer start="0"/>			     		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.InputOutput" valueReference="31" causality="parameter" variability="fixed" initial="exact">			 			<Integer start="0"/>			     		</ScalarVariable>		
+
+		<ScalarVariable name="CoreProtocolIn.base.lo" valueReference="32" causality="input" variability="discrete" description="[CP-RX] Lower 32 bits of 64-bit pointer to CoreProtocol flat buffer (OSMP convention)">			 			<Integer start="0"/>			 		</ScalarVariable>		
+		<ScalarVariable name="CoreProtocolIn.base.hi" valueReference="33" causality="input" variability="discrete" description="[CP-RX] Upper 32 bits of 64-bit pointer to CoreProtocol flat buffer (OSMP convention)">			 			<Integer start="0"/>			 		</ScalarVariable>		
+		<ScalarVariable name="CoreProtocolIn.size" valueReference="34" causality="input" variability="discrete" description="[CP-RX] Valid byte count of CoreProtocol flat buffer (0 = no data this step)">			 			<Integer start="0"/>			 		</ScalarVariable>		
+ 
+		<ScalarVariable name="_ECU_.LM2.EnableCANoverUDPTransmission" valueReference="0" causality="parameter" variability="fixed" initial="exact">			 			<Boolean start="false"/>			     		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.EnableMUDPTransmission" valueReference="1" causality="parameter" variability="fixed" initial="exact">			 			<Boolean start="false"/>			     		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.EnableDspaceFileWrite" valueReference="2" causality="parameter" variability="fixed" initial="exact">			 			<Boolean start="false"/>			     		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.EnableSensorDataFileWrite" valueReference="3" causality="parameter" variability="fixed" initial="exact">			 			<Boolean start="false"/>			     		</ScalarVariable>		 
+ 
+		<ScalarVariable name="_ECU_.LM2.DebugOutputPath" valueReference="0" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.SrcIpAddressMUDP" valueReference="1" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.SrcPortCAN" valueReference="2" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.SrcPortMUDP" valueReference="3" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.DstIpAddressCAN" valueReference="4" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.DstPortCAN" valueReference="5" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.DstIPAddressMUDP" valueReference="6" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.DstPortMUDP" valueReference="7" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.Variant" valueReference="8" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.FmuType" valueReference="9" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+		<ScalarVariable name="_ECU_.LM2.DataInjectionMode" valueReference="10" causality="parameter" variability="fixed">			<String start=""/>		</ScalarVariable>		
+  	</ModelVariables>	
+  	<ModelStructure>		
+    		<Outputs>			
+      			<Unknown index="4"/>			
+      			<Unknown index="5"/>			
+      			<Unknown index="6"/>			
+      			<Unknown index="7"/>			
+      			<Unknown index="8"/>			
+    		</Outputs>		
+  	</ModelStructure>	
+</fmiModelDescription>

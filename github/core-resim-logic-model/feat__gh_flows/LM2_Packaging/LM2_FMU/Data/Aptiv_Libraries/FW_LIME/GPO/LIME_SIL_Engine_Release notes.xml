@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR6 APTIV SIL Framework Release notes -->
+<SIL_ENGINE_RELEASE_NOTE>
+<SIL_ENGINE_FRAMEWORK_RELEASE_CI_0235e5b7dd6e93b5bb9f5003e3f631e275f744b8>
+		<RELEASE_DESCRIPTION>
+			<RELEASE_NAME>SIL Engine Framework</RELEASE_NAME>
+			<SIL_ENGINE_Version> 
+				Major version: 108
+				Minor version: 26
+				Release week : 35
+				Release year : 2026
+			</SIL_ENGINE_Version>
+			<Release_Date> 02-09-2026</Release_Date>
+			<Framework_Plastic_Repo>10030156_03_Analysis_Framework_Suite</Framework_Plastic_Repo>
+			<Framework_Release_CS>f58ed95f87bf85b65d9609d55395d26939576d59</Framework_Release_CS>
+			<Release_GIT_Repo>10028634_01_SRR_RESIM_Release</Release_GIT_Repo>
+			<Release_Change_ID>...</Release_Change_ID>
+			
+			<ChangeLog_Details>	
+				Uploading the GEN8_SIL_ENGINE Binaries 
+			</ChangeLog_Details>
+			
+			<JIRA_Tickets>
+				
+			</JIRA_Tickets>
+			
+			<Known_Issues>
+				
+			</Known_Issues>
+			
+		</RELEASE_DESCRIPTION> 
+</SIL_ENGINE_FRAMEWORK_RELEASE_CI_0235e5b7dd6e93b5bb9f5003e3f631e275f744b8>
+<SIL_ENGINE_FRAMEWORK_RELEASE_CI_0235e5b7dd6e93b5bb9f5003e3f631e275f744b8>
+		<RELEASE_DESCRIPTION>
+			<RELEASE_NAME>SIL Engine Framework</RELEASE_NAME>
+			<SIL_ENGINE_Version> 
+				Major version: 108
+				Minor version: 23
+				Release week : 24
+				Release year : 2026
+			</SIL_ENGINE_Version>
+			<Release_Date> 09-06-2026</Release_Date>
+			<Framework_Plastic_Repo>10030156_03_Analysis_Framework_Suite</Framework_Plastic_Repo>
+			<Framework_Release_CS>0235e5b7dd6e93b5bb9f5003e3f631e275f744b8</Framework_Release_CS>
+			<Release_GIT_Repo>10028634_01_SRR_RESIM_Release</Release_GIT_Repo>
+			<Release_Change_ID>...</Release_Change_ID>
+			
+			<ChangeLog_Details>	
+				Uploading the GEN8_SIL_ENGINE Binaries 
+			</ChangeLog_Details>
+			
+			<JIRA_Tickets>
+				
+			</JIRA_Tickets>
+			
+			<Known_Issues>
+				
+			</Known_Issues>
+			
+		</RELEASE_DESCRIPTION> 
+</SIL_ENGINE_FRAMEWORK_RELEASE_CI_0235e5b7dd6e93b5bb9f5003e3f631e275f744b8>
+</SIL_ENGINE_RELEASE_NOTE>

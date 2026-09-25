@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Windows/SensorModelSilEngine.exe",
+            "args": ["C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/VVEngineConfig.yaml", "C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/Flist_file.txt"],
+            "stopAtEntry": false,
+            "cwd": "C:/Work/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Windows",
+            "environment": [],
+            "externalConsole": true,
+        },
+        {
+            "name": "(gdb) Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Linux/SensorModelSilEngine",
+            "args": ["/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/VVEngineConfig.yaml", "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Config/Flist_file.txt", "/home/aptiv/Git/Core_RESIM_Logic_Model/LM2_Packaging/LM2_FMU/build/Debug"],
+            "stopAtEntry": false,
+            "cwd": "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Linux",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "/home/aptiv/Git/Core_RESIM_VV_Release_Repo/01_VV_ENGINE/Binaries/Linux",
+            }],
+            "externalConsole": false,
+        }
+    ]
+}

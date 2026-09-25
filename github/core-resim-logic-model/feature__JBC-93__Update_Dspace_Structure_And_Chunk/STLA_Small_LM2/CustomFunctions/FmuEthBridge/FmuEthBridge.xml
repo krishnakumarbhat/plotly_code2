@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FmuEthBridge Custom Function  –  LIME Engineering
+    ===================================================
+    Bridges the dSPACE SCALEXIO Ethernet hardware to the LRCF FMU
+    using the proven lo/hi 64-bit pointer-triplet mechanism.
+
+    Data flow per simulation step:
+      [Before fmi2DoStep]
+        RX: Hardware → recvfrom → rx_buf → output (lo, hi, size) → FMU Integer inputs  VR 5000-5002
+      [After  fmi2DoStep]
+        TX: FMU Integer outputs VR 5003-5005 → reconstruct ptr → sendto → Hardware
+
+    The pointer-split pattern is identical to the ZMQ Custom Function already
+    deployed on this SCALEXIO platform (proven in-process pointer sharing).
+-->
+<CustomFunctionType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    Version="3.1"
+                    xmlns="urn:dSPACE:CustomFunctionTypeSchema">
+
+  <Systemidentification>
+    <SystemType Name="SCALEXIO"/>
+  </Systemidentification>
+
+  <Classifications>
+    <Classification Name="Ethernet" />
+  </Classifications>
+
+  <CustomFunctionBlock Name="FmuEthBridge" Version="1" DistributorInformation="LIME Engineering">
+
+    <!-- ── Physical layer: two direct hardware channel assignments ─────────
+         Each LogicalSignal produces one "Assigned Channel" dropdown in the
+         ConfigurationDesk Electrical Interface panel — no separate Custom
+         Ethernet Setup CF block is needed.
+
+         RX Ethernet Adapter  →  physical NIC receiving sensor/camera data
+         TX Ethernet Adapter  →  physical NIC sending LRCF output frames
+
+         If a single NIC handles both directions, select the same hardware
+         port in both dropdowns. -->
+    <PhysicalLayerInterfaces>
+      <PhysicalLayerInterface Id="SC" Name="Electrical Interface">
+        <LogicalSignals>
+          <LogicalSignal Id="LS_RX" Name="RX Ethernet Channel">
+            <HwRequirements>
+              <Resource Id="EthRes_RX" Name="RX Ethernet Adapter" ResourceType="Ethernet"/>
+            </HwRequirements>
+          </LogicalSignal>
+          <LogicalSignal Id="LS_TX" Name="TX Ethernet Channel">
+            <HwRequirements>
+              <Resource Id="EthRes_TX" Name="TX Ethernet Adapter" ResourceType="Ethernet"/>
+            </HwRequirements>
+          </LogicalSignal>
+        </LogicalSignals>
+      </PhysicalLayerInterface>
+    </PhysicalLayerInterfaces>
+
+    <!-- ── Model interface: 6 scalar Width=1 ports ──────────────────────────────
+         Each port is an individual Int32 scalar signal in ConfigurationDesk.
+         Wire each directly to the corresponding FMU Integer variable — no
+         demux/mux needed.
+
+         REQUIRED EXECUTION ORDER (set in ConfigurationDesk):
+           Before fmi2DoStep:  EthRxLo  →  EthRxHi  →  EthRxSize
+           After  fmi2DoStep:  EthTxLo  →  EthTxHi  →  EthTxSize
+    ─────────────────────────────────────────────────────────────────────────── -->
+    <ModelInterface>
+      <Functions>
+        <Function Name="Assignment" Id="Fcn1" IsMultipleTriggerable="true">
+
+          <!-- RX outputs: CF → FMU, called BEFORE fmi2DoStep -->
+          <!-- DataType="Int32" matches fmi2Integer (int32_t) exactly — no type warning in ConfigurationDesk -->
+          <!-- EthRxLo triggers the UDP recvfrom — executes first per CModule declaration order -->
+          <DataPort Name="EthRxLo"   Id="Fcn1_RxLo"   Direction="Out" DataType="Int32" DefaultValue="0" Unit="" Width="1"/>
+          <DataPort Name="EthRxHi"   Id="Fcn1_RxHi"   Direction="Out" DataType="Int32" DefaultValue="0" Unit="" Width="1"/>
+          <DataPort Name="EthRxSize" Id="Fcn1_RxSize"  Direction="Out" DataType="Int32" DefaultValue="0" Unit="" Width="1"/>
+
+          <!-- TX inputs: FMU → CF, called AFTER fmi2DoStep -->
+          <!-- EthTxSize triggers the UDP sendto — executes last per CModule declaration order -->
+          <DataPort Name="EthTxLo"   Id="Fcn1_TxLo"   Direction="In"  DataType="Int32" DefaultValue="0" Unit="" Width="1"/>
+          <DataPort Name="EthTxHi"   Id="Fcn1_TxHi"   Direction="In"  DataType="Int32" DefaultValue="0" Unit="" Width="1"/>
+          <DataPort Name="EthTxSize" Id="Fcn1_TxSize"  Direction="In"  DataType="Int32" DefaultValue="0" Unit="" Width="1"/>
+
+        </Function>
+      </Functions>
+
+      <Parameters>
+        <!-- RX channel ───────────────────────────────────────────────────── -->
+        <Parameter DataType="UInt16" DefaultValue="5001"
+                   Name="RX Port" Id="param1"
+                   RangeMin="1" RangeMax="65535"
+                   Description="UDP port on which the bridge listens for incoming frames on the RX NIC."/>
+
+        <Parameter DataType="Char[]" DefaultValue="192.168.10.1"
+                   Name="RX Local Address" Id="param2"
+                   Description="IP address of the SCALEXIO RX NIC (must match the hardware port selected as RX Ethernet Adapter)."/>
+
+        <Parameter DataType="Char[]" DefaultValue="255.255.255.0"
+                   Name="RX Subnet Mask" Id="param3"
+                   Description="Subnet mask for the RX NIC."/>
+
+        <!-- TX channel ───────────────────────────────────────────────────── -->
+        <Parameter DataType="UInt16" DefaultValue="5002"
+                   Name="TX Port" Id="param4"
+                   RangeMin="1" RangeMax="65535"
+                   Description="UDP destination port to which TX frames from the FMU are forwarded."/>
+
+        <Parameter DataType="Char[]" DefaultValue="192.168.1.10"
+                   Name="TX Remote IP" Id="param5"
+                   Description="IP address of the host machine that receives FMU TX frames."/>
+
+        <Parameter DataType="Char[]" DefaultValue="192.168.20.1"
+                   Name="TX Local Address" Id="param6"
+                   Description="IP address of the SCALEXIO TX NIC (must match the hardware port selected as TX Ethernet Adapter)."/>
+
+        <Parameter DataType="Char[]" DefaultValue="255.255.255.0"
+                   Name="TX Subnet Mask" Id="param7"
+                   Description="Subnet mask for the TX NIC."/>
+
+        <!-- General ──────────────────────────────────────────────────────── -->
+        <Parameter DataType="UInt16" DefaultValue="1500"
+                   Name="Max Frame Size" Id="param8"
+                   RangeMin="64" RangeMax="1500"
+                   Description="Maximum Ethernet payload size in bytes. Must not exceed 1500."/>
+      </Parameters>
+    </ModelInterface>
+
+    <!-- ── C function bindings ────────────────────────────────────────────────── -->
+    <CModule Name="FmuEthBridge">
+
+      <!-- Allocate instance struct once before first simulation start -->
+      <CFunction-Global Name="FmuEthBridge_Create">
+        <Caller AccessPoint="OneTimeInit"/>
+      </CFunction-Global>
+
+      <!-- Open UDP sockets and bind to Ethernet interface at each simulation start -->
+      <CFunction-Global Name="FmuEthBridge_Start">
+        <Caller AccessPoint="Init"/>
+      </CFunction-Global>
+
+      <!-- Called at simulation stop (no-op: sockets stay open across stop/start) -->
+      <CFunction-Global Name="FmuEthBridge_Stop">
+        <Caller AccessPoint="Stop"/>
+      </CFunction-Global>
+
+      <!-- Close sockets and free resources at application unload -->
+      <CFunction-Global Name="FmuEthBridge_Terminate">
+        <Caller AccessPoint="Unload"/>
+      </CFunction-Global>
+
+      <!-- RX: EthRxLo triggers recvfrom and caches result — execute first -->
+      <CFunction-DataPort Name="FmuEthBridge_RxLo">
+        <Caller DataPortId="Fcn1_RxLo"/>
+      </CFunction-DataPort>
+      <CFunction-DataPort Name="FmuEthBridge_RxHi">
+        <Caller DataPortId="Fcn1_RxHi"/>
+      </CFunction-DataPort>
+      <CFunction-DataPort Name="FmuEthBridge_RxSize">
+        <Caller DataPortId="Fcn1_RxSize"/>
+      </CFunction-DataPort>
+
+      <!-- TX: EthTxSize triggers sendto — execute last -->
+      <CFunction-DataPort Name="FmuEthBridge_TxLo">
+        <Caller DataPortId="Fcn1_TxLo"/>
+      </CFunction-DataPort>
+      <CFunction-DataPort Name="FmuEthBridge_TxHi">
+        <Caller DataPortId="Fcn1_TxHi"/>
+      </CFunction-DataPort>
+      <CFunction-DataPort Name="FmuEthBridge_TxSize">
+        <Caller DataPortId="Fcn1_TxSize"/>
+      </CFunction-DataPort>
+
+    </CModule>
+
+    <!-- ── Build dependencies ─────────────────────────────────────────────────── -->
+    <MakeConfiguration>
+      <Artefact Name="dsethernetinterfacemanagementdrv" Type="Library"/>
+    </MakeConfiguration>
+
+  </CustomFunctionBlock>
+</CustomFunctionType>

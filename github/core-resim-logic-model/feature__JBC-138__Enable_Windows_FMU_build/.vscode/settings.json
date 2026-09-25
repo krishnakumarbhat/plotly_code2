@@ -1,0 +1,5 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/LM2_Packaging/LM2_FMU",
+    "cmake.buildDirectory": "${workspaceFolder}/LM2_Packaging/LM2_FMU/build",
+    "cmake.allowCommentsInPresetsFile": true
+}

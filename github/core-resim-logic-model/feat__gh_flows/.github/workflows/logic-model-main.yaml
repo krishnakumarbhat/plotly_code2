@@ -1,0 +1,388 @@
+name: logic-model-build
+on:
+  workflow_call:
+    inputs:
+      job-to-run:
+        description: "Select which job to run"
+        required: false
+        type: string
+        default: "all"
+  workflow_dispatch:
+    inputs:
+      job-to-run:
+        description: "Select which job to run"
+        required: true
+        type: choice
+        default: "all"
+        options:
+          - all
+          - build
+          - build-linux
+          - build-windows
+      version:
+        description: "Release version override (e.g. 1.2.3). Leave blank to auto-increment from the latest GitHub release."
+        type: string
+        required: false
+        default: ""
+      create-release:
+        description: "Create a GitHub release after successful build"
+        type: boolean
+        required: true
+        default: false
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+    types:
+      - opened
+      - synchronize
+      - reopened
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  issues: write
+  security-events: write
+  id-token: write
+
+run-name: >
+  ${{ (github.event_name == 'pull_request' &&
+        format('"{0}" → {1}',
+          github.event.pull_request.title,
+          github.base_ref)) ||
+      (github.event_name == 'push' &&
+        format('Push to {0} by {1}',
+          github.ref_name,
+          github.actor)) ||
+      (github.event_name == 'workflow_dispatch' &&
+        format('Manual Run [{0}] by {1}',
+          github.event.inputs.job-to-run,
+          github.actor))
+  }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-skip:
+    if: |
+      github.event_name == 'pull_request'
+    uses: Aptiv/workflows-library/.github/workflows/skip-on-docs.yml@v4
+    with:
+      runner: ubuntu-latest
+      additional-doc-patterns: |
+        **/*.doc
+        **/*.pdf
+        **/*.md
+    permissions:
+      pull-requests: read
+      contents: read
+
+  pr-validation:
+    if: |
+      github.event_name == 'pull_request'
+    uses: Aptiv/workflows-library/.github/workflows/pr-validation.yml@v4
+    permissions:
+      pull-requests: write
+      contents: read
+      issues: write
+    with:
+      runner: gpo-linux-small
+      required-status: "${{ vars.JIRA_STATUS }}"
+      jira-project-keys: "${{ vars.RESIM_JIRA_KEYS }}"
+      commit-message-pattern: "([A-Z]{3,4}+-[0-9]+)"
+      send-feedback: true
+      jira-url: ${{ vars.JIRA_URL }}
+    secrets:
+      JIRA_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+  read-version:
+    if: github.event_name == 'push' ||  ( github.event_name == 'workflow_dispatch' && inputs.create-release )
+    runs-on: "gpo-linux-small"
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      linux-pkg-name: ${{ steps.resolve.outputs.linux-pkg-name }}
+      win-pkg-name: ${{ steps.resolve.outputs.win-pkg-name }}
+      is-prerelease: ${{ steps.resolve.outputs.is-prerelease }}
+      release-run-type: ${{ steps.resolve.outputs.release-run-type }}
+      component: ${{ steps.resolve.outputs.component }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Resolve version and release metadata
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_HOST: aptv.ghe.com
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REPO="${{ github.repository }}"
+          BRANCH="${{ github.ref_name }}"
+          RUN_NUMBER="${{ github.run_number }}"
+          MANUAL_VERSION="${{ inputs.version }}"
+
+          # Derive component name from repo
+          REPO_NAME="${REPO##*/}"
+          COMPONENT="${REPO_NAME#core-}"
+
+          # Workflow name lower-cased for asset prefix
+          WF_NAME=$(echo "${{ github.workflow }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+          if [[ "${BRANCH}" == "main" ]]; then
+            if [[ -n "${MANUAL_VERSION}" ]]; then
+              VERSION="${MANUAL_VERSION#v}"
+              echo "✓ Version: manual input → ${VERSION}"
+            else
+              RELEASES=$(gh api "repos/${REPO}/releases?per_page=100" 2>/dev/null || echo "[]")
+              LATEST_TAG=$(echo "${RELEASES}" | jq -r '
+                map(select(.prerelease == false and (.tag_name | test("^v?[0-9]+\\.[0-9]+\\.[0-9]+"))))
+                | sort_by(.created_at) | last | .tag_name // empty' 2>/dev/null || true)
+              if [[ -n "${LATEST_TAG}" ]]; then
+                IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
+                VERSION="${MAJOR}.${MINOR}.$((${PATCH:-0} + 1))"
+                echo "✓ Version: auto-incremented from ${LATEST_TAG} → ${VERSION}"
+              else
+                VERSION="0.1.0"
+                echo "✓ Version: no prior release found, starting at ${VERSION}"
+              fi
+            fi
+            TAG="${VERSION}"
+            LINUX_PKG_NAME="${WF_NAME}-v${VERSION}-linux.tar.gz"
+            WIN_PKG_NAME="${WF_NAME}-v${VERSION}-windows.zip"
+            IS_PRERELEASE="false"
+            RELEASE_RUN_TYPE="Release"
+          else
+            VERSION=""
+            TAG="prerelease-${COMPONENT}-${RUN_NUMBER}"
+            LINUX_PKG_NAME="${WF_NAME}-prerelease-${RUN_NUMBER}-linux.tar.gz"
+            WIN_PKG_NAME="${WF_NAME}-prerelease-${RUN_NUMBER}-windows.zip"
+            IS_PRERELEASE="true"
+            RELEASE_RUN_TYPE="Pre-release"
+          fi
+
+          {
+            echo "version=${VERSION}"
+            echo "tag=${TAG}"
+            echo "linux-pkg-name=${LINUX_PKG_NAME}"
+            echo "win-pkg-name=${WIN_PKG_NAME}"
+            echo "is-prerelease=${IS_PRERELEASE}"
+            echo "release-run-type=${RELEASE_RUN_TYPE}"
+            echo "component=${COMPONENT}"
+          } >> "$GITHUB_OUTPUT"
+
+          printf '\n%s\n' "════════════════════════════════════════════════════════"
+          printf '  %-12s: %s\n' "Component" "${COMPONENT}"
+          printf '  %-12s: %s\n' "Version" "${VERSION:-n/a}"
+          printf '  %-12s: %s\n' "Tag" "${TAG}"
+          printf '  %-12s: %s\n' "Linux Package Name" "${LINUX_PKG_NAME}"
+          printf '  %-12s: %s\n' "Windows Package Name" "${WIN_PKG_NAME}"
+          printf '  %-12s: %s\n' "PreRelease" "${IS_PRERELEASE}"
+          printf '  %-12s: %s\n' "Run type" "${RELEASE_RUN_TYPE}"
+          printf '  %-12s: %s\n' "Branch" "${BRANCH}"
+          printf '  %-12s: %s\n' "Run #" "${RUN_NUMBER}"
+          printf '%s\n\n' "════════════════════════════════════════════════════════"
+
+  build-linux:
+    name: Linux Build Analyze
+    needs: [read-version, check-skip, pr-validation]
+    if: |
+      always() && !failure() &&
+      (github.event_name == 'pull_request' ||
+      github.event_name == 'push' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.job-to-run == 'all' || github.event.inputs.job-to-run == 'build' || github.event.inputs.job-to-run == 'build-linux')) ||
+      (github.event_name == 'workflow_call' && (github.event.inputs.job-to-run == 'all' || github.event.inputs.job-to-run == 'build' || github.event.inputs.job-to-run == 'build-linux')))
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v4
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+      # This CONTEXT_SECRETS is for warning analyser to auth JIRA
+      CONTEXT_SECRETS: >-
+        {
+          "APTIV_USERNAME": "${{ vars.APTIV_USERNAME }}",
+          "APTIV_PASSWORD": "${{ secrets.APTIV_PASSWORD }}"
+        }
+    with:
+      os: "linux"
+      runner: "shardl-gpo-latestresim-medium"
+      multi-org-authentication: "${{ github.repository_owner }},Aptiv"
+      script: |
+        set -euo pipefail
+        export PATH="/opt/cmake/bin:$PATH"
+        rm -rf LM2_Packaging/Deliverables/*
+        echo "::group::Running build"
+        cd LM2_Packaging
+        chmod +x Build_All.sh
+        set +e
+        bash Build_All.sh
+        RC=$?
+        set -e
+        echo "::endgroup::"
+        (( RC == 0 )) || { echo "::error::Build failed with exit code $RC"; exit $RC; }
+        cd ${GITHUB_WORKSPACE}/LM2_Packaging/Deliverables
+        CREATE_RELEASE="YES"
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.create-release }}" != "true" ]]; then
+          CREATE_RELEASE="NO"
+        fi
+        PKG_NAME="${{ needs.read-version.outputs.linux-pkg-name }}"
+        if [[ -n "${PKG_NAME}" && "$CREATE_RELEASE" == "YES" ]]; then
+          TMP_PKG="/tmp/${PKG_NAME}"
+          tar -czf "${TMP_PKG}" *.fmu
+          mv "${TMP_PKG}" "${GITHUB_WORKSPACE}/${PKG_NAME}"
+          echo "::notice::Package created ${GITHUB_WORKSPACE}/${PKG_NAME}"
+          ls -lh "${GITHUB_WORKSPACE}/${PKG_NAME}"
+        else
+          echo "::warning::Skipping packaging (no version resolved — maybe a PR or Debug build) ==="
+        fi
+        echo "::notice::Linux build completed"
+      pipeline-type: "pre-merge"
+      build-type: "build"
+      analyze-type: "all"
+      compiler-name: "all"
+      luci_cli_version: "v0.3.7"
+      cov-cli_version: "master"
+      sarif-enabled: false
+      analyze-targets: ""
+      artifact-name: "logic-model-linux"
+      additional-artifacts: LM2_Packaging/Deliverables/*.fmu
+      lfs-enabled: true
+      should_skip: ${{ needs.check-skip.outputs.should_skip }}
+      jira-jql: "project in (HLR) AND issuetype in (Defect, Problem) AND status in ('Triage', 'WIP', 'Identified', 'Open', 'Planned', 'In Review') AND labels in (warning_justification, warnings_justification)"
+      publish-release: ${{ (github.event_name == 'push' || inputs.create-release == true) && needs.read-version.outputs.linux-pkg-name != '' }}
+      releases: '[{"file":"${{ github.workspace }}/${{ needs.read-version.outputs.linux-pkg-name }}","tag":"${{ needs.read-version.outputs.tag }}","title":"${{ needs.read-version.outputs.linux-pkg-name }}"}]'
+      release-run-type: ${{ needs.read-version.outputs.release-run-type }}
+      release-prerelease: ${{ needs.read-version.outputs.is-prerelease == 'true' }}
+
+  build-windows:
+    name: Windows Build Analyze
+    needs: [read-version, check-skip, pr-validation]
+    if: |
+      always() && !failure() &&
+      (github.event_name == 'pull_request' ||
+      github.event_name == 'push' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.job-to-run == 'all' || github.event.inputs.job-to-run == 'build' || github.event.inputs.job-to-run == 'build-windows')) ||
+      (github.event_name == 'workflow_call' && (github.event.inputs.job-to-run == 'all' || github.event.inputs.job-to-run == 'build' || github.event.inputs.job-to-run == 'build-windows')))
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-windows.yml@v4
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      # This CONTEXT_SECRETS is for warning analyser to auth JIRA
+      CONTEXT_SECRETS: >-
+        {
+          "APTIV_USERNAME": "${{ vars.APTIV_USERNAME }}",
+          "APTIV_PASSWORD": "${{ secrets.APTIV_PASSWORD }}"
+        }
+    with:
+      os: "windows"
+      runner: "shardw-gpo-latestresim-medium"
+      multi-org-authentication: "${{ github.repository_owner }},Aptiv"
+      script: |
+        cmake --version
+        Remove-Item "$env:GITHUB_WORKSPACE\LM2_Packaging\Deliverables\*" -Recurse -Force
+        $CREATE_RELEASE = "YES"
+        if ("${{ github.event_name }}" -eq "workflow_dispatch" -and "${{ inputs.create-release }}" -eq "false") {
+          $CREATE_RELEASE = "NO"
+        }
+        Write-Host "::group::Building Windows"
+        Set-Location "$env:GITHUB_WORKSPACE\LM2_Packaging"
+        cmd /c "Build_All.bat"
+        $RC = $LASTEXITCODE
+        Write-Host "::endgroup::"
+        if ($RC -ne 0) {
+          Write-Host "::error::Build failed with exit code $RC"
+          exit $RC
+        }
+        Write-Host "::info::List output dir"
+        $files = Get-ChildItem -Path "$env:GITHUB_WORKSPACE\LM2_Packaging\Deliverables\*.fmu" -ErrorAction Stop
+        if (-not $files) {
+            throw "::error::No .fmu files found in Deliverables"
+        }
+        $PKG_NAME = "${{ needs.read-version.outputs.win-pkg-name }}"
+        if (-not [string]::IsNullOrWhiteSpace($PKG_NAME) -and $CREATE_RELEASE -eq "YES") {
+          Write-Host "::info::Package artifacts for release"
+          Compress-Archive -Path "$env:GITHUB_WORKSPACE\LM2_Packaging\Deliverables\*.fmu" -DestinationPath "$env:GITHUB_WORKSPACE\$PKG_NAME" -Force
+          Write-Host "::notice::Package created: $env:GITHUB_WORKSPACE\$PKG_NAME"
+          Get-Item "$env:GITHUB_WORKSPACE\$PKG_NAME" | Select-Object Name, Length
+        }
+        else {
+          Write-Host "::warning::Skipping packaging (no version resolved - maybe a PR build)"
+        }
+        Set-Location $env:GITHUB_WORKSPACE
+        Write-Host "::notice::Windows build completed"
+      pipeline-type: "pre-merge"
+      build-type: "build"
+      analyze-type: "all"
+      compiler-name: "all"
+      luci_cli_version: "v0.3.7"
+      cov-cli_version: "master"
+      sarif-enabled: false
+      analyze-targets: ""
+      artifact-name: "logic-model-windows"
+      additional-artifacts: LM2_Packaging\Deliverables\*.fmu
+      lfs-enabled: true
+      should_skip: ${{ needs.check-skip.outputs.should_skip }}
+      jira-jql: "project in (FCS,ITY) AND issuetype in (Defect, Problem) AND status in ('Triage', 'WIP', 'Identified', 'Open', 'Planned', 'In Review') AND labels in (warning_justification, warnings_justification)"
+      publish-release: ${{ (github.event_name == 'push' || inputs.create-release == true) && needs.read-version.outputs.win-pkg-name != '' }}
+      releases: '[{"file":"${{ github.workspace }}/${{ needs.read-version.outputs.win-pkg-name }}","tag":"${{ needs.read-version.outputs.tag }}","title":"${{ needs.read-version.outputs.win-pkg-name }}"}]'
+      release-run-type: ${{ needs.read-version.outputs.release-run-type }}
+      release-prerelease: ${{ needs.read-version.outputs.is-prerelease == 'true' }}
+
+  consolidate-report:
+    needs: [pr-validation, build-linux, build-windows]
+    if: always()
+    uses: Aptiv/workflows-library/.github/workflows/consolidate-report.yml@v4
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+    with:
+      runner: gpo-linux-small
+      components: |
+        [
+          {
+            "name": "logic-model-linux",
+            "changed": "true",
+            "build-result": "success",
+            "build-artifacts": ["logic-model-linux"],
+            "ut-artifacts": []
+          },
+          {
+            "name": "logic-model-windows",
+            "changed": "true",
+            "build-result": "success",
+            "build-artifacts": ["logic-model-windows"],
+            "ut-artifacts": []
+          }
+        ]
+      enable-email-notification: true
+      enable-teams-notification: false
+      email-recipient: "sayuj.v.nair@aptiv.com"
+      success-labels: "pr-validation:pr-validation-passed,Linux Build Analyze:linux-build-passed,Windows Build Analyze:windows-build-passed"
+      failure-labels: "pr-validation:pr-validation-failed,Linux Build Analyze:linux-build-failed,Windows Build Analyze:windows-build-failed"
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+
+  workflow-summary:
+    name: Workflow Summary
+    needs: [ pr-validation, read-version, build-linux, build-windows, consolidate-report ]
+    if: always()
+    uses: Aptiv/workflows-library/.github/workflows/workflow-summary.yml@v4
+    with:
+      runner: ubuntu-latest
+      job-results: |
+        {
+          "pr-validation" :"${{ needs.pr-validation.result }}",
+          "read-version": "${{ needs.read-version.result }}",
+          "build-linux": "${{ needs.build-linux.result }}",
+          "build-windows": "${{ needs.build-windows.result }}",
+          "consolidate-report": "${{ needs.consolidate-report.result }}"
+        }

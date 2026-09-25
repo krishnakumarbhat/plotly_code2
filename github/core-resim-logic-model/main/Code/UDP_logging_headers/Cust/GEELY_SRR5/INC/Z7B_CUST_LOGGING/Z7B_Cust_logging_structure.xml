@@ -1,0 +1,60 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<FILE_NAME>z7b_cust_logging_structure</FILE_NAME>
+<STRUCTURE_VERSION>1</STRUCTURE_VERSION>
+<HASH_KEY>37ee</HASH_KEY>
+<MACRO_LIST>
+	<!--record-->
+		<ARRAY_LENGTH>Z7B_CUST_LOGGING_DATA,70</ARRAY_LENGTH>
+	<!--/record-->
+</MACRO_LIST>
+<STRUCTURE_LIST>
+	<!--record-->
+		<STRUCTURE_NAME>Z7B_Cust_Logging_Hdr</STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<STRUCTURE_NAME>Z7B_Cust_Logging_Data</STRUCTURE_NAME>
+	<!--/record-->
+</STRUCTURE_LIST>
+<SUB_MODULE_Z7B_Cust_Logging_Hdr>
+	<!--record-->
+		<VARIABLE_NAME>Sec_Checksum</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Z7B_Cust_Logging_Hdr</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Sec_Compatibility</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned16</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Z7B_Cust_Logging_Hdr</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Sec_Size</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Z7B_Cust_Logging_Hdr</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_Z7B_Cust_Logging_Hdr>
+<SUB_MODULE_Z7B_Cust_Logging_Data>
+	<!--record-->
+		<VARIABLE_NAME>Z7B_Cust_Logging_Hdr</VARIABLE_NAME>
+		<COMPONENT_TYPE>STRUCTURE</COMPONENT_TYPE>
+		<DATA_TYPE>Z7B_Cust_Logging_Hdr</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Z7B_Cust_Logging_Data</PARENT_STRUCTURE_NAME>
+	<!--/record-->
+	<!--record-->
+		<VARIABLE_NAME>Z7B_Logging_Dummy</VARIABLE_NAME>
+		<COMPONENT_TYPE>VARIABLE</COMPONENT_TYPE>
+		<DATA_TYPE>unsigned32</DATA_TYPE>
+		<PARENT_STRUCTURE_NAME>Z7B_Cust_Logging_Data</PARENT_STRUCTURE_NAME>
+		<MIN_RANGE>0</MIN_RANGE>
+		<MAX_RANGE>255</MAX_RANGE>
+	<!--/record-->
+</SUB_MODULE_Z7B_Cust_Logging_Data>

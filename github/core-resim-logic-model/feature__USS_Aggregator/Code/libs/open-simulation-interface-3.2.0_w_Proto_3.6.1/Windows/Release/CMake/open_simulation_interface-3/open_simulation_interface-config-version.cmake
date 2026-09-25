@@ -1,0 +1,21 @@
+
+set(PACKAGE_VERSION_MAJOR "3")
+
+set(PACKAGE_VERSION "3.2.0")
+if("${PACKAGE_FIND_VERSION}" VERSION_EQUAL "0")
+  message(FATAL_ERROR "Please select at least the major version you want to use!")
+else()
+  # Check whether the requested PACKAGE_FIND_VERSION is compatible
+  if("${PACKAGE_VERSION_MAJOR}" VERSION_EQUAL "${PACKAGE_FIND_VERSION_MAJOR}")
+    if("${PACKAGE_VERSION}" VERSION_LESS "${PACKAGE_FIND_VERSION}")
+        set(PACKAGE_VERSION_COMPATIBLE FALSE)
+    else()
+        set(PACKAGE_VERSION_COMPATIBLE TRUE)
+        if ("${PACKAGE_VERSION}" VERSION_EQUAL "${PACKAGE_FIND_VERSION}")
+            set(PACKAGE_VERSION_EXACT TRUE)
+        endif()
+    endif()
+  else()
+    set(PACKAGE_VERSION_COMPATIBLE FALSE)
+  endif()
+endif()
