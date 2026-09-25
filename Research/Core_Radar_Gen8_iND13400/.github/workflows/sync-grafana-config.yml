@@ -1,0 +1,23 @@
+name: Sync Grafana Config to DB
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'grafana_config/**'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    uses: Aptiv/workflows-library/.github/workflows/proj-details-component-mapping-db-sync.yml@main
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM }}
+      config-directory: 'grafana_config'
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      METRICS_DB_HOST: ${{ secrets.METRICS_DB_HOST }}
+      METRICS_DB_USER: ${{ secrets.METRICS_DB_USER }}
+      METRICS_DB_PASSWORD: ${{ secrets.METRICS_DB_PASSWORD }}
+      METRICS_DB_PORT: ${{ secrets.METRICS_DB_PORT }}
+      METRICS_DB_NAME: ${{ secrets.METRICS_DB_NAME }}

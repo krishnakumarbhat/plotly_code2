@@ -1,0 +1,29 @@
+name: ind13400-trigger-verification
+when:
+  eventSource: gerrit
+  eventTypes:
+    - patchset-created
+    - wip-state-changed
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+        - release/v3.2.x
+        - feature/Tiger_Team_Branch
+        - feature/Gen8_Tiger2
+        - feature/v2.0.x
+        - feature/Gen8_A2HW_Bringup
+        - release/v4.0.x
+        - release/v5.0.x
+        - feature/dsp_map_ridm_integration
+        - release/v5.1.x
+        - release/v6.0.x
+run:
+  pipeline: core-radar-gen8-ind13400-trigger-verification
+  params:
+    change-id:       $(body.change.number)
+    commit-id:       $(body.patchSet.revision)
+    patchset-number: $(body.patchSet.number)
+    branch:          $(body.change.branch)
+url: https://389177498442.awsaptiv.com/webhook/triggers/ind13400-trigger-verification

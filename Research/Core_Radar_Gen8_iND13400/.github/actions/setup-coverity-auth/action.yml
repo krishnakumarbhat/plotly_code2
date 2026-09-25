@@ -1,0 +1,27 @@
+name: Setup Coverity Auth
+description: Configure Coverity authentication
+
+inputs:
+  coverity-auth:
+    description: 'COVERITY_COMMITTER_AUTH secret'
+    required: true
+  auth-file:
+    description: 'Path to write auth file (default: /root/coverity.auth)'
+    required: false
+    default: '/root/coverity.auth'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Coverity Auth
+      shell: bash
+      env:
+        COVERITY_AUTH_VALUE: ${{ inputs.coverity-auth }}
+        COVERITY_AUTH_FILE: ${{ inputs.auth-file }}
+      run: |
+        if [ -z "${COVERITY_AUTH_VALUE}" ]; then
+          echo "Missing Coverity auth secret." >&2
+          exit 1
+        fi
+        printf '%s\n' "${COVERITY_AUTH_VALUE}" > "${COVERITY_AUTH_FILE}"
+        chmod 600 "${COVERITY_AUTH_FILE}"

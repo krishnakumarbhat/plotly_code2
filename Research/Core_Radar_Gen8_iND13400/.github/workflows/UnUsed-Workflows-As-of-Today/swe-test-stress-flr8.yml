@@ -1,0 +1,52 @@
+# SWE-Test - On-demand stress test with custom bench attributes
+#                and a custom GUI report filename pattern.
+#
+# Demonstrates:
+#   * bench-attributes -> extra `-b KEY VALUE` pairs (Board=B0, Mars=B0)
+#   * spc-file         -> --spc_file spc_5.s19
+#   * Custom report-subdir AND custom report-name-glob, because the stress
+#     framework decorates filenames with "STRESS" between family and date.
+#
+# Trigger: manual only — stress runs are heavyweight and gated by the operator.
+
+name: SWE-Test - Stress FLR8 (custom paths)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stress-flr8:
+    name: Stress FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: STRESS
+      family: FLR8
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_can", "xcp":"CAN"}
+        ]
+      test-folder: SWE6_Testing
+      markers: 'TestType=Stress'
+      flags: 'stress_mode long_run'
+      spc-file: spc_5.s19
+      # One KEY=VALUE per line — each becomes a separate `-b KEY VALUE`.
+      bench-attributes: |
+        Board=B0
+        Mars=B0
+        StressDuration=8h
+      # Stress reports get their own subtree and their own filename pattern.
+      report-subdir: Reports/Stress
+      # Note: `GUI` is intentionally omitted from the glob — the reusable
+      # workflow post-filters by `GUI` substring, and the framework writes
+      # `..._Report_GUI_<timestamp>.html` (GUI before date), so requiring
+      # `GUI` AFTER `{date}` in the glob would never match.
+      report-name-glob: '*{family}*STRESS*{date}*.html'
+      # 8h+ run — bump the default timeout.
+      timeout-minutes: 720
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-stress-flr8.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

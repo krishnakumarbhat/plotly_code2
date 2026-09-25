@@ -1,0 +1,157 @@
+name: Sync .github to release branches
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - '.github/**'
+  schedule:
+    - cron: '0 3 * * *'   # 03:00 UTC daily safety net
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  # GitHub user to auto-request as reviewer/assignee on every sync PR.
+  # This is what triggers GitHub's email notification.
+  SYNC_REVIEWER: hrithik-singh
+  # Jira ticket to prefix commit messages and PR titles with, so the
+  # Jira/PR-linking check passes.
+  JIRA_TICKET: EAH-8956
+
+jobs:
+  discover-release-branches:
+    runs-on: ubuntu-latest
+    outputs:
+      branches: ${{ steps.list.outputs.branches }}
+    steps:
+      - name: List all release/* branches
+        id: list
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          BRANCHES=$(gh api "repos/${GITHUB_REPOSITORY}/branches?per_page=100" \
+            --paginate \
+            --jq '.[].name' | grep '^release/' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "Found release branches: $BRANCHES"
+          echo "branches=$BRANCHES" >> "$GITHUB_OUTPUT"
+
+  sync:
+    needs: discover-release-branches
+    if: needs.discover-release-branches.outputs.branches != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJson(needs.discover-release-branches.outputs.branches) }}
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: dev
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Compute sanitized branch suffix (avoid literal "release" in name)
+        id: branchname
+        run: |
+          # e.g. release/v6.1.x -> v6-1-x  (strip "release/" and non-alnum)
+          SUFFIX=$(echo "${{ matrix.target }}" | sed 's#^release/##' | tr -c 'a-zA-Z0-9' '-' | sed 's/-\+/-/g;s/^-//;s/-$//')
+          echo "suffix=$SUFFIX" >> "$GITHUB_OUTPUT"
+          echo "sync_branch=task/auto-sync-github-$SUFFIX" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if an open sync PR already exists for this target
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          COUNT=$(gh pr list --base "${{ matrix.target }}" \
+            --head "${{ steps.branchname.outputs.sync_branch }}" \
+            --state open --json number --jq 'length')
+          echo "existing=$COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch target release branch
+        if: steps.existing.outputs.existing == '0'
+        run: git fetch origin "${{ matrix.target }}:${{ matrix.target }}"
+
+      - name: Create sync branch and copy .github from dev
+        if: steps.existing.outputs.existing == '0'
+        run: |
+          set -euo pipefail
+          git checkout -B "${{ steps.branchname.outputs.sync_branch }}" "${{ matrix.target }}"
+          git checkout dev -- .github
+
+      # dev and release branches use different smoke-test runner pools, so the
+      # repo var reference must be swapped after the raw copy from dev.
+      - name: Point synced workflows at the release smoke-test runner variable
+        if: steps.existing.outputs.existing == '0'
+        run: |
+          set -euo pipefail
+          grep -rl 'ADVRADAR_SMOKE_TEST_RUNNER_GEN8_DEV' .github | xargs -r sed -i \
+            's/ADVRADAR_SMOKE_TEST_RUNNER_GEN8_DEV/ADVRADAR_SMOKE_TEST_RUNNER_GEN8_RELEASE/g'
+
+      # Compared against the target branch's own committed .github (not dev's),
+      # since the substitution above always makes this branch differ from dev.
+      - name: Check for .github drift
+        if: steps.existing.outputs.existing == '0'
+        id: diff
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- .github; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push sync branch
+        if: steps.existing.outputs.existing == '0' && steps.diff.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          git add .github
+          git commit -m "${{ env.JIRA_TICKET }}: chore: sync .github workflows from dev to ${{ matrix.target }}"
+          git push -f origin "${{ steps.branchname.outputs.sync_branch }}"
+
+      - name: Write PR body
+        if: steps.existing.outputs.existing == '0' && steps.diff.outputs.changed == 'true'
+        run: |
+          cat > /tmp/pr-body.md << EOF
+          ${{ env.JIRA_TICKET }}
+
+          Automated sync of \`.github/\` from \`dev\` to this release branch.
+
+          This keeps status-check job names on this release branch aligned
+          with the branch ruleset, preventing the recurring
+          "checks not running" issue.
+
+          References to \`ADVRADAR_SMOKE_TEST_RUNNER_GEN8_DEV\` were rewritten to
+          \`ADVRADAR_SMOKE_TEST_RUNNER_GEN8_RELEASE\` so this branch queues HW smoke
+          tests on the release runner pool instead of the dev pool. Make sure the
+          \`ADVRADAR_SMOKE_TEST_RUNNER_GEN8_RELEASE\` repo/environment variable exists.
+
+          **After merge:** verify the branch ruleset's required status
+          checks still match the job names in the synced workflows, and
+          update the ruleset if needed.
+          EOF
+
+      - name: Open pull request
+        if: steps.existing.outputs.existing == '0' && steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh pr create \
+            --base "${{ matrix.target }}" \
+            --head "${{ steps.branchname.outputs.sync_branch }}" \
+            --title "${{ env.JIRA_TICKET }}: chore: auto-sync .github workflows from dev to ${{ matrix.target }}" \
+            --body-file /tmp/pr-body.md \
+            --label "automated,cicd" \
+            --reviewer "${{ env.SYNC_REVIEWER }}" \
+            --assignee "${{ env.SYNC_REVIEWER }}" || echo "PR may already exist, continuing"

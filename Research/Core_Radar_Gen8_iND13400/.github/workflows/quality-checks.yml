@@ -1,0 +1,1481 @@
+name: Quality Checks
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches:
+      - dev
+      - 'release/**'    # matches release/v1.0, release/r1/hotfix, release/2026-Q3, etc.
+  schedule:
+    - cron: '0 2 * * *'  # 02:00 UTC daily — runs on the repository default branch
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch name or full commit SHA to check out (e.g. "feature/my-branch" or "a1b2c3d4e5f6..."). Leave empty to use HEAD of the branch selected above.'
+        required: false
+        default: ''
+        type: string
+      smoke_test_runner:
+        description: 'Runner labels for HW Smoke Test as a JSON array (e.g. ["self-hosted","linux","SmokeTest","Gen8"])'
+        required: false
+        default: '["self-hosted","linux","SmokeTest","Gen8"]'
+
+concurrency:
+  # Merge queue entries are independent — never cancel them; cancel only duplicate PR runs
+  group: quality-checks-${{ github.ref }}-${{ github.event_name }}
+  # cancels any prior run on the same branch when a new commit is pushed; merge queue runs are never cancelled
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  PROJECT_NAME: Core_Radar_Gen8_iND13400
+  JFROG_UPLOAD_BASE: core_radar-aptiv-00000000-gen8_ind13400-local/github/pr/${{ github.run_number }}
+  BAZELISK_OUTPUT_ROOT: ${{ github.workspace }}/bazel_output
+
+# TODO (workflow follow-ups)
+# 1) Coverity summary should come from the current run artifacts/logs only,
+#    not by querying/downloading from the Coverity server.
+# 2) Metrics publishing target DB/table needs final decision:
+#    confirm whether legacy DB is still used, and if SDLC DB is used,
+#    define/create the required table/schema for these workflow metrics.
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # START: sticky "in progress" comment
+  # ─────────────────────────────────────────────────────────────
+  pr_status_comment_start:
+    name: PR Status Comment (Start)
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push'
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Resolve PR number from merge queue ref
+        id: mq-pr
+        if: github.event_name == 'merge_group'
+        run: |
+          PR_NUM=$(echo "${{ github.ref }}" | grep -oP 'pr-\K[0-9]+' || true)
+          echo "pr-number=${PR_NUM}" >> "$GITHUB_OUTPUT"
+
+      - name: Clear stale failure labels
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = context.payload.pull_request.number;
+            const prefixes = [
+              'build failed - ',
+              'unit tests failed - ',
+              'coverity failed - ',
+              'smoke test failed - ',
+              'ci-failed-'
+            ];
+
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              per_page: 100,
+            });
+
+            const toRemove = labels
+              .map((l) => l.name)
+              .filter((name) => {
+                const lower = name.toLowerCase();
+                return prefixes.some((p) => lower.startsWith(p));
+              });
+
+            for (const name of toRemove) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                name,
+              });
+              core.info(`Removed stale failure label: ${name}`);
+            }
+
+            if (toRemove.length === 0) {
+              core.info('No stale failure labels to remove.');
+            }
+
+      - name: Post initial sticky PR status comment
+        uses: ./.github/actions/pr-status-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.mq-pr.outputs.pr-number || '' }}
+          event-type: ${{ github.event_name }}
+          job-pr-validation: in progress...
+          job-precommit: in progress...
+          job-dependency-scan: skipped
+          job-build-stage-1: in progress...
+          job-build-stage-2: in progress...
+          job-unit-test: in progress...
+          job-coverity: in progress...
+          job-hw-test: in progress...
+
+  # ─── Ensure we're using GSS-approved workflows ────────────────────────────
+  # validate-workflow:
+  #   name: Validate Workflow
+  #   if: |
+  #     github.event_name == 'pull_request'
+  #   uses: Aptiv/workflows-library/.github/workflows/validate-remote.yml@v3
+  #   permissions:
+  #     contents: read
+  #     actions: read
+  #   with:
+  #     caller_repo: ${{ github.repository }}
+  #     base_sha: ${{ github.event.pull_request.base.sha }}
+  #     head_sha: ${{ github.event.pull_request.head.sha }}
+  #     ref: ${{ github.ref }}
+  #     run_integration_tests: false
+  #   secrets:
+  #     APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+  #     APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+
+  # ─── Skip on Documentation-Only Changes ────────────────────────────
+  check_skip:
+    name: Check Documentation Changes
+    if: github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'merge_group'
+    uses: Aptiv/workflows-library/.github/workflows/skip-on-docs.yml@v3
+    with:
+      additional-doc-patterns: |
+        **/*.doc
+        **/*.pdf
+        **/*.md
+    permissions:
+      pull-requests: read
+      contents: read
+
+  # ─────────────────────────────────────────────────────────────
+  # PR & Commit Message Validation (Jira)
+  # ─────────────────────────────────────────────────────────────
+  pr_validation:
+    name: Validate PR JIRA Tickets
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    uses: Aptiv/workflows-library/.github/workflows/pr-validation.yml@v3
+    permissions:
+      pull-requests: write
+      contents: read
+      issues: write
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_SMALL }}
+      jira-project-keys: ${{ vars.ADVRADAR_JIRA_KEY_LIST }}
+      commit-message-pattern: '([A-Z]+-[0-9]+)'
+      required-status: ${{ vars.ADVRADAR_JIRA_REQUIRED_STATUS }}
+      send-feedback: true
+      jira-url: ${{ vars.JIRA_URL }}
+    secrets:
+      JIRA_TOKEN: ${{ secrets.ADVRADAR_SID_JIRA_API_KEY }}
+
+  # ─────────────────────────────────────────────────────────────
+  # Pre-commit (with optional auto-fix)
+  # ─────────────────────────────────────────────────────────────
+  precommit:
+    name: Pre-commit
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    container:
+      image: containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593
+      credentials:
+        username: ${{ vars.GHCR_USER }}
+        password: ${{ secrets.GHCR_TOKEN }}
+      options: -v /var/run/docker.sock:/var/run/docker.sock
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache pre-commit
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            pre-commit-${{ runner.os }}-
+
+      - name: Install pre-commit
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pre-commit
+
+      - name: Configure git safe.directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Run pre-commit
+        id: precommit_run
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="origin/${{ github.base_ref }}"
+          elif [ "${{ github.event_name }}" = "merge_group" ]; then
+            # merge_group events target the default branch; github.base_ref may be empty
+            BASE_REF="origin/dev"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # On dispatch, diff against dev (the integration branch) — same logic as a PR targeting dev.
+            BASE_REF="origin/dev"
+          fi
+
+          if [ -n "${BASE_REF:-}" ]; then
+            git fetch origin "${BASE_REF#origin/}" --depth=1
+            pre-commit run --from-ref "$BASE_REF" --to-ref HEAD --show-diff-on-failure --color=always
+          else
+            pre-commit run --all-files --show-diff-on-failure --color=always
+          fi
+
+      # Auto-fix is opt-in via label "auto-fix-pre-commit"
+      # Restricted to same-repo PRs only. Uses App token so a new run is triggered.
+      - name: Generate App Token for auto-fix push
+        if: |
+          failure() &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          contains(github.event.pull_request.labels.*.name, 'auto-fix-pre-commit')
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Auto-fix - commit & push pre-commit changes
+        if: |
+          failure() &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          contains(github.event.pull_request.labels.*.name, 'auto-fix-pre-commit')
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Bot-loop guard
+          LAST_AUTHOR=$(git log -1 --pretty=%an || true)
+          if echo "$LAST_AUTHOR" | grep -qiE 'github-actions|bot|\[bot\]'; then
+            echo "Last commit was already made by a bot ($LAST_AUTHOR). Skipping auto-fix to avoid loops."
+            exit 0
+          fi
+
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Pre-commit failed but no files were modified by the hooks. Nothing to auto-commit."
+            exit 0
+          fi
+
+          echo "=== Files changed by pre-commit hooks ==="
+          git status --short
+          git diff --stat || true
+
+          LAST_MSG=$(git log -1 --pretty=%B || true)
+          JIRA_ID=$(echo "$LAST_MSG" | grep -oE '[A-Z]+-[0-9]+' | head -1 || true)
+
+          if [ -z "$JIRA_ID" ]; then
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            JIRA_ID=$(echo "$PR_TITLE" | grep -oE '[A-Z]+-[0-9]+' | head -1 || true)
+          fi
+
+          if [ -z "$JIRA_ID" ]; then
+            echo "::warning::Could not find a Jira ticket ID. Using placeholder."
+            JIRA_ID="NOJIRA"
+          fi
+
+          echo "Using Jira ID: $JIRA_ID"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          COMMIT_MSG="${JIRA_ID}: auto-fix pre-commit formatting / lint issues
+
+          This commit was created automatically by the Quality Checks workflow
+          after pre-commit hooks modified files. The original Jira ticket ID
+          was preserved so that PR validation continues to pass."
+
+          git commit -m "$COMMIT_MSG"
+
+          BRANCH="${{ github.head_ref }}"
+          echo "Pushing auto-fix commit to branch: $BRANCH"
+
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "HEAD:${BRANCH}"
+
+          echo "::notice::Auto-fix commit pushed with App token. A new workflow run will start on the fixed commit (concurrency will cancel this run)."
+
+      - name: List files modified by pre-commit hooks (summary)
+        if: failure()
+        run: |
+          {
+            echo ""
+            echo "### Files changed by pre-commit hooks"
+            if [ -n "$(git status --porcelain)" ]; then
+              echo '```'
+              git status --short
+              echo '```'
+            else
+              echo "No files were left modified after the auto-fix attempt."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Pre-commit failure guidance
+        if: failure()
+        run: |
+          {
+            echo "### Pre-commit failed"
+            echo ""
+            echo "Auto-fix runs only when **all** of the following are true:"
+            echo "- This is a pull_request event"
+            echo "- The PR comes from the same repository (not a fork)"
+            echo "- The PR has the label \`auto-fix-pre-commit\`"
+            echo ""
+            echo "If the label is present and the push still failed, check branch protection rules or App permissions."
+            echo ""
+            echo "Manual recovery:"
+            echo '```'
+            echo "python repo_init.py"
+            echo "python -m pre_commit run --from-ref origin/${{ github.base_ref || 'dev' }} --to-ref HEAD --show-diff-on-failure --color=always"
+            echo "git add -A && git commit -m \"<JIRA-ID>: fix pre-commit\" && git push"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ─────────────────────────────────────────────────────────────
+  # CHECKPOINT 1 – after Pre-commit
+  # ─────────────────────────────────────────────────────────────
+  status_after_precommit:
+    name: Status (after Pre-commit)
+    if: always() && (github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push')
+    needs: [pr_status_comment_start, precommit, pr_validation]
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Resolve PR number from merge queue ref
+        id: mq-pr
+        if: github.event_name == 'merge_group'
+        run: |
+          PR_NUM=$(echo "${{ github.ref }}" | grep -oP 'pr-\K[0-9]+' || true)
+          echo "pr-number=${PR_NUM}" >> "$GITHUB_OUTPUT"
+      - name: Update sticky PR status comment
+        uses: ./.github/actions/pr-status-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.mq-pr.outputs.pr-number || '' }}
+          event-type: ${{ github.event_name }}
+          job-precommit: ${{ needs.precommit.result }}
+          job-pr-validation: ${{ needs.pr_validation.result }}
+          job-dependency-scan: skipped
+          job-build-stage-1: in progress...
+          job-build-stage-2: in progress...
+          job-unit-test: in progress...
+          job-coverity: in progress...
+          job-hw-test: in progress...
+
+  # ─────────────────────────────────────────────────────────────
+  # Build Stage 1
+  # ─────────────────────────────────────────────────────────────
+  build_stage_1:
+    name: Build (Stage 1) - ${{ matrix.name }}
+    needs: [check_skip]
+    if: always() && (github.event_name == 'schedule' || needs.check_skip.outputs.should_skip != 'true' || github.event_name == 'workflow_dispatch')
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: flr8_standalone
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone"
+            publish-metrics-enabled: true
+          - name: srr8p_al_can_standalone
+            variant: srr8p
+            bazel_extra_flags: "--veh_com=al_can_standalone --tracker_variant=AL --enable_features=true"
+            publish-metrics-enabled: false
+          - name: flr8_satellite
+            variant: flr8
+            bazel_extra_flags: ""
+            publish-metrics-enabled: false
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      build-type: build
+      analyze-type: none
+      analyze-targets: ''
+      gitsubmodules-pull: false
+      sarif-enabled: false
+      toolchain-cache-enabled: false
+      artifact-name: 'build-${{ matrix.name }}'
+      publish-metrics-enabled: ${{ matrix.publish-metrics-enabled }}
+      grafana-project-key: '${{ vars.GRAFANA_PROJECT_KEY }}'
+      metrics-artifact-paths: '[{"type": "compiler-warnings", "paths": ["bazel-bin/outputs/${{ matrix.name }}/warnings_report.json"]}]'
+      additional-artifacts: |
+        bazel-bin/outputs
+        build_status.txt
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        BUILD_CMD=(./bazelisk build //:gen8 "--config=${{ matrix.variant }}")
+        read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags }}"
+        if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+        fi
+
+        # Dev Build Job macros: Pull Request (and manual dispatch, diffed like a PR) only.
+        # Merge Q / push (dev, release) / nightly schedule never get these flags.
+        DEV_MACRO_NOTE="skipped (not a pull_request/workflow_dispatch build)"
+        if [ "${{ github.event_name }}" = "pull_request" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          BUILD_CMD+=(--disable_int_wdg --enable_debug)
+          DEV_MACRO_NOTE="added (--disable_int_wdg --enable_debug)"
+        fi
+
+        BUILD_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${BUILD_CMD[@]}"
+        echo
+        echo "****"
+
+        {
+          echo "### Build (Stage 1) - ${{ matrix.name }}"
+          echo ""
+          echo "| Event | Dev macros (--disable_int_wdg --enable_debug) |"
+          echo "|---|---|"
+          for _ev in pull_request workflow_dispatch merge_group push schedule; do
+            _mark=""
+            [ "${_ev}" = "${{ github.event_name }}" ] && _mark=" ← this run"
+            case "${_ev}" in
+              pull_request|workflow_dispatch) echo "| ${_ev}${_mark} | added |" ;;
+              *) echo "| ${_ev}${_mark} | skipped |" ;;
+            esac
+          done
+          echo ""
+          echo "Dev macros: ${DEV_MACRO_NOTE}"
+          echo '```'
+          printf '%q ' "${BUILD_CMD[@]}"
+          echo
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+
+        while true; do
+          echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${BUILD_CMD[@]}"
+          BUILD_RC=$?
+          set -e
+
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "[BUILD] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[BUILD] Failed after ${attempt} attempts"
+            break
+          fi
+
+          echo "::notice::Build failed (attempt ${attempt}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${BUILD_RC}" > build_status.txt
+        exit "${BUILD_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "NETRC_CUSTOM_USER_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # ─────────────────────────────────────────────────────────────
+  # Build Stage 2
+  # ─────────────────────────────────────────────────────────────
+  build_stage_2:
+    name: Build (Stage 2) - ${{ matrix.name }}
+    needs: [build_stage_1, check_skip]
+    if: always() && needs.build_stage_1.result == 'success'
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: srr8p_satellite_someip
+            variant: srr8p
+            bazel_extra_flags: "--veh_com=someip"
+            publish-metrics-enabled: false
+          - name: flr8_satellite_someip
+            variant: flr8
+            bazel_extra_flags: "--veh_com=someip"
+            publish-metrics-enabled: false
+          - name: srr8p_standalone
+            variant: srr8p
+            bazel_extra_flags: "--tracker_variant=platform_srr8p_standalone --veh_com=can_standalone"
+            publish-metrics-enabled: false
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      build-type: build
+      analyze-type: none
+      analyze-targets: ''
+      sarif-enabled: false
+      gitsubmodules-pull: false
+      toolchain-cache-enabled: false
+      artifact-name: 'build-${{ matrix.name }}'
+      publish-metrics-enabled: ${{ matrix.publish-metrics-enabled }}
+      metrics-artifact-paths: '[{"type": "compiler-warnings", "paths": ["bazel-bin/outputs/${{ matrix.name }}/warnings_report.json"]}]'
+      grafana-project-key: '${{ vars.GRAFANA_PROJECT_KEY }}'
+      additional-artifacts: |
+        bazel-bin/outputs
+        build_status.txt
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        BUILD_CMD=(./bazelisk build //:gen8 "--config=${{ matrix.variant }}")
+        read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags }}"
+        if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+        fi
+
+        # Dev Build Job macros: Pull Request (and manual dispatch, diffed like a PR) only.
+        # Merge Q / push (dev, release) / nightly schedule never get these flags.
+        DEV_MACRO_NOTE="skipped (not a pull_request/workflow_dispatch build)"
+        if [ "${{ github.event_name }}" = "pull_request" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          BUILD_CMD+=(--disable_int_wdg --enable_debug)
+          DEV_MACRO_NOTE="added (--disable_int_wdg --enable_debug)"
+        fi
+
+        BUILD_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${BUILD_CMD[@]}"
+        echo
+        echo "****"
+
+        {
+          echo "### Build (Stage 2) - ${{ matrix.name }}"
+          echo ""
+          echo "| Event | Dev macros (--disable_int_wdg --enable_debug) |"
+          echo "|---|---|"
+          for _ev in pull_request workflow_dispatch merge_group push schedule; do
+            _mark=""
+            [ "${_ev}" = "${{ github.event_name }}" ] && _mark=" ← this run"
+            case "${_ev}" in
+              pull_request|workflow_dispatch) echo "| ${_ev}${_mark} | added |" ;;
+              *) echo "| ${_ev}${_mark} | skipped |" ;;
+            esac
+          done
+          echo ""
+          echo "Dev macros: ${DEV_MACRO_NOTE}"
+          echo '```'
+          printf '%q ' "${BUILD_CMD[@]}"
+          echo
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+
+        while true; do
+          echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${BUILD_CMD[@]}"
+          BUILD_RC=$?
+          set -e
+
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "[BUILD] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[BUILD] Failed after ${attempt} attempts"
+            break
+          fi
+
+          echo "::notice::Build failed (attempt ${attempt}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${BUILD_RC}" > build_status.txt
+        exit "${BUILD_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "NETRC_CUSTOM_USER_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # ─────────────────────────────────────────────────────────────
+  # Unit Test
+  # ─────────────────────────────────────────────────────────────
+  unit_test:
+    name: Unit Test - ${{ matrix.config }}
+    needs: [check_skip]
+    if: always() && (github.event_name == 'schedule' || needs.check_skip.outputs.should_skip != 'true' || github.event_name == 'workflow_dispatch')
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      pull-requests: write
+    uses: Aptiv/workflows-library/.github/workflows/unit-test-linux.yml@v3
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - config: flr8
+            publish-metrics-enabled: true
+          - config: srr8p
+            publish-metrics-enabled: false
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      container-options: "--none"
+      artifact-name: 'unit-test-${{ matrix.config }}'
+      publish-metrics-enabled: ${{ matrix.publish-metrics-enabled }}
+      metrics-artifact-paths: '[{"type": "unittest", "paths": ["bazel-bin/coverage/report_gcovr_report.json"], "ut_report_type": "gcov"}]'
+      pipeline-type: 'full-build'
+      additional-artifacts: |
+        bazel-bin/coverage/report_html
+        bazel-bin/coverage/report_gcovr_report_html
+        bazel-bin/coverage/report.txt
+        bazel-bin/coverage/report_cobertura.xml
+        bazel-bin/coverage/report_gcovr_report.json
+        bazel-bin/coverage/report_untested_sources.txt
+        ut_true_count_report.json
+        ut_true_count_report.xlsx
+      gitsubmodules-pull: false
+      gitlfs-pull: false
+      grafana-project-key: '${{ vars.GRAFANA_PROJECT_KEY }}'
+      skip-gcovr: true
+      skip-gcovr-cobertura-path: 'bazel-out/k8-fastbuild/bin/coverage/report_cobertura.xml'
+      coverage-threshold: 0 # Threshold is self-enforced by bazel
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+        if [ -z "${APTIV_GIT_TOKEN:-}" ]; then
+          echo "::error::APTIV_GIT_TOKEN is required to access the private GHE Bazel registry"
+          exit 1
+        fi
+
+        if ! grep -q '^machine raw\.aptv\.ghe\.com$' "$HOME/.netrc"; then
+          {
+            echo
+            echo "machine raw.aptv.ghe.com"
+            echo "  login $GERRIT_USER"
+            echo "  password $APTIV_GIT_TOKEN"
+          } >> "$HOME/.netrc"
+          chmod 600 "$HOME/.netrc"
+        fi
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        UT_CMD=(./bazelisk test //coverage:report "--config=${{ matrix.config }}")
+        UT_CMD+=("--tracker_variant=AL" "--color=yes") # add extra flags for unit test runs
+        UT_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${UT_CMD[@]}"
+        echo
+        echo "****"
+
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+
+        while true; do
+          echo "[UT] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${UT_CMD[@]}"
+          UT_RC=$?
+          set -e
+
+          if [ "$UT_RC" -eq 0 ]; then
+            echo "[UT] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[UT] Failed after ${attempt} attempts"
+            break
+          fi
+
+          echo "::notice::Unit test failed (attempt ${attempt}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${UT_RC}" > unit_test_status.txt
+
+        # Now run 'True Count' script:
+
+        echo "**** Running 'True Count' script to generate ut_true_count_report.json"
+
+        RUN_CMD=(
+          "./bazelisk"
+          run
+          "//tools/python/unitTestTrueCount:getUTTrueCount"
+        )
+
+        # Echo the full command
+        echo "**** Bazel run command:"
+        printf '**** '
+        printf '%q ' "${RUN_CMD[@]}"
+        echo
+        echo "****"
+
+        "${RUN_CMD[@]}"
+
+        exit "${UT_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "APTIV_GIT_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "JFROG_USERNAME": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "JFROG_PASSWORD": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # ─────────────────────────────────────────────────────────────
+  # CHECKPOINT 2 – after Builds + Unit Tests
+  # ─────────────────────────────────────────────────────────────
+  status_mid:
+    name: Status (mid - builds & unit tests)
+    if: always() && (github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push')
+    needs: [precommit, pr_validation, build_stage_1, build_stage_2, unit_test]
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Resolve PR number from merge queue ref
+        id: mq-pr
+        if: github.event_name == 'merge_group'
+        run: |
+          PR_NUM=$(echo "${{ github.ref }}" | grep -oP 'pr-\K[0-9]+' || true)
+          echo "pr-number=${PR_NUM}" >> "$GITHUB_OUTPUT"
+      - name: Update sticky PR status comment
+        uses: ./.github/actions/pr-status-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.mq-pr.outputs.pr-number || '' }}
+          event-type: ${{ github.event_name }}
+          job-precommit: ${{ needs.precommit.result }}
+          job-pr-validation: ${{ needs.pr_validation.result }}
+          job-dependency-scan: skipped
+          job-build-stage-1: ${{ needs.build_stage_1.result }}
+          job-build-stage-2: ${{ needs.build_stage_2.result }}
+          job-unit-test: ${{ needs.unit_test.result }}
+          job-coverity: in progress...
+          job-hw-test: in progress...
+
+  # ─────────────────────────────────────────────────────────────
+  # Coverity
+  # ─────────────────────────────────────────────────────────────
+  coverity:
+    needs: [check_skip]
+    if: always() && (github.event_name == 'schedule' || needs.check_skip.outputs.should_skip != 'true' || github.event_name == 'workflow_dispatch') && (github.event_name != 'push')
+    name: Coverity
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    uses: ./.github/workflows/coverity.yml
+    with:
+      # nightly Coverity flag not fully working yet, default to false
+      nightly: false # ${{ github.event_name == 'schedule' }}
+      pr-number: ${{ github.event.pull_request.number || '' }}
+      matrix-json: |
+        [
+          {
+            "variant": "flr8",
+            "core": "r52",
+            "coverity_target": "//software/r52:commit_defects",
+            "coverity_stream": "10034606_Core_Radar_Gen8_IND13400_FLR8_R52"
+          },
+          {
+            "variant": "flr8",
+            "core": "bbe32",
+            "coverity_target": "//software/bbe32:commit_defects",
+            "coverity_stream": "10034606_Core_Radar_Gen8_IND13400_FLR8_BBE32"
+          },
+          {
+            "variant": "srr8p",
+            "core": "r52",
+            "coverity_target": "//software/r52:commit_defects",
+            "coverity_stream": "10034606_Core_Radar_Gen8_IND13400_SRR8p_R52"
+          },
+          {
+            "variant": "srr8p",
+            "core": "bbe32",
+            "coverity_target": "//software/bbe32:commit_defects",
+            "coverity_stream": "10034606_Core_Radar_Gen8_IND13400_SRR8p_BBE32"
+          }
+        ]
+    secrets:
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      NETRC_CONTENT: ${{ secrets.NETRC_CONTENT }}
+      ARB_TOKEN: ${{ secrets.ARB_TOKEN }}
+      COVERITY_COMMITTER_AUTH: ${{ secrets.COVERITY_COMMITTER_USINKOK03_AUTH }}
+
+  # ─────────────────────────────────────────────────────────────
+  # HW Smoke Test
+  # ─────────────────────────────────────────────────────────────
+  hw_test:
+    name: HW Smoke Test
+    needs:
+      - build_stage_1
+    # Only reserve smoke-test hardware when all Stage 1 build variants completed successfully.
+    if: always() && (needs.build_stage_1.result == 'success')
+    permissions:
+      contents: read
+      actions: write
+      issues: write
+      pull-requests: write
+    uses: ./.github/workflows/smoke-test.yml
+    with:
+      artifact-path: '.'
+      quickflash-script-path: './bazel-bin/outputs/quickflash/RunQuickFlash.sh'
+      commit-sha: ${{ github.event.pull_request.head.sha || inputs.ref || github.sha }}
+      artifact-run-id: ${{ github.run_id }}
+      pr-number: ${{ github.event.pull_request.number || '' }}
+      runner-labels: ${{ inputs.smoke_test_runner || vars.ADVRADAR_SMOKE_TEST_RUNNER_GEN8_DEV || '["self-hosted","linux","TestSmoke","Gen8"]' }}
+      nightly: ${{ github.event_name == 'schedule' }}
+      matrix-json: |
+        [
+          {
+            "quickflash_variant":"flr8_standalone",
+            "artifact_name":"build-flr8_standalone-${{ github.run_number }}-${{ github.run_attempt }}",
+            "smoke_test_report_path":"wrsd_smoke_test_reports/Gen8_flr8_standalone_Smoke_Test.html, wrsd_smoke_test_reports/Gen8_flr8_standalone_dashboard.json"
+          },
+          {
+            "quickflash_variant":"srr8p_al_can_standalone",
+            "artifact_name":"build-srr8p_al_can_standalone-${{ github.run_number }}-${{ github.run_attempt }}",
+            "smoke_test_report_path":"wrsd_smoke_test_reports/Gen8_srr8p_al_can_standalone_Smoke_Test.html, wrsd_smoke_test_reports/Gen8_srr8p_al_can_standalone_dashboard.json"
+          }
+        ]
+    secrets:
+      SID_GITHUB_TOKEN: ${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}
+      PERCEPTION_DB_USER: ${{ secrets.PERCEPTION_DB_USER }}
+      PERCEPTION_DB_PASSWORD: ${{ secrets.PERCEPTION_DB_PASSWORD }}
+      PERCEPTION_DB_HOST: ${{ secrets.PERCEPTION_DB_HOST }}
+      PERCEPTION_DB_PORT: ${{ secrets.PERCEPTION_DB_PORT }}
+      PERCEPTION_DB_NAME: ${{ secrets.PERCEPTION_DB_NAME }}
+
+  hw_test_queue_guard:
+    name: HW Test Queue Guard
+    needs:
+      - build_stage_1
+    # Keep the queue guard aligned with the smoke job so it does not monitor skipped HW runs.
+    if: needs.build_stage_1.result == 'success'
+    permissions:
+      actions: write
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel run if HW test remains queued
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX_WAIT_MINUTES: 60
+          POLL_INTERVAL_SECONDS: 60
+        run: |
+          set -euo pipefail
+
+          DEADLINE=$(( $(date +%s) + MAX_WAIT_MINUTES * 60 ))
+          API_BASE="${GITHUB_API_URL}"
+          JOBS_API="${API_BASE}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100"
+
+          while [ "$(date +%s)" -lt "${DEADLINE}" ]; do
+            JOBS_JSON=$(curl -fsSL \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "${JOBS_API}")
+
+            HW_CREATED=$(echo "${JOBS_JSON}" | jq '[.jobs[] | select(.name | test("Smoke Test \\("))] | length')
+            HW_QUEUED=$(echo "${JOBS_JSON}" | jq '[.jobs[] | select(.name | test("Smoke Test \\(")) | select(.status == "queued")] | length')
+            HW_STARTED=$(echo "${JOBS_JSON}" | jq '[.jobs[] | select(.name | test("Smoke Test \\(")) | select(.status == "in_progress" or .status == "completed")] | length')
+
+            if [ "${HW_STARTED}" -gt 0 ]; then
+              echo "At least one HW smoke test job started. Queue guard exiting."
+              exit 0
+            fi
+
+            if [ "${HW_CREATED}" -gt 0 ] && [ "${HW_QUEUED}" -gt 0 ]; then
+              echo "HW smoke tests are queued (${HW_QUEUED}) and waiting for runner..."
+            else
+              echo "HW smoke test jobs not visible yet. Rechecking..."
+            fi
+
+            sleep "${POLL_INTERVAL_SECONDS}"
+          done
+
+          echo "HW smoke tests did not start within ${MAX_WAIT_MINUTES} minutes. Cancelling workflow run ${GITHUB_RUN_ID}."
+          curl -fsSL -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${API_BASE}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/cancel" || true
+
+          # A job still in "queued" has no runner to receive the cancel signal, so the run stays
+          # queued forever, holds the concurrency slot and blocks later runs on this ref.
+          sleep 60
+
+          JOBS_JSON=$(curl -fsSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${JOBS_API}")
+          HW_STARTED=$(echo "${JOBS_JSON}" | jq '[.jobs[] | select(.name | test("Smoke Test \\(")) | select(.status == "in_progress")] | length')
+
+          RUN_STATUS=$(curl -fsSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${API_BASE}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" | jq -r '.status')
+
+          # Never force-cancel a bench that picked the job up while we were cancelling.
+          if [ "${HW_STARTED}" -gt 0 ]; then
+            echo "HW smoke test started during cancellation. Leaving the run alone."
+          elif [ "${RUN_STATUS}" != "completed" ]; then
+            echo "Run still ${RUN_STATUS} with no HW job running. Force-cancelling."
+            curl -fsSL -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "${API_BASE}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/force-cancel" || true
+          fi
+
+          exit 1
+
+  # ─────────────────────────────────────────────────────────────
+  # BlackDuck (schedule only)
+  # ─────────────────────────────────────────────────────────────
+  blackduck-scan:
+    name: BlackDuck Scan
+    if: github.event_name == 'schedule'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: Aptiv/workflows-library/.github/workflows/blackduck.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      scm-type: mono-repo
+      DETECT_PROJECT_NAME: 10034606_MYXX_Radar_GEN8_SRR_FLR_Platform
+      DETECT_PROJECT_VERSION_NAME: Dev-HEAD
+      blackducksca_scan_full: 'true'
+      blackducksca_scan_failure_severities: 'BLOCKER,CRITICAL'
+      clone-depth: '1'
+      gitsubmodules-pull: 'false'
+      blackducksca_url: 'https://blackduck.asux.aptiv.com'
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "JFROG_USERNAME": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "JFROG_PASSWORD": "${{ secrets.ADVRADAR_JFROG_API_KEY }}"
+        }
+      blackducksca_token: ${{ secrets.ADVRADAR_SID_BLACKDUCK_KEY }}
+
+  # ─────────────────────────────────────────────────────────────
+  # FINAL sticky comment (full rich summary)
+  # ─────────────────────────────────────────────────────────────
+  pr_status_comment:
+    name: PR Status Comment (Final)
+    if: always() && (github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push')
+    needs:
+      - pr_status_comment_start
+      - check_skip
+      - pr_validation
+      - precommit
+      - build_stage_1
+      - build_stage_2
+      - unit_test
+      - coverity
+      - hw_test
+      - hw_test_queue_guard
+      - status_after_precommit
+      - status_mid
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Write job summary
+        if: always()
+        uses: actions/github-script@v8
+        env:
+          JOB_PRECOMMIT: ${{ needs.precommit.result }}
+          JOB_BUILD_STAGE_1: ${{ needs.build_stage_1.result }}
+          JOB_BUILD_STAGE_2: ${{ needs.build_stage_2.result }}
+          JOB_UNIT_TEST: ${{ needs.unit_test.result }}
+          JOB_COVERITY: ${{ needs.coverity.result }}
+          JOB_HW_TEST: ${{ needs.hw_test.result }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            let pr = context.payload.pull_request || null;
+            // On merge_group, payload has no pull_request — resolve it from the queue ref
+            if (!pr && context.eventName === 'merge_group') {
+              const mqMatch = (context.ref || '').match(/pr-(\d+)-/);
+              if (mqMatch) {
+                try {
+                  const { data } = await github.rest.pulls.get({
+                    owner: context.repo.owner, repo: context.repo.repo,
+                    pull_number: parseInt(mqMatch[1], 10),
+                  });
+                  pr = data;
+                } catch (e) { core.warning(`Could not fetch PR #${mqMatch[1]}: ${e.message}`); }
+              }
+            }
+            const prNum   = pr ? pr.number : '';
+            const prTitle = pr ? pr.title  : '';
+            const sha7    = pr ? pr.head.sha.substring(0, 7) : context.sha.substring(0, 7);
+            const branch  = pr ? pr.head.ref : context.ref;
+
+            const icon = (r) => {
+              if (r === 'success')   return '✅';
+              if (r === 'failure')   return '❌';
+              if (r === 'cancelled') return '⚪';
+              if (r === 'skipped')   return '⏭️';
+              return '🟡';
+            };
+
+            const rows = [
+              { label: 'Pre-commit',      result: process.env.JOB_PRECOMMIT,     matchers: [/^Pre-commit$/i] },
+              { label: 'Build (Stage 1)', result: process.env.JOB_BUILD_STAGE_1, matchers: [/^Build \(Stage 1\)/i] },
+              { label: 'Build (Stage 2)', result: process.env.JOB_BUILD_STAGE_2, matchers: [/^Build \(Stage 2\)/i] },
+              { label: 'Unit Test',       result: process.env.JOB_UNIT_TEST,      matchers: [/^Unit Test/i] },
+              { label: 'Coverity',        result: process.env.JOB_COVERITY,       matchers: [/^Coverity/i] },
+              { label: 'HW Smoke Test',   result: process.env.JOB_HW_TEST,        matchers: [/^HW Smoke Test/i, /^Smoke Test \(/i] },
+            ];
+            let runJobs = [];
+            try {
+              runJobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                run_id: context.runId, per_page: 100,
+              });
+            } catch (e) { core.warning(`listJobsForWorkflowRun failed: ${e.message}`); }
+
+            const jobUrl = (id) =>
+              `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/job/${id}`;
+
+            const cleanLine = (l) =>
+              l.replace(/\x1b\[[0-9;]*m/g, '')
+               .replace(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s*/, '')
+               .replace(/^##\[.*?\]/, '')
+               .trim();
+
+            const isError = (l) => {
+              if (l.length < 6) return false;
+              const t = l.trimStart();
+              if (/^(echo|if |elif |while |for |do$|done$|fi$|sleep |set [-+]|exit |read |break$|continue$|printf |#|\[)/.test(t)) return false;
+              return /^ERROR:/.test(t) || /^FAILED:/.test(t) ||
+                     /Build did NOT complete successfully/i.test(t) ||
+                     /\bFAILED\b.*\/\//.test(t) || /\[\s*FAILED\s*\]/.test(t);
+            };
+
+            const getLogInfo = async (jobId) => {
+              try {
+                const { data: text } = await github.request(
+                  'GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs',
+                  { owner: context.repo.owner, repo: context.repo.repo, job_id: jobId }
+                );
+                if (typeof text !== 'string' || !text) return null;
+                const lines = text.split('\n').map(cleanLine).filter(Boolean);
+                const idx = lines.findIndex(isError);
+                if (idx === -1) return null;
+                return {
+                  firstError: lines[idx].slice(0, 150),
+                  snippet: lines.slice(Math.max(0, idx - 2), Math.min(lines.length, idx + 13)).join('\n'),
+                };
+              } catch (e) { return null; }
+            };
+
+            // Map each category row to its individual matched jobs (top-level only, no reusable-child " / " jobs)
+            const rowGroups = rows.map((row) => {
+              const matched = runJobs.filter((j) => {
+                const name = j && j.name ? j.name : '';
+                return row.matchers.some((re) => re.test(name)) && !name.includes(' / ');
+              });
+              const jobs = matched.length
+                ? matched
+                : [{ id: null, name: row.label, conclusion: row.result }];
+              return { row, jobs };
+            });
+
+            const failedJobs = rowGroups.flatMap((g) => g.jobs).filter((j) => j.conclusion === 'failure' && j.id);
+            const logMap = {};
+            await Promise.all(failedJobs.map(async (j) => { logMap[j.id] = await getLogInfo(j.id); }));
+
+            const failed  = rows.filter((r) => r.result === 'failure').length;
+            const passed  = rows.filter((r) => r.result === 'success').length;
+            const skipped = rows.filter((r) => r.result === 'skipped').length;
+            const overallIcon = failed > 0 ? '❌' : '✅';
+            const parts = [];
+            if (failed)  parts.push(`${failed} failed`);
+            if (passed)  parts.push(`${passed} passed`);
+            if (skipped) parts.push(`${skipped} skipped`);
+
+            // Collect all unique commit authors on this PR branch
+            let contributors = [];
+            if (pr) {
+              try {
+                const commits = await github.paginate(github.rest.pulls.listCommits, {
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  pull_number: pr.number, per_page: 100,
+                });
+                const seen = new Set();
+                for (const c of commits) {
+                  const login = c.author?.login;
+                  const name  = c.commit?.author?.name;
+                  const key   = login || name;
+                  if (key && !seen.has(key)) {
+                    seen.add(key);
+                    contributors.push(login ? `@${login}` : name);
+                  }
+                }
+              } catch (e) { core.warning(`Could not fetch PR commits: ${e.message}`); }
+            }
+            const prAuthor       = pr ? `@${pr.user.login}` : `@${context.actor}`;
+            const contributorStr = contributors.length > 0 ? contributors.join(', ') : prAuthor;
+
+            const tableLines  = [];
+            const detailBlocks = [];
+            for (const { jobs } of rowGroups) {
+              for (const job of jobs) {
+                const nameCell = job.id ? `[${job.name}](${jobUrl(job.id)})` : job.name;
+                tableLines.push(`| ${icon(job.conclusion)} | ${nameCell} |`);
+                if (job.conclusion === 'failure') {
+                  const info = job.id ? logMap[job.id] : null;
+                  if (info && info.firstError) {
+                    tableLines.push(`|  | ↳ *${info.firstError}* |`);
+                    detailBlocks.push(
+                      `<details><summary>❌ <b>${job.name}</b> — log excerpt</summary>\n\n\`\`\`\n${info.snippet}\n\`\`\`\n\n</details>`
+                    );
+                  }
+                }
+              }
+            }
+
+            const lines = [
+              `# ${overallIcon} PR Checks`,
+              '',
+              '| | |',
+              '|---|---|',
+              `| **PR** | [#${prNum} — ${prTitle}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/pull/${prNum}) |`,
+              `| **Branch** | \`${branch}\` @ \`${sha7}\` |`,
+              `| **Author** | ${prAuthor} |`,
+              `| **Contributors** | ${contributorStr} |`,
+              `| **Triggered by** | @${context.actor} |`,
+              `| **Run** | [#${context.runNumber}](${runUrl}) |`,
+              `| **Result** | ${overallIcon} ${parts.join(' · ')} |`,
+              '',
+              '## Per-Job Results',
+              '',
+              '| Status | Job |',
+              '|--------|-----|',
+              ...tableLines,
+              '',
+            ];
+            if (detailBlocks.length) lines.push('## Failure Details', '', ...detailBlocks, '');
+
+            await core.summary.addRaw(lines.join('\n')).write();
+
+      - name: Resolve PR number (merge_group)
+        id: resolve-pr
+        if: github.event_name == 'merge_group'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ref = context.ref || '';
+            const match = ref.match(/pr-(\d+)-/);
+            if (match) {
+              core.setOutput('pr-number', match[1]);
+              core.info(`Extracted PR #${match[1]} from merge group ref: ${ref}`);
+            } else {
+              core.setOutput('pr-number', '');
+              core.warning(`Could not extract PR number from ref: ${ref}`);
+            }
+
+      - name: Post final sticky PR status comment
+        if: github.event_name == 'pull_request' || github.event_name == 'push' || steps.resolve-pr.outputs['pr-number'] != ''
+        uses: ./.github/actions/pr-status-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.resolve-pr.outputs['pr-number'] || '' }}
+          event-type: ${{ github.event_name }}
+          job-precommit: ${{ needs.precommit.result }}
+          job-pr-validation: ${{ needs.pr_validation.result }}
+          job-build-stage-1: ${{ needs.build_stage_1.result }}
+          job-build-stage-2: ${{ needs.build_stage_2.result }}
+          job-unit-test: ${{ needs.unit_test.result }}
+          job-coverity: ${{ needs.coverity.result }}
+          coverity-high: ${{ needs.coverity.outputs.coverity-high }}
+          coverity-medium: ${{ needs.coverity.outputs.coverity-medium }}
+          coverity-low: ${{ needs.coverity.outputs.coverity-low }}
+          job-hw-test: ${{ needs.hw_test.result }}
+          job-hw-queue-guard: ${{ needs.hw_test_queue_guard.result }}
+
+  # ─────────────────────────────────────────────────────────────
+  # CI Status gate
+  # ─────────────────────────────────────────────────────────────
+  ci-status:
+    name: CI Status
+    needs:
+      - pr_validation
+      - precommit
+      - build_stage_1
+      - build_stage_2
+      - unit_test
+      - coverity
+      - hw_test
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Determine Overall Job Status
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+              per_page: 100,
+            });
+
+            const successfulConclusions = ['success', 'skipped', 'neutral'];
+            core.info('Workflow jobs snapshot:');
+            jobs.forEach((job) => {
+              core.info(
+                `- ${job.name}: status=${job.status}, conclusion=${job.conclusion || 'n/a'}`
+              );
+            });
+
+            const completedJobs = jobs.filter(
+              (job) => job.name !== 'Check Jobs Status' && job.status === 'completed'
+            );
+
+            const failedJobs = completedJobs.filter(
+              (job) => !successfulConclusions.includes(job.conclusion || '')
+            );
+
+            core.info(`Checked ${completedJobs.length} completed jobs before/alongside this gate.`);
+
+            if (failedJobs.length > 0) {
+              core.setFailed(
+                failedJobs.map((job) => `${job.name} (${job.conclusion || 'unknown'})`).join(', ')
+              );
+            }
+
+  # ─────────────────────────────────────────────────────────────
+  # Consolidate Reports
+  # ─────────────────────────────────────────────────────────────
+  consolidate-report:
+    name: Consolidate Reports and Post Comment
+    needs:
+      - pr_validation
+      - precommit
+      - build_stage_1
+      - build_stage_2
+      - unit_test
+      - coverity
+      - hw_test
+    if: always()
+    uses: Aptiv/workflows-library/.github/workflows/consolidate-report.yml@v3
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+      id-token: write
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_SMALL }}
+      build-artifact-pattern: '*-build-*'
+      unit-test-artifact-pattern: 'unit-test-*'
+      enable-email-notification: true
+      enable-teams-notification: false
+      enable-jira-update: false
+      jira-url: ${{ vars.JIRA_URL }}
+      jira-project-keys: ${{ vars.ADVRADAR_JIRA_KEY_LIST }}
+      # TODO(CIV-10527): Hack to suppress all PR label churn from action-reporting@v0.
+      # Passing ':' (a single colon) exploits how parseLabels() works in the upstream
+      # action: it splits on ',' then ':', producing job='' / label='' which are both
+      # filtered out as falsy. The result is an empty label map, so no labels are
+      # created, removed, or applied to the PR on every commit push.
+      #
+      # WARNING: Passing '' (empty string) would CRASH the post-comment step because
+      # parseLabels(''.split(':')) yields label=undefined and calls undefined.trim().
+      # The ':' string avoids that by ensuring label='' (empty, not undefined).
+      #
+      # If Aptiv/action-reporting or Aptiv/workflows-library ever ships an
+      # enable-labels: boolean input (the proper fix), drop these two lines and use
+      # that instead. Also watch for parseLabels() refactors upstream that could
+      # change the ':' filtering behaviour.
+      success-labels: ':'
+      failure-labels: ':'
+    secrets:
+      GHCR_USER: ${{ vars.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+      JIRA_API_TOKEN: ${{ secrets.ADVRADAR_SID_JIRA_API_KEY }}
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+
+  # ─────────────────────────────────────────────────────────────
+  # Dispatch Metrics
+  # ─────────────────────────────────────────────────────────────
+  dispatch-metrics:
+    name: Dispatch Workflow Metrics
+    needs: [ ci-status , consolidate-report ]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Generate App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.DSO_BOT_APP_ID }}
+          private-key: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Dispatch Workflow Metrics Event
+        uses: Aptiv/action-metrics-event-dispatch@v0
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          repository: ${{ github.repository }}
+          event-type: 'workflow-metrics'
+          pipeline-name: ${{ github.workflow }}
+          pipeline-type: ${{ github.event_name }}
+          build-number: ${{ github.run_number }}
+          workflow-run-id: ${{ github.run_id }}
+          branch-name: ${{ github.ref_name }}
+          commit-sha: ${{ inputs.ref || github.sha }}
+          repository-name: ${{ github.repository }}
+          custom-payload: |
+            {
+              "pipeline_info": {
+                "workflow_run_id": "${{ github.run_id }}",
+                "workflow_run_number": "${{ github.run_number }}",
+                "workflow_run_attempt": "${{ github.run_attempt }}"
+              },
+              "repo_info": {
+                "repo_id": "${{ github.repository_id }}"
+              },
+              "git_info": {
+                "branch_name": "${{ github.ref_name }}",
+                "commit_sha": "${{ inputs.ref || github.sha }}"
+              },
+              "artifact_pattern": "",
+              "grafana_project_key": "${{ vars.GRAFANA_PROJECT_KEY }}",
+              "runner": "gh-injected-gpo-linux-small"
+            }
