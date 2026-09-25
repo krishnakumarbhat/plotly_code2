@@ -1,0 +1,4 @@
+add_library(SRR_CORE_LIB INTERFACE)
+
+target_include_directories(SRR_CORE_LIB INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_sources(SRR_CORE_LIB INTERFACE ${CMAKE_CURRENT_LIST_DIR}/reuse.h)

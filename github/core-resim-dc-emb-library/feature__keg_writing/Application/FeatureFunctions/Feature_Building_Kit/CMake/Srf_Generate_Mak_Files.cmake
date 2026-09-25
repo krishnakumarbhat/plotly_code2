@@ -1,0 +1,65 @@
+function(Srf_Generate_Mak_Files target_name target_make_alias target_root_path module_variant fbk_root_path)
+   if(${target_name}_GENERATE_MAK_FILES)
+
+      set(comment_list_mak "")
+      list(APPEND comment_list_mak "##############################################################################")
+      list(APPEND comment_list_mak "#")
+      list(APPEND comment_list_mak "# COPYRIGHT, 2021, Aptiv All Rights reserved")
+      list(APPEND comment_list_mak "#")
+      list(APPEND comment_list_mak "##############################################################################")
+      list(APPEND comment_list_mak ";")
+      list(JOIN comment_list_mak "\n" comment_list_mak)
+
+      # Get all necessary target properties
+      get_target_property(target_INC_DIRS ${target_name} INCLUDE_DIRECTORIES)
+      get_filename_component(target_root_path ${target_root_path} ABSOLUTE)
+
+      # Get basic directories for mak file generation
+      set(target_INC_DIRS_REL "")
+      foreach(dir ${target_INC_DIRS})
+         string(REPLACE "${target_root_path}/" "" target_INC_DIR_REL ${dir})
+         list(APPEND target_INC_DIRS_REL ${target_INC_DIR_REL})
+      endforeach()
+      list(FILTER target_INC_DIRS_REL EXCLUDE REGEX "Unit_Test")
+      list(FILTER target_INC_DIRS_REL EXCLUDE REGEX "Mock_Files")
+      list(REMOVE_DUPLICATES target_INC_DIRS_REL)
+
+      # In case that an alias for the make file subdirectory is given, the alias shall be used.
+      if(target_make_alias)
+         set(sub_dir_name "${target_make_alias}")
+      else()
+         set(sub_dir_name "${module_variant}_${target_name}")
+      endif()
+
+      # Get lower case version of target name
+      string(TOLOWER ${target_name} target_name_lc)
+
+      # Write mak file
+      set(target_mak_file_path "${target_root_path}/Makefiles/${target_name}_${module_variant}.mak")
+      file(WRITE ${target_mak_file_path} ${comment_list_mak})
+      foreach(dir ${target_INC_DIRS_REL})
+         file(APPEND ${target_mak_file_path} "SUBDIRS += $(APPLICATION_DIR)/${sub_dir_name}/${dir}\n")
+      endforeach()
+      file(APPEND ${target_mak_file_path} "\n")
+      foreach(dir ${target_INC_DIRS_REL})
+         file(APPEND ${target_mak_file_path} "INCLUDE_DIR += -I$(HOME_DIR)/$(APPLICATION_DIR)/${sub_dir_name}/${dir}\n")
+      endforeach()
+      file(APPEND ${target_mak_file_path} "\n")
+      file(APPEND ${target_mak_file_path} "######## Generate linker files in _lnk folder  #######\n")
+      file(APPEND ${target_mak_file_path} "######## Feature and customer specific part    #######\n\n")
+      file(APPEND ${target_mak_file_path} "FF_CAL_SUBDIRS = \"\"\n")
+      file(APPEND ${target_mak_file_path} "FF_OTHER_SUBDIRS = \"\"\n")
+      foreach(dir ${target_INC_DIRS_REL})
+         if(${dir} MATCHES "Calibration.*")
+            file(APPEND ${target_mak_file_path} "FF_CAL_SUBDIRS += ${dir}\n")
+         else()
+            file(APPEND ${target_mak_file_path} "FF_OTHER_SUBDIRS += ${dir}\n")
+         endif()
+      endforeach()
+      file(APPEND ${target_mak_file_path} "LNK_FILE_PATH_BEGIN = _lnk/${module_variant}/core2_${target_name_lc}\n\n")
+      file(READ ${fbk_root_path}/CMake/lnk_generation.mak LNK_MAK_CONTENTS)
+      file(APPEND ${target_mak_file_path} "${LNK_MAK_CONTENTS}")
+
+      message(STATUS "Created makefile ${target_mak_file_path}")
+   endif()
+endfunction()

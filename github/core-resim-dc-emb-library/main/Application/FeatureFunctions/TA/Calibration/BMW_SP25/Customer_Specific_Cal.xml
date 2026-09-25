@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_ta_prediction_steps_max</NAME>
+    <VALUE>20u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_critical_approach_check_ego_circles</NAME>
+    <VALUE>[1 0 0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_1_ttp_threshold</NAME>
+    <VALUE>[4.0f 3.0f 2.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_active_obj_ttp_offset</NAME>
+    <VALUE>1.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_f_apply_ttp_hysteresis_globally</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_shape_gain_fixed</NAME>
+    <VALUE>1.1f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_f_only_allow_consecutive_ttc_based_alert_levels</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_f_skip_holding_for_single_alert_level_drop</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_1_ttp_late_trigger_host_speed_max</NAME>
+    <VALUE>1.3889f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_1_ttp_normal_trigger_host_speed_max</NAME>
+    <VALUE>2.778f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_3_ttc_threshold</NAME>
+    <VALUE>1.4f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_4_ttc_threshold</NAME>
+    <VALUE>1.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_4_decel_threshold</NAME>
+    <VALUE>8.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_speed</NAME>
+    <VALUE>[0.28f 14.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_speed_ofst</NAME>
+    <VALUE>[0.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_long_acceleration</NAME>
+    <VALUE>[-20.0f 2.1f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_acceleration_weight</NAME>
+    <VALUE>0.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_pred_const_velocity_pred_steps_min</NAME>
+    <VALUE>4u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_max_pred_yaw_angle</NAME>
+    <VALUE>1.66f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_lookup_turning_host_speed</NAME>
+    <VALUE>[1.0f 3.5f 7.0f 10.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_lookup_turning_host_curvature_min</NAME>
+    <VALUE>[0.05f 0.037f 0.028f 0.023f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_straight_host_curvature_max</NAME>
+    <VALUE>0.0085f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_always_overwrite_ta_mode_to_both</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_f_only_allow_ttc_based_alert_level_for_mature_obj</NAME>
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_f_fta_enable</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_f_fta_enable_danger_zones</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_f_fta_enable_brake_gradient_logic</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_brake_gradient</NAME>
+    <VALUE>-40.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_brake_dead_time</NAME>
+    <VALUE>0.3f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pfgs_ego_speed</NAME>
+    <VALUE>[0.87f 10.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pfgs_qualification_ttc_min</NAME>
+    <VALUE>0.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pfgs_symbol_request_sides_enabled</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_exist_prblty</NAME>
+    <VALUE>[0.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_exist_prblty_ofst</NAME>
+    <VALUE>[0.0f 0.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_heading_straight</NAME>
+    <VALUE>[1.414f 1.74f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_heading</NAME>
+    <VALUE>[0.0f 1.7f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_heading_ofst</NAME>
+    <VALUE>[0.0f 0.1f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_ego_obj_heading_diff</NAME>
+    <VALUE>[0.0f 0.33f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_ego_obj_heading_diff_ofst</NAME>
+    <VALUE>[0.0f 0.05f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_velocity_heading_diff_max</NAME>
+    <VALUE>0.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pfgs_qualification_counter_slow_obj</NAME>
+    <VALUE>10u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pfgs_qualification_counter_fast_obj</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_speed</NAME>
+    <VALUE>[0.75f 7.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_speed_straight</NAME>
+    <VALUE>[1.2f 7.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_speed_ofst</NAME>
+    <VALUE>[-0.05f 0.3f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_length</NAME>
+    <VALUE>[0.1f 3.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_width</NAME>
+    <VALUE>[0.1f 1.9f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_area</NAME>
+    <VALUE>[0.0f 4.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_vru_class_prob</NAME>
+    <VALUE>[0.45f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_vru_class_prob_ofst</NAME>
+    <VALUE>[-0.05f 0.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_age_min</NAME>
+    <VALUE>18</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_eclipse_value</NAME>
+    <VALUE>[0.0f 0.2f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_obj_eclipse_value_ofst</NAME>
+    <VALUE>[0.0f 0.1f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_danger_zone_point_size</NAME>
+    <VALUE>7u</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_danger_zone_left_long</NAME>
+    <VALUE>[15.0f 13.5f 4.7f 0.0f -8.0f -9.0f 6.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_danger_zone_left_lat</NAME>
+    <VALUE>[-10.0f -4.0f 0.0f 0.0f -4.2f -8.5f -12.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_danger_zone_right_long</NAME>
+    <VALUE>[4.7f 13.5f 15.0f 6.0f -9.0f -8.0f 0.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_fta_danger_zone_right_lat</NAME>
+    <VALUE>[0.0f 4.0f 10.0f 12.5f 8.5f 4.2f 0.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_f_rta_enable</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_f_rta_enable_info_zones</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_f_rta_enable_wing_zones</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_obj_length</NAME>
+    <VALUE>[0.0f 15.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_obj_width</NAME>
+    <VALUE>[0.0f 5.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_obj_exist_prblty_ofst</NAME>
+    <VALUE>[-0.3f 0.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_obj_vru_class_prob</NAME>
+    <VALUE>[0.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_ttp_obj_abs_lat_vel_rel_max</NAME>
+    <VALUE>1.9f</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_f_calculate_ttp_only_for_same_side_intersection</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_f_higher_obj_crit_based_on_lower_ttp</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_left_long</NAME>
+    <VALUE>[-1.0f -1.0f -40.0f -40.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_left_lat</NAME>
+    <VALUE>[-4.0f -1.5f -1.5f -4.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_right_long</NAME>
+    <VALUE>[-1.0f -1.0f -40.0f -40.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_right_lat</NAME>
+    <VALUE>[1.5f 4.0f 4.0f 1.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_left_lat</NAME>
+    <VALUE>[-10.0f -1.5f -1.5f -10.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_right_lat</NAME>
+    <VALUE>[1.5f 10.0f 10.0f 1.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_left_long</NAME>
+    <VALUE>[-1.0f -1.0f -10.0f -10.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_right_long</NAME>
+    <VALUE>[-1.0f -1.0f -10.0f -10.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_left_long_hys</NAME>
+    <VALUE>[1.0f 1.0f -1.0f -1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_left_lat_hys</NAME>
+    <VALUE>[-1.0f 0.5f 0.5f -1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_right_long_hys</NAME>
+    <VALUE>[1.0f 1.0f -1.0f -1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_wing_zone_right_lat_hys</NAME>
+    <VALUE>[-0.5f 1.0f 1.0f -0.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_left_long_hys</NAME>
+    <VALUE>[0.5f 0.5f -1.0f -1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_left_lat_hys</NAME>
+    <VALUE>[-0.5f 0.5f 0.5f -0.05]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_right_long_hys</NAME>
+    <VALUE>[0.5f 0.5f -1.0f -1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_info_zone_right_lat_hys</NAME>
+    <VALUE>[-0.5f 0.5f 0.5f -0.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_ttp_obj_abs_heading_diff_max</NAME>
+    <VALUE>0.7f</VALUE>
+  </record>
+</data-set>

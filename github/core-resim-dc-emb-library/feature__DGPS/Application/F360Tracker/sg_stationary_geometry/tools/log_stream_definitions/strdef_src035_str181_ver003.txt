@@ -1,0 +1,8 @@
+136
+uint64_t total
+REPEAT12
+uint64_t main_steps
+END_REPEAT
+REPEAT4
+uint64_t details.dc_steps
+END_REPEAT

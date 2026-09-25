@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR5 Delphi SIL component configuration -->
+
+<Embedded_Library_Output_Control>
+  <!-- SIL SRR3 Embedded_Library Configuration Control XML Version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <SIL_SRR3_Embedded_Library_Output_Control_XML_Version>3.1</SIL_SRR3_Embedded_Library_Output_Control_XML_Version>
+
+  <!-- To define the CUSTOMER for which the Embedded_Library is Executed. 
+		 Options available are: SRR3: AUDI, BMW, JLR, SCANIA, GEELY, HKMC_GEN2 -->
+  <Customer_Name>BMW_SAT</Customer_Name>
+
+  <!-- XML Configuration Control for Tracker to be select for execution- 
+				SRR - To execute SRR Tracker 
+				MRR - To execute SRR Tracker
+				SRR_MRR - To execute SRR and MRR, BOTH Tracker				-->
+  <Tracker_to_execute>SRR</Tracker_to_execute>
+  
+  <!-- XML Configuration Control for Sensor Generation to be select for execution- 
+				SRR_Tracker : SRR5P, SRR6P, SRR7P - To execute SRR Tracker 
+				MRR_Tracker : FLR4, FLR4P, FLR7 - To execute MRR Tracker	-->
+  <Sensor_to_calib>SRR6P</Sensor_to_calib>
+  
+  <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				XML_TRACE_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				XML_TRACE_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+  <Suppress_XML_Trace_Files>XML_TRACE_ENABLED</Suppress_XML_Trace_Files>
+
+  <!-- XML Configuration Control for Embedded_Library Output SOMIP XML Trace Files- 
+				XML_TRACE_ENABLED - GENERATE Embedded_Library Output SOMIP XML Trace Files 
+				XML_TRACE_DISABLED - SUPPRESS Embedded_Library Output SOMIP XML Trace Files -->
+  <Suppress_SOMIP_XML_Trace_Files>XML_TRACE_ENABLED</Suppress_SOMIP_XML_Trace_Files>
+
+
+  <!-- Parts of XML Prints: 1 => Generate XML Print 
+							  0 => Suppress XML Print -->
+  <XML_Prints>
+    <Vehicle_Info>1</Vehicle_Info>
+    <LCDA_Info>0</LCDA_Info>
+    <CTA_Info>0</CTA_Info>
+    <RECW_Info>0</RECW_Info>
+    <CED_Info>0</CED_Info>
+    <SCW_Info>0</SCW_Info>
+    <TA_Info>0</TA_Info>
+    <PATHTRACKING_Info>0</PATHTRACKING_Info>
+    <Tracks_Info>1</Tracks_Info>                     
+    <Core_Time_Info>0</Core_Time_Info>
+    <Detection_Info>1</Detection_Info>
+    <Dets_FL>1</Dets_FL>
+    <Dets_FR>1</Dets_FR>
+    <Dets_RL>1</Dets_RL>
+    <Dets_RR>1</Dets_RR>
+    <VRU_Classifier>0</VRU_Classifier>
+    <GDSR_Tracker_info>0</GDSR_Tracker_info>
+    </XML_Prints>
+
+<!-- XML Configuration Control for DFT CSV Files-   
+                DFT_CSV_TRACE_ENABLED - GENERATE DFT CSV Trace Files 
+                DFT_CSV_TRACE_DISABLED - SUPPRESS DFT CSV Trace Files  --> 
+  <Suppress_DFT_CSV_Trace_Files>DFT_CSV_TRACE_DISABLED</Suppress_DFT_CSV_Trace_Files>
+
+  <!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				1 - GENERATE Embedded_Library input CSV Files for all logging streams
+				0 - SUPPRESS Embedded_Library Output CSV Files for all logging streams -->
+  <UDP_Log_Data_CSV>1</UDP_Log_Data_CSV>
+  
+  <!-- XML Configuration Control ECU Embedded_Library Scan Index print-   
+				1 - GENERATE Embedded_Library Scan Index print
+				0 - SUPPRESS Embedded_Library Scan Index print -->
+  <Console_Print>1</Console_Print>
+  
+  <!-- XML Configuration Control for Embedded_Library Overrun status-   
+				OVERRUN_ENABLED - Overrun will be enabled 
+				OVERRUN_DISABLED - Overrun will be disabled -->
+  <Overrun_Status>OVERRUN_ENABLED</Overrun_Status>
+  
+  <!-- XML Configuration Control for PTP message Tx-   
+				PTP_Tx_ENABLED - PTP Message Transmission will be enabled 
+				PTP_Tx_DISABLED - PTP Message Transmission will be enabled  -->
+  <Suppress_PTPMsg>PTP_Tx_DISABLED</Suppress_PTPMsg>
+  
+  <!-- XML Configuration Control for SOMEIP PLP Timestamp Synchronization-   
+				PLP_TS_SYNC_ENABLED - SOMEIP PLP Timestamp Synchronization will be enabled 
+				PLP_TS_SYNC_DISABLED - SOMEIP PLP Timestamp Synchronization will be disabled  -->
+  <Suppress_SOMEIP_PLP_TS_SYNC>PLP_TS_SYNC_ENABLED</Suppress_SOMEIP_PLP_TS_SYNC>
+  
+   <!-- XML Configuration Control for YawRateProvision message Tx-   
+				YawRateProvision_Tx_ENABLED - YawRateProvision Message Transmission will be enabled 
+				YawRateProvision_Tx_DISABLED - YawRateProvision Message Transmission will be enabled  -->
+  <Suppress_YawRateProvisionMsg>YawRateProvision_Tx_DISABLED</Suppress_YawRateProvisionMsg>
+  
+  <!-- XML Configuration Control for ADCAM LANE message -   
+				ADCAM_LANE_Rx_ENABLED - PTP Message Transmission will be enabled 
+				ADCAM_LANE_Rx_DISABLED - PTP Message Transmission will be disabled  -->
+  <Suppress_ADCAM_LANEMsg>ADCAM_LANE_Rx_DISABLED</Suppress_ADCAM_LANEMsg>
+  
+    <!-- XML Configuration Control for Event Data Qualifier-   
+				EVENT_DATA_QUALIFIER_ENABLED - Hard coding of Event Data Qualifier will be enabled 
+				EVENT_DATA_QUALIFIER_DISABLED - Hard coding of Event Data Qualifier will be disabled   -->
+  <Hard_code_event_data_qualifier_NA>EVENT_DATA_QUALIFIER_DISABLED</Hard_code_event_data_qualifier_NA>
+  
+  <!-- XML Configuration for cosidering VSE Inputs-   
+				VSE_ENABLED - VSE algorithm will be enabled in the RESIM
+				VSE_DISABLED - VSE data will be taken from the log  -->
+  <VSE_Status>VSE_DISABLED</VSE_Status>
+  
+  <!-- XML Configuration Control for VRU Module-   
+				VRU_ENABLED - VRU Module will be enabled to run in the RESIM
+				VRU_DISABLED - VRU Module will be Disabled to run in the RESIM  -->
+  <VRU_Module>VRU_ENABLED</VRU_Module>
+  
+  <!-- XML Configuration Control ECU Embedded_Library Xtrk files-   
+				1 - GENERATE Embedded_Library XTRK files
+				0 - SUPPRESS Embedded_Library Xtrk files -->
+  <XTRK_Generation>0</XTRK_Generation>
+
+  <!-- XML Configuration Control for Embedded_Library Output BIN Files-   
+				BIN_FILES_ENABLED - GENERATE Embedded_Library Output BIN Files 
+				BIN_FILES_DISABLED - SUPPRESS Embedded_Library Output BIN Files -->
+  <Suppress_BIN_Files>BIN_FILES_ENABLED</Suppress_BIN_Files>
+  
+  <!-- XML Configuration control to select how the output of the bin files need to be written-
+				SEPERATE - Generate seperate bin files for each input log
+				ALL_IN_ONE - Generate the bin file output for all input logs into a single bin file -->
+  
+  <BIN_FILE_OUTPUT>ALL_IN_ONE</BIN_FILE_OUTPUT>
+  
+  <!-- Which stream to use SP21 or SP25(ORCAS Plugin is not available) -->
+  <UDP_STREAM_TO_USE>SP21</UDP_STREAM_TO_USE>
+  
+   <!-- SM2_MODE_Status-
+		SM2_MODE_DISABLE - Do not run SensorModel/'s
+		SM2_MODE_ENABLE - Run SensorModel/'s-->
+  <SM2_MODE_Status>SM2_MODE_ENABLE</SM2_MODE_Status>
+     <!-- DGPS_Decode_Status-
+		DGPS_DECODE_ENABLE - disable Decoding of DGPS data
+		DGPS_DECODE_DISABLE - enables Decoding of DGPS data -->
+  <DGPS_Decode_Status>DGPS_DECODE_ENABLE</DGPS_Decode_Status>
+  
+  
+  <!-- DGPS_Decode_Protocol-
+		DGPS_OVER_CAN - Looks for RT-Range CAN frames in input MF4 file
+		DGPS_OVER_ETHERNET - Looks for RT-Range Ethernet Packets in input MF4 file -->
+  <DGPS_Decode_Protocol>DGPS_OVER_ETHERNET</DGPS_Decode_Protocol>
+  
+  <SM2_Config_File>/home/aptiv/Plastic/10034601_BMW_SP2025_IpNext_Simulation/DC_SIL_Library/Sil_Executable/Config/SM_Config</SM2_Config_File>
+  <!-- osi file will only be relevant when DGPS DECODE and SM2 MODE is ENABLED
+		NOTE: this tags needs to be removed once DGPS decode functionality is 
+		enabled-->
+  <OSI_FILE>../../../Sil_Executable/Logs/ASMPresentation_FOV250_ASM2022A.txt</OSI_FILE>>
+  <HOST_DGPS_BOX_OFFSET>2.77</HOST_DGPS_BOX_OFFSET>
+  <TARGET_DGPS_BOX_OFFSET>2.78</TARGET_DGPS_BOX_OFFSET>
+
+  <!-- Embedded_Library Output BIN Files for all Customers
+	    BIN File selection values: 1 => Generate Embedded_Library Output BIN Files for Enabled BIN Files
+								   0 => Suppress Embedded_Library Output BIN Files for Disabled BIN Files -->
+  <BIN_Files>
+    <DETECTIONS>1</DETECTIONS>
+    <TRACKER_OUT>1</TRACKER_OUT>
+	<TRACKER_OUT_F360>1</TRACKER_OUT_F360>
+    <RADAR_PARAM>1</RADAR_PARAM>
+    <VEHICLE_DATA>1</VEHICLE_DATA>
+    <VEHICLE_F360>1</VEHICLE_F360>
+    <LCDA>1</LCDA>
+    <RECW>1</RECW>
+    <CTA>1</CTA>
+	<CED>1</CED>
+	<PATH_TRACKING>1</PATH_TRACKING>
+	<TA>1</TA>
+    <ASW>1</ASW>
+    <Freespace>1</Freespace>
+     <SCW>1</SCW>  
+  </BIN_Files>
+
+</Embedded_Library_Output_Control>
+

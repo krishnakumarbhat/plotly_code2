@@ -1,0 +1,782 @@
+
+******************************  SRR_25_07_I360_SRR_3_8_104_MRR_3_8_0_IPN_FACF2E_TRACKER_KPI_SRR_DS_01_BN_RADETH_WBA41BX0707M52225_20240228_110315_0000.MF4  ******************************
+
+Scan index :     0		Start_Time : 1086299	End_Time : 1506898		Cycle_Execution_Time : 420599
+
+Scan index :     1		Start_Time : 1513408	End_Time : 2144772		Cycle_Execution_Time : 631364
+
+Scan index :     2		Start_Time : 2148730	End_Time : 2168642		Cycle_Execution_Time : 19912
+
+Scan index :     3		Start_Time : 2171736	End_Time : 2191715		Cycle_Execution_Time : 19979
+
+Scan index :     4		Start_Time : 2197046	End_Time : 2216165		Cycle_Execution_Time : 19119
+
+Scan index :     5		Start_Time : 2221348	End_Time : 2240355		Cycle_Execution_Time : 19007
+
+Scan index :     6		Start_Time : 2244692	End_Time : 2264936		Cycle_Execution_Time : 20244
+
+Scan index :     7		Start_Time : 2270248	End_Time : 2290210		Cycle_Execution_Time : 19962
+
+Scan index :     8		Start_Time : 2294489	End_Time : 2313790		Cycle_Execution_Time : 19301
+
+Scan index :     9		Start_Time : 2318992	End_Time : 2338203		Cycle_Execution_Time : 19211
+
+Scan index :    10		Start_Time : 2343701	End_Time : 2364105		Cycle_Execution_Time : 20404
+
+Scan index :    11		Start_Time : 2368434	End_Time : 2387706		Cycle_Execution_Time : 19272
+
+Scan index :    12		Start_Time : 2393181	End_Time : 2412170		Cycle_Execution_Time : 18989
+
+Scan index :    13		Start_Time : 2417424	End_Time : 2436424		Cycle_Execution_Time : 19000
+
+Scan index :    14		Start_Time : 2440533	End_Time : 2459480		Cycle_Execution_Time : 18947
+
+Scan index :    15		Start_Time : 2464469	End_Time : 2483524		Cycle_Execution_Time : 19055
+
+Scan index :    16		Start_Time : 2487778	End_Time : 2506842		Cycle_Execution_Time : 19064
+
+Scan index :    17		Start_Time : 2512024	End_Time : 2531051		Cycle_Execution_Time : 19027
+
+Scan index :    18		Start_Time : 2535820	End_Time : 2554732		Cycle_Execution_Time : 18912
+
+Scan index :    19		Start_Time : 2558789	End_Time : 2577698		Cycle_Execution_Time : 18909
+
+Scan index :    20		Start_Time : 2582368	End_Time : 2601385		Cycle_Execution_Time : 19017
+
+Scan index :    21		Start_Time : 2606422	End_Time : 2625420		Cycle_Execution_Time : 18998
+
+Scan index :    22		Start_Time : 2629541	End_Time : 2652508		Cycle_Execution_Time : 22967
+
+Scan index :    23		Start_Time : 2657599	End_Time : 2676529		Cycle_Execution_Time : 18930
+
+Scan index :    24		Start_Time : 2680642	End_Time : 2699562		Cycle_Execution_Time : 18920
+
+Scan index :    25		Start_Time : 2704153	End_Time : 2723179		Cycle_Execution_Time : 19026
+
+Scan index :    26		Start_Time : 2728130	End_Time : 2747168		Cycle_Execution_Time : 19038
+
+Scan index :    27		Start_Time : 2751341	End_Time : 2770273		Cycle_Execution_Time : 18932
+
+Scan index :    28		Start_Time : 2774929	End_Time : 2794116		Cycle_Execution_Time : 19187
+
+Scan index :    29		Start_Time : 2798198	End_Time : 2817230		Cycle_Execution_Time : 19032
+
+Scan index :    30		Start_Time : 2822179	End_Time : 2842508		Cycle_Execution_Time : 20329
+
+Scan index :    31		Start_Time : 2847705	End_Time : 2866752		Cycle_Execution_Time : 19047
+
+Scan index :    32		Start_Time : 2870884	End_Time : 2889942		Cycle_Execution_Time : 19058
+
+Scan index :    33		Start_Time : 2894749	End_Time : 2913897		Cycle_Execution_Time : 19148
+
+Scan index :    34		Start_Time : 2918377	End_Time : 2937384		Cycle_Execution_Time : 19007
+
+Scan index :    35		Start_Time : 2942823	End_Time : 2961915		Cycle_Execution_Time : 19092
+
+Scan index :    36		Start_Time : 2966099	End_Time : 2985147		Cycle_Execution_Time : 19048
+
+Scan index :    37		Start_Time : 2990619	End_Time : 3009738		Cycle_Execution_Time : 19119
+
+Scan index :    38		Start_Time : 3014519	End_Time : 3033518		Cycle_Execution_Time : 18999
+
+Scan index :    39		Start_Time : 3037690	End_Time : 3056631		Cycle_Execution_Time : 18941
+
+Scan index :    40		Start_Time : 3061752	End_Time : 3080831		Cycle_Execution_Time : 19079
+
+Scan index :    41		Start_Time : 3084951	End_Time : 3103895		Cycle_Execution_Time : 18944
+
+Scan index :    42		Start_Time : 3109114	End_Time : 3128094		Cycle_Execution_Time : 18980
+
+Scan index :    43		Start_Time : 3132913	End_Time : 3151926		Cycle_Execution_Time : 19013
+
+Scan index :    44		Start_Time : 3156075	End_Time : 3175203		Cycle_Execution_Time : 19128
+
+Scan index :    45		Start_Time : 3179897	End_Time : 3198907		Cycle_Execution_Time : 19010
+
+Scan index :    46		Start_Time : 3203947	End_Time : 3222954		Cycle_Execution_Time : 19007
+
+Scan index :    47		Start_Time : 3227234	End_Time : 3246130		Cycle_Execution_Time : 18896
+
+Scan index :    48		Start_Time : 3257234	End_Time : 3278209		Cycle_Execution_Time : 20975
+
+Scan index :    49		Start_Time : 3285559	End_Time : 3304989		Cycle_Execution_Time : 19430
+
+Scan index :    50		Start_Time : 3309757	End_Time : 3328891		Cycle_Execution_Time : 19134
+
+Scan index :    51		Start_Time : 3333540	End_Time : 3352763		Cycle_Execution_Time : 19223
+
+Scan index :    52		Start_Time : 3356923	End_Time : 3375973		Cycle_Execution_Time : 19050
+
+Scan index :    53		Start_Time : 3380653	End_Time : 3399689		Cycle_Execution_Time : 19036
+
+Scan index :    54		Start_Time : 3404632	End_Time : 3423913		Cycle_Execution_Time : 19281
+
+Scan index :    55		Start_Time : 3428179	End_Time : 3447361		Cycle_Execution_Time : 19182
+
+Scan index :    56		Start_Time : 3452255	End_Time : 3471425		Cycle_Execution_Time : 19170
+
+Scan index :    57		Start_Time : 3475738	End_Time : 3494742		Cycle_Execution_Time : 19004
+
+Scan index :    58		Start_Time : 3500005	End_Time : 3519010		Cycle_Execution_Time : 19005
+
+Scan index :    59		Start_Time : 3524042	End_Time : 3546604		Cycle_Execution_Time : 22562
+
+Scan index :    60		Start_Time : 3551232	End_Time : 3570274		Cycle_Execution_Time : 19042
+
+Scan index :    61		Start_Time : 3574889	End_Time : 3593924		Cycle_Execution_Time : 19035
+
+Scan index :    62		Start_Time : 3598112	End_Time : 3617174		Cycle_Execution_Time : 19062
+
+Scan index :    63		Start_Time : 3622424	End_Time : 3641370		Cycle_Execution_Time : 18946
+
+Scan index :    64		Start_Time : 3646397	End_Time : 3665525		Cycle_Execution_Time : 19128
+
+Scan index :    65		Start_Time : 3669654	End_Time : 3688579		Cycle_Execution_Time : 18925
+
+Scan index :    66		Start_Time : 3693065	End_Time : 3712152		Cycle_Execution_Time : 19087
+
+Scan index :    67		Start_Time : 3717194	End_Time : 3736187		Cycle_Execution_Time : 18993
+
+Scan index :    68		Start_Time : 3740319	End_Time : 3759287		Cycle_Execution_Time : 18968
+
+Scan index :    69		Start_Time : 3764601	End_Time : 3783614		Cycle_Execution_Time : 19013
+
+Scan index :    70		Start_Time : 3791114	End_Time : 3818454		Cycle_Execution_Time : 27340
+
+Scan index :    71		Start_Time : 3823133	End_Time : 3842338		Cycle_Execution_Time : 19205
+
+Scan index :    72		Start_Time : 3846577	End_Time : 3865637		Cycle_Execution_Time : 19060
+
+Scan index :    73		Start_Time : 3870973	End_Time : 3890068		Cycle_Execution_Time : 19095
+
+Scan index :    74		Start_Time : 3895254	End_Time : 3914299		Cycle_Execution_Time : 19045
+
+Scan index :    75		Start_Time : 3918450	End_Time : 3937512		Cycle_Execution_Time : 19062
+
+Scan index :    76		Start_Time : 3942822	End_Time : 3961830		Cycle_Execution_Time : 19008
+
+Scan index :    77		Start_Time : 3966234	End_Time : 3985297		Cycle_Execution_Time : 19063
+
+Scan index :    78		Start_Time : 3990176	End_Time : 4009251		Cycle_Execution_Time : 19075
+
+Scan index :    79		Start_Time : 4014271	End_Time : 4033391		Cycle_Execution_Time : 19120
+
+Scan index :    80		Start_Time : 4037554	End_Time : 4063980		Cycle_Execution_Time : 26426
+
+Scan index :    81		Start_Time : 4069986	End_Time : 4097029		Cycle_Execution_Time : 27043
+
+Scan index :    82		Start_Time : 4101325	End_Time : 4120497		Cycle_Execution_Time : 19172
+
+Scan index :    83		Start_Time : 4125581	End_Time : 4144719		Cycle_Execution_Time : 19138
+
+Scan index :    84		Start_Time : 4149784	End_Time : 4168876		Cycle_Execution_Time : 19092
+
+Scan index :    85		Start_Time : 4173022	End_Time : 4191981		Cycle_Execution_Time : 18959
+
+Scan index :    86		Start_Time : 4197288	End_Time : 4216263		Cycle_Execution_Time : 18975
+
+Scan index :    87		Start_Time : 4221300	End_Time : 4240443		Cycle_Execution_Time : 19143
+
+Scan index :    88		Start_Time : 4244528	End_Time : 4263706		Cycle_Execution_Time : 19178
+
+Scan index :    89		Start_Time : 4268736	End_Time : 4287735		Cycle_Execution_Time : 18999
+
+Scan index :    90		Start_Time : 4291849	End_Time : 4310811		Cycle_Execution_Time : 18962
+
+Scan index :    91		Start_Time : 4315911	End_Time : 4334882		Cycle_Execution_Time : 18971
+
+Scan index :    92		Start_Time : 4339984	End_Time : 4359121		Cycle_Execution_Time : 19137
+
+Scan index :    93		Start_Time : 4363291	End_Time : 4382331		Cycle_Execution_Time : 19040
+
+Scan index :    94		Start_Time : 4386849	End_Time : 4405945		Cycle_Execution_Time : 19096
+
+Scan index :    95		Start_Time : 4410662	End_Time : 4429741		Cycle_Execution_Time : 19079
+
+Scan index :    96		Start_Time : 4433922	End_Time : 4452959		Cycle_Execution_Time : 19037
+
+Scan index :    97		Start_Time : 4460558	End_Time : 4490883		Cycle_Execution_Time : 30325
+
+Scan index :    98		Start_Time : 4501753	End_Time : 4521173		Cycle_Execution_Time : 19420
+
+Scan index :    99		Start_Time : 4526930	End_Time : 4546277		Cycle_Execution_Time : 19347
+
+Scan index :   100		Start_Time : 4551291	End_Time : 4570318		Cycle_Execution_Time : 19027
+
+Scan index :   101		Start_Time : 4574458	End_Time : 4593484		Cycle_Execution_Time : 19026
+
+Scan index :   102		Start_Time : 4598557	End_Time : 4617643		Cycle_Execution_Time : 19086
+
+Scan index :   103		Start_Time : 4622636	End_Time : 4641739		Cycle_Execution_Time : 19103
+
+Scan index :   104		Start_Time : 4647246	End_Time : 4666246		Cycle_Execution_Time : 19000
+
+Scan index :   105		Start_Time : 4670388	End_Time : 4693540		Cycle_Execution_Time : 23152
+
+Scan index :   106		Start_Time : 4698982	End_Time : 4717982		Cycle_Execution_Time : 19000
+
+Scan index :   107		Start_Time : 4722903	End_Time : 4741996		Cycle_Execution_Time : 19093
+
+Scan index :   108		Start_Time : 4746108	End_Time : 4765169		Cycle_Execution_Time : 19061
+
+Scan index :   109		Start_Time : 4770245	End_Time : 4789270		Cycle_Execution_Time : 19025
+
+Scan index :   110		Start_Time : 4793408	End_Time : 4812435		Cycle_Execution_Time : 19027
+
+Scan index :   111		Start_Time : 4817316	End_Time : 4836375		Cycle_Execution_Time : 19059
+
+Scan index :   112		Start_Time : 4841413	End_Time : 4860465		Cycle_Execution_Time : 19052
+
+Scan index :   113		Start_Time : 4864592	End_Time : 4883550		Cycle_Execution_Time : 18958
+
+Scan index :   114		Start_Time : 4888600	End_Time : 4907490		Cycle_Execution_Time : 18890
+
+Scan index :   115		Start_Time : 4912515	End_Time : 4931560		Cycle_Execution_Time : 19045
+
+Scan index :   116		Start_Time : 4935841	End_Time : 4954814		Cycle_Execution_Time : 18973
+
+Scan index :   117		Start_Time : 4960070	End_Time : 4979120		Cycle_Execution_Time : 19050
+
+Scan index :   118		Start_Time : 4983202	End_Time : 5002199		Cycle_Execution_Time : 18997
+
+Scan index :   119		Start_Time : 5007109	End_Time : 5026094		Cycle_Execution_Time : 18985
+
+Scan index :   120		Start_Time : 5030657	End_Time : 5049603		Cycle_Execution_Time : 18946
+
+Scan index :   121		Start_Time : 5053688	End_Time : 5072806		Cycle_Execution_Time : 19118
+
+Scan index :   122		Start_Time : 5077786	End_Time : 5096745		Cycle_Execution_Time : 18959
+
+Scan index :   123		Start_Time : 5100883	End_Time : 5119869		Cycle_Execution_Time : 18986
+
+Scan index :   124		Start_Time : 5125115	End_Time : 5144169		Cycle_Execution_Time : 19054
+
+Scan index :   125		Start_Time : 5149169	End_Time : 5168122		Cycle_Execution_Time : 18953
+
+Scan index :   126		Start_Time : 5172246	End_Time : 5191312		Cycle_Execution_Time : 19066
+
+Scan index :   127		Start_Time : 5196361	End_Time : 5215368		Cycle_Execution_Time : 19007
+
+Scan index :   128		Start_Time : 5220442	End_Time : 5239449		Cycle_Execution_Time : 19007
+
+Scan index :   129		Start_Time : 5243544	End_Time : 5262474		Cycle_Execution_Time : 18930
+
+Scan index :   130		Start_Time : 5267530	End_Time : 5286630		Cycle_Execution_Time : 19100
+
+Scan index :   131		Start_Time : 5290726	End_Time : 5309789		Cycle_Execution_Time : 19063
+
+Scan index :   132		Start_Time : 5314870	End_Time : 5334033		Cycle_Execution_Time : 19163
+
+Scan index :   133		Start_Time : 5339112	End_Time : 5358139		Cycle_Execution_Time : 19027
+
+Scan index :   134		Start_Time : 5362259	End_Time : 5381271		Cycle_Execution_Time : 19012
+
+Scan index :   135		Start_Time : 5386357	End_Time : 5405317		Cycle_Execution_Time : 18960
+
+Scan index :   136		Start_Time : 5410661	End_Time : 5429710		Cycle_Execution_Time : 19049
+
+Scan index :   137		Start_Time : 5434022	End_Time : 5453050		Cycle_Execution_Time : 19028
+
+Scan index :   138		Start_Time : 5457570	End_Time : 5476658		Cycle_Execution_Time : 19088
+
+Scan index :   139		Start_Time : 5481431	End_Time : 5500554		Cycle_Execution_Time : 19123
+
+Scan index :   140		Start_Time : 5505087	End_Time : 5524123		Cycle_Execution_Time : 19036
+
+Scan index :   141		Start_Time : 5528171	End_Time : 5547265		Cycle_Execution_Time : 19094
+
+Scan index :   142		Start_Time : 5552325	End_Time : 5570539		Cycle_Execution_Time : 18214
+
+Scan index :   143		Start_Time : 5574735	End_Time : 5593817		Cycle_Execution_Time : 19082
+
+Scan index :   144		Start_Time : 5598317	End_Time : 5617315		Cycle_Execution_Time : 18998
+
+Scan index :   145		Start_Time : 5621919	End_Time : 5640816		Cycle_Execution_Time : 18897
+
+Scan index :   146		Start_Time : 5644888	End_Time : 5663889		Cycle_Execution_Time : 19001
+
+Scan index :   147		Start_Time : 5670581	End_Time : 5690182		Cycle_Execution_Time : 19601
+
+Scan index :   148		Start_Time : 5703024	End_Time : 5722382		Cycle_Execution_Time : 19358
+
+Scan index :   149		Start_Time : 5726469	End_Time : 5745881		Cycle_Execution_Time : 19412
+
+Scan index :   150		Start_Time : 5750868	End_Time : 5770395		Cycle_Execution_Time : 19527
+
+Scan index :   151		Start_Time : 5774930	End_Time : 5794045		Cycle_Execution_Time : 19115
+
+Scan index :   152		Start_Time : 5799148	End_Time : 5818223		Cycle_Execution_Time : 19075
+
+Scan index :   153		Start_Time : 5823236	End_Time : 5842265		Cycle_Execution_Time : 19029
+
+Scan index :   154		Start_Time : 5846367	End_Time : 5865531		Cycle_Execution_Time : 19164
+
+Scan index :   155		Start_Time : 5870563	End_Time : 5889801		Cycle_Execution_Time : 19238
+
+Scan index :   156		Start_Time : 5894892	End_Time : 5913994		Cycle_Execution_Time : 19102
+
+Scan index :   157		Start_Time : 5918299	End_Time : 5937336		Cycle_Execution_Time : 19037
+
+Scan index :   158		Start_Time : 5942416	End_Time : 5961357		Cycle_Execution_Time : 18941
+
+Scan index :   159		Start_Time : 5965450	End_Time : 5984383		Cycle_Execution_Time : 18933
+
+Scan index :   160		Start_Time : 5989379	End_Time : 6008406		Cycle_Execution_Time : 19027
+
+Scan index :   161		Start_Time : 6013470	End_Time : 6032492		Cycle_Execution_Time : 19022
+
+Scan index :   162		Start_Time : 6036622	End_Time : 6055663		Cycle_Execution_Time : 19041
+
+Scan index :   163		Start_Time : 6060945	End_Time : 6079910		Cycle_Execution_Time : 18965
+
+Scan index :   164		Start_Time : 6084007	End_Time : 6102885		Cycle_Execution_Time : 18878
+
+Scan index :   165		Start_Time : 6107963	End_Time : 6127097		Cycle_Execution_Time : 19134
+
+Scan index :   166		Start_Time : 6132185	End_Time : 6151290		Cycle_Execution_Time : 19105
+
+Scan index :   167		Start_Time : 6155504	End_Time : 6174742		Cycle_Execution_Time : 19238
+
+Scan index :   168		Start_Time : 6179840	End_Time : 6199427		Cycle_Execution_Time : 19587
+
+Scan index :   169		Start_Time : 6204558	End_Time : 6223647		Cycle_Execution_Time : 19089
+
+Scan index :   170		Start_Time : 6227827	End_Time : 6246852		Cycle_Execution_Time : 19025
+
+Scan index :   171		Start_Time : 6252144	End_Time : 6271209		Cycle_Execution_Time : 19065
+
+Scan index :   172		Start_Time : 6275332	End_Time : 6294293		Cycle_Execution_Time : 18961
+
+Scan index :   173		Start_Time : 6300618	End_Time : 6319587		Cycle_Execution_Time : 18969
+
+Scan index :   174		Start_Time : 6323700	End_Time : 6342646		Cycle_Execution_Time : 18946
+
+Scan index :   175		Start_Time : 6347590	End_Time : 6366735		Cycle_Execution_Time : 19145
+
+Scan index :   176		Start_Time : 6371834	End_Time : 6390875		Cycle_Execution_Time : 19041
+
+Scan index :   177		Start_Time : 6395128	End_Time : 6418438		Cycle_Execution_Time : 23310
+
+Scan index :   178		Start_Time : 6423778	End_Time : 6442957		Cycle_Execution_Time : 19179
+
+Scan index :   179		Start_Time : 6447143	End_Time : 6466217		Cycle_Execution_Time : 19074
+
+Scan index :   180		Start_Time : 6471211	End_Time : 6497270		Cycle_Execution_Time : 26059
+
+Scan index :   181		Start_Time : 6503211	End_Time : 6535140		Cycle_Execution_Time : 31929
+
+Scan index :   182		Start_Time : 6539541	End_Time : 6574034		Cycle_Execution_Time : 34493
+
+Scan index :   183		Start_Time : 6579719	End_Time : 6599038		Cycle_Execution_Time : 19319
+
+Scan index :   184		Start_Time : 6603648	End_Time : 6622582		Cycle_Execution_Time : 18934
+
+Scan index :   185		Start_Time : 6626760	End_Time : 6645646		Cycle_Execution_Time : 18886
+
+Scan index :   186		Start_Time : 6650083	End_Time : 6668831		Cycle_Execution_Time : 18748
+
+Scan index :   187		Start_Time : 6672930	End_Time : 6691959		Cycle_Execution_Time : 19029
+
+Scan index :   188		Start_Time : 6697088	End_Time : 6716064		Cycle_Execution_Time : 18976
+
+Scan index :   189		Start_Time : 6721080	End_Time : 6739953		Cycle_Execution_Time : 18873
+
+Scan index :   190		Start_Time : 6744017	End_Time : 6762875		Cycle_Execution_Time : 18858
+
+Scan index :   191		Start_Time : 6767428	End_Time : 6786275		Cycle_Execution_Time : 18847
+
+Scan index :   192		Start_Time : 6790297	End_Time : 6809273		Cycle_Execution_Time : 18976
+
+Scan index :   193		Start_Time : 6814798	End_Time : 6833789		Cycle_Execution_Time : 18991
+
+Scan index :   194		Start_Time : 6838726	End_Time : 6857533		Cycle_Execution_Time : 18807
+
+Scan index :   195		Start_Time : 6861565	End_Time : 6880879		Cycle_Execution_Time : 19314
+
+Scan index :   196		Start_Time : 6885932	End_Time : 6904944		Cycle_Execution_Time : 19012
+
+Scan index :   197		Start_Time : 6916875	End_Time : 6936083		Cycle_Execution_Time : 19208
+
+Scan index :   198		Start_Time : 6941543	End_Time : 6960808		Cycle_Execution_Time : 19265
+
+Scan index :   199		Start_Time : 6965769	End_Time : 6989627		Cycle_Execution_Time : 23858
+
+Scan index :   200		Start_Time : 6993719	End_Time : 7012682		Cycle_Execution_Time : 18963
+
+Scan index :   201		Start_Time : 7017674	End_Time : 7036407		Cycle_Execution_Time : 18733
+
+Scan index :   202		Start_Time : 7041366	End_Time : 7060148		Cycle_Execution_Time : 18782
+
+Scan index :   203		Start_Time : 7064196	End_Time : 7083147		Cycle_Execution_Time : 18951
+
+Scan index :   204		Start_Time : 7088142	End_Time : 7120781		Cycle_Execution_Time : 32639
+
+Scan index :   205		Start_Time : 7127082	End_Time : 7146084		Cycle_Execution_Time : 19002
+
+Scan index :   206		Start_Time : 7150183	End_Time : 7169320		Cycle_Execution_Time : 19137
+
+Scan index :   207		Start_Time : 7174503	End_Time : 7193701		Cycle_Execution_Time : 19198
+
+Scan index :   208		Start_Time : 7198952	End_Time : 7217839		Cycle_Execution_Time : 18887
+
+Scan index :   209		Start_Time : 7223143	End_Time : 7252996		Cycle_Execution_Time : 29853
+
+Scan index :   210		Start_Time : 7257217	End_Time : 7276391		Cycle_Execution_Time : 19174
+
+Scan index :   211		Start_Time : 7281414	End_Time : 7300333		Cycle_Execution_Time : 18919
+
+Scan index :   212		Start_Time : 7304392	End_Time : 7323223		Cycle_Execution_Time : 18831
+
+Scan index :   213		Start_Time : 7328579	End_Time : 7347453		Cycle_Execution_Time : 18874
+
+Scan index :   214		Start_Time : 7352084	End_Time : 7371004		Cycle_Execution_Time : 18920
+
+Scan index :   215		Start_Time : 7375201	End_Time : 7394016		Cycle_Execution_Time : 18815
+
+Scan index :   216		Start_Time : 7398679	End_Time : 7417595		Cycle_Execution_Time : 18916
+
+Scan index :   217		Start_Time : 7422127	End_Time : 7440997		Cycle_Execution_Time : 18870
+
+Scan index :   218		Start_Time : 7445087	End_Time : 7463980		Cycle_Execution_Time : 18893
+
+Scan index :   219		Start_Time : 7469004	End_Time : 7488005		Cycle_Execution_Time : 19001
+
+Scan index :   220		Start_Time : 7492139	End_Time : 7511072		Cycle_Execution_Time : 18933
+
+Scan index :   221		Start_Time : 7515582	End_Time : 7534487		Cycle_Execution_Time : 18905
+
+Scan index :   222		Start_Time : 7538963	End_Time : 7557970		Cycle_Execution_Time : 19007
+
+Scan index :   223		Start_Time : 7562043	End_Time : 7581086		Cycle_Execution_Time : 19043
+
+Scan index :   224		Start_Time : 7585989	End_Time : 7607564		Cycle_Execution_Time : 21575
+
+Scan index :   225		Start_Time : 7612623	End_Time : 7644121		Cycle_Execution_Time : 31498
+
+Scan index :   226		Start_Time : 7649199	End_Time : 7668122		Cycle_Execution_Time : 18923
+
+Scan index :   227		Start_Time : 7673216	End_Time : 7692358		Cycle_Execution_Time : 19142
+
+Scan index :   228		Start_Time : 7696510	End_Time : 7715361		Cycle_Execution_Time : 18851
+
+Scan index :   229		Start_Time : 7720318	End_Time : 7739434		Cycle_Execution_Time : 19116
+
+Scan index :   230		Start_Time : 7744694	End_Time : 7764407		Cycle_Execution_Time : 19713
+
+Scan index :   231		Start_Time : 7768464	End_Time : 7787804		Cycle_Execution_Time : 19340
+
+Scan index :   232		Start_Time : 7792863	End_Time : 7811634		Cycle_Execution_Time : 18771
+
+Scan index :   233		Start_Time : 7815759	End_Time : 7834984		Cycle_Execution_Time : 19225
+
+Scan index :   234		Start_Time : 7839830	End_Time : 7858875		Cycle_Execution_Time : 19045
+
+Scan index :   235		Start_Time : 7864057	End_Time : 7883024		Cycle_Execution_Time : 18967
+
+Scan index :   236		Start_Time : 7887277	End_Time : 7906149		Cycle_Execution_Time : 18872
+
+Scan index :   237		Start_Time : 7911365	End_Time : 7930239		Cycle_Execution_Time : 18874
+
+Scan index :   238		Start_Time : 7935297	End_Time : 7954201		Cycle_Execution_Time : 18904
+
+Scan index :   239		Start_Time : 7958316	End_Time : 7977237		Cycle_Execution_Time : 18921
+
+Scan index :   240		Start_Time : 7981692	End_Time : 8000611		Cycle_Execution_Time : 18919
+
+Scan index :   241		Start_Time : 8004808	End_Time : 8023717		Cycle_Execution_Time : 18909
+
+Scan index :   242		Start_Time : 8028938	End_Time : 8047969		Cycle_Execution_Time : 19031
+
+Scan index :   243		Start_Time : 8052059	End_Time : 8071072		Cycle_Execution_Time : 19013
+
+Scan index :   244		Start_Time : 8076313	End_Time : 8102056		Cycle_Execution_Time : 25743
+
+Scan index :   245		Start_Time : 8106164	End_Time : 8125220		Cycle_Execution_Time : 19056
+
+Scan index :   246		Start_Time : 8130797	End_Time : 8149877		Cycle_Execution_Time : 19080
+
+Scan index :   247		Start_Time : 8162013	End_Time : 8181269		Cycle_Execution_Time : 19256
+
+Scan index :   248		Start_Time : 8185378	End_Time : 8204714		Cycle_Execution_Time : 19336
+
+Scan index :   249		Start_Time : 8210377	End_Time : 8229882		Cycle_Execution_Time : 19505
+
+Scan index :   250		Start_Time : 8234850	End_Time : 8253855		Cycle_Execution_Time : 19005
+
+Scan index :   251		Start_Time : 8257928	End_Time : 8277156		Cycle_Execution_Time : 19228
+
+Scan index :   252		Start_Time : 8282098	End_Time : 8301202		Cycle_Execution_Time : 19104
+
+Scan index :   253		Start_Time : 8305465	End_Time : 8324780		Cycle_Execution_Time : 19315
+
+Scan index :   254		Start_Time : 8329965	End_Time : 8349013		Cycle_Execution_Time : 19048
+
+Scan index :   255		Start_Time : 8354294	End_Time : 8376359		Cycle_Execution_Time : 22065
+
+Scan index :   256		Start_Time : 8380685	End_Time : 8399788		Cycle_Execution_Time : 19103
+
+Scan index :   257		Start_Time : 8404638	End_Time : 8423668		Cycle_Execution_Time : 19030
+
+Scan index :   258		Start_Time : 8428659	End_Time : 8447574		Cycle_Execution_Time : 18915
+
+Scan index :   259		Start_Time : 8451645	End_Time : 8470518		Cycle_Execution_Time : 18873
+
+Scan index :   260		Start_Time : 8475423	End_Time : 8494223		Cycle_Execution_Time : 18800
+
+Scan index :   261		Start_Time : 8498340	End_Time : 8517106		Cycle_Execution_Time : 18766
+
+Scan index :   262		Start_Time : 8521726	End_Time : 8540697		Cycle_Execution_Time : 18971
+
+Scan index :   263		Start_Time : 8545726	End_Time : 8564755		Cycle_Execution_Time : 19029
+
+Scan index :   264		Start_Time : 8568899	End_Time : 8587814		Cycle_Execution_Time : 18915
+
+Scan index :   265		Start_Time : 8592509	End_Time : 8611574		Cycle_Execution_Time : 19065
+
+Scan index :   266		Start_Time : 8615675	End_Time : 8634744		Cycle_Execution_Time : 19069
+
+Scan index :   267		Start_Time : 8639779	End_Time : 8659030		Cycle_Execution_Time : 19251
+
+Scan index :   268		Start_Time : 8664241	End_Time : 8683391		Cycle_Execution_Time : 19150
+
+Scan index :   269		Start_Time : 8687520	End_Time : 8706368		Cycle_Execution_Time : 18848
+
+Scan index :   270		Start_Time : 8711543	End_Time : 8730435		Cycle_Execution_Time : 18892
+
+Scan index :   271		Start_Time : 8735424	End_Time : 8754952		Cycle_Execution_Time : 19528
+
+Scan index :   272		Start_Time : 8759021	End_Time : 8777993		Cycle_Execution_Time : 18972
+
+Scan index :   273		Start_Time : 8783016	End_Time : 8801824		Cycle_Execution_Time : 18808
+
+Scan index :   274		Start_Time : 8805881	End_Time : 8824813		Cycle_Execution_Time : 18932
+
+Scan index :   275		Start_Time : 8830580	End_Time : 8849645		Cycle_Execution_Time : 19065
+
+Scan index :   276		Start_Time : 8854828	End_Time : 8873737		Cycle_Execution_Time : 18909
+
+Scan index :   277		Start_Time : 8879259	End_Time : 8898183		Cycle_Execution_Time : 18924
+
+Scan index :   278		Start_Time : 8903060	End_Time : 8922342		Cycle_Execution_Time : 19282
+
+Scan index :   279		Start_Time : 8926465	End_Time : 8945461		Cycle_Execution_Time : 18996
+
+Scan index :   280		Start_Time : 8950414	End_Time : 8972334		Cycle_Execution_Time : 21920
+
+Scan index :   281		Start_Time : 8976380	End_Time : 8995218		Cycle_Execution_Time : 18838
+
+Scan index :   282		Start_Time : 9000112	End_Time : 9019065		Cycle_Execution_Time : 18953
+
+Scan index :   283		Start_Time : 9024001	End_Time : 9042942		Cycle_Execution_Time : 18941
+
+Scan index :   284		Start_Time : 9047082	End_Time : 9066099		Cycle_Execution_Time : 19017
+
+Scan index :   285		Start_Time : 9070688	End_Time : 9089623		Cycle_Execution_Time : 18935
+
+Scan index :   286		Start_Time : 9094524	End_Time : 9114762		Cycle_Execution_Time : 20238
+
+Scan index :   287		Start_Time : 9118946	End_Time : 9139809		Cycle_Execution_Time : 20863
+
+Scan index :   288		Start_Time : 9144989	End_Time : 9164142		Cycle_Execution_Time : 19153
+
+Scan index :   289		Start_Time : 9168285	End_Time : 9187361		Cycle_Execution_Time : 19076
+
+Scan index :   290		Start_Time : 9192387	End_Time : 9211291		Cycle_Execution_Time : 18904
+
+Scan index :   291		Start_Time : 9216278	End_Time : 9235245		Cycle_Execution_Time : 18967
+
+Scan index :   292		Start_Time : 9239286	End_Time : 9258278		Cycle_Execution_Time : 18992
+
+Scan index :   293		Start_Time : 9263126	End_Time : 9282031		Cycle_Execution_Time : 18905
+
+Scan index :   294		Start_Time : 9286266	End_Time : 9305216		Cycle_Execution_Time : 18950
+
+Scan index :   295		Start_Time : 9321162	End_Time : 9344285		Cycle_Execution_Time : 23123
+
+Scan index :   296		Start_Time : 9349313	End_Time : 9370114		Cycle_Execution_Time : 20801
+
+Scan index :   297		Start_Time : 9374292	End_Time : 9393591		Cycle_Execution_Time : 19299
+
+Scan index :   298		Start_Time : 9398003	End_Time : 9417102		Cycle_Execution_Time : 19099
+
+Scan index :   299		Start_Time : 9422001	End_Time : 9441045		Cycle_Execution_Time : 19044
+
+Scan index :   300		Start_Time : 9445142	End_Time : 9465073		Cycle_Execution_Time : 19931
+
+Scan index :   301		Start_Time : 9470093	End_Time : 9489230		Cycle_Execution_Time : 19137
+
+Scan index :   302		Start_Time : 9493681	End_Time : 9515198		Cycle_Execution_Time : 21517
+
+Scan index :   303		Start_Time : 9519922	End_Time : 9539671		Cycle_Execution_Time : 19749
+
+Scan index :   304		Start_Time : 9544633	End_Time : 9565806		Cycle_Execution_Time : 21173
+
+Scan index :   305		Start_Time : 9570349	End_Time : 9589708		Cycle_Execution_Time : 19359
+
+Scan index :   306		Start_Time : 9594486	End_Time : 9613702		Cycle_Execution_Time : 19216
+
+Scan index :   307		Start_Time : 9618766	End_Time : 9637915		Cycle_Execution_Time : 19149
+
+Scan index :   308		Start_Time : 9642111	End_Time : 9661343		Cycle_Execution_Time : 19232
+
+Scan index :   309		Start_Time : 9666057	End_Time : 9685226		Cycle_Execution_Time : 19169
+
+Scan index :   310		Start_Time : 9689500	End_Time : 9708683		Cycle_Execution_Time : 19183
+
+Scan index :   311		Start_Time : 9715160	End_Time : 9734258		Cycle_Execution_Time : 19098
+
+Scan index :   312		Start_Time : 9738463	End_Time : 9757604		Cycle_Execution_Time : 19141
+
+Scan index :   313		Start_Time : 9763204	End_Time : 9785889		Cycle_Execution_Time : 22685
+
+Scan index :   314		Start_Time : 9790275	End_Time : 9811328		Cycle_Execution_Time : 21053
+
+Scan index :   315		Start_Time : 9816527	End_Time : 9840008		Cycle_Execution_Time : 23481
+
+Scan index :   316		Start_Time : 9845157	End_Time : 9864400		Cycle_Execution_Time : 19243
+
+Scan index :   317		Start_Time : 9868587	End_Time : 9887695		Cycle_Execution_Time : 19108
+
+Scan index :   318		Start_Time : 9892838	End_Time : 9911970		Cycle_Execution_Time : 19132
+
+Scan index :   319		Start_Time : 9917062	End_Time : 9936334		Cycle_Execution_Time : 19272
+
+Scan index :   320		Start_Time : 9940719	End_Time : 9960156		Cycle_Execution_Time : 19437
+
+Scan index :   321		Start_Time : 9965309	End_Time : 9984277		Cycle_Execution_Time : 18968
+
+Scan index :   322		Start_Time : 9988452	End_Time : 10007502		Cycle_Execution_Time : 19050
+
+Scan index :   323		Start_Time : 10012653	End_Time : 10031621		Cycle_Execution_Time : 18968
+
+Scan index :   324		Start_Time : 10036790	End_Time : 10055863		Cycle_Execution_Time : 19073
+
+Scan index :   325		Start_Time : 10060209	End_Time : 10081804		Cycle_Execution_Time : 21595
+
+Scan index :   326		Start_Time : 10087269	End_Time : 10110374		Cycle_Execution_Time : 23105
+
+Scan index :   327		Start_Time : 10115491	End_Time : 10140687		Cycle_Execution_Time : 25196
+
+Scan index :   328		Start_Time : 10145872	End_Time : 10165060		Cycle_Execution_Time : 19188
+
+Scan index :   329		Start_Time : 10170088	End_Time : 10189254		Cycle_Execution_Time : 19166
+
+Scan index :   330		Start_Time : 10193509	End_Time : 10212908		Cycle_Execution_Time : 19399
+
+Scan index :   331		Start_Time : 10218064	End_Time : 10237085		Cycle_Execution_Time : 19021
+
+Scan index :   332		Start_Time : 10242888	End_Time : 10263431		Cycle_Execution_Time : 20543
+
+Scan index :   333		Start_Time : 10267700	End_Time : 10288144		Cycle_Execution_Time : 20444
+
+Scan index :   334		Start_Time : 10293208	End_Time : 10312431		Cycle_Execution_Time : 19223
+
+Scan index :   335		Start_Time : 10316618	End_Time : 10335810		Cycle_Execution_Time : 19192
+
+Scan index :   336		Start_Time : 10340881	End_Time : 10360031		Cycle_Execution_Time : 19150
+
+Scan index :   337		Start_Time : 10366388	End_Time : 10388565		Cycle_Execution_Time : 22177
+
+Scan index :   338		Start_Time : 10392804	End_Time : 10412131		Cycle_Execution_Time : 19327
+
+Scan index :   339		Start_Time : 10417422	End_Time : 10436640		Cycle_Execution_Time : 19218
+
+Scan index :   340		Start_Time : 10441717	End_Time : 10461209		Cycle_Execution_Time : 19492
+
+Scan index :   341		Start_Time : 10471814	End_Time : 10501893		Cycle_Execution_Time : 30079
+
+Scan index :   342		Start_Time : 10513601	End_Time : 10533192		Cycle_Execution_Time : 19591
+
+Scan index :   343		Start_Time : 10537405	End_Time : 10556889		Cycle_Execution_Time : 19484
+
+Scan index :   344		Start_Time : 10562000	End_Time : 10581416		Cycle_Execution_Time : 19416
+
+Scan index :   345		Start_Time : 10586559	End_Time : 10605747		Cycle_Execution_Time : 19188
+
+Scan index :   346		Start_Time : 10611658	End_Time : 10630771		Cycle_Execution_Time : 19113
+
+Scan index :   347		Start_Time : 10634914	End_Time : 10654406		Cycle_Execution_Time : 19492
+
+Scan index :   348		Start_Time : 10659737	End_Time : 10678827		Cycle_Execution_Time : 19090
+
+Scan index :   349		Start_Time : 10683489	End_Time : 10704611		Cycle_Execution_Time : 21122
+
+Scan index :   350		Start_Time : 10708883	End_Time : 10728323		Cycle_Execution_Time : 19440
+
+Scan index :   351		Start_Time : 10733615	End_Time : 10752816		Cycle_Execution_Time : 19201
+
+Scan index :   352		Start_Time : 10757880	End_Time : 10777058		Cycle_Execution_Time : 19178
+
+Scan index :   353		Start_Time : 10781141	End_Time : 10800535		Cycle_Execution_Time : 19394
+
+Scan index :   354		Start_Time : 10805607	End_Time : 10824691		Cycle_Execution_Time : 19084
+
+Scan index :   355		Start_Time : 10828881	End_Time : 10848318		Cycle_Execution_Time : 19437
+
+Scan index :   356		Start_Time : 10853723	End_Time : 10873131		Cycle_Execution_Time : 19408
+
+Scan index :   357		Start_Time : 10878202	End_Time : 10899606		Cycle_Execution_Time : 21404
+
+Scan index :   358		Start_Time : 10903910	End_Time : 10925952		Cycle_Execution_Time : 22042
+
+Scan index :   359		Start_Time : 10931270	End_Time : 10950745		Cycle_Execution_Time : 19475
+
+Scan index :   360		Start_Time : 10956118	End_Time : 10976703		Cycle_Execution_Time : 20585
+
+Scan index :   361		Start_Time : 10980950	End_Time : 11002176		Cycle_Execution_Time : 21226
+
+Scan index :   362		Start_Time : 11007653	End_Time : 11027557		Cycle_Execution_Time : 19904
+
+Scan index :   363		Start_Time : 11031696	End_Time : 11052245		Cycle_Execution_Time : 20549
+
+Scan index :   364		Start_Time : 11057339	End_Time : 11076672		Cycle_Execution_Time : 19333
+
+Scan index :   365		Start_Time : 11081866	End_Time : 11101366		Cycle_Execution_Time : 19500
+
+Scan index :   366		Start_Time : 11105564	End_Time : 11125688		Cycle_Execution_Time : 20124
+
+Scan index :   367		Start_Time : 11130622	End_Time : 11149993		Cycle_Execution_Time : 19371
+
+Scan index :   368		Start_Time : 11155125	End_Time : 11174306		Cycle_Execution_Time : 19181
+
+Scan index :   369		Start_Time : 11178600	End_Time : 11197844		Cycle_Execution_Time : 19244
+
+Scan index :   370		Start_Time : 11203276	End_Time : 11222725		Cycle_Execution_Time : 19449
+
+Scan index :   371		Start_Time : 11226942	End_Time : 11246359		Cycle_Execution_Time : 19417
+
+Scan index :   372		Start_Time : 11251627	End_Time : 11276161		Cycle_Execution_Time : 24534
+
+Scan index :   373		Start_Time : 11282171	End_Time : 11305721		Cycle_Execution_Time : 23550
+
+Scan index :   374		Start_Time : 11309997	End_Time : 11330081		Cycle_Execution_Time : 20084
+
+Scan index :   375		Start_Time : 11336140	End_Time : 11374612		Cycle_Execution_Time : 38472
+
+Scan index :   376		Start_Time : 11382388	End_Time : 11405041		Cycle_Execution_Time : 22653
+
+Scan index :   377		Start_Time : 11410362	End_Time : 11429624		Cycle_Execution_Time : 19262
+
+Scan index :   378		Start_Time : 11434617	End_Time : 11453946		Cycle_Execution_Time : 19329
+
+Scan index :   379		Start_Time : 11458181	End_Time : 11479577		Cycle_Execution_Time : 21396
+
+Scan index :   380		Start_Time : 11486002	End_Time : 11505463		Cycle_Execution_Time : 19461
+
+Scan index :   381		Start_Time : 11509776	End_Time : 11529338		Cycle_Execution_Time : 19562
+
+Scan index :   382		Start_Time : 11534146	End_Time : 11553886		Cycle_Execution_Time : 19740
+
+Scan index :   383		Start_Time : 11558211	End_Time : 11592145		Cycle_Execution_Time : 33934
+
+Scan index :   384		Start_Time : 11598243	End_Time : 11617861		Cycle_Execution_Time : 19618
+
+Scan index :   385		Start_Time : 11622981	End_Time : 11642342		Cycle_Execution_Time : 19361
+
+Scan index :   386		Start_Time : 11646593	End_Time : 11665886		Cycle_Execution_Time : 19293
+
+Scan index :   387		Start_Time : 11671028	End_Time : 11690243		Cycle_Execution_Time : 19215
+
+Scan index :   388		Start_Time : 11695440	End_Time : 11714700		Cycle_Execution_Time : 19260
+
+Scan index :   389		Start_Time : 11718973	End_Time : 11738099		Cycle_Execution_Time : 19126

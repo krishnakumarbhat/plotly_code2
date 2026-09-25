@@ -1,0 +1,42 @@
+{ 
+	"reprocessingInputFileStreams": [
+		{
+			"key": "BN_CALIFR",
+			"files": [
+			]
+		},
+		{
+			"key": "BN_FASETH",
+			"files": [
+"/input/input_logs/I360/DS_01/BN_RADETH/25_07_I360_SRR_3_8_104_MRR_3_8_0_IPN_FACF2E_TRACKER_KPI_SRR_DS_01_BN_RADETH_WBA41BX0707M52225_20240228_110315_0000.MF4"
+			]
+		},
+		{
+			"key": "SRR_DEBUG",
+			"files": [
+                
+			]
+		},
+		{
+			"key":"SRR_REFERENCE",
+			"files": [ 	
+"/input/input_logs/I360/DS_01/MT_RE/25_07_I360_SRR_3_8_104_MRR_3_8_0_IPN_FACF2E_TRACKER_KPI_SRR_DS_01_MT_RE_WBA41BX0707M52225_20240228_110315_0000.MF4"
+			]
+ 
+		},
+		{
+			"key":"SRR50_RAW",
+			"files": [ 	
+
+			]
+ 
+		},
+		{
+			"key":"MRR40_RAW",
+			"files": [ 	
+
+			]
+ 
+		}
+	]
+}

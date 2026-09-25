@@ -1,0 +1,162 @@
+##############################################################
+#####  Load configuration                                #####
+##############################################################
+
+[MESSAGE][executable] Options loaded successfully from .xml file (C:\Work\Git\SG_StationaryGeometries\tools\scripts\executable_config.xml)
+Reading executable config file from here (C:\Work\Git\SG_StationaryGeometries\tools\scripts\executable_config.xml)
+
+##############################################################
+#####  Executable resim - configuration                  #####
+##############################################################
+
+lib_name                               	= "stationary_geometries_wrapper"                                                                                                                    
+lib_include_folder                     	= "C:\Work\Git\SG_StationaryGeometries\build\development\components\resim\resim_wrapper\Release"                                                     
+input_file                             	= "C:\Logs\KPI_set_OD\25_07_I440_SRR_0_0_0_MRR_4_20_1_FVA_1022_retest_MRR40_RAW_WBA41BX0007M97040_20241009_074143_0077_rRf360_t0_10100309v205p50.keg"
+logging_folder                         	= "logging"                                                                                                                                          
+config/executable_xml                  	= "C:\Work\Git\SG_StationaryGeometries\tools\scripts\executable_config.xml"                                                                          
+config/lib_xml                         	= ""                                                                                                                                                 
+config/lib_show_options                	= "false"                                                                                                                                            
+mode/continuous_resim                  	= "false"                                                                                                                                            
+mode/continuous_logging                	= "true"                                                                                                                                             
+mode/copy_lib_on_load                  	= "false"                                                                                                                                            
+data_injection/append_scalar_dimensions	= "false"                                                                                                                                            
+data_injection/fill_missing            	= "true"                                                                                                                                             
+data_injection/remove_excessing        	= "true"                                                                                                                                             
+data_injection/adjust_timestamps       	= "true"                                                                                                                                             
+execution/source                       	= ""                                                                                                                                                 
+execution/target                       	= ""                                                                                                                                                 
+loggers/suppress_BIN                   	= "false"                                                                                                                                            
+loggers/suppress_CSV                   	= "false"                                                                                                                                            
+loggers/suppress_KEG                   	= "false"                                                                                                                                            
+loggers/suppress_MESSAGEPACK           	= "false"                                                                                                                                            
+loggers/combined/active                	= "false"                                                                                                                                            
+loggers/combined/name                  	= "combined_keg_logger"                                                                                                                              
+loggers/combined/compression_level     	= "3"                                                                                                                                                
+loggers/combined/block_size            	= "64"                                                                                                                                               
+loggers/combined/async                 	= "true"                                                                                                                                             
+debug/list_used_signals                	= "false"
+
+
+##############################################################
+#####  Resimulating logfile - load dynamic library       #####
+##############################################################
+
+Data_Manager: Loading comp resim library: stationary_geometries_wrapper
+[MESSAGE][components] Component resim library loaded successfully (C:\Work\Git\SG_StationaryGeometries\build\development\components\resim\resim_wrapper\Release\stationary_geometries_wrapper.dll).
+
+##############################################################
+#####  Resimulating logfile - load configuration         #####
+##############################################################
+
+No config file for component resim (components) specified, using default settings. Use -config/lib_xml "/path/to.xml" to specify it.
+
+##############################################################
+#####  Resimulating logfile - load logfile data          #####
+##############################################################
+
+Data_Manager: Loading input file: C:\Logs\KPI_set_OD\25_07_I440_SRR_0_0_0_MRR_4_20_1_FVA_1022_retest_MRR40_RAW_WBA41BX0007M97040_20241009_074143_0077_rRf360_t0_10100309v205p50.keg
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.id, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.mounting_position.vcs_boresight_azimuth_angle, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.mounting_position.vcs_boresight_elevation_angle, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.mounting_position.vcs_position.longitudinal, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.mounting_position.vcs_position.lateral, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.mounting_position.vcs_position.height, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.polarity, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.sensor_sw_version, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.sensor_type, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.mounting_location, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.range_limits, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.fov_min_az_rad, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.fov_max_az_rad, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.fov_min_el_rad, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.fov_max_el_rad, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.min_aliaised_range_rate, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.v_wrapping, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/constant.r_wrapping, expected: 393x1x4, provided: 393x10x4).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.is_valid, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.timestamp_us, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.number_of_valid_detections, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.vcs_velocity.longitudinal, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.vcs_velocity.lateral, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.yaw_rate_calc_dps, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.vehicle_speed_calc_mps, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.look_index, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: RADAR_PARAMS/sensors/variable.look_id, expected: 393x1, provided: 393x10).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.sensor_id, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.det_id, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.range, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.std_range, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.range_rate, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.std_range_rate, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.azimuth, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.std_azimuth, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.elevation, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.std_elevation, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.snr, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.rcs, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.confid_azimuth, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.confid_elevation, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.f_super_res, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.f_host_veh_clutter, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.f_nd_target, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/raw.f_bistatic, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.vcs_position_x, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.vcs_position_y, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.vcs_position_z, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.vcs_position_cov_scm, expected: 393x900x2x2, provided: 393x9408x2x2).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.global_id, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.range_rate_compensated, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.std_range_rate_compensated_scm, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.vcs_az, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.std_vcs_az_scm, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.cos_vcs_az, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.sin_vcs_az, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.vcs_cross_covariances_scm, expected: 393x900x5, provided: 393x9408x5).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.next_sorted_idx, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.prev_sorted_idx, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.motion_status, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.f_azimuth_error_stat_mov, expected: 393x900, provided: 393x9408).
+Signal data exceeding, dropping unused data (signal: DETECTIONS/dets_raw/processed.f_ok_to_use, expected: 393x900, provided: 393x9408).
+Input file data type not matching expected data type, converting to UNKNOWN data type (RADAR_PARAMS/sensors/constant.id;RADAR_PARAMS/sensors/constant.mounting_position.vcs_boresight_azimuth_angle;RADAR_PARAMS/sensors/constant.mounting_position.vcs_boresight_elevation_angle;RADAR_PARAMS/sensors/constant.mounting_position.vcs_position.longitudinal;RADAR_PARAMS/sensors/constant.mounting_position.vcs_position.lateral;RADAR_PARAMS/sensors/constant.mounting_position.vcs_position.height;RADAR_PARAMS/sensors/constant.polarity;RADAR_PARAMS/sensors/constant.sensor_sw_version;RADAR_PARAMS/sensors/constant.sensor_type;RADAR_PARAMS/sensors/constant.mounting_location;RADAR_PARAMS/sensors/constant.range_limits;RADAR_PARAMS/sensors/constant.fov_min_az_rad;RADAR_PARAMS/sensors/constant.fov_max_az_rad;RADAR_PARAMS/sensors/constant.fov_min_el_rad;RADAR_PARAMS/sensors/constant.fov_max_el_rad;RADAR_PARAMS/sensors/constant.min_aliaised_range_rate;RADAR_PARAMS/sensors/constant.v_wrapping;RADAR_PARAMS/sensors/constant.r_wrapping;RADAR_PARAMS/sensors/variable.is_valid;RADAR_PARAMS/sensors/variable.timestamp_us;RADAR_PARAMS/sensors/variable.number_of_valid_detections;RADAR_PARAMS/sensors/variable.vcs_velocity.longitudinal;RADAR_PARAMS/sensors/variable.vcs_velocity.lateral;RADAR_PARAMS/sensors/variable.yaw_rate_calc_dps;RADAR_PARAMS/sensors/variable.vehicle_speed_calc_mps;RADAR_PARAMS/sensors/variable.look_index;RADAR_PARAMS/sensors/variable.look_id;DETECTIONS/number_of_valid_detections;DETECTIONS/dets_raw/raw.sensor_id;DETECTIONS/dets_raw/raw.det_id;DETECTIONS/dets_raw/raw.range;DETECTIONS/dets_raw/raw.std_range;DETECTIONS/dets_raw/raw.range_rate;DETECTIONS/dets_raw/raw.std_range_rate;DETECTIONS/dets_raw/raw.azimuth;DETECTIONS/dets_raw/raw.std_azimuth;DETECTIONS/dets_raw/raw.elevation;DETECTIONS/dets_raw/raw.std_elevation;DETECTIONS/dets_raw/raw.snr;DETECTIONS/dets_raw/raw.rcs;DETECTIONS/dets_raw/raw.confid_azimuth;DETECTIONS/dets_raw/raw.confid_elevation;DETECTIONS/dets_raw/raw.f_super_res;DETECTIONS/dets_raw/raw.f_host_veh_clutter;DETECTIONS/dets_raw/raw.f_nd_target;DETECTIONS/dets_raw/raw.f_bistatic;DETECTIONS/dets_raw/processed.vcs_position_x;DETECTIONS/dets_raw/processed.vcs_position_y;DETECTIONS/dets_raw/processed.vcs_position_z;DETECTIONS/dets_raw/processed.vcs_position_cov_scm;DETECTIONS/dets_raw/processed.global_id;DETECTIONS/dets_raw/processed.range_rate_compensated;DETECTIONS/dets_raw/processed.std_range_rate_compensated_scm;DETECTIONS/dets_raw/processed.vcs_az;DETECTIONS/dets_raw/processed.std_vcs_az_scm;DETECTIONS/dets_raw/processed.cos_vcs_az;DETECTIONS/dets_raw/processed.sin_vcs_az;DETECTIONS/dets_raw/processed.vcs_cross_covariances_scm;DETECTIONS/dets_raw/processed.next_sorted_idx;DETECTIONS/dets_raw/processed.prev_sorted_idx;DETECTIONS/dets_raw/processed.motion_status;DETECTIONS/dets_raw/processed.f_azimuth_error_stat_mov;DETECTIONS/dets_raw/processed.f_ok_to_use;VEHICLE/host/vehicle_index;VEHICLE/host/speed;VEHICLE/host/vcs_speed;VEHICLE/host/acceleration;VEHICLE/host/vcs_lat_acceleration;VEHICLE/host/vcs_long_acceleration;VEHICLE/host/yaw_rate_rad;VEHICLE/host/vcs_sideslip;VEHICLE/host/curvature_rear;VEHICLE/host/dist_rear_axle_to_vcs_m;VEHICLE/host/rear_cornering_compliance;VEHICLE/host/speed_correction_factor;VEHICLE/host/speed_qf;VEHICLE/host/yaw_rate_qf;VEHICLE/host/lat_accel_qf;VEHICLE/host/long_accel_qf)
+Bin signals found which can be used within the component resim: 80
+Data_Manager: Input file data loading finished
+
+##############################################################
+#####  Resimulating logfile - executing                  #####
+##############################################################
+
+Progress: Initialize
+[MESSAGE] Specified folder does not exist, creating it (C:\Logs\KPI_set_OD\logging\25_07_I440_SRR_0_0_0_MRR_4_20_1_FVA_1022_retest_MRR40_RAW_WBA41BX0007M97040_20241009_074143_0077_rRf360_t0_10100309v205p50.keg) (in: create_folder_if_not_existing)
+[WARNING][components] Logging folder length is close to max path length allowed by Windows. Issues with logging could occur. (C:\Logs\KPI_set_OD\logging\25_07_I440_SRR_0_0_0_MRR_4_20_1_FVA_1022_retest_MRR40_RAW_WBA41BX0007M97040_20241009_074143_0077_rRf360_t0_10100309v205p50.keg).
+[MESSAGE][components] Using file for logging (C:\Logs\KPI_set_OD\logging\25_07_I440_SRR_0_0_0_MRR_4_20_1_FVA_1022_retest_MRR40_RAW_WBA41BX0007M97040_20241009_074143_0077_rRf360_t0_10100309v205p50.keg\SGOutput.keg)
+Progress: Step execution
+[WARNING][components] input signal (ROT/detections/num_valid) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/raw_det_id) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/objTrkID) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/vcs_x) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/vcs_y) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/rngrate_dealiased) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/rngrate_comp) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/clusterID) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/sensorID) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/motion_status) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/wheel_spin) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_dealiased) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_double_bounce) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_FOV_edge) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_rr_inlier) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_used_in_rr_msmt_update) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_close_target) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_inside_gate) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_ok_to_use) is unitialized.
+[WARNING][components] input signal (ROT/detections/detection/f_on_guardrail) is unitialized.
+
+Progress: Terminate
+Progress: [0;33mWarnings: 21  Errors: 0[m
+
+Summary:
+Input files:  1
+Issues:       [0;33mWarnings: 21  Errors: 0[m
+Total time:   2.554438s.
+Average time: Cycles per second (including/excluding loading libs & logfile data): 154/419
+

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<CALIBRATION_COMPONENT>
+  <Section>-------Fta related output-----</Section>
+  <record>
+    <NAME>fta_brake_deceleration_request</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>float32_T</DATA_TYPE>
+    <DATA_RESOLUTION>0.00001f</DATA_RESOLUTION>
+    <RANGE_MIN>0.0f</RANGE_MIN>
+    <RANGE_MAX>10.0f</RANGE_MAX>
+    <Comment>range max limited by p_cals->k_fta_brake_deceleration_max</Comment>
+    <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+  </record>
+   <record>
+    <NAME>fta_target_gap</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>float32_T</DATA_TYPE>
+    <DATA_RESOLUTION>0.00001f</DATA_RESOLUTION>
+    <RANGE_MIN>0.0f</RANGE_MIN>
+    <RANGE_MAX>60.0f</RANGE_MAX>
+    <Comment>TA_INVALID_DISTANCE gets truncated to BMW_TARGET_GAP_LIMIT_MAX</Comment>
+    <DEFAULT_VALUE>60.0f</DEFAULT_VALUE>
+  </record> 
+   <record>
+    <NAME>fta_ttc</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>float32_T</DATA_TYPE>
+    <DATA_RESOLUTION>0.00001f</DATA_RESOLUTION>
+    <RANGE_MIN>0.0f</RANGE_MIN>
+    <RANGE_MAX>100.0f</RANGE_MAX>
+    <Comment>range max limited by TA_INVALID_TTC</Comment>
+    <DEFAULT_VALUE>100.0f</DEFAULT_VALUE>
+  </record>   
+  <record>
+    <NAME>fta_alert_level</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>4u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>  
+  <record>
+    <NAME>fta_symbol_request</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>4u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>  
+  <record>
+    <NAME>fta_brake_threshold_reduction</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>3u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>
+  <record>
+    <NAME>fta_brake_conditioning</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>4u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>
+  <record>
+    <NAME>fta_target_id</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>255u</RANGE_MAX>
+    <Comment>range max limited by type</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>   
+  <record>
+    <NAME>fta_maneuver_direction</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>1u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>   
+    <record>
+    <NAME>f_diagnostic_mode</NAME>
+    <Comp>Ta_Fta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>boolean_T</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>1u</RANGE_MAX>
+    <Comment>range max limited by type</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>   
+  <Section>-------Flags for enabling subfunctionalities-----</Section>
+  <record>
+    <NAME>f_fta_enable</NAME>
+    <Comp>Ta_Output_Enable_Flags</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>1u</RANGE_MAX>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>     
+  <record>
+    <NAME>f_rta_enable</NAME>
+    <Comp>Ta_Output_Enable_Flags</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>1u</RANGE_MAX>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>
+  <record>
+    <NAME>f_rta_enable_turning_area</NAME>
+    <Comp>Ta_Output_Enable_Flags</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>1u</RANGE_MAX>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>  
+  <record>
+    <NAME>f_rta_enable_dynamic_area</NAME>
+    <Comp>Ta_Output_Enable_Flags</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>1u</RANGE_MAX>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>    
+  <Section>-------Rta related outputs-----</Section>
+    <record>
+    <NAME>rta_dynamic_area_status</NAME>
+    <Comp>Ta_Rta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>25u</RANGE_MAX>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record> 
+    <record>
+    <NAME>rta_turning_area_status</NAME>
+    <Comp>Ta_Rta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>25u</RANGE_MAX>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>
+    <record>
+    <NAME>rta_alert_left</NAME>
+    <Comp>Ta_Rta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>4u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>  
+    <record>
+    <NAME>rta_alert_right</NAME>
+    <Comp>Ta_Rta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>uint8_t</DATA_TYPE>
+    <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+    <RANGE_MIN>0u</RANGE_MIN>
+    <RANGE_MAX>4u</RANGE_MAX>
+    <Comment>range max limited by enum definition</Comment>
+    <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+  </record>  
+  <Section>-------General Ta outputs-----</Section> 
+    <record>
+    <NAME>ta_current_deceleration_estimate</NAME>
+    <Comp>Ta_Output</Comp>
+    <Module>Ta_Output_Bmw</Module>
+    <DATA_TYPE>float32_T</DATA_TYPE>
+    <DATA_RESOLUTION>0.00001f</DATA_RESOLUTION>
+    <RANGE_MIN>0.0f</RANGE_MIN>
+    <RANGE_MAX>10.0f</RANGE_MAX>
+    <Comment>range max limited by p_cals->k_fta_brake_deceleration_max</Comment>
+    <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+  </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

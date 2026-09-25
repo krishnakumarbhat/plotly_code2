@@ -1,0 +1,21 @@
+target_sources(Feature_Building_Kit PRIVATE ${CMAKE_CURRENT_LIST_FILE})
+target_include_directories(Feature_Building_Kit PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+target_link_libraries(Feature_Building_Kit Tracker_api_object_output)
+target_link_libraries(Feature_Building_Kit Tracker_api_object_legacy_output)
+target_link_libraries(Feature_Building_Kit Tracker_api_vehicle_output)
+target_link_libraries(Feature_Building_Kit Tracker_api_constants)
+target_link_libraries(Feature_Building_Kit Tracker_api_status_output)
+target_link_libraries(Feature_Building_Kit Tracker_api_guardrail_output)
+target_link_libraries(Feature_Building_Kit Tracker_api_detections_output)
+target_link_libraries(Feature_Building_Kit Tracker_api_radar_parameter_output)
+if(TARGET GDSRTracker)
+   target_link_libraries(Feature_Building_Kit GDSRTracker)
+endif()
+
+if(TARGET Z2_SRR)
+   target_link_libraries(Feature_Building_Kit Z2_SRR)
+endif()
+
+include(${CMAKE_CURRENT_LIST_DIR}/context/pa_gdsr_context.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/data_ports/pa_gdsr_data_ports.cmake)

@@ -1,0 +1,1748 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CALIBRATION_GENERIC_INFO>
+    <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+    <CAL_SIZE_MACRO>TA_CAL_SIZE</CAL_SIZE_MACRO>
+    <COMPONENT_NAME>Ta</COMPONENT_NAME>
+    <CUSTOMERS>[Generic BMW_SP25 Rivian_SRR6]</CUSTOMERS>
+    <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+    <FILE_NAME>ta_calibration</FILE_NAME>
+    <STRUCTURE_OBJ_NAME>Ta_Cal</STRUCTURE_OBJ_NAME>
+  </CALIBRATION_GENERIC_INFO>
+  <CALIBRATION_HEADER>
+    <record>
+      <NAME>version</NAME>
+      <VALUE>46</VALUE>
+    </record>
+  </CALIBRATION_HEADER>
+  <CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_ta_always_overwrite_ta_mode_to_both</NAME>
+      <DESCRIPTION>If any alert is raised, set TA mode to BOTH (dont distinguish between front/rear for qualifications).</DESCRIPTION>
+      <Comp>Ta_Enable_Flags</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_qualifying_cycles</NAME>
+      <DESCRIPTION>Number of cycle to qualify an alert level.</DESCRIPTION>
+      <Comp>Ta_Alert_Debouncer</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_f_only_allow_consecutive_ttc_based_alert_levels</NAME>
+      <DESCRIPTION>Flag to only allow consecutive alerts. Applies to alert levels 3 and higher.</DESCRIPTION>
+      <Comp>Ta_Alert_Debouncer</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_f_skip_holding_for_single_alert_level_drop</NAME>
+      <DESCRIPTION>Flag to skip alert level holding if the drop is only to one level lower. Only affects drop from level 4.</DESCRIPTION>
+      <Comp>Ta_Alert_Debouncer</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_f_only_allow_ttc_based_alert_level_for_mature_obj</NAME>
+      <DESCRIPTION>Flag to only allow TTC based alerts for tracker objects with status MATURE. Applies to alert levels 2 and higher.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_holding_cycles</NAME>
+      <DESCRIPTION>Number of cycle for holding an alert level.</DESCRIPTION>
+      <Comp>Ta_Alert_Debouncer</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_prediction_steps_max</NAME>
+      <DESCRIPTION>Maximum number of steps to predict trajectories of the ego and the relevant objects.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>20u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_1_ttp_threshold</NAME>
+      <DESCRIPTION>TA raises an alert level 1 for an object with a calculated TTP smaller than or equal to the specified value based on alert trigger sensitivity [EARLY NORMAL LATE].</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>s</UNIT>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[8.0f 6.0f 4.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_active_obj_ttp_offset</NAME>
+      <DESCRIPTION>TA raises an alert level 1 for a previously active object with a calculated TTP smaller than or equal to k_ta_alert_lvl_1_ttp_threshold plus this specified value.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>s</UNIT>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_f_apply_ttp_hysteresis_globally</NAME>
+      <DESCRIPTION>If active, k_ta_active_obj_ttp_offset is applied to all objects if a warning is currently raised. By default, k_ta_active_obj_ttp_offset is only applied to the currently warned object. </DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_1_ttp_late_trigger_host_speed_max</NAME>
+      <DESCRIPTION>TA uses the late alert trigger below the specified vehicle host speed.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_1_ttp_normal_trigger_host_speed_max</NAME>
+      <DESCRIPTION>TA uses the normal alert trigger below the specified vehicle host speed. At and above this host speed, the early trigger is used.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_2_ttc_threshold</NAME>
+      <DESCRIPTION>TA raises an alert level 2 for an object with a calculated TTC smaller than or equal to the specified value.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_3_ttc_threshold</NAME>
+      <DESCRIPTION>TA raises an alert level 3 for an object with a calculated TTC smaller than or equal to the specified value.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.2f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_3_ttb_threshold</NAME>
+      <DESCRIPTION>TA raises an alert level 3 only for an object with a calculated TTB (time-to-brake) smaller than or equal to the specified value.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.8f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_4_ttc_threshold</NAME>
+      <DESCRIPTION>TA raises an alert level 4 for an object with a calculated TTC smaller than or equal to the specified value.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.8f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_alert_lvl_4_decel_threshold</NAME>
+      <DESCRIPTION>TA raises an alert level 4 for an object with an estimated host deceleration to avoid a collision greater than or equal to the specified value.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s^2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>8.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_critical_approach_min_safe_distance</NAME>
+      <DESCRIPTION>TA considers an approach of an object to the ego with a distance smaller than the specified value as a collision.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_critical_approach_angle_diff_min</NAME>
+      <DESCRIPTION>TA considers an approach of an object to the ego only as critical above this angle difference.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.05f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_critical_approach_check_ego_circles</NAME>
+      <DESCRIPTION>TA only checks the enabled ego circle path predictions. [front middle rear].</DESCRIPTION>
+      <Comp>Ta_Enable_Flags</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>[1u 1u 1u]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_max_pred_yaw_angle</NAME>
+      <DESCRIPTION>TA only continues the ego trajectory calculation if the (absolute) predicted yaw angle to the last straight section is below this threshold.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.14f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_obj_pred_speed_min</NAME>
+      <DESCRIPTION>TA only continues object trajectory calculation if the predicted waypoint speed is equal or above this threshold.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.7f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_obj_acceleration_long_weight</NAME>
+      <DESCRIPTION>This weight factor controls the influence of the acceleration value for the object in long direction.</DESCRIPTION>
+      <Comp>Ta_Weighting_Factors</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_obj_acceleration_lat_weight</NAME>
+      <DESCRIPTION>This weight factor controls the influence of the acceleration value for the object in lat direction.</DESCRIPTION>
+      <Comp>Ta_Weighting_Factors</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_shape_gain_per_pred_step</NAME>
+      <DESCRIPTION>TA grows or shrinks an object's shape by multiplying the specified value with the object's dimensions at every prediction step. This means, the more in the future a prediction step is, the more the shape will be grown or shrunk. This is in addition to the fixed gain specified by k_ego_shape_gain_fixed. Value greater than 1: ego shape will grow, value lower than 1: ego shape will shrink</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction_Gain_Factors</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.1f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_obj_shape_gain_per_pred_step</NAME>
+      <DESCRIPTION>TA grows or shrinks the ego shape by multiplying the specified value with the ego dimensions at every prediction step. This means, the more in the future a prediction step is, the more the shape will be grown or shrunk. This is in addition to the fixed gain specified by k_obj_shape_gain_fixed. Value greater than 1: object shape will grow, value lower than 1: object shape will shrink</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction_Gain_Factors</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.1f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_shape_gain_fixed</NAME>
+      <DESCRIPTION>TA grows or shrinks the ego shape by multiplying the specified value with the ego dimensions once at the beginning of the prediction phase. Value greater than 1: ego shape will be increased, value lower than 1: ego shape will be decreased</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction_Gain_Factors</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_obj_shape_gain_fixed</NAME>
+      <DESCRIPTION>TA grows or shrinks an object's shape by multiplying the specified value with the object's dimensions once at the beginning of the prediction phase. Value greater than 1: object shape will be increased, value lower than 1: object shape will be decreased</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction_Gain_Factors</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_speed</NAME>
+      <DESCRIPTION>TA only marks objects as relevant for ego vehicle in the specified speed range.</DESCRIPTION>
+      <Comp>Ta_Host_State_Validator</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.2f 14.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_speed_ofst</NAME>
+      <DESCRIPTION>TA adds these offsets to k_ta_ego_speed for objects that have been active previously.</DESCRIPTION>
+      <Comp>Ta_Host_State_Validator</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.1f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_yawrate</NAME>
+      <DESCRIPTION>TA only marks objects as relevant for an absolute ego yawrate in the specified range.</DESCRIPTION>
+      <Comp>Ta_Host_State_Validator</Comp>
+      <Module>Ta</Module>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.5f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_yawrate_ofst</NAME>
+      <DESCRIPTION>TA adds this offset to k_ta_ego_yawrate for objects that have been active previously.</DESCRIPTION>
+      <Comp>Ta_Host_State_Validator</Comp>
+      <Module>Ta</Module>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_long_acceleration</NAME>
+      <DESCRIPTION>TA only marks objects as relevant for an ego acceleration in the specified range.</DESCRIPTION>
+      <Comp>Ta_Host_State_Validator</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s^2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-20.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-20.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_long_acceleration_ofst</NAME>
+      <DESCRIPTION>TA adds this offset to k_ta_ego_long_acceleration for objects that have been active previously.</DESCRIPTION>
+      <Comp>Ta_Host_State_Validator</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s^2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-3.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_acceleration_weight</NAME>
+      <DESCRIPTION>This weight factor controls the influence of the positive acceleration value on the predicted velocity in each prediction step.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_deceleration_weight</NAME>
+      <DESCRIPTION>This weight factor controls the influence of the negative acceleration / deceleration value on the predicted velocity in each prediction step.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_pred_const_velocity_pred_steps_min</NAME>
+      <DESCRIPTION>This value indicates at which prediction step to switch to a constant velocity prediction model when TA alert level 4 was active in previous cycle.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>40u</RANGE_MAX>
+      <DEFAULT_VALUE>40u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_circle_offset</NAME>
+      <DESCRIPTION>This weight factor adds an additional offset to the host circles.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-0.5f</RANGE_MIN>
+      <RANGE_MAX>0.5f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_circle_host_length_factor</NAME>
+      <DESCRIPTION>This weight factor controls the influence of the host vehicle length when calculating the host vehicle circle offsets.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.5f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_ego_yawangle_integration_yawrate_min</NAME>
+      <DESCRIPTION>This value indicates the minimum (absolute) yawrate value to start integrating the ego yawangle. Below this threshold the yawangle resets.</DESCRIPTION>
+      <Comp>Ta_Trajectory_Prediction</Comp>
+      <Module>Ta</Module>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.01f</RANGE_MIN>
+      <RANGE_MAX>0.10f</RANGE_MAX>
+      <DEFAULT_VALUE>0.01f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_ta_enable_debug_mode</NAME>
+      <DESCRIPTION>TA uses this flag in order to turn on/off the debug mode which enables object position manipulation.</DESCRIPTION>
+      <Comp>Ta_Enable_Flags</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_fta_enable</NAME>
+      <DESCRIPTION>TA uses this flag in order to turn on/off the FTA subfunction.</DESCRIPTION>
+      <Comp>Ta_Fta_Enable_Flags</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_exist_prblty</NAME>
+      <DESCRIPTION>FTA puts only objects with an existence probability in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.7f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_exist_prblty_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with an existence probability outside of the sum of the specified values and k_fta_obj_exist_prblty entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-1.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.2f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_long_vel_rel</NAME>
+      <DESCRIPTION>FTA adds only objects with a relative vcs long velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-10.f 10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_long_vel_rel_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a relative vcs long velocity outside of the sum of the specified values and k_fta_obj_vcs_long_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_lat_vel_rel</NAME>
+      <DESCRIPTION>FTA adds only objects with a relative vcs lat velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-10.f 10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_lat_vel_rel_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a relative vcs lat velocity outside of the sum of the specified values and k_fta_obj_vcs_lat_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_long_vel</NAME>
+      <DESCRIPTION>FTA adds only objects with a vcs long velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-20.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_long_vel_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a vcs long velocity outside of the sum of the specified values and k_fta_obj_vcs_long_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_lat_vel</NAME>
+      <DESCRIPTION>FTA only adds objects with a vcs lat velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-20.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_lat_vel_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a vcs lat velocity outside of the sum of the specified values and k_fta_obj_vcs_lat_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_straight_host_curvature_max</NAME>
+      <DESCRIPTION>For TA to assume that the host vehicle is driving straight, the host curvature is must be lower than this parameter.</DESCRIPTION>
+      <Comp>Ta_Object_Filter</Comp>
+      <Module>Ta</Module>
+      <UNIT>1/m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.01f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_lookup_turning_host_speed</NAME>
+      <DESCRIPTION>This host speed parameter configures the lookup table for the host turning logic depending on curvature.</DESCRIPTION>
+      <Comp>Ta_Object_Filter_Lookup</Comp>
+      <Module>Ta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0f 4.0f 7.0f 10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ta_lookup_turning_host_curvature_min</NAME>
+      <DESCRIPTION>For TA to assume that the host vehicle is turning, the host curvature is must be greater than this lookup parameter depending on host vehicle speed set in k_ta_lookup_turning_host_speed.</DESCRIPTION>
+      <Comp>Ta_Object_Filter_Lookup</Comp>
+      <Module>Ta</Module>
+      <UNIT>1/m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.033f 0.033f 0.033f 0.033f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vcs_long_pos_straight_min</NAME>
+      <DESCRIPTION>In straight scenarios, FTA only adds objects that are generally positioned in front of the host vehicle to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-1.0f</RANGE_MIN>
+      <RANGE_MAX>0.0f</RANGE_MAX>
+      <DEFAULT_VALUE>-0.4f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_heading</NAME>
+      <DESCRIPTION>In curved scenarios, FTA only adds objects with an absolute heading in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.2f 1.7f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_heading_straight</NAME>
+      <DESCRIPTION>In straight scenarios, FTA only adds objects with an absolute heading in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.1f 1.7f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_heading_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with an absolute heading outside of the sum of the specified values and k_fta_obj_heading entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.1f 0.1f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_heading_rate</NAME>
+      <DESCRIPTION>In turning scenarios, FTA only adds objects with an absolute heading rate in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_heading_rate_straight</NAME>
+      <DESCRIPTION>In straight scenarios, FTA only adds objects with an absolute heading rate in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_heading_rate_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with an absolute heading rate outside of the sum of the specified values and k_fta_obj_heading_rate entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.1f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_speed</NAME>
+      <DESCRIPTION>FTA only adds objects with a speed in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.7f 11.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_speed_straight</NAME>
+      <DESCRIPTION>FTA only adds objects with a speed in the specified value range on its list of active objects when driving straight.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.33f 11.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_speed_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a speed outside of the sum of the specified values and k_fta_obj_speed entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.2f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_length</NAME>
+      <DESCRIPTION>FTA only adds objects with a length in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 5.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_length_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a length outside of the sum of the specified values and k_fta_obj_length entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_width</NAME>
+      <DESCRIPTION>FTA only adds objects with a width in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 2.5f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_width_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a width outside of the sum of the specified values and k_fta_obj_width entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_area</NAME>
+      <DESCRIPTION>FTA only adds objects with an area in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m^2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 5.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_area_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with an area outside of the sum of the specified values and k_fta_obj_area entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m^2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vru_class_prob</NAME>
+      <DESCRIPTION>FTA only adds objects with a VRU class probability in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.5f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_vru_class_prob_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with a VRU class probability outside of the sum of the specified values and k_fta_obj_vru_class_prob entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-1.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.1f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_age_min</NAME>
+      <DESCRIPTION>FTA only adds objects with an object age greater than the specified threshold on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>25u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_ego_obj_heading_diff</NAME>
+      <DESCRIPTION>FTA only adds objects with an absolute heading difference to the turning host vehicle in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.25f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_ego_obj_heading_diff_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with an absolute heading difference to the turning host vehicle outside of the sum of the specified values and k_fta_ego_obj_heading_diff entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.15f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_eclipse_value</NAME>
+      <DESCRIPTION>FTA only adds objects with an eclipse value in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.3f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_eclipse_value_ofst</NAME>
+      <DESCRIPTION>FTA removes objects with an eclipse value outside of the sum of the specified values and k_fta_obj_eclipse_value entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.05f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_obj_velocity_heading_diff_max</NAME>
+      <DESCRIPTION>FTA removes objects with a difference of heading and velocity vector based heading greater than the specified threshold from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Fta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>0.5f</RANGE_MAX>
+      <DEFAULT_VALUE>0.2f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_brake_deceleration_max</NAME>
+      <DESCRIPTION>FTA caps the maximum braking deceleration to this value.</DESCRIPTION>
+      <Comp>Ta_Fta_Braking_Logic</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s^2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_brake_dead_time</NAME>
+      <DESCRIPTION>FTA assumes that the vehicle will start deceleration after the specified dead time of the braking system.</DESCRIPTION>
+      <Comp>Ta_Fta_Braking_Logic</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.2f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_fta_enable_brake_gradient_logic</NAME>
+      <DESCRIPTION>FTA considers the brake gradient or jerk if this flag is enabled. It uses the value from k_fta_brake_gradient.</DESCRIPTION>
+      <Comp>Ta_Fta_Braking_Logic</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_brake_gradient</NAME>
+      <DESCRIPTION>FTA assumes that the vehicle deceleration will ramp up with the specified gradient or jerk. Only active if k_f_fta_enable_brake_gradient_logic is enabled.</DESCRIPTION>
+      <Comp>Ta_Fta_Braking_Logic</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s^3</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>-25.0f</RANGE_MAX>
+      <DEFAULT_VALUE>-40.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_fta_enable_danger_zones</NAME>
+      <DESCRIPTION>FTA uses this flag in order to turn on/off the danger zone area.</DESCRIPTION>
+      <Comp>Ta_Fta_Enable_Flags</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_danger_zone_point_size</NAME>
+      <DESCRIPTION>Sets the number of points used to construct the danger zones.</DESCRIPTION>
+      <Comp>Ta_Fta_Zones</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>8u</RANGE_MAX>
+      <DEFAULT_VALUE>7u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_danger_zone_left_long</NAME>
+      <DESCRIPTION>List of long coordinates of danger zone on ego left side.</DESCRIPTION>
+      <Comp>Ta_Fta_Zones</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[8.0f 8.0f -4.0f -4.0f -4.0f -4.0f -4.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_danger_zone_left_lat</NAME>
+      <DESCRIPTION>List of lat coordinates of danger zone on ego left side.</DESCRIPTION>
+      <Comp>Ta_Fta_Zones</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-10.0f 0.0f 0.0f -10.0f -10.0f -10.0f -10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_danger_zone_right_long</NAME>
+      <DESCRIPTION>List of long coordinates of danger zone on ego right side.</DESCRIPTION>
+      <Comp>Ta_Fta_Zones</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[8.0f 8.0f -4.0f -4.0f -4.0f -4.0f -4.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_fta_danger_zone_right_lat</NAME>
+      <DESCRIPTION>List of lat coordinates of danger zone on ego right side.</DESCRIPTION>
+      <Comp>Ta_Fta_Zones</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 10.0f 10.0f 0.0f 0.0f 0.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pfgs_symbol_request_sides_enabled</NAME>
+      <DESCRIPTION>Enable output signal to show side of critical object.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pfgs_ego_speed</NAME>
+      <DESCRIPTION>PFGS only increases qualification counter for ego vehicle in the specified speed range.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.84f 10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pfgs_qualification_counter_fast_obj</NAME>
+      <DESCRIPTION>Minimum qualification counter value for PFGS alert and brake request. Threshold will be scaled based on object speed. Value 3 means in third relevant cycle.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pfgs_qualification_counter_slow_obj</NAME>
+      <DESCRIPTION>Maximum qualification counter value for PFGS alert and brake request. Threshold will be scaled based on object speed.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>10u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pfgs_qualification_ttc_min</NAME>
+      <DESCRIPTION>Minimum TTC value of most critical object to start qualification process for PFGS.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pfgs_qualification_check_f_stationary</NAME>
+      <DESCRIPTION>Enables the check for f_stationary. If active, only objects that are not stationary can increase the qualification counter.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Fta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_tap_lvl_2_host_curvature_min</NAME>
+      <DESCRIPTION>For TAP warnings of level 2 and higher the host curvature must be greater than this parameter.</DESCRIPTION>
+      <Comp>Ta_Post_Run</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>1/m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.012f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_rta_enable</NAME>
+      <DESCRIPTION>TA uses this flag in order to turn on/off the RTA subfunction.</DESCRIPTION>
+      <Comp>Ta_Rta_Enable_Flags</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_exist_prblty</NAME>
+      <DESCRIPTION>RTA puts only objects with an existence probability in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.7f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_exist_prblty_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with an existence probability outside of the sum of the specified values and k_rta_obj_exist_prblty entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-1.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.2f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_long_vel_rel</NAME>
+      <DESCRIPTION>RTA adds only objects with a relative vcs long velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_long_vel_rel_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a relative vcs long velocity outside of the sum of the specified values and k_rta_obj_vcs_long_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-2.0f 2.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_lat_vel_rel</NAME>
+      <DESCRIPTION>RTA adds only objects with a relative vcs lat velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-20.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_lat_vel_rel_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a relative vcs lat velocity outside of the sum of the specified values and k_rta_obj_vcs_lat_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_long_vel</NAME>
+      <DESCRIPTION>RTA adds only objects with a vcs long velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_long_vel_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a vcs long velocity outside of the sum of the specified values and k_rta_obj_vcs_long_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_lat_vel</NAME>
+      <DESCRIPTION>RTA only adds objects with a vcs lat velocity in the specified value range to its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-100.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-20.0f 20.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vcs_lat_vel_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a vcs lat velocity outside of the sum of the specified values and k_rta_obj_vcs_lat_vel_rel entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_heading</NAME>
+      <DESCRIPTION>RTA only adds objects with an absolute heading in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_heading_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with an absolute heading outside of the sum of the specified values and k_rta_obj_heading entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets_Vcs_Properties</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.2f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_speed</NAME>
+      <DESCRIPTION>RTA only adds objects with a speed in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0f 16.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_speed_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a speed outside of the sum of the specified values and k_rta_obj_speed entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.1f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_length</NAME>
+      <DESCRIPTION>RTA only adds objects with a length in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 5.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_length_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a length outside of the sum of the specified values and k_rta_obj_length entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_width</NAME>
+      <DESCRIPTION>RTA only adds objects with a width in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 2.5f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_width_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a width outside of the sum of the specified values and k_rta_obj_width entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vru_class_prob</NAME>
+      <DESCRIPTION>RTA only adds objects with a VRU class probability in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.3f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_vru_class_prob_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with a VRU class probability outside of the sum of the specified values and k_rta_obj_vru_class_prob entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-1.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-0.1f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_eclipse_value</NAME>
+      <DESCRIPTION>RTA only adds objects with an eclipse value in the specified value range on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.5f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_eclipse_value_ofst</NAME>
+      <DESCRIPTION>RTA removes objects with an eclipse value outside of the sum of the specified values and k_rta_obj_eclipse_value entries from its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter_Offsets</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.1f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_obj_age_min</NAME>
+      <DESCRIPTION>RTA only adds objects with an object age greater than the specified threshold on its list of active objects.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_ttp_obj_abs_lat_vel_rel_max</NAME>
+      <DESCRIPTION>RTA only calculates a TTP value for objects that are not moving away laterally from the info zone.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>3.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_ttp_obj_abs_heading_diff_max</NAME>
+      <DESCRIPTION>RTA only calculates a TTP value for objects that are not heading away from the info zone.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.3f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_ttp_curve_suppression_obj_distance_min</NAME>
+      <DESCRIPTION>RTA only calculates a TTP value when the host vehicle is not driving straight for close objects or objects that have curvi info available.</DESCRIPTION>
+      <Comp>Ta_Rta_Object_Filter</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_rta_enable_info_zones</NAME>
+      <DESCRIPTION>RTA uses this flag in order to turn on/off the information zone area.</DESCRIPTION>
+      <Comp>Ta_Rta_Enable_Flags</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_point_size</NAME>
+      <DESCRIPTION>Sets the number of points used to construct the info zones.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>8u</RANGE_MAX>
+      <DEFAULT_VALUE>4u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_left_long</NAME>
+      <DESCRIPTION>List of long coordinates of info zone on ego left side.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-40.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f -1.0f -26.0f -26.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_left_lat</NAME>
+      <DESCRIPTION>List of lat coordinates of info zone on ego left side.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-7.0f -1.0f -1.0f -7.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_right_long</NAME>
+      <DESCRIPTION>List of long coordinates of info zone on ego right side.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-40.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f -1.0f -26.0f -26.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_right_lat</NAME>
+      <DESCRIPTION>List of lat coordinates of info zone on ego right side.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0f 7.0f 7.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_left_long_hys</NAME>
+      <DESCRIPTION>List of long coordinates of info zone addition on ego left side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f -1.0f -1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_left_lat_hys</NAME>
+      <DESCRIPTION>List of lat coordinates of info zone addition on ego left side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 0.0f 0.0f -1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_right_long_hys</NAME>
+      <DESCRIPTION>List of long coordinates of info zone addition on ego right side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f -1.0f -1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_info_zone_right_lat_hys</NAME>
+      <DESCRIPTION>List of lat coordinates of info zone addition on ego right side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Info_Zone</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f 1.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_f_higher_obj_crit_based_on_lower_ttp</NAME>
+      <DESCRIPTION>Objects that have a lower TTP will be evaluated as more critical. If disabled the criticality is based on closer distance to host vehicle.</DESCRIPTION>
+      <Comp>Ta_Warn_Level_Logic</Comp>
+      <Module>Ta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_f_rta_enable_wing_zones</NAME>
+      <DESCRIPTION>RTA uses this flag in order to turn on/off the wing zone area.</DESCRIPTION>
+      <Comp>Ta_Rta_Enable_Flags</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_point_size</NAME>
+      <DESCRIPTION>Sets the number of points used to construct the wing zones.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>8u</RANGE_MAX>
+      <DEFAULT_VALUE>4u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_left_long</NAME>
+      <DESCRIPTION>List of long coordinates of wing zone on ego left side.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0f</RANGE_MIN>
+      <RANGE_MAX>0.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f -1.0f -10.0f -10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_left_lat</NAME>
+      <DESCRIPTION>List of lat coordinates of wing zone on ego left side.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-10.0f -1.0f -1.0f -10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_right_long</NAME>
+      <DESCRIPTION>List of long coordinates of wing zone on ego right side.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0f</RANGE_MIN>
+      <RANGE_MAX>0.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f -1.0f -10.0f -10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_right_lat</NAME>
+      <DESCRIPTION>List of lat coordinates of wing zone on ego right side.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0f</RANGE_MIN>
+      <RANGE_MAX>15.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0f 10.0f 10.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_left_long_hys</NAME>
+      <DESCRIPTION>List of long coordinates of wing zone addition on ego left side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f -1.0f -1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_left_lat_hys</NAME>
+      <DESCRIPTION>List of lat coordinates of wing zone addition on ego left side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 0.0f 0.0f -1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_right_long_hys</NAME>
+      <DESCRIPTION>List of long coordinates of wing zone addition on ego right side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f -1.0f -1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_rta_wing_zone_right_lat_hys</NAME>
+      <DESCRIPTION>List of lat coordinates of wing zone addition on ego right side for hysteresis.</DESCRIPTION>
+      <Comp>Ta_Rta_Wing_Zones</Comp>
+      <Module>Ta_Rta</Module>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 1.0f 1.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

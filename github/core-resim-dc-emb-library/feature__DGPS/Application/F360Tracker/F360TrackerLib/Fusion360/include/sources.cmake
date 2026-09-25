@@ -1,0 +1,55 @@
+set(REL_PATH Fusion360/include)
+
+set(SRC_LOCAL
+    ${REL_PATH}/f360_accel.h
+    ${REL_PATH}/f360_aeb_confidence.h
+    ${REL_PATH}/f360_angle.h
+    ${REL_PATH}/f360_bounding_box.h
+    ${REL_PATH}/f360_calculate_priority.h
+    ${REL_PATH}/f360_calibrations.h
+    ${REL_PATH}/f360_circular_buffer.h
+    ${REL_PATH}/f360_cluster.h
+    ${REL_PATH}/f360_conf.h
+    ${REL_PATH}/f360_convert_tcs_posn_to_vcs_posn.h
+    ${REL_PATH}/f360_cwd_data.h
+    ${REL_PATH}/f360_dead_zone_status.h
+    ${REL_PATH}/f360_detection_hist.h
+    ${REL_PATH}/f360_detection_props.h
+    ${REL_PATH}/f360_detection_props_list.h
+    ${REL_PATH}/f360_detection_wheelspin_type.h
+    ${REL_PATH}/f360_dimensions.h
+    ${REL_PATH}/f360_globals.h
+    ${REL_PATH}/f360_host_props.h
+    ${REL_PATH}/f360_internal_reflection_buffer_slot.h
+    ${REL_PATH}/f360_interval.h
+    ${REL_PATH}/f360_iterator.h
+    ${REL_PATH}/f360_iterator_detail.h
+    ${REL_PATH}/f360_line.h
+    ${REL_PATH}/f360_local_clusters.h
+    ${REL_PATH}/f360_longi_stat_curve.h
+    ${REL_PATH}/f360_math.h
+    ${REL_PATH}/f360_math_func.h
+    ${REL_PATH}/f360_matrix_dimension.h
+    ${REL_PATH}/f360_norm_heading_angle.h
+    ${REL_PATH}/f360_object_class.h
+    ${REL_PATH}/f360_object_class_probability_type.h
+    ${REL_PATH}/f360_object_sides.h
+    ${REL_PATH}/f360_object_status.h
+    ${REL_PATH}/f360_object_track.h
+    ${REL_PATH}/f360_point.h
+    ${REL_PATH}/f360_polygon.h
+    ${REL_PATH}/f360_pseudo_msmt.h
+    ${REL_PATH}/f360_radar_sensor_props.h
+    ${REL_PATH}/f360_reference_point.h
+    ${REL_PATH}/f360_reference_point_candidate.h
+    ${REL_PATH}/f360_sort_data_type.h
+    ${REL_PATH}/f360_static_env_helpers.h
+    ${REL_PATH}/f360_static_env_poly_types.h
+    ${REL_PATH}/f360_timing_info.h
+    ${REL_PATH}/f360_track_init.h
+    ${REL_PATH}/f360_tracker_info.h
+    ${REL_PATH}/f360_trk_fltr_type.h
+    ${REL_PATH}/f360_vector.h
+)
+
+set(SRC ${SRC} ${SRC_LOCAL})

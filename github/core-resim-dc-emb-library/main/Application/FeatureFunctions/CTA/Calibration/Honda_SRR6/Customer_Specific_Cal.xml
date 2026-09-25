@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<record>
+      <NAME>k_cta_enable_modes</NAME>
+      <!-- Only use RCTA. -->
+      <VALUE>[1 0]</VALUE>
+    </record>
+    <record>
+      <NAME>k_cta_min_long_point_criticality_level</NAME>
+      <!-- Minimum Offset of the (closest) target's point of intersection with the x-axis for RCTA and FCTA. -->
+      <VALUE>[[5.0 7.0][-0.5 0.0]]</VALUE>
+    </record>
+    <record>
+      <NAME>k_cta_max_long_point_criticality_level</NAME>
+      <!-- Maximum Offset of the (closest) target's point of intersection with the x-axis for RCTA and FCTA. -->
+      <VALUE>[[-0.5 0.0][5.0 7.0]]</VALUE>
+    </record>
+    <record>
+      <NAME>k_cta_ttc_criticality_level</NAME>
+      <!-- Maximum Offset of the target's TTC for the second warning level. -->
+      <VALUE>[[3.10 3.10][3.10 3.10]]</VALUE>
+      </record>
+    <record>
+      <NAME>k_cta_max_speed</NAME>
+        <!-- Maximum speed of object to be a valid candidate for CTA.
+        \Requirements \reqtrace{SDD-CTA-k_cta_max_speed}{CFE-SRD-CTA-1075-1, CFE-SRD-CTA-1115-1} -->
+        <!-- RENAULT:?? / NISSAN:70 / MMC:70  -->
+      <VALUE>7.5</VALUE>
+    </record>
+  <record>
+    <NAME>k_cta_min_speed</NAME>
+    <!-- Minimum speed for a target to be considered.
+        \Requirements \reqtrace{SDD-CTA-k_cta_min_speed}{CFE-SRD-CTA-1077-1, CFE-SRD-CTA-1076-1} -->
+    <!-- RENAULT:1.1 / NISSAN:1.333334 / MMC:1.333334  -->
+    <VALUE>1.1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_lateral_approach_speed</NAME>
+    <!-- Minimum lateral speed of targets to be considered.
+        \Requirements \reqtrace{SDD-CTA-k_cta_min_lateral_approach_speed}{CFE-SRD-CTA-1080-1, CFE-SRD-CTA-1081-1} -->
+    <VALUE>0</VALUE>
+  </record>
+    <record>
+        <NAME>k_cta_f_calc_ttc_ego_side_enabled</NAME>
+        <!-- Switch to turn on or off calculate TTC with reference to the ego side instead of x-axis defined in VCS -->
+            <VALUE>1</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_f_use_object_min_object_age_in_cycles</NAME>
+        <!-- Flag indicating wether object age threshold is used to check cta relevance for this object. -->
+            <VALUE>1</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_f_apply_path_tracking</NAME>
+        <!-- Switch to turn on or off path tracking algorithm -->
+            <VALUE>0</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_cycles_coasted_to_ignore</NAME>
+        <!-- Defines the cycles that an object can maximal be coasted to be still considered by the algo-->
+            <VALUE>9</VALUE>
+    </record>
+  <record>
+    <NAME>k_cta_min_mature_cycles_level_qualifiction</NAME>
+    <!-- Minimum required number of consecutive cycles for an object status to be mature for activation of a criticality level. -->
+    <VALUE>2</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_steering_angle</NAME>
+    <!-- Switch to turn on or off steering-angle-based adaptation of the intersect lines associated with the criticality levels -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_obj_heading</NAME>
+    <!-- Switch to turn on or off object-heading-based adaptation of the intersect lines associated with the criticality levels -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_stop_alert_ttc</NAME>
+    <!--  Time to stop a triggered alert. \Requirements \reqtrace{SDD-CTA-k_cta_stop_alert_ttc}{CFE-SRD-CTA-486-1, CFE-SRD-CTA-492-1} -->
+    <VALUE>0.1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_heading_for_relative_velocity_calculation</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ego_abs_speed_max</NAME>
+    <VALUE>4.1667</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_enable_thres_crit_level_reset</NAME>
+    <!-- Flag indicating wether to reset the criticality level when an object passes a user defined threshold -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_angles_zone_definition</NAME>
+    <VALUE>[0.0f 2.356f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_dist_thres_crit_level_reset</NAME>
+    <VALUE>0.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_front_corners_dist_stop</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_enable_heading_exp_moving_average</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_check_reflection_signal</NAME>
+    <!--DDG-4304 If flag is set to true, objects with a f_reflection signal set to true will be considered in criticality level calculation -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_intersection_line_host_width_percentage</NAME>
+    <!--DDG-4619-->
+    <VALUE>1.0f</VALUE>
+  </record>
+  <CUSTOMER_SPECIFIC_CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_honda_max_dist_crashline</NAME>
+      <DESCRIPTION>Maximum distance between target and crashline for which the alert will be triggered </DESCRIPTION>
+      <Comp>CTA</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>200.0f</RANGE_MAX>
+      <DEFAULT_VALUE>25.0f</DEFAULT_VALUE>
+      <CONSTANT>false</CONSTANT>
+    </record>
+  </CUSTOMER_SPECIFIC_CALIBRATION_COMPONENT>
+  <record>
+    <NAME>k_cta_speed_thresh_for_rel_vel_calc</NAME>
+    <VALUE>2.7f</VALUE>
+  </record>
+</data-set>

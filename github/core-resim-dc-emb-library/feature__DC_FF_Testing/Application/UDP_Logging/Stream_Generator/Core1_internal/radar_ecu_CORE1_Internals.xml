@@ -1,0 +1,30 @@
+<FILE_NAME>radar_ecu_internal_CORE1</FILE_NAME>
+<STRUCTURE_VERSION>2</STRUCTURE_VERSION>
+<HASH_KEY>1042</HASH_KEY>
+
+
+
+<STRUCTURE_LIST>
+	<!--record-->
+		<STRUCTURE_NAME>Radar_ECU_Internal_CORE1</STRUCTURE_NAME>
+	<!--/record-->	
+</STRUCTURE_LIST>
+
+<MACRO_LIST>
+		<!--record-->
+			<ARRAY_LENGTH>RADAR_ECU__INTERNAL_CORE1_ID,95</ARRAY_LENGTH>
+		<!--/record-->
+		<!--record-->
+			<ARRAY_LENGTH>DATA_SIZE,1424</ARRAY_LENGTH>
+		<!--/record-->
+</MACRO_LIST>
+
+<SUB_MODULE_Radar_ECU_Internal_CORE1>
+		<!--record-->
+			<VARIABLE_NAME>Tracker_Internal_Data</VARIABLE_NAME>
+			<COMPONENT_TYPE>ARRAY</COMPONENT_TYPE>
+			<DATA_TYPE>unsigned8</DATA_TYPE>
+			<ARRAY_LENGTH>DATA_SIZE</ARRAY_LENGTH>
+			<PARENT_STRUCTURE_NAME>Radar_ECU_Internal_CORE1</PARENT_STRUCTURE_NAME>
+		<!--/record-->		
+</SUB_MODULE_Radar_ECU_Internal_CORE1>

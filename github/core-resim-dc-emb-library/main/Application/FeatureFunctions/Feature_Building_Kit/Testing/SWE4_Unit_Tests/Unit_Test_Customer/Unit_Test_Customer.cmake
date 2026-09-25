@@ -1,0 +1,3 @@
+target_sources(Feature_Building_Kit_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_FILE})
+
+target_include_directories(Feature_Building_Kit_Unit_Test PUBLIC ${CMAKE_CURRENT_LIST_DIR})

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Lime_Output_Control>
+	<Lime_Output_Control_XML_Version>2.0</Lime_Output_Control_XML_Version>
+	<Customer_Name>BMW_LOW</Customer_Name>
+	<RUN_MODE>E_LIME_HIL_FRAMEWORK</RUN_MODE>
+	<Binary_Path_Location>./</Binary_Path_Location>
+	<Input_File_Location>C:\Users\4nogo6\Documents\From_Hitesh\xyz_dspace_output.7z</Input_File_Location>
+	<DEBUG_MODE>E_DEBUG_DSPACE_WRITER</DEBUG_MODE>
+	<Debug_File_Type>E_DEBUG_MDF4</Debug_File_Type>
+	<Output_Path_Location>C:/Work/Logs/STLA/DGPS//DGPS_OUTPUT_SRR/</Output_Path_Location>
+	<Output_File_Name>Overtaking_from_left</Output_File_Name>
+	<DATA_INJECTION_MODE>INPUT_DATA</DATA_INJECTION_MODE>
+	<GENERATE_DIAGNOSTICS_REPORT>NONE</GENERATE_DIAGNOSTICS_REPORT>
+	<Output_File_Generation>ENABLE</Output_File_Generation>
+	<DUMP_TIMING_INFO>ENABLE</DUMP_TIMING_INFO>
+	<UDP_FRAME_TRANSMISSION>DISABLE</UDP_FRAME_TRANSMISSION>
+	<DESTINATION_IP>192.168.1.41</DESTINATION_IP>
+	<DESTINATION_PORT>5556</DESTINATION_PORT>
+</Lime_Output_Control>

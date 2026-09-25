@@ -1,0 +1,64 @@
+cmake_minimum_required(VERSION 3.16)
+
+# configure RSPP interface
+add_library(SG-Rspp-iface INTERFACE)
+set(iface_dir ${CMAKE_CURRENT_SOURCE_DIR})
+file(GLOB interface_files CONFIGURE_DEPENDS "${iface_dir}/*.h")
+target_sources(
+   SG-Rspp-iface
+      PUBLIC
+         ${interface_files}
+)
+target_include_directories(
+    SG-Rspp-iface
+        INTERFACE
+            $<BUILD_INTERFACE:${iface_dir}>
+)
+
+# configure RSPP variant
+set(RSPP_VARIANT "A" CACHE STRING "Tracker variant")
+set_property(CACHE RSPP_VARIANT PROPERTY STRINGS A B C D E F G H I J K L M N O P Q R S)
+message("RSPP: Used variant -> ${RSPP_VARIANT}")
+
+if(RSPP_VARIANT STREQUAL "A")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_a.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "B")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_b.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "C")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_c.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "D")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_d.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "E")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_e.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "F")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_f.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "G")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_g.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "H")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_h.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "I")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_i.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "J")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_j.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "K")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_k.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "L")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_l.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "M")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_m.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "N")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_n.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "O")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_o.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "P")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_p.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "Q")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_q.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "R")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_r.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+elseif(RSPP_VARIANT STREQUAL "S")
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/variants/rspp_variant_definition_s.h ${CMAKE_CURRENT_SOURCE_DIR}/rspp_variant_definition.h COPYONLY)
+endif()
+
+set(RSPP_VARIANT_NS_STR "rspp_variant_${RSPP_VARIANT}" PARENT_SCOPE)
+

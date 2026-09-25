@@ -1,0 +1,5 @@
+\DDG-3235\bsw_alert_right\rear_entry_bsi.keg
+\DDG-3235\bsw_alert_right\slide_through_rear.keg
+\DDG-3235\bsw_alert_right\slide_through_rear_far.keg
+\DDG-3235\bsw_alert_right\slide_through_rear_behind.keg
+\DDG-3235\bsw_alert_right\slide_through_rear_between_overlap.keg

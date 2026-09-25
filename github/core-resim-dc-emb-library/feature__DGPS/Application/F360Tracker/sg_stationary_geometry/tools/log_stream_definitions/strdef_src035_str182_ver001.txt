@@ -1,0 +1,63 @@
+37216
+uint64_t timestamp_us
+REPEAT200
+float contour_storage.vertices.x
+float contour_storage.vertices.y
+float contour_storage.vertices.xx
+float contour_storage.vertices.yy
+float contour_storage.vertices.xy
+float contour_storage.vertices.x1x2
+float contour_storage.vertices.y1y2
+float contour_storage.vertices.x1y2
+float contour_storage.vertices.y1x2
+float contour_storage.vertices.reliability
+uint32_t contour_storage.vertices.segment_id
+uint16_t contour_storage.vertices.age
+uint16_t contour_storage.vertices.num_cycles_no_update
+uint8_t contour_storage.vertices.drivability
+bool contour_storage.vertices.f_critical
+PADDING2
+END_REPEAT
+REPEAT100
+float contour_storage.contours.priority
+uint32_t contour_storage.contours.cluster_id
+uint32_t contour_storage.contours.unique_id
+uint16_t contour_storage.contours.num_vertices
+bool contour_storage.contours.f_selected_for_output
+PADDING1
+END_REPEAT
+uint32_t contour_storage.number_of_contours
+REPEAT300
+float detection_storage.detections.position.x
+float detection_storage.detections.position.y
+float detection_storage.detections.position.z
+float detection_storage.detections.xx
+float detection_storage.detections.yy
+float detection_storage.detections.xy
+uint16_t detection_storage.detections.current_num_neighbors
+uint16_t detection_storage.detections.cumulated_num_neighbors
+bool detection_storage.detections.f_core
+bool detection_storage.detections.f_visited
+PADDING2
+float detection_storage.detections.position_squeezed.x
+float detection_storage.detections.position_squeezed.y
+float detection_storage.detections.position_squeezed.z
+float detection_storage.detections.existence_probability
+float detection_storage.detections.probability_of_detection
+float detection_storage.detections.range_rate_compensated
+float detection_storage.detections.importance
+uint32_t detection_storage.detections.unique_id
+uint32_t detection_storage.detections.contour_id
+REPEAT2
+uint32_t detection_storage.detections.segment_id
+END_REPEAT
+uint16_t detection_storage.detections.cluster_id
+uint16_t detection_storage.detections.age
+uint8_t detection_storage.detections.drivability
+bool detection_storage.detections.f_used_in_measurement_update
+bool detection_storage.detections.f_valid
+PADDING1
+END_REPEAT
+REPEAT4
+uint8_t padding
+END_REPEAT

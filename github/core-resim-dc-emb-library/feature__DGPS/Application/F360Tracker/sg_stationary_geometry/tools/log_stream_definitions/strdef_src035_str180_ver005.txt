@@ -1,0 +1,34 @@
+12056
+uint64_t execution_timestamp_us
+uint64_t measurement_timestamp_us
+REPEAT400
+float vertices.position_x
+float vertices.position_y
+float vertices.position_variance_x
+float vertices.position_variance_y
+float vertices.position_covariance_xy
+uint16_t vertices.cycles_since_created
+uint16_t vertices.cycles_since_coasted
+uint8_t vertices.drivability
+uint8_t vertices.drivability_confidence
+PADDING2
+END_REPEAT
+REPEAT100
+uint32_t contours.unique_id
+uint16_t contours.num_vertices
+uint8_t contours.type
+PADDING1
+END_REPEAT
+uint16_t software_version.major
+uint16_t software_version.minor
+uint16_t software_version.patch
+REPEAT20
+char software_version.name
+END_REPEAT
+PADDING2
+uint32_t cycle_index
+uint16_t num_contours
+bool f_valid
+REPEAT5
+uint8_t padding
+END_REPEAT

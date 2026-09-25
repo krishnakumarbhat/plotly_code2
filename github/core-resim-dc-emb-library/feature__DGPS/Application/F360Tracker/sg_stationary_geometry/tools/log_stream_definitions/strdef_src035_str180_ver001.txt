@@ -1,0 +1,20 @@
+2096
+double timestamp
+REPEAT100
+float vertices.position_x
+float vertices.position_y
+float vertices.position_variance_x
+float vertices.position_variance_y
+float vertices.position_covariance_xy
+END_REPEAT
+REPEAT10
+uint32_t contours.unique_id
+uint16_t contours.num_vertices
+SG_Contour_Type_T contours.type
+SG_Drivability_Class_T contours.drivability
+END_REPEAT
+uint16_t num_contours
+bool f_valid
+REPEAT5
+uint8_t padding
+END_REPEAT

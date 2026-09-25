@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<root>
+	<Component_Resim_Option_Settings name="executable" type="top_level_instance">
+
+		<!--Name of library to load. Either specify complete path or just the lib name (e.g. libresim.so/resim.dll -> resim). If multiple libs are specified, all of them are loaded and concatenated into a single component resim instance.-->
+		<!--REQUIRED: Path-->
+		<lib_name value="COMPONENT_RESIM_FF" />
+
+		<!--Additional include paths in which the lib is searched. Separate multiple paths with semicolons. Environment variables can be used(e.g. "${env_name}\bin".-->
+		<!--REQUIRED: Path-->
+		<lib_include_folder value="C:\Work\Git\SG_StationaryGeometries\tools\scripts;../lib" />
+
+		<!--Specify input file name (.keg/.bin) or list of input files (.txt). For bin files, only provide one representative (e.g. _Vehicle.bin). Multiple input files have to be concatenated with ";", e.g. "log1.keg;log2.keg".-->
+		<!--REQUIRED: Path-->
+		<input_file value="" />
+
+		<!--Specify logging folder. For relative paths, it is relative to the logfile folder.-->
+		<!--REQUIRED: Path-->
+		<logging_folder value="logging" />
+
+		<config>
+
+			<!--Specify .xml config file which is used to initialize the loaded component resim lib. If not set, the default option values defined within the lib are used.-->
+			<!--REQUIRED: Path-->
+			<lib_xml value="" />
+
+			<!--If set, all options for the loaded component resim will be written to the console.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<lib_show_options value="false" />
+
+		</config>
+		<mode>
+
+			<!--If active, resimulate all provided logfiles are run continuously without resetting the component resim in between.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<continuous_resim value="false" />
+
+			<!--If active and mode/continuous_resim is set, all resimulated logfiles will log their output individually instead of continuously.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<continuous_logging value="true" />
+
+			<!--If active, a copy of the specified component resim lib is loaded. This ensures that any static memory is reset. Note that this affects only the instance loaded by the executable, implicitly loaded libs need to specify this behaviour individually.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<copy_lib_on_load value="false" />
+
+		</mode>
+		<data_injection>
+
+			<!--If set, scalar dimensions are appended for provided/expected data arrays if the number of dimensions mismatches.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<append_scalar_dimensions value="false" />
+
+			<!--If available data size is smaller than the expected data size by the component resim, fill missing values with zero.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<fill_missing value="false" />
+
+			<!--If available data size is larger than the expected data size by the component resim, remove excess values.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<remove_excessing value="false" />
+
+			<!--If timesteps are not within 0.001 and 1.000 seconds, they are adjusted (i.e. to convert ms, us, etc to seconds).-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<adjust_timestamps value="true" />
+
+		</data_injection>
+		<execution>
+
+			<!--Specify component resim name which is taken from the loaded keg file to act as source. If empty, the top level component resim from the keg files is used.-->
+			<!--REQUIRED: String-->
+			<source value="" />
+
+			<!--Specify component resim name which is executed from the loaded shared library. If empty, the top level component resim from the loaded shared library is used.-->
+			<!--REQUIRED: String-->
+			<target value="" />
+
+		</execution>
+		<loggers>
+
+			<!--Set to true to suppress all registered loggers of type BIN.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<suppress_BIN value="false" />
+
+			<!--Set to true to suppress all registered loggers of type CSV.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<suppress_CSV value="false" />
+
+			<!--Set to true to suppress all registered loggers of type KEG.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<suppress_KEG value="false" />
+
+			<!--Set to true to suppress all registered loggers of type MESSAGEPACK.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<suppress_MESSAGEPACK value="false" />
+
+			<combined>
+
+				<!--If set to active, a combined keg logger with the provided settings is created. It replaces all loggers with visible scope.-->
+				<!--REQUIRED: Boolean value (possible values: true or false)-->
+				<active value="false" />
+
+				<!--If a combined keg logger is used, the specified name will be used.-->
+				<!--REQUIRED: String-->
+				<name value="combined_keg_logger" />
+
+				<!--If a combined keg logger is used, the specified compression level is used for writing HDF datasets.-->
+				<!--REQUIRED: Integer value (limited to range: 0 to 9)-->
+				<compression_level value="3" />
+
+				<!--If a combined keg logger is used, the specified block size (number of timestamps) is used for writing HDF datasets-->
+				<!--REQUIRED: Integer value (limited to range: 1 to Inf)-->
+				<block_size value="64" />
+
+				<!--If a combined keg logger is used, the data logging is performed asynchronously. Set to false if the data needs to be written to the file after each cycle.-->
+				<!--REQUIRED: Boolean value (possible values: true or false)-->
+				<async value="true" />
+
+			</combined>
+		</loggers>
+		<debug>
+
+			<!--If set, the signals used from the current logfile are listed.-->
+			<!--REQUIRED: Boolean value (possible values: true or false)-->
+			<list_used_signals value="false" />
+
+		</debug>
+	</Component_Resim_Option_Settings>
+</root>

@@ -1,0 +1,128 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [
+        "GenericPresets.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "release_BMW_SP25_QNX7",
+            "inherits": "generic_release_unlimited",
+            "displayName": "BMW release: QNX | RSPP variant default",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/tools/cmake/toolchains/bmw_qnx7_toolchain.cmake",
+            "environment": {
+                "QNX_HOST": "/opt/tools/qnx/qnx710/host/linux/x86_64",
+                "QNX_TARGET": "/opt/tools/qnx/qnx710/target/qnx7"
+            },
+            "cacheVariables": {
+                "QNX_COMPILER_DIR_PATH": "/opt/tools/qnx/qnx710/host/linux/x86_64/usr/bin"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_QNX8",
+            "inherits": "generic_release_unlimited",
+            "displayName": "BMW release: QNX | RSPP variant default",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/tools/cmake/toolchains/bmw_qnx8_toolchain.cmake",
+            "environment": {
+                "QNX_HOST": "/opt/tools/qnx/qnx800/host/linux/x86_64",
+                "QNX_TARGET": "/opt/tools/qnx/qnx800/target/qnx",
+                "LM_LICENSE_FILE": "27002@nlnhsrk-is03.aptiv.com"
+            },
+            "cacheVariables": {
+                "QNX_COMPILER_DIR_PATH": "/opt/tools/qnx/qnx800/host/linux/x86_64/usr/bin"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_SRR_QNX7",
+            "inherits": "release_BMW_SP25_QNX7",
+            "displayName": "BMW release: SRR | QNX | RSPP/ROT variant C | SG variant Platform (inherited)",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "C",
+                "F360_TRACKER_VARIANT": "C"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_MRR_QNX7",
+            "inherits": "release_BMW_SP25_QNX7",
+            "displayName": "BMW release: MRR | QNX | RSPP/ROT variant D | SG variant Bmw_Sp25_Mrr",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "D",
+                "F360_TRACKER_VARIANT": "D",
+                "SG_VARIANT": "BMW_SP25_MRR"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_SRR_QNX8",
+            "inherits": "release_BMW_SP25_QNX8",
+            "displayName": "BMW release: SRR | QNX | RSPP/ROT variant C | SG variant Platform (inherited)",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "C",
+                "F360_TRACKER_VARIANT": "C"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_MRR_QNX8",
+            "inherits": "release_BMW_SP25_QNX8",
+            "displayName": "BMW release: MRR | QNX | RSPP/ROT variant D | SG variant Bmw_Sp25_Mrr",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "D",
+                "F360_TRACKER_VARIANT": "D",
+                "SG_VARIANT": "BMW_SP25_MRR"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release_BMW_SP25_SRR_QNX7",
+            "configurePreset": "release_BMW_SP25_SRR_QNX7",
+            "displayName": "BMW release: SRR | QNX | RSPP/ROT variant C | SG variant Platform (inherited)",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_BMW_SP25_MRR_QNX7",
+            "configurePreset": "release_BMW_SP25_MRR_QNX7",
+            "displayName": "BMW release: MRR | QNX | RSPP/ROT variant D | SG variant Bmw_Sp25_Mrr",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_BMW_SP25_SRR_QNX8",
+            "configurePreset": "release_BMW_SP25_SRR_QNX8",
+            "displayName": "BMW release: SRR | QNX | RSPP/ROT variant C | SG variant Platform (inherited)",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_BMW_SP25_MRR_QNX8",
+            "configurePreset": "release_BMW_SP25_MRR_QNX8",
+            "displayName": "BMW release: MRR | QNX | RSPP/ROT variant D | SG variant Bmw_Sp25_Mrr",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        }
+    ]
+}

@@ -1,0 +1,2 @@
+
+	Total Scan_index_miss count observed throughout the run     : 0 occurrence

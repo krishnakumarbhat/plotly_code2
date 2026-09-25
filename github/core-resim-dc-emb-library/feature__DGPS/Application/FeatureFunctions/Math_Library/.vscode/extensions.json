@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "matepek.vscode-catch2-test-adapter",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+        "streetsidesoftware.code-spell-checker",
+        "david-reis.crashacters",
+        "bbenoist.doxygen",
+        "hbenl.vscode-test-explorer",
+        "ms-vscode.test-adapter-converter",
+        "ms-vscode.notepadplusplus-keybindings"
+    ]
+}

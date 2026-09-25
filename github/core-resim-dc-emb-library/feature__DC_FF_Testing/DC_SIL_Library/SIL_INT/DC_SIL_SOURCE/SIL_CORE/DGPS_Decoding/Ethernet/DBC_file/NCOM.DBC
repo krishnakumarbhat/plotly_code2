@@ -1,0 +1,1102 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: LOGGER RTRANGE
+VAL_TABLE_ Ch_77_Diff_GPS_Type 6 "RINEX" 5 "LOG" 4 "RD" 3 "Pass-through EGPS " 2 "Pass-through sec GNSS receiver " 1 "Pass-through prim GNSS receiver" 0 "None" ;
+VAL_TABLE_ Ch_77_Diff_GPS_Format 3 "CMR" 2 "RTCA" 1 "RTCM" 0 "None" ;
+VAL_TABLE_ Ch_64_Product_Type 2 "OEM" 1 "Survey" 0 "Default" ;
+VAL_TABLE_ Ch_64_Data_Rate 6 "20 Hz " 5 "10 Hz " 4 "5 Hz" 3 "4 Hz" 2 "2 Hz" 1 "1 Hz" 0 "Disabled" ;
+VAL_TABLE_ Ch_64_Dual_Port_RAM_Stat 10 "Excellent" 9 "Good" 8 "OK" 7 "Acceptable" 6 "Slow" 5 "Sporadic" 4 "Overloaded" 3 "Down" 2 "Dead" 1 "Failed to initialise " 0 "Not fitted " ;
+VAL_TABLE_ Ch_64_Ext_GNSS_Format 9 "OWI" 8 "NCT Binary" 7 "Debug" 6 "GRIL" 5 "TSIP" 4 "GSOF" 3 "NMEA" 2 "UBX" 1 "Novatel OEM4/OEMV Binary " 0 "Novatel OEM2 Binary " ;
+VAL_TABLE_ Ch_64_Ext_GNSS_Type 14 "Novatel OEM6" 13 "Topcon B110 " 12 " Leica GX1200 " 11 "Trimble BD920 " 10 " u-Blox LEA6" 9 " NavCom Sapphire" 8 "Topcon GB-500 " 7 "Trimble AgGPS 132" 6 "Trimble 5700/5800" 5 "Generic" 4 "u-blox LEA4" 3 "Novatel OEMV" 2 "None" 1 "Novatel OEM4" 0 "Novatel Millennium or BeeLine " ;
+VAL_TABLE_ Ch_64_CPU_Type 4 "OMAP3503" 3 "None" 2 "TP600" 1 "TP500" 0 "TP400B" ;
+VAL_TABLE_ Ch_55_Ant_Power_stat 3 "Invalid" 2 "Power unknown" 1 "Power off " 0 "Power on" ;
+VAL_TABLE_ Ch_55_GNSS_Ant_Stat 3 "Unknown or invalid" 2 "Short" 1 "Open" 0 "OK" ;
+VAL_TABLE_ Ch_48_Earth_frame_Datum 2 "NAD83(2011)" 1 "ETRF2000(R08)" 0 "ITRF2008" ;
+VAL_TABLE_ Ch_48_Datum_Ellipsoid 1 "GRS80" 0 "WGS84" ;
+VAL_TABLE_ Ch_41_CAN_Baud_rate 6 "1000000" 5 "500000" 4 "250000" 3 "200000" 2 "125000" 1 "100000" 0 "Disabled" ;
+VAL_TABLE_ Ch_41_Serial_baud_Rate 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_TABLE_ Ch_29_Heading_search_option 3 "Always perform heading searches" 2 "Only search after initialisation" 1 "NoSearch, allow INS 2-ant relock" 0 "Never compute 2-ant heading" ;
+VAL_TABLE_ Ch_29_Heave_Coup_Mode 2 "Disabled " 1 "DC coupled " 0 "AC coupled" ;
+VAL_TABLE_ Ch_29_UDP_Output_Option 16 "Reserved" 15 "Reserved" 14 "Reserved" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "Reserved" 7 "MCOM" 6 "Reserved" 5 "NMEA" 4 "Reserved" 3 "Reserved" 2 "ABD robot interface" 1 "Reserved" 0 "NCOM" ;
+VAL_TABLE_ Ch_29_Expected_GNSS_Acc 2 "Frequent obstructions" 1 "Open sky" 0 "Some obstructions" ;
+VAL_TABLE_ Ch_29_Vibration_Env 2 "Very high " 1 "High" 0 "Normal" ;
+VAL_TABLE_ Ch_29_Vehicle_Starts 1 "Initially level" 0 "Initially not level " ;
+VAL_TABLE_ Ch_27_Heading_Search_Ready 1 "Processing" 0 "Waiting" ;
+VAL_TABLE_ Ch_27_Heading_Search_Status 18 "Disabled" 17 "Lost lock" 16 "Ambiguous ambiguities " 15 "Covariance error " 14 "Satellite constellation too poor" 13 "Lost slave 3 " 12 "Lost slave 2 " 11 "Lost slave 1 " 10 "Lost master " 9 "Too many ambiguities" 8 "No matching ambiguities " 7 "Bad length " 6 "No slave 3 " 5 "No slave 2 " 4 "No slave 1 " 3 "No master" 2 "No seed" 1 "No spare CPU" 0 "OK" ;
+VAL_TABLE_ Ch_27_Heading_Search_Type 3 "L1/L2" 2 "L2" 1 "L1" 0 "Idle" ;
+VAL_TABLE_ Ch_27_Heading_Quality 3 "RTK Integer" 2 "RTK Float" 1 "Poor" 0 "None" ;
+VAL_TABLE_ Ch_4_Blended_Method 6 "Unknown" 5 "Post-process
+combined " 4 "Post-process
+backward " 3 "Post-process
+forward" 2 "Simulated" 1 "Real-time" 0 "Invalid" ;
+VAL_TABLE_ Ch_0_Modes 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_TABLE_ NavigationStatus 11 "Internal Use" 7 "Blocked firmware" 22 "Trigger out while locked" 21 "Trigger out while locking" 20 "Trigger out while initialising" 10 "Status only" 6 "Expired Firmware" 5 "Reserved for unlocked" 4 "Locked" 3 "Locking" 0 "invalid" 2 "Initialising" 1 "Raw IMU" ;
+
+
+BO_ 0 NCOM_BASE: 72 RTRANGE
+ SG_ Pitch_Mis_Angle m91 : 504|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Acc_Pitch_Mis_Angle m91 : 520|16@1+ (1E-005,0) [0|0] "rad" Vector__XXX
+ SG_ Reserved_ch_91_1 m91 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Validity_ch_91 m91 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_91_2 m91 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Dist_Ver_Slip_Point_X m90 : 504|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Ver_Slip_Point_Y m90 : 520|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Ver_Slip_Point_Z m90 : 536|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_90 m90 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_90 m90 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Ver_Slip_Point_X m89 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Ver_Slip_Point_Y m89 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Ver_Slip_Point_Z m89 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_89 m89 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_89 m89 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Valid_Flag_ch_88 m88 : 504|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Vertical_Adv_Slip_Inn m88 : 505|7@1+ (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Reserved_ch_88 m88 : 512|56@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Diff_GPS_Format m77 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Diff_GPS_Type m77 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Diff_GPS_Num_Stations m77 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_77 m77 : 528|40@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Diff_GPS_Chars_Received m76 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Diff_GPS_Packets_Received m76 : 520|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Diff_GPS_Chars_Skipped m76 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_76 m76 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Expiry_Date m75 : 504|16@1+ (1,0) [0|0] "days" Vector__XXX
+ SG_ Supply_Voltage m75 : 520|8@1+ (0.2,0) [0|0] "V" Vector__XXX
+ SG_ IMU_Rate m75 : 528|16@1+ (0.02,0) [0|0] "Hz" Vector__XXX
+ SG_ Reserved_ch_75 m75 : 544|24@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_73 m73 : 504|56@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GLONASS_Number_ch_73 m73 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GLONASS_Number_ch_73 m73 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_72 m72 : 504|56@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GPS_Number_ch_72 m72 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GPS_Number_ch_72 m72 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Local_Coors_Orig_Alt m67 : 504|32@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Local_Coors_Orig_Head m67 : 536|32@1- (1E-007,0) [0|0] "deg" Vector__XXX
+ SG_ Local_Coors_Orig_Lat m66 : 504|32@1- (1E-007,0) [0|0] "deg" Vector__XXX
+ SG_ Local_Coors_Orig_Long m66 : 536|32@1- (1E-007,0) [0|0] "deg" Vector__XXX
+ SG_ CPU_Type_Nav_Comp m64 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Ext_GNSS_Type m64 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Ext_GNSS_Format m64 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dual_port_RAM_Stat m64 : 528|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Prim_GNSS_Pos_Update_rate m64 : 536|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Prim_GNSS_Vel_Update_rate m64 : 540|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Prim_GNSS_Raw_Data_Rate m64 : 544|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Sec_GNSS_Raw_Data_Rate m64 : 548|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_64 m64 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Product_Type m64 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Chars_Ext_GNSS_Nav m61 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Packets_Ext_GNSS_Nav m61 : 520|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Chars_Ext_GNSS_Nav_No_Dec m61 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Packets_Ext_GNSS_Nav_No_Kal m61 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Surf_Angle_Heading_Rot m60 : 504|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Surf_Angle_Pitch_Rot m60 : 520|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Surf_Angle_Roll_Rot m60 : 536|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Validity_ch_60 m60 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_60 m60 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IMU_Num_Packets_Missed m59 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IMU_Num_Resets m59 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IMU_Num_Errors m59 : 528|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Calibration_Date m59 : 536|16@1+ (1,0) [0|0] "days" Vector__XXX
+ SG_ IMU_Temperature m59 : 552|16@1+ (0.01,-70) [0|0] "ºC" Vector__XXX
+ SG_ Heading_Out_Frame_Ref_Veh m58 : 504|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Pitch_Out_Frame_Ref_Veh m58 : 520|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Roll_Out_Frame_Ref_Veh m58 : 536|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Validity_ch_58 m58 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_58 m58 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Prim_GNNS_Ant_X m57 : 504|16@1- (1,0) [0|0] "mm/Scale_factor" Vector__XXX
+ SG_ Dist_Prim_GNNS_Ant_Y m57 : 520|16@1- (1,0) [0|0] "mm/Scale_factor" Vector__XXX
+ SG_ Dist_Prim_GNNS_Ant_Z m57 : 536|16@1- (1,0) [0|0] "mm/Scale_factor" Vector__XXX
+ SG_ Age_ch_57 m57 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Scale_factor m57 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Ant_Stat_ch_62 m62 : 504|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Ant_Power_Stat_ch_62 m62 : 506|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_62 m62 : 508|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Card_CPU_Load_ch_62 m62 : 512|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ GNSS_Card_Core_Noise_ch_62 m62 : 520|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ GNSS_Card_Baud_Rate_ch_62 m62 : 528|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Num_Of_Sat_ch_62 m62 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Pos_Mode_ch_62 m62 : 544|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Core_Temp_X_ch_62 m62 : 552|8@1+ (1,-70) [0|0] "°C" Vector__XXX
+ SG_ GNSS_Rx_Supply_Vol_ch_62 m62 : 560|8@1+ (0.1,0) [0|0] "V" Vector__XXX
+ SG_ GNSS_Ant_Stat_ch_56 m56 : 504|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Ant_Power_Stat_ch_56 m56 : 506|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_56 m56 : 508|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Card_CPU_Load_ch_56 m56 : 512|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ GNSS_Card_Core_Noise_ch_56 m56 : 520|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ GNSS_Card_Baud_Rate_ch_56 m56 : 528|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Num_Of_Sat_ch_56 m56 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Pos_Mode_ch_56 m56 : 544|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Core_Temp_X_ch_56 m56 : 552|8@1+ (1,-70) [0|0] "°C" Vector__XXX
+ SG_ GNSS_Rx_Supply_Vol_ch_56 m56 : 560|8@1+ (0.1,0) [0|0] "V" Vector__XXX
+ SG_ GNSS_Ant_Stat_ch_55 m55 : 504|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Ant_Power_Stat_ch_55 m55 : 506|2@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_55 m55 : 508|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Card_CPU_Load_ch_55 m55 : 512|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ GNSS_Card_Core_Noise_ch_55 m55 : 520|8@1+ (1,0) [0|0] "%" Vector__XXX
+ SG_ GNSS_Card_Baud_Rate_ch_55 m55 : 528|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Num_Of_Sat_ch_55 m55 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GNSS_Pos_Mode_ch_55 m55 : 544|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Core_Temp_X_ch_55 m55 : 552|8@1+ (1,-70) [0|0] "°C" Vector__XXX
+ SG_ GNSS_Rx_Supply_Vol_ch_55 m55 : 560|8@1+ (0.1,0) [0|0] "V" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_71 m71 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_71 m71 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_71 m71 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_71 m71 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_71 m71 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_70 m70 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_70 m70 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_70 m70 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_70 m70 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_70 m70 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_69 m69 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_69 m69 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_69 m69 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_69 m69 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_69 m69 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_68 m68 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_68 m68 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_68 m68 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_68 m68 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_68 m68 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_54 m54 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_54 m54 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_54 m54 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_54 m54 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_54 m54 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_53 m53 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_53 m53 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_53 m53 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_53 m53 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_53 m53 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_52 m52 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_52 m52 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_52 m52 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_52 m52 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_52 m52 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Add_Slip_Point_X_ch_51 m51 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Y_ch_51 m51 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Add_Slip_Point_Z_ch_51 m51 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_51 m51 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_51 m51 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Com_Port_Char m50 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Com_Port_Packets m50 : 520|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Com_Port_Char_No_Decoder m50 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Com_Port_Errors m50 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Freq_OmniSTAR_Track_Loop m49 : 504|16@1+ (1E-006,1.52) [0|0] "GHz" Vector__XXX
+ SG_ SNR_OmiSTAR m49 : 520|8@1+ (0.2,0) [0|0] "dB" Vector__XXX
+ SG_ Time_cont_tracking_OmniSTAR m49 : 528|8@1+ (1,0) [0|0] "s" Vector__XXX
+ SG_ OmiSTAR_Status m49 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ OmiSTAR_Serial_Number m49 : 544|24@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Undulation_Value m48 : 504|16@1- (5,0) [0|0] "mm" Vector__XXX
+ SG_ HDOP_Of_GPS m48 : 520|8@1+ (0.1,0) [0|0] "" Vector__XXX
+ SG_ PDOP_Of_GPS m48 : 528|8@1+ (0.1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_48 m48 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Data_Ellipsoid m48 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Earth_Frame_Ass_With_Date m48 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Dist_Wheel_Speed_X m47 : 504|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Wheel_Speed_Y m47 : 520|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Wheel_Speed_Z m47 : 536|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_47 m47 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_47 m47 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Wheel_Speed_X m46 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Wheel_Speed_Y m46 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Wheel_Speed_Z m46 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_46 m46 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_46 m46 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Cyclic_Wheel_Speed_In_Count m45 : 504|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Timestamp_of_Wheel_Speed_In_Coun m45 : 536|16@1+ (1,0) [0|60000] "ms" Vector__XXX
+ SG_ Time_Since_Last_Count m45 : 552|8@1+ (0.1,0) [0|0] "s" Vector__XXX
+ SG_ Reserved_ch_45 m45 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Wheel_Speed_Scaling m44 : 504|16@1+ (0.1,0) [0|0] "puls per m" Vector__XXX
+ SG_ Acc_Wheel_Speed_Scaling m44 : 520|16@1+ (0.002,0) [0|0] "%" Vector__XXX
+ SG_ Reserved_ch_44 m44 : 536|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_42_0 m42 : 504|48@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Mode_Option_Raw_In m42 : 552|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Mode_Option_Att_In m42 : 553|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_42_1 m42 : 554|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Mode_Option_Att_Ex m42 : 555|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_42_2 m42 : 556|3@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Valid_Flag_ch_42 m42 : 559|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_42_3 m42 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Serial_1_Baud_Rate m41 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Serial_2_Baud_Rate m41 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Serial_3_Baud_Rate m41 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ CAN_Baud_Rate m41 : 528|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_41 m41 : 536|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ NCOM_Format_Encoder_Ver m40 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_40 m40 : 520|48@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Mis_Angle m37 : 504|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Acc_Heading_Mis_Angle m37 : 520|16@1+ (1E-005,0) [0|0] "rad" Vector__XXX
+ SG_ Num_Sat_Pos_Sol m37 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_Sat_Vel_Sol m37 : 544|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Validity_ch_37 m37 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_Sat_Att_Sol m37 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Dist_Lat_Adv_Slip_X m36 : 504|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Lat_Adv_Slip_Y m36 : 520|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Lat_Adv_Slip_Z m36 : 536|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_36 m36 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_36 m36 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Lat_Adv_Slip_X m35 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Lat_Adv_Slip_Y m35 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Lat_Adv_Slip_Z m35 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_35 m35 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_35 m35 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Dist_Zero_Vel_X m34 : 504|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Zero_Vel_Y m34 : 520|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Zero_Vel_Z m34 : 536|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_34 m34 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_34 m34 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Zero_Vel_X m33 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Zero_Vel_Y m33 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Zero_Vel_Z m33 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_33 m33 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_33 m33 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Zero_Vel_X_Inn_Valid m32 : 504|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Zero_Vel_X_Inn m32 : 505|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Zero_Vel_Y_Inn_Valid m32 : 512|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Zero_Vel_Y_Inn m32 : 513|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Zero_Vel_Z_Inn_Valid m32 : 520|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Zero_Vel_Z_Inn m32 : 521|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Lat_Adv_Slip_Inn_Valid m32 : 528|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Lat_Adv_Slip_Inn m32 : 529|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Heading_Lock_Inn_Valid m32 : 536|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Lock_Inn m32 : 537|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Wheel_Speed_Inn_Valid m32 : 544|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Wheel_Speed_Inn m32 : 545|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Clock_Offset_Inn_Valid m32 : 552|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Clock_Offset_Inn m32 : 553|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Clock_Drift_Inn_Valid m32 : 560|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Clock_Drift_Inn m32 : 561|7@1- (1,0) [0|0] "sigma" Vector__XXX
+ SG_ Operating_Sys_Ver_1 m30 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Operating_Sys_Ver_2 m30 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Operating_Sys_Ver_3 m30 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Start_Up_Script_Ver m30 : 528|24@1- (1,0) [0|0] "" Vector__XXX
+ SG_ Serial_Number m30 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Vehicle_Starts m29 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Vibration_Env_Option m29 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Expected_GNSS_Acc_Or_Weigh m29 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ UDP_Output_Option m29 : 528|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Serial_1_Output_Option m29 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Serial_2_Output_Option m29 : 544|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Search_Option m29 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heave_Coupling_Mode m29 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Master_Sat_PRN m28 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Slave_1_Sat_PRN m28 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Slave_2_Sat_PRN m28 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Slave_3_Sat_PRN m28 : 528|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_search_Duration m28 : 536|16@1+ (1,0) [0|0] "s" Vector__XXX
+ SG_ Num_Of_Constrains_Heading_Search m28 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Quality m27 : 504|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Search_Type m27 : 512|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Search_Status m27 : 520|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Search_Ready m27 : 528|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Init_Num_Of_Amb_Heading_Search m27 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Remaining_Num_Of_Amb_Heading_Sea m27 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Output_DisP_Lever_Arm_X m26 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Output_DisP_Lever_Arm_Y m26 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Output_DisP_Lever_Arm_Z m26 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Validity_ch_26 m26 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_26 m26 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ TRIG_MINUTE_ch_81 m81 : 504|32@1- (1,0) [0|0] "minute" Vector__XXX
+ SG_ TRIG_MSEC_ch_81 m81 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ TRIG_USEC_ch_81 m81 : 552|8@1- (4,0) [0|0] "us" Vector__XXX
+ SG_ TRIG_COUNT_ch_81 m81 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ TRIG_MINUTE_ch_80 m80 : 504|32@1- (1,0) [0|0] "minute" Vector__XXX
+ SG_ TRIG_MSEC_ch_80 m80 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ TRIG_USEC_ch_80 m80 : 552|8@1- (4,0) [0|0] "us" Vector__XXX
+ SG_ TRIG_COUNT_ch_80 m80 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ TRIG_MINUTE_ch_79 m79 : 504|32@1- (1,0) [0|0] "minute" Vector__XXX
+ SG_ TRIG_MSEC_ch_79 m79 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ TRIG_USEC_ch_79 m79 : 552|8@1- (4,0) [0|0] "us" Vector__XXX
+ SG_ TRIG_COUNT_ch_79 m79 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ TRIG_MINUTE_ch_65 m65 : 504|32@1- (1,0) [0|0] "minute" Vector__XXX
+ SG_ TRIG_MSEC_ch_65 m65 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ TRIG_USEC_ch_65 m65 : 552|8@1- (4,0) [0|0] "us" Vector__XXX
+ SG_ TRIG_COUNT_ch_65 m65 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ TRIG_MINUTE_ch_43 m43 : 504|32@1- (1,0) [0|0] "minute" Vector__XXX
+ SG_ TRIG_MSEC_ch_43 m43 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ TRIG_USEC_ch_43 m43 : 552|8@1- (4,0) [0|0] "us" Vector__XXX
+ SG_ TRIG_COUNT_ch_43 m43 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ TRIG_MINUTE_ch_24 m24 : 504|32@1- (1,0) [0|0] "minute" Vector__XXX
+ SG_ TRIG_MSEC_ch_24 m24 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ TRIG_USEC_ch_24 m24 : 552|8@1- (4,0) [0|0] "us" Vector__XXX
+ SG_ TRIG_COUNT_ch_24 m24 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Blended_Nav_Sys_Lag_Time m23 : 504|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ INS_Running_Time m23 : 520|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GPS_Pos_Update_Rej m23 : 536|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GPS_Vel_Update_Rej m23 : 544|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GPS_Att_Update_Rej m23 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_23 m23 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Time_Mismatch_Counter m22 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IMU_Time_Diff m22 : 520|8@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ IMU_Time_Margin m22 : 528|8@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ IMU_Loop_Time m22 : 536|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ OUTPUT_Loop_Time m22 : 552|16@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ Disk_Space_Remain m21 : 504|32@1- (1,0) [0|0] "kiB" Vector__XXX
+ SG_ Current_logged_Size m21 : 536|32@1- (1,0) [0|0] "kiB" Vector__XXX
+ SG_ Age_Diff_Cor_From_Base m20 : 504|16@1- (0.01,0) [0|0] "s" Vector__XXX
+ SG_ Differential_Station_ID_0 m20 : 520|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ Differential_Station_ID_1 m20 : 528|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ Differential_Station_ID_2 m20 : 536|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ Differential_Station_ID_3 m20 : 544|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ Reserved_ch_20 m20 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ SW_Version_0 m19 : 504|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_1 m19 : 512|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_2 m19 : 520|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_3 m19 : 528|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_4 m19 : 536|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_5 m19 : 544|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_6 m19 : 552|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ SW_Version_7 m19 : 560|8@1- (1,0) [0|0] "ASCII" Vector__XXX
+ SG_ IMU_Packets_Nav m18 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IMU_Char_Nav_No_Decoder m18 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ IMU_Char_Nav m18 : 504|32@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS2_Packets_Nav_No_Kalman m17 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS2_Packets_Nav m17 : 520|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS2_Char_Nav_No_Decoder m17 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS2_Char_Nav m17 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Veh_RT_Coor m16 : 504|16@1- (0.0001,0) [0|0] "" Vector__XXX
+ SG_ Pitch_Veh_RT_Coor m16 : 520|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Roll_Veh_RT_Coor m16 : 536|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Validity_ch_16 m16 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ UTC_Time_Offset_Valid m16 : 560|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ UTC_Time_Offset m16 : 561|7@1- (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GLONASS_Sat_Available m15 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GLONASS_Sat_Used_L1 m15 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Heading_Ori_GPS_Ants m15 : 504|16@1+ (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Acc_Pitch_Ori_GPS_Ants m15 : 520|16@1+ (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Acc_Dist_bet_GPS_Ants m15 : 536|16@1+ (1,0) [0|0] "mm" Vector__XXX
+ SG_ Age_ch_15 m15 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GPS_Sat_Used_Position m14 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GLONASS_Sat_Used_Position m14 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Dist_Prim_GPS_Ant_X m14 : 504|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Prim_GPS_Ant_Y m14 : 520|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Acc_Dist_Prim_GPS_Ant_Z m14 : 536|16@1+ (0.1,0) [0|0] "mm" Vector__XXX
+ SG_ Age_ch_14 m14 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GPS_Sat_Available m13 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Num_GPS_Sat_Used_L1 m13 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Ori_GPS_Ants m13 : 504|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Pitch_Ori_GPS_Ants m13 : 520|16@1- (0.0001,0) [0|0] "rad" Vector__XXX
+ SG_ Dist_bet_GPS_Ants m13 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Age_ch_13 m13 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_12 m12 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Dist_Prim_GPS_Ant_X m12 : 504|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Prim_GPS_Ant_Y m12 : 520|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Dist_Prim_GPS_Ant_Z m12 : 536|16@1- (1,0) [0|0] "mm" Vector__XXX
+ SG_ Age_ch_12 m12 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GLONASS_Number_ch_11 m11 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GLONASS_Number_ch_11 m11 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Of_Gyro_Scale_Factor_X m11 : 504|16@1+ (0.0001,0) [0|0] "%" Vector__XXX
+ SG_ Acc_Of_Gyro_Scale_Factor_Y m11 : 520|16@1+ (0.0001,0) [0|0] "%" Vector__XXX
+ SG_ Acc_Of_Gyro_Scale_Factor_Z m11 : 536|16@1+ (0.0001,0) [0|0] "%" Vector__XXX
+ SG_ Age_ch_11 m11 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GLONASS_Number_ch_10 m10 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GLONASS_Number_ch_10 m10 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Of_Accelerometer_Bias_X m10 : 504|16@1+ (0.01,0) [0|0] "mm/s^2" Vector__XXX
+ SG_ Acc_Of_Accelerometer_Bias_Y m10 : 520|16@1+ (0.01,0) [0|0] "mm/s^2" Vector__XXX
+ SG_ Acc_Of_Accelerometer_Bias_Z m10 : 536|16@1+ (0.01,0) [0|0] "mm/s^2" Vector__XXX
+ SG_ Age_ch_10 m10 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GLONASS_Number_ch_9 m9 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GLONASS_Number_ch_9 m9 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Acc_Of_Gyro_Bias_X m9 : 504|16@1+ (1E-006,0) [0|0] "rad" Vector__XXX
+ SG_ Acc_Of_Gyro_Bias_Y m9 : 520|16@1+ (1E-006,0) [0|0] "rad" Vector__XXX
+ SG_ Acc_Of_Gyro_Bias_Z m9 : 536|16@1+ (1E-006,0) [0|0] "rad" Vector__XXX
+ SG_ Age_ch_9 m9 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GPS_Number_ch_8 m8 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GPS_Number_ch_8 m8 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Gyro_Scale_Factor_X m8 : 504|16@1- (0.0001,0) [0|0] "%" Vector__XXX
+ SG_ Gyro_Scale_Factor_Y m8 : 520|16@1- (0.0001,0) [0|0] "%" Vector__XXX
+ SG_ Gyro_Scale_Factor_Z m8 : 536|16@1- (0.0001,0) [0|0] "%" Vector__XXX
+ SG_ Age_ch_8 m8 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GPS_Number_ch_7 m7 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GPS_Number_ch_7 m7 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Accelerometer_Bias_X m7 : 504|16@1- (0.1,0) [0|0] "mm/s^2" Vector__XXX
+ SG_ Accelerometer_Bias_Y m7 : 520|16@1- (0.1,0) [0|0] "mm/s^2" Vector__XXX
+ SG_ Accelerometer_Bias_Z m7 : 536|16@1- (0.1,0) [0|0] "mm/s^2" Vector__XXX
+ SG_ Age_ch_7 m7 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L1_GPS_Number_ch_6 m6 : 560|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ L2_GPS_Number_ch_6 m6 : 564|4@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Gyro_Bias_X m6 : 504|16@1- (5E-006,0) [0|0] "rad" Vector__XXX
+ SG_ Gyro_Bias_Y m6 : 520|16@1- (5E-006,0) [0|0] "rad" Vector__XXX
+ SG_ Gyro_Bias_Z m6 : 536|16@1- (5E-006,0) [0|0] "rad" Vector__XXX
+ SG_ Age_ch_6 m6 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Reserved_ch_5 m5 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Heading_Accuracy m5 : 504|16@1+ (1E-005,0) [0|0] "rad" Vector__XXX
+ SG_ Pitch_Accuracy m5 : 520|16@1+ (1E-005,0) [0|0] "rad" Vector__XXX
+ SG_ Roll_Accuracy m5 : 536|16@1+ (1E-005,0) [0|0] "rad" Vector__XXX
+ SG_ Age_ch_5 m5 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Blended_Method m4 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ North_Velocity_Accuracy m4 : 504|16@1+ (1,0) [0|0] "mm/s" Vector__XXX
+ SG_ East_Velocity_Accuracy m4 : 520|16@1+ (1,0) [0|0] "mm/s" Vector__XXX
+ SG_ Down_Velocity_Accuracy m4 : 536|16@1+ (1,0) [0|0] "mm/s" Vector__XXX
+ SG_ Age_ch_4 m4 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ ABD_robot_UMAC m3 : 560|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Age_ch_3 m3 : 552|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Down_Position_Accuracy m3 : 536|16@1+ (1,0) [0|0] "mm" Vector__XXX
+ SG_ East_Position_Accuracy m3 : 520|16@1+ (1,0) [0|0] "mm" Vector__XXX
+ SG_ North_Position_Accuracy m3 : 504|16@1+ (1,0) [0|0] "mm" Vector__XXX
+ SG_ GPS1_Packets_Nav_No_Kalman m2 : 552|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS1_Packets_Nav m2 : 520|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS1_Char_Nav_No_Decoder m2 : 536|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ GPS1_Char_Nav m2 : 504|16@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Velocity_Z_Inn m1 : 545|7@1+ (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Velocity_Y_Inn m1 : 537|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Velocity_X_Inn m1 : 529|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Position_Z_Inn m1 : 521|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Position_Y_Inn m1 : 513|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Position_X_Inn m1 : 505|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Orientation_Pitch_Inn m1 : 553|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Orientation_Heading_Inn m1 : 561|7@1- (0.1,0) [0|0] "sigma" Vector__XXX
+ SG_ Orientation_Pitch_Inn_Valid m1 : 552|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Orientation_Heading_Inn_Valid m1 : 560|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Velocity_Y_Inn_Valid m1 : 536|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Velocity_Z_Inn_Valid m1 : 544|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Velocity_X_Inn_Valid m1 : 528|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Position_Z_Inn_Valid m1 : 520|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Position_Y_Inn_Valid m1 : 512|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Position_X_Inn_Valid m1 : 504|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Orientation_Mode m0 : 560|8@1+ (1,0) [0|254] "" Vector__XXX
+ SG_ Velocity_Mode m0 : 552|8@1+ (1,0) [0|254] "" Vector__XXX
+ SG_ Position_Mode m0 : 544|8@1+ (1,0) [0|254] "" Vector__XXX
+ SG_ GPS_Satellites_Number m0 : 536|8@1+ (1,0) [0|254] "" Vector__XXX
+ SG_ GPS_Time m0 : 504|32@1- (1,0) [0|0] "" Vector__XXX
+ SG_ Latitude : 184|64@1- (1,0) [0|0] "rad" Vector__XXX
+ SG_ Checksum3 : 568|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Channel_Number M : 496|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Checksum2 : 488|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Roll : 464|24@1- (1E-006,0) [-3.1415926536|3.1415926536] "rad" Vector__XXX
+ SG_ Pitch : 440|24@1- (1E-006,0) [-1.5707963269|1.5707963269] "rad" Vector__XXX
+ SG_ Heading : 416|24@1- (1E-006,0) [-3.1415926536|3.1415926536] "rad" Vector__XXX
+ SG_ Down_Velocity : 392|24@1- (0.0001,0) [0|0] "m/s" Vector__XXX
+ SG_ East_Velocity : 368|24@1- (0.0001,0) [0|0] "m/s" Vector__XXX
+ SG_ North_Velocity : 344|24@1- (0.0001,0) [0|0] "m/s" Vector__XXX
+ SG_ Altitude : 312|32@1- (1,0) [0|0] "m" Vector__XXX
+ SG_ Longitude : 248|64@1- (1,0) [0|0] "rad" Vector__XXX
+ SG_ Checksum1 : 176|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ NavigationStatus : 168|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ Angular_Rate_Z : 144|24@1- (1E-005,0) [0|0] "rad/s" Vector__XXX
+ SG_ Angular_Rate_Y : 120|24@1- (1E-005,0) [0|0] "rad/s" Vector__XXX
+ SG_ Angular_Rate_X : 96|24@1- (1E-005,0) [0|0] "rad/s" Vector__XXX
+ SG_ Acceleration_Z : 72|24@1- (0.0001,0) [0|0] "m/s2" Vector__XXX
+ SG_ Acceleration_Y : 48|24@1- (0.0001,0) [0|0] "m/s2" Vector__XXX
+ SG_ Acceleration_X : 24|24@1- (0.0001,0) [0|0] "m/s2" Vector__XXX
+ SG_ Time : 8|16@1+ (1,0) [0|60] "ms" Vector__XXX
+ SG_ Sync : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+
+
+
+CM_ BO_ 0 "Based on ncomman.pdf Revision: 150615";
+CM_ SG_ 0 Pitch_Mis_Angle "Pitch misalignment angle ";
+CM_ SG_ 0 Acc_Pitch_Mis_Angle "Accuracy of pitch misalignment angle ";
+CM_ SG_ 0 Reserved_ch_91_1 "Reserved";
+CM_ SG_ 0 Validity_ch_91 "Validity";
+CM_ SG_ 0 Reserved_ch_91_2 "Reserved";
+CM_ SG_ 0 Acc_Dist_Ver_Slip_Point_X "Accuracy of distance to the vertical advanced slip point in x direction";
+CM_ SG_ 0 Acc_Dist_Ver_Slip_Point_Y "Accuracy of distance to the vertical advanced slip point in y direction";
+CM_ SG_ 0 Acc_Dist_Ver_Slip_Point_Z "Accuracy of distance to the vertical advanced slip point in z direction";
+CM_ SG_ 0 Validity_ch_90 "Validity";
+CM_ SG_ 0 Reserved_ch_90 "Reserved";
+CM_ SG_ 0 Dist_Ver_Slip_Point_X "Distance to the vertical advanced slip point in x direction";
+CM_ SG_ 0 Dist_Ver_Slip_Point_Y "Distance to the vertical advanced slip point in y direction";
+CM_ SG_ 0 Dist_Ver_Slip_Point_Z "Distance to the vertical advanced slip point in z direction";
+CM_ SG_ 0 Validity_ch_89 "Validity";
+CM_ SG_ 0 Reserved_ch_89 "Reserved";
+CM_ SG_ 0 Valid_Flag_ch_88 "Validity Flag";
+CM_ SG_ 0 Vertical_Adv_Slip_Inn "Vertical advanced slip innovation";
+CM_ SG_ 0 Reserved_ch_88 "Reserved";
+CM_ SG_ 0 Diff_GPS_Format "Differential GPS format";
+CM_ SG_ 0 Diff_GPS_Type "Differential GPS type ";
+CM_ SG_ 0 Diff_GPS_Num_Stations "Differential GPS number of stations ";
+CM_ SG_ 0 Reserved_ch_77 "Reserved";
+CM_ SG_ 0 Diff_GPS_Chars_Received "Differential GPS characters received ";
+CM_ SG_ 0 Diff_GPS_Packets_Received "Differential GPS packets received ";
+CM_ SG_ 0 Diff_GPS_Chars_Skipped "Differential GPS characters skipped ";
+CM_ SG_ 0 Reserved_ch_76 "Reserved";
+CM_ SG_ 0 Expiry_Date "Expiry date in days since GPS began (midnight, 6th January 1980) ";
+CM_ SG_ 0 Supply_Voltage "Supply voltage";
+CM_ SG_ 0 IMU_Rate "IMU rate ";
+CM_ SG_ 0 Reserved_ch_75 "Reserved";
+CM_ SG_ 0 Reserved_ch_73 "Reserved";
+CM_ SG_ 0 L1_GLONASS_Number_ch_73 "number of L1 GLONASS measurements received in differential corrections";
+CM_ SG_ 0 L2_GLONASS_Number_ch_73 "number of L2 GLONASS measurements received in differential corrections";
+CM_ SG_ 0 Reserved_ch_72 "Reserved";
+CM_ SG_ 0 L1_GPS_Number_ch_72 "number of L1 GPS measurements received in differential corrections";
+CM_ SG_ 0 L2_GPS_Number_ch_72 "number of L2 GPS measurements received in differential corrections";
+CM_ SG_ 0 Local_Coors_Orig_Alt "Local co-ordinates origin altitude";
+CM_ SG_ 0 Local_Coors_Orig_Head "Local co-ordinates origin heading";
+CM_ SG_ 0 Local_Coors_Orig_Lat "Local co-ordinates origin latitude";
+CM_ SG_ 0 Local_Coors_Orig_Long "Local co-ordinates origin longitude";
+CM_ SG_ 0 CPU_Type_Nav_Comp "CPU type running the navigation computer ";
+CM_ SG_ 0 Ext_GNSS_Type "External GNSS type";
+CM_ SG_ 0 Ext_GNSS_Format "External GNSS format";
+CM_ SG_ 0 Dual_port_RAM_Stat "Dual-port RAM status ";
+CM_ SG_ 0 Prim_GNSS_Pos_Update_rate "Primary GNSS expected position update rate";
+CM_ SG_ 0 Prim_GNSS_Vel_Update_rate "Primary GNSS expected velocity update rate";
+CM_ SG_ 0 Prim_GNSS_Raw_Data_Rate "Primary GNSS expected raw data rate ";
+CM_ SG_ 0 Sec_GNSS_Raw_Data_Rate "Secondary GNSS expected raw data rate";
+CM_ SG_ 0 Reserved_ch_64 "Reserved";
+CM_ SG_ 0 Product_Type "Product type";
+CM_ SG_ 0 Chars_Ext_GNSS_Nav "Characters received from the external GNSS by the navigation computer. ";
+CM_ SG_ 0 Packets_Ext_GNSS_Nav "Packets received from the external GNSS by the navigation computer. ";
+CM_ SG_ 0 Chars_Ext_GNSS_Nav_No_Dec "Characters received from the external GNSS by the navigation computer, but not understood by the decoder. ";
+CM_ SG_ 0 Packets_Ext_GNSS_Nav_No_Kal "Packets received from the external GNSS by the navigation computer that could not be used to update the Kalman filter (e.g. too old).";
+CM_ SG_ 0 Surf_Angle_Heading_Rot "Surface angle heading rotation ";
+CM_ SG_ 0 Surf_Angle_Pitch_Rot "Surface angle pitch rotation";
+CM_ SG_ 0 Surf_Angle_Roll_Rot "Surface angle roll rotation";
+CM_ SG_ 0 Validity_ch_60 "Validity";
+CM_ SG_ 0 Reserved_ch_60 "Reserved";
+CM_ SG_ 0 IMU_Num_Packets_Missed "Number of IMU packets missed";
+CM_ SG_ 0 IMU_Num_Resets "Number of IMU resets detected. ";
+CM_ SG_ 0 IMU_Num_Errors "Number of IMU errors detected. ";
+CM_ SG_ 0 Calibration_Date "Calibration date in days since GPS began (midnight, 6th January 1980). ";
+CM_ SG_ 0 IMU_Temperature "IMU temperature ";
+CM_ SG_ 0 Heading_Out_Frame_Ref_Veh "Heading of output frame with reference to vehicle frame.";
+CM_ SG_ 0 Pitch_Out_Frame_Ref_Veh "Pitch of output frame with reference to vehicle frame.";
+CM_ SG_ 0 Roll_Out_Frame_Ref_Veh "Roll of the output frame with reference to vehicle frame.";
+CM_ SG_ 0 Validity_ch_58 "Validity";
+CM_ SG_ 0 Reserved_ch_58 "Reserved";
+CM_ SG_ 0 Dist_Prim_GNNS_Ant_X "Distance to primary GNSS antenna in X direction. The unit of the distances is 1 mm and each value has to be multiplied by the scale factor. If the scale factor is 255 then the distances are saturated.";
+CM_ SG_ 0 Dist_Prim_GNNS_Ant_Y "Distance to primary GNSS antenna in Y direction. The unit of the distances is 1 mm and each value has to be multiplied by the scale factor. If the scale factor is 255 then the distances are saturated.";
+CM_ SG_ 0 Dist_Prim_GNNS_Ant_Z "Distance to primary GNSS antenna in Z direction. The unit of the distances is 1 mm and each value has to be multiplied by the scale factor. If the scale factor is 255 then the distances are saturated.";
+CM_ SG_ 0 Age_ch_57 "Age";
+CM_ SG_ 0 Scale_factor "Scale factor ";
+CM_ SG_ 0 GNSS_Ant_Stat_ch_62 "GNSS antenna status";
+CM_ SG_ 0 GNSS_Ant_Power_Stat_ch_62 "GNSS antenna power status ";
+CM_ SG_ 0 Reserved_ch_62 "Reserved";
+CM_ SG_ 0 GNSS_Card_CPU_Load_ch_62 "CPU load on GNSS card ";
+CM_ SG_ 0 GNSS_Card_Core_Noise_ch_62 "Core noise on GNSS card";
+CM_ SG_ 0 GNSS_Card_Baud_Rate_ch_62 "Baud rate of GNSS card ";
+CM_ SG_ 0 Num_Of_Sat_ch_62 "Number of satellites tracked ";
+CM_ SG_ 0 GNSS_Pos_Mode_ch_62 "Position mode of GNSS";
+CM_ SG_ 0 Core_Temp_X_ch_62 "Core temperature";
+CM_ SG_ 0 GNSS_Ant_Stat_ch_56 "GNSS antenna status";
+CM_ SG_ 0 GNSS_Ant_Power_Stat_ch_56 "GNSS antenna power status ";
+CM_ SG_ 0 Reserved_ch_56 "Reserved";
+CM_ SG_ 0 GNSS_Card_CPU_Load_ch_56 "CPU load on GNSS card ";
+CM_ SG_ 0 GNSS_Card_Core_Noise_ch_56 "Core noise on GNSS card";
+CM_ SG_ 0 GNSS_Card_Baud_Rate_ch_56 "Baud rate of GNSS card ";
+CM_ SG_ 0 Num_Of_Sat_ch_56 "Number of satellites tracked ";
+CM_ SG_ 0 GNSS_Pos_Mode_ch_56 "Position mode of GNSS";
+CM_ SG_ 0 Core_Temp_X_ch_56 "Core temperature";
+CM_ SG_ 0 GNSS_Ant_Stat_ch_55 "GNSS antenna status";
+CM_ SG_ 0 GNSS_Ant_Power_Stat_ch_55 "GNSS antenna power status ";
+CM_ SG_ 0 Reserved_ch_55 "Reserved";
+CM_ SG_ 0 GNSS_Card_CPU_Load_ch_55 "CPU load on GNSS card ";
+CM_ SG_ 0 GNSS_Card_Core_Noise_ch_55 "Core noise on GNSS card";
+CM_ SG_ 0 GNSS_Card_Baud_Rate_ch_55 "Baud rate of GNSS card ";
+CM_ SG_ 0 Num_Of_Sat_ch_55 "Number of satellites tracked ";
+CM_ SG_ 0 GNSS_Pos_Mode_ch_55 "Position mode of GNSS";
+CM_ SG_ 0 Core_Temp_X_ch_55 "Core temperature";
+CM_ SG_ 0 GNSS_Rx_Supply_Vol_ch_55 "GNSS receiver supply voltage ";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_71 "Distance to the additional slip point in x direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_71 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_71 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_71 "Validity";
+CM_ SG_ 0 Reserved_ch_71 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_70 "Distance to the additional slip point in x direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_70 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_70 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_70 "Validity";
+CM_ SG_ 0 Reserved_ch_70 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_69 "Distance to the additional slip point in x direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_69 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_69 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_69 "Validity";
+CM_ SG_ 0 Reserved_ch_69 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_68 "Distance to the additional slip point in x direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_68 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_68 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_68 "Validity";
+CM_ SG_ 0 Reserved_ch_68 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_54 "Distance to the additional slip point in x direction ";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_54 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_54 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_54 "Validity";
+CM_ SG_ 0 Reserved_ch_54 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_53 "Distance to the additional slip point in x direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_53 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_53 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_53 "Validity";
+CM_ SG_ 0 Reserved_ch_53 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_52 "Distance to the additional slip point in x direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_52 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_52 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_52 "Validity";
+CM_ SG_ 0 Reserved_ch_52 "Reserved";
+CM_ SG_ 0 Dist_Add_Slip_Point_X_ch_51 "Distance to the additional slip point in x direction ";
+CM_ SG_ 0 Dist_Add_Slip_Point_Y_ch_51 "Distance to the additional slip point in y direction";
+CM_ SG_ 0 Dist_Add_Slip_Point_Z_ch_51 "Distance to the additional slip point in z direction";
+CM_ SG_ 0 Validity_ch_51 "Validity";
+CM_ SG_ 0 Reserved_ch_51 "Reserved";
+CM_ SG_ 0 Com_Port_Char "Characters received on the command port ";
+CM_ SG_ 0 Com_Port_Packets "Packets received on the command port ";
+CM_ SG_ 0 Com_Port_Char_No_Decoder "Characters received on the command port but not understood by the decoder ";
+CM_ SG_ 0 Com_Port_Errors "Errors received on the command port ";
+CM_ SG_ 0 Freq_OmniSTAR_Track_Loop "Frequency of OmniSTAR tracking loop ";
+CM_ SG_ 0 SNR_OmiSTAR "SNR of OmniSTAR signal";
+CM_ SG_ 0 Time_cont_tracking_OmniSTAR "Time of continuous tracking of OmniSTAR signal ";
+CM_ SG_ 0 OmiSTAR_Status "OmniSTAR status ";
+CM_ SG_ 0 OmiSTAR_Serial_Number "OmniSTAR serial number";
+CM_ SG_ 0 Undulation_Value "Undulation value (difference between INS altitude and WGS-84 ellipsoidal altitude) ";
+CM_ SG_ 0 HDOP_Of_GPS "HDOP of GPS";
+CM_ SG_ 0 PDOP_Of_GPS "PDOP of GPS";
+CM_ SG_ 0 Reserved_ch_48 "Reserved";
+CM_ SG_ 0 Data_Ellipsoid "Datum ellipsoid ";
+CM_ SG_ 0 Earth_Frame_Ass_With_Date "Earth frame associated with datum ellipsoid";
+CM_ SG_ 0 Acc_Dist_Wheel_Speed_X "Accuracy of distance to the wheel speed measurement point in x direction";
+CM_ SG_ 0 Acc_Dist_Wheel_Speed_Y "Accuracy of distance to the wheel speed measurement point in y direction";
+CM_ SG_ 0 Acc_Dist_Wheel_Speed_Z "Accuracy of distance to the wheel speed measurement point in z direction";
+CM_ SG_ 0 Validity_ch_47 "Validity";
+CM_ SG_ 0 Reserved_ch_47 "Reserved";
+CM_ SG_ 0 Dist_Wheel_Speed_X "Distance to the wheel speed measurement point in x direction";
+CM_ SG_ 0 Dist_Wheel_Speed_Y "Distance to the wheel speed measurement point in y direction";
+CM_ SG_ 0 Dist_Wheel_Speed_Z "Distance to the wheel speed measurement point in z direction";
+CM_ SG_ 0 Validity_ch_46 "Validity";
+CM_ SG_ 0 Reserved_ch_46 "Reserved";
+CM_ SG_ 0 Cyclic_Wheel_Speed_In_Count "Cyclic wheel speed input count. This value increases each time a pulse is detected on the wheel speed input";
+CM_ SG_ 0 Timestamp_of_Wheel_Speed_In_Coun "Timestamp of wheel speed input count measurement above. This time-stamp is transmitted as milliseconds into the current GPS minute";
+CM_ SG_ 0 Time_Since_Last_Count "Time since the wheel speed count last changed";
+CM_ SG_ 0 Reserved_ch_45 "Reserved";
+CM_ SG_ 0 Wheel_Speed_Scaling "Wheel speed scaling";
+CM_ SG_ 0 Acc_Wheel_Speed_Scaling "Wheel speed scaling accuracy ";
+CM_ SG_ 0 Reserved_ch_44 "Reserved";
+CM_ SG_ 0 Reserved_ch_42_0 "Reserved";
+CM_ SG_ 0 Heading_Mode_Option_Raw_In "Heading mode option raw internal ";
+CM_ SG_ 0 Heading_Mode_Option_Att_In "Heading mode option attitude internal";
+CM_ SG_ 0 Reserved_ch_42_1 "Reserved";
+CM_ SG_ 0 Heading_Mode_Option_Att_Ex "Heading mode option attitude external";
+CM_ SG_ 0 Reserved_ch_42_2 "Reserved";
+CM_ SG_ 0 Valid_Flag_ch_42 "Valid flag for this byte";
+CM_ SG_ 0 Reserved_ch_42_3 "Reserved";
+CM_ SG_ 0 Serial_1_Baud_Rate "Serial port 1 baud rate";
+CM_ SG_ 0 Serial_2_Baud_Rate "Serial port 2 baud rate";
+CM_ SG_ 0 Serial_3_Baud_Rate "Serial port 3 baud rate";
+CM_ SG_ 0 CAN_Baud_Rate "CAN bus baud rate ";
+CM_ SG_ 0 Reserved_ch_41 "Reserved";
+CM_ SG_ 0 NCOM_Format_Encoder_Ver "NCOM format encoder version (currently 22)";
+CM_ SG_ 0 Reserved_ch_40 "Reserved";
+CM_ SG_ 0 Heading_Mis_Angle "Heading misalignment angle";
+CM_ SG_ 0 Acc_Heading_Mis_Angle "Accuracy of heading misalignment angle";
+CM_ SG_ 0 Num_Sat_Pos_Sol "Number of satellites used in position solution";
+CM_ SG_ 0 Num_Sat_Vel_Sol "Number of satellites used in velocity solution";
+CM_ SG_ 0 Validity_ch_37 "Validity";
+CM_ SG_ 0 Num_Sat_Att_Sol "Number of satellites used in attitude solution";
+CM_ SG_ 0 Acc_Dist_Lat_Adv_Slip_X "Accuracy of distance to the lateral advanced slip point in x direction";
+CM_ SG_ 0 Acc_Dist_Lat_Adv_Slip_Y "Accuracy of distance to the lateral advanced slip point in y direction";
+CM_ SG_ 0 Acc_Dist_Lat_Adv_Slip_Z "Accuracy of distance to the lateral advanced slip point in z direction";
+CM_ SG_ 0 Validity_ch_36 "Validity";
+CM_ SG_ 0 Reserved_ch_36 "Reserved";
+CM_ SG_ 0 Dist_Lat_Adv_Slip_X "Distance to the lateral advanced slip point in x direction";
+CM_ SG_ 0 Dist_Lat_Adv_Slip_Y "Distance to the lateral advanced slip point in y direction";
+CM_ SG_ 0 Dist_Lat_Adv_Slip_Z "Distance to the lateral advanced slip point in z direction";
+CM_ SG_ 0 Validity_ch_35 "Validity";
+CM_ SG_ 0 Reserved_ch_35 "Reserved";
+CM_ SG_ 0 Acc_Dist_Zero_Vel_X "Accuracy of distance to the zero velocity point in x direction";
+CM_ SG_ 0 Acc_Dist_Zero_Vel_Y "Accuracy of distance to the zero velocity point in y direction";
+CM_ SG_ 0 Acc_Dist_Zero_Vel_Z "Accuracy of distance to the zero velocity point in z direction";
+CM_ SG_ 0 Validity_ch_34 "Validity";
+CM_ SG_ 0 Reserved_ch_34 "Reserved";
+CM_ SG_ 0 Dist_Zero_Vel_X "Distance to the zero velocity point in x direction";
+CM_ SG_ 0 Dist_Zero_Vel_Y "Distance to the zero velocity point in y direction";
+CM_ SG_ 0 Dist_Zero_Vel_Z "Distance to the zero velocity point in z direction";
+CM_ SG_ 0 Validity_ch_33 "Validity";
+CM_ SG_ 0 Reserved_ch_33 "Reserved";
+CM_ SG_ 0 Zero_Vel_X_Inn_Valid "Zero velocity x innovation Valid";
+CM_ SG_ 0 Zero_Vel_X_Inn "Zero velocity y innovation";
+CM_ SG_ 0 Zero_Vel_Y_Inn_Valid "Zero velocity y innovation Valid";
+CM_ SG_ 0 Zero_Vel_Y_Inn "Zero velocity z innovation";
+CM_ SG_ 0 Zero_Vel_Z_Inn_Valid "Zero velocity z innovation Valid";
+CM_ SG_ 0 Zero_Vel_Z_Inn "Zero velocity z innovation";
+CM_ SG_ 0 Lat_Adv_Slip_Inn_Valid "Lateral advanced slip innovation Valid";
+CM_ SG_ 0 Lat_Adv_Slip_Inn "Lateral advanced slip innovation";
+CM_ SG_ 0 Heading_Lock_Inn_Valid "Heading lock innovation Valid";
+CM_ SG_ 0 Heading_Lock_Inn "Heading lock innovation";
+CM_ SG_ 0 Wheel_Speed_Inn_Valid "Wheel speed innovation Valid";
+CM_ SG_ 0 Wheel_Speed_Inn "Wheel speed innovation";
+CM_ SG_ 0 Clock_Offset_Inn_Valid "Clock offset innovation Valid";
+CM_ SG_ 0 Clock_Offset_Inn "Clock offset innovation";
+CM_ SG_ 0 Clock_Drift_Inn_Valid "Clock drift innovation Valid";
+CM_ SG_ 0 Clock_Drift_Inn "Clock drift innovation";
+CM_ SG_ 0 Operating_Sys_Ver_1 "Operating system version 1";
+CM_ SG_ 0 Operating_Sys_Ver_2 "Operating system version 2";
+CM_ SG_ 0 Operating_Sys_Ver_3 "Operating system version 3";
+CM_ SG_ 0 Start_Up_Script_Ver "Start-up script version";
+CM_ SG_ 0 Serial_Number "Serial number";
+CM_ SG_ 0 Vehicle_Starts "Vehicle starts";
+CM_ SG_ 0 Vibration_Env_Option "Vibration in the environment option ";
+CM_ SG_ 0 Expected_GNSS_Acc_Or_Weigh "Expected GNSS accuracy or weighting";
+CM_ SG_ 0 UDP_Output_Option "UDP output option";
+CM_ SG_ 0 Serial_1_Output_Option "Serial 1 output option";
+CM_ SG_ 0 Serial_2_Output_Option "Serial 2 output option";
+CM_ SG_ 0 Heading_Search_Option "Heading search option ";
+CM_ SG_ 0 Heave_Coupling_Mode "Heave coupling mode";
+CM_ SG_ 0 Master_Sat_PRN "Master satellite PRN in the heading search";
+CM_ SG_ 0 Slave_1_Sat_PRN "Slave 1 satellite PRN in the heading search";
+CM_ SG_ 0 Slave_2_Sat_PRN "Slave 2 satellite PRN in the heading search ";
+CM_ SG_ 0 Slave_3_Sat_PRN "Slave 3 satellite PRN in the heading search ";
+CM_ SG_ 0 Heading_search_Duration "Heading search duration";
+CM_ SG_ 0 Num_Of_Constrains_Heading_Search "Number of constraints applied in the heading search";
+CM_ SG_ 0 Heading_Quality "Heading quality ";
+CM_ SG_ 0 Heading_Search_Type "Heading search type ";
+CM_ SG_ 0 Heading_Search_Status "Heading search status";
+CM_ SG_ 0 Heading_Search_Ready "Heading search ready ";
+CM_ SG_ 0 Init_Num_Of_Amb_Heading_Search "Initial number of ambiguities in the heading search";
+CM_ SG_ 0 Remaining_Num_Of_Amb_Heading_Sea "Remaining number of ambiguities in the heading search ";
+CM_ SG_ 0 Output_DisP_Lever_Arm_X "Output displacement lever arm in x direction. ";
+CM_ SG_ 0 Output_DisP_Lever_Arm_Y "Output displacement lever arm in y direction. ";
+CM_ SG_ 0 Output_DisP_Lever_Arm_Z "Output displacement lever arm in z direction. ";
+CM_ SG_ 0 Validity_ch_26 "Validity";
+CM_ SG_ 0 Reserved_ch_26 "Reserved";
+CM_ SG_ 0 TRIG_MINUTE_ch_81 "GPS minute when the triggered occurred. Given as minutes since GPS began (6th January 1980). ";
+CM_ SG_ 0 TRIG_MSEC_ch_81 "Milliseconds into TRIG_MINUTE when the triggered occurred.";
+CM_ SG_ 0 TRIG_USEC_ch_81 "Microseconds into TRIG_MSEC when the trigger occurred";
+CM_ SG_ 0 TRIG_COUNT_ch_81 "Trigger count, increments each time there is a new trigger.";
+CM_ SG_ 0 TRIG_MINUTE_ch_80 "GPS minute when the triggered occurred. Given as minutes since GPS began (6th January 1980). ";
+CM_ SG_ 0 TRIG_MSEC_ch_80 "Milliseconds into TRIG_MINUTE when the triggered occurred.";
+CM_ SG_ 0 TRIG_USEC_ch_80 "Microseconds into TRIG_MSEC when the trigger occurred";
+CM_ SG_ 0 TRIG_COUNT_ch_80 "Trigger count, increments each time there is a new trigger.";
+CM_ SG_ 0 TRIG_MINUTE_ch_79 "GPS minute when the triggered occurred. Given as minutes since GPS began (6th January 1980). ";
+CM_ SG_ 0 TRIG_MSEC_ch_79 "Milliseconds into TRIG_MINUTE when the triggered occurred.";
+CM_ SG_ 0 TRIG_USEC_ch_79 "Microseconds into TRIG_MSEC when the trigger occurred";
+CM_ SG_ 0 TRIG_COUNT_ch_79 "Trigger count, increments each time there is a new trigger.";
+CM_ SG_ 0 TRIG_MINUTE_ch_65 "GPS minute when the triggered occurred. Given as minutes since GPS began (6th January 1980). ";
+CM_ SG_ 0 TRIG_MSEC_ch_65 "Milliseconds into TRIG_MINUTE when the triggered occurred.";
+CM_ SG_ 0 TRIG_USEC_ch_65 "Microseconds into TRIG_MSEC when the trigger occurred";
+CM_ SG_ 0 TRIG_COUNT_ch_65 "Trigger count, increments each time there is a new trigger.";
+CM_ SG_ 0 TRIG_MINUTE_ch_43 "GPS minute when the triggered occurred. Given as minutes since GPS began (6th January 1980). ";
+CM_ SG_ 0 TRIG_MSEC_ch_43 "Milliseconds into TRIG_MINUTE when the triggered occurred.";
+CM_ SG_ 0 TRIG_USEC_ch_43 "Microseconds into TRIG_MSEC when the trigger occurred";
+CM_ SG_ 0 TRIG_COUNT_ch_43 "Trigger count, increments each time there is a new trigger.";
+CM_ SG_ 0 TRIG_MINUTE_ch_24 "GPS minute when the triggered occurred. Given as minutes since GPS began (6th January 1980). ";
+CM_ SG_ 0 TRIG_MSEC_ch_24 "Milliseconds into TRIG_MINUTE when the triggered occurred.";
+CM_ SG_ 0 TRIG_USEC_ch_24 "Microseconds into TRIG_MSEC when the trigger occurred";
+CM_ SG_ 0 TRIG_COUNT_ch_24 "Trigger count, increments each time there is a new trigger.";
+CM_ SG_ 0 Blended_Nav_Sys_Lag_Time "Blended navigation system lag time: delay in the calculation of the Kalman filter compared to the targeted time (ms)";
+CM_ SG_ 0 INS_Running_Time "Indicates how long the INS has been running for. The field uses a non-linear time scale as follows: Value > 20,700: (value - 20,532 ) (hours); 10,800 < value = 20,700: (value - 10,620) (minutes); Value = 10,800: value (seconds)";
+CM_ SG_ 0 Num_GPS_Pos_Update_Rej "Number of consecutive GPS position updates rejected ";
+CM_ SG_ 0 Num_GPS_Vel_Update_Rej "Number of consecutive GPS velocity updates rejected ";
+CM_ SG_ 0 Num_GPS_Att_Update_Rej "Number of consecutive GPS attitude updates rejected ";
+CM_ SG_ 0 Reserved_ch_23 "Reserved";
+CM_ SG_ 0 Time_Mismatch_Counter "Time mismatch counter. This field counts the number of times that the IMU time and the GPS time disagree. This can occur if GPS has been unavailable for a long period of time and the IMU clock has drifted compared to GPS time. It can occur when the IMU resets unexpectedly.";
+CM_ SG_ 0 IMU_Time_Diff "IMU time difference (ms). ";
+CM_ SG_ 0 IMU_Time_Margin "IMU time margin (ms). ";
+CM_ SG_ 0 IMU_Loop_Time "IMU loop time (ms). ";
+CM_ SG_ 0 OUTPUT_Loop_Time "Output loop time (ms). ";
+CM_ SG_ 0 Disk_Space_Remain "Disk space remaining in kiB. Note that approximately 8 MB is always left spare on the disk.";
+CM_ SG_ 0 Current_logged_Size "Size of current logged raw data file in kiB. When there is insufficient space on the disk no more data will be written.";
+CM_ SG_ 0 Age_Diff_Cor_From_Base "Age of the differential corrections from the base-station";
+CM_ SG_ 0 Differential_Station_ID_0 "Differential station ID in ASCII format";
+CM_ SG_ 0 Differential_Station_ID_1 "Differential station ID in ASCII format";
+CM_ SG_ 0 Differential_Station_ID_2 "Differential station ID in ASCII format";
+CM_ SG_ 0 Differential_Station_ID_3 "Differential station ID in ASCII format";
+CM_ SG_ 0 Reserved_ch_20 "Reserved";
+CM_ SG_ 0 SW_Version_0 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_1 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_2 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_3 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_4 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_5 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_6 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 SW_Version_7 "This is the software version or development ID that is running in the INS in ASCII format.";
+CM_ SG_ 0 IMU_Packets_Nav "Packets received from the IMU by the navigation computer";
+CM_ SG_ 0 IMU_Char_Nav_No_Decoder "Characters received from the IMU by the navigation computer but not understood by the decoder ";
+CM_ SG_ 0 IMU_Char_Nav "Characters received from the IMU by the navigation computer";
+CM_ SG_ 0 GPS2_Packets_Nav_No_Kalman "Packets received from the secondary GNSS receiver by the navigation computer that could not be used to update the Kalman filter (e.g. too old) ";
+CM_ SG_ 0 GPS2_Packets_Nav "Packets received from the secondary GNSS receiver by the navigation computer ";
+CM_ SG_ 0 GPS2_Char_Nav_No_Decoder "Characters received from the secondary GNSS receiver by the navigation computer, but not understood by the decoder";
+CM_ SG_ 0 GPS2_Char_Nav "Characters received from the secondary GNSS receiver by the navigation computer ";
+CM_ SG_ 0 Heading_Veh_RT_Coor "Heading of the vehicle in the INS co-ordinate frame";
+CM_ SG_ 0 Pitch_Veh_RT_Coor "Pitch of the vehicle in the INS co-ordinate frame";
+CM_ SG_ 0 Roll_Veh_RT_Coor "Roll of the vehicle in the INS co-ordinate frame";
+CM_ SG_ 0 Validity_ch_16 "Validity";
+CM_ SG_ 0 UTC_Time_Offset_Valid "UTC time offset Valid";
+CM_ SG_ 0 UTC_Time_Offset "UTC time offset ";
+CM_ SG_ 0 Num_GLONASS_Sat_Available "number of GLONASS satellites available (not necessarily used) in heading module";
+CM_ SG_ 0 Num_GLONASS_Sat_Used_L1 "number of GLONASS satellites used in current L1 solution in heading module";
+CM_ SG_ 0 Acc_Heading_Ori_GPS_Ants "Accuracy of Heading Orientation of the GPS Antennas";
+CM_ SG_ 0 Acc_Pitch_Ori_GPS_Ants "Accuracy of Pitch Orientation of the GPS Antennas";
+CM_ SG_ 0 Acc_Dist_bet_GPS_Ants "Accuracy of Distance between the GPS Antennas";
+CM_ SG_ 0 Age_ch_15 "Age";
+CM_ SG_ 0 Num_GPS_Sat_Used_Position "number of GPS satellites used in position solution";
+CM_ SG_ 0 Num_GLONASS_Sat_Used_Position "number of GLONASS satellites used in position solution";
+CM_ SG_ 0 Acc_Dist_Prim_GPS_Ant_X "Accuracy of Distance to Primary GPS Antenna in X direction";
+CM_ SG_ 0 Acc_Dist_Prim_GPS_Ant_Y "Accuracy of Distance to Primary GPS Antenna in X direction";
+CM_ SG_ 0 Acc_Dist_Prim_GPS_Ant_Z "Accuracy of Distance to Primary GPS Antenna in Z direction";
+CM_ SG_ 0 Age_ch_14 "Age";
+CM_ SG_ 0 Num_GPS_Sat_Available "number of GPS satellites available (not necessarily used) in heading module";
+CM_ SG_ 0 Num_GPS_Sat_Used_L1 "number of GPS satellites used in current L1 solution in heading module";
+CM_ SG_ 0 Heading_Ori_GPS_Ants "Heading Orientation of the GPS Antennas";
+CM_ SG_ 0 Pitch_Ori_GPS_Ants "Pitch Orientation of the GPS Antennas";
+CM_ SG_ 0 Dist_bet_GPS_Ants "Distance between the GPS Antennas";
+CM_ SG_ 0 Age_ch_13 "Age";
+CM_ SG_ 0 Reserved_ch_12 "Reserved";
+CM_ SG_ 0 Dist_Prim_GPS_Ant_X "Distance to Primary GPS Antenna in X direction";
+CM_ SG_ 0 Dist_Prim_GPS_Ant_Y "Distance to Primary GPS Antenna in Y direction";
+CM_ SG_ 0 Dist_Prim_GPS_Ant_Z "Distance to Primary GPS Antenna in Z direction";
+CM_ SG_ 0 Age_ch_12 "Age";
+CM_ SG_ 0 L1_GLONASS_Number_ch_11 "number of L1 GLONASS measurements decoded by primary receiver";
+CM_ SG_ 0 L2_GLONASS_Number_ch_11 "number of L2 GLONASS measurements decoded by primary receiver";
+CM_ SG_ 0 Acc_Of_Gyro_Scale_Factor_X "Accuracy of  Gyro Scale Factor X";
+CM_ SG_ 0 Acc_Of_Gyro_Scale_Factor_Y "Accuracy of  Gyro Scale Factor Y";
+CM_ SG_ 0 Acc_Of_Gyro_Scale_Factor_Z "Accuracy of  Gyro Scale Factor Z";
+CM_ SG_ 0 Age_ch_11 "Age";
+CM_ SG_ 0 L1_GLONASS_Number_ch_10 "number of L1 GLONASS measurements decoded by primary receiver";
+CM_ SG_ 0 L2_GLONASS_Number_ch_10 "number of L2 GLONASS measurements decoded by primary receiver";
+CM_ SG_ 0 Acc_Of_Accelerometer_Bias_X "Accuracy of  Accelerometer Bias X";
+CM_ SG_ 0 Acc_Of_Accelerometer_Bias_Y "Accuracy of  Accelerometer Bias Y";
+CM_ SG_ 0 Acc_Of_Accelerometer_Bias_Z "Accuracy of  Accelerometer Bias Z";
+CM_ SG_ 0 Age_ch_10 "Age";
+CM_ SG_ 0 L1_GLONASS_Number_ch_9 "number of L1 GLONASS measurements decoded by primary receiver";
+CM_ SG_ 0 L2_GLONASS_Number_ch_9 "number of L2 GLONASS measurements decoded by primary receiver";
+CM_ SG_ 0 Acc_Of_Gyro_Bias_X "Accuracy of Gyro Bias X";
+CM_ SG_ 0 Acc_Of_Gyro_Bias_Y "Accuracy of Gyro Bias Y";
+CM_ SG_ 0 Acc_Of_Gyro_Bias_Z "Accuracy of Gyro Bias Z";
+CM_ SG_ 0 Age_ch_9 "Age";
+CM_ SG_ 0 L1_GPS_Number_ch_8 "number of L1 GPS measurements decoded by primary receiver";
+CM_ SG_ 0 L2_GPS_Number_ch_8 "number of L2 GPS measurements decoded by primary receiver";
+CM_ SG_ 0 Gyro_Scale_Factor_X "Gyro Scale Factor X";
+CM_ SG_ 0 Gyro_Scale_Factor_Y "Gyro Scale Factor Y";
+CM_ SG_ 0 Gyro_Scale_Factor_Z "Gyro Scale Factor Z";
+CM_ SG_ 0 Age_ch_8 "Age";
+CM_ SG_ 0 L1_GPS_Number_ch_7 "number of L1 GPS measurements decoded by primary receiver";
+CM_ SG_ 0 L2_GPS_Number_ch_7 "number of L2 GPS measurements decoded by primary receiver";
+CM_ SG_ 0 Accelerometer_Bias_X "Accelerometer Bias X";
+CM_ SG_ 0 Accelerometer_Bias_Y "Accelerometer Bias Y";
+CM_ SG_ 0 Accelerometer_Bias_Z "Accelerometer Bias Z";
+CM_ SG_ 0 Age_ch_7 "Age";
+CM_ SG_ 0 L1_GPS_Number_ch_6 "number of L1 GPS measurements decoded by primary receiver";
+CM_ SG_ 0 L2_GPS_Number_ch_6 "number of L2 GPS measurements decoded by primary receiver";
+CM_ SG_ 0 Gyro_Bias_X "Gyro Bias X";
+CM_ SG_ 0 Gyro_Bias_Y "Gyro Bias Y";
+CM_ SG_ 0 Gyro_Bias_Z "Gyro Bias Z";
+CM_ SG_ 0 Age_ch_6 "Age";
+CM_ SG_ 0 Reserved_ch_5 "Reserved";
+CM_ SG_ 0 Heading_Accuracy "Heading Accuracy";
+CM_ SG_ 0 Pitch_Accuracy "Pitch Accuracy";
+CM_ SG_ 0 Roll_Accuracy "Roll Accuracy";
+CM_ SG_ 0 Age_ch_5 "Age";
+CM_ SG_ 0 Blended_Method "Reserved Reserved ";
+CM_ SG_ 0 North_Velocity_Accuracy "North Velocity Accuracy";
+CM_ SG_ 0 East_Velocity_Accuracy "East Velocity Accuracy";
+CM_ SG_ 0 Down_Velocity_Accuracy "Down Velocity Accuracy";
+CM_ SG_ 0 Age_ch_4 "Age";
+CM_ SG_ 0 ABD_robot_UMAC "ABD robot UMAC interface status byte ";
+CM_ SG_ 0 Down_Position_Accuracy "Down Position Accuracy";
+CM_ SG_ 0 East_Position_Accuracy "East Position Accuracy";
+CM_ SG_ 0 North_Position_Accuracy "North Position Accuracy";
+CM_ SG_ 0 GPS1_Packets_Nav_No_Kalman "Packets received from GPS1 by the navigation computer that could not be used to update the Kalman filter (e.g. too old) ";
+CM_ SG_ 0 GPS1_Packets_Nav "Packets received from GPS1 by the navigation computer";
+CM_ SG_ 0 GPS1_Char_Nav_No_Decoder "Characters received from GPS1 by the navigation computer but not understood by the decoder";
+CM_ SG_ 0 GPS1_Char_Nav "Characters received from GPS1 by the navigation computer ";
+CM_ SG_ 0 Velocity_Z_Inn "Velocity Z Innovation";
+CM_ SG_ 0 Velocity_Y_Inn "Velocity Y Innovation";
+CM_ SG_ 0 Velocity_X_Inn "Velocity X Innovation";
+CM_ SG_ 0 Position_Z_Inn "Position Z Innovation";
+CM_ SG_ 0 Position_Y_Inn "Position Y Innovation ";
+CM_ SG_ 0 Position_X_Inn "Position X Innovation";
+CM_ SG_ 0 Orientation_Pitch_Inn "Orientation Pitch Innovation ";
+CM_ SG_ 0 Orientation_Heading_Inn "Orientation Heading Innovation";
+CM_ SG_ 0 Orientation_Pitch_Inn_Valid "Orientation Pitch Innovation Valid";
+CM_ SG_ 0 Orientation_Heading_Inn_Valid "Orientation Heading Innovation Valid";
+CM_ SG_ 0 Velocity_Y_Inn_Valid "Velocity Y Innovation Valid";
+CM_ SG_ 0 Velocity_Z_Inn_Valid "Velocity Z Innovation Valid";
+CM_ SG_ 0 Velocity_X_Inn_Valid "Velocity X Innovation Valid";
+CM_ SG_ 0 Position_Z_Inn_Valid "Position Z Innovation Valid";
+CM_ SG_ 0 Position_Y_Inn_Valid "Position Y Innovation Valid";
+CM_ SG_ 0 Position_X_Inn_Valid "Position X Innovation Valid";
+CM_ SG_ 0 Orientation_Mode "Orientation Mode of Dual antenna Systems";
+CM_ SG_ 0 Velocity_Mode "Velocity Mode of Primary GPS";
+CM_ SG_ 0 Position_Mode "Position Mode of Primary GPS";
+CM_ SG_ 0 GPS_Satellites_Number "Number of GPS satellites tracked by the Primary GPS receiver ";
+CM_ SG_ 0 GPS_Time "Time in minutes since GPS began (midnight 06/01/1980) ";
+CM_ SG_ 0 Latitude "Longitude of the INS";
+CM_ SG_ 0 Checksum3 "This is the final checksum that verifies the entire packet ";
+CM_ SG_ 0 Checksum2 "Checksum 2 allows the software to verify the integrity of bytes 1–60. The sync byte is ignored.";
+CM_ SG_ 0 East_Velocity "East velocity ";
+CM_ SG_ 0 North_Velocity "North velocity ";
+CM_ SG_ 0 Altitude "Altitude of the IMU";
+CM_ SG_ 0 Longitude "Longitude of the INS";
+CM_ SG_ 0 Checksum1 "Checksum 1 allows the software to verify the integrity of bytes 1–21.The sync byte is ignored.";
+CM_ SG_ 0 Angular_Rate_Z "Angular Rate Z is the vehicle body-frame angular rate in the z-direction (i.e. after the IMU to Vehicle Attitude matrix has been applied)";
+CM_ SG_ 0 Angular_Rate_Y "Angular Rate Y is the vehicle body-frame angular rate in the y-direction (i.e. after the IMU to Vehicle Attitude matrix has been applied)";
+CM_ SG_ 0 Angular_Rate_X "Angular Rate X is the vehicle body-frame angular rate in the x-direction (i.e. after the IMU to Vehicle Attitude matrix has been applied)";
+CM_ SG_ 0 Acceleration_Z "Acceleration Z is the vehicle body-frame acceleration in the z-direction (i.e. after the IMU to Vehicle Attitude matrix has been applied).";
+CM_ SG_ 0 Acceleration_Y "Acceleration Y is the vehicle body-frame acceleration in the y-direction (i.e. after the IMU to Vehicle Attitude matrix has been applied).";
+CM_ SG_ 0 Acceleration_X "Acceleration X is the vehicle body-frame acceleration in the x-direction (i.e. after the IMU to Vehicle Attitude matrix has been applied).";
+CM_ SG_ 0 Time "Time is transmitted as milliseconds into the minute in GPS time. Range is 0 to 59,999 ms. ";
+CM_ SG_ 0 Sync "Always E7h";
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_ SG_  "SystemSignalLongSymbol" STRING ;
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "BusType" "Ethernet";
+BA_DEF_DEF_  "SystemSignalLongSymbol" "";
+BA_ "BusType" "Ethernet";
+BA_ "DBName" "main";
+BA_ "SystemSignalLongSymbol" SG_ 0 Timestamp_of_Wheel_Speed_In_Coun "Timestamp_of_Wheel_Speed_In_Count";
+BA_ "SystemSignalLongSymbol" SG_ 0 Remaining_Num_Of_Amb_Heading_Sea "Remaining_Num_Of_Amb_Heading_Search";
+VAL_ 0 Diff_GPS_Format 3 "CMR" 2 "RTCA" 1 "RTCM" 0 "None" ;
+VAL_ 0 Diff_GPS_Type 6 "RINEX" 5 "LOG" 4 "RD" 3 "Pass-through EGPS " 2 "Pass-through sec GNSS receiver " 1 "Pass-through prim GNSS receiver" 0 "None" ;
+VAL_ 0 CPU_Type_Nav_Comp 4 "OMAP3503" 3 "None" 2 "TP600" 1 "TP500" 0 "TP400B" ;
+VAL_ 0 Ext_GNSS_Type 14 "Novatel OEM6" 13 "Topcon B110 " 12 " Leica GX1200 " 11 "Trimble BD920 " 10 " u-Blox LEA6" 9 " NavCom Sapphire" 8 "Topcon GB-500 " 7 "Trimble AgGPS 132" 6 "Trimble 5700/5800" 5 "Generic" 4 "u-blox LEA4" 3 "Novatel OEMV" 2 "None" 1 "Novatel OEM4" 0 "Novatel Millennium or BeeLine " ;
+VAL_ 0 Ext_GNSS_Format 9 "OWI" 8 "NCT Binary" 7 "Debug" 6 "GRIL" 5 "TSIP" 4 "GSOF" 3 "NMEA" 2 "UBX" 1 "Novatel OEM4/OEMV Binary " 0 "Novatel OEM2 Binary " ;
+VAL_ 0 Dual_port_RAM_Stat 10 "Excellent" 9 "Good" 8 "OK" 7 "Acceptable" 6 "Slow" 5 "Sporadic" 4 "Overloaded" 3 "Down" 2 "Dead" 1 "Failed to initialise " 0 "Not fitted " ;
+VAL_ 0 Prim_GNSS_Pos_Update_rate 6 "20 Hz " 5 "10 Hz " 4 "5 Hz" 3 "4 Hz" 2 "2 Hz" 1 "1 Hz" 0 "Disabled" ;
+VAL_ 0 Prim_GNSS_Vel_Update_rate 6 "20 Hz " 5 "10 Hz " 4 "5 Hz" 3 "4 Hz" 2 "2 Hz" 1 "1 Hz" 0 "Disabled" ;
+VAL_ 0 Prim_GNSS_Raw_Data_Rate 6 "20 Hz " 5 "10 Hz " 4 "5 Hz" 3 "4 Hz" 2 "2 Hz" 1 "1 Hz" 0 "Disabled" ;
+VAL_ 0 Sec_GNSS_Raw_Data_Rate 6 "20 Hz " 5 "10 Hz " 4 "5 Hz" 3 "4 Hz" 2 "2 Hz" 1 "1 Hz" 0 "Disabled" ;
+VAL_ 0 Product_Type 2 "OEM" 1 "Survey" 0 "Default" ;
+VAL_ 0 GNSS_Ant_Stat_ch_62 3 "Unknown or invalid" 2 "Short" 1 "Open" 0 "OK" ;
+VAL_ 0 GNSS_Ant_Power_Stat_ch_62 3 "Invalid" 2 "Power unknown" 1 "Power off " 0 "Power on" ;
+VAL_ 0 GNSS_Card_Baud_Rate_ch_62 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_ 0 GNSS_Pos_Mode_ch_62 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_ 0 GNSS_Ant_Stat_ch_56 3 "Unknown or invalid" 2 "Short" 1 "Open" 0 "OK" ;
+VAL_ 0 GNSS_Ant_Power_Stat_ch_56 3 "Invalid" 2 "Power unknown" 1 "Power off " 0 "Power on" ;
+VAL_ 0 GNSS_Card_Baud_Rate_ch_56 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_ 0 GNSS_Pos_Mode_ch_56 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_ 0 GNSS_Ant_Stat_ch_55 3 "Unknown or invalid" 2 "Short" 1 "Open" 0 "OK" ;
+VAL_ 0 GNSS_Ant_Power_Stat_ch_55 3 "Invalid" 2 "Power unknown" 1 "Power off " 0 "Power on" ;
+VAL_ 0 GNSS_Card_Baud_Rate_ch_55 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_ 0 GNSS_Pos_Mode_ch_55 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_ 0 Data_Ellipsoid 1 "GRS80" 0 "WGS84" ;
+VAL_ 0 Earth_Frame_Ass_With_Date 2 "NAD83(2011)" 1 "ETRF2000(R08)" 0 "ITRF2008" ;
+VAL_ 0 Serial_1_Baud_Rate 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_ 0 Serial_2_Baud_Rate 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_ 0 Serial_3_Baud_Rate 14 "921600" 13 "460800" 12 "230400" 11 "115200" 10 "76800" 9 "57600" 8 "38400" 7 "19200" 6 "9600" 5 "4800" 4 "2400" 3 "1200" 2 "600" 1 "300" 0 "Disabled" ;
+VAL_ 0 CAN_Baud_Rate 6 "1000000" 5 "500000" 4 "250000" 3 "200000" 2 "125000" 1 "100000" 0 "Disabled" ;
+VAL_ 0 Vehicle_Starts 1 "Initially level" 0 "Initially not level " ;
+VAL_ 0 Vibration_Env_Option 2 "Very high " 1 "High" 0 "Normal" ;
+VAL_ 0 Expected_GNSS_Acc_Or_Weigh 2 "Frequent obstructions" 1 "Open sky" 0 "Some obstructions" ;
+VAL_ 0 UDP_Output_Option 16 "Reserved" 15 "Reserved" 14 "Reserved" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "Reserved" 7 "MCOM" 6 "Reserved" 5 "NMEA" 4 "Reserved" 3 "Reserved" 2 "ABD robot interface" 1 "Reserved" 0 "NCOM" ;
+VAL_ 0 Serial_1_Output_Option 16 "Reserved" 15 "Reserved" 14 "Reserved" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "Reserved" 7 "MCOM" 6 "Reserved" 5 "NMEA" 4 "Reserved" 3 "Reserved" 2 "ABD robot interface" 1 "Reserved" 0 "NCOM" ;
+VAL_ 0 Serial_2_Output_Option 16 "Reserved" 15 "Reserved" 14 "Reserved" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "Reserved" 7 "MCOM" 6 "Reserved" 5 "NMEA" 4 "Reserved" 3 "Reserved" 2 "ABD robot interface" 1 "Reserved" 0 "NCOM" ;
+VAL_ 0 Heading_Search_Option 3 "Always perform heading searches" 2 "Only search after initialisation" 1 "NoSearch, allow INS 2-ant relock" 0 "Never compute 2-ant heading" ;
+VAL_ 0 Heave_Coupling_Mode 2 "Disabled " 1 "DC coupled " 0 "AC coupled" ;
+VAL_ 0 Heading_Quality 3 "RTK Integer" 2 "RTK Float" 1 "Poor" 0 "None" ;
+VAL_ 0 Heading_Search_Type 3 "L1/L2" 2 "L2" 1 "L1" 0 "Idle" ;
+VAL_ 0 Heading_Search_Status 18 "Disabled" 17 "Lost lock" 16 "Ambiguous ambiguities " 15 "Covariance error " 14 "Satellite constellation too poor" 13 "Lost slave 3 " 12 "Lost slave 2 " 11 "Lost slave 1 " 10 "Lost master " 9 "Too many ambiguities" 8 "No matching ambiguities " 7 "Bad length " 6 "No slave 3 " 5 "No slave 2 " 4 "No slave 1 " 3 "No master" 2 "No seed" 1 "No spare CPU" 0 "OK" ;
+VAL_ 0 Heading_Search_Ready 1 "Processing" 0 "Waiting" ;
+VAL_ 0 Blended_Method 6 "Unknown" 5 "Post-process
+combined " 4 "Post-process
+backward " 3 "Post-process
+forward" 2 "Simulated" 1 "Real-time" 0 "Invalid" ;
+VAL_ 0 Orientation_Mode 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_ 0 Velocity_Mode 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_ 0 Position_Mode 20 "Unknown " 19 "Not Recognised" 18 "CDGPS " 17 "OmniStar XP" 16 "RTK Integer (PP) " 15 "RTK Float (PP)" 14 "Differential (PP)" 13 "SPS (PP)" 12 "Doppler (PP)" 11 "Blanked" 10 "No Data" 9 "OmniStar HP" 8 "OmniStar " 7 "WAAS " 6 "RTK Integer" 5 "RTK Float" 4 "Differential " 3 "SPS " 2 "Doppler" 1 "Search" 0 "None" ;
+VAL_ 0 NavigationStatus 11 "Internal Use" 7 "Blocked firmware" 22 "Trigger out while locked" 21 "Trigger out while locking" 20 "Trigger out while initialising" 10 "Status only" 6 "Expired Firmware" 5 "Reserved for unlocked" 4 "Locked" 3 "Locking" 0 "invalid" 2 "Initialising" 1 "Raw IMU" ;
+SIG_GROUP_ 0 Channel_91 1 : Pitch_Mis_Angle Acc_Pitch_Mis_Angle Reserved_ch_91_1 Validity_ch_91 Reserved_ch_91_2;
+SIG_GROUP_ 0 Channel_90 1 : Acc_Dist_Ver_Slip_Point_X Acc_Dist_Ver_Slip_Point_Y Acc_Dist_Ver_Slip_Point_Z Validity_ch_90 Reserved_ch_90;
+SIG_GROUP_ 0 Channel_89 1 : Dist_Ver_Slip_Point_X Dist_Ver_Slip_Point_Y Dist_Ver_Slip_Point_Z Validity_ch_89 Reserved_ch_89;
+SIG_GROUP_ 0 Channel_88 1 : Valid_Flag_ch_88 Vertical_Adv_Slip_Inn Reserved_ch_88;
+SIG_GROUP_ 0 Channel_81 1 : TRIG_MINUTE_ch_81 TRIG_MSEC_ch_81 TRIG_USEC_ch_81 TRIG_COUNT_ch_81;
+SIG_GROUP_ 0 Channel_80 1 : TRIG_MINUTE_ch_80 TRIG_MSEC_ch_80 TRIG_USEC_ch_80 TRIG_COUNT_ch_80;
+SIG_GROUP_ 0 Channel_79 1 : TRIG_MINUTE_ch_79 TRIG_MSEC_ch_79 TRIG_USEC_ch_79 TRIG_COUNT_ch_79;
+SIG_GROUP_ 0 Channel_77 1 : Diff_GPS_Format Diff_GPS_Type Diff_GPS_Num_Stations Reserved_ch_77;
+SIG_GROUP_ 0 Channel_76 1 : Diff_GPS_Chars_Received Diff_GPS_Packets_Received Diff_GPS_Chars_Skipped Reserved_ch_76;
+SIG_GROUP_ 0 Channel_75 1 : Expiry_Date Supply_Voltage IMU_Rate Reserved_ch_75;
+SIG_GROUP_ 0 Channel_73 1 : Reserved_ch_73 L1_GLONASS_Number_ch_73 L2_GLONASS_Number_ch_73;
+SIG_GROUP_ 0 Channel_72 1 : Reserved_ch_72 L1_GPS_Number_ch_72 L2_GPS_Number_ch_72;
+SIG_GROUP_ 0 Channel_71 1 : Dist_Add_Slip_Point_X_ch_71 Dist_Add_Slip_Point_Y_ch_71 Dist_Add_Slip_Point_Z_ch_71 Validity_ch_71 Reserved_ch_71;
+SIG_GROUP_ 0 Channel_70 1 : Dist_Add_Slip_Point_X_ch_70 Dist_Add_Slip_Point_Y_ch_70 Dist_Add_Slip_Point_Z_ch_70 Validity_ch_70 Reserved_ch_70;
+SIG_GROUP_ 0 Channel_69 1 : Dist_Add_Slip_Point_X_ch_69 Dist_Add_Slip_Point_Y_ch_69 Dist_Add_Slip_Point_Z_ch_69 Validity_ch_69 Reserved_ch_69;
+SIG_GROUP_ 0 Channel_68 1 : Dist_Add_Slip_Point_X_ch_68 Dist_Add_Slip_Point_Y_ch_68 Dist_Add_Slip_Point_Z_ch_68 Validity_ch_68 Reserved_ch_68;
+SIG_GROUP_ 0 Channel_67 1 : Local_Coors_Orig_Alt Local_Coors_Orig_Head;
+SIG_GROUP_ 0 Channel_66 1 : Local_Coors_Orig_Lat Local_Coors_Orig_Long;
+SIG_GROUP_ 0 Channel_65 1 : TRIG_MINUTE_ch_65 TRIG_MSEC_ch_65 TRIG_USEC_ch_65 TRIG_COUNT_ch_65;
+SIG_GROUP_ 0 Channel_64 1 : CPU_Type_Nav_Comp Ext_GNSS_Type Ext_GNSS_Format Dual_port_RAM_Stat Prim_GNSS_Pos_Update_rate Prim_GNSS_Vel_Update_rate Prim_GNSS_Raw_Data_Rate Sec_GNSS_Raw_Data_Rate Reserved_ch_64 Product_Type;
+SIG_GROUP_ 0 Channel_62 1 : GNSS_Ant_Stat_ch_62 GNSS_Ant_Power_Stat_ch_62 Reserved_ch_62 GNSS_Card_CPU_Load_ch_62 GNSS_Card_Core_Noise_ch_62 GNSS_Card_Baud_Rate_ch_62 Num_Of_Sat_ch_62 GNSS_Pos_Mode_ch_62 Core_Temp_X_ch_62 GNSS_Rx_Supply_Vol_ch_62;
+SIG_GROUP_ 0 Channel_61 1 : Chars_Ext_GNSS_Nav Packets_Ext_GNSS_Nav Chars_Ext_GNSS_Nav_No_Dec Packets_Ext_GNSS_Nav_No_Kal;
+SIG_GROUP_ 0 Channel_60 1 : Surf_Angle_Heading_Rot Surf_Angle_Pitch_Rot Surf_Angle_Roll_Rot Validity_ch_60 Reserved_ch_60;
+SIG_GROUP_ 0 Channel_59 1 : IMU_Num_Packets_Missed IMU_Num_Resets IMU_Num_Errors Calibration_Date IMU_Temperature;
+SIG_GROUP_ 0 Channel_58 1 : Heading_Out_Frame_Ref_Veh Pitch_Out_Frame_Ref_Veh Roll_Out_Frame_Ref_Veh Validity_ch_58 Reserved_ch_58;
+SIG_GROUP_ 0 Channel_57 1 : Dist_Prim_GNNS_Ant_X Dist_Prim_GNNS_Ant_Y Dist_Prim_GNNS_Ant_Z Age_ch_57 Scale_factor;
+SIG_GROUP_ 0 Channel_56 1 : GNSS_Ant_Stat_ch_56 GNSS_Ant_Power_Stat_ch_56 Reserved_ch_56 GNSS_Card_CPU_Load_ch_56 GNSS_Card_Core_Noise_ch_56 GNSS_Card_Baud_Rate_ch_56 Num_Of_Sat_ch_56 GNSS_Pos_Mode_ch_56 Core_Temp_X_ch_56 GNSS_Rx_Supply_Vol_ch_56;
+SIG_GROUP_ 0 Channel_55 1 : GNSS_Ant_Stat_ch_55 GNSS_Ant_Power_Stat_ch_55 Reserved_ch_55 GNSS_Card_CPU_Load_ch_55 GNSS_Card_Core_Noise_ch_55 GNSS_Card_Baud_Rate_ch_55 Num_Of_Sat_ch_55 GNSS_Pos_Mode_ch_55 Core_Temp_X_ch_55 GNSS_Rx_Supply_Vol_ch_55;
+SIG_GROUP_ 0 Channel_54 1 : Dist_Add_Slip_Point_X_ch_54 Dist_Add_Slip_Point_Y_ch_54 Dist_Add_Slip_Point_Z_ch_54 Validity_ch_54 Reserved_ch_54;
+SIG_GROUP_ 0 Channel_53 1 : Dist_Add_Slip_Point_X_ch_53 Dist_Add_Slip_Point_Y_ch_53 Dist_Add_Slip_Point_Z_ch_53 Validity_ch_53 Reserved_ch_53;
+SIG_GROUP_ 0 Channel_52 1 : Dist_Add_Slip_Point_X_ch_52 Dist_Add_Slip_Point_Y_ch_52 Dist_Add_Slip_Point_Z_ch_52 Validity_ch_52 Reserved_ch_52;
+SIG_GROUP_ 0 Channel_51 1 : Dist_Add_Slip_Point_X_ch_51 Dist_Add_Slip_Point_Y_ch_51 Dist_Add_Slip_Point_Z_ch_51 Validity_ch_51 Reserved_ch_51;
+SIG_GROUP_ 0 Channel_50 1 : Com_Port_Char Com_Port_Packets Com_Port_Char_No_Decoder Com_Port_Errors;
+SIG_GROUP_ 0 Channel_49 1 : Freq_OmniSTAR_Track_Loop SNR_OmiSTAR Time_cont_tracking_OmniSTAR OmiSTAR_Status OmiSTAR_Serial_Number;
+SIG_GROUP_ 0 Channel_48 1 : Undulation_Value HDOP_Of_GPS PDOP_Of_GPS Reserved_ch_48 Data_Ellipsoid Earth_Frame_Ass_With_Date;
+SIG_GROUP_ 0 Channel_47 1 : Acc_Dist_Wheel_Speed_X Acc_Dist_Wheel_Speed_Y Acc_Dist_Wheel_Speed_Z Validity_ch_47 Reserved_ch_47;
+SIG_GROUP_ 0 Channel_46 1 : Dist_Wheel_Speed_X Dist_Wheel_Speed_Y Dist_Wheel_Speed_Z Validity_ch_46 Reserved_ch_46;
+SIG_GROUP_ 0 Channel_45 1 : Cyclic_Wheel_Speed_In_Count Timestamp_of_Wheel_Speed_In_Coun Time_Since_Last_Count Reserved_ch_45;
+SIG_GROUP_ 0 Channel_44 1 : Wheel_Speed_Scaling Acc_Wheel_Speed_Scaling Reserved_ch_44;
+SIG_GROUP_ 0 Channel_43 1 : TRIG_MINUTE_ch_43 TRIG_MSEC_ch_43 TRIG_USEC_ch_43 TRIG_COUNT_ch_43;
+SIG_GROUP_ 0 Channel_42 1 : Reserved_ch_42_0 Heading_Mode_Option_Raw_In Heading_Mode_Option_Att_In Reserved_ch_42_1 Heading_Mode_Option_Att_Ex Reserved_ch_42_2 Valid_Flag_ch_42 Reserved_ch_42_3;
+SIG_GROUP_ 0 Channel_41 1 : Serial_1_Baud_Rate Serial_2_Baud_Rate Serial_3_Baud_Rate CAN_Baud_Rate Reserved_ch_41;
+SIG_GROUP_ 0 Channel_40 1 : NCOM_Format_Encoder_Ver Reserved_ch_40;
+SIG_GROUP_ 0 Channel_37 1 : Heading_Mis_Angle Acc_Heading_Mis_Angle Num_Sat_Pos_Sol Num_Sat_Vel_Sol Validity_ch_37 Num_Sat_Att_Sol;
+SIG_GROUP_ 0 Channel_36 1 : Acc_Dist_Lat_Adv_Slip_X Acc_Dist_Lat_Adv_Slip_Y Acc_Dist_Lat_Adv_Slip_Z Validity_ch_36 Reserved_ch_36;
+SIG_GROUP_ 0 Channel_35 1 : Dist_Lat_Adv_Slip_X Dist_Lat_Adv_Slip_Y Dist_Lat_Adv_Slip_Z Validity_ch_35 Reserved_ch_35;
+SIG_GROUP_ 0 Channel_34 1 : Acc_Dist_Zero_Vel_X Acc_Dist_Zero_Vel_Y Acc_Dist_Zero_Vel_Z Validity_ch_34 Reserved_ch_34;
+SIG_GROUP_ 0 Channel_33 1 : Dist_Zero_Vel_X Dist_Zero_Vel_Y Dist_Zero_Vel_Z Validity_ch_33 Reserved_ch_33;
+SIG_GROUP_ 0 Channel_32 1 : Zero_Vel_X_Inn_Valid Zero_Vel_X_Inn Zero_Vel_Y_Inn_Valid Zero_Vel_Y_Inn Zero_Vel_Z_Inn_Valid Zero_Vel_Z_Inn Lat_Adv_Slip_Inn_Valid Lat_Adv_Slip_Inn Heading_Lock_Inn_Valid Heading_Lock_Inn Wheel_Speed_Inn_Valid Wheel_Speed_Inn Clock_Offset_Inn_Valid Clock_Offset_Inn Clock_Drift_Inn_Valid Clock_Drift_Inn;
+SIG_GROUP_ 0 Channel_30 1 : Operating_Sys_Ver_1 Operating_Sys_Ver_2 Operating_Sys_Ver_3 Start_Up_Script_Ver Serial_Number;
+SIG_GROUP_ 0 Channel_29 1 : Vehicle_Starts Vibration_Env_Option Expected_GNSS_Acc_Or_Weigh UDP_Output_Option Serial_1_Output_Option Serial_2_Output_Option Heading_Search_Option Heave_Coupling_Mode;
+SIG_GROUP_ 0 Channel_28 1 : Master_Sat_PRN Slave_1_Sat_PRN Slave_2_Sat_PRN Slave_3_Sat_PRN Heading_search_Duration Num_Of_Constrains_Heading_Search;
+SIG_GROUP_ 0 Channel_27 1 : Heading_Quality Heading_Search_Type Heading_Search_Status Heading_Search_Ready Init_Num_Of_Amb_Heading_Search Remaining_Num_Of_Amb_Heading_Sea;
+SIG_GROUP_ 0 Channel_26 1 : Output_DisP_Lever_Arm_X Output_DisP_Lever_Arm_Y Output_DisP_Lever_Arm_Z Validity_ch_26 Reserved_ch_26;
+SIG_GROUP_ 0 Channel_24 1 : TRIG_MINUTE_ch_24 TRIG_MSEC_ch_24 TRIG_USEC_ch_24 TRIG_COUNT_ch_24;
+SIG_GROUP_ 0 Channel_23 1 : Blended_Nav_Sys_Lag_Time INS_Running_Time Num_GPS_Pos_Update_Rej Num_GPS_Vel_Update_Rej Num_GPS_Att_Update_Rej Reserved_ch_23;
+SIG_GROUP_ 0 Channel_22 1 : Time_Mismatch_Counter IMU_Time_Diff IMU_Time_Margin IMU_Loop_Time OUTPUT_Loop_Time;
+SIG_GROUP_ 0 Channel_21 1 : Disk_Space_Remain Current_logged_Size;
+SIG_GROUP_ 0 Channel_20 1 : Age_Diff_Cor_From_Base Differential_Station_ID_0 Differential_Station_ID_1 Differential_Station_ID_2 Differential_Station_ID_3 Reserved_ch_20;
+SIG_GROUP_ 0 Channel_19 1 : SW_Version_0 SW_Version_1 SW_Version_2 SW_Version_3 SW_Version_4 SW_Version_5 SW_Version_6 SW_Version_7;
+SIG_GROUP_ 0 Channel_18 1 : IMU_Packets_Nav IMU_Char_Nav_No_Decoder IMU_Char_Nav;
+SIG_GROUP_ 0 Channel_17 1 : GPS2_Packets_Nav_No_Kalman GPS2_Packets_Nav GPS2_Char_Nav_No_Decoder GPS2_Char_Nav;
+SIG_GROUP_ 0 Channel_16 1 : Heading_Veh_RT_Coor Pitch_Veh_RT_Coor Roll_Veh_RT_Coor Validity_ch_16 UTC_Time_Offset_Valid UTC_Time_Offset;
+SIG_GROUP_ 0 Channel_15 1 : Age_ch_15 Acc_Heading_Ori_GPS_Ants Acc_Pitch_Ori_GPS_Ants Acc_Dist_bet_GPS_Ants Num_GLONASS_Sat_Available Num_GLONASS_Sat_Used_L1;
+SIG_GROUP_ 0 Channel_14 1 : Age_ch_14 Acc_Dist_Prim_GPS_Ant_X Acc_Dist_Prim_GPS_Ant_Y Acc_Dist_Prim_GPS_Ant_Z Num_GPS_Sat_Used_Position Num_GLONASS_Sat_Used_Position;
+SIG_GROUP_ 0 Channel_13 1 : Age_ch_13 Heading_Ori_GPS_Ants Pitch_Ori_GPS_Ants Dist_bet_GPS_Ants Num_GPS_Sat_Used_L1 Num_GPS_Sat_Available;
+SIG_GROUP_ 0 Channel_12 1 : Age_ch_12 Dist_Prim_GPS_Ant_X Dist_Prim_GPS_Ant_Y Dist_Prim_GPS_Ant_Z Reserved_ch_12;
+SIG_GROUP_ 0 Channel_11 1 : Age_ch_11 Acc_Of_Gyro_Scale_Factor_X Acc_Of_Gyro_Scale_Factor_Y Acc_Of_Gyro_Scale_Factor_Z L1_GLONASS_Number_ch_11 L2_GLONASS_Number_ch_11;
+SIG_GROUP_ 0 Channel_10 1 : Age_ch_10 Acc_Of_Accelerometer_Bias_X Acc_Of_Accelerometer_Bias_Y Acc_Of_Accelerometer_Bias_Z L1_GLONASS_Number_ch_10 L2_GLONASS_Number_ch_10;
+SIG_GROUP_ 0 Channel_9 1 : Age_ch_9 Acc_Of_Gyro_Bias_X Acc_Of_Gyro_Bias_Y Acc_Of_Gyro_Bias_Z L1_GLONASS_Number_ch_9 L2_GLONASS_Number_ch_9;
+SIG_GROUP_ 0 Channel_8 1 : Age_ch_8 Gyro_Scale_Factor_X Gyro_Scale_Factor_Y Gyro_Scale_Factor_Z L1_GPS_Number_ch_8 L2_GPS_Number_ch_8;
+SIG_GROUP_ 0 Channel_7 1 : Age_ch_7 Accelerometer_Bias_X Accelerometer_Bias_Y Accelerometer_Bias_Z L1_GPS_Number_ch_7 L2_GPS_Number_ch_7;
+SIG_GROUP_ 0 Channel_6 1 : L2_GPS_Number_ch_6 Age_ch_6 Gyro_Bias_X Gyro_Bias_Y Gyro_Bias_Z L1_GPS_Number_ch_6;
+SIG_GROUP_ 0 Channel_5 1 : Age_ch_5 Roll_Accuracy Pitch_Accuracy Heading_Accuracy Reserved_ch_5;
+SIG_GROUP_ 0 Channel_4 1 : Age_ch_4 East_Velocity_Accuracy Down_Velocity_Accuracy North_Velocity_Accuracy Blended_Method;
+SIG_GROUP_ 0 Channel_3 1 : Age_ch_3 ABD_robot_UMAC East_Position_Accuracy Down_Position_Accuracy North_Position_Accuracy;
+SIG_GROUP_ 0 Channel_2 1 : GPS1_Char_Nav_No_Decoder GPS1_Packets_Nav_No_Kalman GPS1_Packets_Nav GPS1_Char_Nav;
+SIG_GROUP_ 0 Channel_1 1 : Velocity_X_Inn_Valid Velocity_Z_Inn Velocity_Y_Inn Velocity_X_Inn Position_Y_Inn_Valid Position_Z_Inn Orientation_Pitch_Inn_Valid Position_X_Inn Position_Y_Inn Velocity_Z_Inn_Valid Orientation_Heading_Inn Orientation_Pitch_Inn Orientation_Heading_Inn_Valid Velocity_Y_Inn_Valid Position_Z_Inn_Valid Position_X_Inn_Valid;
+SIG_GROUP_ 0 Channel_0 1 : Orientation_Mode Velocity_Mode Position_Mode GPS_Satellites_Number GPS_Time;
+SIG_VALTYPE_ 0 Latitude : 2;
+SIG_VALTYPE_ 0 Altitude : 1;
+SIG_VALTYPE_ 0 Longitude : 2;
+

@@ -1,0 +1,1 @@
+C:\10032114_01_MY2021_BMW_SRR5_ECU\RECU_SIL_Library\Config\SRR5_customer_config_v1p1.xml C:\10032114_01_MY2021_BMW_SRR5_ECU\RECU_SIL_Library\Config\BMW_SIL_ECU_Log_List.txt

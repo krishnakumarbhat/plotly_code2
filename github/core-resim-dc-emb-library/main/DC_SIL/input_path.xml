@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- Common paths -->
+  <FW_LIBS_PATH>/sil_executables/fw_dlls</FW_LIBS_PATH>
+  <CONFIG_FILES_PATH>/sil_executables/dc_config</CONFIG_FILES_PATH>
+  
+  <!-- Customer-specific paths -->
+  <CEER>
+    <RADAR_DLLS_PATH>/sil_executables/radar_dlls</RADAR_DLLS_PATH>
+    <SRR_LIB_PATH>/build/libSRR_DC_SIL_LIB.so</SRR_LIB_PATH>
+    <MRR_LIB_PATH>/build/libMRR_DC_SIL_LIB.so</MRR_LIB_PATH>
+  </CEER>
+</configuration>
+

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_ced_crash_line_host_length_percentage</NAME>
+    <!-- The crash line is set as a percentage of the vehicle length. (0.0 = front bumper, 1.0 = rear bumper).-->
+    <VALUE>[0.4f 0.4f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_first_warning_ttc_threshold</NAME>
+    <!-- This parameter defines the TTC threshold for the first warning level. -->
+    <VALUE>[5.8f 5.8f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_second_warning_ttc_threshold</NAME>
+    <!-- This parameter defines the TTC threshold for the second warning level if it is enabled. -->
+    <VALUE>[1.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_existence_probability_min</NAME>
+    <!-- Minimum existence probability of the target object. -->
+    <VALUE>0.90f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_heading_abs_angle_max</NAME>
+    <!-- Maximum allowed absolute heading angle of the target object. -->
+    <VALUE>0.262f</VALUE> <!-- 15.00° -->
+  </record>
+  <record>
+    <NAME>k_ced_object_long_vel_rel_min</NAME>
+    <!-- Minimum approaching longitudinal relative velocity of the target object. -->
+    <VALUE>0.83f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_long_vel_min</NAME>
+    <!-- Minimum longitudinal target object velocity. -->
+    <VALUE>1.11f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_lat_vel_max</NAME>
+    <!-- Maximum lateral target velocity. -->
+    <VALUE>10.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_ego_abs_speed_max</NAME>
+    <!-- CED will only work for absolute ego speed values equal or below this value. -->
+    <VALUE>0.278f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_alert_qualifying_cycles</NAME>
+    <!-- Number of qualifying cycles for alert level 1. Level 2 qualifies immediately. -->
+    <VALUE>4u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_alert_holding_cycles</NAME>
+    <!-- Number of holding cycles for alert. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_heading_exp_moving_average_alpha</NAME>
+    <!-- Set alpha value for exponential moving average filter for object heading. Higher alpha means more weight for current values. -->
+    <VALUE>0.75f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_enable_heading_exp_moving_average</NAME>
+    <!-- Indicates if the exponential moving average function for the object heading is enabled. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_path_tracking_enable</NAME>
+    <!-- Enable use of path tracking information. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_handle_both_side_alerts_as_object_side</NAME>
+    <!-- Objects that alert both sides are restricted to only alert their current side. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_second_warning_level_enable</NAME>
+    <!-- Disable the second warning level. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_third_warning_level_enable</NAME>
+    <!-- Disable the third warning level. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_allow_coasted_object_alerts</NAME>
+    <!-- Objects that are coasting are allowed to give alerts. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_slow_objects_long_vel_max</NAME>
+    <VALUE>0.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_ftm_heading_abs_angle_min</NAME>
+    <VALUE>2.75f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_long_vel_rel_max</NAME>
+    <VALUE>40.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_ftm_long_vel_rel_max</NAME>
+    <VALUE>40.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_ftm_long_vel_rel_min</NAME>
+    <VALUE>2.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_vel_max</NAME>
+    <VALUE>40.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_funnel_zone_length</NAME>
+    <VALUE>50.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_funnel_zone_width</NAME>
+    <VALUE>18.84f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_ego_lane_width</NAME>
+    <VALUE>1.8f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_collision_zone_width</NAME>
+    <VALUE>2.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_allow_opposite_side_alerts</NAME>
+    <VALUE>0</VALUE>
+	<!-- DDG: 3489 -->
+  </record>
+  <record>
+    <NAME>k_ced_f_object_lat_on_one_side_of_border</NAME>
+    <VALUE>1</VALUE>
+	<!-- DDG: 3489 -->
+  </record>
+  <record>
+    <NAME>k_ced_lat_pos_of_border</NAME>
+    <VALUE>1.0f</VALUE>
+	<!-- DDG: 3489 -->
+  </record>
+  <record>
+    <NAME>k_ced_object_max_width_increase_factor_without_path_match</NAME>
+    <VALUE>0.675f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_max_width_increase_factor_with_path_match</NAME>
+    <VALUE>0.5f</VALUE>
+  </record> 
+  <record>
+    <NAME>k_ced_slight_turn_lat_vel_table</NAME>
+    <VALUE>[0.85f 1.75f]</VALUE>
+  </record>  
+  <record>
+    <NAME>k_ced_slight_turn_position_limits</NAME>
+    <!--DDG-4304 -->
+    <VALUE>[6.0f 2.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_lat_pos_shift_enable</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_lat_pos_max_shift</NAME>
+    <VALUE>0.45f</VALUE>
+    <!-- DDG-4818 -->
+  </record>
+  <record>
+    <NAME>k_ced_lat_pos_shift_long_dist_thresholds</NAME>
+    <VALUE>[7.5f 20.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_lat_pos_shift_lat_dist_thresholds</NAME>
+    <VALUE>[2.3f 3.7f]</VALUE>
+    <!-- DDG-4818 -->
+  </record>
+  <record>
+    <NAME>k_ced_object_min_dist_to_crash_line_for_path_match</NAME>
+    <VALUE>5.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_offset_to_path_weight</NAME>
+    <VALUE>0.3f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_adapt_heading_ego_lane</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_choose_ref_point_funnel_check</NAME>
+    <VALUE>2</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_suppress_range_to_nearest_path_max</NAME>
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_use_only_mature_paths</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_predicted_max_width_slope_reduce_factor</NAME>
+    <VALUE>0.65f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_predicted_max_width_slope_offset</NAME>
+    <VALUE>0.15f</VALUE>
+  </record>
+  <CUSTOMER_SPECIFIC_CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_ced_honda_srr6_custom_ttc_alert_threshold</NAME>
+      <DESCRIPTION>This parameter defines the custom TTC threshold for keeping alert active. [LEFT RIGHT]</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[2.8f 2.8f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_honda_srr6_custom_ttc_alert_hysteresis</NAME>
+      <DESCRIPTION>This parameter defines the custom TTC hysteresis for keeping alert active. [LEFT RIGHT]</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.25f 0.25f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_honda_srr6_long_dist_threshold</NAME>
+      <DESCRIPTION>This parameter defines the longitudinal distance from host rear bumper to object reference point threshold for keeping alert active. [LEFT RIGHT]</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>40.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[40.0f 40.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_honda_min_alert_duration</NAME>
+      <DESCRIPTION>The minimum duration of the alert.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.05</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.8f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_honda_use_alert_ttc_threshold</NAME>
+      <DESCRIPTION>Flag whether there should be ttc threshold check performed in post run</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_honda_elatch_zones_width_table</NAME>
+      <DESCRIPTION>Honda table with door elatch zones width for EW_Zone_Information_T ew_elatch_sense_stt   </DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[2.0f 1.3f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_honda_min_eratch_alert_duration</NAME>
+      <DESCRIPTION>The minimum duration of the eratch alert in Honda</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_honda_object_acceleration_weight</NAME>
+      <DESCRIPTION>Weights the influence of the objects acceleration on the prediction and TTC calculation.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+  </CUSTOMER_SPECIFIC_CALIBRATION_COMPONENT>
+</data-set>

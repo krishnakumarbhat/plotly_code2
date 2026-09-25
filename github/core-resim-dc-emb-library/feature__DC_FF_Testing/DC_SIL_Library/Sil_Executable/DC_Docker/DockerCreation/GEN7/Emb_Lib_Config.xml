@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR3 Delphi SIL component configuration -->
+
+<Embedded_Library_Output_Control>
+  <!-- SIL SRR3 Embedded_Library Configuration Control XML Version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <SIL_SRR3_Embedded_Library_Output_Control_XML_Version>4.0</SIL_SRR3_Embedded_Library_Output_Control_XML_Version>
+  <!-- XML Configuration Control for the Transmission of CAN Data - 
+				CAN_TX_ENABLED - Send RESIM outputs to CANoe(in Live mode) 
+				CAN_TX_DISABLED-Don't send RESIM outputs to CANoe -->
+  <CAN_TRANSMISSION>CAN_TX_DISABLED</CAN_TRANSMISSION>
+
+  <!-- XML Configuration Control for the Transmission of UDP Data- 
+				UDP_TX_ENABLED - Send RESIM outputs to Orcas(in Live mode) 
+				UDP_TX_DISABLED-Don't send RESIM outputs to Orcas -->
+  <UDP_TRANSMISSION>UDP_TX_DISABLED</UDP_TRANSMISSION>
+
+  <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				XML_TRACE_ENABLED - GENERATE Embedded_Library Output XML Trace Files 
+				XML_TRACE_DISABLED - SUPPRESS Embedded_Library Output XML Trace Files -->
+  <XML_Trace_Files>XML_TRACE_ENABLED</XML_Trace_Files>
+  <!--XML Configuration Control for Embedded_Library plp synchronization 
+				ENABLE_TRACKER_MODE_INIT - Enable tracker only in Init
+	      ENABLE_TRACKER_MODE_EVERYCYCLE- Emable tracker for evry cycle
+        DISABLE_TRACKER_MODE- SUPPRESS Loading Tracker Internals -->
+  <LOAD_TRACKER_INTERNALS>ENABLE_TRACKER_MODE_INIT</LOAD_TRACKER_INTERNALS>
+
+  <!-- External Error via XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				EXTERNAL_ERROR_XML_ENABLED - ENABLE Loading ANERMA Files 
+				EXTERNAL_ERROR_XML_DISABLED - SUPPRESS Loading ANERMA Files -->
+  <LOAD_ANERMA_ERROR>EXTERNAL_ERROR_XML_DISABLED</LOAD_ANERMA_ERROR>
+  <!-- XML Configuration Control for Embedded_Library Output XML Trace Files- 
+				USC_NORMAL - Loads the USC from the UDP logs
+				USC_READ_FROM_XML - Loads the USC from the XML file -->
+  <USC_XML_Control>USC_NORMAL</USC_XML_Control>
+
+  <!--XML Configuration Control for Embedded_Library USC CSV Mode extraction
+				ENABLE_USC_CSV_MODE Genearate usc csv to output
+				DISABLE_USC_CSV_MODE SUPPRESS  usc csv to output -->
+  <Suppress_Usc_Csv_log>ENABLE_USC_CSV_MODE</Suppress_Usc_Csv_log>
+
+  <!--XML Configuration Control for Embedded_Library USC XML mode extraction
+				ENABLE_USC_XML_MODE Generate usc xml to output
+				DISABLE_USC_XML_MODE SUPPRESS usc xml to output -->
+  <Suppress_Usc_Xml_log>ENABLE_USC_XML_MODE</Suppress_Usc_Xml_log>
+
+  <!-- Angular Error Manipulation (ANERMA) - 
+     Path for test and reference files which stores the required parameters to simulate angular error noise (for testing and analysis) -->
+  <ANERMA_PARAMETER_FILE_REFERENCE>C:/anerma/AU536</ANERMA_PARAMETER_FILE_REFERENCE>
+  <ANERMA_PARAMETER_FILE_TEST>C:/anerma/PO513</ANERMA_PARAMETER_FILE_TEST>
+
+
+  <PLP_Resim>
+    <!-- Enable / Disable PLP Time Syncronization
+          0 => Enable 
+          1 => Disable 
+	  If PLP Algorithm is enabled(0) then only resim will consider host accelearation from CALIFR file for below SW PDX 3.18-->
+    <plp_algorithems>0</plp_algorithems>
+    <!-- Enable / Disable PLP Analysis. Use either PCAN_Decoder or PLP analysis.
+          1 => Enable 
+          0 => Disable -->
+    <plp_analysis>0</plp_analysis>
+    <!-- Enable / Disable PLP Analysis. Use either PCAN_Decoder or PLP analysis.
+          1 => Enable 
+          0 => Disable -->
+    <PCAN_Decoder>0</PCAN_Decoder>
+  </PLP_Resim>
+  
+    <!-- Enable / Disable PLP Analysis. Use either PCAN_Decoder or STATE_MACHINE.
+          0 => Enable 
+          1 => Disable -->
+    <STATE_MACHINE>0</STATE_MACHINE>
+
+  <!-- Parts of XML Prints: 
+          1 => Generate XML Print 
+					0 => Suppress XML Print -->
+  <XML_Prints>
+    <Vehicle_Info>1</Vehicle_Info>
+    <Mounting_Info>1</Mounting_Info>
+    <MNR_blockage>1</MNR_blockage>
+    <TD_blockage>1</TD_blockage>
+    <Self_Dets>1</Self_Dets>
+    <Opp_Dets>1</Opp_Dets>
+    <scan_prints>1</scan_prints>
+    <Cal_Error_Files>0</Cal_Error_Files>
+    <Active_Faults>1</Active_Faults>
+    <UDP_Datas>1</UDP_Datas>
+    <Curvi_Tracks>1</Curvi_Tracks>
+    <Alignment_Info>1</Alignment_Info>
+    <Z4_Z7B_Cust_Data>0</Z4_Z7B_Cust_Data>
+    <ADC_Physical_Data>1</ADC_Physical_Data>
+    <Algo_Z7B_core>1</Algo_Z7B_core>
+    <!-- Algo Timing Info of Z7B core -->
+    <Algo_Z7A_core>1</Algo_Z7A_core>
+    <!-- Algo Timing Info of Z7A core -->
+    <Algo_Z4_core>1</Algo_Z4_core>
+    <!-- Algo Timing Info of Z4 core -->
+    <PATH_Tracking_Info>0</PATH_Tracking_Info>
+    <LCDA_Info>1</LCDA_Info>
+    <CTA_Info>1</CTA_Info>
+    <RECW_Info>1</RECW_Info>
+    <ASW_Info>0</ASW_Info>
+    <ABA_Info>0</ABA_Info>
+    <CDC_Errors_Info>1</CDC_Errors_Info>
+    <IPC_Error_Infor>1</IPC_Error_Infor>
+    <PCAN_Error_Info>1</PCAN_Error_Info>
+    <ENET_Frame_Error_Info>1</ENET_Frame_Error_Info>
+    <HIL_BB_Erors_Info>1</HIL_BB_Erors_Info>
+	<CTB_Info>1</CTB_Info>
+	<TA_Info>1</TA_Info>
+  </XML_Prints>
+
+  <!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				
+				0 - SUPPRESS Embedded_Library both input and  Output CSV Files for all logging streams 
+				1 - GENERATE Embedded_Library input CSV Files for all logging streams
+				2 - GENERATE Embedded_Library input CSV Files for all logging streams and SUPPRESS Embedded_Library Output CSV Files for all logging streams
+                3 - SUPPRESS Embedded_Library input CSV Files for all logging streams and GENERATE Embedded_Library Output CSV Files for all logging streams-->
+  
+	<UDP_Log_Data_CSV>2</UDP_Log_Data_CSV>
+
+  <!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				1 - GENERATE Embedded_Library PCAN_DECODER_XML  Files 
+				0 - SUPPRESS Embedded_Library PCAN_DECODER_XML  Files-->
+  <PCAN_DECODER_XML>1</PCAN_DECODER_XML>
+
+  <!-- XML Configuration Control for Embedded_Library Input and Output CSV Files-   
+				1 - GENERATE Embedded_Library input XML Trace Files for all logging streams
+				0 - SUPPRESS Embedded_Library Output XML Trace Files for all logging streams -->
+  <UDP_Log_Data_XML_TRACE>1</UDP_Log_Data_XML_TRACE>
+
+  <!-- XML Configuration Control for Embedded_Library Output BIN Files-   
+				BIN_FILES_ENABLED - GENERATE Embedded_Library Output BIN Files 
+				BIN_FILES_ALL_IN_ONE - Create single BIN for complete session
+				BIN_FILES_DISABLED - SUPPRESS Embedded_Library Output BIN Files -->
+  <BIN_FILES>BIN_FILES_DISABLED</BIN_FILES>
+
+  <!-- XML Configuration Control for Embedded Library Console Prints-   
+				CONSOLE_PRINTS_ENABLED - Enable Console Prints while execution 
+				CONSOLE_PRINTS_DISABLED - Disable Console Prints while execution -->
+  <CONSOLE_PRINTS>CONSOLE_PRINTS_ENABLED</CONSOLE_PRINTS>
+
+  <!-- XML Configuration Control for Embedded_Library DGPS Decoding -
+				SM2_MODE_ENABLE - Enable SM2 mode in EB.. NOTE: NEED TO PROVIDE PROPER GPS MF4 FILE IN JSON BN_IUKETH section 
+				SM2_MODE_DISABLE - Disable SM2 mode in EB -->
+  <SM2_MODE_Status>SM2_MODE_DISABLE</SM2_MODE_Status>
+
+  <!-- XML Configuration Control for Embedded_Library DGPS Decoding -
+				DGPS_DECODE_ENABLE - Enable DGPS Decoding in EB.. NOTE: NEED TO PROVIDE PROPER GPS MF4 FILE IN JSON BN_IUKETH section 
+				DGPS_DECODE_DISABLE - Disable DGPS Decoding in EB -->
+  <DGPS_Decode_Status>DGPS_DECODE_DISABLE</DGPS_Decode_Status>
+
+  <!-- XML Configuration Control for Embedded_Library SM2 Execution control -
+				SM2_ENABLE 	- Enable Sensor Model Execution in EB.. NOTE: Need DGPS ENABLED and NEED TO PROVIDE PROPER GPS MF4 FILE IN JSON BN_IUKETH section 
+				SM2_DISABLE - Disable Sensor Model Execution in EB.. -->
+  <SM2_Execution_Status>SM2_DISABLE</SM2_Execution_Status>
+
+  <!-- Sensor Model and MESH configuration path to be provided here -
+				Provide the complete path for the Sensor Model Config and MESH Config accrodingly here
+				Without this paths the SM code will not Execute hence this is a Mandatory Field for SM2 in RESIM-->
+  <SM2_Config_File>C:\Plastic\BMW_SRR5_Radar2\BMW_SRR5\RR_ADAS\SIL_Library\SIL_INT\SRR_SIL_SOURCE\SRR_SIL_CORE\SM2\model_code\SM_Config\sensor_model.config</SM2_Config_File>
+  <MESH_Config_File>C:\Plastic\BMW_SRR5_Radar2\BMW_SRR5\RR_ADAS\SIL_Library\SIL_INT\SRR_SIL_SOURCE\SRR_SIL_CORE\SM2\model_code\Mesh\OSI_library.obj</MESH_Config_File>
+  <SM_Paramater_File>NONE</SM_Paramater_File>
+  <!-- XML Configuration Control for Enabling / Disabling the Auto Alignment BMW_SRR5- 
+				AUTO_ALIGN_ENABLED - INITIALIZE_AUTO_ALIGNMENT_FROM_INTERNALS 
+				AUTO_ALIGN_DISABLED - AUTO_ALIGNMENT_USE_VALUE_FROM_UDP  
+				AUTO_HARD_CODED_VALUES_ENABLED - AUTO_ALIGNMENT USE HARD CODED VALUES FORM XML CONFIG FILE -->
+  <Auto_Align_Option>AUTO_ALIGN_ENABLED</Auto_Align_Option>
+
+  <!-- Add Additional XML options - for AA angle and for AA Quality factor to be entered by the user .
+	     Add Options to load the AA values for 6 SRR sensors . 4 Corner radars and 2 B Pillar sensors .
+		  Align angle and  Align Quality 6 SRR sensors . 4 Corner radars and 2 B Pillar sensors
+                                                		  Note: Align_Angle Hardcoded values are in radians format -->
+  <Align_Angle_Quality_Values>
+    <Front_Left_Align_Angle>0.0523599</Front_Left_Align_Angle>
+    <Front_Left_Align_QF>2</Front_Left_Align_QF>
+    <Front_Right_Align_Angle>0.0523599</Front_Right_Align_Angle>
+    <Front_Right_Align_QF>1</Front_Right_Align_QF>
+    <Left_Center_Align_Angle>0.0523599</Left_Center_Align_Angle>
+    <Left_Center_Align_QF>2</Left_Center_Align_QF>
+    <Rear_Left_Align_Angle>0.0523599</Rear_Left_Align_Angle>
+    <Rear_Left_Align_QF>0</Rear_Left_Align_QF>
+    <Rear_Right_Align_Angle>0.0523599</Rear_Right_Align_Angle>
+    <Rear_Right_Align_QF>1</Rear_Right_Align_QF>
+    <Right_Center_Align_Angle>0.0523599</Right_Center_Align_Angle>
+    <Right_Center_Align_QF>1</Right_Center_Align_QF>
+  </Align_Angle_Quality_Values>
+
+  <!-- Embedded_Library Output BIN Files for all Customers
+	    BIN File selection values: 
+            1 => Generate Embedded_Library Output BIN Files for Enabled BIN Files
+						0 => Suppress Embedded_Library Output BIN Files for Disabled BIN Files -->
+  <BIN_Files>
+    <DETECTIONS>1</DETECTIONS>
+    <TRACKER_OUT>1</TRACKER_OUT>
+    <RADAR_PARAM>1</RADAR_PARAM>
+    <VEHICLE_DATA>1</VEHICLE_DATA>
+    <GROUPED_TRACKLETS>1</GROUPED_TRACKLETS>
+    <DEBUG_DETECTION_GROUPS>1</DEBUG_DETECTION_GROUPS>
+    <FEATURES>1</FEATURES>
+    <LCDA>1</LCDA>
+    <RECW>1</RECW>
+    <CTA>1</CTA>
+    <ASW>1</ASW>
+    <VISOB>1</VISOB>
+    <Freespace>1</Freespace>
+    <ABA>1</ABA>
+    <Timing_Info>1</Timing_Info>
+    <TODS>1</TODS>
+  </BIN_Files>
+
+  <!-- XML Configuration Control for Enabling / Disabling the Seep Compensation Factor Value BMW_SRR5- 
+				SPEED_COMPENSATION_FACTOR_HARD_CODED_VALUE_ENABLED - SPEED_COMPENSATION_FACTOR_VALUE_FROM_CONFIG_FILE 
+				SPEED_COMPENSATION_FACTOR_HARD_CODED_VALUE_DISABLED - SPEED_COMPENSATION_FACTOR_VALUE_FROM_LOG  -->
+  <Speed_Compensation_Factor>SPEED_COMPENSATION_FACTOR_HARD_CODED_VALUE_DISABLED</Speed_Compensation_Factor>
+
+  <!-- Add Additional XML options - for speed_compensation_factor value to be entered by the user.  -->
+  <Speed_Compensation_Factor_Sensors_Values>
+    <Front_Left_Speed_Compensation_Factor>1.12</Front_Left_Speed_Compensation_Factor>
+    <Front_Right_Speed_Compensation_Factor>2.34</Front_Right_Speed_Compensation_Factor>
+    <Rear_Left_Speed_Compensation_Factor>3.56</Rear_Left_Speed_Compensation_Factor>
+    <Rear_Right_Speed_Compensation_Factor>4.78</Rear_Right_Speed_Compensation_Factor>
+  </Speed_Compensation_Factor_Sensors_Values>
+
+
+</Embedded_Library_Output_Control>
+

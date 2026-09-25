@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_ced_f_third_warning_level_enable</NAME>
+    <!-- Disable the third warning level. -->
+    <VALUE>0u</VALUE>
+  </record>
+</data-set>

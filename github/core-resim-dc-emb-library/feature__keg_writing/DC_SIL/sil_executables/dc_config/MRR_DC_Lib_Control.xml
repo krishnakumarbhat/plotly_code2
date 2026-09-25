@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR5 Delphi SIL component configuration -->
+
+<Embedded_Library_Output_Control>
+  <!-- SIL SRR3 Embedded_Library Configuration Control XML Version -->
+  <!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+  <DC_Library_XML_Version>1.0</DC_Library_XML_Version>
+  
+  <!-- To define the CUSTOMER for which the Embedded_Library is Executed. 
+		 Options available are: BMW, FORD, CHANGAN, RNA, SCANIA, NISSAN, HONDA, HKMC, TML, STLA, MTNL, TRATON, CEER, GPO -->
+  <Customer_Name>CEER</Customer_Name>
+
+   <!-- XML Configuration Control for Sensor Generation to be select for execution-
+      Options available are: SRR5Plus, MRR3, SRR5, SRR3, FLR4, SRR6Plus, SRR6, FLR4Plus, SRR7Plus, FLR7, SRR7PlusUWB  -->
+  <Sensor_Type>FLR7</Sensor_Type>
+
+    <!-- XML Configaration for Embedded_Library Output HDF Files
+					ENABLE  Generate HDF files in Output_Path
+					DISABLE Supress HDF files in Output_Path -->	
+          
+  <HDF_FILES>ENABLE</HDF_FILES>
+
+     <!-- XML Configuration Control for terminal print of Input Data Quality Check-   
+                ENABLE - No prints on the terminal regarding data quality checks 
+                DISABLE -Prints on the terminal regarding data quality checks   -->
+   <DC_IP_DQ_Chk_Print>DISABLE</DC_IP_DQ_Chk_Print>
+
+  <!-- XML Configaration for Embedded_Library Output XTRK Files
+					ENABLE  Generate XTRK files in Output_Path
+					DISABLE Supress XTRK files in Output_Path -->	
+          
+  <XTRK_FILES>ENABLE</XTRK_FILES>
+  
+  <!-- BIN Files Configaration 
+    ENABLE  Generate BIN files in output path
+    DISABLE Supress BIN files in output path -->
+
+  <BIN_FILES>ENABLE</BIN_FILES>
+
+  <!-- Which stream to use RECU or Gen7 Streams -->
+  <UDP_Stream_to_use>Gen7</UDP_Stream_to_use>
+  
+ </Embedded_Library_Output_Control>

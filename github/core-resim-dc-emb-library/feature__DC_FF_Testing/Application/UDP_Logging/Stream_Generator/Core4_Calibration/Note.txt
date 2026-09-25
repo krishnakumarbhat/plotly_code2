@@ -1,0 +1,3 @@
+Stream version 7
+generated with 4.0 ver tool
+*******Manual patch is required after generation of stream file******* 

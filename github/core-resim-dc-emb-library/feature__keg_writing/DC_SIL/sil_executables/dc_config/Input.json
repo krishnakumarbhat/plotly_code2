@@ -1,0 +1,31 @@
+{ 
+	"reprocessingInputFileStreams": [
+		{
+			"key": "BN_CALIFR",
+			"files": [
+			"/media/aptiv/DATADRIVE2/Raji/Core_RESIM_DC_Emb_Library/DC_SIL/sil_executables/output/CEER_S13_20251009_170610_0001_b05.MF4"
+			]
+		},
+		{
+			"key": "BN_FASETH",
+			"files": [
+			"/media/aptiv/DATADRIVE2/Raji/Core_RESIM_DC_Emb_Library/DC_SIL/sil_executables/output/CEER_S13_20251009_170610_0001_b05.MF4"
+			]
+		},
+		{
+			"key": "SRR_DEBUG",
+			"files": [
+			"/media/aptiv/DATADRIVE2/Raji/Core_RESIM_DC_Emb_Library/DC_SIL/sil_executables/output/CEER_S13_20251009_170610_0001_b05.MF4"
+                
+			]
+		},
+		{
+			"key":"SRR_REFERENCE",
+			"files": [ 	
+			"/media/aptiv/DATADRIVE2/Raji/Core_RESIM_DC_Emb_Library/DC_SIL/sil_executables/output/CEER_S13_20251009_170610_0001_g03.MF4"
+			]
+ 
+		}
+ 
+	]
+}

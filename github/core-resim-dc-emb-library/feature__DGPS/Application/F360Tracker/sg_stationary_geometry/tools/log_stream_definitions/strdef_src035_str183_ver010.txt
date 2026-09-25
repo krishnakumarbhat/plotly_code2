@@ -1,0 +1,41 @@
+2976
+uint64_t execution_timestamp_us
+uint64_t measurement_timestamp_us
+REPEAT100
+float vertices.position_x
+float vertices.position_y
+float vertices.position_variance_x
+float vertices.position_variance_y
+float vertices.position_covariance_xy
+uint16_t vertices.cycles_since_created
+uint16_t vertices.cycles_since_coasted
+uint8_t vertices.drivability
+uint8_t vertices.drivability_confidence
+REPEAT2
+uint8_t vertices.padding
+END_REPEAT
+END_REPEAT
+REPEAT10
+uint32_t contours.unique_id
+uint16_t contours.num_vertices
+uint16_t contours.cycles_since_created
+uint8_t contours.type
+REPEAT3
+uint8_t contours.padding
+END_REPEAT
+END_REPEAT
+uint16_t software_version.major
+uint16_t software_version.minor
+uint16_t software_version.patch
+REPEAT20
+char software_version.name
+END_REPEAT
+REPEAT2
+uint8_t software_version.padding
+END_REPEAT
+uint32_t cycle_index
+SG_Diagnostic_Status f_valid
+uint16_t num_contours
+REPEAT2
+uint8_t padding
+END_REPEAT

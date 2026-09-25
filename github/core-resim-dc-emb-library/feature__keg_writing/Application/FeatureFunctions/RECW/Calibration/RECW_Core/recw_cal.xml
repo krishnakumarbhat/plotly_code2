@@ -1,0 +1,890 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="core_stylesheet.xsl"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CALIBRATION_GENERIC_INFO>
+    <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+    <CAL_SIZE_MACRO>RECW_CAL_SIZE</CAL_SIZE_MACRO>
+    <COMPONENT_NAME>Recw</COMPONENT_NAME>
+    <CUSTOMERS>[Generic BMW_SP25 Rivian_SRR6]</CUSTOMERS>
+    <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+    <FILE_NAME>recw_calibration</FILE_NAME>
+    <STRUCTURE_OBJ_NAME>Recw_Cal</STRUCTURE_OBJ_NAME>
+  </CALIBRATION_GENERIC_INFO>
+  <CALIBRATION_HEADER>
+    <record>
+      <NAME>version</NAME>
+      <VALUE>16</VALUE>
+    </record>
+  </CALIBRATION_HEADER>
+  <CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_recw_min_rel_velocity</NAME>
+      <DESCRIPTION>The minimal relative velocity of an object has to be greater or equal than this calibration value to be considered for alert level 1 and alert level 2.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[2.77f 5.55f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_rel_velocity_hys</NAME>
+      <DESCRIPTION>Hysteresis for the minimal relative velocity k_recw_min_rel_velocity for alert level 1 and alert level 2. This value is subtracted from the corresponding array value of k_recw_min_rel_velocity, if the object was critical before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.83f 0.83f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_heading</NAME>
+      <DESCRIPTION>Maximal heading angle of an object to be considered for RECW depending on alert level.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.5f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.15f 0.15f 0.15f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_heading_hys</NAME>
+      <DESCRIPTION>Hysteresis for the heading angle of an object to be considered for RECW. The value will be added to k_recw_max_approach_angle if the object was critical before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>0.3f</RANGE_MAX>
+      <DEFAULT_VALUE>0.01f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_factor_ego_width</NAME>
+      <DESCRIPTION>Factor to adapt the relevant ego width in order to adjust the feature sensitivity.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.75f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_average_sensor_latency</NAME>
+      <DESCRIPTION>Average overall latency between real world and feature output in seconds.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_crash_prob</NAME>
+      <DESCRIPTION>Minimal crash probability to raise a level 1 alert and level 2 alert.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.16f 0.99f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_existence_prob</NAME>
+      <DESCRIPTION>Minimal existence probability to raise a level 1 alert and level 2 alert.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.8f 0.95f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_existence_prob_hys</NAME>
+      <DESCRIPTION>Hysteresis for minimal existence probability to raise a level 1 alert. This value will be subtracted from k_recw_min_existence_prob[0], if the object was critical before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.1f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_make_use_of_guardrail</NAME>
+      <DESCRIPTION>Switch to activate consideration of guardrail information in estimation of crash probability.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_only_allow_consecutive_alert_levels</NAME>
+      <DESCRIPTION>Flag to only allow consecutive alerts. If activated level 2 alerts can only follow a previous level 1 alert.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_allow_alert_on_coasted_objects</NAME>
+      <DESCRIPTION>Flags define if coasted objects are allowed to raise an alert of level 1 and alert of level 2.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>[0u 0u]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_use_rear_blockage</NAME>
+      <DESCRIPTION>Flags define whether the rear end blockage algorithm should be used for alert level 1 and alert of level 2.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>[1u 1u]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_apply_lane_filter</NAME>
+      <DESCRIPTION>If flag is true, targets outside the ego lane will be exluded from warnings.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_enable_heading_filter</NAME>
+      <DESCRIPTION>Switch to enable usage of the heading filter. If turned off the filtered heading will be replaced with the heading provided by the tracker.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_enable_traffic_light_ghost_detection</NAME>
+      <DESCRIPTION>Switch to enable the traffic light ghost detection.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_f_enable_recb</NAME>
+      <DESCRIPTION>Switch to enable the RECB functionality. If turned off RECB will be disabled.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_alert_holding_cycles</NAME>
+      <DESCRIPTION>Number of holding cycles for alerts of level 1 and alerts of level 2.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>100u</RANGE_MAX>
+      <DEFAULT_VALUE>[10u 3u]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_alert_qualifying_cycles</NAME>
+      <DESCRIPTION>Number of qualifying cycles for alert level 1. Alert level 2 does not require qualifying.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>255</RANGE_MAX>
+      <DEFAULT_VALUE>0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_stage_age_for_alert_level</NAME>
+      <DESCRIPTION>Minimal stage age to raise an alert of level 1 and alert of level 2. Coasted objects are also controlled via k_recw_max_allowed_consecutive_coasted_cycles and k_recw_f_allow_alert_on_coasted_objects.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>10u</RANGE_MAX>
+      <DEFAULT_VALUE>[4u 0u]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_ttc_for_alert_level</NAME>
+      <DESCRIPTION>Minimal TTC at which a level 1 alert and a level 2 alert can be raised.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.05f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.3f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_overlap_for_alert_level</NAME>
+      <DESCRIPTION>Minimum overlap of predicted object position at the host rear bumper to output alert level 1 an 2.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_cycles_alert_duration</NAME>
+      <DESCRIPTION>Defines the maximum number of cycles a warning can be active for alert level 1 and alert level 2 before it will be disabled. This is independent on the target that caused the warning.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>[60u 60u]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_host_speed</NAME>
+      <DESCRIPTION>Minimal host speed, alert level dependant, for which RECW should be operational.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_host_speed_hys</NAME>
+      <DESCRIPTION>Hysteresis for the minimal host speed for which RECW should be operational. The value will be subtracted from k_recw_min_host_speed if RECW was operational before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_host_speed</NAME>
+      <DESCRIPTION>Maximal host speed, alert level dependant, for which RECW should be operational.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>80.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[69.44f 69.44f 69.44f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_host_speed_hys</NAME>
+      <DESCRIPTION>Hysteresis for the maximal host speed for which RECW should be operational. The value will be added to k_recw_max_host_speed if RECW was operational before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_rel_velocity_for_max_ttc_threshold</NAME>
+      <DESCRIPTION>Minimal relative velocity for alert level 1 and alert level 2 for which the corresponding maximal ttc threshold from k_recw_max_ttc_threshold shall be used. For lower relative velocities the ttc threshold decreases linearly.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>30.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[8.33f 5.55f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_ttc_threshold</NAME>
+      <DESCRIPTION>Maximal ttc threshold that should be used for alert level 1 and alert level 2. This will be applied for valid relative velocities greater or equal to the corresponding array entry of k_recw_min_rel_velocity_for_max_ttc_threshold. </DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.05f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.4f 0.3f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_age_for_close_slow_targets</NAME>
+      <DESCRIPTION>Minimum age that a slow and close target must have to raise an alert</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>100u</RANGE_MAX>
+      <DEFAULT_VALUE>20u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_dist_for_young_slow_targets</NAME>
+      <DESCRIPTION>Minimum distance of a young and slow target to raise an alert</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_abs_speed_for_young_close_targets</NAME>
+      <DESCRIPTION>Minimum absolute speed of a young and close target to raise an alert</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.2f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>60.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_object_age</NAME>
+      <DESCRIPTION>Minimal age of an object in cycles to be considered by RECW.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>11u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_rel_velocity</NAME>
+      <DESCRIPTION>The maximal relative velocity of an object has to be equal or less than this calibration value (alert level dependant) to be considered by RECW.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[41.7f 41.7f 41.7f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_rel_velocity_hys</NAME>
+      <DESCRIPTION>Hysteresis for the maximal relative velocity k_recw_max_rel_velocity. This value is added to k_recw_max_rel_velocity, if the object was critical before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_cycles_with_min_crash_prob</NAME>
+      <DESCRIPTION>Number of consecutive cycles a crash probability of k_recw_min_crash_prob[0] for alert level 1 has to be reached before an object can raise an alert.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>5u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_en_active_car_wash_logic</NAME>
+      <DESCRIPTION>0 - car wash deactivated, 1 - car wash logic based on target state, 2 - car wash logic based on neutral gear position.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>2u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_rel_lon_vel_release_car_wash</NAME>
+      <DESCRIPTION>Maximum relative longitudinal velocity between ego and target at which the PCR warning suppresion due to car wash logic can be released.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>-70.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_lon_distance_car_wash</NAME>
+      <DESCRIPTION>Maximum initial longitudinal distance between ego and target vehicle in which the PCR warning can be suppressed due to car wash logic.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_lat_distance_car_wash</NAME>
+      <DESCRIPTION>Maximum initial lateral distance between ego and target vehicle in which the PCR warning can be suppressed due to car wash logic.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_rel_lon_vel_car_wash</NAME>
+      <DESCRIPTION>Minimum initial relative longitudinal velocity between ego and target at which the PCR warning can be suppressed due to car wash logic.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>-20.0f</RANGE_MIN>
+      <RANGE_MAX>70.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_speed_ego_car_wash</NAME>
+      <DESCRIPTION>Maximum ego speed at which car wash logic will be applied.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>-20.0f</RANGE_MIN>
+      <RANGE_MAX>70.0f</RANGE_MAX>
+      <DEFAULT_VALUE>3.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lane_filter_width</NAME>
+      <DESCRIPTION>If k_recw_f_apply_lane_filter is active, only objects inside a zone with the respective lane width will be considered as relevant for RECW.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.7f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lane_filter_width_hys</NAME>
+      <DESCRIPTION>Hysteresis for the lane filter width. This value will be added to k_recw_lane_filter_width, if the object was critical before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.2f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lane_filter_max_abs_ego_speed_vcs_coord</NAME>
+      <DESCRIPTION>Maximum absolute ego speed for which the lane filter calculation will be done with vcs coordinates instead of curvi coordinates.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lane_width_slope</NAME>
+      <DESCRIPTION>Slope that can be used to increase the lane width used for the lane filter at higher distances.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.03f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lane_filter_num_consecutive_cycles</NAME>
+      <DESCRIPTION>Number of consecutive cycles required by target to be within lane in order to be able to trigger warning</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>5u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lookup_braking_deceleration</NAME>
+      <DESCRIPTION>Look-up table of brake deceleration used for look up of braking probability.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s**2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>13.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0 2.0 5.0 8.0 9.0 13.0]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lookup_braking_probability</NAME>
+      <DESCRIPTION>Look-up table of probabilities assigned to braking decelerations specified in k_recw_lookup_braking_deceleration.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0 0.2 0.5 0.95 0.99 1.0]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lookup_steering_acceleration</NAME>
+      <DESCRIPTION>Look-up table of steering acceleration used for look up of steering probability.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s**2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>13.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0 1.3 4.0 8.0 10.0 13.0]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_lookup_steering_probability</NAME>
+      <DESCRIPTION>Look-up table of probabilities assigned to steering accelerations specified in k_recw_lookup_steering_acceleration.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0 0.2 0.5 0.9 0.99 1.0]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_eclipse_value_for_valid_object</NAME>
+      <DESCRIPTION>Maximal allowed eclipse value for an object to be considered as valid for RECW.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_object_width_warn_on</NAME>
+      <DESCRIPTION>This is the max object width to be considered by the algo</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>4.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_allowed_consecutive_coasted_cycles</NAME>
+      <DESCRIPTION>Maximal number of consecutive coasted cycles for which an object is still considered as valid for RECW.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>4u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_allowed_rel_vel_long_diff</NAME>
+      <DESCRIPTION>This defines the maximal allowed difference between the internally filtered longitudinal relative velocity and the one provided by the tracker for a valid object.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_allowed_rel_vel_lat_diff</NAME>
+      <DESCRIPTION>This defines the maximal allowed difference between the internally filtered lateral relative velocity and the one provided by the tracker for a valid object.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_max_allowed_heading_diff</NAME>
+      <DESCRIPTION>This defines the maximal allowed difference between the internally filtered heading and the one provided by the tracker for a valid object.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.12f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_rear_blockage_qualifying_cycles</NAME>
+      <DESCRIPTION>Number of consecutive qualifying cycles with rear blockage before rear blockage is set for alert level calculation.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>255</RANGE_MAX>
+      <DEFAULT_VALUE>3</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_rear_blockage_speed_threshold</NAME>
+      <DESCRIPTION>Only objects below this speed threshold are considered valid as blockers for the ego rear.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_rear_blockage_width</NAME>
+      <DESCRIPTION>Width of blockage zone.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_rear_blockage_length</NAME>
+      <DESCRIPTION>Length of blockage zone.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_rear_blockage_ego_speed_threshold</NAME>
+      <DESCRIPTION>Ego speed threshold to release rear blockage. If object speed is above this value rear blockage cannot be active.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.6f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_heading_accuracy_threshold</NAME>
+      <DESCRIPTION>Maximal allowed heading accuracy (greater values are less accurate)</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.0001f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>0.5f</RANGE_MAX>
+      <DEFAULT_VALUE>0.1881f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_min_speed_not_stationary</NAME>
+      <DESCRIPTION>Minimum speed an object needs to provide so that it is classified as non-stationary.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_max_host_speed</NAME>
+      <DESCRIPTION>Maximal host speed for which RECB can raise a braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.5f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_max_host_speed_hys</NAME>
+      <DESCRIPTION>Hysteresis for maximal host speed for which RECB can raise a braking request. This value will be added to k_recb_max_host_speed if the host speed was in the allowed range before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_min_cycles_host_standstill</NAME>
+      <DESCRIPTION>Minimal time for which the host has to be stationary before a braking request can be raised.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>10u</RANGE_MAX>
+      <DEFAULT_VALUE>2u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_max_velocity_host_standstill</NAME>
+      <DESCRIPTION>Maximal velocity for which the host vehicle will be considered as standstill in the calculation of k_recb_min_cycles_host_standstill.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.3f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_min_rel_velocity</NAME>
+      <DESCRIPTION>Minimal relative velocity of the relevant target which is required to raise a braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>70.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.55f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_min_rel_velocity_hys</NAME>
+      <DESCRIPTION>Hysteresis for the minimal relative velocity of an object to be able to raise a braking request. This value will be subtracted from k_recb_min_rel_velocity if a braking request was active before.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.83f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_max_ttc</NAME>
+      <DESCRIPTION>The TTC of the relevant target is required to be below this threshold to raise a braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.05</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.3f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_nominal_acceleration_applied</NAME>
+      <DESCRIPTION>The acceleration which is applied to the brakes if a braking request is raised.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>m/s**2</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>-20.0f</RANGE_MIN>
+      <RANGE_MAX>0.0f</RANGE_MAX>
+      <DEFAULT_VALUE>-10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_ssm_braking</NAME>
+      <DESCRIPTION>The standstill management required during a braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>7u</RANGE_MAX>
+      <DEFAULT_VALUE>7u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_ssm_request_cancelled</NAME>
+      <DESCRIPTION>The standstill management required if a braking request is cancelled.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>7u</RANGE_MAX>
+      <DEFAULT_VALUE>2u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_integrity</NAME>
+      <DESCRIPTION>The ASIL level required for the braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>2u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_qualifier_nominal_acceleration</NAME>
+      <DESCRIPTION> The mode requested by Central Vehicle Management required for the braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>6u</RANGE_MAX>
+      <DEFAULT_VALUE>6u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_max_cycles_braking_request_duration</NAME>
+      <DESCRIPTION>Defines the maximum number of cycles a braking request can be active before it will be cancelled. This is independent on the target that caused the braking request.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>cycles</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>4u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recb_accelerator_pedal_gradient_threshold</NAME>
+      <DESCRIPTION>Threshold for the accelerator pedal gradient above which a braking request will be cancelled immediately.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>percent/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1000.0f</RANGE_MAX>
+      <DEFAULT_VALUE>200.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_recw_f_suppress_alert_lvl_2_for_pedestrian</NAME>
+      <DESCRIPTION>Suppress alert level 2 for pedestrian object.</DESCRIPTION>
+      <Comp>Core</Comp>
+      <UNIT>boolean_T</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1u</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>1u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

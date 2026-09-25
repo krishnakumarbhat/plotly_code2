@@ -1,0 +1,22 @@
+2496
+uint64_t timestamp_us
+REPEAT100
+float vertices.position_x
+float vertices.position_y
+float vertices.position_variance_x
+float vertices.position_variance_y
+float vertices.position_covariance_xy
+uint8_t vertices.confidence
+uint8_t vertices.drivability
+PADDING2
+END_REPEAT
+REPEAT10
+uint32_t contours.unique_id
+uint16_t contours.num_vertices
+uint8_t contours.type
+PADDING1
+END_REPEAT
+uint32_t cycle_index
+uint16_t num_contours
+bool f_valid
+PADDING1

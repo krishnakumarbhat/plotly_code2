@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_ced_crash_line_host_length_percentage</NAME>
+    <!-- The crash line is set as a percentage of the vehicle length. (0.0 = front bumper, 1.0 = rear bumper).-->
+    <VALUE>[1.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_collision_zone_width</NAME>
+    <!-- Sets the width of the collision zone next to the vehicle. Should be set to door length plus safety margin.-->
+    <VALUE>1.8f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_second_warning_pred_lat_dist_max</NAME>
+    <!-- Defines the maximum lateral object distance threshold for the second warning level.
+    It shall not be less than k_ced_collision_zone_width. -->
+    <VALUE>5.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_funnel_zone_length</NAME>
+    <!-- Sets the length of the funnel zones. This zone extends like a cone to the front and rear of the ego.
+    The length is starting from the position of the crash line, i.e., it extends:
+    k_ced_funnel_zone_length - k_ced_crash_line_host_length_percentage* ego_length behind the ego. -->
+    <VALUE>50.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_funnel_zone_width</NAME>
+    <VALUE>3.6f</VALUE>
+    <!-- Sets the width of the funnel zones on the side furthest away from the ego. The minimum width is given by k_ced_collision_zone_width. -->
+  </record>
+  <record>
+    <NAME>k_ced_ego_lane_width</NAME>
+    <!-- Sets the virtual width of the ego lane. Is used for classifying objects ego side as EGO_LANE and alert side as INTERSEC_BOTH_SIDES. -->
+    <VALUE>1.8f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_first_warning_ttc_threshold</NAME>
+    <!-- This parameter defines the TTC threshold for the first warning level. [FRONT REAR] -->
+    <VALUE>[3.0f 3.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_second_warning_ttc_threshold</NAME>
+    <!-- This parameter defines the TTC threshold for the second warning level if it is enabled. [FRONT REAR] -->
+    <VALUE>[1.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_alert_ttp_min</NAME>
+    <!-- Only objects with a time-to-pass equal or above this value can trigger a warning.
+	Also alert holding can be deactived for objects with a TTP below this value using k_ced_f_suppress_alert_holding_for_obj_below_min_ttp. [FRONT REAR] -->
+    <VALUE>[0.0f 0.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_suppress_alert_holding_for_obj_below_min_ttp</NAME>
+    <!-- If enabled alert holding on objects with a TTP below k_ced_alert_ttp_min is suppressed. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_existence_probability_min</NAME>
+    <!-- Minimum existence probability of the target object. -->
+    <VALUE>0.90f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_heading_abs_angle_max</NAME>
+    <!-- Maximum allowed absolute heading angle of the target object. -->
+    <VALUE>0.349f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_long_vel_rel_min</NAME>
+    <!-- Minimum approaching longitudinal relative velocity of the target object. -->
+    <VALUE>1.94f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_long_vel_min</NAME>
+    <!-- Minimum longitudinal target object velocity. -->
+    <VALUE>1.94f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_lat_vel_max</NAME>
+    <!-- Maximum lateral target velocity. -->
+    <VALUE>10.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_ego_abs_speed_max</NAME>
+    <!-- CED will only work for absolute ego speed values equal or below this value. -->
+    <VALUE>0.833f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_alert_qualifying_cycles</NAME>
+    <!-- Number of qualifying cycles for alert level 1. Level 2 qualifies immediately. -->
+    <VALUE>4u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_alert_holding_cycles</NAME>
+    <!-- Number of holding cycles for alert. -->
+    <VALUE>40u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_allow_opposite_side_alerts</NAME>
+    <!-- Number of holding cycles for alert. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_max_width_increase_factor_without_path_match</NAME>
+    <!-- Maximal width increase factor of the predicted object for objects without path match.
+    The applied width increase factor will be at the maximal value at the end of the funnel zone and will decrease linearly based on the distance to the crash line.
+    Thus setting the value to 0.0f deactivates the width increase completely. -->
+    <VALUE>0.6f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_max_width_increase_factor_with_path_match</NAME>
+    <!-- Maximal width increase factor of the predicted object for objects with path match.
+    The applied width increase factor will be at the maximal value at the end of the funnel zone and will decrease linearly based on the distance to the crash line.
+    Thus setting the value to 0.0f deactivates the width increase completely. -->
+    <VALUE>0.4f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_width_safety_margin_for_active_alert</NAME>
+    <!-- This value is added to the width of the predicted object, for any object that was alerted in the previous cycle. -->
+    <VALUE>1.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_width_safety_margin_for_critical_path_match</NAME>
+    <!-- This value is added to the width of the predicted object, for any object that is matched to the same path as any object with an active alert. -->
+    <VALUE>0.75f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_heading_exp_moving_average_alpha</NAME>
+    <!-- Set alpha value for exponential moving average filter for object heading. Higher alpha means more weight for current values. -->
+    <VALUE>0.75f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_enable_heading_exp_moving_average</NAME>
+    <!-- Indicates if the exponential moving average function for the object heading is enabled. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_path_tracking_enable</NAME>
+    <!-- Enable use of path tracking information. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_handle_both_side_alerts_as_object_side</NAME>
+    <!-- Objects that alert both sides are restricted to only alert their current side. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_second_warning_level_enable</NAME>
+    <!-- Enable the second warning level. -->
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_allow_ego_lane_alerts</NAME>
+    <!-- Objects that are laterally in the ego lane (defined by k_ced_ego_lane_width) are allowed to give alerts. -->
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_ego_lane_parking_maneuver_speed</NAME>
+    <!-- Sets the speed for a parking scenario of an approaching object. Is used for suppression of objects moving on the ego lane when those are parking. -->
+    <VALUE>6.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_ego_lane_parking_range</NAME>
+    <!-- Sets the range for a parking scenario of an approaching object. Is used for suppression of objects moving on the ego lane when those are parking. -->
+    <VALUE>25.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_age_min</NAME>
+    <!-- Minimal tracker age of object needed to be relevant. -->
+    <VALUE>3u</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_min_dist_to_crash_line_for_path_match</NAME>
+    <!-- Specifies the minimum absolute distance of the object to the crash line to activate path matching functionality. Objects that are closer will be predicted using their heading. -->
+    <VALUE>5.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_slow_objects_long_vel_max</NAME>
+    <VALUE>0.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_object_ftm_heading_abs_angle_min</NAME>
+    <VALUE>2.75f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ced_f_third_warning_level_enable</NAME>
+    <!-- Disable the third warning level. -->
+    <VALUE>0u</VALUE>
+  </record>
+</data-set>

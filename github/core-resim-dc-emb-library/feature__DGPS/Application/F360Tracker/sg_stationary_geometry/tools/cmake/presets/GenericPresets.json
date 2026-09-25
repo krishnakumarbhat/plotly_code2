@@ -1,0 +1,134 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "generic_platform_unlimited",
+            "displayName": "Generic platform unlimited setup",
+            "description": "Default build to be used as initial one for any other preset",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables":
+            {
+                "RSPP_VARIANT": "A",
+                "F360_TRACKER_VARIANT": "A",
+                "SG_VARIANT": "PLATFORM_UNLIMITED"
+            }
+        },
+        {
+            "name": "generic_platform_high",
+            "displayName": "Generic platform high setup",
+            "description": "Default build to be used as initial one for any other preset",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables":
+            {
+                "RSPP_VARIANT": "A",
+                "F360_TRACKER_VARIANT": "A",
+                "SG_VARIANT": "PLATFORM_HIGH"
+            }
+        },
+        {
+            "name": "generic_platform_medium",
+            "displayName": "Generic platform medium setup",
+            "description": "Default build to be used as initial one for any other preset",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables":
+            {
+                "RSPP_VARIANT": "A",
+                "F360_TRACKER_VARIANT": "A",
+                "SG_VARIANT": "PLATFORM_MEDIUM"
+            }
+        },
+        {
+            "name": "generic_platform_low",
+            "displayName": "Generic platform low setup",
+            "description": "Default build to be used as initial one for any other preset",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables":
+            {
+                "RSPP_VARIANT": "A",
+                "F360_TRACKER_VARIANT": "A",
+                "SG_VARIANT": "PLATFORM_LOW"
+            }
+        },
+        {
+            "name": "generic_platform_reduced",
+            "displayName": "Generic platform reduced setup",
+            "description": "Default build to be used as initial one for any other preset",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables":
+            {
+                "RSPP_VARIANT": "A",
+                "F360_TRACKER_VARIANT": "A",
+                "SG_VARIANT": "PLATFORM_REDUCED"
+            }
+        },
+        {
+            "name": "generic_development_unlimited",
+            "displayName": "Generic development setup unlimited",
+            "description": "Default build to be used by all other development configurations",
+            "inherits": "generic_platform_unlimited",
+            "cacheVariables":
+            {
+                "SG_DEVELOPER_MODE": "ON",
+                "SG_MOCK_EXTERNAL_INCLUDES": "ON"
+            }
+        },
+        {
+            "name": "generic_release_unlimited",
+            "displayName": "Generic release setup unlimited",
+            "description": "Default build to be used by all other release configurations",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "inherits": "generic_platform_unlimited",
+            "cacheVariables": {
+                "SG_DEVELOPER_MODE": "ON",
+                "SG_MOCK_EXTERNAL_INCLUDES": "ON",
+                "CMAKE_CXX_FLAGS": "-O2 -DNDEBUG"
+            }
+        },
+        {
+            "name": "generic_development_reduced",
+            "displayName": "Generic development reduced setup",
+            "description": "Default build to be used by all other development configurations",
+            "inherits": "generic_platform_reduced",
+            "cacheVariables":
+            {
+                "SG_DEVELOPER_MODE": "ON",
+                "SG_MOCK_EXTERNAL_INCLUDES": "ON"
+            }
+        },
+        {
+            "name": "generic_release_reduced",
+            "displayName": "Generic release reduced setup",
+            "description": "Default build to be used by all other release configurations",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "inherits": "generic_platform_reduced",
+            "cacheVariables": {
+                "SG_DEVELOPER_MODE": "ON",
+                "SG_MOCK_EXTERNAL_INCLUDES": "ON",
+                "CMAKE_CXX_FLAGS": "-O2 -DNDEBUG"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "generic_release_unlimited",
+            "configurePreset": "generic_release_unlimited",
+            "displayName": "Generic release | system compiler | RSPP variant default",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "generic_release_reduced",
+            "configurePreset": "generic_release_reduced",
+            "displayName": "Generic release | system compiler | RSPP variant default",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [
+        "GenericPresets.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "release_BMW_SP25",
+            "inherits": "generic_release",
+            "displayName": "BMW release: QNX | RSPP variant default",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/tools/cmake/toolchains/bmw_qnx_toolchain.cmake",
+            "environment": {
+                "QNX_HOST": "/opt/tools/qnx/qnx710/host/linux/x86_64",
+                "QNX_TARGET": "/opt/tools/qnx/qnx710/target/qnx7"
+            },
+            "cacheVariables": {
+                "QNX_COMPILER_DIR_PATH": "/opt/tools/qnx/qnx710/host/linux/x86_64/usr/bin"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_SRR",
+            "inherits": "release_BMW_SP25",
+            "displayName": "BMW release: SRR | QNX | RSPP variant C",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "C",
+                "F360_TRACKER_VARIANT": "C"
+            }
+        },
+        {
+            "name": "release_BMW_SP25_MRR",
+            "inherits": "release_BMW_SP25",
+            "displayName": "BMW release: MRR | QNX | RSPP variant D",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "D",
+                "F360_TRACKER_VARIANT": "D"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release_BMW_SP25_SRR",
+            "configurePreset": "release_BMW_SP25_SRR",
+            "displayName": "BMW release: SRR | QNX | RSPP variant C",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_BMW_SP25_MRR",
+            "configurePreset": "release_BMW_SP25_MRR",
+            "displayName": "BMW release: MRR | QNX | RSPP variant D",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "stream-definition-generator"
+version = "0.1.0"
+description = "MUDP stream definition generator"
+authors = ["Radoslaw Ciupinski <radoslaw.ciupinski@aptiv.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+clang = "15.0.7"

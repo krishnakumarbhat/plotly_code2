@@ -1,0 +1,159 @@
+78880
+uint64_t execution_timestamp_us
+REPEAT200
+float contour_storage.vertices.position.x
+float contour_storage.vertices.position.y
+float contour_storage.vertices.b_box_center.x
+float contour_storage.vertices.b_box_center.y
+float contour_storage.vertices.pos_cov.xx
+float contour_storage.vertices.pos_cov.yy
+float contour_storage.vertices.pos_cov.xy
+float contour_storage.vertices.pos_cross_cov.x1x2
+float contour_storage.vertices.pos_cross_cov.y1y2
+float contour_storage.vertices.pos_cross_cov.x1y2
+float contour_storage.vertices.pos_cross_cov.y1x2
+float contour_storage.vertices.b_box_width
+float contour_storage.vertices.b_box_length
+float contour_storage.vertices.b_box_rotation_angle
+float contour_storage.vertices.reliability
+uint32_t contour_storage.vertices.segment_id
+uint16_t contour_storage.vertices.age
+uint16_t contour_storage.vertices.num_cycles_no_update
+uint8_t contour_storage.vertices.drivability
+PADDING3
+END_REPEAT
+REPEAT100
+float contour_storage.contours.priority
+uint32_t contour_storage.contours.cluster_id
+uint32_t contour_storage.contours.unique_id
+uint16_t contour_storage.contours.num_vertices
+uint16_t contour_storage.contours.cycles_since_created
+uint8_t contour_storage.contours.drivability
+bool contour_storage.contours.f_selected_for_output
+PADDING2
+END_REPEAT
+uint32_t contour_storage.number_of_contours
+REPEAT200
+float detection_storage.detections.position.x
+float detection_storage.detections.position.y
+float detection_storage.detections.position.z
+float detection_storage.detections.position_cov.xx
+float detection_storage.detections.position_cov.yy
+float detection_storage.detections.position_cov.xy
+float detection_storage.detections.db_scan.current_num_neighbors
+float detection_storage.detections.db_scan.cumulated_num_neighbors
+bool detection_storage.detections.db_scan.f_core
+bool detection_storage.detections.db_scan.f_visited
+PADDING2
+float detection_storage.detections.position_squeezed.x
+float detection_storage.detections.position_squeezed.y
+float detection_storage.detections.position_squeezed.z
+float detection_storage.detections.existence_probability
+float detection_storage.detections.probability_of_detection
+float detection_storage.detections.range_rate_compensated
+float detection_storage.detections.importance
+uint32_t detection_storage.detections.unique_id
+uint32_t detection_storage.detections.contour_id
+REPEAT2
+uint32_t detection_storage.detections.segment_id
+END_REPEAT
+uint16_t detection_storage.detections.cluster_id
+uint16_t detection_storage.detections.age
+uint8_t detection_storage.detections.drivability
+int8_t detection_storage.detections.look_id
+bool detection_storage.detections.f_used_in_measurement_update
+bool detection_storage.detections.f_valid
+END_REPEAT
+REPEAT8
+float dc_dump.critical_region_dump.critical_region.x
+float dc_dump.critical_region_dump.critical_region.y
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.detections_number
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.rcs_recur_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_abs_ewma025_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_abs_max
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_abs_recur_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_recur_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.height_under_nondr_bins_proportion
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.height_over_nondr_bins_proportion
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.detection_density
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.elevation_outliers_density
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.elevation_outliers_num
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.bin_low
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.snr_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.snr_recur_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_abs_std
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_std
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.dc_features_dump.z_scs_mean
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.position_x
+END_REPEAT
+REPEAT500
+float dc_dump.dc_vertices_dump.position_y
+END_REPEAT
+REPEAT500
+uint8_t dc_dump.dc_vertices_dump.drivability
+END_REPEAT
+REPEAT500
+uint8_t dc_dump.dc_vertices_dump.drivability_confidence
+END_REPEAT
+REPEAT500
+uint32_t dc_dump.dc_vertices_dump.segment_id
+END_REPEAT
+REPEAT500
+uint32_t dc_dump.dc_vertices_dump.unique_id
+END_REPEAT
+REPEAT500
+uint8_t dc_dump.dc_vertices_dump.f_critical
+END_REPEAT
+REPEAT500
+uint8_t dc_dump.dc_vertices_dump.f_primary
+END_REPEAT
+REPEAT100
+uint32_t dc_dump.dc_contours_dump.contour_id
+END_REPEAT
+REPEAT100
+uint16_t dc_dump.dc_contours_dump.num_vertices
+END_REPEAT
+REPEAT100
+uint8_t dc_dump.dc_contours_dump.f_valid
+END_REPEAT
+REPEAT100
+uint8_t dc_dump.dc_contours_dump.sg_drivability
+END_REPEAT
+uint16_t dc_dump.num_DC_contours
+PADDING2

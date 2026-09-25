@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_rta_obj_vru_class_prob</NAME>
+    <!-- Apply all object types.-->
+    <VALUE>[0.0f 1.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_alert_lvl_1_ttp_threshold</NAME>
+    <!-- Rivian requirement: PRS6P-50883.-->
+    <VALUE>[2.5f 3.0f 3.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_active_obj_ttp_offset</NAME>
+    <VALUE>0.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_ta_ego_speed</NAME>
+    <!-- [1.0 50.0] km/h.-->
+    <VALUE>[0.27f 13.9f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_rta_obj_speed</NAME>
+    <!-- [3.0 60.0] km/h.-->
+    <VALUE>[0.83f 16.67f]</VALUE>
+  </record>
+</data-set>

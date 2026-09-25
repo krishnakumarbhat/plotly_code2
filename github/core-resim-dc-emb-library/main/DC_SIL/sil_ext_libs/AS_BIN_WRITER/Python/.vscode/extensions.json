@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        // Adds a lot of functionality to VS Code to handle Python code: linting, debugging, intellisense, and much more
+        "ms-python.python",
+        // Automatically generates detailed docstrings for python functions
+        "njpwerner.autodocstring",
+        // Linting and style checking for markdown files
+        "davidanson.vscode-markdownlint"
+    ]
+}

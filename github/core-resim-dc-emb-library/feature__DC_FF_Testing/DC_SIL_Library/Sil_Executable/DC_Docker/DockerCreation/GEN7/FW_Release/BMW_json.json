@@ -1,0 +1,33 @@
+{ 
+	"reprocessingInputFileStreams": [
+		{
+			"key": "BN_CALIFR",
+			"files": [
+			"C:/LOGS/STLA_SCALE1/TNDR1_BEDG_20240218_174636_WDC3_bus_0000.MF4"
+
+			]
+		},
+		{
+			"key": "BN_FASETH",
+			"files": [
+			"C:/LOGS/STLA_SCALE1/TNDR1_BEDG_20240218_174636_WDC3_bus_0000.MF4"
+
+			]
+		},
+		{
+			"key": "SRR_DEBUG",
+			"files": [
+			"C:/LOGS/STLA_SCALE1/TNDR1_BEDG_20240218_174636_WDC3_deb_0000.MF4"
+
+			]
+		},
+		{
+			"key":"SRR_REFERENCE",
+			"files": [
+				"C:/LOGS/STLA_REF/TNDR1_LEAF_20240119_150827_WDC2_ref_0000.MF4"
+			]
+ 
+		}
+ 
+	]
+}

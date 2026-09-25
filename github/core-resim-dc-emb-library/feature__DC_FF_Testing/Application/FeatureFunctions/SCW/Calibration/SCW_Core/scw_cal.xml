@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CALIBRATION_GENERIC_INFO>
+    <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+    <CAL_SIZE_MACRO>SCW_CAL_SIZE</CAL_SIZE_MACRO>
+    <COMPONENT_NAME>Scw</COMPONENT_NAME>
+    <CUSTOMERS>[Generic BMW_SP25]</CUSTOMERS>
+    <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+    <FILE_NAME>scw_calibration</FILE_NAME>
+    <STRUCTURE_OBJ_NAME>Scw_Cal</STRUCTURE_OBJ_NAME>
+  </CALIBRATION_GENERIC_INFO>
+  <CALIBRATION_HEADER>
+    <record>
+      <NAME>version</NAME>
+      <VALUE>13</VALUE>
+    </record>
+  </CALIBRATION_HEADER>
+  <CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_scw_min_host_speed</NAME>
+      <DESCRIPTION>Minimum ego speed at which SCW feature is enabled.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>8.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_host_speed_hys</NAME>
+      <DESCRIPTION>Value subtracted from the k_scw_min_host_speed to apply hysteresis for the activation of SCW function.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>1.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_guardrail_age</NAME>
+      <DESCRIPTION>Minimum age of the guardrail to be considered as valid for SCW.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>5u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_lat_pos_ratio</NAME>
+      <DESCRIPTION>Maximum ratio between current and previous values of guardrail lateral distance. Lateral distance is frozen for k_scw_guardrail_freeze_period consecutive cycles above this threshold. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_guardrail_freeze_period</NAME>
+      <DESCRIPTION>Lateral distance is frozen for k_scw_guardrail_freeze_period consecutive cycles if the guardrail is unplausible.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>100u</RANGE_MAX>
+      <DEFAULT_VALUE>10u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_heading</NAME>
+      <DESCRIPTION>Only objects with heading in the specified value range are considered SCW candidates.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[-1.0f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_heading_hys</NAME>
+      <DESCRIPTION>Value subtracted from minimum heading or added to maximum heading, to apply hysteresis for the SCW candidate.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.1f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_yawrate</NAME>
+      <DESCRIPTION>Only objects with yawrate in the specified value range are considered SCW candidates.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_yawrate_hys</NAME>
+      <DESCRIPTION>Value added to maximum yawrate, to apply hysteresis for the SCW candidate.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.1f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_velocity</NAME>
+      <DESCRIPTION>Only objects with an absolute velocity in the specified value range are considered SCW candidates.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[8.0f 100.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_velocity_hys</NAME>
+      <DESCRIPTION>Value subtracted from minimum relative velocity or added to maximum relative velocity, to apply hysteresis for the SCW candidate.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>1.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_relative_velocity</NAME>
+      <DESCRIPTION>Only objects with relative longitudinal velocity in the specified value range are considered SCW candidates.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-20</RANGE_MIN>
+      <RANGE_MAX>20</RANGE_MAX>
+      <DEFAULT_VALUE>[-5.0f 10.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_relative_vel_hys</NAME>
+      <DESCRIPTION>Value subtracted from min relative longitudinal velocity threshold or added to the max threshold, to apply hysteresis for the SCW candidate.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>0.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_candidate_age</NAME>
+      <DESCRIPTION>Minimum age of the object to be considered as a valid candidate for SCW.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>20u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_candidate_existence_probability</NAME>
+      <DESCRIPTION>Minimum existence probability of the object to be considered as a valid candidate for SCW.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0.9</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_exist_prob_radar_guardrail</NAME>
+      <DESCRIPTION>The minimum existence probability of a radar guardrail to determine, if an SCW candidate is in conflict with its environment.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.8</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_dynamic_lat_ttc</NAME>
+      <DESCRIPTION>The minimum critical lateral TTC of the dynamic object to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>5.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.9</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_dynamic_lat_ttc</NAME>
+      <DESCRIPTION>The maximum critical lateral TTC of the dynamic object to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>5.0</RANGE_MAX>
+      <DEFAULT_VALUE>2.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_guardrail_lat_ttc</NAME>
+      <DESCRIPTION>The minimum critical lateral TTC of the guardrail to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>5.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.9</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_guardrail_lat_ttc</NAME>
+      <DESCRIPTION>The maximum critical lateral TTC of the guardrail to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>5.0</RANGE_MAX>
+      <DEFAULT_VALUE>2.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_trailer_lat_ttc_extension</NAME>
+      <DESCRIPTION>The extension of the min lateral TTC when the trailer is attached. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_dynamic_lat_distance</NAME>
+      <DESCRIPTION>The minimum critical lateral distance to the dynamic object to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>2.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.35</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_dynamic_lat_distance</NAME>
+      <DESCRIPTION>The maximum critical lateral distance to the dynamic object to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>2.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.8</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_min_guardrail_lat_distance</NAME>
+      <DESCRIPTION>The minimum critical lateral distance to the guardrail to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>2.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.35</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_guardrail_lat_distance</NAME>
+      <DESCRIPTION>The maximum critical lateral distance to the guardrail to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>2.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.8</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_guardrail_lat_distance</NAME>
+      <DESCRIPTION>The maximum critical lateral distance to the guardrail to trigger an alert. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>2.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.8</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_critical_lat_ttc_hys</NAME>
+      <DESCRIPTION>The critical lateral ttc hysteresis. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_critical_lat_distance_hys</NAME>
+      <DESCRIPTION>The critical lateral distance hysteresis. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_adjust_zones_to_ego_size</NAME>
+      <DESCRIPTION>If enabled the SCW zones defined by k_scw_initial_zone_x and k_scw_initial_zone_y will be relative to the host vehicle side and will be extended by the host vehicle length. </DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_initial_zone_x</NAME>
+      <DESCRIPTION>X-coordinate of corners of polygon defining SCW zone of the right side. First coordinate should be right front corner of zone, subsequent coordinates should be clockwise.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>-15.0</RANGE_MIN>
+      <RANGE_MAX>15.0</RANGE_MAX>
+      <DEFAULT_VALUE>[0.5 -4 -10 -10 -4 0.5]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_initial_zone_y</NAME>
+      <DESCRIPTION>Y-coordinate of corners of polygon defining SCW zone of the right side. First coordinate should be right front corner of zone, subsequent coordinates should be clockwise.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>15.0</RANGE_MAX>
+      <DEFAULT_VALUE>[3.0 3.0 3.0 0.5 0.5 0.5]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_hys_zone_x_offset</NAME>
+      <DESCRIPTION>Offsets to be added to the x-coordinate of the initial zone to get the hysteresis zone.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0</RANGE_MIN>
+      <RANGE_MAX>10.0</RANGE_MAX>
+      <DEFAULT_VALUE>[0.3 0 -1 -1 0 0.3]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_hys_zone_y_offset</NAME>
+      <DESCRIPTION>Offsets to be added to the y-coordinate of the initial zone to get the hysteresis zone.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-10.0</RANGE_MIN>
+      <RANGE_MAX>10.0</RANGE_MAX>
+      <DEFAULT_VALUE>[1 1 1 -1 -1 -1]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_candidate_mature_cycles_in_zone_threshold</NAME>
+      <DESCRIPTION>An object is required to be in the SCW zone with mature object status for at least this many cycles before it qualifies as critical object.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_guardrail_cycles_in_zone_threshold</NAME>
+      <DESCRIPTION>A guardrail is required to be in the SCW zone for at least this many consecutive cycles before it qualifies as critical object.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_lateral_distance_default</NAME>
+      <DESCRIPTION>Max value of lateral distance, usually equal to the max value.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>10</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_lateral_ttc_max</NAME>
+      <DESCRIPTION>Max value of lateral TTC.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>10</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_lateral_ttc_default</NAME>
+      <DESCRIPTION>Default value of lateral TTC, usually equal to the max value.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>10</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_ttle_max</NAME>
+      <DESCRIPTION>Max value of TTLE.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>10</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_ttle_default</NAME>
+      <DESCRIPTION>Default value of TTLE, usually equal to the max value.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>10</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_ttp_max</NAME>
+      <DESCRIPTION>Max value of TTP.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>100</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_ttp_default</NAME>
+      <DESCRIPTION>Default value of TTP, usually equal to the max value.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>100.0</RANGE_MAX>
+      <DEFAULT_VALUE>100</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_enable_via_cal</NAME>
+      <DESCRIPTION>Decides whether vehicle input or cal shall be used to enable/disable SCW.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_dynamic_enable_via_cal</NAME>
+      <DESCRIPTION>Decides whether vehicle input or cal shall be used to enable/disable subfunction SCW dynamic objects.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_guardrail_enable_via_cal</NAME>
+      <DESCRIPTION>Decides whether vehicle input or cal shall be used to enable/disable subfunction SCW guardrail.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_enable</NAME>
+      <DESCRIPTION>Decides whether SCW shall be enabled or disabled if CAF input is not used.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_enable_dynamic</NAME>
+      <DESCRIPTION>Decides whether subfunction SCW dynamic objects shall be enabled or disabled if CAF input is not used.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_enable_guardrail</NAME>
+      <DESCRIPTION>Decides whether subfunction SCW guardrail shall be enabled or disabled if CAF input is not used.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_enable_trailer_zone_extension</NAME>
+      <DESCRIPTION>Enables an additional adjustment of the SCW zone based on trailer information in core input.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_f_enable_trailer_ttc_extension</NAME>
+      <DESCRIPTION>Allows to increase of lateral ttc of a dynamic object or guardrail if a trailer is attached.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_trailer_zone_ext_safety_margin</NAME>
+      <DESCRIPTION>Longitudinal extension of the rear edge of the SCW zone behind the trailer edge.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_trailer_zone_ext_safety_margin_lat</NAME>
+      <DESCRIPTION>Lateral extension of the SCW zone.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>2</RANGE_MAX>
+      <DEFAULT_VALUE>0.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_zone_length</NAME>
+      <DESCRIPTION>Maximum length of the SCW zone.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>30</RANGE_MAX>
+      <DEFAULT_VALUE>20</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_scw_max_zone_width</NAME>
+      <DESCRIPTION>Maximum width of the SCW zone.</DESCRIPTION>
+      <Comp>SCW</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>5</DEFAULT_VALUE>
+    </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

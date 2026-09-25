@@ -1,0 +1,44 @@
+{ 
+    "reprocessingInputFileStreams": [
+        {
+            "key": "BN_CALIFR",
+            "files": [
+			"C:/WD/MRR/DC_SIL_Library/Sil_Executable/Logs/Flr7_MZK/GPO_GEN7_NA_20250206_NA_NA_NA_144229_001.mf4"
+            ]
+        },
+        {
+            "key": "BN_FASETH",
+            "files": [
+"C:/WD/MRR/DC_SIL_Library/Sil_Executable/Logs/Flr7_MZK/GPO_GEN7_NA_20250206_NA_NA_NA_144229_001.mf4"
+            ]
+        },
+        {
+            "key": "SRR_DEBUG",
+            "files": [
+			"C:/WD/MRR/DC_SIL_Library/Sil_Executable/Logs/Flr7_MZK/GPO_GEN7_NA_20250206_NA_NA_NA_144229_001.mf4"
+                
+            ]
+        },
+        {
+            "key":"SRR_REFERENCE",
+            "files": [     
+"C:/WD/MRR/DC_SIL_Library/Sil_Executable/Logs/Flr7_MZK/GPO_GEN7_NA_20250206_NA_NA_NA_144229_001.mf4"
+            ]
+ 
+        },
+        {
+            "key":"SRR50_RAW",
+            "files": [     
+
+            ]
+ 
+        },
+        {
+            "key":"MRR40_RAW",
+            "files": [     
+
+            ]
+ 
+        }
+    ]
+}

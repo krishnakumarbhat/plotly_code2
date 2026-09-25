@@ -1,0 +1,89 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [
+        "GenericPresets.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "release_platform_QNX8",
+            "inherits": "generic_release_unlimited",
+            "displayName": "Platform release: QNX8 | RSPP variant default",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/tools/cmake/toolchains/platform_qnx8_toolchain.cmake",
+            "environment": {
+                "QNX_HOST": "/opt/tools/qnx/qnx800/host/linux/x86_64",
+                "QNX_TARGET": "/opt/tools/qnx/qnx800/target/qnx",
+                "LM_LICENSE_FILE": "27002@nlnhsrk-is03.aptiv.com"
+            },
+            "cacheVariables": {
+                "QNX_COMPILER_DIR_PATH": "/opt/tools/qnx/qnx800/host/linux/x86_64/usr/bin"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release_platform_front_variant",
+            "inherits": "release_platform_QNX8",
+            "displayName": "Platform release: front | QNX8 | RSPP/ROT variant L | SG variant Platform front",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "H",
+                "F360_TRACKER_VARIANT": "H"
+            }
+        },
+        {
+            "name": "release_platform_corner_variant",
+            "inherits": "release_platform_QNX8",
+            "displayName": "Platform release: corner | QNX8 | RSPP/ROT variant L | SG variant Platform Corner",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "L",
+                "F360_TRACKER_VARIANT": "L"
+            }
+        },
+        {
+            "name": "release_platform_rear_variant",
+            "inherits": "release_platform_QNX8",
+            "displayName": "Platform release: rear | QNX8 | RSPP/ROT variant L | SG variant Platform Rear",
+            "hidden": false,
+            "cacheVariables": {
+                "RSPP_VARIANT": "O",
+                "F360_TRACKER_VARIANT": "O"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release_platform_front_variant",
+            "configurePreset": "release_platform_front_variant",
+            "displayName": "Platform release: Front | QNX8 | RSPP/ROT variant L | SG variant Platform Front",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_platform_corner_variant",
+            "configurePreset": "release_platform_corner_variant",
+            "displayName": "Platform release: Corner | QNX8 | RSPP/ROT variant L | SG variant Platform Corner",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_platform_rear_variant",
+            "configurePreset": "release_platform_rear_variant",
+            "displayName": "Platform release: Rear | QNX8 | RSPP/ROT variant O | SG variant Platform Rear",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        }
+    ]
+}

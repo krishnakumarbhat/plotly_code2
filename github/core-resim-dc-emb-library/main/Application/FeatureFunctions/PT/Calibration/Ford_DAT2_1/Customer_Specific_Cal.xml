@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_pt_min_confidence_valid_match</NAME>
+    <VALUE>0.40f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_f_check_object_age_plausibility</NAME>
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_group_overlap_paths_min_diff</NAME>
+    <VALUE>2.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_enable_host_trail</NAME>
+    <VALUE>0u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_range_nearest_border_impl_path</NAME>
+    <VALUE>0u</VALUE>
+  </record>
+</data-set>

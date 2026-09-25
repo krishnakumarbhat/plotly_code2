@@ -1,0 +1,276 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: LOGGER RTRANGE
+
+
+BO_ 0 RCOM_BASE_LANE_PACKET: 133 RTRANGE
+ SG_ sync_byte : 0|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ packet_type : 8|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ data_length : 16|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ GPS_time_into_minute : 32|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Line_number_to_left_of_A : 48|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Line_number_to_right_of_A : 56|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Distance_along_lane_1 : 64|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_distance_to_left_of_A : 96|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_velocity_to_left_of_A : 112|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_accel_to_left_of_A : 128|16@1+ (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_distance_to_right_of_A : 144|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_velocity_to_right_of_A : 160|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_accel_to_right_of_A : 176|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_1 : 192|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_2 : 208|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_3 : 224|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_4 : 240|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_5 : 256|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_6 : 272|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_7 : 288|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Point_A_to_Line_8 : 304|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dis_Pt_B_tolineon_leftof_A : 320|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dis_Pt_C_tolineon_rightof_A : 336|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Line_on_left_of_Point_B : 352|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Line_on_right_of_Point_B : 360|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Line_on_left_of_Point_C : 368|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Line_on_right_of_Point_C : 376|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved1 : 384|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Status_Channel M : 392|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ GPS_time_in_minutes m0 : 400|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved2 m0 : 432|32@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ RT_Range_SW_Develop_ID m1 : 400|64@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ RT_Map_number m2 : 400|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ RT_Reserved3 m2 : 408|56@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Major_OS_version m6 : 400|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Minor_OS_version m6 : 408|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ OS_revision_version m6 : 416|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Script_version m6 : 424|24@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ RT_Reserved4 m6 : 448|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ UTC_Offset m7 : 400|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved5 m7 : 416|48@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Point_A_lev_arm_displ_x_axis m8 : 400|24@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_A_lev_arm_displ_y_axis m8 : 424|24@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_A_lev_arm_displ_z_axis m8 : 448|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_B_lev_arm_displ_x_axis m9 : 400|24@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_B_lev_arm_displ_y_axis m9 : 424|24@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_B_lev_arm_displ_z_axis m9 : 448|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_C_lev_arm_displ_x_axis m10 : 400|24@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_C_lev_arm_displ_y_axis m10 : 424|24@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Point_C_lev_arm_displ_z_axis m10 : 448|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ characters_overflow m15 : 400|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ packets_oveflow m15 : 416|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ characters_skipped m15 : 432|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ command_errors m15 : 448|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_1 : 464|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_2 : 480|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_3 : 496|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_4 : 512|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_5 : 528|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_6 : 544|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_7 : 560|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_velocity_from_Pt_A_to_Line_8 : 576|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_1 : 592|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_2 : 608|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_3 : 624|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_4 : 640|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_5 : 656|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_6 : 672|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_7 : 688|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_B_to_Line_8 : 704|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_1 : 720|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_2 : 736|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_3 : 752|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_4 : 768|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_5 : 784|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_6 : 800|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_7 : 816|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lat_dist_Pt_C_to_Line_8 : 832|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_1 : 848|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_2 : 864|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_3 : 880|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_4 : 896|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_5 : 912|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_6 : 928|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_7 : 944|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Line_8 : 960|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Point_A : 976|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Point_B : 992|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Curvature_of_Point_C : 1008|16@1- (0.0001,0) [0|0] "units" Vector__XXX
+ SG_ Heading_wrt_line_on_left_of_A : 1024|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Heading_wrt_line_on_right_of_A : 1040|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ checksum : 1056|8@1+ (1,0) [0|0] "units" Vector__XXX
+
+BO_ 1 RCOM_EXTENDED_RANGE: 107 RTRANGE
+ SG_ sync_byte : 0|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ packet_type : 8|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ data_length : 16|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ GPS_time_into_minute : 32|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_Number : 48|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Total_Number_of_Targets : 56|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_Range : 64|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Longitudinal_Range : 96|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Lateral_Range_rate : 128|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Longitudinal_Range_rate : 144|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_meas_Pt_X : 160|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_meas_Pt_Y : 192|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_meas_Pt_X : 224|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_meas_Pt_Y : 256|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Heading_Angle_Hunter : 288|16@1+ (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Heading_Angle_Target : 304|16@1+ (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Range_Status : 320|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Status_Channel M : 328|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ GPS_time_in_minutes m0 : 336|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Postion_mode_Hunter m0 : 368|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Position_mode_Target m0 : 376|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_Latency m0 : 384|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_0 m1 : 336|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_1 m1 : 344|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_2 m1 : 352|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_3 m1 : 360|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_4 m1 : 368|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_5 m1 : 376|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_6 m1 : 384|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ SW_Dev_ID_7 m1 : 392|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ char_rcvd_Target_radio m2 : 336|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ pkts_rcvd_Target_radio m2 : 352|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ char_skipped_Target_radio m2 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved1 m2 : 384|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ char_rcvd_Target_WLAN m3 : 336|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ pkts_rcvd_Target_WLAN m3 : 352|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ char_skipped_Target_WLAN m3 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved2 m3 : 384|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ char_rcvd_Target_ETH m4 : 336|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ pkts_rcvd_Target_ETH m4 : 352|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ char_skipped_Target_ETH m4 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved3 m4 : 384|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_output_Latency m5 : 336|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Range_Long_offset m5 : 352|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Range_Lati_offset m5 : 368|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Reserved4 m5 : 384|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Major_OS_version m6 : 336|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Minor_OS_version m6 : 344|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ OS_revision_version m6 : 352|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Script_version m6 : 360|24@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved5 m6 : 384|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ UTC_Offset m7 : 336|16@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Rang_ref_plane m7 : 352|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_feat_set m7 : 360|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Number_feat_points m7 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Max_num_feature_pts m7 : 384|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Reserved6 m7 : 392|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Fixd_pt_Latitude m8 : 336|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Fixd_pt_Longitude m8 : 368|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_IP_1 m9 : 336|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_IP_2 m9 : 344|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_IP_3 m9 : 352|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_IP_4 m9 : 360|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_IP_1 m9 : 368|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_IP_2 m9 : 376|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_IP_3 m9 : 384|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_IP_4 m9 : 392|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Fixd_pt_Altitude m10 : 336|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Fixd_pt_Heading m10 : 368|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Loc_coo_orgin_Lat m11 : 336|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Loc_coo_orgin_Long m11 : 368|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Loc_coo_Altitude m12 : 336|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Loc_coo_Heading_x_Axis m12 : 368|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Huntr_levr_Arm_x_disp m13 : 336|24@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Huntr_levr_Arm_y_disp m13 : 360|24@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Huntr_levr_Arm_z_disp m13 : 384|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_levr_Arm_x_disp m14 : 336|24@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_levr_Arm_y_disp m14 : 360|24@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_levr_Arm_z_disp m14 : 384|16@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ UDP_cmd_chr_rcvd m15 : 336|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ UDP_cmd_pkt_rcvd m15 : 352|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ UDP_cmd_chr_skip m15 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ UDP_cmd_error m15 : 384|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Range_Long_accur m16 : 336|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Range_Latr_accur m16 : 352|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Range_Vert_accur m16 : 368|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Range_Magn_accur m16 : 384|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_Veh_Length m17 : 336|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_Veh_Width m17 : 352|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Target_Poly_number m17 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_Veh_height m17 : 384|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Accl_filt_cutoff_frqncy m18 : 336|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Accl_filt_damp_ratio m18 : 368|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Extr_filt_cutoff_frqncy m19 : 336|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Extr_filt_damp_ratio m19 : 368|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Feat_Pt_Latitude m20 : 336|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Feat_Pt_Longitude m20 : 368|32@1- (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Feat_Pt_Altitude m21 : 336|32@1- (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Feat_Pt_Heading m21 : 368|32@1+ (1E-007,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_veh_len m22 : 336|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_veh_wid m22 : 352|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_poly_numb m22 : 368|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_veh_height m22 : 384|16@1+ (0.001,0) [0|0] "units" Vector__XXX
+ SG_ Forwd_vel_hunter : 400|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_vel_hunter : 416|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Lat_range_accel : 432|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Longit_range_accel : 448|16@1- (0.01,0) [0|0] "units" Vector__XXX
+ SG_ Near_target_to_hunter_left : 464|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Near_target_to_hunter_right : 472|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_visibility : 480|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_feature_point_type : 488|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_feature_point_index : 496|16@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Nearhunter_pol_ver_target_left : 512|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Nearhunter_pol_ver_target_right : 520|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Neartarget_pol_ver_hunter_left : 528|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Neartarget_pol_ver_hunter_right : 536|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Nearhunter_pol_ver_target_left : 544|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Nearhunter_pol_ver_target_right : 552|8@1+ (1,0) [0|0] "units" Vector__XXX
+ SG_ Neartarget_pol_ver_hunter_point : 560|8@1+ (0.004,0) [0|0] "units" Vector__XXX
+ SG_ Nearhunter_pol_ver_target_point : 568|8@1+ (0.004,0) [0|0] "units" Vector__XXX
+ SG_ Neartarget_pol_ver_hunter_poly : 576|8@1+ (0.004,0) [0|0] "units" Vector__XXX
+ SG_ Nearhunter_pol_ver_target_poly : 584|8@1+ (0.004,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_Poly_origin_Pos_X : 592|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_Poly_origin_Pos_Y : 624|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_Poly_origin_Pos_X : 656|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_Poly_origin_Pos_Y : 688|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_unit_Pos_X : 720|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Hunter_unit_Pos_Y : 752|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_unit_Pos_X : 784|32@1- (1,0) [0|0] "units" Vector__XXX
+ SG_ Target_unit_Pos_Y : 816|32@1- (1,0) [0|0] "units" Vector__XXX
+
+
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "BusType" "Ethernet";
+BA_ "BusType" "Ethernet";
+BA_ "DBName" "main";
+SIG_VALTYPE_ 1 Accl_filt_cutoff_frqncy : 1;
+SIG_VALTYPE_ 1 Accl_filt_damp_ratio : 1;
+SIG_VALTYPE_ 1 Extr_filt_cutoff_frqncy : 1;
+SIG_VALTYPE_ 1 Extr_filt_damp_ratio : 1;
+

@@ -1,0 +1,139 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [
+        "GenericPresets.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "release_GCC",
+            "inherits": "generic_release_unlimited",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_A",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP/ROT variant A | SG variant Platform",
+            "cacheVariables": {
+                "RSPP_VARIANT": "A",
+                "F360_TRACKER_VARIANT": "A"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_C",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP/ROT variant C | SG variant Platform",
+            "cacheVariables": {
+                "RSPP_VARIANT": "C",
+                "F360_TRACKER_VARIANT": "C"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_D",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP/ROT variant D | SG variant BMW_SP25_MRR",
+            "cacheVariables": {
+                "RSPP_VARIANT": "D",
+                "F360_TRACKER_VARIANT": "D",
+                "SG_VARIANT": "BMW_SP25_MRR"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_H",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP/ROT variant L | SG variant NORTHSTAR_FRONT",
+            "cacheVariables": {
+                "RSPP_VARIANT": "H",
+                "F360_TRACKER_VARIANT": "H",
+                "SG_VARIANT": "NORTH_STAR_FRONT"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_L",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP/ROT variant L | SG variant NORTHSTAR_CORNER",
+            "cacheVariables": {
+                "RSPP_VARIANT": "L",
+                "F360_TRACKER_VARIANT": "L",
+                "SG_VARIANT": "NORTH_STAR_CORNER"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_O",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP/ROT variant O | SG variant NORTHSTAR_REAR",
+            "cacheVariables": {
+                "RSPP_VARIANT": "O",
+                "F360_TRACKER_VARIANT": "O",
+                "SG_VARIANT": "NORTH_STAR_REAR"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release_GCC",
+            "configurePreset": "release_GCC",
+            "displayName": "Release PC | GCC | RSPP variant A (default)",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_PC_GCC_RSPP_A",
+            "configurePreset": "release_PC_GCC_RSPP_A",
+            "displayName": "Release: GCC | RSPP variant A",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_PC_GCC_RSPP_C",
+            "configurePreset": "release_PC_GCC_RSPP_C",
+            "displayName": "Release: GCC | RSPP variant C",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 8
+        },
+        {
+            "name": "release_PC_GCC_RSPP_D",
+            "configurePreset": "release_PC_GCC_RSPP_D",
+            "displayName": "Release: GCC | RSPP variant D",
+            "configuration": "Release",
+            "jobs": 8
+        },
+        {
+            "name": "release_PC_GCC_RSPP_H",
+            "configurePreset": "release_PC_GCC_RSPP_H",
+            "displayName": "Release: GCC | RSPP variant H",
+            "configuration": "Release",
+            "jobs": 8
+        },
+        {
+            "name": "release_PC_GCC_RSPP_L",
+            "configurePreset": "release_PC_GCC_RSPP_L",
+            "displayName": "Release: GCC | RSPP variant L",
+            "configuration": "Release",
+            "jobs": 8
+        },
+                {
+            "name": "release_PC_GCC_RSPP_O",
+            "configurePreset": "release_PC_GCC_RSPP_O",
+            "displayName": "Release: GCC | RSPP variant O",
+            "configuration": "Release",
+            "jobs": 8
+        }
+    ]
+}

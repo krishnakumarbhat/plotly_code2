@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.16)
+
+add_library(stationary_geometries STATIC IMPORTED GLOBAL)
+
+set_target_properties(
+    stationary_geometries
+        PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/iface
+            IMPORTED_LOCATION_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/lib/libstationary_geometries.a
+            IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/libstationary_geometries.a
+)
