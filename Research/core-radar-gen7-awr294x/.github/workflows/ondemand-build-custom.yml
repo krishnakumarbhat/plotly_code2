@@ -1,0 +1,40 @@
+# On-demand: pick any combination of flavor and variant.
+
+name: On-Demand · Build Custom
+
+on:
+  workflow_dispatch:
+    inputs:
+      production:
+        description: 'Include production flavor'
+        type: boolean
+        default: true
+      standalone:
+        description: 'Include standalone flavor (srr7p only)'
+        type: boolean
+        default: false
+      eco:
+        description: 'Include eco flavor (AWR2944ECO target)'
+        type: boolean
+        default: false
+      variants:
+        description: 'JSON array of variants'
+        type: string
+        default: '["srr7p","flr7"]'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: ${{ format('[{0}{1}{2}{3}{4}]',
+                          inputs.production && '"production"' || '',
+                          (inputs.production && inputs.standalone) && ',' || '',
+                          inputs.standalone && '"standalone"' || '',
+                          ((inputs.production || inputs.standalone) && inputs.eco) && ',' || '',
+                          inputs.eco && '"eco"' || '') }}
+      variants: ${{ inputs.variants }}
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}

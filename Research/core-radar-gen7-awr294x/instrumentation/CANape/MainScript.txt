@@ -1,0 +1,74 @@
+function MainScript ()
+{
+//#define NO_TURNTABLE_MOVEMENT
+Var ErrStatus;
+double TargetRCS;
+double phys_range, rpt_range;
+double temp;
+long k;
+unsigned int COMPort;
+long hFile1;
+double angle, PosnDeg[2];
+var Result;
+TargetRCS = 0;
+ErrStatus = 0;
+
+write("main Function starts");
+write("1 ErrStatus = '%.0f'",ErrStatus);
+Initialize_Test();
+write("Initialization complete");
+write("2 ErrStatus = '%.0f'",ErrStatus);
+
+Result = TRUE;
+COMPort = TC_COM_Port_HVS;
+hFile1 = OpenFile ( "Antenna Measurement Angles.csv", "r" );
+
+Result = TRUE;
+//TC_COM_Port_HVS = 1;
+//COMPort = TC_COM_Port_HVS;
+hFile1 = OpenFile ( "Antenna Measurement Angles.csv", "r" );
+#ifndef NO_TURNTABLE_MOVEMENT
+  ErrStatus = HVS_SetAnglePosnDeg(0,PosnDeg);
+#endif
+write("3 ErrStatus = '%.0f'",ErrStatus);
+
+if (0 != ErrStatus) 
+{
+    write("1 HVS_SetAnglePosn() returned ErrStatus = '%.0f'",ErrStatus);
+}
+
+
+while (FScan(hFile1, "%f\n", angle) == 1)
+{
+  #ifndef NO_TURNTABLE_MOVEMENT
+      ErrStatus = HVS_SetAnglePosnDeg(angle,PosnDeg);
+  #endif
+  if (0 != ErrStatus) 
+  {
+	  write("2 HVS_SetAnglePosn() returned ErrStatus = '%.0f'",ErrStatus);
+    break;
+  }
+	write("PosnDeg() = '%.2f'",PosnDeg[0]);
+  Angle_For_Measurement_File = angle;
+//  Save_SBMP_Antenna_Response_Data();
+}
+
+#ifndef NO_TURNTABLE_MOVEMENT
+  ErrStatus = HVS_SetAnglePosnDeg(0,PosnDeg);
+#endif
+if (0 != ErrStatus) 
+{
+    write("3 HVS_SetAnglePosn() returned ErrStatus = '%.0f'",ErrStatus);
+}
+//write("PosnDeg() = '%.2f'",PosnDeg[0]);
+ErrStatus = HVS_CloseDLL();
+if (0 != ErrStatus) 
+{
+  write("4 HVS_CloseDLL() returned ErrStatus = '%.0f'",ErrStatus);
+  Result = FALSE;
+}
+CloseFile(hFile1);
+if(Result == FALSE)
+  write("Collect_Dataset_E () failed");
+return Result;
+}

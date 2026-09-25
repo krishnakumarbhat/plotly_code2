@@ -1,0 +1,24 @@
+# On-demand: build the ECO flavor (--awr_target_variant=awr2944eco).
+
+name: On-Demand · Build ECO
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Sensor variant'
+        type: choice
+        options: [srr7p, flr7]
+        default: srr7p
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["eco"]'
+      variants: '["${{ inputs.variant }}"]'
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}

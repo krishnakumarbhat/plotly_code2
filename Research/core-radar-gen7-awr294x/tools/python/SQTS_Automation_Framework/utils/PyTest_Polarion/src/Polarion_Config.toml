@@ -1,0 +1,16 @@
+# Configuration file for Pytest Polarion Pipeline
+# Use double quotes for normal strings, single quotes for raw strings
+# Relative paths start from PyTest_Polarion
+
+#------------------------------ polarion config index ------------------------------
+# Ln# | Section
+#  9 - Polarion server information
+
+#-------------------------- Polarion Server information --------------------------
+
+[polarion]
+server = "https://polariondev1.aptiv.com/polarion/"
+project = "STIG_Testing"
+testrun_template = "Software Test Run"
+testrun_prefix = "TR_"
+record_comment = "Automated result update"

@@ -1,0 +1,129 @@
+"""Python testcase for FRONT_END_MANAGEMENT."""
+import pytest
+import time
+import traceback
+
+
+@pytest.mark.WI("WI-350267")
+@pytest.mark.description("Qualification test for validation of MMIC safe startup fault - Negative Test Case")
+def test_FRONT_END_MANAGEMENT(Power, T32_R5A, T32_C66, Report):
+    """WinCLEAR."""
+    T32_R5A.Clean_and_Reset()
+    T32_C66.delete_all_breakpoints()
+    T32_R5A.cmd("SYStem.mode.Down")
+    time.sleep(2)
+    try:
+        T32_R5A.cmd("SYStem.mode.Up")
+    except Exception:
+        print("An exception occurred R5A")
+        traceback.print_exc()
+    time.sleep(5)
+    attachAttempts = 0
+    while T32_R5A.get_run_state() != 3:
+        T32_R5A.cmd("SYStem.Attach")
+        attachAttempts += 1
+        time.sleep(10)
+        T32_R5A.print(f'-------- State: {T32_R5A.get_run_state()} --------')
+        if (attachAttempts > 5) :
+            break
+
+    T32_C66.cmd("SYStem.mode.NoDebug")
+    time.sleep(2)
+    try:
+        T32_C66.cmd("SYStem.mode.Attach")
+    except Exception:
+        print("An exception occurred C66")
+        traceback.print_exc()
+    time.sleep(5)
+    print("")
+    # Checking Radar Status
+    T_1 = []
+    T_1.append("RADAR_CTL_INIT_FAIL")
+    T_1.append("RADAR_CTL_INIT_NOT_STARTED")
+    T_1.append("RADAR_CTL_INIT_STARTED")
+    T_1.append("RADAR_CTL_INIT_SUCCESS")
+    t = "Radar_Ctl_Data.init_status"
+    # Wait for radar initialization with retry and power cycle on NOT_STARTED/FAIL
+    retry_count = 0
+    max_retries = 5
+    power_cycle_attempts = 0
+    max_power_cycles = 3
+    T = T32_R5A.read_var(t)
+    print("")
+    print(t, "=", T_1[T])
+    while T != 3 and retry_count < max_retries:
+        retry_count += 1
+        print(f"Waiting for radar initialization... (attempt {retry_count}/{max_retries})")
+        # If radar is in NOT_STARTED state (1) or FAIL state (0), perform power cycle
+        if (T == 1 or T == 0) and power_cycle_attempts < max_power_cycles:
+            print(f"\nRadar in {T_1[T]} state. Performing power cycle {power_cycle_attempts + 1}/{max_power_cycles}...")
+            power_cycle_attempts += 1
+            Power.switch_off()
+            time.sleep(3)
+            Power.switch_on()
+            time.sleep(3)
+            # Perform Lauterbach reset to code start
+            print("Performing Lauterbach reset to code start...")
+            T32_R5A.cmd("SYStem.Down")
+            time.sleep(2)
+            T32_R5A.cmd("SYStem.Attach")
+            time.sleep(5)
+            # Check radar status again after power cycle
+            T = T32_R5A.read_var(t)
+            print("After power cycle:")
+            print(t, "=", T_1[T])
+            print()
+        else:
+            # Regular retry without power cycle
+            time.sleep(5)
+            try:
+                T = T32_R5A.read_var(t)
+                print(t, "=", T_1[T])
+            except Exception as e:
+                print(f"Error reading radar status: {e}")
+                traceback.print_exc()
+    if T == 3:
+        final_condition = True
+    else:
+        final_condition = False
+    if final_condition :
+        print("-----------------------------------WI-350267 :START-----------------------------------")
+        print("")
+        temp = ["XCP_MMIC_FIT_Enable", "MMIC_Stream.MMIC_Data.MMIC_Fault_Status.MMIC_Startup_Error.MMIC_Startup_Error_Cnt",
+                "MMIC_Stream.MMIC_Data.MMIC_Fault_Status.MMIC_Startup_Error.MMIC_System_Start_Fault",
+                "Platform_Active_Fault_Table.platform_bits.mmic_safe_start_fault"]
+        TEMP = [0, 0, 0, 0]
+        print("##Overwriting XCP_MMIC_FIT_Enable to XCP_MMIC_SafeStartUp_FIT##")
+        T32_R5A.cmd("Var.set %e XCP_MMIC_FIT_Enable = 4")
+        time.sleep(2)
+        for i in range(0, len(temp)) :
+            T32_R5A.add_var_watch(temp[i])
+            time.sleep(0.5)
+            TEMP[i] = T32_R5A.read_var(temp[i])
+            print(temp[i], "=", TEMP[i])
+        print("")
+        if TEMP[1] >= 3 and TEMP[2] == 170:
+            final_condition = True
+        else :
+            final_condition = False
+        print("")
+        print("-----------------------------------WI-350267 :END-------------------------------------")
+    else :
+        print("Execution is stopped, Radar Status is ", T_1[T])
+
+    if final_condition:
+        assert True
+    else:
+        raise AssertionError()
+
+
+##############################################################################
+#                               Revision History                              #
+###############################################################################
+#
+# MM/DD/YYYY  Name/
+#               Initials           JIRA         Explanation of changes done here.
+#    Date         By              ###-####               Description
+# ----------    ---------         --------      ----------------------------------
+# 09/12/2025   AZEEJ SHAIK        EAH-7440             Script correction
+# 09/12/2025   SHAIK OSMANE GANI  EAH-7463             Script correction

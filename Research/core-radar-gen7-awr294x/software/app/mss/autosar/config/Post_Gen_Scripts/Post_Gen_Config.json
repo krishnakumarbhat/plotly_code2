@@ -1,0 +1,104 @@
+{
+    "CAN": {
+        "dest_dir": "VehCom_CAN",
+        "bsw_files": {
+            "LdCom_Lcfg_file": {
+                "name": "LdCom_Lcfg.c",
+                "mod": [
+                    "Rte_LdComCbkRxIndication_signalPdu_ASDM_Vehicle_Status_9e0bbf47_Rx",
+                    "Rte_LdComCbkCopyRxData_signalPdu_RDR_2_DownSel_Detections_bfa9d2b0_Rx",
+                    "Rte_LdComCbkCopyTxData_signalPdu_RDR_1_Detections_52b391ee_Tx",
+                    "Rte_LdComCbkCopyTxData_signalPdu_RDR_1_DownSel_Detections_10009f7a_Tx",
+                    "Rte_LdComCbkCopyTxData_signalPdu_RDR_1_Tracker_Data_44d32107_Tx",
+                    "Rte_LdComCbkStartOfReception_signalPdu_RDR_2_DownSel_Detections_bfa9d2b0_Rx",
+                    "Rte_LdComCbkTpTxConfirmation_signalPdu_RDR_1_Detections_52b391ee_Tx",
+                    "Rte_LdComCbkTpTxConfirmation_signalPdu_RDR_1_DownSel_Detections_10009f7a_Tx",
+                    "Rte_LdComCbkTpTxConfirmation_signalPdu_RDR_1_Tracker_Data_44d32107_Tx",
+                    "Rte_LdComCbkTpRxIndication_signalPdu_RDR_2_DownSel_Detections_bfa9d2b0_Rx"
+                ]
+            },
+            "PduR_Lcfg_c_file": {
+                "name": "PduR_Lcfg.c",
+                "mod": [
+                    "LdCom_CopyRxData",
+                    "LdCom_CopyTxData",
+                    "LdCom_RxIndication",
+                    "LdCom_StartOfReception",
+                    "LdCom_TpRxIndication",
+                    "LdCom_TpTxConfirmation",
+                    "SomeIpTp_RxIndication",
+                    "SomeIpTp_TxConfirmation",
+                    "SomeIpTp_Transmit",
+                    "SomeIpTp_Transmit",
+                    "SomeIpTp_TriggerTransmit"
+                ]
+            },
+            "SoAd_Lcfg_file": {
+                "name": "SoAd_Lcfg.c",
+                "mod": [
+                    "Sd_RxIndication"
+                ]
+            }
+        },
+        "rte_mods": [
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx[72281];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx_Length;",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_DownSel_Detections_10009f7a_Tx[13365];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_DownSel_Detections_10009f7a_Tx_Length;",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Tracker_Data_44d32107_Tx[7933];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Tracker_Data_44d32107_Tx_Length;",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_2_DownSel_Detections_bfa9d2b0_Rx[13365];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_2_DownSel_Detections_bfa9d2b0_Rx_Length;",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdCom_signalPdu_ASDM_Vehicle_Status_9e0bbf47_Rx[57];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdCom_signalPdu_ASDM_Vehicle_Status_9e0bbf47_Rx_Length;",
+            "Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx_Length = 0;",
+            "Rte_LdComTp_signalPdu_RDR_1_DownSel_Detections_10009f7a_Tx_Length = 0;",
+            "Rte_LdComTp_signalPdu_RDR_1_Tracker_Data_44d32107_Tx_Length = 0;",
+            "Rte_LdComTp_signalPdu_RDR_2_DownSel_Detections_bfa9d2b0_Rx_Length = 0;",
+            "Rte_LdCom_signalPdu_ASDM_Vehicle_Status_9e0bbf47_Rx_Length = 0;",
+            "SomeIpTp_MainFunctionTx()",
+            "SomeIpTp_MainFunctionRx()",
+            "Sd_MainFunction()"
+        ]
+    },
+
+    "SOMEIP": {
+        "dest_dir": "VehCom_SOMEIP",
+        "bsw_files": {
+            "PduR_Lcfg_c_file": {
+                "name": "PduR_Lcfg.c",
+                "mod": [
+                    "Com_RxIndication",
+                    "Com_TriggerTransmit",
+                    "CanIf_Transmit",
+                    "IpduM_RxIndication",
+                    "IpduM_Transmit",
+                    "IpduM_TriggerTransmit"
+                ]
+            },
+            "EcuM_Init_Cfg_file": {
+                "name": "EcuM_Init_Cfg.c",
+                "mod": [
+                    "CanIf_Config_RTL9000_RDR04_Ptr",
+                    "Com_Config_RTL9000_RDR04_Ptr",
+                    "CanIf_Config_RTL9010_RDR02_Ptr",
+                    "Com_Config_RTL9010_RDR02_Ptr",
+                    "CanIf_Config_RTL9010_RDR05_Ptr",
+                    "Com_Config_RTL9010_RDR05_Ptr",
+                    "CanIf_Config_TI_Gbps_RDR03_Ptr",
+                    "Com_Config_TI_Gbps_RDR03_Ptr",
+                    "CanIf_Config_TI_RDR01_Ptr",
+                    "Com_Config_TI_RDR01_Ptr"
+                ]
+            }
+        },
+        "rte_mods": [
+            "Com_MainFunctionTx_ComMainFunctionTx()",
+            "Com_MainFunctionRx_ComMainFunctionRx()",
+            "IpduM_MainFunctionTx()",
+            "IpduM_MainFunctionRx()",
+            "CanXcp_MainFunction()",
+            "CanSM_MainFunction()"
+        ]
+    }
+}

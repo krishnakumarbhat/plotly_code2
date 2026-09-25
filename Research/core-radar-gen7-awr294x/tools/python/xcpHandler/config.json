@@ -1,0 +1,13 @@
+{
+    "ipConfig": {
+        "Ip_Hil_Replay": "192.168.1.40",
+        "Port_Hil_Replay": "65000",
+        "Port_XCP_Replay": "5010",
+        "Ip_Sensor": "192.168.1.0",
+        "Port_Sensor": "65000",
+        "Port_Sensor_XCP": "5010"
+    },
+    "bufferSize": 1480,
+    "timeout_sec": 20,
+    "xcp_buffersize": 12
+}

@@ -1,0 +1,198 @@
+# Configuration file for SITS Automation Framework
+# Toml specification can be found here: https://toml.io/en/v1.0.0
+# Use double quotes for normal strings, single quotes for raw strings
+# Relative paths start from SITS_Automation_Framework
+# Syntax highlighting for notepad++ can be enabled following the instructions in .\installation\TOML_notepad++\README.txt
+
+#------------------------------ pyproject index ------------------------------
+# Ln# | Section
+#  19 - Bench information
+#  29 - Reports options
+#  44 - CANoe
+#  55 - Flashing
+#  61 - vFlash
+#  70 - Trace32
+# 109 - Ethernet switch
+# 118 - Pytest configuration
+# 146 - Project information
+
+#------------------------------ Bench information ------------------------------
+# Add information about the bench here, it will be displayed in the Environment section in the reports
+
+[Bench]
+"Company" = "APTIV"
+"Project" = "Gen7 AWR294x"
+"Team" = "ADVRADAR"
+"Variant" = "FLR7"
+"Hardware Version" = "B3 Board"
+"Software Release Version" = "SW Version"
+
+#------------------------------ Reports options ------------------------------
+
+[Reports]
+project_name = "Gen7_AWR294x_FLR7"  # Field used in the report name
+team_name = "Weiner_Test"  # Field used in the report name
+var = "FLR7Eth"
+execution_type = "SWE5"
+reports_dir = "Reports/SWE5_SIT_MACRO"  # Path of directory where the reports should be saved
+test_type = "SITp"  # Type of test we are runing
+report_name = "{project_name}_{team_name}_SITS_{execution_type}_{var}_Report_{timestamp}"
+report_formats = [
+    "HTML",
+    # "XLSX",
+    # "JUNIT"
+]  # You can uncomment the other formats if you want reports generated in those.
+
+screenshots = false # Flag to enable or disable screenshots when failures are present
+
+#------------------------------ CANoe ------------------------------
+
+[CANoe]
+config_path = '.\utils\CAN_CONFIG\SRR.cfg'
+ada_unlock_config_path = ''
+#dbc_file = '.\utils\CAN_CONFIG\DBC\PCAN_G5_RDR01_NU.dbc'
+#arxml_file = '.\src\arxml_parser\FCA_mPAD_Safety_Fee_Fee_ecuc.arxml'
+
+[CANoe.FDX]  # FDX configuration.
+ip_address = "127.0.0.1"
+port = 2809
+transport_layer = "UDP"  # If TCP is preferred, it must be manually selected in the CANoe configuration (TCP IPV4)
+
+#------------------------------ Flashing ------------------------------
+
+[flashing]
+bootloader_tc_path = '.\flashing_testcases\ifv600\trace32\test_bootloader_IFV600.py'
+application_tc_path = '.\flashing_testcases\ifv600\trace32\test_application_IFV600.py'
+
+#------------------------------ vFlash ------------------------------
+
+[vFlash]
+application_project = 'C:\Reports\IFV600\release_4_1\vFlashConfig\ADCAM_4_1.vflash'  # Path to vflash project to flash application (file with extension .vflash)
+bootloader_project = ''  # Path to vflash project to flash bootloader (file with extension .vflash)
+
+executable = ''  # Path to vFlash.exe, leave empty to find path automatically
+dll = ''  # Path to dll for the vFlash C API (e.g. VFlashAutomation64.dll), leave empty to find path automatically
+
+#------------------------------ Trace32 ------------------------------
+
+[Trace32]
+processor_type = "AWR294x"
+pre_erase = 0
+
+[Trace32.setup]
+hsm_verify = true  # Whether to verify the flashed application with the HSM_TC39x cmm script in the Trace32 setup
+
+[[Trace32.setup.cmm]]
+path = ''  # Path to the cmm file to execute in the setup, if a path is specified you need to set Trace32.setup.hsm_verify to false
+change_dir = true  # Whether to change the Trace32 working directory to the one where the cmm file is located before executing it
+
+[[Trace32.connection]]  # Connection details for the first instance of Trace32
+executable = 'C:\T32\bin\windows64\t32marm.exe'
+t32_config = '.\src\Trace32_Python_API\config_auto.t32'
+t32_config_arguments = ['20001', '10031', '1', 'R5A']
+startup_cmm = '.\..\..\..\instrumentation\Lauterbach\start_powerview_r5f_auto.cmm'
+startup_cmm_timeout_s = 60
+protocol = 'TCP'
+port = 20001
+
+[[Trace32.connection]]  # Connection details for the second instance of Trace32
+executable = 'C:\T32\bin\windows64\t32m6000.exe'
+t32_config = '.\src\Trace32_Python_API\config_auto.t32'
+t32_config_arguments = ['20002', '10032', '2', 'C66']
+startup_cmm = '.\..\..\..\instrumentation\Lauterbach\start_powerview_c66_auto.cmm'
+startup_cmm_timeout_s = 0
+protocol = 'TCP'
+port = 20002
+
+[Trace32.TC397x]  # Configuration for HSM_TC39x cmm script
+HSM_dir = '.\src\Trace32_Python_API\cmm_scripts\IFV600'  # Path to the directory where the HSM_TC39x cmm script and all the scripts it calls are located
+
+certificate_type = 'TEST'  # Type of certificate used to program CertStore, 'TEST' or 'ROW' are supported
+hw_variant = 'ADCAM'  # Hardware variant, used for flashing, 'ADCAM' and 'mPAD' are supported
+
+source_code_dirs = []  # List of paths to source code directories
+
+[Trace32.TC397x.flashing_files]  # Files used for flashing/verification with HSM_TC39x cmm script
+bootloader = 'C:\Stellantis_Thunder_MY24_IFV600_24.00.01.23.24.01_DV_Engineering_Release\Stellantis_Thunder_MY24_IFV600_24.00.01.23.24.01_DV_Engineering_Release\Bootloader\GHS\debug_GHS.s19'
+application = 'C:\Stellantis_Thunder_MY24_IFV600_24.00.01.23.24.01_DV_Engineering_Release\Stellantis_Thunder_MY24_IFV600_24.00.01.23.24.01_DV_Engineering_Release\Output_Files\Output_Files\host_appl.s19'
+symbols = 'C:\Stellantis_Thunder_MY24_IFV600_24.00.01.23.24.01_DV_Engineering_Release\Stellantis_Thunder_MY24_IFV600_24.00.01.23.24.01_DV_Engineering_Release\Output_Files\Output_Files\host_appl.elf'
+
+[Trace32.TC397x.options]  # Additional options for HSM_TC39x cmm script
+force_single_core_debug = false
+force_multi_core_debug = true
+load_default_windows = true
+on_chip_MCDS_off = false
+UCBs_unlock = false
+use_jtag_pw = false
+
+[Trace32.files]
+auto_flash_cmm  = '.\..\..\..\instrumentation\Lauterbach\flash_all_awr294x_auto.cmm'
+reset_cmm       = '.\..\..\..\instrumentation\Lauterbach\reset.cmm'
+pbl_hex = '.\..\..\..\bazel-bin\outputs\boot\aptivBootloaderSigned_csum_filled.hex'
+hsm_hex = '.\..\..\..\bazel-bin\outputs\boot\hsm_csum_filled.hex'
+pbl_elf = '.\..\..\..\bazel-bin\outputs\boot\aptivBootloader.elf'
+Base_dir = '.\..\..\..\bazel-bin\outputs\'
+app_hex = '\aptivApp_csum_filled.hex'
+mss_elf = '\aptivMssApp.elf'
+dss_elf = '\aptivDssApp.elf'
+smc_ptp = '\smc_cal.ptp'
+usc_ptp = '\usc_cal.ptp'
+
+[Trace32.files.flags]
+variant = 'flr7'
+
+
+#------------------------------ Ethernet switch ------------------------------
+# Eth switch information in case there is one available
+[EthSwitch]
+ip = ''
+debug_port_name = ''  # Fill this field to do a debugger reset before using Trace32
+power_supply_port_name = ''  # Fill this field to do a power supply reset before using Power_Session
+user_id = ''
+password = ''
+
+#------------------------------ Pytest configuration ------------------------------
+# Configuration options for pytest, more options can be found here: https://docs.pytest.org/en/6.2.x/reference.html#configuration-options
+
+[tool.pytest.ini_options]
+minversion = "7.3.2"
+
+filterwarnings = ["ignore::DeprecationWarning:pywintypes.*", "ignore::DeprecationWarning:can.*", "ignore::DeprecationWarning:dlipower.*"]
+addopts = ["--strict-markers", "--verbose", "--tb=line", "--html=Reports\\Gen7_AWR294x_FLR7_SITS_Test_Report_Aug_09_2023_16-08-55.html", "--self-contained-html", "--html=Reports\\Gen7_AWR294x_FLR7_SITS_Test_Report_Jun_05_2024_02-11-47.html", "--self-contained-html"]  # Additional command-line arguments for pytest more options can be found here: https://docs.pytest.org/en/6.2.x/reference.html#command-line-flags
+
+enable_assertion_pass_hook = true
+markers = ["Req", "WI", "description"]  # Markers for test cases
+
+# Test cases options
+python_files = ["test_*.py", "*_test.py"]  # Glob-style file patterns determining which python files are considered as test modules.
+python_functions = ["test_*"]  # One or more name prefixes or glob-patterns determining which test functions and methods are considered tests
+# Paths to look in for test cases
+testpaths = ['.\Testcases\GEN7_V1_Test_Cases\Integration_Testing_SIT_MACRO_TestScripts\']
+
+junit_logging = "all"  # What output to capture in JUnitXML reports (https://docs.pytest.org/en/6.2.x/reference.html#confval-junit_logging)
+
+# Logging configuration
+log_level = "INFO"
+log_format = "%(asctime)s.%(msecs)03d | %(status)5s | %(message)s"
+log_date_format = "%H:%M:%S"
+
+log_file_level = "DEBUG"
+log_file_format = "%(asctime)s.%(msecs)03d [%(levelname)-.1s] %(name)s:%(funcName)s:%(lineno)d | %(message)s"
+log_file_date_format = "%H:%M:%S"
+
+#------------------------------ Project information ------------------------------
+# General information about the SITS Automation Framework
+
+[project]
+name = "SITS Automation Framework"
+version = "5.0.1024"
+description = "Framework to automate SWE.6 test cases."
+readme = "README.txt"
+authors = [
+    {name = "Thomson Cristopher", email = "thomson.christopher@aptiv.com"},
+    {name = "Raja Shekar Modem", email = "raja.shekar.modem@aptiv.com"},
+    {name = "Nickolas L. Presley", email = "nickolas.l.presley@aptiv.com"},
+    {name = "Luis A. Chavez", email = "luis.a.chavez@aptiv.com"},
+    {name = "Alan B. Perez", email = "alan.b.perez@aptiv.com"},
+	{name = "Sai Dheeraj. J", email = "jonnalagadda.sai.dheeraj@aptiv.com"}
+]

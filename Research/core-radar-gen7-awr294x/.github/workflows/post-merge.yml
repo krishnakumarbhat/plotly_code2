@@ -1,0 +1,68 @@
+# Post-merge pipeline for AWR294X (Gen7).
+# Runs on push to `dev`: auto-rebase open PRs and commit Coverity defects into
+# the dev stream. Grafana publish placeholder remains gated until the GitHub
+# equivalent is selected.
+
+name: Post-Merge
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: post-merge-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  auto_rebase_open_prs:
+    name: Auto-rebase open PRs
+    runs-on: gh-injected-gpo-linux-medium
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - name: Trigger update-branch on PRs targeting dev
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh pr list --base dev --state open --json number,headRefName,mergeStateStatus \
+            -L 100 --jq '.[] | select(.mergeStateStatus == "BEHIND") | .number' | while read -r PR; do
+              echo "Updating PR #${PR}"
+              gh api -X PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/update-branch" \
+                -F expected_head_sha="$(gh pr view ${PR} --json headRefOid -q .headRefOid)" \
+                || echo "::warning::Could not update PR #${PR}"
+            done
+
+  coverity_commit:
+    name: Coverity (commit on dev)
+    uses: ./.github/workflows/coverity.yml
+    with:
+      nightly: true
+      matrix-json: |
+        [
+          {"variant":"srr7p","core":"mss","coverity_target":"//software/app/mss/src:aptivMss","coverity_stream":"ADVRADAR_SRR7p_Mss"},
+          {"variant":"srr7p","core":"dss","coverity_target":"//software/app/dss/src:aptivDss","coverity_stream":"ADVRADAR_SRR7p_Dss"},
+          {"variant":"flr7","core":"mss","coverity_target":"//software/app/mss/src:aptivMss","coverity_stream":"ADVRADAR_FLR7_Mss"},
+          {"variant":"flr7","core":"dss","coverity_target":"//software/app/dss/src:aptivDss","coverity_stream":"ADVRADAR_FLR7_Dss"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      ADVRADAR_COVERITY_COMMITTER_AUTH: ${{ secrets.ADVRADAR_COVERITY_COMMITTER_AUTH }}
+
+  grafana_publish:
+    name: Grafana Publish (placeholder)
+    if: false
+    runs-on: gh-injected-gpo-linux-medium
+    steps:
+      - run: |
+          echo "studio-cli pipeline-updates equivalent goes here."

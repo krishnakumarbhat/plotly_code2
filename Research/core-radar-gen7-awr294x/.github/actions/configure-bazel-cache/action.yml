@@ -1,0 +1,26 @@
+name: Configure Bazel Remote Cache
+description: Append ARB remote-cache headers (AWR294x token) to user.bazelrc.
+
+inputs:
+  arb-token:
+    description: 'ADVRADAR_ARB_TOKEN secret for the Aptiv RapidBuild remote cache (BES)'
+    required: true
+  output-file:
+    description: 'Bazelrc file to write to'
+    required: false
+    default: 'user.bazelrc'
+
+runs:
+  using: composite
+  steps:
+    - name: Append remote-cache headers
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.arb-token }}" ]; then
+          echo "Missing ADVRADAR_ARB_TOKEN secret." >&2
+          exit 1
+        fi
+        {
+          echo "build --bes_header=x-arb-api-key=${{ inputs.arb-token }}"
+          echo "build --remote_header=x-arb-api-key=${{ inputs.arb-token }}"
+        } >> "${{ inputs.output-file }}"

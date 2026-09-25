@@ -1,0 +1,79 @@
+{
+    "variants": [
+        {
+            "name": "App all",
+            "sensor_id": "Gen7v1",
+            "description": "flash bootloader, application, SMC, USC",
+            "images": [
+                {
+                    "path": "../../boot/aptivBootloaderSigned_csum_filled.hex"
+                },
+                {
+                    "path": "../../boot/FBLImage.hex"
+                },
+                {
+                    "path": "../aptivApp_csum_filled.hex"
+                },
+                {
+                    "path": "../usc_cal.ptp"
+                },
+                {
+                    "path": "../smc_cal.ptp"
+                }
+            ]
+        },
+        {
+            "name": "boot",
+            "sensor_id": "Gen7v1",
+            "description": "flash bootloader",
+            "images": [
+                {
+                    "path": "../../boot/aptivBootloaderSigned_csum_filled.hex"
+                }
+            ]
+        },
+        {
+            "name": "hsm",
+            "sensor_id": "Gen7v1",
+            "description": "flash HSM",
+            "images": [
+                {
+                    "path": "../../boot/hsm_csum_filled.hex"
+                }
+            ]
+        },
+        {
+            "name": "smc",
+            "sensor_id": "Gen7v1",
+            "description": "flash SMC",
+            "images": [
+                {
+                    "path": "../smc_cal.ptp"
+                }
+            ]
+        },
+        {
+            "name": "usc",
+            "sensor_id": "Gen7v1",
+            "description": "flash USC",
+            "images": [
+                {
+                    "path": "../usc_cal.ptp"
+                }
+            ]
+        },
+        {
+            "name": "smc usc",
+            "sensor_id": "Gen7v1",
+            "description": "flash SMC and USC",
+            "images": [
+                {
+                    "path": "../usc_cal.ptp"
+                },
+                {
+                    "path": "../smc_cal.ptp"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,167 @@
+{
+   "aptivBootloader": {
+      "Total": {
+         "files": [
+            "Grand Total"
+         ],
+         "exclude_files": [
+            "boot_main.o"
+         ]
+      },
+      "Boot": {
+         "files": [
+            "Grand Total"
+         ],
+         "exclude_files": [
+            "boot_main.o"
+         ]
+      }
+   },
+   "aptivMssApp": {
+      "Total": {
+         "files": [
+            "Grand Total"
+         ]
+      },
+      "MCAL": {
+         "files": [
+            "adcbuf_module.a",
+            "crc_module.a",
+            "Mdo.a"
+         ],
+         "regex": [
+            "^lib\\S*cfg_c\\.a$",
+            "^.*[Mm]cal.*\\.a$"
+         ]
+      },
+      "BSW": {
+         "files": [
+            "BSW_GenData.a",
+            "BSW_GenData_asm.a",
+            "BSW_Callout.a",
+            "BswM.a",
+            "Com.a",
+            "ComM.a",
+            "Det.a",
+            "E2EXf.a",
+            "EcuM.a",
+            "EthIf.a",
+            "EthSM.a",
+            "EthTrcv_30_Dp83Tc811.a",
+            "Eth_30_TexasMac.a",
+            "IpBase.a",
+            "Os.a",
+            "Os_asm.a",
+            "PduR.a",
+            "SoAd.a",
+            "TcpIp.a",
+            "VStdLib.a"
+         ]
+      },
+      "MMIC": {
+         "files": [
+            "mmwavelink_module.a",
+            "mmic_module.a"
+         ]
+      },
+      "App": {
+         "files": [
+            "radar_ctl_module.a",
+            "HilModule.a",
+            "XcpModule.a",
+            "hil_iface_module.a",
+            "stream_hil_iface_module.a"
+         ],
+         "regex": [
+            "^.*libSWC_PLT.*\\.a$"
+         ]
+      },
+      "Cals": {
+         "regex": [
+            "^.*smc.*\\.a$",
+            "^.*usc.*\\.a$",
+            "^.*calibration.*\\.a$"
+         ]
+      },
+      "IPC": {
+         "regex": [
+            "^.*ipc.*\\.a$",
+            "^.*mailbox.*\\.a$"
+         ],
+         "exclude_files": [
+            "ipc_data.o"
+         ]
+      },
+      "Logging": {
+         "files": [
+            "StreamHandlingModule.a"
+         ]
+      },
+      "Instrumentation": {
+         "files": [
+            "SWC_PLT_CDD_HIL.a"
+         ]
+      }
+   },
+   "aptivDssApp": {
+      "Total": {
+         "files": [
+            "Grand Total"
+         ]
+      },
+      "Data Cube": {
+         "files": [
+            "rfft_configuration.o"
+         ]
+      },
+      "Signal Proc": {
+         "files": [
+            "rdd_proc_lib.a",
+            "dopp_proc_lib.a",
+            "rfft_lib.a",
+            "edma_lib.a",
+            "range_process_lib.a"
+         ],
+         "exclude_files": [
+            "rfft_configuration.o"
+         ]
+      },
+      "Angle Finding": {
+         "files": [
+            "anglefinding_module.a",
+            "radar_math.a"
+         ]
+      },
+      "Radar Object Tracker": {
+         "regex": [
+            "f360_wrapper",
+            "f360_vse",
+            "f360_lib_1",
+            "f360_lib_2",
+            "f360_lib_3",
+            "f360_lib_4",
+            "f360_lib_5",
+            "f360_lib_6",
+            "f360_lib_7"
+         ]
+      },
+      "IPC": {
+         "regex": [
+            "^.*ipc.*\\.a$",
+            "^.*mailbox.*\\.a$"
+         ]
+      },
+      "Cals": {
+         "exclude_files": [
+            "smc_module.a",
+            "usc_module.a"
+         ]
+      },
+	  "TOI": {
+         "files": [
+            "TOI_Char_Quality_determination_lib",
+            "std_deviation_lib"
+         ]
+      }
+   }
+}

@@ -1,0 +1,20 @@
+name: Configure NETRC
+description: Write the ~/.netrc file used by Bazel/JFrog/Gerrit/Coverity tooling.
+
+inputs:
+  netrc-content:
+    description: 'ADVRADAR_NETRC_CONTENT secret payload (machine/login/password lines)'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Write ~/.netrc
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.netrc-content }}" ]; then
+          echo "Missing ADVRADAR_NETRC_CONTENT secret. Provide a .netrc payload for Gerrit/JFrog/Coverity." >&2
+          exit 1
+        fi
+        printf "%s" "${{ inputs.netrc-content }}" > ~/.netrc
+        chmod 600 ~/.netrc

@@ -1,0 +1,6 @@
+include:
+  - "*.c"
+exclude:
+  - "*.cc"
+  - "*.inc"
+  - "*.h"

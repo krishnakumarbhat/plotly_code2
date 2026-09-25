@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<file>
+   <header Description="PBL Sensor Flash Tool configuration"/>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.71; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>srr7p</Name>
+      <Description></Description>
+      <DownloadFile>../../boot/aptivBootloaderSigned_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/hsm_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/FBLImage.hex</DownloadFile>
+      <DownloadFile>../../srr7p/aptivApp_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../srr7p/usc_cal.ptp</DownloadFile>
+      <DownloadFile>../../srr7p/smc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.71; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>flr7</Name>
+      <Description>Radar 1</Description>
+      <DownloadFile>../../boot/aptivBootloaderSigned_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/hsm_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/FBLImage.hex</DownloadFile>
+      <DownloadFile>../../flr7/aptivApp_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../flr7/usc_cal.ptp</DownloadFile>
+      <DownloadFile>../../flr7/smc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.71; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>srr7hd</Name>
+      <Description>Radar 1</Description>
+      <DownloadFile>../../boot/aptivBootloaderSigned_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/hsm_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/FBLImage.hex</DownloadFile>
+      <DownloadFile>../../srr7hd/aptivApp_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../srr7hd/usc_cal.ptp</DownloadFile>
+      <DownloadFile>../../srr7hd/smc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.71; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>boot</Name>
+      <Description>Radar 1</Description>
+      <DownloadFile>../../boot/aptivBootloaderSigned_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/hsm_csum_filled.hex</DownloadFile>
+      <DownloadFile>../../boot/FBLImage.hex</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.71; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>calibration</Name>
+      <Description>Radar 1</Description>
+      <DownloadFile>../../srr7hd/usc_cal.ptp</DownloadFile>
+      <DownloadFile>../../srr7hd/smc_cal.ptp</DownloadFile>
+   </Variant>
+</file>

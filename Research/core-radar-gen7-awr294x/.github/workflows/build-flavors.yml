@@ -1,0 +1,114 @@
+# Build Flavors orchestrator for AWR294X (Gen7).
+#
+# Central catalog of every build flavor the Jenkins verification/nightly pipelines
+# run. Mirrors `tools/Jenkins/verifiedJob/Jenkinsfile` and `nightlyJob/Jenkinsfile`:
+#
+#   - production : //:gen7 --variant=<srr7p|flr7>                        (Build stage)
+#   - standalone : //:gen7 --variant=srr7p --rot=standalone               (Build Standalone)
+#   - eco        : //:gen7 --variant=<srr7p|flr7> --awr_target_variant=awr2944eco (Build ECO)
+#
+# Each flavor is gated by `contains(fromJson(inputs.flavors), 'NAME')` so callers
+# can opt-in to any subset. Triggers: `workflow_call` (PR/nightly/weekly/post-merge)
+# and `workflow_dispatch` (manual re-run).
+
+name: Build · Flavors
+
+on:
+  workflow_call:
+    inputs:
+      flavors:
+        description: 'JSON array of flavor names. Allowed: production, standalone, eco.'
+        required: false
+        type: string
+        default: '["production"]'
+      variants:
+        description: 'JSON array of variants. Allowed: srr7p, flr7.'
+        required: false
+        type: string
+        default: '["srr7p","flr7"]'
+      pr-number:
+        required: false
+        type: string
+        default: ''
+      nightly:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+  workflow_dispatch:
+    inputs:
+      flavors:
+        description: 'JSON array of flavor names'
+        type: string
+        default: '["production"]'
+      variants:
+        description: 'JSON array of variants'
+        type: string
+        default: '["srr7p","flr7"]'
+
+jobs:
+  # -------- production (//:gen7) --------
+  production:
+    if: contains(fromJson(inputs.flavors), 'production')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      pr-number: ${{ inputs.pr-number }}
+      nightly: ${{ inputs.nightly }}
+      bazel-extra-flags: '--color=yes --jobs=auto --//:jenkins'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"srr7p-production","variant":"srr7p"},
+          {"name":"flr7-production","variant":"flr7"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  # -------- standalone (srr7p only; flr7 does not build standalone) --------
+  standalone:
+    if: contains(fromJson(inputs.flavors), 'standalone')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      pr-number: ${{ inputs.pr-number }}
+      nightly: ${{ inputs.nightly }}
+      bazel-extra-flags: '--color=yes --jobs=auto --//:jenkins'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"srr7p-standalone","variant":"srr7p","rot":"standalone"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  # -------- eco (AWR2944ECO target_variant) --------
+  eco:
+    if: contains(fromJson(inputs.flavors), 'eco')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      pr-number: ${{ inputs.pr-number }}
+      nightly: ${{ inputs.nightly }}
+      bazel-extra-flags: '--color=yes --jobs=auto --//:jenkins'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"srr7p-eco","variant":"srr7p","target_variant":"awr2944eco"},
+          {"name":"flr7-eco","variant":"flr7","target_variant":"awr2944eco"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}

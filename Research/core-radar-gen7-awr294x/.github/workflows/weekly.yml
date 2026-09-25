@@ -1,0 +1,63 @@
+# Weekly pipeline for AWR294X (Gen7).
+# Long-form smoke test path goes here. HW smoke remains gated `if: false` until
+# a GitHub-registered bench is available; the build + JFrog handoff still run so
+# a known-good weekly artifact gets published.
+
+name: Weekly
+
+on:
+  schedule:
+    - cron: '0 22 * * 0'  # Sun 22:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: weekly
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+jobs:
+  build:
+    name: Build (all flavors)
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["production","standalone","eco"]'
+      variants: '["srr7p","flr7"]'
+      nightly: true
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  hw_test_long:
+    name: HW Smoke (long, disabled)
+    if: false
+    needs: [build]
+    uses: ./.github/workflows/smoke-test.yml
+    with:
+      commit-sha: ${{ github.sha }}
+      timeout-minutes: 360
+      num-power-cycles: 15
+      integration-duration-sec: 900
+      matrix-json: |
+        [
+          {"variant":"srr7p","artifact_name":"awr294x-build-output-srr7p-production","quickflash_variant":"srr7p","smoke_test_report_path":"reports/smoke-srr7p-weekly"},
+          {"variant":"flr7","artifact_name":"awr294x-build-output-flr7-production","quickflash_variant":"flr7","smoke_test_report_path":"reports/smoke-flr7-weekly"}
+        ]
+
+  jfrog_handoff:
+    name: JFrog Handoff (weekly)
+    needs: [build]
+    uses: ./.github/workflows/wrsd-integration.yml
+    with:
+      pipeline: weekly
+      branch: ${{ github.ref_name }}
+      commit-sha: ${{ github.sha }}
+    secrets:
+      ADVRADAR_SID_USERNAME: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      ADVRADAR_JFROG_API_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+      ADVRADAR_WRSD_TRIGGER_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}

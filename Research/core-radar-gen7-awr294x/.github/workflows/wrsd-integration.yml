@@ -1,0 +1,166 @@
+# WRSD / JFrog integration workflow for AWR294X (Gen7).
+#
+# Bundles successful build artifacts and uploads them to the JFrog repo that
+# the AWR294x release pipeline consumes (mirrors the JFrog upload + Gerrit-vote
+# tail of `tools/Jenkins/buildJob`/`nightlyJob`). A WRSD trigger endpoint is
+# called only when one is configured — the AWR294x Jenkins layout does not
+# define one today, so by default this workflow only does the JFrog publish.
+
+name: WRSD / JFrog Integration
+
+on:
+  workflow_call:
+    inputs:
+      pipeline:
+        description: 'Logical pipeline name (nightly | release | adhoc | weekly)'
+        required: true
+        type: string
+      branch:
+        description: 'Branch the artifact belongs to'
+        required: true
+        type: string
+      commit-sha:
+        description: 'Source commit SHA'
+        required: true
+        type: string
+      jfrog-base-repo:
+        description: 'JFrog base repo for uploads'
+        required: false
+        type: string
+        default: 'gen7-aptiv-advradar-releases-generic-local'
+      jfrog-release-repo:
+        description: 'JFrog release repo (used when `pipeline == release`)'
+        required: false
+        type: string
+        default: 'gen7-aptiv-advradar-swe.4_swe.5-generic-local'
+      jfrog-url:
+        required: false
+        type: string
+        default: 'https://jfrog.asux.aptiv.com'
+      wrsd-trigger-url:
+        description: 'WRSD pipeline trigger endpoint (empty = skip trigger step)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      ADVRADAR_SID_USERNAME: {required: true}
+      ADVRADAR_JFROG_API_KEY: {required: true}
+      ADVRADAR_WRSD_TRIGGER_TOKEN: {required: false}
+
+jobs:
+  publish:
+    name: Publish to JFrog ${{ inputs.wrsd-trigger-url != '' && '& trigger WRSD' || '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    env:
+      JFROG_URL: ${{ inputs.jfrog-url }}
+      JFROG_BASE_REPO: ${{ inputs.jfrog-base-repo }}
+      JFROG_RELEASE_REPO: ${{ inputs.jfrog-release-repo }}
+      JFROG_USER: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      JFROG_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+      PIPELINE: ${{ inputs.pipeline }}
+      BRANCH: ${{ inputs.branch }}
+      COMMIT_SHA: ${{ inputs.commit-sha }}
+      RUN_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 1}
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+          pattern: 'awr294x-build-output-*'
+          merge-multiple: false
+
+      - name: Bundle artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p bundle
+          find artifacts -maxdepth 2 -type d -name 'awr294x-build-output-*' | while read -r DIR; do
+            NAME=$(basename "${DIR}")
+            (cd "${DIR}" && zip -qr "${GITHUB_WORKSPACE}/bundle/${NAME}.zip" .)
+          done
+          (cd bundle && zip -qr ../buildFiles_output_combined.zip .)
+          ls -la buildFiles_output_combined.zip
+
+      - name: Install JFrog CLI
+        run: |
+          curl -fL https://install-cli.jfrog.io | sh
+          jf --version
+
+      - name: Configure JFrog CLI
+        run: |
+          jf c add wrsd \
+            --url="${JFROG_URL}" \
+            --user="${JFROG_USER}" \
+            --password="${JFROG_KEY}" \
+            --interactive=false --overwrite=true
+          jf c use wrsd
+
+      - name: Upload bundle to JFrog
+        id: upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${COMMIT_SHA:0:7}"
+          if [ "${PIPELINE}" = "release" ]; then
+            TARGET_DIR="${JFROG_RELEASE_REPO}/releases/${BRANCH}/${RUN_NUMBER}"
+          else
+            TARGET_DIR="${JFROG_BASE_REPO}/${BRANCH}/${SHORT_SHA}/buildFiles"
+          fi
+          LATEST_DIR="${JFROG_BASE_REPO}/${BRANCH}/latest/${PIPELINE}"
+          jf rt u buildFiles_output_combined.zip "${TARGET_DIR}/" --flat=true
+          jf rt u buildFiles_output_combined.zip "${LATEST_DIR}/" --flat=true
+          echo "target_path=${TARGET_DIR}/buildFiles_output_combined.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Stage WRSD trigger token
+        id: wrsd_token
+        env:
+          WRSD_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}
+        shell: bash
+        run: |
+          if [ -n "${WRSD_TOKEN:-}" ]; then
+            echo "have_token=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_token=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger WRSD pipeline
+        if: ${{ inputs.wrsd-trigger-url != '' && steps.wrsd_token.outputs.have_token == 'true' }}
+        env:
+          WRSD_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}
+          TRIGGER_URL: ${{ inputs.wrsd-trigger-url }}
+          ARTIFACT_URL: ${{ steps.upload.outputs.target_path }}
+        run: |
+          set -euo pipefail
+          PAYLOAD=$(jq -n \
+            --arg pipeline "${PIPELINE}" \
+            --arg branch   "${BRANCH}" \
+            --arg sha      "${COMMIT_SHA}" \
+            --arg run      "${RUN_NUMBER}" \
+            --arg artifact "${ARTIFACT_URL}" \
+            '{pipeline:$pipeline, branch:$branch, commit:$sha, gh_run:$run, artifact:$artifact}')
+          STATUS=$(curl -sS -o trigger.json -w '%{http_code}' \
+            -X POST "${TRIGGER_URL}" \
+            -H "Authorization: Bearer ${WRSD_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "${PAYLOAD}")
+          echo "WRSD trigger HTTP ${STATUS}"
+          cat trigger.json || true
+          [ "${STATUS}" -ge 200 ] && [ "${STATUS}" -lt 300 ]
+
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## WRSD / JFrog Handoff"
+            echo "- Pipeline: \`${PIPELINE}\`"
+            echo "- Branch: \`${BRANCH}\`"
+            echo "- Commit: \`${COMMIT_SHA}\`"
+            echo "- Artifact: \`${{ steps.upload.outputs.target_path }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

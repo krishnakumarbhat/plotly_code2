@@ -1,0 +1,95 @@
+"""Python testcase for FAULT_MANAGER."""
+import pytest
+import time
+import traceback
+
+
+@pytest.mark.WI("WI_377500")
+@pytest.mark.description("Range_Check_fault for Gen_7v1")
+def test_FAULT_MANAGER(Power, T32_R5A, T32_C66, Report):
+    """WinCLEAR."""
+    T32_R5A.Clean_and_Reset()
+    T32_C66.delete_all_breakpoints()
+    T32_R5A.cmd("SYStem.Down")
+    time.sleep(2)
+    try:
+        T32_R5A.cmd("SYStem.Up")
+    except Exception:
+        print("An exception occurred R5A")
+        traceback.print_exc()
+    time.sleep(5)
+
+    attachAttempts = 0
+    while T32_R5A.get_run_state() != 3:  # Running
+        T32_R5A.cmd("SYStem.Attach")
+        attachAttempts += 1
+        time.sleep(10)
+        T32_R5A.print(f'-------- State: {T32_R5A.get_run_state()} --------')
+        if (attachAttempts > 5) :
+            break
+
+    T32_C66.cmd("SYStem.Mode.NoDebug")
+    time.sleep(2)
+    try:
+        T32_C66.cmd("SYStem.Mode.Attach")
+    except Exception:
+        print("An exception occurred R5A")
+        traceback.print_exc()
+    time.sleep(5)
+    print("-----------------------------------WI-377500 :START-----------------------------------")
+    print("")
+    # Checking Radar Status
+    T_1 = []
+    T_1.append("RADAR_CTL_INIT_FAIL")
+    T_1.append("RADAR_CTL_INIT_NOT_STARTED")
+    T_1.append("RADAR_CTL_INIT_STARTED")
+    T_1.append("RADAR_CTL_INIT_SUCCESS")
+    t = "Radar_Ctl_Data.init_status"
+    T = T32_R5A.read_var(t)
+    print("")
+    if T == 3 :
+        print(t, " ", T_1[T])
+        condition = 1
+    else:
+        print("Execution is stopped, Radar Status is ", T_1[T])
+        condition = 0
+
+    if condition == 1:
+        temp = "Range_Check_Fault_Sqt_Stub"
+        T32_R5A.add_var_watch(temp)
+        Temp = T32_R5A.read_var(temp)
+        print(temp, "=", Temp)
+        temp_1 = "Platform_Active_Fault_Table.platform_bits.range_algo_error_fault"
+        T32_R5A.add_var_watch(temp_1)
+        time.sleep(0.5)
+        T32_R5A.cmd("Var.set %e Range_Check_Fault_Sqt_Stub = 1")
+        time.sleep(2)
+        Temp_1 = T32_R5A.read_var(temp_1)
+        if Temp_1 == 1:
+            condition_1 = 1
+        else:
+            condition_1 = 0
+        print(print(temp_1, "=", Temp_1))
+        print("Platform_Active_Fault_Table.platform_bits.range_algo_error_fault = 1")
+        time.sleep(0.5)
+        T32_R5A.cmd("Var.set %e Range_Check_Fault_Sqt_Stub = 2")
+        time.sleep(2)
+        Temp_1 = T32_R5A.read_var(temp_1)
+        if Temp_1 == 0:
+            condition_2 = 1
+        else:
+            condition_2 = 0
+        print(print(temp_1, "=", Temp_1))
+        print("Platform_Active_Fault_Table.platform_bits.range_algo_error_fault = = 0")
+        print("-----------------------------------WI-377500 :END-----------------------------------")
+
+        if condition == 1 and condition_1 == 1 and condition_2 == 1 :
+            print("All the Test steps are successful")
+            main_condition = 1
+        else:
+            main_condition = 0
+
+        assert main_condition
+    else:
+        print("Execution is stopped")
+        assert condition

@@ -1,0 +1,65 @@
+# On-demand: SWE6 (Sub-system Qualification Test) framework run.
+#
+# Mirrors tools/Jenkins/SWE6Job/Jenkinsfile. The Jenkins job runs the SQTS
+# Automation Framework SWE6 suite on a Windows bench (label `GEN7_ITF`) and
+# also publishes results to Datadog and PlatformHealth. Until a GitHub-
+# registered Windows bench runner is available, jobs below are gated `if: false`.
+
+name: On-Demand · SWE6 (Bench, disabled)
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Sensor variant'
+        type: choice
+        options: [srr7p, flr7]
+        default: srr7p
+
+jobs:
+  swe6:
+    name: SWE6 (${{ inputs.variant }})
+    if: false  # Enable once GEN7_ITF / windows bench is registered with GitHub Actions
+    runs-on: [self-hosted, windows, GEN7_ITF]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0, submodules: recursive}
+
+      - name: Configure netrc
+        uses: ./.github/actions/configure-netrc
+        with:
+          netrc-content: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+
+      - id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Build ${{ inputs.variant }}
+        shell: cmd
+        run: |
+          .\bazelisk.exe build //:gen7 --variant=${{ inputs.variant }} --micro_revision=ES1 --board=A1 --noremote_accept_cached
+
+      - name: Install SQTS dependencies
+        shell: cmd
+        working-directory: tools\python\SQTS_Automation_Framework\installation
+        run: Dependency_Installer.bat
+
+      - name: Update SQTS pyproject (SWE6)
+        shell: cmd
+        working-directory: tools\python\SQTS_Automation_Framework\utils\pyproject_updater
+        run: |
+          set TOML=${{ inputs.variant == 'srr7p' && 'SRR7p_SQTp_pyproject.toml' || 'FLR7_SQTp_pyproject.toml' }}
+          python update_TOML.py .\%TOML%
+
+      - name: Run SQTS SWE6 test cases
+        shell: cmd
+        working-directory: tools\python\SQTS_Automation_Framework
+        run: STEP5_RUN_TEST_CASES.bat
+
+      - name: Upload SWE6 reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: swe6-${{ inputs.variant }}
+          path: tools/python/SQTS_Automation_Framework/Reports/SWE6/*.html
+          if-no-files-found: warn

@@ -1,0 +1,91 @@
+# Nightly pipeline for AWR294X (Gen7).
+# Mirrors tools/Jenkins/nightlyJob/Jenkinsfile: full build (all 3 flavors),
+# unit tests with coverage, all 8 Coverity streams in commit-mode, then JFrog
+# handoff.
+
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 02:00 UTC daily
+  workflow_dispatch:
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  build:
+    name: Build (all flavors)
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["production","standalone","eco"]'
+      variants: '["srr7p","flr7"]'
+      nightly: true
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  unit_tests:
+    name: Unit Tests + Coverage
+    needs: [build]
+    uses: ./.github/workflows/unit-tests.yml
+    with:
+      coverage: true
+      matrix-json: |
+        [
+          {"variant":"srr7p","core":"mss"},
+          {"variant":"srr7p","core":"dss","extra_config":"dss_ut"},
+          {"variant":"flr7","core":"mss"},
+          {"variant":"flr7","core":"dss","extra_config":"dss_ut"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  coverity:
+    name: Coverity (commit defects)
+    needs: [build]
+    uses: ./.github/workflows/coverity.yml
+    with:
+      nightly: true
+      matrix-json: |
+        [
+          {"variant":"srr7p","core":"mss","coverity_target":"//software/app/mss/src:aptivMss","coverity_stream":"ADVRADAR_SRR7p_Mss"},
+          {"variant":"srr7p","core":"dss","coverity_target":"//software/app/dss/src:aptivDss","coverity_stream":"ADVRADAR_SRR7p_Dss"},
+          {"variant":"flr7","core":"mss","coverity_target":"//software/app/mss/src:aptivMss","coverity_stream":"ADVRADAR_FLR7_Mss"},
+          {"variant":"flr7","core":"dss","coverity_target":"//software/app/dss/src:aptivDss","coverity_stream":"ADVRADAR_FLR7_Dss"},
+          {"variant":"srr7p","core":"mss","coverity_target":"//software/app/mss/src:aptivMss","coverity_stream":"ADVRADAR_SRR7p_ECO_Mss","target_variant":"awr2944eco"},
+          {"variant":"srr7p","core":"dss","coverity_target":"//software/app/dss/src:aptivDss","coverity_stream":"ADVRADAR_SRR7p_ECO_Dss","target_variant":"awr2944eco"},
+          {"variant":"flr7","core":"mss","coverity_target":"//software/app/mss/src:aptivMss","coverity_stream":"ADVRADAR_FLR7_ECO_Mss","target_variant":"awr2944eco"},
+          {"variant":"flr7","core":"dss","coverity_target":"//software/app/dss/src:aptivDss","coverity_stream":"ADVRADAR_FLR7_ECO_Dss","target_variant":"awr2944eco"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      ADVRADAR_COVERITY_COMMITTER_AUTH: ${{ secrets.ADVRADAR_COVERITY_COMMITTER_AUTH }}
+
+  jfrog_handoff:
+    name: JFrog Handoff
+    needs: [build, unit_tests, coverity]
+    uses: ./.github/workflows/wrsd-integration.yml
+    with:
+      pipeline: nightly
+      branch: ${{ github.ref_name }}
+      commit-sha: ${{ github.sha }}
+    secrets:
+      ADVRADAR_SID_USERNAME: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      ADVRADAR_JFROG_API_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+      ADVRADAR_WRSD_TRIGGER_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<INPUT xmlns="http://com.vector.cfg.workflow.merge/input" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://com.vector.cfg.workflow.merge/input SystemDescriptionMergeConfig.xsd">
+    <MODEL name="EDU" condition="/VariantDefinition/Criterion/EthTrcv_Variant == 0"/>
+    <MODEL name="A1" condition="/VariantDefinition/Criterion/EthTrcv_Variant == 1"/>
+    <MODEL name="EDU_Gbps" condition="/VariantDefinition/Criterion/EthTrcv_Variant == 2"/>
+    <MODEL name="A1_RTL9000" condition="/VariantDefinition/Criterion/EthTrcv_Variant == 3"/>
+    <MODEL name="RTL9010_RDR05" condition="/VariantDefinition/Criterion/EthTrcv_Variant == 4"/>
+</INPUT>

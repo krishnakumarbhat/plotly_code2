@@ -1,0 +1,33 @@
+name: Setup Coverity Auth
+description: Materialise the Coverity Connect auth-key file used by commit_defects targets.
+
+inputs:
+  coverity-auth:
+    description: 'ADVRADAR_COVERITY_COMMITTER_AUTH secret (raw auth-key JSON, OR base64-encoded JSON)'
+    required: true
+  output-path:
+    description: 'Where to write the auth-key file inside the workspace'
+    required: false
+    default: 'coverity.auth'
+  base64:
+    description: 'If "true", treat the secret as base64 and decode before writing'
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Write Coverity auth key
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.coverity-auth }}" ]; then
+          echo "Missing ADVRADAR_COVERITY_COMMITTER_AUTH secret." >&2
+          exit 1
+        fi
+        if [ "${{ inputs.base64 }}" = "true" ]; then
+          printf "%s" "${{ inputs.coverity-auth }}" | base64 --decode > "${{ inputs.output-path }}"
+        else
+          printf "%s" "${{ inputs.coverity-auth }}" > "${{ inputs.output-path }}"
+        fi
+        chmod 600 "${{ inputs.output-path }}"
+        echo "COVERITY_AUTH_FILE=$GITHUB_WORKSPACE/${{ inputs.output-path }}" >> "$GITHUB_ENV"

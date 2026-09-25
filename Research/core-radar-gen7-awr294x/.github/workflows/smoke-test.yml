@@ -1,0 +1,117 @@
+# Reusable HW Smoke Test (Integration / Power-Cycle) workflow for AWR294X.
+#
+# Mirrors Jenkins tools/Jenkins/integrationJob, which runs on a bench labelled
+# `GEN7_CICD` and performs: ETH-flash, power-cycle test, integration test, then
+# uploads JUnit/HTML reports to JFrog. The Gen7 AWR294x bench fleet is real but
+# bench-runner provisioning under GitHub Actions is still pending — therefore
+# this workflow is shipped as a skeleton and every caller currently gates it
+# with `if: false`. Flip the gate once a runner with the labels below registers.
+
+name: Reusable HW Smoke Test (AWR294X)
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: 'JSON array; each item: variant, artifact_name, quickflash_variant, smoke_test_report_path'
+        required: true
+        type: string
+      artifact-path:
+        description: 'Where to extract the build artifact on the bench runner'
+        required: false
+        type: string
+        default: 'bazel-bin/outputs'
+      runner-labels:
+        description: 'Self-hosted runner labels (JSON array)'
+        required: false
+        type: string
+        default: '["self-hosted","windows","SmokeTest","Gen7","AWR294x"]'
+      timeout-minutes:
+        required: false
+        type: number
+        default: 60
+      num-power-cycles:
+        description: 'How many power cycles to run (0 disables the test)'
+        required: false
+        type: number
+        default: 5
+      integration-duration-sec:
+        required: false
+        type: number
+        default: 180
+      commit-sha:
+        required: false
+        type: string
+        default: ''
+      pr-number:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  smoke-test:
+    name: Smoke (${{ matrix.quickflash_variant }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      actions: write
+      issues: write
+      pull-requests: write
+    runs-on: ${{ fromJson(inputs.runner-labels) }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ inputs.artifact-path }}
+          if-no-files-found: error
+
+      - name: Flash radar over Ethernet
+        shell: pwsh
+        env:
+          VARIANT: ${{ matrix.quickflash_variant }}
+        run: |
+          $quickflashDir = Join-Path "${{ inputs.artifact-path }}" "$env:VARIANT/quickflash"
+          Push-Location $quickflashDir
+          .\RunQuickFlash.bat -c sensor_config.xml -v $env:VARIANT -p $env:BENCH0_POWER_SUPPLY_COM_PORT
+          Pop-Location
+
+      - name: Power-cycle test
+        if: ${{ inputs.num-power-cycles > 0 }}
+        shell: pwsh
+        env:
+          VARIANT: ${{ matrix.quickflash_variant }}
+          CYCLES: ${{ inputs.num-power-cycles }}
+        run: |
+          $report = "Gen7_${env:VARIANT}_Power_Cycle_Test"
+          python tools\python\Gen7_PowerCycleTest\Gen7_PowerCycleTest.py `
+            -o $report -v $env:VARIANT -p $env:CYCLES `
+            -c $env:BENCH0_POWER_SUPPLY_COM_PORT -e $env:BENCH0_ETHERNET_PORT
+
+      - name: Integration test
+        if: ${{ inputs.integration-duration-sec > 0 }}
+        shell: pwsh
+        env:
+          VARIANT: ${{ matrix.quickflash_variant }}
+          DURATION: ${{ inputs.integration-duration-sec }}
+        run: |
+          $report = "Gen7_${env:VARIANT}_Integration_Test"
+          python tools\python\Gen7_IntegrationTest\Gen7_IntegrationTest.py `
+            -o $report -v $env:VARIANT -t $env:DURATION `
+            -c "Commit Hash ${{ inputs.commit-sha }}" `
+            -k $env:BENCH0_POWER_SUPPLY_COM_PORT -e $env:BENCH0_ETHERNET_PORT
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: smoke-${{ matrix.quickflash_variant }}
+          path: ${{ matrix.smoke_test_report_path }}
+          if-no-files-found: warn

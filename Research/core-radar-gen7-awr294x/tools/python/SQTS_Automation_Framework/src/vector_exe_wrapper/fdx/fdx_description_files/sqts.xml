@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<canoefdxdescription version="1.0">
+  <datagroup groupID="32768" size="92">
+    <identifier>send_message</identifier>
+    <item offset="0" size="68" type="bytearray">
+      <identifier></identifier>
+      <sysvar name="message_buffer" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="68" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="id" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="72" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="dlc" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="73" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="channel" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="74" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="counter" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="78" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="check_counter" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="82" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="fd" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="83" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="error_code" namespace="SQTS::send_message" value="raw" />
+    </item>
+    <item offset="84" size="8" type="int64">
+      <identifier></identifier>
+      <sysvar name="sent_timestamp_ns" namespace="SQTS::send_message" value="raw" />
+    </item>
+  </datagroup>
+  <datagroup groupID="32769" size="95">
+    <identifier>receive_message</identifier>
+    <item offset="0" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="channel" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="1" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="expected_channel" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="2" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="dlc" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="3" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="expected_number_of_messages" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="4" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="is_extended_id" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="5" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="is_fd" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="6" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="expected_id" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="10" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="counter" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="14" size="68" type="bytearray">
+      <identifier></identifier>
+      <sysvar name="message_buffer" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="82" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="error_code" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="83" size="8" type="int64">
+      <identifier></identifier>
+      <sysvar name="timestamp_ns" namespace="SQTS::receive_message" value="raw" />
+    </item>
+    <item offset="91" size="4" type="int32">
+      <identifier></identifier>
+      <sysvar name="check_counter" namespace="SQTS::receive_message" value="raw" />
+    </item>
+  </datagroup>
+  <datagroup groupID="32770" size="1555">
+    <identifier>send_ethernet_packet</identifier>
+    <item offset="0" size="18" type="string">
+      <identifier></identifier>
+      <sysvar name="dest_addr" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="18" size="18" type="string">
+      <identifier></identifier>
+      <sysvar name="source_addr" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="36" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="counter" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="40" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="check_counter" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="44" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="error_code" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="45" size="2" type="uint16">
+      <identifier></identifier>
+      <sysvar name="vlanId" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="47" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="priority" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="48" size="1504" type="bytearray">
+      <identifier></identifier>
+      <sysvar name="packet_buffer" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1552" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="channel" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1553" size="2" type="uint16">
+      <identifier></identifier>
+      <sysvar name="type" namespace="SQTS::send_ethernet_packet" value="raw" />
+    </item>
+  </datagroup>
+  <datagroup groupID="32771" size="1618">
+    <identifier>receive_ethernet_packet</identifier>
+    <item offset="0" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="channel" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="21" size="2" type="uint16">
+      <identifier></identifier>
+      <sysvar name="expected_number_of_packets" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="23" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="expected_vlanId" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="20" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="expected_channel" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="27" size="1504" type="bytearray">
+      <identifier></identifier>
+      <sysvar name="packet_buffer" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1" size="18" type="string">
+      <identifier></identifier>
+      <sysvar name="dest_addr" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="19" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="error_code" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1549" size="2" type="uint16">
+      <identifier></identifier>
+      <sysvar name="type" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1531" size="18" type="string">
+      <identifier></identifier>
+      <sysvar name="source_addr" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1551" size="18" type="string">
+      <identifier></identifier>
+      <sysvar name="expected_source_addr" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1569" size="18" type="string">
+      <identifier></identifier>
+      <sysvar name="expected_dest_addr" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1587" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="hwport" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1591" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="isPTP" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1592" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="domainNumber" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1596" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="sourcePortNumber" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1600" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="msgtype" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1604" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="vlanId" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1608" size="8" type="int64">
+      <identifier></identifier>
+      <sysvar name="time" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+    <item offset="1616" size="2" type="uint16">
+      <identifier></identifier>
+      <sysvar name="expected_type" namespace="SQTS::receive_ethernet_packet" value="raw" />
+    </item>
+  </datagroup>
+  <datagroup groupID="32772" size="61">
+    <identifier>send_ethernet_diagnostic</identifier>
+    <item offset="0" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="linkStatus" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="1" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="speed" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="5" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="SQI" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="9" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="error_packets" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="13" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="check_counter" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="17" size="4" type="uint32">
+      <identifier></identifier>
+      <sysvar name="counter" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="21" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="error_code" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="22" size="1" type="uint8">
+      <identifier></identifier>
+      <sysvar name="type_flag" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+    <item offset="24" size="37" type="string">
+      <identifier></identifier>
+      <sysvar name="portName" namespace="SQTS::send_ethernet_diagnostic" value="raw" />
+    </item>
+  </datagroup>
+</canoefdxdescription>

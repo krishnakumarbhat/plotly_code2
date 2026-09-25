@@ -1,0 +1,19 @@
+# On-demand: build the standalone flavor (srr7p only, --rot=standalone).
+# flr7 does not build standalone — see Jenkins note in verifiedJob/Jenkinsfile.
+
+name: On-Demand · Build Standalone
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["standalone"]'
+      variants: '["srr7p"]'
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}

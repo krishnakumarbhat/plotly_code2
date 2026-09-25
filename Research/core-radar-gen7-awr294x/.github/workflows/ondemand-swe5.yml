@@ -1,0 +1,66 @@
+# On-demand: SWE5 (System Integration Test) framework run.
+#
+# Mirrors tools/Jenkins/SWE5Job/Jenkinsfile. The Jenkins job invokes the SQTS
+# Automation Framework under `tools/python/SQTS_Automation_Framework` on a
+# Windows bench (label `GEN7_ITF`). Until a GitHub-registered Windows bench
+# runner with that label exists, every job below is gated `if: false`. Flip
+# the gate once the bench joins and the labels match.
+
+name: On-Demand · SWE5 (Bench, disabled)
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Sensor variant'
+        type: choice
+        options: [srr7p, flr7]
+        default: srr7p
+
+jobs:
+  swe5:
+    name: SWE5 (${{ inputs.variant }})
+    if: false  # Enable once GEN7_ITF / windows bench is registered with GitHub Actions
+    runs-on: [self-hosted, windows, GEN7_ITF]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0, submodules: recursive}
+
+      - name: Configure netrc
+        uses: ./.github/actions/configure-netrc
+        with:
+          netrc-content: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+
+      - id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Build ${{ inputs.variant }}
+        shell: cmd
+        run: |
+          .\bazelisk.exe build //:gen7 --color=yes --//:jenkins --variant=${{ inputs.variant }} --jobs=auto
+
+      - name: Install SQTS dependencies
+        shell: cmd
+        working-directory: tools\python\SQTS_Automation_Framework\installation
+        run: Dependency_Installer.bat
+
+      - name: Update SQTS pyproject (SWE5)
+        shell: cmd
+        working-directory: tools\python\SQTS_Automation_Framework\utils
+        run: |
+          set TOML=.\pyproject_updater\${{ inputs.variant == 'srr7p' && 'SRR7p_SITp_pyproject.toml' || 'FLR7_SITp_pyproject.toml' }}
+          Update_Pyproject.bat --source_toml %TOML%
+
+      - name: Run SQTS SWE5 test cases
+        shell: cmd
+        working-directory: tools\python\SQTS_Automation_Framework
+        run: Run_Test_Cases.bat
+
+      - name: Upload SWE5 reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: swe5-${{ inputs.variant }}
+          path: tools/python/SQTS_Automation_Framework/Reports/SWE5/*.html
+          if-no-files-found: warn

@@ -1,0 +1,157 @@
+# Reusable Unit Tests workflow for AWR294X (Gen7).
+#
+# Mirrors Jenkins tools/Jenkins/unitTestJob (shared lib
+# `ADVRADAR_CICD.buildAndRunUTAndVote`). Runs both MSS and DSS suites:
+#   bazelisk test //:all_unit_tests_mss
+#   bazelisk test //:all_unit_tests_dss --config=dss_ut
+#
+# When `coverage: true`, runs the coverage targets instead:
+#   bazelisk coverage //:all_unit_tests_mss
+#   bazelisk coverage //:all_unit_tests_dss --config=dss_ut
+
+name: Reusable Unit Tests (AWR294X)
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: |
+          Matrix include array. Each item: {variant, core, extra_config}.
+          core ∈ {mss, dss}; extra_config carried as a single --config flag (dss only).
+        required: false
+        type: string
+        default: |
+          [
+            {"variant":"srr7p","core":"mss"},
+            {"variant":"srr7p","core":"dss","extra_config":"dss_ut"},
+            {"variant":"flr7","core":"mss"},
+            {"variant":"flr7","core":"dss","extra_config":"dss_ut"}
+          ]
+      coverage:
+        description: 'When true, runs `bazelisk coverage` instead of `bazelisk test`'
+        required: false
+        type: boolean
+        default: false
+      pr-number:
+        description: 'PR number for failure-label management'
+        required: false
+        type: string
+        default: ''
+      container-image:
+        description: 'Container image'
+        required: false
+        type: string
+        default: 'jfrog.asux.aptiv.com/core_radar-aptiv-00000000-docker-local/gut-ready:1.5'
+      runner:
+        description: 'Runner label'
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+      bazel-extra-flags:
+        description: 'Extra Bazel flags'
+        required: false
+        type: string
+        default: '--color=yes --test_output=errors'
+      upload-artifact-name:
+        description: 'Default uploaded artifact name (matrix may override)'
+        required: false
+        type: string
+        default: 'awr294x-unit-test-output'
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+
+jobs:
+  unit-test:
+    name: UT (${{ matrix.variant }}-${{ matrix.core }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: ./.github/actions/configure-netrc
+        with: {netrc-content: "${{ secrets.ADVRADAR_NETRC_CONTENT }}"}
+
+      - uses: ./.github/actions/configure-bazel-cache
+        with: {arb-token: "${{ secrets.ADVRADAR_ARB_TOKEN }}"}
+
+      - id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Run unit tests
+        id: test
+        shell: bash
+        env:
+          VARIANT: ${{ matrix.variant }}
+          CORE: ${{ matrix.core }}
+          EXTRA_CONFIG: ${{ matrix.extra_config || '' }}
+          COVERAGE: ${{ inputs.coverage }}
+        run: |
+          set -euo pipefail
+          TARGET="//:all_unit_tests_${CORE}"
+          CMD="test"
+          if [ "${COVERAGE}" = "true" ]; then CMD="coverage"; fi
+          EXTRA=""
+          if [ -n "${EXTRA_CONFIG}" ]; then EXTRA="--config=${EXTRA_CONFIG}"; fi
+          ${{ steps.bazelisk.outputs.bazelisk-path }} ${CMD} ${TARGET} \
+            ${EXTRA} \
+            ${{ inputs.bazel-extra-flags }} \
+            2>&1 | tee unit_test.log
+
+      - name: Summarise test results
+        if: always()
+        shell: bash
+        env:
+          VARIANT: ${{ matrix.variant }}
+          CORE: ${{ matrix.core }}
+        run: |
+          PASSED=$(grep -Eo '[0-9]+ test target' unit_test.log | tail -n1 || true)
+          FAILED=$(grep -c 'FAILED in' unit_test.log || true)
+          {
+            echo "## Unit Test Results (${VARIANT}-${CORE})"
+            echo ""
+            echo "- Status: ${{ steps.test.outcome }}"
+            echo "- Targets: ${PASSED:-n/a}"
+            echo "- Failed: ${FAILED:-0}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload test outputs
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ inputs.upload-artifact-name }}-${{ matrix.variant }}-${{ matrix.core }}
+          path: |
+            unit_test.log
+            bazel-testlogs/**/test.xml
+            bazel-out/_coverage/_coverage_report.dat
+          if-no-files-found: warn
+
+      - name: Update failure label on PR
+        if: always() && inputs.pr-number != '' && steps.test.outcome != 'success' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL: unit-test failed - ${{ matrix.variant }}-${{ matrix.core }}
+        shell: bash
+        run: |
+          set -e
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${{ inputs.pr-number }}/labels" \
+            -f "labels[]=${LABEL}" || echo "::warning::Failed to add label '${LABEL}'"

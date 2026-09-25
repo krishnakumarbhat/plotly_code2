@@ -1,0 +1,122 @@
+# Reusable Dynamic Analysis workflow for AWR294X (Gen7).
+#
+# Mirrors Jenkins tools/Jenkins/dynamicAnalysisJob (shared lib
+# `ADVRADAR_CICD.buildAndRunDynamicAnalysisAndVote`), which runs unit-tests
+# under three sanitizer configurations:
+#   --config=asan      (AddressSanitizer)
+#   --config=ubsan     (UndefinedBehaviorSanitizer)
+#   --config=valgrind  (Valgrind)
+#
+# Matrix item shape: {variant, core, sanitizer, extra_config?}
+
+name: Reusable Dynamic Analysis (AWR294X)
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: 'JSON array; each item: variant, core, sanitizer, extra_config?'
+        required: false
+        type: string
+        default: |
+          [
+            {"variant":"srr7p","core":"mss","sanitizer":"asan"},
+            {"variant":"srr7p","core":"dss","sanitizer":"asan","extra_config":"dss_ut"},
+            {"variant":"srr7p","core":"mss","sanitizer":"ubsan"},
+            {"variant":"srr7p","core":"dss","sanitizer":"ubsan","extra_config":"dss_ut"},
+            {"variant":"srr7p","core":"mss","sanitizer":"valgrind"},
+            {"variant":"srr7p","core":"dss","sanitizer":"valgrind","extra_config":"dss_ut"},
+            {"variant":"flr7","core":"mss","sanitizer":"asan"},
+            {"variant":"flr7","core":"dss","sanitizer":"asan","extra_config":"dss_ut"},
+            {"variant":"flr7","core":"mss","sanitizer":"ubsan"},
+            {"variant":"flr7","core":"dss","sanitizer":"ubsan","extra_config":"dss_ut"},
+            {"variant":"flr7","core":"mss","sanitizer":"valgrind"},
+            {"variant":"flr7","core":"dss","sanitizer":"valgrind","extra_config":"dss_ut"}
+          ]
+      pr-number:
+        required: false
+        type: string
+        default: ''
+      container-image:
+        required: false
+        type: string
+        default: 'jfrog.asux.aptiv.com/core_radar-aptiv-00000000-docker-local/gut-ready:1.5'
+      runner:
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+
+jobs:
+  dynamic-analysis:
+    name: ${{ matrix.sanitizer }} (${{ matrix.variant }}-${{ matrix.core }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: ./.github/actions/configure-netrc
+        with: {netrc-content: "${{ secrets.ADVRADAR_NETRC_CONTENT }}"}
+
+      - uses: ./.github/actions/configure-bazel-cache
+        with: {arb-token: "${{ secrets.ADVRADAR_ARB_TOKEN }}"}
+
+      - id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Run ${{ matrix.sanitizer }}
+        id: san
+        shell: bash
+        env:
+          VARIANT: ${{ matrix.variant }}
+          CORE: ${{ matrix.core }}
+          SAN: ${{ matrix.sanitizer }}
+          EXTRA_CONFIG: ${{ matrix.extra_config || '' }}
+        run: |
+          set -euo pipefail
+          TARGET="//:all_unit_tests_${CORE}"
+          EXTRA=""
+          if [ -n "${EXTRA_CONFIG}" ]; then EXTRA="--config=${EXTRA_CONFIG}"; fi
+          ${{ steps.bazelisk.outputs.bazelisk-path }} test ${TARGET} \
+            ${EXTRA} --config=${SAN} \
+            --test_output=errors 2>&1 | tee dynamic_${SAN}.log
+
+      - name: Upload sanitizer log
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dynamic-${{ matrix.sanitizer }}-${{ matrix.variant }}-${{ matrix.core }}
+          path: dynamic_${{ matrix.sanitizer }}.log
+          if-no-files-found: warn
+
+      - name: Update failure label on PR
+        if: always() && inputs.pr-number != '' && steps.san.outcome != 'success' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL: dynamic-analysis failed - ${{ matrix.sanitizer }}/${{ matrix.variant }}-${{ matrix.core }}
+        shell: bash
+        run: |
+          set -e
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${{ inputs.pr-number }}/labels" \
+            -f "labels[]=${LABEL}" || echo "::warning::Failed to add label '${LABEL}'"
