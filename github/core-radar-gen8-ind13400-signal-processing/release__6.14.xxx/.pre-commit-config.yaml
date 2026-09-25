@@ -1,0 +1,133 @@
+repos:
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: v13.0.1
+  hooks:
+  - id: clang-format
+    name: format C code
+    types_or: [c++, c]
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    exclude: |
+      (?x)^(
+        # Add files here that should not be auto-formatted.
+        # This should NOT include any hand coded files, only auto-generated or vendor provided libraries.
+        modules/cfar/test/testdata/cfar_3d_unit_test_data_rbin_149.c                 |
+        modules/helpers/test/embedded/ra/testdata/ra_test_data.c                 |
+        modules/helpers/test/embedded/mipi/testdata/mipi_test_data.c             |
+        modules/helpers/test/embedded/mipi/testdata/mipi_test_data_ridm.c             |
+        modules/range_process/test/testdata/range_process_test_data_LookA_ridm.c       |
+        modules/range_process/test/testdata/range_process_test_data_LookB_ridm.c       |
+        modules/range_process/test/testdata/range_process_test_data_LookC_ridm.c       |
+        modules/range_process/test/testdata/range_process_test_data_LookD_ridm.c       |
+        modules/doppler_process/test/testdata/doppler_process_map_test_data_rbin17.c        |
+        modules/helpers/test/embedded/aux_acc/testdata/aa_test_data.c            |
+        modules/helpers/test/embedded/aux_acc/testdata/aa_test_data.h            |
+        modules/doppler_process/test/unit_test/data/transpose_test_data.c    |
+        modules/rdd_first_pass_process/test/testdata/rdd_fp_gtest_data.c    |
+        modules/rdd_first_pass_process/test/testdata/rdd_fp_test_data_equal_local_maxima.c    |
+        modules/rdd_first_pass_process/test/testdata/rdd_fp_test_data.c |
+        modules/rdd_first_pass_process/test/testdata/rdd_fp_multiple_rbin_test_data.c |
+        modules/rdd_first_pass_process/test/testdata/rdd_fp_bv_data.c |
+        modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_2.c |
+        modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_3.c |
+        modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_4.c |
+        modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_9.c |
+        modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_29.c |
+        modules/second_pass/test/test_data/ut_data.c
+      )$
+- repo: https://github.com/Warchant/pre-commit-buildifier
+  rev: 0.0.2
+  hooks:
+  - id: buildifier
+# Not currently working on Linux - some dependency is required that is not present in our Docker image.
+# - repo: https://github.com/DavidAnson/markdownlint-cli2
+#   rev: v0.6.0
+#   hooks:
+#   - id: markdownlint-cli2-fix
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+  - id: check-added-large-files
+    name: "Prevent Binary Files"
+    alias: forbid-binary
+    types: ['binary']
+    exclude_types: ['image']
+    args: ['--maxkb=0']
+    exclude: |
+      (?x)^(
+          bazelisk.exe                                           | # Windows Bazelisk
+          bazelisk                                               | # Linux Bazelisk
+          tools/lauterbach/example_elf/bbe_luna_test_app_emb.elf | # Example elf file for BBE
+          tools/lauterbach/example_elf/r52_startup.elf           | # PLL setup elf file for R52
+          tools/lauterbach/example_elf/r52_b0_startup.elf        | # PLL setup elf file for B0 R52
+      )$
+  - id: check-merge-conflict
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+  - id: end-of-file-fixer
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+          .*html                                                    | # HTML files
+          .*url                                                     | # URL files
+      )$
+  - id: trailing-whitespace
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+          .*html                                                    | # HTML files
+          .*url                                                     | # URL files
+          modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_2.c |
+          modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_3.c |
+          modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_4.c |
+          modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_9.c |
+          modules/rdd_first_pass_process/test/testdata/first_pass_3d_unit_test_data_rbin_29.c |
+      )$
+  - id: check-shebang-scripts-are-executable
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+      )$
+  - id: check-executables-have-shebangs
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+      )$
+- repo: https://github.com/psf/black
+  rev: 22.8.0
+  hooks:
+  - id: black
+    name: "black: format python"
+    args: [--config, tools/preCommit/pyproject.toml]
+    exclude: |
+      (?x)^(
+      )$
+- repo: https://github.com/pycqa/flake8
+  rev: 5.0.4
+  hooks:
+  - id: flake8
+    name: "flake8: lint python"
+    args: [--config, tools/preCommit/f8_python.ini]
+    types: [python]
+    additional_dependencies: [flake8-docstrings, flake8-bugbear, flake8-builtins, flake8-comprehensions]
+    exclude: |
+      (?x)^(
+        .*__init__.py                                   | # Ignore __init__.py files
+      )$
+  - id: flake8
+    name: "flake8: lint bazel"
+    args: [--config, tools/preCommit/f8_bazel.ini]
+    types: [bazel]
+    additional_dependencies: [flake8-docstrings]
+- repo: local
+  hooks:
+  - id: mh_style
+    name: Format Matlab Code
+    entry: mh_style
+    args: [--process-slx, --fix]
+    files: ((.*\.(m|slx))$)
+    language: python
+    additional_dependencies: [miss_hit_core]
+    verbose: false

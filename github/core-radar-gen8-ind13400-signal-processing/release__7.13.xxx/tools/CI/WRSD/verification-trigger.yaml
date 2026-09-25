@@ -1,0 +1,41 @@
+name: core-radar-gen8-spbb-verification-trigger
+when:
+  eventSource: gerrit
+  eventTypes:
+    - patchset-created
+    - ref-updated
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+        - release/4.13.xxx
+        - release/01.01.xxx
+        - release/2.01.xxx
+        - feature/b0plus_bringup
+        - release/5.07.xxx
+        - feature/c0_bringup
+run:
+  pipeline: core-radar-bb-verification
+  params:
+    bb-build-job-name: core-radar-gen8-spbb-build
+    build-job-name: core-radar-flr8-bb-build
+    build-parent-bb-bazel-name: spbb
+    build-parent-project: Core_Radar_Gen8_iND13400
+    build-parent-target: //:gen8
+    build-variants: NA
+    branch: $(body.change.branch)
+    gerrit-change-id: $(body.change.number)
+    gerrit-commit-id: $(body.patchSet.revision)
+    gerrit-project: Core_Radar_Gen8_iND13400_Signal_Processing
+    unit-test-job-name: core-radar-bb-ut
+    unit-test-target: //coverage:report
+    upload-path: core_radar-aptiv-00000000-building_blocks-local/wrsd/verification/
+  tasks:
+    - name: build
+      enabled: true
+    - name: unit-tests
+      enabled: false
+    - name: bb-build
+      enabled: true
+url: https://389177498442.awsaptiv.com/webhook/triggers/core-radar-gen8-spbb-verification-trigger

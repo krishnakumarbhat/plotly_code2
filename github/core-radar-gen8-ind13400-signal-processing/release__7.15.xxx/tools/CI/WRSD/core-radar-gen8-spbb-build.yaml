@@ -1,0 +1,346 @@
+langVersion: v1
+name: core-radar-gen8-spbb-build
+meta: {}
+defineTasks:
+- langVersion: v1
+  name: spbb-build-all
+  version: ""
+  category: build
+  ui: {}
+  meta: {}
+  wrrn: ""
+  description: Clones the repo once, runs all embedded builds sequentially
+  params:
+  - name: git-ref
+    description: The git commit hash or branch to check out from Gerrit
+    ui:
+      name: Commit Hash or Branch
+    type: string
+    default: dev
+  - name: gerrit-url
+    ui:
+      name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    ui:
+      name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400_Signal_Processing
+  results:
+  - name: vote-value
+    description: Value to vote back to Gerrit (+1 or -1)
+    ui: {}
+  - name: vote-message
+    description: Detailed message to write back to Gerrit
+    ui: {}
+  - name: overall-exit-code
+    description: 0 if all builds passed, 1 if any failed
+    ui: {}
+  - name: build-status
+    description: true if all builds passed, false if any failed
+    ui: {}
+  - name: commit-hash
+    description: Commit hash
+    ui: {}
+  steps:
+  - name: shallow-clone
+    params:
+      repository:
+        depth: "1"
+        git-ref: $(params.git-ref)
+        password: $(secrets.gerrit-cred.password.path)
+        url: $(params.gerrit-url)/$(params.project-url-encoded)
+        username: $(secrets.gerrit-cred.username.path)
+    returnResults:
+      commitHash: commit-hash
+    task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+  - name: build-and-collect
+    params:
+      repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+    returnResults:
+      build-status: build-status
+      overall-exit-code: overall-exit-code
+      vote-message: vote-message
+      vote-value: vote-value
+    task: spbb-run-all-builds
+- langVersion: v1
+  name: spbb-run-all-builds
+  version: ""
+  category: build
+  ui: {}
+  meta: {}
+  wrrn: ""
+  description: ""
+  params:
+  - name: repoRoot
+    description: Path to the root of the repo
+    ui:
+      name: repoRoot
+    type: string
+  results:
+  - name: vote-value
+    description: Gerrit vote value (+1 or -1)
+    ui: {}
+  - name: vote-message
+    description: Detailed build results table for Gerrit
+    ui: {}
+  - name: overall-exit-code
+    description: 0 if all passed, 1 if any failed
+    ui: {}
+  - name: build-status
+    description: true if all builds passed, false if any failed
+    ui: {}
+  steps:
+  - name: run-builds
+    image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+    script: |
+      #!/bin/bash
+
+      cd $(params.repoRoot)
+      git config --global --add safe.directory $(params.repoRoot)
+      cp $(secrets.netrc.path) ~/.netrc
+
+      # Set up credentials for the ARB remote cache
+      echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+      echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+      REPO_ROOT="$(params.repoRoot)"
+
+      # Define all build targets (name|command)
+      declare -a BUILD_TARGETS=(
+        "bbe32-test-app-b0|build //internal/bbe32:example_luna_test_app_emb --bbe_asic_fpga=b0_asic"
+        "bbe32-test-app|build //internal/bbe32:example_luna_test_app_emb"
+        "mipi-test|build //modules/helpers/test/embedded/mipi:mipi_test"
+        "fito-test|build //modules/helpers/test/embedded/sysmem:fito_test"
+        "profiling-tests|build //modules/helpers/test/embedded/sysmem:profiling_tests"
+        "cache-test|build //modules/helpers/test/embedded/sysmem:cache_test"
+        "aux-acc|build //modules/helpers/test/embedded/aux_acc:example_luna_test_app_emb"
+        "aux-acc-b0|build //modules/helpers/test/embedded/aux_acc:example_luna_test_app_emb --bbe_asic_fpga=b0_asic"
+        "idma-test|build //modules/helpers/test/embedded/sysmem:idma_test --bbe_opt=O2 --bbe_profile_timing=ns"
+        "mipi-test-b0|build //modules/helpers/test/embedded/mipi:mipi_test --bbe_asic_fpga=b0_asic"
+        "idma-test-b0|build //modules/helpers/test/embedded/sysmem:idma_test --bbe_asic_fpga=b0_asic --bbe_opt=O2 --bbe_profile_timing=ns"
+
+        "range-default|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=False --//common:range_datacube_48_bit_disabled=True"
+        "range-looka-b0|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=False --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True"
+        "range-looka-adc-b0|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True"
+        "range-looka-48b-b0|build //modules/range_process/test:example_luna_48b_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic"
+        "range-looka-adc-b0-dup|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True"
+
+        "doppler-restmap-b0|build //modules/doppler_process/test:example_luna_test_restmap_app_emb --//modules/doppler_process/test/testdata:test_select=rbin17 --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True"
+        "doppler-restmap-qddma-b0|build //modules/doppler_process/test:example_luna_test_restmap_app_emb_qddma --//modules/doppler_process/test/testdata:test_select=rbin17 --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True"
+        "doppler-restmap|build //modules/doppler_process/test:example_luna_test_restmap_app_emb --//modules/doppler_process/test/testdata:test_select=rbin17 --//common:range_datacube_48_bit_disabled=True"
+        "doppler-restmap-qddma-48b-b0|build //modules/doppler_process/test:example_luna_test_restmap_app_emb_qddma_48b --//modules/doppler_process/test/testdata:test_select=rbin17 --bbe_asic_fpga=b0_asic"
+
+        "transpose-ops-sim|build //modules/doppler_process/test/unit_test/simulator:transpose_ops_sim --bbe_opt=O2"
+
+        "rdd-3d-map|build //modules/rdd_first_pass_process/test:3d_map_fun_test_emb"
+        "rdd-frac-bin-sim|build //modules/rdd_first_pass_process/test/sim:simulate_frac_bin_test --bbe_opt=O2 --bbe_profile_timing=ns"
+        "rdd-extract-bv-sim|build //modules/rdd_first_pass_process/test/sim:simulate_extract_bv_test --bbe_opt=O2 --bbe_profile_timing=ns"
+
+        "sweep-bw-sim|build //modules/sweep_bw/test/sim:simulate_functional_test"
+
+        "cfar-3d-map|build //modules/cfar/test:3d_map_fun_test_emb"
+        "cfar-3d-map-transpose|build //modules/cfar/test:3d_map_fun_test_transpose_emb --//modules/cfar/test/cfg:enable_transpose_cfar_flag=True"
+
+        "second-pass-sim|build //modules/second_pass/test/sim:simulate_functional_test"
+      )
+
+      # Initialize counters
+      PASSED=0
+      FAILED=0
+      TOTAL=${#BUILD_TARGETS[@]}
+      OVERALL_EXIT=0
+
+      # Track failed targets only
+      FAILED_TARGETS=()
+
+      # Run each build sequentially
+      INDEX=0
+      for ENTRY in "${BUILD_TARGETS[@]}"; do
+        INDEX=$((INDEX + 1))
+        TARGET_NAME="${ENTRY%%|*}"
+        BUILD_CMD="${ENTRY##*|}"
+
+        echo ""
+        echo "================================================================"
+        echo "[$INDEX/$TOTAL] Building: $TARGET_NAME"
+        echo "Command: bazelisk --output_user_root=${REPO_ROOT}/bazel_output $BUILD_CMD --jobs=auto"
+        echo "================================================================"
+
+        # Clean before each build
+        bazelisk --output_user_root=${REPO_ROOT}/bazel_output clean 2>&1 || true
+
+        # Run build
+        bazelisk --output_user_root=${REPO_ROOT}/bazel_output $BUILD_CMD --jobs=auto 2>&1 | tee /tmp/build_${TARGET_NAME}.log
+        BUILD_EXIT=${PIPESTATUS[0]}
+
+        if [ $BUILD_EXIT -eq 0 ]; then
+          PASSED=$((PASSED + 1))
+        else
+          FAILED=$((FAILED + 1))
+          OVERALL_EXIT=1
+          FAILED_TARGETS+=("$TARGET_NAME")
+        fi
+
+        echo "[$INDEX/$TOTAL] $TARGET_NAME: exit=$BUILD_EXIT (Passed=$PASSED, Failed=$FAILED)"
+      done
+
+      # Generate compact Gerrit message
+      {
+        echo "## SPBB Embedded Build Results"
+        echo ""
+
+        if [ $FAILED -eq 0 ]; then
+          echo "PASS: All ${TOTAL} builds passed."
+        else
+          echo "FAILED BUILDS (${FAILED}):"
+          echo ""
+
+          for TARGET in "${FAILED_TARGETS[@]}"; do
+            echo "- ${TARGET}"
+          done
+
+          echo ""
+        fi
+
+        echo "Summary: ${PASSED}/${TOTAL} passed, ${FAILED} failed"
+      } > $(results.vote-message.path)
+
+      # Set Gerrit vote
+      if [ $OVERALL_EXIT -ne 0 ]; then
+        echo -n "-1" > $(results.vote-value.path)
+        echo -n "false" > $(results.build-status.path)
+      else
+        echo -n "+1" > $(results.vote-value.path)
+        echo -n "true" > $(results.build-status.path)
+      fi
+
+      echo -n "$OVERALL_EXIT" > $(results.overall-exit-code.path)
+
+      # Debug results
+      echo ""
+      echo "================ RESULT DEBUG ================"
+
+      echo "overall-exit-code:"
+      cat $(results.overall-exit-code.path)
+
+      echo ""
+      echo "build-status:"
+      cat $(results.build-status.path)
+
+      echo ""
+      echo "vote-value:"
+      cat $(results.vote-value.path)
+
+      echo ""
+      echo "vote-message size (bytes):"
+      wc -c $(results.vote-message.path)
+
+      echo ""
+      echo "vote-message contents:"
+      cat $(results.vote-message.path)
+
+      echo "============================================="
+
+      echo ""
+      echo "================================================================"
+      echo "BUILD COMPLETE: ${PASSED}/${TOTAL} passed, ${FAILED} failed"
+      echo "================================================================"
+
+      # Always exit 0 so results are propagated to Gerrit
+      exit 0
+    onError: continue
+ui:
+  name: core-radar-gen8-spbb-build
+description: Pipeline that builds all embedded test applications for Gen8 iND13400
+  Signal Processing (SPBB)
+params:
+- name: change-id
+  ui: {}
+  type: string
+  default: ""
+- name: commit-id
+  ui: {}
+  type: string
+  default: dev
+- name: gerrit-url
+  ui: {}
+  type: string
+  default: https://gitgerrit.asux.aptiv.com
+- name: project-url-encoded
+  ui: {}
+  type: string
+  default: Core_Radar_Gen8_iND13400_Signal_Processing
+- name: branch
+  ui: {}
+  type: string
+  default: dev
+- name: patchset-number
+  ui: {}
+  type: string
+  default: ""
+tasks:
+- name: publish-run
+  meta: {}
+  compute: linux-1c4g
+  task: Utils/core-radar-publish-run@0.0.1
+- name: build-triggered
+  meta: {}
+  params:
+    gerrit-setup: {}
+    message: |-
+      ## SPBB Build Triggered
+
+      Build Job: [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+    votes: {}
+  compute: linux-1c4g
+  task: Utils/post-gerrit-comment-vote-flr8@1.1.0
+- name: spbb-build-all
+  meta: {}
+  params:
+    gerrit-url: $(params.gerrit-url)
+    git-ref: $(params.commit-id)
+    project-url-encoded: $(params.project-url-encoded)
+  steps:
+  - name: build-and-collect
+    steps:
+    - name: run-builds
+      containerSettings: container-16c64g300g
+      computeResources: {}
+    computeResources: {}
+  task: build/spbb-build-all
+- name: build-vote
+  meta: {}
+  params:
+    gerrit-setup: {}
+    message: |-
+      $(tasks.spbb-build-all.results.vote-message)
+
+      Build Job: [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+    votes:
+      BB-Build: $(tasks.spbb-build-all.results.vote-value)
+  compute: linux-1c4g
+  task: Utils/post-gerrit-comment-vote-flr8@1.1.0
+- name: auto-submit-check
+  meta: {}
+  params:
+    change-id: $(params.change-id)
+    comment: "False"
+    gerrit-url: $(params.gerrit-url)
+    project-name: $(params.project-url-encoded)
+  compute: linux-2c8g
+  task: Utils/ADVRADAR/auto-submit@1.0.1
+timeout: 3h
+compute:
+- name: linux-1c4g
+  resource: asp-compute-linux-1c4g
+  computeResources: {}
+- name: linux-2c8g
+  resource: asp-compute-linux-2c8g
+  computeResources: {}
+containerSettings:
+- name: container-16c64g300g
+  resource: asp-container-16c64g300g
+- name: container-8c32g150g
+  resource: asp-container-8c32g150g

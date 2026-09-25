@@ -1,0 +1,33 @@
+r"""
+Bazel file defining all building blocks, local and remote.
+
+Many times, developers will need to override the http_archive calls to develop their building block code locally.
+To do this, use the override_repository flag during build.
+This can be either added on the command line, or for convenience it can be added to a user.bazelrc file in the root of the repo.
+Simply create this user.bazelrc file and add one of the following lines (or similar) and that parameter will be appended to all build commands.
+
+Example for Linux:
+build --override_repository=_main~_repo_rules~reuse="/home/repos/reuse_repository"
+Example for Windows:
+common --override_repository=_main~_repo_rules~reuse="C:\\reuse_repository"
+
+If not using the user.bazelrc file, the build command might look like this:
+bazel build //:gen7 --override_repository=_main~_repo_rules~reuse="/home/repos/reuse_repository"
+"""
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_archive(
+    name = "reuse",
+    sha256 = "627bebee054b6dc140600bcba9a091dcc653a696846b1fadf67f4a74d245bd7f",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/reuse/reuse_v1.1.1.zip"],
+)
+
+# SDK Repo / v3.x for Chandra_B0 and Chandra_A0
+http_archive(
+    name = "iND13400_sdk",
+    sha256 = "81924c68f1c44695831daaebba1d162f5166f22f540868f67733114a4c6a881c",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_SDK/v3/Core_Radar_Gen8_iND13400_SDK_v3.42.45.zip"],
+)

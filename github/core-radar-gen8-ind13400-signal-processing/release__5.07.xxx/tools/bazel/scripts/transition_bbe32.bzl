@@ -1,0 +1,66 @@
+"""
+This transition is used to set the platform to one that uses the correct compiler.
+
+Transistions should be applied above the cc_binary call. It tells Bazel to change toolchain,
+variant, etc. for the below modules.
+"""
+
+def _impl(ctx):
+    return [DefaultInfo(
+        files = depset(ctx.attr.next_step[0][DefaultInfo].files.to_list()),
+    )]
+
+def _transition_impl(_settings, attr):
+    platform = ""
+    if attr.is_windows:
+        platform = "@build_config//:winbbe32"
+    else:
+        platform = "@build_config//:linuxbbe32"
+
+    return {
+        "//command_line_option:platforms": platform,
+        "//internal/bbe32/linker:linker_package": attr.linker_package,
+    }
+
+_platform_transition = transition(
+    implementation = _transition_impl,
+    inputs = [],
+    outputs = [
+        "//command_line_option:platforms",
+        "//internal/bbe32/linker:linker_package",
+    ],
+)
+
+# Use transition_ti_arm_platform rule to transisiton to the Ti Arm compiler
+_transition_bbe32 = rule(
+    implementation = _impl,
+    attrs = {
+        "next_step": attr.label(cfg = _platform_transition),
+        "is_windows": attr.bool(mandatory = True),
+        "_allowlist_function_transition": attr.label(
+            default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
+        ),
+        "linker_package": attr.string(mandatory = True),
+    },
+)
+
+def transition_bbe32(name, next_step, **kwargs):
+    """
+    Transisiton to the BBE32 compiler and app variant for building the bbe32 image
+
+    Args:
+        name: Name of the rule.
+        next_step: The next target to call. This is the base target for the bbe32 build and is typically a cc_binary target.
+        **kwargs: further keyword arguments, e.g. `visibility`
+    """
+    transition_bbe32_impl = _transition_bbe32
+
+    transition_bbe32_impl(
+        name = name,
+        next_step = next_step,
+        is_windows = select({
+            "@bazel_tools//src/conditions:host_windows": True,
+            "//conditions:default": False,
+        }),
+        **kwargs
+    )

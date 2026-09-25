@@ -1,0 +1,101 @@
+name: Building Block CI Verification
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: bb-ci-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    if: always()
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      pull-requests: write
+    uses: GPO/Core_Radar_CICD/.github/workflows/common-bb-verification.yml@v0.3.4
+    secrets:
+      NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      JIRA_TOKEN: ${{ secrets.ADVRADAR_SID_JIRA_API_KEY }}
+      PARENT_TOKEN: ${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}
+    with:
+      # Common controls
+      run-ut: false
+      run-build: true
+      run-build-bb: true
+
+      run-check-skip: true
+
+      # PR validation
+      run-pr-validation: true
+      jira-url: ${{ vars.JIRA_URL }}
+
+      # variants: "srr8p,flr8"
+
+      # Build params
+      build-command: build //:gen8
+      build-bb-command: |
+        bbe32-test-app-b0|build //internal/bbe32:example_luna_test_app_emb --bbe_asic_fpga=b0_asic
+        bbe32-test-app|build //internal/bbe32:example_luna_test_app_emb
+        mipi-test|build //modules/helpers/test/embedded/mipi:mipi_test
+        fito-test|build //modules/helpers/test/embedded/sysmem:fito_test
+        profiling-tests|build //modules/helpers/test/embedded/sysmem:profiling_tests
+        cache-test|build //modules/helpers/test/embedded/sysmem:cache_test
+        aux-acc|build //modules/helpers/test/embedded/aux_acc:example_luna_test_app_emb
+        aux-acc-b0|build //modules/helpers/test/embedded/aux_acc:example_luna_test_app_emb --bbe_asic_fpga=b0_asic
+        idma-test|build //modules/helpers/test/embedded/sysmem:idma_test --bbe_opt=O2 --bbe_profile_timing=ns
+        mipi-test-b0|build //modules/helpers/test/embedded/mipi:mipi_test --bbe_asic_fpga=b0_asic
+        idma-test-b0|build //modules/helpers/test/embedded/sysmem:idma_test --bbe_asic_fpga=b0_asic --bbe_opt=O2 --bbe_profile_timing=ns
+        range-default|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=False --//common:range_datacube_48_bit_disabled=True
+        range-looka-b0|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=False --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True
+        range-looka-adc-b0|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True
+        range-looka-48b-b0|build //modules/range_process/test:example_luna_48b_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic
+        range-lookb-48b-b0|build //modules/range_process/test:example_luna_48b_fddt_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookB --bbe_asic_fpga=b0_asic
+        range-looka-adc-b0-dup|build //modules/range_process/test:example_luna_test_app_emb --enable_adc_log=True --//modules/range_process/test/testdata:range_test_select=LookA --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True
+        doppler-restmap-b0|build //modules/doppler_process/test:example_luna_test_restmap_app_emb --//modules/doppler_process/test/testdata:test_select=rbin17 --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True
+        doppler-restmap-qddma-b0|build //modules/doppler_process/test:example_luna_test_restmap_app_emb_qddma --//modules/doppler_process/test/testdata:test_select=rbin17 --bbe_asic_fpga=b0_asic --//common:range_datacube_48_bit_disabled=True
+        doppler-restmap|build //modules/doppler_process/test:example_luna_test_restmap_app_emb --//modules/doppler_process/test/testdata:test_select=rbin17 --//common:range_datacube_48_bit_disabled=True
+        doppler-restmap-qddma-48b-b0|build //modules/doppler_process/test:example_luna_test_restmap_app_emb_qddma_48b --//modules/doppler_process/test/testdata:test_select=rbin17 --bbe_asic_fpga=b0_asic
+        doppler-restmap-qddma-bigbv-48b-b0|bazelisk build //modules/doppler_process/test:example_luna_test_restmap_app_emb_bigbv_qddma_48b --//modules/doppler_process/test/testdata:test_select=rbin17  --bbe_asic_fpga=b0_asic --//common:bigbv_reorder_enabled=True
+        transpose-ops-sim|build //modules/doppler_process/test/unit_test/simulator:transpose_ops_sim --bbe_opt=O2
+        rdd-3d-map|build //modules/rdd_first_pass_process/test:3d_map_fun_test_emb
+        rdd-frac-bin-sim|build //modules/rdd_first_pass_process/test/sim:simulate_frac_bin_test --bbe_opt=O2 --bbe_profile_timing=ns
+        rdd-extract-bv-sim|build //modules/rdd_first_pass_process/test/sim:simulate_extract_bv_test --bbe_opt=O2 --bbe_profile_timing=ns
+        sweep-bw-sim|build //modules/sweep_bw/test/sim:simulate_functional_test
+        cfar-3d-map|build //modules/cfar/test:3d_map_fun_test_emb
+        cfar-3d-map-transpose|build //modules/cfar/test:3d_map_fun_test_transpose_emb --//modules/cfar/test/cfg:enable_transpose_cfar_flag=True
+        second-pass-sim|build //modules/second_pass/test/sim:simulate_functional_test
+
+      # Parent Repo Config (for run-build)
+      parent-repository: "GPO/Core_Radar_Gen8_iND13400"
+      parent-ref: "dev"
+
+      # variant-arg-format: "--variant={variant}"
+
+
+      # UT params
+      # ut-command: build //coverage:report
+
+  post_merge:
+    if: github.event_name == 'push'
+    # if: false # To Disable this Stage you can make this line uncommented
+    uses: GPO/Core_Radar_CICD/.github/workflows/common-bb-post-merge.yml@v0.3.2
+    with:
+      project-name: core-radar-gen8-ind13400-signal-processing
+      base-sha: ${{ github.event.before }}
+      head-sha: ${{ github.sha }}
+      version-file: version.yaml
+      package-include-patterns: "**/*.c **/*.h **/*.inc **/*.bazel **/*.S **/*.m **/BUILD **/changelog.md **/WORKSPACE **/version.yaml **/*.bzl **/*.cpp **/*.cc"
+      package-exclude-files: "repo_init.py .gitignore .pre-commit-config.yaml .gitattributes"
+    secrets:
+      app-id: ${{ secrets.DSO_BOT_APP_ID }}
+      app-private-key: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+      jfrog-username: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      jfrog-password: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
