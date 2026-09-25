@@ -1,0 +1,54 @@
+set(REL_PATH Fusion360/internal_preprocessing)
+
+set(SRC_LOCAL
+    ${REL_PATH}/include/f360_clear_detections_props.h
+    ${REL_PATH}/include/f360_configure_rdot_interval_compatibility.h
+    ${REL_PATH}/include/f360_det_is_in_bistatic_fp_area.h
+    ${REL_PATH}/include/f360_det_is_seen_by_sensor.h
+    ${REL_PATH}/include/f360_detect_stationary_bounce.h
+    ${REL_PATH}/include/f360_detect_wheelspin_pairs.h
+    ${REL_PATH}/include/f360_detection_priority.h
+    ${REL_PATH}/include/f360_determine_dets_on_edge_of_fov.h
+    ${REL_PATH}/include/f360_filter_out_low_quality_detections_on_or_behind_guardrail.h
+    ${REL_PATH}/include/f360_handle_bistatic.h
+    ${REL_PATH}/include/f360_handle_host_vehicle_clutter.h
+    ${REL_PATH}/include/f360_handle_host_vehicle_clutter_helpers.h
+    ${REL_PATH}/include/f360_mark_host_water_spray_detections.h
+    ${REL_PATH}/include/f360_mark_object_tracks_next_to_sensors.h
+    ${REL_PATH}/include/f360_mark_out_det_pairs.h
+    ${REL_PATH}/include/f360_update_detection_property.h
+    ${REL_PATH}/include/f360_calc_obj_mov_stat_thresh.h
+    ${REL_PATH}/include/f360_internal_preprocessing.h
+    ${REL_PATH}/include/f360_select_prioritized_detections.h
+    ${REL_PATH}/include/f360_update_global_parameters.h
+    ${REL_PATH}/include/f360_identify_relevant_low_azimuth_confidence_dets.h
+    ${REL_PATH}/include/f360_check_for_low_power_clutter.h
+    ${REL_PATH}/include/f360_mark_suspicious_angle_jump_detections.h
+    ${REL_PATH}/include/f360_determine_cv_driving_scenario.h
+    ${REL_PATH}/source/f360_clear_detections_props.cpp
+    ${REL_PATH}/source/f360_configure_rdot_interval_compatibility.cpp
+    ${REL_PATH}/source/f360_det_is_in_bistatic_fp_area.cpp
+    ${REL_PATH}/source/f360_det_is_seen_by_sensor.cpp
+    ${REL_PATH}/source/f360_detect_stationary_bounce.cpp
+    ${REL_PATH}/source/f360_detect_wheelspin_pairs.cpp
+    ${REL_PATH}/source/f360_detection_priority.cpp
+    ${REL_PATH}/source/f360_determine_dets_on_edge_of_fov.cpp
+    ${REL_PATH}/source/f360_filter_out_low_quality_detections_on_or_behind_guardrail.cpp
+    ${REL_PATH}/source/f360_handle_bistatic.cpp
+    ${REL_PATH}/source/f360_handle_host_vehicle_clutter.cpp
+    ${REL_PATH}/source/f360_handle_host_vehicle_clutter_helpers.cpp
+    ${REL_PATH}/source/f360_mark_host_water_spray_detections.cpp
+    ${REL_PATH}/source/f360_mark_object_tracks_next_to_sensors.cpp
+    ${REL_PATH}/source/f360_mark_out_det_pairs.cpp
+    ${REL_PATH}/source/f360_update_detection_property.cpp
+    ${REL_PATH}/source/f360_calc_obj_mov_stat_thresh.cpp
+    ${REL_PATH}/source/f360_internal_preprocessing.cpp
+    ${REL_PATH}/source/f360_select_prioritized_detections.cpp
+    ${REL_PATH}/source/f360_update_global_parameters.cpp
+    ${REL_PATH}/source/f360_identify_relevant_low_azimuth_confidence_dets.cpp
+    ${REL_PATH}/source/f360_check_for_low_power_clutter.cpp
+    ${REL_PATH}/source/f360_mark_suspicious_angle_jump_detections.cpp
+    ${REL_PATH}/source/f360_determine_cv_driving_scenario.cpp
+)
+
+set(SRC ${SRC} ${SRC_LOCAL})

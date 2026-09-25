@@ -1,0 +1,5 @@
+---
+MajorVersion: 3       # Creates a separate folder in JFrog with this version(Similar to Major release versioning)
+MinorVersion: 0       # Zip file with this version (Similar to engineering release)
+PatchVersion: 3       # Patch version on on top of minor version (Similar to patch version on top of engineering release)
+ShortName: rotbb      # Short name given in the main repo bb.bzl file

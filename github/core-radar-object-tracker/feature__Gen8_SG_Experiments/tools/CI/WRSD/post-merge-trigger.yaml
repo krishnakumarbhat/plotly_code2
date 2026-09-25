@@ -1,0 +1,21 @@
+name: core-radar-obj-tracker-post-merge-trigger
+when:
+  eventSource: gerrit
+  eventTypes:
+    - change-merged
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+run:
+  pipeline: core-radar-bb-post-merge
+  params:
+    change-id: $(body.change.number)
+    commit-id: $(body.patchSet.revision)
+    gerrit-project: Core_Radar_Object_Tracker
+    owner-email: $(body.submitter.email),$(body.change.owner.email)
+  tasks:
+    - name: update-triggers
+      enabled: true
+url: https://389177498442.awsaptiv.com/webhook/triggers/core-radar-obj-tracker-post-merge-trigger

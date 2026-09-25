@@ -1,0 +1,36 @@
+name: core-radar-obj-tracker-trigger-verification
+when:
+  eventSource: gerrit
+  eventTypes:
+    - patchset-created
+    - ref-updated
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+        - feature/rna_r13_rot10.24
+        - feature/Gen7v2_ROT10.30_w_LUT
+        - feature/rna_rot10.41
+        - feature/Gen8_Stream_Experiment
+        - feature/Gen8_Updated_Integration
+        - feature/Gen7v1_and_RNA_branch
+run:
+  pipeline: core-radar-bb-verification
+  params:
+    build-job-name: NA
+    build-parent-bb-bazel-name: NA
+    build-parent-project: NA
+    build-parent-target: NA
+    gerrit-change-id: $(body.change.number)
+    gerrit-commit-id: $(body.patchSet.revision)
+    gerrit-project: Core_Radar_Object_Tracker
+    unit-test-target-pipeline: NA
+    unit-test-yaml-path: NA
+    upload-path: NA
+  tasks:
+    - name: build
+      enabled: false
+    - name: unit-tests
+      enabled: false
+url: https://389177498442.awsaptiv.com/webhook/triggers/core-radar-obj-tracker-trigger-verification
