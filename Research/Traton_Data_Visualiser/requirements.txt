@@ -1,0 +1,10 @@
+asammdf==8.8.8
+cantools==41.3.1
+numpy==2.4.4
+pandas==3.0.2
+matplotlib==3.10.9
+PyQt6==6.11.0
+PyQt6-Qt6==6.11.0
+PyQt6_sip==13.11.1
+scipy==1.17.1
+openpyxl==3.1.5
