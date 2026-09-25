@@ -1,0 +1,13 @@
+{
+   "version": "1.1",
+   "SiL_Engine": "25.42.108.14",
+   "SW": "6.1.156",
+   "RSP_SiL": "RSP_SIL_Release_STLA_MCIP",
+   "Tracker": "NA",
+   "Mode": "CDC",
+   "Max_CDC_Records": 5016,
+   "Range_Saturation_Thresh_Front_Radar": 135,
+   "Range_Saturation_Thresh_Corner_Radar": 135,
+   "Max_DS_Detections_Front_Radar": 128,
+   "Max_DS_Detections_Corner_Radar": 64
+} 

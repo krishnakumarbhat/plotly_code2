@@ -1,0 +1,1 @@
+The ego vehicle is tracking a green moving target car, which is moving forward and slightly to the left, while a red static obstacle, a guardrail, remains stationary in the background. view

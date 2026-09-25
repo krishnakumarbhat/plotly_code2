@@ -1,0 +1,175 @@
+<!-- <?xml version="1.0" encoding="UTF-8" ? -->
+<!-- Delphi SIL component configuration -->
+<DATA_Extracter_Configuration>
+	<!--DATA_Extracter_Config_XML_Version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+	<DATA_Extracter_Config_XML_Version>2.14</DATA_Extracter_Config_XML_Version>
+	<!-- Generation Selection
+	 GEN5: All Gen5 customer logs need to Enable tag with GEN5
+	 GEN6: All Gen5 customer logs need to Enable tag with GEN6
+	 GEN7: All Gen7 customer logs need to Enable tag with GEN7
+	 -->
+	<GENERATION_SELECTION>GEN7</GENERATION_SELECTION>
+	<!--Vector Approach selection
+	 1: Vector Approach will be enabled
+	 0: Vector Approach will be disabled
+	-->
+	<Vector_Approach_Selection>1</Vector_Approach_Selection>
+	<!-- Sensor selection values:
+	1: Resim is executed for that Sensor Position
+	0: Resim is not executed for that Sensor Position -->
+  <SENSOR_STATUS>
+	<REAR_LEFT>1</REAR_LEFT>
+    <REAR_RIGHT>1</REAR_RIGHT>
+    <FRONT_RIGHT>1</FRONT_RIGHT>
+    <FRONT_LEFT>1</FRONT_LEFT>
+	<FRONT_CENTER>0</FRONT_CENTER>
+    <BP_RIGHT>0</BP_RIGHT>
+    <BP_LEFT>0</BP_LEFT>
+	<FLR4P_FC>0</FLR4P_FC>
+	<RADAR_ECU>0</RADAR_ECU>
+   </SENSOR_STATUS>
+	<!-- Output_Stream_Options available are :
+		HDR : Extracts mudp stream header information
+		CDC: Extracts cdc stream output data
+		z4 Core: Extracts z4(Core0) stream output data
+		Z7A Core: Extracts z7A(Core1) stream output data
+		Z7B Core: Extracts z7B(Core2) stream output data
+		Z4 Customer: Extracts z4(Customer) stream output data
+		Z7B Customer: Extracts z7b(Customer) stream output data -->
+	<Radar_Stream_Option>
+	    <HDR>0</HDR>
+		<CDC>1</CDC>
+		<DSPACE>0</DSPACE>
+		<CCA_HDR>0</CCA_HDR>
+		<OSI_STREAM>0</OSI_STREAM>
+		<Z4_Core>0</Z4_Core> <!--<C0_Core>1</C0_Core> -->
+		<Z7A_Core>0</Z7A_Core><!-- <C1_Core>0</C1_Core>  -->
+		<Z7B_Core>0</Z7B_Core><!-- <C2_Core>0</C2_Core>  -->
+	    <Z4_Customer>0</Z4_Customer><!-- <C0_Cust>0</C0_Cust>  -->
+	    <Z7B_Customer>0</Z7B_Customer><!--<C2_Cust>0</C2_Cust>   -->
+		<BC_CORE>0</BC_CORE>
+		<VSE_CORE>1</VSE_CORE>
+		<STATUS_CORE>0</STATUS_CORE>
+		<RDD_CORE>1</RDD_CORE>
+		<DET_CORE>1</DET_CORE>
+		<HDR_CORE>0</HDR_CORE>
+		<TRACKER_CORE>0</TRACKER_CORE>
+		<DEBUG_CORE>0</DEBUG_CORE>
+		<MMIC_CORE>0</MMIC_CORE>
+		<ALIGNMENT_CORE>0</ALIGNMENT_CORE>
+		<BLOCKAGE_CORE>0</BLOCKAGE_CORE>
+		<RADAR_CAPABILITY_CORE>1</RADAR_CAPABILITY_CORE>
+		<DOWN_SELECTION_CORE>0</DOWN_SELECTION_CORE>
+		<ID_CORE>1</ID_CORE>
+		<TOI_CORE>0</TOI_CORE>
+		<TOI_DS_CORE>0</TOI_DS_CORE>
+		<DETECTION_DEBUG_CORE>0</DETECTION_DEBUG_CORE>
+		<RDD_DEBUG_CORE>0</RDD_DEBUG_CORE>
+		<DYNAMIC_ALIGNMENT_CORE>1</DYNAMIC_ALIGNMENT_CORE>
+		<ROT_SAFETY_FAULTS_CORE>0</ROT_SAFETY_FAULTS_CORE>
+		<ROT_TRACKER_INFO_CORE>0</ROT_TRACKER_INFO_CORE>
+		<ROT_VEHICLE_INFO_CORE>0</ROT_VEHICLE_INFO_CORE>
+		<ROT_OBJECT_STREAM_CORE>0</ROT_OBJECT_STREAM_CORE>
+		<ROT_ISO_OBJECT_STREAM_CORE>0</ROT_ISO_OBJECT_STREAM_CORE>
+		<ROT_PROCESSED_DETECTION_STREAM_CORE>0</ROT_PROCESSED_DETECTION_STREAM_CORE>
+		<LCDA_CUST_OUTPUT_STREAM_CORE>0</LCDA_CUST_OUTPUT_STREAM_CORE>
+		<CTA_CUST_OUTPUT_STREAM_CORE>0</CTA_CUST_OUTPUT_STREAM_CORE>
+		<CED_CUST_OUTPUT_STREAM_CORE>0</CED_CUST_OUTPUT_STREAM_CORE>
+		<CUST_ALGO_INFO_STREAM_CORE>0</CUST_ALGO_INFO_STREAM_CORE>
+		<VID_CORE>0</VID_CORE>
+	</Radar_Stream_Option>
+
+	<!--RADAR_ECU_Stream_Options available are -
+		ECU_Coreo:Extracts ECU0 output data
+		ECU_Core1: Extracts ECU1 output data
+		ECU_Core3: Extracts ECU3 output data -->
+	<RADAR_ECU_Stream_Option>
+		<ECU0>0</ECU0>
+		<ECU1>0</ECU1>
+		<ECU3>0</ECU3>
+		<ECU_VRU_Classifier>0</ECU_VRU_Classifier>
+	</RADAR_ECU_Stream_Option>
+
+	<!-- Resim output path selection. Options are SAME_AS_INPUT or NEW_OUTPUT_PATH or SAME_AS_OUTPUT
+           SAME_AS_OUTPUT : This is Optional . Files will generated path provided in the third command line argument	-->
+         <Output_Path_Options>SAME_AS_OUTPUT</Output_Path_Options>
+    <!-- If resim output path selection is NEW_OUTPUT_PATH use the below tag to enter valid folder path -->
+		 <Output_Path_Location>NONE</Output_Path_Location>
+
+	<!-- Extractor User Options :
+				0 : Does not  Creates Embedded Lib UDP XML for HIL_PORT files
+				1 :  Creates Embedded Lib UDP XML for HIL_PORT files  -->
+			<output_xml_trace_option>
+				<HIL_port_xml>0</HIL_port_xml>
+				<Sensor_xml>1</Sensor_xml>
+			</output_xml_trace_option>
+    <!-- Data_Extraction_Mode User Options :
+
+	CSV_DUMP_EXTRACTION:
+	           This tag is for SRR6 Customers use only. Applicable Only for populating six parameters.
+			   For using this mode must Enable Z7B_CORE/C2_CORE in Radar Stream Options.
+    CSV_MODE:
+				0 : Doesnot Extract the Input Log data into the CSV .
+				1 : Extract the Imput Log data into the CSV in the input log path according to the stream enabled.
+	XML_TRACE_MODE:
+				0 : Doesn't generate the input xml_traces.
+				1 : Generates the xml_traces in the MUDP_XML_TRACE folder in the log path.
+
+	Detail_Error_Info:
+				0 : Doesn't generate the detailed error info of packetloss report.
+				1 : Generates only detailed error info of  packet_loss report.
+
+	PACKET_LOSS_STATISTICS :
+	            0 : Does not prints  prints Packet loss statistics
+                1 : prints Packet loss statistics + Summery Table at the end
+
+	Log_Quality_Summary  :
+	              This tag is BMW Customer use only. do not use this tag  for extracting csv and packetloss report.
+				-->
+
+        <Data_Extraction_Mode>
+				<CSV_DUMP_EXTRACTION>0</CSV_DUMP_EXTRACTION>
+				<CSV_MODE>0</CSV_MODE>
+				<XML_TRACE_MODE>0</XML_TRACE_MODE>
+				<Detail_Error_Info>0</Detail_Error_Info>
+				<PACKET_LOSS_STATISTICS>0</PACKET_LOSS_STATISTICS>
+				<Log_Quality_Summary>0</Log_Quality_Summary>
+				<CCA_MF4_DUMP_MODE>0</CCA_MF4_DUMP_MODE>
+				<HDF_MODE>1</HDF_MODE>
+				<HTML_REPORT_NONINTERACTIVE>0</HTML_REPORT_NONINTERACTIVE>
+				<HTML_SCANINDEX_SCALING>0</HTML_SCANINDEX_SCALING>
+		</Data_Extraction_Mode>
+
+
+
+ <!-- Extractor User Options :
+        text_fomat-> Packet loss report will generate in .txt format
+		xml_format-> Packet loss report will generate in .xml format -->
+		 <PACKET_LOSS_Report_Format>xml_format</PACKET_LOSS_Report_Format>
+
+
+<!-- LOG REPLAY mode selection: User shall provide the list of filenames the RESIM should execute in the Input_Log.txt file
+		Sequential_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed uniquely by resetting the memory after each file.
+								 Hence history is not maintained between the input files.
+
+   	    Continuous_FILE_Input -  RESIM shall execute in a sequential order of the Filenames provided
+								 Ensuring that each input file is processed in continuity between the files.
+								 The memory is NOT reset after each file. Hence history is maintained between the input files.
+								 Please ensure that the Logs are collected in a continuous manner from the Vehicle Expedition to use this mode
+								 This Mode provides results with more correlation with actual Sensor behaviour
+								 User is responsible to make sure that the file list is sequential the RESIM shall not check this.
+								 USE THIS MODE WITH CAUTION -->
+	<INPUT_FILE_MODE>Continuous_FILE_Input</INPUT_FILE_MODE>
+
+
+<!-- Enable anyone of the library which needs to be integrated -->
+	<LIBRARY_INTEGRATED>
+		<CCA_Library>0</CCA_Library>
+	    <Vector_Library>1</Vector_Library>
+	</LIBRARY_INTEGRATED>
+
+</DATA_Extracter_Configuration>

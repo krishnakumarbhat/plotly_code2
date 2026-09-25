@@ -1,0 +1,102 @@
+{
+  "Gen7V1_V2": {
+    "DETECTION_STREAM": {
+      "ran": {
+        "aliases": [
+          "ran",
+          "detection_range",
+          "range"
+        ],
+        "call": [
+          "range"
+        ],
+        "plot_types": [
+          "scatter_plot",
+          "scatter_with_mismatch"
+        ],
+        "unit": "meters",
+        "range_to_be_accepted": [
+          0,
+          500
+        ],
+        "grp": "DETECTION_STREAM"
+      },
+      "phi": {
+        "aliases": [
+          "phi",
+          "elevation"
+        ],
+        "call": [
+          "phi"
+        ],
+        "plot_types": [
+          "scatter_plot",
+          "scatter_with_mismatch"
+        ],
+        "unit": "radian",
+        "range_to_be_accepted": [
+          -3.2,
+          3.2
+        ],
+        "grp": "DETECTION_STREAM"
+      },
+      "vel": {
+        "aliases": [
+          "vel",
+          "velocity",
+          "range_rate"
+        ],
+        "call": [
+          "velocity"
+        ],
+        "plot_types": [
+          "scatter_plot",
+          "scatter_with_mismatch"
+        ],
+        "unit": "m/s",
+        "range_to_be_accepted": [
+          -200,
+          200
+        ],
+        "grp": "DETECTION_STREAM"
+      },
+      "theta": {
+        "aliases": [
+          "theta",
+          "azimuth"
+        ],
+        "call": [
+          "theta"
+        ],
+        "plot_types": [
+          "scatter_plot",
+          "scatter_with_mismatch"
+        ],
+        "unit": "radian",
+        "range_to_be_accepted": [
+          -3.2,
+          3.2
+        ],
+        "grp": "DETECTION_STREAM"
+      }
+    },
+    "sequence_of_plot": {
+      "scatter": [
+        "range;scatter_plot",
+        "range;scatter_with_mismatch",
+        "phi;scatter_plot",
+        "phi;scatter_with_mismatch",
+        "velocity;scatter_plot",
+        "velocity;scatter_with_mismatch",
+        "theta;scatter_plot",
+        "theta;scatter_with_mismatch"
+      ],
+      "scatter_mismatch": [
+        "range;scatter_with_mismatch",
+        "phi;scatter_with_mismatch",
+        "velocity;scatter_with_mismatch",
+        "theta;scatter_with_mismatch"
+      ]
+    }
+  }
+}

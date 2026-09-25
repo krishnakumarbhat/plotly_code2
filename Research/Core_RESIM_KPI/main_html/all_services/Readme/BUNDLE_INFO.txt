@@ -1,0 +1,9 @@
+HPCC standalone bundle
+generated_at=2026-04-13T13:04:48+05:30
+source_root=/mnt/c/Users/ouymc2/Desktop/simg_zmq
+bundle_root=/mnt/c/Users/ouymc2/Desktop/simg_zmq/simg_sh_hpcc
+contains=hpcc_main.pyz,bundle_src/,bundle_common.sh,cleanup_memory.sh,main_hpcc.sh,run_hpcc_stack.sh,main_html.simg,kpi/can/can_kpi.simg,kpi/udp/udp_kpi.simg,kpi/int_plot/intplot_kpi.simg,rag/rag.simg
+launch=PORT=5005 HPCC_BROKER_PORT=9105 ./main_hpcc.sh
+direct_url=http://10.214.45.45:<shifted_port>/
+public_host_override=HPCC_PUBLIC_HOST=10.214.45.45
+tunnel=ssh -N -L <local_port>:127.0.0.1:<remote_port> <user>@<login-node>

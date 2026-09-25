@@ -1,0 +1,35 @@
+
+
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Serve: Run main.py --serve",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "args": ["--serve"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Offline: Generate viewer (db/html db/video)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "args": ["db/html", "db/video"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Custom: main.py (edit args)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "args": [],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

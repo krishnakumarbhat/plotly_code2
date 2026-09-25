@@ -1,0 +1,1 @@
+A white ego vehicle is navigating a complex urban environment, tracking green moving targets (cars/trucks) and avoiding red static obstacles (guardrails/pedestrians) while maintaining a safe distance and trajectory.

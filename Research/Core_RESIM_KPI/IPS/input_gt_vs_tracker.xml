@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+    <HDF_Root_Folder>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/8-Users/gzvcb3/CONE_OF_SILENCE/R4.1/Output/p700/</HDF_Root_Folder>
+    <InputJSON_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/DC/new.json</InputJSON_Path>
+    <HTML_Config_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/hdf/HTMLConfig.xml</HTML_Config_Path>
+    <Singularity_Image_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/DC/ResimHTMLReport.simg</Singularity_Image_Path>
+    <Output_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/DC/GTvsTracker_output/</Output_Path>
+</Config>

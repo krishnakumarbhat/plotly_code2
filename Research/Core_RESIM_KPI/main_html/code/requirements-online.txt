@@ -1,0 +1,5 @@
+# Minimal deps for the HTML online viewer service (Flask + cluster SFTP browser)
+flask
+flask-cors
+paramiko
+requests

@@ -1,0 +1,11 @@
+{
+    "base_url": "https://hzp.atlassian.net",
+    "pat": "",
+    "user": "ouymc2",
+    "api_token": "",
+    "default_project": "HZP",
+    "default_board_id": 14936,
+    "default_assignee": "ouymc2",
+    "verify_ssl": true,
+    "timeout_seconds": 30
+}

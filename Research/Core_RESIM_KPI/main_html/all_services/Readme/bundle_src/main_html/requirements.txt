@@ -1,0 +1,40 @@
+# HPC Tools Platform - Requirements
+# Minimal versions for faster builds
+
+# Flask and Extensions
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Migrate
+Flask-WTF
+Flask-Cors
+Flask-Compress
+
+# Database
+SQLAlchemy
+psycopg2-binary
+
+# Security
+Werkzeug
+itsdangerous
+
+# Jinja2/Flask/Werkzeug compatibility
+MarkupSafe
+
+# HTTP Requests
+requests
+
+# SSH/SFTP for cluster connectivity
+paramiko
+
+# Utilities
+python-dotenv
+gunicorn
+
+# Data Processing
+h5py
+pandas
+numpy
+pyzmq
+plotly
+lxml

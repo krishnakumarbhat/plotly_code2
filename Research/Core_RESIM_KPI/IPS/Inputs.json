@@ -1,0 +1,14 @@
+{
+    "InputHDF": [
+        "C:/Users/ouymc2/Downloads/SRR_CEER_S13_20251106_134103_0001_b05_HDF_Report 1.h5",
+        "C:/Users/ouymc2/Downloads/SRR_CEER_S13_20251105_111413_0003_b05_HDF_Report 1.h5"
+    ],
+    "OutputHDF": [
+        "C:/Users/ouymc2/Downloads/SRR_CEER_S13_20251105_111413_0003_b05_HDF_ReportWithDGPS 1.h5",
+        "C:/Users/ouymc2/Downloads/SRR_CEER_S13_20251106_134103_0001_b05_HDF_ReportWithDGPS 1.h5"
+    ],
+    "export_png": true,
+    "DGPS": {
+        "roi_radius": 5.0
+    }
+}

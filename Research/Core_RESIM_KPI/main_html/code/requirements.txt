@@ -1,0 +1,35 @@
+# Requirements gathered from project imports (best-effort, pin versions as needed)
+flask
+flask-cors
+paramiko
+requests
+urllib3
+numpy
+pandas
+plotly
+h5py
+opencv-python
+torch
+transformers
+qwen-vl-utils
+pyyaml
+cryptography
+bcrypt
+pynacl
+cffi
+pycparser
+zmq
+psutil
+scipy
+matplotlib
+scikit-learn
+scikit-image
+opencv-python-headless
+protobuf
+tqdm
+pyinstaller
+
+# Optional / conditional (used by some components if available)
+pytorch-lightning
+torchaudio
+torchvision

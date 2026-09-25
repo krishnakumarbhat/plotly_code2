@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": ["folder_path.txt", "C:\\logs\\Gen7v2\\R6\\With_AA\\STATISTICAL_REPORT"]
+
+        }
+    ]
+}

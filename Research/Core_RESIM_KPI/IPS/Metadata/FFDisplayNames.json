@@ -1,0 +1,13 @@
+{
+    "LCDA": "Lane Change Decision Aid",
+    "LCDA.bsw": "Blind Spot Warning",
+    "LCDA.cvw": "Closing Vehicle Warning",
+    "LCDA.slc": "Simultaneous Lane Change",
+    "CTA": "Cross Traffic Alert",
+    "CED": "Clear Exit Detection",
+    "LTB": "Longitudinal Traffic Break",
+    "RECW": "Rear End Collision Warning",
+    "SCW": "Side Collision Warning",
+    "TA": "Turn Assist",
+    "ESA": "Emergency Steering Assist"
+}

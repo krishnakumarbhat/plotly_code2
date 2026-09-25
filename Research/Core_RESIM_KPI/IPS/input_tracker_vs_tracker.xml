@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+    <!-- Root folder of Resim Run 1 (HDF_Output folders will be found recursively) -->
+    <ResimRun1_Root>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/8-Users/gzvcb3/CONE_OF_SILENCE/R4.1/Output/p700/</ResimRun1_Root>
+    <!-- Root folder of Resim Run 2 - must have the same subfolder structure as Run 1 -->
+    <ResimRun2_Root>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/8-Users/REPLACE_WITH_RUN2_PATH/</ResimRun2_Root>
+    <InputJSON_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/DC/new.json</InputJSON_Path>
+    <HTML_Config_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/hdf/HTMLConfig.xml</HTML_Config_Path>
+    <Singularity_Image_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/DC/ResimHTMLReport.simg</Singularity_Image_Path>
+    <Output_Path>/net/8k3/e0fs01/irods/PLKRA-PROJECTS/RNA-SDV-SRR7/2-Sim/USER_DATA/pcmzxl/html_testing/DC/TrackerVsTracker_output/</Output_Path>
+</Config>

@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": ["log_path.txt", "meta_data.json", "C:/logs/Gen7v2/R5.2/ORCAS"]
+
+        }
+    ]
+}
