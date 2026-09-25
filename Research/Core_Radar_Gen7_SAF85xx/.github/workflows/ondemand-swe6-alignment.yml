@@ -1,0 +1,47 @@
+# On-demand: SWE6 Alignment weekly regression re-run.
+#
+# Companion to swe6-alignment.yml (which runs every Sunday 20:30 UTC for both
+# FLR7 + SRR7p). Lets you re-run for a single variant or both on demand.
+
+name: "On-demand · SWE6 Alignment"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Variant to run (FLR7, SRR7p, or all)'
+        required: true
+        type: choice
+        options: [all, FLR7, SRR7p]
+        default: 'all'
+
+concurrency:
+  group: ondemand-swe6-alignment-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+# Reuses the weekly workflow's matrix logic by forwarding the variant choice.
+# swe6-alignment.yml already supports `workflow_dispatch.inputs.variant`, so we
+# call it as a reusable workflow with the picked variant.
+jobs:
+  trigger:
+    name: Dispatch SWE6 Alignment for ${{ inputs.variant }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - name: Fire swe6-alignment.yml with selected variant
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VARIANT: ${{ inputs.variant }}
+          REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          gh workflow run swe6-alignment.yml \
+            --ref "${REF}" \
+            -f variant="${VARIANT}"
+          echo "Triggered swe6-alignment.yml on ${REF} with variant=${VARIANT}"

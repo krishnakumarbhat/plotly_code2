@@ -1,0 +1,153 @@
+# Gerrit <-> GitHub sync workflow for Gen7 SAF85xx.
+#
+# Two-directional mirroring:
+#   * push -> Gerrit:   on every push to `dev`/`main`/`release/*` we mirror the
+#                       new commits to the canonical Gerrit repository so the
+#                       Aptiv WRSD pipeline continues to see them as the source
+#                       of truth.
+#   * Gerrit -> GitHub: a scheduled job (every 15 min) and a `repository_dispatch`
+#                       hook (fired by the Gerrit replication plugin) fetch new
+#                       refs/heads/* and refs/changes/* from Gerrit and force-push
+#                       them into GitHub so PR validation and dashboards reflect
+#                       the latest patchsets.
+#
+# All Gerrit auth uses HTTP password (.netrc) bundled in ADVRADAR_NETRC_CONTENT; no SSH
+# keys are stored as workflow secrets.
+
+name: Gerrit Sync
+
+on:
+  push:
+    branches: [dev, main, 'release/**']
+  schedule:
+    - cron: '*/15 * * * *'
+  repository_dispatch:
+    types: [gerrit-replication]
+  workflow_dispatch:
+    inputs:
+      direction:
+        description: 'Force a specific direction'
+        required: false
+        default: 'both'
+        type: choice
+        options: [both, push-to-gerrit, pull-from-gerrit]
+
+concurrency:
+  group: gerrit-sync
+  cancel-in-progress: false
+
+env:
+  GERRIT_HOST: gitgerrit.asux.aptiv.com
+  GERRIT_PROJECT: Core_Radar_Gen7_SAF85xx
+
+jobs:
+  push-to-gerrit:
+    name: GitHub -> Gerrit
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.direction == 'both' || inputs.direction == 'push-to-gerrit'))
+    runs-on: ubuntu-latest
+    permissions: {contents: read}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: ./.github/actions/configure-netrc
+        with: {netrc-content: "${{ secrets.ADVRADAR_NETRC_CONTENT }}"}
+
+      - name: Push branch to Gerrit
+        shell: bash
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          GERRIT_URL="https://${GERRIT_HOST}/a/${GERRIT_PROJECT}"
+          echo "Mirroring ${BRANCH} -> ${GERRIT_URL}"
+          git remote add gerrit "${GERRIT_URL}" || git remote set-url gerrit "${GERRIT_URL}"
+          # Use refs/heads/<branch> on Gerrit side, NOT refs/for/* (this is mirror, not review).
+          git push gerrit "HEAD:refs/heads/${BRANCH}"
+
+  pull-from-gerrit:
+    name: Gerrit -> GitHub
+    if: github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || (github.event_name == 'workflow_dispatch' && (inputs.direction == 'both' || inputs.direction == 'pull-from-gerrit'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/configure-netrc
+        with: {netrc-content: "${{ secrets.ADVRADAR_NETRC_CONTENT }}"}
+
+      - name: Fetch from Gerrit and push branches into GitHub
+        shell: bash
+        run: |
+          set -euo pipefail
+          GERRIT_URL="https://${GERRIT_HOST}/a/${GERRIT_PROJECT}"
+          git remote add gerrit "${GERRIT_URL}" || git remote set-url gerrit "${GERRIT_URL}"
+
+          git fetch gerrit '+refs/heads/*:refs/remotes/gerrit/*' --prune
+
+          # Mirror the protected branches we care about.
+          for BR in dev main; do
+            if git show-ref --verify --quiet "refs/remotes/gerrit/${BR}"; then
+              GERRIT_SHA=$(git rev-parse "refs/remotes/gerrit/${BR}")
+              GITHUB_SHA=$(git rev-parse "refs/remotes/origin/${BR}" 2>/dev/null || echo "")
+              if [ "${GERRIT_SHA}" != "${GITHUB_SHA}" ]; then
+                echo "Updating GitHub ${BR}: ${GITHUB_SHA:-<none>} -> ${GERRIT_SHA}"
+                git push origin "refs/remotes/gerrit/${BR}:refs/heads/${BR}"
+              else
+                echo "${BR} already in sync"
+              fi
+            fi
+          done
+
+      - name: Mirror open Gerrit changes as PRs (refs/changes/*)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git fetch gerrit '+refs/changes/*:refs/remotes/gerrit-changes/*' --prune || true
+          # Push each latest patchset to a GH branch named `gerrit/<change-num>`;
+          # downstream PR-checks workflow runs against the branch.
+          git for-each-ref refs/remotes/gerrit-changes --format='%(refname)' | \
+            awk -F/ '{ print $5"/"$6, $0 }' | sort -k1,1 -V | \
+            awk '!seen[$1]++ {print $2}' | while read -r REF; do
+              CHANGE_NUM=$(echo "${REF}" | awk -F/ '{print $5}')
+              BR="gerrit/${CHANGE_NUM}"
+              git push -f origin "${REF}:refs/heads/${BR}" || true
+            done
+
+  notify:
+    name: Notify on sync failure
+    needs: [push-to-gerrit, pull-from-gerrit]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open/update tracking issue
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Gerrit sync failure';
+            const body = `Run failed: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: existing } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open',
+              labels: 'gerrit-sync', per_page: 50,
+            });
+            if (existing.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['gerrit-sync','ci'],
+              });
+            }

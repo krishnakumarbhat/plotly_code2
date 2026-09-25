@@ -1,0 +1,204 @@
+# PR validation workflow for Gen7 SAF85xx.
+# Runs pre-commit, dependency scan, build (all variants), unit tests, Coverity
+# and a HW smoke test. Each heavy job is delegated to a reusable workflow so the
+# orchestrator stays small. Posts a sticky PR status comment.
+
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: pr-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PROJECT_NAME: Core_Radar_Gen7_SAF85xx
+
+jobs:
+  pr_status_start:
+    name: PR Status (Start)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Clear stale failure labels
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const num = context.payload.pull_request.number;
+            const prefixes = ['build failed - ','unit tests failed - ','coverity failed - ','smoke test failed - ','ci-failed-'];
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: num, per_page: 100,
+            });
+            for (const l of labels.filter(l => prefixes.some(p => l.name.toLowerCase().startsWith(p)))) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo, issue_number: num, name: l.name,
+              });
+            }
+      - uses: ./.github/actions/pr-status-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          job-precommit: in progress...
+          job-dependency-scan: in progress...
+          job-build: in progress...
+          job-unit-test: in progress...
+          job-coverity: in progress...
+          job-hw-test: in progress...
+
+  precommit:
+    name: Pre-commit
+    runs-on: ubuntu-latest
+    container:
+      image: containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    permissions: {contents: read}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: python3 -m pip install --upgrade pip pre-commit
+      - name: Run pre-commit
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }} --depth=1
+            pre-commit run --from-ref origin/${{ github.base_ref }} --to-ref ${{ github.sha }}
+          else
+            pre-commit run --all-files
+          fi
+
+  dependency_scan:
+    name: Dependency Scan
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      - uses: actions/dependency-review-action@v4.3.2
+        with:
+          fail-on-severity: high
+          fail-on-scopes: runtime
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause, ISC
+
+  build:
+    name: Build
+    uses: ./.github/workflows/build-flavors.yml
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    with:
+      flavors: '["satellite"]'
+      variants: '["flr7","srr7p","srr7e","flr7v3"]'
+      pr-number: ${{ github.event.pull_request.number || '' }}
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  unit_test:
+    name: Unit Test
+    uses: ./.github/workflows/unit-tests.yml
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    with:
+      test-target: //:all_unit_tests
+      pr-number: ${{ github.event.pull_request.number || '' }}
+      matrix-json: |
+        [
+          {"variant":"flr7"},
+          {"variant":"srr7p"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  coverity:
+    name: Coverity
+    if: false  # enable once Coverity streams are provisioned for Gen7
+    uses: ./.github/workflows/coverity.yml
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    with:
+      pr-number: ${{ github.event.pull_request.number || '' }}
+      matrix-json: |
+        [
+          {"variant":"flr7", "core":"m7",    "coverity_target":"//software/m7:commit_defects_flr7",    "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_M7"},
+          {"variant":"flr7", "core":"a53",   "coverity_target":"//software/a53:commit_defects_flr7",   "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_A53"},
+          {"variant":"flr7", "core":"bbe32", "coverity_target":"//software/bbe32:commit_defects_flr7", "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_BBE32"},
+          {"variant":"srr7p","core":"m7",    "coverity_target":"//software/m7:commit_defects_srr7p",   "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_M7"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      ADVRADAR_COVERITY_COMMITTER_AUTH: ${{ secrets.ADVRADAR_COVERITY_COMMITTER_AUTH }}
+
+  hw_test:
+    name: HW Smoke Test
+    needs: build
+    if: always() && needs.build.result == 'success'
+    uses: ./.github/workflows/smoke-test.yml
+    permissions:
+      contents: read
+      actions: write
+      issues: write
+      pull-requests: write
+    with:
+      commit-sha: ${{ github.event.pull_request.head.sha }}
+      pr-number: ${{ github.event.pull_request.number || '' }}
+      matrix-json: |
+        [
+          {"variant":"flr7", "quickflash_variant":"flr7_satellite",  "artifact_name":"build-flr7.zip",  "smoke_test_report_path":"/home/sid_advradar_cicd/wrsd_smoke_test_reports/flr7_satellite_Smoke_Test.html"},
+          {"variant":"srr7p","quickflash_variant":"srr7p_satellite", "artifact_name":"build-srr7p.zip", "smoke_test_report_path":"/home/sid_advradar_cicd/wrsd_smoke_test_reports/srr7p_satellite_Smoke_Test.html"}
+        ]
+
+  pr_status:
+    name: PR Status (Final)
+    if: always() && github.event_name == 'pull_request'
+    needs:
+      - pr_status_start
+      - precommit
+      - dependency_scan
+      - build
+      - unit_test
+      - coverity
+      - hw_test
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pr-status-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          job-precommit: ${{ needs.precommit.result }}
+          job-dependency-scan: ${{ needs.dependency_scan.result }}
+          job-build: ${{ needs.build.result }}
+          job-unit-test: ${{ needs.unit_test.result }}
+          job-coverity: ${{ needs.coverity.result }}
+          job-hw-test: ${{ needs.hw_test.result }}

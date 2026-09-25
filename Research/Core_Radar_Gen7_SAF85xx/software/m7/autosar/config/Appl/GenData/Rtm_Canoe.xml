@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<testmodule title="AmdRtmGen" version="3.02.00" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance">
+  <variants>
+    <variant name="PARALLEL">Selected measurement sections are measured simultaneously</variant>
+    <variant name="SERIAL">Selected measurement sections are measured consecutively</variant>
+    <variant name="LIVE">Selected measurement sections remain active until manually stopped </variant>
+  </variants>
+  <testgroup title="Active Measurement Selection: Only the following selected measurement points or measurement groups will be considered in the RTM measurement session. Note: All auto start measurements are registered for measurement by default."> 
+    <testgroup title="Sd">
+    </testgroup>
+    <testgroup title="CanNm">
+    </testgroup>
+    <testgroup title="Xcp">
+    </testgroup>
+    <testgroup title="EthTrcv_30_88Q1010">
+      <testcase ident="EthTrcv_30_88Q1010_TransceiverInit" title="EthTrcv_30_88Q1010_TransceiverInit (ID 13)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">13</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="CpuLoad">
+      <testcase ident="Rtm_CpuLoadMeasurement" title="Rtm_CpuLoadMeasurement (ID 16)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">16</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="EthTrcv_30_Rtl9010">
+    </testgroup>
+    <testgroup title="Default">
+      <testcase ident="App_Task_General_1" title="App_Task_General_1 (ID 4)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">4</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Background_Task" title="Appl_Background_Task (ID 5)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">5</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_IPC_Task" title="Appl_IPC_Task (ID 6)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">6</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Communication" title="Appl_Task_Communication (ID 7)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">7</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_High_Prio" title="Appl_Task_High_Prio (ID 8)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">8</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Logging_Buffering" title="Appl_Task_Logging_Buffering (ID 9)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">9</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Logging_Transmitting" title="Appl_Task_Logging_Transmitting (ID 10)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">10</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Radar_Control" title="Appl_Task_Radar_Control (ID 11)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">11</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="BSW_Task" title="BSW_Task (ID 12)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">12</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="IdleTask_OsCore0" title="IdleTask_OsCore0 (ID 14)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">14</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="PLT_Appl_Task" title="PLT_Appl_Task (ID 15)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">15</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="Can_30_Flexcan4">
+    </testgroup>
+    <testgroup title="Nm">
+    </testgroup>
+  </testgroup>
+  <testgroup title="Measurement">
+    <testcase ident="Clear Results On ECU" title="Clear Results On ECU (If this option is deactivated the results of the previous measurement session affect upcoming measurement results)">
+      <capltestfunction name="ClearResultsOnEcu" title=""/>
+    </testcase>
+
+    <testcase ident="Perform Measurement" title="Perform Parallel Measurement: With parallel measurement, all measurement points enabled at pre-compile time and activated in CANoe are measured simultaneously. The measurement duration is specified at measurement start and applies to all selected measurements." variants="PARALLEL"> 
+      <capltestfunction name="RuntimeMeasurement" title="">
+        <caplparam name="variant" type="int">2</caplparam>
+      </capltestfunction>
+    </testcase>
+
+    <testcase ident="Perform Measurement" title="Perform Serial Measurement: With serial measurement, all measurement points enabled at pre-compile time and activated in CANoe are measured consecutively. The measurement duration is specified at measurement start and applies for each measurement individually." variants="SERIAL"> 
+      <capltestfunction name="RuntimeMeasurement" title="">
+        <caplparam name="variant" type="int">3</caplparam>
+      </capltestfunction>
+    </testcase>
+    <testcase ident="Perform Live Measurement" title="Perform Live Measurement: In contrast to Parallel and Serial Measurement, Live Measurement sends data on a cyclic basis. There is no pre-defiend measurement duration. Instead the measurement has to be stopped by the user." variants="LIVE"> 
+      <capltestfunction name="RuntimeMeasurement" title="">
+        <caplparam name="variant" type="int">1</caplparam>
+      </capltestfunction>
+    </testcase>
+  </testgroup>
+</testmodule>

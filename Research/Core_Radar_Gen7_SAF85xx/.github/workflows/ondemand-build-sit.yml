@@ -1,0 +1,27 @@
+# On-demand: build the SIT flavor (--Integration_Testing=true --Anglefinding_IT=true).
+
+name: "On-demand · Build SIT"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-sit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sit:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["sit"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

@@ -1,0 +1,145 @@
+# Reusable Unit Tests workflow for Gen7 SAF85xx.
+# Runs `bazelisk test` with the requested target/variant, captures the test log,
+# and uploads coverage/test artifacts. Set `coverage: true` to run a coverage
+# target instead of plain tests.
+
+name: Reusable Unit Tests (Gen7)
+
+on:
+  workflow_call:
+    inputs:
+      test-target:
+        description: 'Bazel test target (e.g. //:all_unit_tests or //coverage:report)'
+        required: false
+        type: string
+        default: '//:all_unit_tests'
+      variant:
+        description: 'Sensor variant'
+        required: false
+        type: string
+        default: 'flr7'
+      board:
+        description: 'Board revision'
+        required: false
+        type: string
+        default: 'A1'
+      micro-revision:
+        description: 'MCU stepping'
+        required: false
+        type: string
+        default: 'ES2'
+      matrix-json:
+        description: 'Matrix include array: [{"variant":"srr7p"},{"variant":"flr7"}]'
+        required: false
+        type: string
+        default: '[{"variant":"flr7"}]'
+      coverage:
+        description: 'When true, runs coverage targets and uploads HTML report'
+        required: false
+        type: boolean
+        default: false
+      pr-number:
+        description: 'PR number for failure-label management'
+        required: false
+        type: string
+        default: ''
+      container-image:
+        description: 'Container image'
+        required: false
+        type: string
+        default: 'containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593'
+      runner:
+        description: 'Runner label'
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+      bazel-extra-flags:
+        description: 'Extra Bazel flags'
+        required: false
+        type: string
+        default: '--color=yes --test_output=errors'
+      upload-artifact-name:
+        description: 'Default uploaded artifact name (matrix may override)'
+        required: false
+        type: string
+        default: 'gen7-unit-test-output'
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+
+jobs:
+  unit-test:
+    name: Unit Test (${{ matrix.variant || inputs.variant }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: ./.github/actions/configure-netrc
+        with: {netrc-content: "${{ secrets.ADVRADAR_NETRC_CONTENT }}"}
+
+      - uses: ./.github/actions/configure-bazel-cache
+        with: {arb-token: "${{ secrets.ADVRADAR_ARB_TOKEN }}"}
+
+      - id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Run unit tests
+        id: test
+        shell: bash
+        env:
+          VARIANT: ${{ matrix.variant || inputs.variant }}
+          BOARD: ${{ matrix.board || inputs.board }}
+          MICRO_REVISION: ${{ matrix.micro_revision || inputs.micro-revision }}
+          TARGET: ${{ matrix.test_target || inputs.test-target }}
+        run: |
+          set -euo pipefail
+          CMD="test"
+          if [ "${{ inputs.coverage }}" = "true" ]; then CMD="coverage"; fi
+          ${{ steps.bazelisk.outputs.bazelisk-path }} ${CMD} ${TARGET} \
+            --variant=${VARIANT} --board=${BOARD} --micro_revision=${MICRO_REVISION} \
+            ${{ matrix.bazel_extra_flags || inputs.bazel-extra-flags }} \
+            2>&1 | tee unit_test.log
+
+      - name: Summarise test results
+        if: always()
+        shell: bash
+        run: |
+          PASSED=$(grep -Eo '[0-9]+ test target' unit_test.log | tail -n1 || true)
+          FAILED=$(grep -Eo 'FAILED in [0-9]+' unit_test.log | wc -l || true)
+          {
+            echo "## Unit Test Results (${{ matrix.variant || inputs.variant }})"
+            echo ""
+            echo "- Status: ${{ steps.test.outcome }}"
+            echo "- Targets: ${PASSED:-n/a}"
+            echo "- Failed: ${FAILED:-0}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload test outputs
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.upload_artifact_name || inputs.upload-artifact-name }}-${{ matrix.variant || inputs.variant }}
+          path: |
+            unit_test.log
+            bazel-testlogs/**/test.xml
+            bazel-bin/coverage/report_html
+            bazel-bin/coverage/report.txt
+          if-no-files-found: warn

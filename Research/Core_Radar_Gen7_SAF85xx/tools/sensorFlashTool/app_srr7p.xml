@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<file>
+   <header Description="srr7p Sensor Flash Tool configuration"/>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x68B; RXID=0x60B; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR01_APP</Name>
+      <Description>Radar 1 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x68C; RXID=0x60C; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR02_APP</Name>
+      <Description>Radar 2 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6BB; RXID=0x63B; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR03_APP</Name>
+      <Description>Radar 3 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6BA; RXID=0x63A; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR04_APP</Name>
+      <Description>Radar 4 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6AB; RXID=0x62B; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR05_APP</Name>
+      <Description>Radar 5 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6BE; RXID=0x63E; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR06_APP</Name>
+      <Description>Radar 6 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6BF; RXID=0x63F; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR07_APP</Name>
+      <Description>Radar 7 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C0; RXID=0x640; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR08_APP</Name>
+      <Description>Radar 8 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C1; RXID=0x641; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR09_APP</Name>
+      <Description>Radar 9 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C2; RXID=0x642; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR10_APP</Name>
+      <Description>Radar 10 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C3; RXID=0x643; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR11_APP</Name>
+      <Description>Radar 11 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C4; RXID=0x644; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR12_APP</Name>
+      <Description>Radar 12 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C5; RXID=0x645; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR13_APP</Name>
+      <Description>Radar 13 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=CANFD; Vendor=VectorXL; UseFixedFrames=TRUE; UseExtendedCanFrames=FALSE; FuncTXID=0xF; TXID=0x6C6; RXID=0x646; ArbitrationBitRate=500000; TSEG1Abr=63; TSEG2Abr=16; SJWAbr=15; DataBitRate=2000000; TSEG1Dbr=14; TSEG2Dbr=5; SJWDbr=5; ApplicationName=SensorFlashTool; ChannelNumber=0</ChannelConfig0>
+      <Name>RDR14_APP</Name>
+      <Description>Radar 14 Application</Description>
+      <DownloadFile>../sbl/sbl.ptp</DownloadFile>
+      <DownloadFile>../srr7p/app.ptp</DownloadFile>
+   </Variant>
+</file>

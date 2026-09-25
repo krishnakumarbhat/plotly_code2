@@ -1,0 +1,27 @@
+# On-demand: build the SIT-CORE0 flavor (--enable_sit_testcases).
+
+name: "On-demand · Build SIT-CORE0"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-sit-core0-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sit-core0:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["sit-core0"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

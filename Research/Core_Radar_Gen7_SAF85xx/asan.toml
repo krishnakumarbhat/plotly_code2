@@ -1,0 +1,11 @@
+# Unit Test Bypasses
+[asan."*/test/*"]
+stack-buffer-overflow = 10
+global-buffer-overflow = 10
+SEGV = 10
+
+# 3rd-party bypasses
+[asan."*/*bbe_*/builds/*"]
+SEGV = 5
+global-buffer-overflow = 5
+stack-buffer-overflow = 5

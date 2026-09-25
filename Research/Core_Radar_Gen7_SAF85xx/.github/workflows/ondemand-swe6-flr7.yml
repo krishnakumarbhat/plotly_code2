@@ -1,0 +1,47 @@
+# On-demand: SWE6 FLR7 nightly test re-run.
+#
+# Companion to swe6-flr7.yml (which runs nightly at 18:30 UTC). Use this when
+# you need to re-run the FLR7 SWE6 suite against a specific branch ad-hoc
+# without waiting for the schedule.
+
+name: "On-demand · SWE6 FLR7"
+
+on:
+  workflow_dispatch:
+    inputs:
+      nightly-artifact-jfrog-path:
+        description: 'Optional override of the JFrog artifact path (default = nightly/latest/output_flr7.zip)'
+        required: false
+        type: string
+        default: 'core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/output_flr7.zip'
+      email-recipients:
+        description: 'Optional override of email recipients (semicolon-separated). Leave blank to use the default distribution list.'
+        required: false
+        type: string
+        default: ''
+
+concurrency:
+  group: ondemand-swe6-flr7-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  swe6-flr7:
+    name: SWE6 FLR7 (on-demand)
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: SWE6
+      family: FLR7
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/ondemand-swe6-flr7.yml
+      gen-version: Gen7v2
+      nightly-artifact-jfrog-path: ${{ inputs.nightly-artifact-jfrog-path }}
+      toml-file: FLR7_SQTp_pyproject_CICD.toml
+      ci-cd-environment: true
+      report-name-filter: GUI
+      jfrog-reports-subpath: SWE6/Reports
+      jfrog-latest-subpath: SWE6/latest_report
+      email-subject-prefix: 'Gen7v2 SWE6 (FLR7) On-demand'
+      email-recipients: ${{ inputs.email-recipients }}
+    secrets: inherit

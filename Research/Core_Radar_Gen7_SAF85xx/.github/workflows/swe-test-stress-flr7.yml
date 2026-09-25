@@ -1,0 +1,47 @@
+# SWE-Test - On-demand stress test with custom bench attributes
+#                and a custom GUI report filename pattern.
+#
+# Demonstrates:
+#   * bench-attributes  -> extra `-b KEY VALUE` pairs (Board=B0, Mars=B0, ...)
+#   * spc-file          -> --spc_file spc_5.s19
+#   * Custom report-subdir AND custom report-name-glob, because the stress
+#     framework decorates filenames with "STRESS" between family and date.
+#   * timeout-minutes   -> 720 (12h) — stress runs are long
+#
+# Trigger: manual only — stress runs are heavyweight and gated by the operator.
+
+name: SWE-Test - Stress FLR7 (custom paths)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stress-flr7:
+    name: Stress FLR7
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: STRESS
+      family: FLR7
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-stress-flr7.yml
+      nightly-artifact-jfrog-path: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/output_flr7.zip
+      toml-file: FLR7_SQTp_pyproject_CICD.toml
+      ci-cd-environment: true
+      test-folder: SWE6_Testing
+      markers: 'TestType=Stress'
+      flags: 'stress_mode long_run'
+      spc-file: spc_5.s19
+      # Each space- or comma-separated KEY=VALUE becomes a `-b KEY VALUE`.
+      bench-attributes: 'Variant=FLR7_V2 Board=B0 Mars=B0 StressDuration=8h'
+      # Stress reports get their own subtree and their own filename pattern.
+      report-subdir: Reports/Stress
+      report-name-glob: '*{family}*STRESS*{date}*.html'
+      jfrog-reports-subpath: STRESS/Reports
+      jfrog-latest-subpath: STRESS/latest_report
+      # 8h+ run — bump the default timeout.
+      timeout-minutes: 720
+      email-subject-prefix: 'Gen7v2 Stress (FLR7)'
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

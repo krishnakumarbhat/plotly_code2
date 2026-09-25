@@ -1,0 +1,191 @@
+# Reusable Bazel Build Workflow for Gen7 SAF85xx.
+#
+# Mirrors the Gen8 build.yml pattern: matrix fan-out by variant/board/micro_revision,
+# build-event-json capture, memory/flash step summary, artifact upload, and optional
+# PR failure-label management.
+#
+# Inputs default to the canonical Gen7 satellite target //:gen7 with variant=flr7,
+# board=A1, micro_revision=ES2 (see .bazelrc).
+
+name: Reusable Bazel Build (Gen7)
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: 'Bazel build target (e.g. //:gen7)'
+        required: false
+        type: string
+        default: '//:gen7'
+      variant:
+        description: 'Sensor variant: srr7e | srr7p | flr7 | flr7v3'
+        required: false
+        type: string
+        default: 'flr7'
+      board:
+        description: 'Board revision (e.g. A1)'
+        required: false
+        type: string
+        default: 'A1'
+      micro-revision:
+        description: 'MCU stepping (ES1 | ES2)'
+        required: false
+        type: string
+        default: 'ES2'
+      matrix-json:
+        description: 'JSON include array for matrix fan-out. Each item may set name/variant/board/micro_revision/upload_artifact_name/bazel_extra_flags/bazel_target/upload_artifact_path.'
+        required: false
+        type: string
+        default: '[{"name":"flr7-satellite","variant":"flr7"}]'
+      pr-number:
+        description: 'PR number for failure-label management'
+        required: false
+        type: string
+        default: ''
+      nightly:
+        description: 'When true, enables metrics generation/publish path'
+        required: false
+        type: boolean
+        default: false
+      container-image:
+        description: 'Container image'
+        required: false
+        type: string
+        default: 'containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593'
+      runner:
+        description: 'Runner label'
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+      bazel-extra-flags:
+        description: 'Extra Bazel flags appended to build'
+        required: false
+        type: string
+        default: '--color=yes --jobs=auto'
+      upload-artifact-name:
+        description: 'Default uploaded artifact name (matrix may override)'
+        required: false
+        type: string
+        default: 'gen7-build-output'
+      upload-artifact-path:
+        description: 'Artifact path to upload'
+        required: false
+        type: string
+        default: 'bazel-bin/outputs'
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+
+jobs:
+  build:
+    name: Build (${{ matrix.name || matrix.variant || inputs.variant }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Configure git safe.directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure netrc
+        uses: ./.github/actions/configure-netrc
+        with:
+          netrc-content: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+
+      - name: Configure bazel remote cache
+        uses: ./.github/actions/configure-bazel-cache
+        with:
+          arb-token: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+      - name: Setup bazelisk
+        id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Bazel build
+        id: build
+        shell: bash
+        env:
+          VARIANT: ${{ matrix.variant || inputs.variant }}
+          BOARD: ${{ matrix.board || inputs.board }}
+          MICRO_REVISION: ${{ matrix.micro_revision || inputs.micro-revision }}
+          BAZEL_TARGET: ${{ matrix.bazel_target || inputs.target }}
+        run: |
+          set -euo pipefail
+          ${{ steps.bazelisk.outputs.bazelisk-path }} build ${BAZEL_TARGET} \
+            --variant=${VARIANT} \
+            --board=${BOARD} \
+            --micro_revision=${MICRO_REVISION} \
+            ${{ matrix.bazel_extra_flags || inputs.bazel-extra-flags }} \
+            --build_event_json_file=build_event.json
+
+      - name: Report build results
+        if: always()
+        shell: bash
+        env:
+          VARIANT: ${{ matrix.variant || inputs.variant }}
+          BAZEL_TARGET: ${{ matrix.bazel_target || inputs.target }}
+          OUTPUT_DIR: ${{ matrix.upload_artifact_path || inputs.upload-artifact-path }}
+        run: |
+          set -uo pipefail
+          ICON="❌"; STATUS="Build Failed"
+          if [ "${{ steps.build.outcome }}" = "success" ]; then
+            ICON="✅"; STATUS="Build Successful"
+          fi
+
+          FLASH_PCT=""; MEM_PCT=""
+          if [ -d "${OUTPUT_DIR}" ]; then
+            FLASH_FILE=$(find "${OUTPUT_DIR}" -type f -name "flash_memory_stats.txt" 2>/dev/null | head -n1 || true)
+            MEM_FILE=$(find "${OUTPUT_DIR}" -type f -name "memoryStats.txt" 2>/dev/null | head -n1 || true)
+            [ -n "$FLASH_FILE" ] && FLASH_PCT=$(grep -m1 -Eo 'Flash utilization:[[:space:]]*[0-9.]+%' "$FLASH_FILE" | grep -Eo '[0-9.]+' || true)
+            [ -n "$MEM_FILE" ]   && MEM_PCT=$(grep -m1 -Eo '[0-9.]+%' "$MEM_FILE" | head -n1 | tr -d '%' || true)
+          fi
+
+          {
+            echo "${ICON} **${STATUS}**"
+            echo ""
+            echo "| Property | Value |"
+            echo "|----------|-------|"
+            echo "| Flavor | \`${{ matrix.name || matrix.variant || inputs.variant }}\` |"
+            echo "| Target | \`${BAZEL_TARGET}\` |"
+            echo "| Variant | \`${VARIANT}\` |"
+            echo "| Output | \`${OUTPUT_DIR}\` |"
+            echo "| Flash | ${FLASH_PCT:-n/a}% |"
+            echo "| Memory | ${MEM_PCT:-n/a}% |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build outputs
+        if: always() && steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.upload_artifact_name || inputs.upload-artifact-name }}
+          path: ${{ matrix.upload_artifact_path || inputs.upload-artifact-path }}
+          if-no-files-found: error
+
+      - name: Update failure label on PR
+        if: always() && inputs.pr-number != '' && steps.build.outcome != 'success' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL: build failed - ${{ matrix.name || matrix.variant || inputs.variant }}
+        shell: bash
+        run: |
+          set -e
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${{ inputs.pr-number }}/labels" \
+            -f "labels[]=${LABEL}" || echo "::warning::Failed to add label '${LABEL}'"

@@ -1,0 +1,22 @@
+name: Setup Bazelisk
+description: Validate the in-repo bazelisk binary and expose its path.
+
+outputs:
+  bazelisk-path:
+    description: 'Path to the bazelisk binary'
+    value: ${{ steps.setup.outputs.bazelisk_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Locate bazelisk
+      id: setup
+      shell: bash
+      run: |
+        if [ -f ./bazelisk ]; then
+          chmod +x ./bazelisk
+          echo "bazelisk_path=./bazelisk" >> "$GITHUB_OUTPUT"
+        else
+          echo "bazelisk binary not found in repo root." >&2
+          exit 1
+        fi

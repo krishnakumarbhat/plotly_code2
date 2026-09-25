@@ -1,0 +1,246 @@
+langVersion: v1
+name: core-radar-gen7-saf85xx-trigger-verification
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project Gen7v2 SAF85xx
+ui:
+  name: core-radar-gen7-saf85xx-trigger-verification
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/verification/$(config.pipeline.runNumber)
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: ""
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen7_SAF85xx
+  - name: branch-name
+    type: string
+    default: dev
+  - name: change-url
+    type: string
+    default: ""
+  - name: patchset-id
+    type: string
+    default: ""
+  # - name: wip
+  #   type: boolean
+  #   default: false
+  - name: gateway
+    type: string
+    default: perceptionGateway
+  - name: patchset-number
+    type: string
+    default: ""
+compute:
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+    params:
+      change-id: $(params.change-id)
+      branch: $(params.branch-name)
+      patchset-number: $(params.patchset-number)
+      project: $(params.project-url-encoded)
+    compute: linux-1c4g
+  - name: pre-gerrit-comment-vote
+    task: Utils/post-gerrit-comment-vote@0.0.2
+    compute: linux-1c4g
+    params:
+      gerrit-setup: {}
+      message: |
+        🔔 WRSD pipeline started. [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+      votes:
+        Verified: "0"
+  - parallelTasks:
+      - name: precommit
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+          target-pipeline: core-radar-gen7-saf85xx-precommit-check
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-precommit-check.yaml
+
+      - tasks:
+          - name: build
+            task: Utils/YGGDRASIL/custom-run@0.0.2
+            compute: linux-1c4g
+            params:
+              project-name: $(params.project-url-encoded)
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              parameters:
+                change-id: $(params.change-id)
+                commit-id: $(params.commit-id)
+                gerrit-url: $(params.gerrit-url)
+                project-url-encoded: $(params.project-url-encoded)
+                upload-path: $(params.upload-path)/buildFiles/
+                change-url: $(params.change-url)
+                patchset-id: $(params.patchset-id)
+                branch-name: $(params.branch-name)
+              target-pipeline: core-radar-gen7-saf85xx-build
+              yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-build.yaml
+
+          - name: hw-tests
+            task: Utils/YGGDRASIL/custom-run@0.0.2
+            compute: linux-1c4g
+            params:
+              project-name: $(params.project-url-encoded)
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              parameters:
+                change-id: $(params.change-id)
+                commit-id: $(params.commit-id)
+                gerrit-url: $(params.gerrit-url)
+                project-url-encoded: $(params.project-url-encoded)
+                upload-path: $(params.upload-path)/hw-tests/
+                download-path: $(params.upload-path)/buildFiles/
+                change-url: $(params.change-url)
+                patchset-id: $(params.patchset-id)
+                branch-name: $(params.branch-name)
+                testTimeout: "15m"
+                testDuration: "60"
+              target-pipeline: core-radar-gen7-saf85xx-hw-test
+              yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-hw-test.yaml
+
+      - name: unit-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/unitTests/
+            change-url: $(params.change-url)
+            patchset-id: $(params.patchset-id)
+            branch-name: $(params.branch-name)
+          target-pipeline: core-radar-gen7-saf85xx-unit-test
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-unit-test.yaml
+
+      - name: coverity-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/coverity/
+            change-url: $(params.change-url)
+            patchset-id: $(params.patchset-id)
+            branch-name: $(params.branch-name)
+          target-pipeline: core-radar-gen7-saf85xx-coverity
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-coverity.yaml
+
+      - name: dynamic-analysis
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/dynamicAnalysis/
+            change-url: $(params.change-url)
+            patchset-id: $(params.patchset-id)
+            branch-name: $(params.branch-name)
+          target-pipeline: core-radar-gen7-saf85xx-dynamic-analysis
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-dynamic-analysis.yaml
+
+      - name: itf
+        meta:
+          disabled: true
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/itf/
+            download-path: $(params.upload-path)/buildFiles/
+            change-url: $(params.change-url)
+            patchset-id: $(params.patchset-id)
+            branch-name: $(params.branch-name)
+          target-pipeline: core-radar-gen7-saf85xx-itf
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-itf.yaml
+
+      - name: fuzz-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            patchset-id: $(params.patchset-id)
+            merge-base-branch: $(params.branch-name)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            change-url: $(params.change-url)
+          target-pipeline: core-radar-gen7-saf85xx-fuzz-test
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-fuzz-test.yaml
+  - name: auto-submit-check
+    task: Utils/ADVRADAR/auto-submit@1.0.1
+    compute: linux-2c8g
+    params:
+      project-name: $(params.project-url-encoded)
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      comment: "True"
+  - name: continue-auto-submit
+    when:
+      - input: $(tasks.auto-submit-check.results.trigger-rebase)
+        operator: in
+        values:
+          - "true"
+    task: Utils/ADVRADAR/auto-rebase@1.0.0
+    compute: linux-2c8g
+    params:
+      gerrit-url: $(params.gerrit-url)
+      project-name: $(params.project-url-encoded)
+      branch: $(params.branch-name)
+
+timeout: 2h

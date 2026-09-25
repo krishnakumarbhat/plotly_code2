@@ -1,0 +1,115 @@
+# Reusable Coverity Workflow for Gen7 SAF85xx.
+# Matrix-driven: each item provides {variant, core, coverity_target, coverity_stream}.
+# Cores: m7, a53, bbe32 (see software/<core>/BUILD for *_cov + commit_defects targets).
+
+name: Reusable Coverity (Gen7)
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: 'JSON array; each item: variant, core, coverity_target, coverity_stream'
+        required: true
+        type: string
+      pr-number:
+        description: 'PR number for failure-label management'
+        required: false
+        type: string
+        default: ''
+      nightly:
+        description: 'When true, adds full commit flags'
+        required: false
+        type: boolean
+        default: false
+      container-image:
+        required: false
+        type: string
+        default: 'containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593'
+      runner:
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+      bazel-extra-flags:
+        required: false
+        type: string
+        default: '--jobs=auto'
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+      ADVRADAR_COVERITY_COMMITTER_AUTH: {required: true}
+
+jobs:
+  coverity:
+    name: Coverity (${{ matrix.variant }}-${{ matrix.core }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: ./.github/actions/configure-netrc
+        with: {netrc-content: "${{ secrets.ADVRADAR_NETRC_CONTENT }}"}
+
+      - uses: ./.github/actions/configure-bazel-cache
+        with: {arb-token: "${{ secrets.ADVRADAR_ARB_TOKEN }}"}
+
+      - uses: ./.github/actions/setup-coverity-auth
+        with: {coverity-auth: "${{ secrets.ADVRADAR_COVERITY_COMMITTER_AUTH }}"}
+
+      - id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Build Coverity intermediate dir
+        id: cov_build
+        shell: bash
+        continue-on-error: true
+        env:
+          VARIANT: ${{ matrix.variant }}
+          CORE: ${{ matrix.core }}
+        run: |
+          set -euo pipefail
+          # Map core -> *_cov target (Gen7 convention)
+          case "${CORE}" in
+            m7)    BUILD_TGT="//software/m7:windriver_v7_cov" ;;
+            a53)   BUILD_TGT="//software/a53:windriver_v7_cov" ;;
+            bbe32) BUILD_TGT="//software/bbe32:xtensa_bbe32_cov" ;;
+            *)     echo "Unknown core ${CORE}"; exit 1 ;;
+          esac
+          ${{ steps.bazelisk.outputs.bazelisk-path }} build ${BUILD_TGT} \
+            --config=${VARIANT} ${{ inputs.bazel-extra-flags }} 2>&1 | tee coverity_build.log
+
+      - name: Commit Coverity defects
+        id: cov_commit
+        if: steps.cov_build.outcome == 'success'
+        shell: bash
+        env:
+          AUTH_FILE: ${{ env.COVERITY_AUTH_FILE }}
+        run: |
+          set -euo pipefail
+          ${{ steps.bazelisk.outputs.bazelisk-path }} run ${{ matrix.coverity_target }} \
+            -- --auth-key-file="${AUTH_FILE}" --stream="${{ matrix.coverity_stream }}" \
+            2>&1 | tee -a coverity_build.log
+
+      - name: Upload Coverity log
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverity-${{ matrix.variant }}-${{ matrix.core }}
+          path: coverity_build.log
+          if-no-files-found: warn

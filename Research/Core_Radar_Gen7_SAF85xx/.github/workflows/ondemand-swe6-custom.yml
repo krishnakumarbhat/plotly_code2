@@ -1,0 +1,82 @@
+# On-demand: SWE6 custom mix.
+#
+# Tick any combination of FLR7 / SRR7p / Alignment and fire them in one go.
+# Each ticked family launches its dedicated on-demand workflow against this
+# branch.
+
+name: "On-demand · SWE6 (custom mix)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      flr7:
+        description: 'Run SWE6 FLR7'
+        type: boolean
+        default: true
+      srr7p:
+        description: 'Run SWE6 SRR7p'
+        type: boolean
+        default: false
+      alignment:
+        description: 'Run SWE6 Alignment (both variants)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ondemand-swe6-custom-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  validate:
+    name: Validate selection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require at least one family
+        env:
+          FLR7: ${{ inputs.flr7 }}
+          SRR7P: ${{ inputs.srr7p }}
+          ALN: ${{ inputs.alignment }}
+        run: |
+          set -e
+          if [ "$FLR7" != "true" ] && [ "$SRR7P" != "true" ] && [ "$ALN" != "true" ]; then
+            echo "::error::Pick at least one family (FLR7 / SRR7p / Alignment)."
+            exit 1
+          fi
+          echo "FLR7=$FLR7  SRR7p=$SRR7P  Alignment=$ALN"
+
+  fire-flr7:
+    needs: validate
+    if: inputs.flr7 == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ github.ref_name }}
+        run: gh workflow run ondemand-swe6-flr7.yml --ref "${REF}"
+
+  fire-srr7p:
+    needs: validate
+    if: inputs.srr7p == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ github.ref_name }}
+        run: gh workflow run ondemand-swe6-srr7p.yml --ref "${REF}"
+
+  fire-alignment:
+    needs: validate
+    if: inputs.alignment == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ github.ref_name }}
+        run: gh workflow run ondemand-swe6-alignment.yml --ref "${REF}" -f variant=all

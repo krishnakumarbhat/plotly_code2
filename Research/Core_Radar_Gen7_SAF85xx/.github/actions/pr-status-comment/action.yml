@@ -1,0 +1,118 @@
+name: PR Status Comment
+description: Post or update a sticky PR comment summarising CI job results and artifacts.
+
+inputs:
+  github-token:
+    description: 'GitHub token with pull-requests: write permission'
+    required: true
+  job-precommit:
+    description: 'Result of the Pre-commit job'
+    required: false
+    default: 'skipped'
+  job-dependency-scan:
+    description: 'Result of the Dependency Scan job'
+    required: false
+    default: 'skipped'
+  job-build:
+    description: 'Result of the Build job(s)'
+    required: false
+    default: 'skipped'
+  job-unit-test:
+    description: 'Result of the Unit Test job'
+    required: false
+    default: 'skipped'
+  job-coverity:
+    description: 'Result of the Coverity job'
+    required: false
+    default: 'skipped'
+  job-hw-test:
+    description: 'Result of the HW Smoke Test job'
+    required: false
+    default: 'skipped'
+  job-gerrit-sync:
+    description: 'Result of the Gerrit sync job'
+    required: false
+    default: 'skipped'
+
+runs:
+  using: composite
+  steps:
+    - name: Upsert PR status comment
+      uses: actions/github-script@v8
+      env:
+        JOB_PRECOMMIT: ${{ inputs.job-precommit }}
+        JOB_DEP_SCAN: ${{ inputs.job-dependency-scan }}
+        JOB_BUILD: ${{ inputs.job-build }}
+        JOB_UNIT_TEST: ${{ inputs.job-unit-test }}
+        JOB_COVERITY: ${{ inputs.job-coverity }}
+        JOB_HW_TEST: ${{ inputs.job-hw-test }}
+        JOB_GERRIT_SYNC: ${{ inputs.job-gerrit-sync }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          if (!context.payload.pull_request) {
+            core.info('Not a pull_request event. Skipping.');
+            return;
+          }
+
+          const marker = '<!-- pr-checks-status-comment -->';
+          const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const shortSha = (context.payload.pull_request.head?.sha || '').substring(0, 7);
+          const title = shortSha ? `## PR Checks Status (${shortSha})` : '## PR Checks Status';
+
+          const icon = (r) => ({
+            success:   '✅ success',
+            failure:   '❌ failure',
+            cancelled: '⚪ cancelled',
+            skipped:   '⏭️ skipped',
+          })[r] || `🟡 ${r || 'unknown'}`;
+
+          const rows = [
+            ['Pre-commit',       process.env.JOB_PRECOMMIT],
+            ['Dependency Scan',  process.env.JOB_DEP_SCAN],
+            ['Build',            process.env.JOB_BUILD],
+            ['Unit Test',        process.env.JOB_UNIT_TEST],
+            ['Coverity',         process.env.JOB_COVERITY],
+            ['HW Smoke Test',    process.env.JOB_HW_TEST],
+            ['Gerrit Sync',      process.env.JOB_GERRIT_SYNC],
+          ];
+
+          const table = rows.map(([l, r]) => `| ${l} | ${icon(r)} |`).join('\n');
+
+          let artifactSection = '_No artifacts._';
+          try {
+            const artifacts = await github.paginate(
+              github.rest.actions.listWorkflowRunArtifacts,
+              { owner: context.repo.owner, repo: context.repo.repo, run_id: context.runId, per_page: 100 }
+            );
+            if (artifacts.length) {
+              artifactSection = artifacts
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(a => `- [${a.name}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/artifacts/${a.id})`)
+                .join('\n');
+            }
+          } catch (e) {
+            core.warning(`Artifact list failed: ${e.message}`);
+          }
+
+          const body = [
+            marker, title, '',
+            '| Job | Result |', '|---|---|', table, '',
+            `Run: ${runUrl}`, '',
+            '<details><summary>Artifacts</summary>\n', artifactSection, '\n</details>',
+          ].join('\n');
+
+          const issue_number = context.payload.pull_request.number;
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner, repo: context.repo.repo, issue_number, per_page: 100,
+          });
+          const existing = comments.find(c => c.body && c.body.includes(marker));
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number, body,
+            });
+          }

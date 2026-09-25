@@ -1,0 +1,100 @@
+# Post-merge CI for Gen7 SAF85xx.
+#
+# Mirrors tools/CI/WRSD/core-radar-gen7-saf85xx-trigger-post-merge.yaml:
+#   - Auto-rebase open Gerrit changes against new dev tip
+#   - Run full Coverity sweep against the merged commit (commits defects)
+#   - Publish grafana metrics for post-merge pipeline-type
+#
+# Trigger: push to dev (i.e. merge landing).
+
+name: Post-Merge
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: post-merge-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  auto_rebase:
+    name: Auto-rebase open changes
+    runs-on: ubuntu-latest
+    permissions: {contents: read}
+    container:
+      image: containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Rebase open Gerrit changes against new dev tip
+        env:
+          GERRIT_URL: https://gitgerrit.asux.aptiv.com
+          PROJECT: Core_Radar_Gen7_SAF85xx
+          BRANCH: dev
+          GERRIT_USER: ${{ secrets.ADVRADAR_GERRIT_USERNAME }}
+          GERRIT_PASS: ${{ secrets.ADVRADAR_GERRIT_HTTP_PASSWORD }}
+        run: |
+          set -e
+          echo "Auto-rebase placeholder — replace with Utils/ADVRADAR/auto-rebase equivalent"
+          # TODO: invoke the Aptiv reusable rebase action once available in GHE.
+
+  coverity:
+    name: Post-Merge Coverity
+    uses: ./.github/workflows/coverity.yml
+    with:
+      nightly: true   # commit defects against the merged commit
+      matrix-json: |
+        [
+          {"variant":"flr7",  "core":"m7",    "coverity_target":"//software/m7:commit_defects_flr7",     "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_M7"},
+          {"variant":"flr7",  "core":"a53",   "coverity_target":"//software/a53:commit_defects_flr7",    "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_A53"},
+          {"variant":"flr7",  "core":"bbe32", "coverity_target":"//software/bbe32:commit_defects_flr7",  "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_BBE32"},
+          {"variant":"srr7p", "core":"m7",    "coverity_target":"//software/m7:commit_defects_srr7p",    "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_M7"},
+          {"variant":"srr7p", "core":"a53",   "coverity_target":"//software/a53:commit_defects_srr7p",   "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_A53"},
+          {"variant":"srr7p", "core":"bbe32", "coverity_target":"//software/bbe32:commit_defects_srr7p", "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_BBE32"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      ADVRADAR_COVERITY_COMMITTER_AUTH: ${{ secrets.ADVRADAR_COVERITY_COMMITTER_AUTH }}
+
+  grafana_publish:
+    name: Publish Grafana Metrics
+    needs: coverity
+    if: always()
+    runs-on: ubuntu-latest
+    container:
+      image: containers.aptv.ghe.com/devsecops/dashboard:1.0
+      credentials:
+        username: ${{ secrets.ADVRADAR_GHCR_USER }}
+        password: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+    permissions: {contents: read}
+    env:
+      PIPELINE_TYPE: post-merge
+      PROJECT_NAME: core-radar-gen7-saf85xx-trigger-post-merge
+      BRANCH_NAME: feature/sw-quality
+      REPO_NAME: 00000000_wrsd/metrics
+    steps:
+      - uses: actions/checkout@v5
+      - name: Write .netrc
+        run: |
+          printf '%s' "${{ secrets.ADVRADAR_NETRC_CONTENT }}" > "$HOME/.netrc"
+          chmod 600 "$HOME/.netrc"
+      - name: Publish metrics
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Publishing post-merge metrics to grafana dashboard repo ${REPO_NAME}@${BRANCH_NAME}"
+          # The WRSD task runs Utils/grafana-publish-metrics@1.0.0; here we invoke
+          # the underlying entry point from the dashboard image.
+          /usr/local/bin/publish_metrics.py \
+            --pipeline-type "${PIPELINE_TYPE}" \
+            --project-name "${PROJECT_NAME}" \
+            --branch "${BRANCH_NAME}" \
+            --repo "${REPO_NAME}" \
+            --patchset-revision dev

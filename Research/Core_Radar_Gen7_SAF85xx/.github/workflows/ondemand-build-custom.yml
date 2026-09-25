@@ -1,0 +1,81 @@
+# On-demand: pick any combination of flavors + variants from the Actions UI.
+#
+# This is the "kitchen sink" companion to the per-flavor ondemand-build-*.yml
+# wrappers. Use it when you need to fire several flavors at once without
+# kicking off the full nightly.
+
+name: "On-demand · Build (custom mix)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      satellite: {description: 'Build satellite', type: boolean, default: true}
+      sil: {description: 'Build SIL', type: boolean, default: false}
+      iso: {description: 'Build ISO', type: boolean, default: false}
+      vlan: {description: 'Build VLAN', type: boolean, default: false}
+      sqt: {description: 'Build SQT', type: boolean, default: false}
+      sit: {description: 'Build SIT', type: boolean, default: false}
+      sit-core0: {description: 'Build SIT-CORE0', type: boolean, default: false}
+      alignment: {description: 'Build Alignment', type: boolean, default: false}
+      variants:
+        description: 'Variants per selected flavor'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+          - '["flr7","srr7p","srr7e","flr7v3"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-custom-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  resolve-flavors:
+    name: Resolve flavor selection
+    runs-on: ubuntu-latest
+    outputs:
+      flavors: ${{ steps.build.outputs.flavors }}
+      count: ${{ steps.build.outputs.count }}
+    steps:
+      - id: build
+        shell: bash
+        env:
+          SAT: ${{ inputs.satellite }}
+          SIL: ${{ inputs.sil }}
+          ISO: ${{ inputs.iso }}
+          VLN: ${{ inputs.vlan }}
+          SQT: ${{ inputs.sqt }}
+          SIT: ${{ inputs.sit }}
+          SC0: ${{ inputs['sit-core0'] }}
+          ALN: ${{ inputs.alignment }}
+        run: |
+          set -euo pipefail
+          declare -a sel=()
+          [ "$SAT" = "true" ] && sel+=("satellite")
+          [ "$SIL" = "true" ] && sel+=("sil")
+          [ "$ISO" = "true" ] && sel+=("iso")
+          [ "$VLN" = "true" ] && sel+=("vlan")
+          [ "$SQT" = "true" ] && sel+=("sqt")
+          [ "$SIT" = "true" ] && sel+=("sit")
+          [ "$SC0" = "true" ] && sel+=("sit-core0")
+          [ "$ALN" = "true" ] && sel+=("alignment")
+          if [ ${#sel[@]} -eq 0 ]; then
+            echo "::error::No flavor selected. Tick at least one checkbox."
+            exit 1
+          fi
+          json=$(printf '"%s",' "${sel[@]}")
+          json="[${json%,}]"
+          echo "flavors=$json" >> "$GITHUB_OUTPUT"
+          echo "count=${#sel[@]}" >> "$GITHUB_OUTPUT"
+          echo "Selected: $json"
+
+  build:
+    name: Build (${{ needs.resolve-flavors.outputs.count }} flavors)
+    needs: resolve-flavors
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: ${{ needs.resolve-flavors.outputs.flavors }}
+      variants: ${{ inputs.variants }}
+    secrets: inherit

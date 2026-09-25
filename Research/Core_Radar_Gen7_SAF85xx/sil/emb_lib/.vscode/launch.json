@@ -1,0 +1,128 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/media/aptiv/DATADRIVE2/git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE/APT_SRR_RESIM",
+            "args": ["SIL_Engine_Config.xml", "SIL_Input_Logs.txt"],
+            "stopAtEntry": false,
+            "cwd": "/media/aptiv/DATADRIVE2/git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "/media/aptiv/DATADRIVE2/git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE",
+            }],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Add source path",
+                    "text": "directory ${workspaceFolder}"
+                },
+                {
+                    "description": "Add deps path",
+                    "text": "directory /media/aptiv/DATADRIVE2/.bazel_output_base/gen7v2_emb_lib"
+                },
+            ]
+        },
+        {
+            "name": "(fmu) Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/fmu/linux/SensorModelSilEngine",
+            "args": ["${workspaceFolder}/fmu/linux/VVEngineConfig.yaml", "${workspaceFolder}/fmu/linux/Flist_file.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/fmu/linux",
+            "environment": [{
+                "name": "LD_LIBRARY_PATH",
+                "value": "${workspaceFolder}/fmu/linux",
+            }],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Add source path",
+                    "text": "directory ${workspaceFolder}"
+                },
+                {
+                    "description": "Add deps path",
+                    "text": "directory /media/aptiv/DATADRIVE2/.bazel_output_base/gen7v2_emb_lib"
+                },
+            ]
+        },
+        {
+            "name": "(gdb) Windows",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "C:/Git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE/APT_SRR_RESIM.exe",
+            "args": ["C:/Git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE/SIL_Engine_Config.xml", "C:/Git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE/Input_json.json", "OUTPUT_PATH_TO_BE_PROVIDED"],
+            "stopAtEntry": false,
+            "cwd": "C:/Git/10028634_01_SRR_RESIM_Release/RESIM_SIL/GEN7_SIL_ENGINE",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "${workspaceFolder}/bazel-emb_lib/external/mingw/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(fmu) Windows",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/fmu/windows/SensorModelSilEngine.exe",
+            "args": ["${workspaceFolder}/fmu/windows/VVEngineConfig.yaml", "${workspaceFolder}/fmu/windows/Flist_file.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/fmu/windows",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "${workspaceFolder}/bazel-emb_lib/external/mingw/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

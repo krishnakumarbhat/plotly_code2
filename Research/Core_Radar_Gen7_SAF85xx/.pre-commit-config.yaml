@@ -1,0 +1,158 @@
+repos:
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v13.0.1
+    hooks:
+      - id: clang-format
+        name: format C code
+        types_or: [c++, c]
+        additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+        exclude: |
+          (?x)^(
+            software/m7/mcal/app/output/.*                             | # MCAL Generated files
+            software/m7/mmic/drivers/RFE_driver/.*                     | # NXP MMIC API Files
+            software/m7/autosar/config/Appl/GenData/.*                 | # VECTOR Autosar folder
+            software/m7/autosar/input/.*                               | # VECTOR Autosar folder
+            software/m7/autosar/config/Config/.*                       | # VECTOR Autosar folder
+            software/m7/mmic/drivers/ppe_csi2/csi2_driver/.*           | # NXP CSI2 driver Files
+          )$
+  - repo: https://github.com/Warchant/pre-commit-buildifier
+    rev: 0.0.2
+    hooks:
+      - id: buildifier
+  # Not currently working on Linux -
+  # some dependency is required that is not present in our Docker image.
+  # - repo: https://github.com/DavidAnson/markdownlint-cli2
+  #   rev: v0.6.0
+  #   hooks:
+  #   - id: markdownlint-cli2-fix
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-added-large-files
+        name: "Prevent Binary Files"
+        alias: forbid-binary
+        types: ['binary']
+        exclude_types: ['image']
+        args: ['--maxkb=0']
+        exclude: |
+          (?x)^(
+              bazelisk.exe                                      | # Windows Bazelisk
+              bazelisk                                          | # Linux Bazelisk
+              tools/spt_assembler/bin/.*                        | # SPT Assembler binaries
+              software/m7/mmic/drivers/RFE_driver/ES1/bin/.*    | # RFE firmware binaries
+              software/m7/mmic/drivers/RFE_driver/ES2/bin/.*    | # RFE firmware binaries
+              software/m7/autosar/config/Appl/GenData/.*        | # VECTOR Autosar folder
+              software/m7/autosar/input/.*                      | # VECTOR Autosar folder
+              software/m7/autosar/config/Config/.*              | # VECTOR Autosar folder
+              tools/python/STEP0_Install_Python-3_10_6.exe      | # Required Python Exe File
+              tools/tools_tkey/CANoe_Configuration_V2_R8/Radars_DLL/LRR/SeedKey_LRR.dll         | # dll File for 0x27 service
+              tools/tools_tkey/CANoe_Configuration_V2_R8/Radars_DLL/SRR_FL/SeedKey_SRR_FL.dll   | # dll File for 0x27 service
+              tools/tools_tkey/CANoe_Configuration_V2_R8/Radars_DLL/SRR_FR/SeedKey_SRR_FR.dll   | # dll File for 0x27 service
+              tools/tools_tkey/CANoe_Configuration_V2_R8/Radars_DLL/SRR_RL/SeedKey_SRR_RL.dll   | # dll File for 0x27 service
+              tools/tools_tkey/CANoe_Configuration_V2_R8/Radars_DLL/SRR_RR/SeedKey_SRR_RR.dll   | # dll File for 0x27 service
+          )$
+      - id: check-merge-conflict
+        additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+      - id: end-of-file-fixer
+        additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+        # types_or: [c++, c]
+        exclude: |
+          (?x)^(
+              .*html                                                    | # HTML files
+              .*url                                                     | # URL files
+              software/m7/mcal/app/systemmod/.*arxml                    | # MCAL System ARXML files
+              software/m7/mcal/app/output/.*                            | # MCAL Generated files
+              software/m7/mcal/app/.prefs/.*                            | # MCAL .prefs directory
+              software/m7/mmic/drivers/RFE_driver/.*                    | # NXP MMIC API Files
+              software/m7/autosar/config/Appl/GenData/.*                | # VECTOR Autosar folder
+              software/m7/autosar/input/.*                              | # VECTOR Autosar folder
+              software/m7/autosar/config/Config/.*                      | # VECTOR Autosar folder
+              software/m7/mmic/drivers/ppe_csi2/csi2_driver/.*          | # NXP CSI2 driver Files
+          )$
+      - id: trailing-whitespace
+        additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+        # types_or: [c++, c]
+        exclude: |
+          (?x)^(
+              .*html                                                    | # HTML files
+              .*url                                                     | # URL files
+              software/m7/mcal/app/config/.*xdm                         | # MCAL Xdm files
+              software/m7/mcal/app/output/.*                            | # MCAL Generated files
+              software/m7/mcal/app/.prefs/.*                            | # MCAL .prefs directory
+              software/m7/mmic/drivers/RFE_driver/.*                    | # NXP MMIC API Files
+              software/m7/autosar/config/Appl/GenData/.*                | # VECTOR Autosar folder
+              software/m7/autosar/input/.*                              | # VECTOR Autosar folder
+              software/m7/autosar/config/Config/.*                      | # VECTOR Autosar folder
+              software/m7/mmic/drivers/ppe_csi2/csi2_driver/.*          | # NXP CSI2 driver Files
+          )$
+      - id: check-shebang-scripts-are-executable
+        additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+        # types_or: [c++, c]
+        exclude: |
+          (?x)^(
+          )$
+      - id: check-executables-have-shebangs
+        additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+        # types_or: [c++, c]
+        exclude: |
+          (?x)^(
+          )$
+  - repo: https://github.com/psf/black
+    rev: 22.8.0
+    hooks:
+      - id: black
+        name: "black: format python"
+        args: [--config, tools/preCommit/pyproject.toml, -t, py310]
+        exclude: |
+          (?x)^(
+          )$
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        name: "flake8: lint python"
+        args: [--config, tools/preCommit/f8_python.ini]
+        types: [python]
+        additional_dependencies: [flake8-docstrings, flake8-bugbear, flake8-builtins, flake8-comprehensions]
+        exclude: |
+          (?x)^(
+            .*__init__.py                                   | # Ignore __init__.py files
+          )$
+      - id: flake8
+        name: "flake8: lint bazel"
+        args: [--config, tools/preCommit/f8_bazel.ini]
+        types: [bazel]
+        additional_dependencies: [flake8-docstrings]
+  - repo: local
+    hooks:
+      - id: mh_style
+        name: Format Matlab Code
+        entry: mh_style
+        args: [--process-slx, --fix]
+        files: ^(.*\.(m|slx))$
+        language: python
+        additional_dependencies: [miss_hit_core]
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.10.0-1
+    hooks:
+      - id: shfmt  # prebuilt upstream executable
+        name: Format .sh Shell Scripts
+        args: ["-w", "-i", "2", "-bn", "-ci"]  # roughly google styleguide
+
+  # Formats YAML files
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.15.0
+    hooks:
+      - id: pretty-format-yaml
+        args: [--autofix, --indent, '2', --offset, '2', --preserve-quotes]
+  # Validates YAML syntax
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+  # Lints YAML files for style and best practices
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.1
+    hooks:
+      - id: yamllint
+        args: [--strict, --format, parsable, --config-data, "{rules: {document-start: {present: false}, line-length: {max: 256, level: warning}}}"]

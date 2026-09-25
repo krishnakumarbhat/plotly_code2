@@ -1,0 +1,8 @@
+SWC_PLT_Appl_PlatformTime
+SWC_PLT_Appl_ModeManager
+SWC_PLT_CDD_WdgHandler
+SWC_PLT_Appl_FaultMgr
+SWC_PLT_Appl_TimeSync
+SWC_PLT_CDD_FailSafe
+SWC_PLT_Appl_IoHwAb
+SWC_PLT_Appl_Diag

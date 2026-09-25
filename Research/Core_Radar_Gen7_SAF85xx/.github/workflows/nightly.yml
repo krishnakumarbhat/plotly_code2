@@ -1,0 +1,83 @@
+# Nightly CI for Gen7 SAF85xx.
+# Builds every shipping variant, runs full unit tests with coverage, runs full
+# Coverity, then hands off to the WRSD integration workflow to publish nightly
+# artifacts and trigger downstream WRSD test stages.
+
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 02:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+jobs:
+  # Mirrors WRSD trigger-nightly run-all-builds=true: every flavor in parallel.
+  build:
+    name: Nightly Build (all flavors)
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["satellite","sil","iso","vlan","sqt","sit","sit-core0","alignment"]'
+      variants: '["flr7","srr7p"]'
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  unit_test:
+    name: Nightly Unit Test
+    uses: ./.github/workflows/unit-tests.yml
+    with:
+      test-target: //coverage:report
+      coverage: true
+      matrix-json: |
+        [
+          {"variant":"flr7"},
+          {"variant":"srr7p"},
+          {"variant":"srr7e"},
+          {"variant":"flr7v3"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  coverity:
+    name: Nightly Coverity
+    uses: ./.github/workflows/coverity.yml
+    with:
+      nightly: true
+      matrix-json: |
+        [
+          {"variant":"flr7",  "core":"m7",    "coverity_target":"//software/m7:commit_defects_flr7",     "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_M7"},
+          {"variant":"flr7",  "core":"a53",   "coverity_target":"//software/a53:commit_defects_flr7",    "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_A53"},
+          {"variant":"flr7",  "core":"bbe32", "coverity_target":"//software/bbe32:commit_defects_flr7",  "coverity_stream":"Core_Radar_Gen7_SAF85xx_FLR7_BBE32"},
+          {"variant":"srr7p", "core":"m7",    "coverity_target":"//software/m7:commit_defects_srr7p",    "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_M7"},
+          {"variant":"srr7p", "core":"a53",   "coverity_target":"//software/a53:commit_defects_srr7p",   "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_A53"},
+          {"variant":"srr7p", "core":"bbe32", "coverity_target":"//software/bbe32:commit_defects_srr7p", "coverity_stream":"Core_Radar_Gen7_SAF85xx_SRR7P_BBE32"}
+        ]
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      ADVRADAR_COVERITY_COMMITTER_AUTH: ${{ secrets.ADVRADAR_COVERITY_COMMITTER_AUTH }}
+
+  wrsd_handoff:
+    name: WRSD Nightly Handoff
+    needs: [build, unit_test]
+    if: success()
+    uses: ./.github/workflows/wrsd-integration.yml
+    with:
+      pipeline: nightly
+      branch: ${{ github.ref_name }}
+      commit-sha: ${{ github.sha }}
+    secrets:
+      ADVRADAR_SID_USERNAME: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      ADVRADAR_JFROG_API_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+      ADVRADAR_WRSD_TRIGGER_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}

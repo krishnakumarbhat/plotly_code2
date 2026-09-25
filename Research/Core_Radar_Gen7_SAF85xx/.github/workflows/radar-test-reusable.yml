@@ -1,0 +1,1020 @@
+# Reusable Radar Test Workflow (Gen7 SAF85xx)
+#
+# Generic across job-types (SWE6 / SWE6_Alignment / SWE5 / SQT / SIT / future)
+# and variant families (FLR7 / SRR7p / future). Ported from the Gen8
+# radar-test-reusable.yml and adapted to Gen7's in-tree Python framework at
+# tools\python\Core_Radar_Gen7_SAF85xx_Python_Framework.
+#
+# Replaces the previous swe6.yml. Every literal that used to be "SWE6" is now
+# driven by inputs.job-type (concurrency group, JFrog build name, summary
+# titles, Platform-Health --job_type, …). The Run_Test_Cases.bat command line
+# is composed at runtime from typed inputs (markers, flags, bench-attributes,
+# python-files/functions, …); the legacy free-form test-cmd-args is still
+# supported as an escape hatch.
+#
+# Stages: Setup -> Repo init -> Download build (JFrog) -> TOML update
+# (optional) -> Rotation pick (optional) -> Test -> JFrog upload ->
+# Platform-Health push -> Summary + pie charts -> Notification -> Cleanup.
+
+name: Reusable Radar Test Workflow (Gen7)
+
+on:
+  workflow_call:
+    inputs:
+      # ---- Identity ----
+      job-type:
+        description: 'Job type label (SWE6, SWE6_Alignment, SWE5, SQT, SIT, …). Drives concurrency group, JFrog build name, Platform-Health --job_type, summary filename, and UI labels.'
+        required: false
+        type: string
+        default: 'SWE6'
+      family:
+        description: 'Variant family (FLR7 | SRR7p | …). Used for report filename matching, JFrog paths, and labels.'
+        required: true
+        type: string
+      gen-version:
+        description: 'Generation label forwarded to Platform-Health scripts (--gen_version).'
+        required: false
+        type: string
+        default: 'Gen7v2'
+      job-url:
+        description: 'URL displayed in the email/Teams footer linking back to this workflow.'
+        required: false
+        type: string
+        default: ''
+
+      # ---- Build artifact source (JFrog) ----
+      nightly-artifact-jfrog-path:
+        description: 'JFrog path to the nightly per-family build zip.'
+        required: true
+        type: string
+      nightly-artifact-zip-name:
+        description: 'Local filename of the downloaded artifact. Empty -> output_<family>.zip. Alignment overrides with alignment-outputs.zip.'
+        required: false
+        type: string
+        default: ''
+      artifactory-base-repo:
+        description: 'JFrog base repo for report uploads.'
+        required: false
+        type: string
+        default: 'core_radar-aptiv-00000000-gen7_saf85xx-local'
+      jfrog-url:
+        description: 'JFrog server URL.'
+        required: false
+        type: string
+        default: 'https://jfrog.asux.aptiv.com'
+
+      # ---- Test framework knobs ----
+      toml-file:
+        description: 'Optional pyproject TOML under utils/pyproject_updater. Empty -> skip TOML update step.'
+        required: false
+        type: string
+        default: ''
+      test-folder:
+        description: 'Subfolder under testcases/GEN7_V2_Test_Cases/. Empty -> framework defaults from pyproject.toml.'
+        required: false
+        type: string
+        default: ''
+      markers:
+        description: 'Value passed to -m / --mark. Supports the framework`s flexible format (e.g. `Module=ALIGNMENT_Module`, `WI=[WI-1, WI-2]`).'
+        required: false
+        type: string
+        default: ''
+      flags:
+        description: 'Space-separated tokens emitted as repeated --flag <token> arguments.'
+        required: false
+        type: string
+        default: ''
+      bench-attributes:
+        description: 'Space- or comma-separated KEY=VALUE pairs emitted as repeated -b KEY VALUE arguments (e.g. `Variant=FLR7_V2 Board=A1`).'
+        required: false
+        type: string
+        default: ''
+      python-files:
+        description: 'Space-separated patterns passed to --python-files (overrides python_files in pyproject.toml).'
+        required: false
+        type: string
+        default: ''
+      python-functions:
+        description: 'Space-separated patterns passed to --python-functions (overrides python_functions in pyproject.toml).'
+        required: false
+        type: string
+        default: ''
+      spc-file:
+        description: 'SPC file to flash (e.g. `spc_5.s19`). Empty -> framework auto-detect.'
+        required: false
+        type: string
+        default: ''
+      project-name:
+        description: 'Override --project_name in reports.'
+        required: false
+        type: string
+        default: ''
+      team-name:
+        description: 'Override --team_name in reports.'
+        required: false
+        type: string
+        default: ''
+      ci-cd-environment:
+        description: 'Pass --ci_cd_environment (headless mode). Defaults true for CI usage.'
+        required: false
+        type: boolean
+        default: true
+      no-reports:
+        description: 'Pass --no_reports to skip report generation.'
+        required: false
+        type: boolean
+        default: false
+      gui-html:
+        description: 'Pass --gui_html to force the GUI_HTML enhanced report regardless of pyproject.toml.'
+        required: false
+        type: boolean
+        default: false
+      extra-args:
+        description: 'Free-form extra arguments appended to Run_Test_Cases.bat (escape hatch).'
+        required: false
+        type: string
+        default: ''
+      test-cmd-args:
+        description: >-
+          [Deprecated] Full pre-baked Run_Test_Cases.bat argument string.
+          Prefer the typed inputs above. When set, suppresses
+          ci-cd-environment / markers / flags / bench-attributes /
+          python-files / python-functions / spc-file / project-name /
+          team-name / no-reports / gui-html composition and is used verbatim.
+        required: false
+        type: string
+        default: ''
+
+      # ---- Rotation (daily variant+XCP picker, optional) ----
+      test-matrix-json:
+        description: 'Optional JSON array of {variant, xcp} entries. When non-empty, today`s entry is appended to the command as `-b Variant <variant> --xcp_protocol <xcp>`.'
+        required: false
+        type: string
+        default: '[]'
+      rotation-strategy:
+        description: '`fixed` (use matrix[0]) or `daily` (IST day-of-year picks one entry). Ignored when test-matrix-json is empty.'
+        required: false
+        type: string
+        default: 'fixed'
+
+      # ---- Report discovery ----
+      report-subdir:
+        description: 'Reports sub-directory under the framework root. Default `Reports/SWE6` (the framework writes here regardless of marker).'
+        required: false
+        type: string
+        default: 'Reports/SWE6'
+      report-name-glob:
+        description: 'Filename glob to locate the GUI HTML report. `{family}` and `{date}` substituted (date = MMM_dd_yyyy). Default matches the historical Gen7 pattern.'
+        required: false
+        type: string
+        default: '*{family}*{date}*.html'
+      report-name-filter:
+        description: 'Regex applied to candidate HTML filenames after the glob (e.g. `GUI`, `SWE6_Alignment_test`). Default `GUI`.'
+        required: false
+        type: string
+        default: 'GUI'
+
+      # ---- JFrog upload destinations (family is appended automatically) ----
+      jfrog-reports-subpath:
+        description: 'JFrog path under <repo>/<branch>/ for the per-run report upload (no leading/trailing slash).'
+        required: false
+        type: string
+        default: 'SWE6/Reports'
+      jfrog-latest-subpath:
+        description: 'JFrog path under <repo>/dev/ for the static-latest report upload (no leading/trailing slash). Family (lowercased) is appended.'
+        required: false
+        type: string
+        default: 'SWE6/latest_report'
+
+      # ---- Platform-Health ----
+      ph-mode:
+        description: 'Platform-Health push mode. `gui` -> sendSwe6GuiResultsToPH + sendNewFailuresToPH (default SWE6 nightly). `alignment` -> single sendJobResultsToPH call, no delta failures.'
+        required: false
+        type: string
+        default: 'gui'
+      grafana-dashboard-url:
+        description: 'Grafana dashboard URL shown in the email.'
+        required: false
+        type: string
+        default: 'https://platformhealth.389177498442.awsaptiv.com/grafana/d/ee3aiw0q58vswe/core-radar-gen7v2-saf85xx?orgId=1'
+
+      # ---- Runner / dependencies ----
+      runner-labels:
+        description: 'Self-hosted Windows bench labels (JSON array).'
+        required: false
+        type: string
+        default: '["self-hosted","windows","GEN7_V2_FRAMEWORK"]'
+      timeout-minutes:
+        description: 'Job timeout in minutes.'
+        required: false
+        type: number
+        default: 360
+      extra-pip-packages:
+        description: 'Space-separated pip packages installed after STEP4 (matplotlib/pandas only needed for email pie charts).'
+        required: false
+        type: string
+        default: 'beautifulsoup4 psycopg2 matplotlib pandas'
+
+      # ---- Notification ----
+      email-recipients:
+        description: 'Semicolon-separated recipients for the Power Automate notification.'
+        required: false
+        type: string
+        default: ''
+      email-subject-prefix:
+        description: 'Subject prefix used in the Power Automate notification (run number + short SHA appended).'
+        required: false
+        type: string
+        default: ''
+
+    secrets:
+      ADVRADAR_SID_USERNAME: {required: false}
+      ADVRADAR_JFROG_API_KEY: {required: false}
+      # NOTE: secret name preserved for backwards compatibility — same webhook
+      # is reused for SWE5 / Alignment / future job-types.
+      ADVRADAR_SWE6_TEAMS_WEBHOOK_URL: {required: false}
+
+# Concurrency: one in-flight run per (job-type, family). Different job-types
+# on the same family aren't blocked here — bench-level serialization is handled
+# implicitly by the self-hosted runner being single-job-at-a-time.
+concurrency:
+  group: radar-test-${{ inputs.job-type }}-${{ inputs.family }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: ${{ inputs.job-type }} (${{ inputs.family }})
+    runs-on: ${{ fromJson(inputs.runner-labels) }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    permissions: {contents: read}
+    defaults:
+      run: {shell: cmd}
+    env:
+      JOB_TYPE: ${{ inputs.job-type }}
+      FAMILY: ${{ inputs.family }}
+      GEN_VERSION: ${{ inputs.gen-version }}
+      JFROG_URL: ${{ inputs.jfrog-url }}
+      ARTIFACTORY_BASE_REPO: ${{ inputs.artifactory-base-repo }}
+      JFROG_BUILD_NAME: ${{ inputs.job-type }}_${{ inputs.family }}_${{ github.run_number }}
+      JFROG_BUILD_NUMBER: ${{ github.run_number }}
+      FULL_COMMIT_HASH: ${{ github.sha }}
+      GRAFANA_DASHBOARD: ${{ inputs.grafana-dashboard-url }}
+      JOB_URL: ${{ inputs.job-url }}
+      TOML_FILE: ${{ inputs.toml-file }}
+      NIGHTLY_ZIP_URL: ${{ inputs.nightly-artifact-jfrog-path }}
+      NIGHTLY_ZIP_NAME: ${{ inputs.nightly-artifact-zip-name }}
+      REPORT_SUBDIR: ${{ inputs.report-subdir }}
+      REPORT_NAME_FILTER: ${{ inputs.report-name-filter }}
+      JFROG_REPORTS_SUBPATH: ${{ inputs.jfrog-reports-subpath }}
+      JFROG_LATEST_SUBPATH: ${{ inputs.jfrog-latest-subpath }}
+      EXTRA_PIP_PACKAGES: ${{ inputs.extra-pip-packages }}
+      PH_MODE: ${{ inputs.ph-mode }}
+
+    steps:
+      # -------- Setup --------
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Compute artifactory upload path + short SHA
+        shell: powershell
+        run: |
+          $branch = "${{ github.ref_name }}"
+          "ARTIFACTORY_UPLOAD_PATH=$env:ARTIFACTORY_BASE_REPO/$branch" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          $short = "${{ github.sha }}".Substring(0,7)
+          "SHORT_COMMIT_HASH=$short" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      # Detect optional secrets so later steps can gate themselves.
+      - name: Detect secret availability
+        id: gates
+        shell: powershell
+        env:
+          _JFROG_USER: ${{ secrets.ADVRADAR_SID_USERNAME }}
+          _JFROG_API_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+          _TEAMS_URL: ${{ secrets.ADVRADAR_SWE6_TEAMS_WEBHOOK_URL }}
+        run: |
+          $haveJfrog = [bool]$env:_JFROG_USER -and [bool]$env:_JFROG_API_KEY
+          $haveTeams = [bool]$env:_TEAMS_URL
+          "have_jfrog=$($haveJfrog.ToString().ToLower())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "have_teams=$($haveTeams.ToString().ToLower())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # -------- Repo init + Python framework setup --------
+      # STEP1_REPO_INIT.bat cd's to the repo root internally and ends with a no-op `pause` in CI.
+      # Invoke each subsequent script by its full path so we don't depend on shell cwd persistence.
+      - name: Repo init & Python framework setup
+        run: |
+          echo ---- Running Precommit ----
+          call tools\python\STEP1_REPO_INIT.bat || exit /b 1
+          echo ---- Initiate Python Repo ----
+          call tools\python\STEP3_Initiate_Python_Automation_Repo.bat || exit /b 1
+          echo ---- Downloading Dependencies ----
+          call tools\python\STEP4_Python_FM_Dependency_Installer.bat || exit /b 1
+          if not "%EXTRA_PIP_PACKAGES%"=="" python -m pip install %EXTRA_PIP_PACKAGES% || exit /b 1
+
+      # -------- Configure JFrog CLI --------
+      - name: Configure JFrog CLI
+        if: steps.gates.outputs.have_jfrog == 'true'
+        env:
+          JFROG_USER: ${{ secrets.ADVRADAR_SID_USERNAME }}
+          JFROG_API_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+        run: |
+          jf c add default --url=%JFROG_URL% --user=%JFROG_USER% --password=%JFROG_API_KEY% --interactive=false --overwrite || exit /b 1
+
+      # -------- Download nightly build artifact from JFrog --------
+      - name: Download nightly build artifact from JFrog
+        run: |
+          set ZIP_NAME=%NIGHTLY_ZIP_NAME%
+          if "%ZIP_NAME%"=="" set ZIP_NAME=output_%FAMILY%.zip
+          if exist %ZIP_NAME% del /f /q %ZIP_NAME%
+          jf rt download "%NIGHTLY_ZIP_URL%" "." --flat=true || exit /b 1
+          if exist bazel-bin\outputs rmdir /s /q bazel-bin\outputs
+          mkdir bazel-bin\outputs
+          tar -xf %ZIP_NAME% -C bazel-bin\outputs || exit /b 1
+          dir bazel-bin\outputs
+
+      # -------- Update TOML pyproject (only when caller pinned a file) --------
+      - name: Update TOML pyproject
+        if: inputs.toml-file != ''
+        working-directory: tools\python\Core_Radar_Gen7_SAF85xx_Python_Framework\utils\pyproject_updater
+        run: |
+          python update_TOML.py .\%TOML_FILE% || exit /b 1
+
+      # -------- Rotation pick (optional; only when caller provides a matrix) --------
+      - name: Select today's variant + XCP from rotation
+        id: rotation
+        if: inputs.test-matrix-json != '[]' && inputs.test-matrix-json != ''
+        shell: powershell
+        env:
+          MATRIX_JSON: ${{ inputs.test-matrix-json }}
+          ROTATION: ${{ inputs.rotation-strategy }}
+        run: |
+          $matrix = $env:MATRIX_JSON | ConvertFrom-Json
+          if ($matrix.Count -eq 0) { Write-Warning "test-matrix-json parsed as empty; skipping rotation."; return }
+          if ($env:ROTATION -ieq 'daily') {
+            $istNow = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, "India Standard Time")
+            $idx = $istNow.DayOfYear % $matrix.Count
+            $today = $matrix[$idx]
+            Write-Host "Rotation=daily IST day $($istNow.DayOfYear) (index $idx / $($matrix.Count)) -> $($today.variant) [$($today.xcp)]"
+          } else {
+            $today = $matrix[0]
+            Write-Host "Rotation=fixed -> $($today.variant) [$($today.xcp)]"
+          }
+          "TODAY_VARIANT=$($today.variant)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "TODAY_XCP=$($today.xcp)"         | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "today_variant=$($today.variant)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "today_xcp=$($today.xcp)"         | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # -------- Test --------
+      # When `test-cmd-args` is set (legacy callers), it is used verbatim and ALL
+      # typed inputs are ignored. Otherwise the command line is composed from
+      # the typed inputs; empty values are skipped.
+      - name: Run test cases
+        id: test
+        continue-on-error: true
+        working-directory: tools\python\Core_Radar_Gen7_SAF85xx_Python_Framework
+        env:
+          LEGACY_CMD_ARGS: ${{ inputs.test-cmd-args }}
+          CI_CD_ENV: ${{ inputs.ci-cd-environment }}
+          TEST_FOLDER: ${{ inputs.test-folder }}
+          SPC_FILE: ${{ inputs.spc-file }}
+          PROJECT_NAME: ${{ inputs.project-name }}
+          TEAM_NAME: ${{ inputs.team-name }}
+          MARKERS: ${{ inputs.markers }}
+          EXTRA_ARGS: ${{ inputs.extra-args }}
+          NO_REPORTS: ${{ inputs.no-reports }}
+          GUI_HTML: ${{ inputs.gui-html }}
+          FLAGS: ${{ inputs.flags }}
+          PYTHON_FILES: ${{ inputs.python-files }}
+          PYTHON_FUNCTIONS: ${{ inputs.python-functions }}
+          BENCH_ATTRIBUTES: ${{ inputs.bench-attributes }}
+        run: |
+          @echo off
+          setlocal enabledelayedexpansion
+          echo ------- Running %JOB_TYPE% tests for %FAMILY% -------
+          if defined LEGACY_CMD_ARGS if not "%LEGACY_CMD_ARGS%"=="" (
+            echo [legacy] Run_Test_Cases.bat %LEGACY_CMD_ARGS%
+            call Run_Test_Cases.bat %LEGACY_CMD_ARGS%
+            exit /b !ERRORLEVEL!
+          )
+          set "CMD=Run_Test_Cases.bat"
+          if /i "%CI_CD_ENV%"=="true"     set "CMD=%CMD% --ci_cd_environment"
+          if defined TEST_FOLDER  if not "%TEST_FOLDER%"==""  set "CMD=%CMD% --tests_dirs .\testcases\GEN7_V2_Test_Cases\%TEST_FOLDER%\"
+          if defined SPC_FILE     if not "%SPC_FILE%"==""     set "CMD=%CMD% --spc_file %SPC_FILE%"
+          if defined PROJECT_NAME if not "%PROJECT_NAME%"=="" set "CMD=%CMD% --project_name %PROJECT_NAME%"
+          if defined TEAM_NAME    if not "%TEAM_NAME%"==""    set "CMD=%CMD% --team_name %TEAM_NAME%"
+          if defined MARKERS      if not "%MARKERS%"==""      set "CMD=%CMD% -m %MARKERS%"
+          if /i "%NO_REPORTS%"=="true"    set "CMD=%CMD% --no_reports"
+          if /i "%GUI_HTML%"=="true"      set "CMD=%CMD% --gui_html"
+          if defined PYTHON_FILES     if not "%PYTHON_FILES%"==""     set "CMD=%CMD% --python-files %PYTHON_FILES%"
+          if defined PYTHON_FUNCTIONS if not "%PYTHON_FUNCTIONS%"=="" set "CMD=%CMD% --python-functions %PYTHON_FUNCTIONS%"
+          if defined FLAGS if not "%FLAGS%"=="" (
+            for %%F in (%FLAGS%) do set "CMD=!CMD! --flag %%F"
+          )
+          if defined BENCH_ATTRIBUTES if not "%BENCH_ATTRIBUTES%"=="" (
+            for %%P in (%BENCH_ATTRIBUTES%) do (
+              for /f "tokens=1,2 delims==" %%K in ("%%P") do if not "%%K"=="" set "CMD=!CMD! -b %%K %%L"
+            )
+          )
+          if defined TODAY_VARIANT if not "%TODAY_VARIANT%"=="" set "CMD=!CMD! -b Variant %TODAY_VARIANT%"
+          if defined TODAY_XCP     if not "%TODAY_XCP%"==""     set "CMD=!CMD! --xcp_protocol %TODAY_XCP%"
+          if defined EXTRA_ARGS    if not "%EXTRA_ARGS%"==""    set "CMD=!CMD! %EXTRA_ARGS%"
+          echo Executing: !CMD!
+          call !CMD!
+
+      # -------- Locate latest GUI HTML report --------
+      # Glob template + regex filter: caller can drive either. Default glob is
+      # the historical Gen7 `*<family>*<date>*.html` pattern; default regex
+      # narrows to `GUI`.
+      - name: Locate latest GUI HTML report
+        id: find_report
+        shell: powershell
+        env:
+          REPORT_GLOB_TEMPLATE: ${{ inputs.report-name-glob }}
+        run: |
+          $reportDir = Join-Path "tools\python\Core_Radar_Gen7_SAF85xx_Python_Framework" $env:REPORT_SUBDIR
+          if (-not (Test-Path $reportDir)) {
+            Write-Warning "Report directory not found: $reportDir"
+            "report_path=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_dir="  | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            return
+          }
+          $currentDate = Get-Date -Format "MMM_dd_yyyy"
+          $glob = $env:REPORT_GLOB_TEMPLATE.Replace('{family}', $env:FAMILY).Replace('{date}', $currentDate)
+          Write-Host "Searching $reportDir with glob: $glob (filter: $env:REPORT_NAME_FILTER)"
+          $latest = Get-ChildItem -Path $reportDir -Filter $glob -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match $env:REPORT_NAME_FILTER } |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
+          if ($latest) {
+            Write-Host "Latest report: $($latest.FullName)"
+            "report_path=$($latest.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_name=$($latest.Name)"     | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_date=$currentDate"        | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_dir=$reportDir"           | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          } else {
+            Write-Warning "No matching HTML report in $reportDir for $currentDate (glob=$glob filter=$env:REPORT_NAME_FILTER)"
+            "report_path=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_dir=$reportDir" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          }
+
+      # -------- JFrog upload --------
+      - name: Upload report to JFrog (common + static-latest)
+        id: jfrog_upload
+        if: steps.find_report.outputs.report_path != '' && steps.gates.outputs.have_jfrog == 'true'
+        continue-on-error: true
+        shell: powershell
+        env:
+          REPORT_PATH: ${{ steps.find_report.outputs.report_path }}
+          REPORT_NAME: ${{ steps.find_report.outputs.report_name }}
+        run: |
+          $branch  = "${{ github.ref_name }}"
+          $family  = $env:FAMILY
+          $familyLower = $family.ToLower()
+          $commonDest = "$env:ARTIFACTORY_BASE_REPO/$branch/$env:JFROG_REPORTS_SUBPATH/$family/"
+          $staticDest = "$env:ARTIFACTORY_BASE_REPO/dev/$env:JFROG_LATEST_SUBPATH/$familyLower/"
+
+          jf rt upload "$env:REPORT_PATH" "$commonDest" --build-name="$env:JFROG_BUILD_NAME" --build-number="$env:JFROG_BUILD_NUMBER" --flat=true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          jf rt del "$staticDest*" --quiet
+          jf rt upload "$env:REPORT_PATH" "$staticDest" --build-name="$env:JFROG_BUILD_NAME" --build-number="$env:JFROG_BUILD_NUMBER" --flat=true
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          "jfrog_all_reports=$env:JFROG_URL/ui/native/$commonDest"               | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "static_jfrog_url=$env:JFROG_URL/ui/native/$staticDest$env:REPORT_NAME" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Send JFrog Top-10 reports to Platform-Health
+        if: steps.jfrog_upload.outcome == 'success'
+        continue-on-error: true
+        run: |
+          python tools\python\platformHealthMetrices\sendJfrogReportsToPH.py --variant "%FAMILY%" --gen_version "%GEN_VERSION%"
+
+      # -------- Platform-Health push --------
+      # gui  -> sendSwe6GuiResultsToPH + sendNewFailuresToPH (SWE6 nightly).
+      # alignment -> single sendJobResultsToPH call, no delta-failures file.
+      # Backwards-compat: when JOB_TYPE=SWE6 the summary filename stays
+      # `swe6_results_summary.txt`; otherwise `<jobtype-lower>_results_summary.txt`.
+      - name: Push results + delta failures to Platform-Health
+        id: grafana
+        if: steps.find_report.outputs.report_path != ''
+        continue-on-error: true
+        shell: powershell
+        env:
+          REPORT_PATH: ${{ steps.find_report.outputs.report_path }}
+          REPORT_DIR: ${{ steps.find_report.outputs.report_dir }}
+        run: |
+          $jobTypeLower = $env:JOB_TYPE.ToLower()
+          if ($env:JOB_TYPE -ieq 'SWE6') {
+            $summaryName = "swe6_results_summary.txt"
+          } else {
+            $summaryName = "${jobTypeLower}_results_summary.txt"
+          }
+          $summary  = Join-Path $env:REPORT_DIR $summaryName
+
+          if ($env:PH_MODE -ieq 'alignment') {
+            # Alignment summary file keyed by family so FLR7+SRR7p don't collide.
+            $summary = Join-Path $env:REPORT_DIR "${jobTypeLower}_summary_$($env:FAMILY).txt"
+            python tools\python\platformHealthMetrices\sendJobResultsToPH.py `
+              --htmlfile "$env:REPORT_PATH" `
+              --variant "$env:FAMILY" `
+              --job_type "$env:JOB_TYPE" `
+              --gen_version "$env:GEN_VERSION" `
+              --commit_id "$env:FULL_COMMIT_HASH" > $summary
+            "summary_file=$summary" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "newfails_file="        | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          } else {
+            $newFails = Join-Path $env:REPORT_DIR "new_failures_test_srs.txt"
+            python tools\python\platformHealthMetrices\sendSwe6GuiResultsToPH.py `
+              --htmlfile "$env:REPORT_PATH" `
+              --variant "$env:FAMILY" `
+              --job_type "$env:JOB_TYPE" `
+              --gen_version "$env:GEN_VERSION" `
+              --commit_id "$env:FULL_COMMIT_HASH" > $summary
+            python tools\python\platformHealthMetrices\sendNewFailuresToPH.py `
+              --variant "$env:FAMILY" `
+              --gen_version "$env:GEN_VERSION" `
+              --job_type "$env:JOB_TYPE" > $newFails
+            "summary_file=$summary"   | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "newfails_file=$newFails" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          }
+
+      # -------- Parse counts, generate pie charts, build step summary --------
+      - name: Parse summary + generate pie charts + step summary
+        id: summarize
+        if: always()
+        continue-on-error: true
+        shell: powershell
+        env:
+          SUMMARY_FILE: ${{ steps.grafana.outputs.summary_file }}
+          NEWFAILS_FILE: ${{ steps.grafana.outputs.newfails_file }}
+          REPORT_NAME: ${{ steps.find_report.outputs.report_name }}
+          REPORT_DIR: ${{ steps.find_report.outputs.report_dir }}
+          JFROG_ALL_REPORTS: ${{ steps.jfrog_upload.outputs.jfrog_all_reports }}
+          STATIC_JFROG_URL: ${{ steps.jfrog_upload.outputs.static_jfrog_url }}
+        run: |
+          $TOTAL=$PASSED=$FAILED=$SKIPPED=$ERRORS=0
+          $SRS_PASSED=$SRS_FAILED=$SRS_ERRORS=0
+          $NEW_TEST_FAIL=0; $NEW_SRS_FAIL=0
+
+          if ($env:SUMMARY_FILE -and (Test-Path $env:SUMMARY_FILE)) {
+            $s = Get-Content $env:SUMMARY_FILE -Raw
+            if ($s -match 'TOTAL:\s*(\d+),\s*PASSED:\s*(\d+),\s*FAILED:\s*(\d+),\s*SKIPPED:\s*(\d+),\s*ERRORS:\s*(\d+)') {
+              $TOTAL=$Matches[1]; $PASSED=$Matches[2]; $FAILED=$Matches[3]; $SKIPPED=$Matches[4]; $ERRORS=$Matches[5]
+            }
+            if ($s -match 'SRS RESULTS =+[\s\S]*?TOTAL:\s*(\d+),\s*PASSED:\s*(\d+),\s*FAILED:\s*(\d+),\s*ERRORS:\s*(\d+)') {
+              $SRS_PASSED=$Matches[2]; $SRS_FAILED=$Matches[3]; $SRS_ERRORS=$Matches[4]
+            }
+          } else {
+            Write-Warning "Summary file not produced; using zeros."
+          }
+          if ($env:NEWFAILS_FILE -and (Test-Path $env:NEWFAILS_FILE)) {
+            $c = Get-Content $env:NEWFAILS_FILE -Raw
+            if ($c -match 'New Failed Test Count:\s*(\d+)') { $NEW_TEST_FAIL = $Matches[1] }
+            if ($c -match 'New Failed SRS Count:\s*(\d+)')  { $NEW_SRS_FAIL  = $Matches[1] }
+          }
+
+          # Pie charts (best-effort). matplotlib divides by zero when all
+          # wedge values are 0 — skip in that case.
+          $testSum = [int]$PASSED + [int]$FAILED + [int]$SKIPPED + [int]$ERRORS
+          $srsSum  = [int]$SRS_PASSED + [int]$SRS_FAILED + [int]$SRS_ERRORS
+          if ($testSum -eq 0 -and $srsSum -eq 0) {
+            Write-Warning "All counts are zero; skipping pie chart generation."
+          } else {
+            try {
+              python tools\python\platformHealthMetrices\generate_ci_piecharts.py `
+                --passed-tests $PASSED --failed-tests $FAILED --skipped-tests $SKIPPED --error-tests $ERRORS `
+                --passed-srs $SRS_PASSED --failed-srs $SRS_FAILED --error-srs $SRS_ERRORS
+              if ($LASTEXITCODE -ne 0) { Write-Warning "pie chart script exited with code $LASTEXITCODE" }
+            } catch { Write-Warning "pie chart generation failed: $_" }
+          }
+          $global:LASTEXITCODE = 0
+
+          @(
+            "total=$TOTAL","passed=$PASSED","failed=$FAILED","skipped=$SKIPPED","errors=$ERRORS",
+            "srs_passed=$SRS_PASSED","srs_failed=$SRS_FAILED","srs_errors=$SRS_ERRORS",
+            "new_test_fail=$NEW_TEST_FAIL","new_srs_fail=$NEW_SRS_FAIL"
+          ) | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+          # Step summary (avoid here-string indentation pitfalls inside YAML literal blocks).
+          $mdLines = @(
+            "## $($env:JOB_TYPE) ($($env:FAMILY)) Result",
+            "",
+            "| Field | Value |",
+            "|---|---|",
+            "| Job Type | ``$($env:JOB_TYPE)`` |",
+            "| Family | ``$($env:FAMILY)`` |",
+            "| Commit | ``$($env:FULL_COMMIT_HASH)`` |",
+            "| Report | $($env:REPORT_NAME) |",
+            "",
+            "### Test Summary",
+            "PASS: **$PASSED**  FAIL: **$FAILED**  SKIP: **$SKIPPED**  ERROR: **$ERRORS**",
+            "",
+            "### SRS Summary",
+            "PASS: **$SRS_PASSED**  FAIL: **$SRS_FAILED**  ERROR: **$SRS_ERRORS**",
+            "",
+            "### Delta failures",
+            "New test failures: **$NEW_TEST_FAIL**   New SRS failures: **$NEW_SRS_FAIL**"
+          )
+          if ($env:STATIC_JFROG_URL)  { $mdLines += ""; $mdLines += "[Latest report]($($env:STATIC_JFROG_URL))" }
+          if ($env:JFROG_ALL_REPORTS) { $mdLines += "[All reports]($($env:JFROG_ALL_REPORTS))" }
+          $md = ($mdLines -join "`n")
+          $md | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      # -------- Artifact upload --------
+      - name: Upload report bundle
+        if: always() && steps.find_report.outputs.report_path != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ inputs.job-type }}-${{ inputs.family }}-report
+          path: |
+            ${{ steps.find_report.outputs.report_path }}
+            ${{ steps.find_report.outputs.report_dir }}/*_results_summary.txt
+            ${{ steps.find_report.outputs.report_dir }}/*_summary_*.txt
+            ${{ steps.find_report.outputs.report_dir }}/new_failures_test_srs.txt
+            ${{ steps.find_report.outputs.report_dir }}/test_results_pie.png
+            ${{ steps.find_report.outputs.report_dir }}/srs_results_pie.png
+          if-no-files-found: warn
+
+      # -------- Notification: Teams + Outlook via Power Automate --------
+      - name: Send Teams + Email notification via Power Automate
+        if: always() && steps.gates.outputs.have_teams == 'true' && steps.find_report.outputs.report_path != ''
+        continue-on-error: true
+        shell: powershell
+        env:
+          TEAMS_URL: ${{ secrets.ADVRADAR_SWE6_TEAMS_WEBHOOK_URL }}
+          STATIC_URL: ${{ steps.jfrog_upload.outputs.static_jfrog_url }}
+          ALL_URL: ${{ steps.jfrog_upload.outputs.jfrog_all_reports }}
+          PASSED: ${{ steps.summarize.outputs.passed }}
+          FAILED: ${{ steps.summarize.outputs.failed }}
+          SKIPPED: ${{ steps.summarize.outputs.skipped }}
+          ERRORS: ${{ steps.summarize.outputs.errors }}
+          SRS_PASSED: ${{ steps.summarize.outputs.srs_passed }}
+          SRS_FAILED: ${{ steps.summarize.outputs.srs_failed }}
+          SRS_ERRORS: ${{ steps.summarize.outputs.srs_errors }}
+          NEW_TEST: ${{ steps.summarize.outputs.new_test_fail }}
+          NEW_SRS: ${{ steps.summarize.outputs.new_srs_fail }}
+          VARIANT: ${{ steps.rotation.outputs.today_variant }}
+          XCP: ${{ steps.rotation.outputs.today_xcp }}
+          RUN_URL: ${{ format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
+          RECIPIENTS: ${{ inputs.email-recipients }}
+          SUBJECT_PREFIX: ${{ inputs.email-subject-prefix }}
+          REPORT_DIR: ${{ steps.find_report.outputs.report_dir }}
+          REPORT_NAME: ${{ steps.find_report.outputs.report_name }}
+          MATRIX_JSON: ${{ inputs.test-matrix-json }}
+          ROTATION: ${{ inputs.rotation-strategy }}
+        run: |
+          # Force UTF-8 so emoji + HTML entities survive the HTTPS hop. Default
+          # PS 5.1 console encoding is the OEM code page, which mangles BMP
+          # symbols to '?' before ConvertTo-Json ever runs.
+          [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false
+          $OutputEncoding           = New-Object System.Text.UTF8Encoding $false
+
+          # Inline pie-chart helper. Reads the PNGs produced by
+          # generate_ci_piecharts.py and returns a data:image/png;base64 URI so
+          # the chart renders directly in the email body (Power Automate does
+          # not auto-attach workflow artifacts). Returns $null on miss.
+          function Get-PieDataUri {
+            param([string[]] $Candidates)
+            foreach ($p in $Candidates) {
+              if ($p -and (Test-Path $p)) {
+                try {
+                  $bytes = [System.IO.File]::ReadAllBytes($p)
+                  return "data:image/png;base64," + [Convert]::ToBase64String($bytes)
+                } catch { Write-Warning "Failed to inline ${p}: $_" }
+              }
+            }
+            return $null
+          }
+          $testPieB64 = Get-PieDataUri @("$env:REPORT_DIR\test_results_pie.png", "test_results_pie.png")
+          $srsPieB64  = Get-PieDataUri @("$env:REPORT_DIR\srs_results_pie.png",  "srs_results_pie.png")
+
+          # Derived metrics for the health banner / progress bars.
+          $totalTests = [int]$env:PASSED + [int]$env:FAILED + [int]$env:SKIPPED + [int]$env:ERRORS
+          $totalSrs   = [int]$env:SRS_PASSED + [int]$env:SRS_FAILED + [int]$env:SRS_ERRORS
+          $testPassPct = if ($totalTests -gt 0) { [Math]::Round(([int]$env:PASSED / $totalTests) * 100, 1) } else { 0 }
+          $srsPassPct  = if ($totalSrs   -gt 0) { [Math]::Round(([int]$env:SRS_PASSED / $totalSrs)   * 100, 1) } else { 0 }
+          if     ($testPassPct -ge 90) { $bannerColor = "#16a34a"; $bannerLabel = "HEALTHY" }
+          elseif ($testPassPct -ge 70) { $bannerColor = "#d97706"; $bannerLabel = "DEGRADED" }
+          else                          { $bannerColor = "#dc2626"; $bannerLabel = "CRITICAL" }
+
+          # Parse rotation matrix for schedule table (no-op when fixed).
+          $matrix = @()
+          if ($env:MATRIX_JSON) {
+            try { $matrix = @($env:MATRIX_JSON | ConvertFrom-Json) } catch { $matrix = @() }
+          }
+          $istNow = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, "India Standard Time")
+          $dayOfYear = $istNow.DayOfYear
+          $rotationIsDaily = ($env:ROTATION -ine 'fixed')
+
+          $shortSha = "${{ github.sha }}".Substring(0,7)
+          $defaultPrefix = "Gen7v2 $($env:JOB_TYPE) ($($env:FAMILY))"
+          $prefix = if ([string]::IsNullOrWhiteSpace($env:SUBJECT_PREFIX)) { $defaultPrefix } else { $env:SUBJECT_PREFIX }
+
+          # ---- HTML Email body ----
+          $dateStr = (Get-Date).ToString("dddd dd-MMMM-yyyy")
+
+          # Light theme palette
+          $bodyBg='#f1f5f9'; $textColor='#1e293b'; $cardBg='#ffffff'; $cardBorder='border:1px solid #e2e8f0;'
+          $linkColor='#2563eb'; $dateHL='#1d4ed8'; $sectionTitle='#1d4ed8'; $subText='#64748b'
+          $labelColor='#64748b'; $variantColor='#7c3aed'; $xcpColor='#b45309'; $commitColor='#0891b2'
+          $passBg='#dcfce7'; $passText='#166534'; $failBg='#fee2e2'; $failText='#991b1b'
+          $skipBg='#fef9c3'; $skipText='#854d0e'; $errBg='#f3e8ff'; $errText='#6b21a8'
+          $failTitle='#dc2626'; $failValue='#dc2626'; $noteText='#64748b'; $footerText='#64748b'
+          $badgeBg='#e0e7ff'; $badgeText='#1d4ed8'; $greetText='color:#334155;'
+          $headerSubText='#c7d2fe'; $headerVariant='#e9d5ff'; $headerXcp='#fde68a'
+          $todayRowBg='#dbeafe'; $todayRowText='#1e40af'
+          $altRow1='#f8fafc'; $altRow2='#ffffff'; $rowText='#475569'
+
+          $scheduleRows = ""
+          if ($rotationIsDaily -and $matrix.Count -gt 1) {
+            for ($i = 0; $i -lt $matrix.Count; $i++) {
+              $idx = ($dayOfYear + $i) % $matrix.Count
+              $combo = $matrix[$idx]
+              if ($i -eq 0) {
+                $dateLabel = "&#x25B6; Today ($($istNow.ToString('ddd, MMM dd')))"
+                $rBg = "background:${todayRowBg};"
+                $rColor = "color:${todayRowText};font-weight:bold;"
+              } else {
+                $dateLabel = $istNow.AddDays($i).ToString('ddd, MMM dd')
+                $rBg = if ($i % 2 -eq 0) { "background:${altRow2};" } else { "background:${altRow1};" }
+                $rColor = "color:${rowText};"
+              }
+              $scheduleRows += "<tr style='${rBg}'><td style='padding:6px 12px;${rColor}'>${dateLabel}</td><td style='padding:6px 12px;${rColor}'>$($combo.variant)</td><td style='padding:6px 12px;${rColor}'>$($combo.xcp)</td></tr>"
+            }
+          }
+
+          $scheduleBlock = ""
+          if ($scheduleRows) {
+            $scheduleBlock = @"
+          <div style="background:${cardBg};margin-top:20px;padding:18px;border-radius:10px;${cardBorder}">
+          <h3 style="color:${sectionTitle};margin-top:0;">&#x1F4C5; Test Rotation Schedule ($($matrix.Count)-Day Cycle)</h3>
+          <p style="font-size:12px;color:${subText};margin-top:2px;">Each day a different variant + protocol combination is tested automatically.</p>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;">
+          <tr style="background:#1e40af;">
+            <th style="padding:10px 12px;text-align:left;color:#ffffff;font-size:14px;border-bottom:2px solid #3b82f6;">Date</th>
+            <th style="padding:10px 12px;text-align:left;color:#ffffff;font-size:14px;border-bottom:2px solid #3b82f6;">Variant</th>
+            <th style="padding:10px 12px;text-align:left;color:#ffffff;font-size:14px;border-bottom:2px solid #3b82f6;">XCP Protocol</th>
+          </tr>
+          ${scheduleRows}
+          </table>
+          </div>
+          "@
+          }
+
+          $emailHtml = @"
+          <html>
+          <body style="margin:0;background:${bodyBg};font-family:Segoe UI,Arial;color:${textColor};">
+          <div style="max-width:1000px;margin:auto;padding:20px;">
+          <div style="background:#1520A6;padding:15px;border-radius:6px;">
+          <h2 style="margin:0;color:white;">&#x1F680; Gen7v2 ${env:JOB_TYPE} Nightly CI-Test Execution Report</h2>
+          <p style="margin-top:6px;color:${headerSubText};font-size:13px;">Variant: <strong style="color:${headerVariant};">${env:VARIANT}</strong> &nbsp;|&nbsp; XCP: <strong style="color:${headerXcp};">${env:XCP}</strong></p>
+          </div>
+          <div style="margin-top:18px;font-size:14px;${greetText}">
+          Hello Team,<br><br>
+          Here are the test results from nightly CI Job for <strong style="color:${dateHL};">${dateStr}</strong>
+          </div>
+          <div style="background:${cardBg};margin-top:15px;padding:15px;border-radius:10px;${cardBorder}">
+          <h3 style="color:${sectionTitle};margin-top:0;">&#x1F527; Build Configuration</h3>
+          <table style="font-size:14px;border-spacing:8px 4px;">
+          <tr><td style="color:${labelColor};">Job Type:</td><td><strong style="color:${variantColor};">${env:JOB_TYPE}</strong></td></tr>
+          <tr><td style="color:${labelColor};">Variant Tested:</td><td><strong style="color:${variantColor};">${env:VARIANT}</strong></td></tr>
+          <tr><td style="color:${labelColor};">XCP Protocol:</td><td><strong style="color:${xcpColor};">${env:XCP}</strong></td></tr>
+          <tr><td style="color:${labelColor};">Commit ID:</td><td><code style="color:${commitColor};">${shortSha}</code></td></tr>
+          </table>
+          </div>
+
+          <!-- Overall health banner: pass-rate %, status pill, CSS progress bars.
+               Renders without any image so the at-a-glance signal survives even
+               when the recipient's mail client blocks remote/inline images. -->
+          <div style="background:${cardBg};margin-top:18px;padding:18px;border-radius:10px;${cardBorder}">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="vertical-align:middle;">
+                  <div style="font-size:12px;color:${labelColor};text-transform:uppercase;letter-spacing:1px;">Overall Build Health</div>
+                  <div style="font-size:34px;font-weight:bold;color:${bannerColor};line-height:1.1;margin-top:4px;">${testPassPct}%</div>
+                  <div style="font-size:13px;color:${subText};margin-top:2px;">${env:PASSED} of ${totalTests} test cases passing</div>
+                </td>
+                <td style="vertical-align:middle;text-align:right;">
+                  <span style="display:inline-block;background:${bannerColor};color:#ffffff;font-weight:bold;padding:8px 18px;border-radius:20px;font-size:13px;letter-spacing:1px;">${bannerLabel}</span>
+                </td>
+              </tr>
+            </table>
+            <table style="width:100%;margin-top:14px;border-spacing:0;">
+              <tr>
+                <td style="font-size:11px;color:${labelColor};padding-bottom:3px;">Tests pass-rate</td>
+                <td style="font-size:11px;color:${labelColor};padding-bottom:3px;text-align:right;">${testPassPct}%</td>
+              </tr>
+              <tr><td colspan="2" style="padding:0;">
+                <div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;">
+                  <div style="height:8px;width:${testPassPct}%;background:${bannerColor};"></div>
+                </div>
+              </td></tr>
+              <tr>
+                <td style="font-size:11px;color:${labelColor};padding:8px 0 3px 0;">SRS pass-rate</td>
+                <td style="font-size:11px;color:${labelColor};padding:8px 0 3px 0;text-align:right;">${srsPassPct}%</td>
+              </tr>
+              <tr><td colspan="2" style="padding:0;">
+                <div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;">
+                  <div style="height:8px;width:${srsPassPct}%;background:#1d4ed8;"></div>
+                </div>
+              </td></tr>
+            </table>
+          </div>
+
+          <table width="100%" cellpadding="10" cellspacing="0" style="margin-top:25px;">
+          <tr>
+          <td width="50%" valign="top">
+          <div style="background:${cardBg};border-radius:10px;padding:15px;${cardBorder}">
+          <div style="text-align:center;margin-bottom:12px;"><span style="background:${badgeBg};padding:6px 16px;border-radius:20px;font-weight:bold;color:${badgeText};">Overall Test Summary</span></div>
+          $(if ($testPieB64) { "<div style='text-align:center;margin-bottom:10px;'><img src='${testPieB64}' alt='Overall Test Results' width='240' style='max-width:100%;border-radius:6px;'/></div>" })
+          <table style="border-spacing:0 6px;width:200px;font-size:13px;margin:auto;">
+          <tr><td style="background:${passBg};padding:7px;border-radius:6px;color:${passText};">PASSED <span style="float:right;font-weight:bold;">${env:PASSED}</span></td></tr>
+          <tr><td style="background:${failBg};padding:7px;border-radius:6px;color:${failText};">FAILED <span style="float:right;font-weight:bold;">${env:FAILED}</span></td></tr>
+          <tr><td style="background:${skipBg};padding:7px;border-radius:6px;color:${skipText};">SKIPPED <span style="float:right;font-weight:bold;">${env:SKIPPED}</span></td></tr>
+          <tr><td style="background:${errBg};padding:7px;border-radius:6px;color:${errText};">ERROR <span style="float:right;font-weight:bold;">${env:ERRORS}</span></td></tr>
+          </table>
+          </div>
+          </td>
+          <td width="50%" valign="top">
+          <div style="background:${cardBg};border-radius:10px;padding:15px;${cardBorder}">
+          <div style="text-align:center;margin-bottom:12px;"><span style="background:${badgeBg};padding:6px 16px;border-radius:20px;font-weight:bold;color:${badgeText};">Overall SRS Summary</span></div>
+          $(if ($srsPieB64) { "<div style='text-align:center;margin-bottom:10px;'><img src='${srsPieB64}' alt='Overall SRS Results' width='240' style='max-width:100%;border-radius:6px;'/></div>" })
+          <table style="border-spacing:0 6px;width:200px;font-size:13px;margin:auto;">
+          <tr><td style="background:${passBg};padding:7px;border-radius:6px;color:${passText};">PASSED <span style="float:right;font-weight:bold;">${env:SRS_PASSED}</span></td></tr>
+          <tr><td style="background:${failBg};padding:7px;border-radius:6px;color:${failText};">FAILED <span style="float:right;font-weight:bold;">${env:SRS_FAILED}</span></td></tr>
+          <tr><td style="background:${errBg};padding:7px;border-radius:6px;color:${errText};">ERROR <span style="float:right;font-weight:bold;">${env:SRS_ERRORS}</span></td></tr>
+          </table>
+          </div>
+          </td>
+          </tr>
+          </table>
+          <div style="background:${cardBg};margin-top:20px;padding:15px;border-radius:10px;${cardBorder}">
+          <h3 style="color:${sectionTitle};">&#x1F4CA; Reports &amp; Dashboards</h3>
+          <a href="${env:GRAFANA_DASHBOARD}" style="color:${linkColor};text-decoration:none;display:block;">&#x1F50D; Platform Health Visualization</a><br>
+          <a href="${env:STATIC_URL}" style="color:${linkColor};text-decoration:none;display:block;margin-top:6px;">&#x2B07;&#xFE0F; Download Latest Test Report</a><br>
+          <a href="${env:ALL_URL}" style="color:${linkColor};text-decoration:none;display:block;margin-top:6px;">&#x1F4C2; Find all Test Reports</a>
+          </div>
+          <div style="background:${cardBg};margin-top:20px;padding:18px;border-radius:10px;${cardBorder}">
+          <h3 style="color:${failTitle};margin-bottom:15px;">&#x26D4; New Failures Detected</h3>
+          <p style="font-size:16px;margin:6px 0;">Delta Failures in Test Cases: <span style="font-weight:bold;color:${failValue};">${env:NEW_TEST}</span></p>
+          <p style="font-size:16px;margin:6px 0;">Delta Failures in SRS (Requirements): <span style="font-weight:bold;color:${failValue};">${env:NEW_SRS}</span></p>
+          </div>
+          <br>
+          <div style="font-size:12px;color:${noteText};font-style:italic;">
+          <b>Note:</b><br>
+          &nbsp;&nbsp;&#x2022; Delta represents newly introduced failures compared to the previous run.<br>
+          &nbsp;&nbsp;&#x2022; Refer attachments for detailed reports.
+          </div>
+          ${scheduleBlock}
+          <p style="margin-top:30px;">Best Regards,<br>
+          <b style="color:#00539C;">Gen7v2 ${env:JOB_TYPE} CI</b><br>
+          <a href="${env:RUN_URL}" style="color:#0078D7;">&#x267E;&#xFE0F; CI-Job Link</a>
+          </p>
+          <div style="margin-top:20px;font-size:12px;color:${footerText};text-align:center;">
+          &#x1F4CE; Attached Reports: HTML Test Execution, Results Summary &amp; Delta Failures
+          </div>
+          </div>
+          </body>
+          </html>
+          "@
+
+          # Collect email attachments (parity with legacy Jenkins emailext
+          # attachmentsPattern). Each entry is { name, contentBytes } with
+          # contentBytes base64-encoded so the Power Automate flow can feed
+          # them straight into "Send an email (V2) -> Attachments". Missing
+          # files are skipped silently.
+          function New-EmailAttachment {
+            param([string]$Path, [string]$Name)
+            if (-not $Path -or -not (Test-Path $Path)) { return $null }
+            try {
+              $bytes = [System.IO.File]::ReadAllBytes($Path)
+              return @{
+                name         = $Name
+                contentBytes = [Convert]::ToBase64String($bytes)
+              }
+            } catch {
+              Write-Warning "Skip attachment ${Path}: $_"
+              return $null
+            }
+          }
+
+          $attachSpecs = @()
+          if ($env:REPORT_NAME) {
+            $attachSpecs += ,@{ Path = (Join-Path $env:REPORT_DIR $env:REPORT_NAME); Name = $env:REPORT_NAME }
+          }
+          $jobTypeLower = $env:JOB_TYPE.ToLower()
+          # SWE6 keeps the legacy `swe6_results_summary.txt`; Alignment keys by
+          # family (`<jobtype>_summary_<family>.txt`); others use `<jobtype>_results_summary.txt`.
+          if ($env:JOB_TYPE -ieq 'SWE6') {
+            $attachSpecs += ,@{ Path = (Join-Path $env:REPORT_DIR 'swe6_results_summary.txt'); Name = 'swe6_results_summary.txt' }
+          } elseif ($env:JOB_TYPE -match '(?i)alignment') {
+            $alignName = "${jobTypeLower}_summary_$($env:FAMILY).txt"
+            $attachSpecs += ,@{ Path = (Join-Path $env:REPORT_DIR $alignName); Name = $alignName }
+          } else {
+            $attachSpecs += ,@{ Path = (Join-Path $env:REPORT_DIR "${jobTypeLower}_results_summary.txt"); Name = "${jobTypeLower}_results_summary.txt" }
+          }
+          $attachSpecs += ,@{ Path = (Join-Path $env:REPORT_DIR 'new_failures_test_srs.txt'); Name = 'new_failures_test_srs.txt' }
+          # Pie PNGs are NOT attached — they are inlined as base64 in the email
+          # body via Get-PieDataUri, so attaching them would duplicate content.
+
+          $emailAttachments = @()
+          foreach ($spec in $attachSpecs) {
+            $a = New-EmailAttachment -Path $spec.Path -Name $spec.Name
+            if ($a) { $emailAttachments += $a }
+          }
+          Write-Host "Email attachments prepared: $($emailAttachments.Count)"
+
+          $body = @{
+            job_type          = $env:JOB_TYPE
+            family            = $env:FAMILY
+            gen_version       = $env:GEN_VERSION
+            commit            = $env:FULL_COMMIT_HASH
+            short_commit      = $shortSha
+            branch            = "${{ github.ref_name }}"
+            run_url           = $env:RUN_URL
+            job_url           = $env:JOB_URL
+            today_variant     = $env:VARIANT
+            today_xcp         = $env:XCP
+            test_passed       = [int]$env:PASSED
+            test_failed       = [int]$env:FAILED
+            test_skipped      = [int]$env:SKIPPED
+            test_errors       = [int]$env:ERRORS
+            srs_passed        = [int]$env:SRS_PASSED
+            srs_failed        = [int]$env:SRS_FAILED
+            srs_errors        = [int]$env:SRS_ERRORS
+            new_test_failures = [int]$env:NEW_TEST
+            new_srs_failures  = [int]$env:NEW_SRS
+            test_pass_pct     = $testPassPct
+            srs_pass_pct      = $srsPassPct
+            health_status     = $bannerLabel
+            health_color      = $bannerColor
+            report_static_url = $env:STATIC_URL
+            report_all_url    = $env:ALL_URL
+            grafana_url       = $env:GRAFANA_DASHBOARD
+            email_recipients  = $env:RECIPIENTS
+            email_subject     = "$prefix Run #${{ github.run_number }} | Commit $shortSha"
+            email_html        = $emailHtml
+            email_attachments = $emailAttachments
+          } | ConvertTo-Json -Depth 20 -Compress
+          try {
+            # PS 5.1's Invoke-RestMethod sends string -Body as ISO-8859-1 by
+            # default, which silently mangles BMP emoji to '?'. Encode as
+            # UTF-8 bytes and declare the charset so glyphs survive the wire.
+            $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+            Invoke-RestMethod -Method Post -Uri $env:TEAMS_URL -ContentType 'application/json; charset=utf-8' -Body $bodyBytes | Out-Null
+            Write-Host "Notification sent."
+          } catch {
+            Write-Warning "Notification failed: $_"
+          }
+
+      # -------- Post-job runner cleanup (persistent self-hosted runner safety) --------
+      # Drop leftover http.*.extraheader, url.*.insteadOf entries, and the
+      # local JFrog CLI config so credentials never bleed across jobs.
+      - name: Cleanup runner credentials
+        if: always()
+        continue-on-error: true
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Continue'
+          try { jf c remove default --quiet 2>$null | Out-Null } catch { }
+
+          # 1. http.*.extraheader (set by actions/checkout for the auth token)
+          $headers = git config --local --get-regexp '^http\..+\.extraheader$' 2>$null
+          if ($LASTEXITCODE -eq 0 -and $headers) {
+            foreach ($line in $headers -split "`n") {
+              if ([string]::IsNullOrWhiteSpace($line)) { continue }
+              $key = ($line -split '\s+', 2)[0]
+              git config --local --unset-all $key 2>$null | Out-Null
+            }
+          }
+          # 2. http.<repo>.* sections (drop whole section if any leftovers remain)
+          $sections = git config --local --get-regexp '^http\..+\.' 2>$null
+          if ($LASTEXITCODE -eq 0 -and $sections) {
+            $secs = ($sections -split "`n" | ForEach-Object {
+              if ($_ -match '^(http\.[^.]+(?:\.[^.]+)*)\.[^.]+\s') { $Matches[1] }
+            }) | Sort-Object -Unique
+            foreach ($s in $secs) {
+              git config --local --remove-section $s 2>$null | Out-Null
+            }
+          }
+          # 3. url.*.insteadOf rewrites (submodule token rewrites etc.)
+          $rewrites = git config --local --name-only --get-regexp '^url\..*\.insteadof$' 2>$null
+          if ($LASTEXITCODE -eq 0 -and $rewrites) {
+            foreach ($key in $rewrites) {
+              if ($key -match '^url\.(.+)\.insteadof$') {
+                git config --local --remove-section "url.$($Matches[1])" 2>$null | Out-Null
+              }
+            }
+          }
+          $globalRewrites = git config --global --name-only --get-regexp '^url\..*x-access-token.*\.insteadof$' 2>$null
+          if ($LASTEXITCODE -eq 0 -and $globalRewrites) {
+            foreach ($key in $globalRewrites) {
+              if ($key -match '^url\.(.+)\.insteadof$') {
+                git config --global --remove-section "url.$($Matches[1])" 2>$null | Out-Null
+              }
+            }
+          }
+          $global:LASTEXITCODE = 0
+          exit 0

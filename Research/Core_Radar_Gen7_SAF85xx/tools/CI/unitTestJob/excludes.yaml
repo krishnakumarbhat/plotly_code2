@@ -1,0 +1,20 @@
+# This excludes.yaml file is to be used by the
+# buildAndRunUTAndVote function in the ADVRADAR_CICD repo.
+# Add any folders/files that need to be excluded from the UT analysis.
+# See the ADVRADAR_CICD repo for more information.
+include:
+  - "software/**/*.c"
+  - "external/spbb/*.c"
+exclude:
+  - "software/m7/mmic/drivers/**"
+  - "software/m7/autosar/config/Appl/GenData/**"
+  - "software/m7/autosar/config/Appl/include/**"
+  - "software/m7/autosar/config/Appl/Source/**"
+  - "software/a53/**/*.c"
+  - "software/radar_processing/bb_radar_ctl/bb_radar_ctl_imp/radar_data.c"
+  - "software/common/reuse.h"
+  - "software/m7/autosar/swc/PLT_SWC/SWC_PLT_CDD_XCP/source/XCP_Logging.c"
+  - "software/m7/autosar/swc/PLT_SWC/SWC_PLT_CDD_XCP/source/XcpAppl.c"
+  - "software/m7/autosar/swc/PLT_SWC/SWC_PLT_CDD_XCP/source/SWC_PLT_CDD_XCP.c"
+  - "software/m7/ipc/src/ipc_mss.c"
+  - "software/common/versions/versions.c"

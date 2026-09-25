@@ -1,0 +1,29 @@
+# On-demand: build the SIL flavor (RDD/CDC simulator).
+#
+# Targets //sil/rsp_sil/.../rdd_sil_Test with the full sil/cstub flag set.
+
+name: "On-demand · Build SIL"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-sil-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sil:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["sil"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

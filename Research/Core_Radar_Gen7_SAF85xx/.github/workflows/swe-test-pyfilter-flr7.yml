@@ -1,0 +1,54 @@
+# SWE-Test - Run a single python file / function pattern on a custom
+#               test folder. Quick ad-hoc developer loop.
+#
+# Demonstrates:
+#   * test-folder      -> point at any subfolder under testcases/GEN7_V2_Test_Cases/
+#   * python-files     -> override pyproject.toml python_files
+#   * python-functions -> override pyproject.toml python_functions
+#   * no-reports: true (don't upload HTML; just collect logs)
+#
+# Trigger: manual only.
+
+name: SWE-Test - PyFilter FLR7
+
+on:
+  workflow_dispatch:
+    inputs:
+      python_files:
+        description: 'Glob for test file selection (overrides pyproject python_files)'
+        required: false
+        type: string
+        default: 'test_xcp_*.py'
+      python_functions:
+        description: 'Space-separated test-function patterns (overrides pyproject python_functions)'
+        required: false
+        type: string
+        default: 'test_xcp_dtc_* test_xcp_session_*'
+
+permissions:
+  contents: read
+
+jobs:
+  pyfilter-flr7:
+    name: PyFilter FLR7
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: DEV_FILTER
+      family: FLR7
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-pyfilter-flr7.yml
+      nightly-artifact-jfrog-path: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/output_flr7.zip
+      toml-file: FLR7_SQTp_pyproject_CICD.toml
+      ci-cd-environment: true
+      test-folder: SWE6_Testing
+      bench-attributes: 'Variant=FLR7_V2'
+      python-files: ${{ inputs.python_files }}
+      python-functions: ${{ inputs.python_functions }}
+      no-reports: true
+      gui-html: false
+      # Keep dev outputs separate from CI reports.
+      report-subdir: Reports/Dev/Filter
+      jfrog-reports-subpath: DEV/Filter/Reports
+      jfrog-latest-subpath: DEV/Filter/latest_report
+      email-subject-prefix: 'Gen7v2 PyFilter (FLR7)'
+      email-recipients: ${{ github.actor }}@aptiv.com
+    secrets: inherit

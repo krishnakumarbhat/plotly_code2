@@ -1,0 +1,33 @@
+# On-demand: build the Satellite flavor (//:gen7 --jenkins).
+#
+# Manual companion to nightly/weekly so engineers can trigger just this flavor
+# from the Actions tab without waiting for a scheduled run.
+
+name: "On-demand · Build Satellite"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["srr7e"]'
+          - '["flr7v3"]'
+          - '["flr7","srr7p"]'
+          - '["flr7","srr7p","srr7e","flr7v3"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-satellite-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  satellite:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["satellite"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

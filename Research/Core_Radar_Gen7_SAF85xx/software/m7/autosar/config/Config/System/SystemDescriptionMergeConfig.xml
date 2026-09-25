@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<INPUT xmlns="http://com.vector.cfg.workflow.merge/input" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://com.vector.cfg.workflow.merge/input SystemDescriptionMergeConfig.xsd">
+    <MODEL name="RDR01" condition="/VariantDefinition/Criterion/RDR_Position == 1"/>
+    <MODEL name="RDR02" condition="/VariantDefinition/Criterion/RDR_Position == 2"/>
+    <MODEL name="RDR03" condition="/VariantDefinition/Criterion/RDR_Position == 3"/>
+    <MODEL name="RDR04" condition="/VariantDefinition/Criterion/RDR_Position == 4"/>
+    <MODEL name="RDR05" condition="/VariantDefinition/Criterion/RDR_Position == 5"/>
+    <MODEL name="RDR06" condition="/VariantDefinition/Criterion/RDR_Position == 6"/>
+    <MODEL name="RDR07" condition="/VariantDefinition/Criterion/RDR_Position == 7"/>
+    <MODEL name="RDR08" condition="/VariantDefinition/Criterion/RDR_Position == 8"/>
+</INPUT>

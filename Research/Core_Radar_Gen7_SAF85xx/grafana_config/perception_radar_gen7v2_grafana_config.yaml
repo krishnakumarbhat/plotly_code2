@@ -1,0 +1,223 @@
+grfanaConfigVersion: v1
+projectDetails:
+  oemName: 'PLATFORM'
+  projectName: 'GEN7V2'
+  jiraProjectName: 'EMH'
+  jiraProjectKey: 'PLATFORM_GEN7V2'
+  rosterName: '10055799'
+  wrsdAccessConfigName: 'Perception_Radar_SRR7e'
+  wrsdLeadGroup: 'Perception_Radar_SRR7e_lead'
+  SID: 'sid_cci'
+  jiraAdditionalQuery: ' AND "Product Name" IN ("GEN7_V2")'
+componentJiraMapping:
+  - compJiraProject: 'EMH'
+    compName: 'all'
+    jiraAdditionalCompQuery: ' AND "Product Name" IN ("GEN7_V2")'
+pipelineProjectDetails:
+  - pipelineUrl: 'https://389177498442.awsaptiv.com/plm/view/core-radar-gen7-saf85xx-trigger-nightly/runs/536'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+    env: 'linux'
+    pipelineType: 'nightly'
+    reportBasePath: 'core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/%build_number%/'
+    compilerReportPath: '["buildfiles/output_flr7/flr7/warnings_html_report/index.html"]'
+    unittestReportPath: '["unitTests/flr7/coverage/report_html/coverage_report/index.html"]'
+    coverityReportPath: '#SERVER#'
+    streams: '["CORERDR0_Gen7_SAF85xx_FLR7_A53", "CORERDR0_Gen7_SAF85xx_SRR7p_A53", "CORERDR0_Gen7_SAF85xx_FLR7_BBE32", "CORERDR0_Gen7_SAF85xx_SRR7p_BBE32", "CORERDR0_Gen7_SAF85xx_FLR7_M7", "CORERDR0_Gen7_SAF85xx_SRR7p_M7"]'
+    blackduckReportUrl: 'https://blackduck.asux.aptiv.com/api/projects/24f91ead-9a99-4a49-aa8b-6e4e7be23b05'
+    blackduckProjectName: '10055799_MY25_Radar_GEN7_SRR_2nd_Source_Platform'
+    blackduckVersionName: 'dev-HEAD'
+    utReportType: '["gcov"]'
+  - pipelineUrl: 'https://389177498442.awsaptiv.com/plm/view/core-radar-gen7-saf85xx-trigger-verification/runs/13489'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-verification'
+    env: 'linux'
+    pipelineType: 'verification'
+    reportBasePath: ''
+    compilerReportPath: ''
+    unittestReportPath: "['']"
+    coverityReportPath: "['']"
+    streams: "['']"
+    blackduckReportUrl: ''
+    blackduckProjectName: ''
+    blackduckVersionName: ''
+    utReportType: "['']"
+  - pipelineUrl: 'https://389177498442.awsaptiv.com/plm/view/core-radar-gen7-saf85xx-trigger-post-merge/runs/1399'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+    env: 'linux'
+    pipelineType: 'post-merge'
+    reportBasePath: 'core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/post-merge/%build_number%/'
+    compilerReportPath: '["buildfiles/output_flr7/flr7/warnings_html_report/index.html"]'
+    unittestReportPath: '["unitTests/flr7/coverage/report_html/coverage_report/index.html"]'
+    coverityReportPath: '#SERVER#'
+    streams: '["CORERDR0_Gen7_SAF85xx_FLR7_A53", "CORERDR0_Gen7_SAF85xx_SRR7p_A53", "CORERDR0_Gen7_SAF85xx_FLR7_BBE32", "CORERDR0_Gen7_SAF85xx_SRR7p_BBE32", "CORERDR0_Gen7_SAF85xx_FLR7_M7", "CORERDR0_Gen7_SAF85xx_SRR7p_M7"]'
+    blackduckReportUrl: 'https://blackduck.asux.aptiv.com/api/projects/24f91ead-9a99-4a49-aa8b-6e4e7be23b05'
+    blackduckProjectName: '10055799_MY25_Radar_GEN7_SRR_2nd_Source_Platform'
+    blackduckVersionName: 'dev-HEAD'
+    utReportType: '["gcov"]'
+manifest:
+  manifestAvailable: 'No'
+  manifestFiles:
+    - file_name: 'NA'
+componentMapping:
+  - compName: 'reuse'
+    repoPath: ['external/_main~_repo_rules~_main~_repo_rules~reuse/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'SAF85xx_MCAL'
+    repoPath: ['external/_main~_repo_rules~SAF85xx_MCAL/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'saf85xx_autosar_sip'
+    repoPath: ['external/_main~_repo_rules~saf85xx_autosar_sip/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'PlatformTime'
+    repoPath: ['external/_main~_repo_rules~PlatformTime/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'afbb'
+    repoPath: ['external/_main~_repo_rules~afbb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'spbb'
+    repoPath: ['external/_main~_repo_rules~spbb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'idbb'
+    repoPath: ['external/_main~_repo_rules~idbb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'sabb'
+    repoPath: ['external/_main~_repo_rules~sabb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'dabb'
+    repoPath: ['external/_main~_repo_rules~dabb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'rcbb'
+    repoPath: ['external/_main~_repo_rules~rcbb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'hilbb'
+    repoPath: ['external/_main~_repo_rules~hilbb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'rotbb'
+    repoPath: ['external/_main~_repo_rules~rotbb/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'Calibration_Handler'
+    repoPath: ['external/_main~_repo_rules~Calibration_Handler/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'Mode_Manager'
+    repoPath: ['external/_main~_repo_rules~Mode_Manager/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'Appl_Diag'
+    repoPath: ['external/_main~_repo_rules~Appl_Diag/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'Appl_FaultMgr'
+    repoPath: ['external/_main~_repo_rules~Appl_FaultMgr/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'FailSafe'
+    repoPath: ['external/_main~_repo_rules~FailSafe/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'WdgHandler'
+    repoPath: ['external/_main~_repo_rules~WdgHandler/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'smc_srr7e'
+    repoPath: ['external/_main~_repo_rules~smc_srr7e/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'smc_flr7'
+    repoPath: ['external/_main~_repo_rules~smc_flr7/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'smc_flr7_standalone'
+    repoPath: ['external/_main~_repo_rules~smc_flr7_standalone/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'smc_flr7v3'
+    repoPath: ['external/_main~_repo_rules~smc_flr7v3/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'smc_srr7p'
+    repoPath: ['external/_main~_repo_rules~smc_srr7p/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'smc_srr7p_standalone'
+    repoPath: ['external/_main~_repo_rules~smc_srr7p_standalone/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'usc_srr7e'
+    repoPath: ['external/_main~_repo_rules~usc_srr7e/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'usc_flr7'
+    repoPath: ['external/_main~_repo_rules~usc_flr7/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'usc_flr7v3'
+    repoPath: ['external/_main~_repo_rules~usc_flr7v3/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'usc_srr7p'
+    repoPath: ['external/_main~_repo_rules~usc_srr7p/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'boot'
+    repoPath: ['external/_main~_repo_rules~boot/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'IoHwAb_ADC_Appl'
+    repoPath: ['external/_main~_repo_rules~IoHwAb_ADC_Appl/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'TimeSync'
+    repoPath: ['external/_main~_repo_rules~TimeSync/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+  - compName: 'Sensor_Position'
+    repoPath: ['external/_main~_repo_rules~Sensor_Position/']
+    env: 'linux'
+    pipelineProjectName: 'core-radar-gen7-saf85xx-trigger-nightly'
+categoryMapping:
+  - categoryName: 'aptiv-owned'
+    categoryPaths:
+      - categoryPath: 'external/_main~_repo_rules~reuse'
+      - categoryPath: 'external/_main~_repo_rules~SAF85xx_MCAL'
+      - categoryPath: 'external/_main~_repo_rules~saf85xx_autosar_sip'
+      - categoryPath: 'external/_main~_repo_rules~PlatformTime'
+      - categoryPath: 'external/_main~_repo_rules~afbb'
+      - categoryPath: 'external/_main~_repo_rules~spbb'
+      - categoryPath: 'external/_main~_repo_rules~idbb'
+      - categoryPath: 'external/_main~_repo_rules~sabb'
+      - categoryPath: 'external/_main~_repo_rules~dabb'
+      - categoryPath: 'external/_main~_repo_rules~rcbb'
+      - categoryPath: 'external/_main~_repo_rules~hilbb'
+      - categoryPath: 'external/_main~_repo_rules~rotbb'
+      - categoryPath: 'external/_main~_repo_rules~Calibration_Handler'
+      - categoryPath: 'external/_main~_repo_rules~Mode_Manager'
+      - categoryPath: 'external/_main~_repo_rules~Appl_Diag'
+      - categoryPath: 'external/_main~_repo_rules~Appl_FaultMgr'
+      - categoryPath: 'external/_main~_repo_rules~FailSafe'
+      - categoryPath: 'external/_main~_repo_rules~WdgHandler'
+      - categoryPath: 'external/_main~_repo_rules~smc_srr7e'
+      - categoryPath: 'external/_main~_repo_rules~smc_flr7'
+      - categoryPath: 'external/_main~_repo_rules~smc_flr7_standalone'
+      - categoryPath: 'external/_main~_repo_rules~smc_flr7v3'
+      - categoryPath: 'external/_main~_repo_rules~smc_srr7p'
+      - categoryPath: 'external/_main~_repo_rules~usc_srr7e'
+      - categoryPath: 'external/_main~_repo_rules~smc_srr7p_standalone'
+      - categoryPath: 'external/_main~_repo_rules~usc_flr7'
+      - categoryPath: 'external/_main~_repo_rules~usc_flr7v3'
+      - categoryPath: 'external/_main~_repo_rules~usc_srr7p'
+      - categoryPath: 'external/_main~_repo_rules~boot'
+      - categoryPath: 'external/_main~_repo_rules~IoHwAb_ADC_Appl'
+      - categoryPath: 'external/_main~_repo_rules~TimeSync'
+      - categoryPath: 'external/_main~_repo_rules~Sensor_Position'

@@ -1,0 +1,1505 @@
+langVersion: v1
+name: core-radar-gen7-saf85xx-itf
+description: Pipeline that run the ITF testing for Gen7v2 SAF85xx
+ui:
+  name: core-radar-gen7-saf85xx-itf
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen7_SAF85xx
+  - name: upload-path
+    type: string
+    description: |-
+      The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the JFrog Artifactory
+      Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/unitTests/
+    default: "core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/manual/0/hwTests/"
+    ui:
+      name: JFrog Upload Path
+  - name: download-path
+    type: string
+    description: |-
+      The path inside of JFrog to download the outputs from. Note - this does not include the base URL of the JFrog Artifactory
+      Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/verification/1381/buildFiles/
+    default: "core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/manual/0/buildFiles/"
+    ui:
+      name: JFrog Download Path
+  - name: gateway
+    type: string
+    default: perceptionGateway
+  - name: branch-name
+    type: string
+    default: dev
+  - name: change-url
+    type: string
+    default: ""
+  - name: patchset-id
+    type: string
+    default: ""
+compute:
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+    compute: linux-1c4g
+
+  - name: build-flr7
+    task: build/itf-build
+    params:
+      git-ref: $(params.commit-id)
+      upload-path: $(params.download-path)
+      variant: flr7
+
+  - name: reserve-bench
+    task: utils/reserve-bench
+    compute: linux-1c4g
+    params:
+      gateway: $(params.gateway)
+      group-name: "core_radar_gen7v2_itf"
+
+  - name: itf-test-flr7
+    task: test/itf-test
+    compute: linux-2c8g
+    onError: continue
+    params:
+      variant: flr7
+      project-name: $(params.project-url-encoded)
+      commit-id: $(params.commit-id)
+      upload-path: $(params.upload-path)
+      download-path: $(params.download-path)
+      gateway: $(params.gateway)
+      bench-name: $(tasks.reserve-bench.results.bench-name)
+      bench-user: $(tasks.reserve-bench.results.bench-user)
+      bench-ip: $(tasks.reserve-bench.results.bench-ip)
+      repo-url: "$(params.gerrit-url)/a/$(params.project-url-encoded)"
+
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    compute: linux-1c4g
+    params:
+      download-exit-codes:
+        FLR7: $(tasks.itf-test-flr7.results.download-exit-code)
+      upload-exit-codes:
+        FLR7: $(tasks.itf-test-flr7.results.upload-exit-code)
+      clone-exit-codes:
+        FLR7: $(tasks.itf-test-flr7.results.clone-exit-code)
+      itf-test-exit-codes:
+        FLR7: $(tasks.itf-test-flr7.results.itf-test-exit-code)
+      error-messages:
+        FLR7: $(tasks.itf-test-flr7.results.error-message)
+
+  - name: itf-test-vote
+    task: Utils/post-gerrit-comment-vote@0.0.2
+    compute: linux-1c4g
+    params:
+      exit-code: $(tasks.prepare-vote-and-message.results.exit-code)
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Outputs: https://jfrog.asux.aptiv.com/ui/repos/tree/General/$(params.upload-path)
+
+        Build Job: https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+      votes:
+        ITF: $(tasks.prepare-vote-and-message.results.vote-value)
+
+  - name: publish-metrics-flr7
+    task: Utils/publish-metrics
+    compute: linux-2c8g
+    params:
+      git-ref: $(params.commit-id)
+      project-name: $(params.project-url-encoded)
+      variant: flr7
+      report-files-path: $(tasks.itf-test-flr7.results.jf-upload-path)
+      destination-path: /workspace/Core_Radar_Gen7_SAF85xx/
+      commit-hash: $(tasks.itf-test-flr7.results.commit-hash)
+  - name: auto-submit-check
+    task: Utils/ADVRADAR/auto-submit@1.0.1
+    compute: linux-2c8g
+    params:
+      project-name: $(params.project-url-encoded)
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      comment: "False"
+
+final:
+  - name: unreserve-bench
+    task: Utils/studio-cli@1.0.0
+    params:
+      script: |-
+        #!/bin/bash
+        set +e # Disable immediate exit on error
+        set +x # Disable command tracing globally
+
+        echo "Unreserve Windows Device - studio-cli"
+
+        target_id="$(tasks.reserve-bench.results.target-id)"
+        bench_name="$(tasks.reserve-bench.results.bench-name)"
+
+        echo "Target ID : $target_id"
+        echo "Bench Name: $bench_name"
+        echo "----------------------------"
+        # Reserve command, reserve for 1 hour
+        reserve_command="studio-cli vlab physical unreserve -i $target_id"
+
+        # Run the reserve command and capture output and exit code
+        echo "Running command: $reserve_command"
+        output=$($reserve_command 2>&1)  # Capture both stdout and stderr
+        exit_code=$?
+
+        # Check the status field first
+        status=$(echo "$output" | jq -r '.status' 2>/dev/null)
+
+        if [ "$status" == "success" ]; then
+          echo "Successfully unreserved the test bench $bench_name."
+        elif [ "$status" == "error" ]; then
+          echo "ERROR: Failed to unreserve the test bench $bench_name"
+        else
+          # Handle unexpected statuses or invalid responses
+          echo "Unexpected status in response: $status (raw output: $output)." >&2
+        fi
+
+defineTasks:
+  - name: reserve-bench
+    langVersion: v1
+    category: utils
+    params:
+      - name: duration
+        type: string
+        default: "3600"
+        description: |-
+          This is the total time that this script will attempt to reserve a test bench, basically a timeout. default is 3600s (1hr)
+      - name: interval
+        type: string
+        default: "60"
+        description: |-
+          This is the interval between each check for an open, unreserved test bench. default is 20s
+      - name: group-name
+        type: string
+        default: core_radar_gen7v2_itf
+        description: |-
+          This is the group name used to label all of the ITF test benches. The field being used for now is "bsp"
+      - name: gateway
+        type: string
+        default: perceptionGateway
+        description: |-
+          This is the name of the gateway that is used by the test benche(s). default is "perceptionGateway"
+    results:
+      - name: bench-name
+        description: The name of the reserved test bench
+      - name: bench-user
+        description: The user of the reserved test bench
+      - name: bench-ip
+        description: The ip of the reserved test bench
+      - name: reservation-id
+        description: The reservation id of the reserved test bench
+      - name: target-id
+        description: The target id of the reserved test bench
+      - name: exit-code
+        description: The exit code of the reserve step
+      - name: error-message
+        description: The error message of the reserve step
+    steps:
+      - name: reserve-bench
+        task: Utils/studio-cli@1.0.0
+        onError: continue
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            # Debug: uncomment and update the target id if reservation is stuck
+            # studio-cli vlab physical unreserve -i ada7abd4-b482-4b9e-b26c-a70564e0a8c2 #
+            # exit 9
+
+            # Check that the gateway is connected. If not, then exit.
+            connected_to_dis=$(studio-cli vlab physical slc gateway list --gwid "$(params.gateway)" | jq -r '.[0].connected_to_dis')
+
+            if [[ "$connected_to_dis" == "NO" ]]; then
+              echo "---------------------------"
+              echo "ERROR: Gateway is not connected: ($(params.gateway))"
+              echo "---------------------------"
+
+              echo "Gateway is not connected. ($(params.gateway))" >> $(results.error-message.path)
+              echo -n "1" > $(results.exit-code.path)
+              exit 1
+            fi
+
+            # Fetch targets with the required bsp
+            echo "Fetching targets with group: $(params.group-name)"
+            targets=$(studio-cli vlab physical search -a | jq -c '.data[] | select(.bsp == "$(params.group-name)")')
+
+            if [ -z "$targets" ]; then
+              echo "---------------------------"
+              echo "ERROR: No targets found with group: $(params.group-name)"
+              echo "---------------------------"
+              echo "No targets found with group: $(params.group-name)" >> $(results.error-message.path)
+              echo -n "1" > $(results.exit-code.path)
+              exit 1
+            fi
+
+            # Extract target names into an array
+            target_names=($(echo "$targets" | jq -r '.name'))
+            ssh_strings=($(echo "$targets" | jq -r '.labConnectInfo.sshString'))
+
+            if [ ${#target_names[@]} -eq 0 ]; then
+              echo "---------------------------"
+              echo "ERROR: No targets with valid names found."
+              echo "---------------------------"
+              echo "No targets with valid names found." >> $(results.error-message.path)
+              echo -n "1" > $(results.exit-code.path)
+              exit 1
+            fi
+
+            echo "Targets matching group $(params.group-name):"
+            for name in "${target_names[@]}"; do
+                echo "- $name"
+            done
+            echo "-------------------"
+
+            # Total duration to retry (seconds) and interval (seconds)
+            duration=$(params.duration)  # Total time to keep retrying, 1hr
+            interval=$(params.interval)   # Retry every 10s
+
+            # Start time
+            start_time=$(date +%s)
+            end_time=$((start_time + duration))
+
+            while [ $(date +%s) -lt $end_time ]; do
+              echo "Checking available benches..."
+              available_benches=$(studio-cli vlab physical search -a | jq -r '.data[] | select(.availability == "Available") | .name')
+              bench_count=$(echo "$available_benches" | wc -l)
+
+              if [ "$bench_count" -eq 0 ]; then
+                echo "No benches are currently available. Retrying in $interval seconds..."
+                sleep $interval
+                continue
+              fi
+
+              echo "Checking the lowest 'In Progress' run..."
+              lowest_in_progress_run=$(studio-cli plm run list -n "$(config.pipeline.name)" -l 10 -s IN_PROGRESS | \
+                jq '[.rows[] | select(.status == "IN_PROGRESS")] | sort_by(.number) | .[0].number')
+
+              current_run_number=$(config.pipeline.runNumber)
+
+              # Check if the lowest "In Progress" job already has a reserved bench
+              reserved_bench_for_lowest=$(studio-cli vlab physical search -a | jq -r ".data[] | select(.reservedBy == \"${lowest_in_progress_run}\") | .name")
+              if [ -n "$reserved_bench_for_lowest" ]; then
+                echo "Lowest 'In Progress' run ($lowest_in_progress_run) already has a reserved bench: $reserved_bench_for_lowest"
+                bench_count=$((bench_count - 1))
+              fi
+
+              if [ "$lowest_in_progress_run" == "$current_run_number" ] || [ "$bench_count" -gt 0 ]; then
+                echo "This run ($current_run_number) is eligible to reserve a bench."
+
+                for i in "${!target_names[@]}"; do
+                  name=${target_names[$i]}
+
+                  echo "Searching for target: $name"
+                  # Fetch target details and check availability
+                  output=$(studio-cli vlab physical search -n "$name" 2>&1)
+                  exit_code=$?
+
+                  if [ $exit_code -ne 0 ]; then
+                    echo "Failed to fetch target: $name. Skipping..."
+                    continue
+                  fi
+
+                  ssh_string=$(echo "$output" | jq -r '.data[0].labConnectInfo.sshString')
+                  target_id=$(echo "$output" | jq -r '.data[0].targetId')
+                  availability=$(echo "$output" | jq -r '.data[0].availability')
+
+                  # Skip targets with no sshString
+                  if [ -z "$ssh_string" ]; then
+                      echo "Warning: sshString is empty for target $name. Skipping..."
+                      continue
+                  fi
+
+                  # Extract TARGET_HOST and TARGET_USER from sshString
+                  target_host=$(echo "$ssh_string" | sed -n 's/.*TARGET_HOST=\([^ ]*\);.*/\1/p')
+                  target_user=$(echo "$ssh_string" | sed -n 's/.*TARGET_USER=\([^ ]*\);.*/\1/p')
+
+                  # Debug: Log parsed values
+                  if [ -z "$target_host" ]; then
+                      echo "  Warning: TARGET_HOST not found in sshString."
+                  else
+                      echo "- TARGET_HOST: $target_host"
+                  fi
+
+                  if [ -z "$target_user" ]; then
+                      echo "  Warning: TARGET_USER not found in sshString."
+                  else
+                      echo "- TARGET_USER: $target_user"
+                  fi
+                  if [ "$availability" == "Available" ]; then
+                    echo "Target $name (ID: $target_id) is available. Attempting to reserve..."
+
+                    # Reserve the target for 1 hour
+                    reserve_command="studio-cli vlab physical reserve -H 1 -i $target_id"
+                    reserve_output=$($reserve_command 2>&1)
+                    reserve_exit_code=$?
+
+                    if [ $reserve_exit_code -eq 0 ]; then
+                      status=$(echo "$reserve_output" | jq -r '.status')
+                      if [ "$status" == "success" ]; then
+                        reservation_id=$(echo "$reserve_output" | jq -r '.data.reservationId')
+
+                        echo "Reservation successful for target $name: $reservation_id"
+
+                        echo -n "$name" > $(results.bench-name.path)
+                        echo -n "$target_host" > $(results.bench-ip.path)
+                        echo -n "$target_user" > $(results.bench-user.path)
+                        echo -n "$reservation_id" > $(results.reservation-id.path)
+                        echo -n "$target_id" > $(results.target-id.path)
+                        echo -n "0" > $(results.exit-code.path)
+                        exit 0
+                      fi
+                    fi
+                    echo "Failed to reserve target: $name. Moving to the next..."
+                  else
+                    echo "Target $name is not available. Checking next..."
+                  fi
+                done
+
+                sleep $interval
+                continue
+              else
+                echo "This run ($current_run_number) is not eligible to reserve a bench. Retrying in $interval seconds..."
+                sleep $interval
+                continue
+              fi
+            done
+
+            echo "---------------------------"
+            echo "ERROR: Failed to reserve a target after $duration seconds."
+            echo "---------------------------"
+            echo "Failed to reserve a target after $duration seconds." >> $(results.error-message.path)
+            echo -n "1" > $(results.exit-code.path)
+            exit 1
+
+  - name: itf-test
+    langVersion: v1
+    category: test
+    params:
+      - name: commit-id
+        type: string
+        default: "1234567890"
+      - name: project-name
+        type: string
+        default: $(params.project-name)
+      - name: repo-url
+        type: string
+        description: Project git repo url
+        ui:
+          name: repo-url
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is FLR7
+            value: flr7
+        default: srr7p
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the JFrog Artifactory
+          Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/unitTests/
+        default: "core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/verification/1381/hwTests/"
+        ui:
+          name: JFrog Upload Path
+      - name: download-path
+        type: string
+        description: |-
+          The path inside of JFrog to download the outputs from. Note - this does not include the base URL of the JFrog Artifactory
+          Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/verification/1381/buildFiles/
+        default: "core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/verification/1381/buildFiles/"
+        ui:
+          name: JFrog Download Path
+      - name: gateway
+        type: string
+        default: perceptionGateway
+      - name: bench-name
+        type: string
+        default: ""
+      - name: bench-user
+        type: string
+        description: The user of the reserved test bench
+      - name: bench-ip
+        type: string
+        description: The ip of the reserved test bench
+    results:
+      - name: jf-upload-url
+        description: The URL the outputs are uploaded to.
+      - name: jf-upload-path
+        description: The path the outputs are uploaded to.
+      - name: clean-exit-code
+        description: The exit code of the clean step
+      - name: clone-exit-code
+        description: The exit code of the flash step
+      - name: download-exit-code
+        description: The exit code of the download step
+      - name: itf-test-exit-code
+        description: The exit code of the smoke test step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: error-message
+        description: A string with any new errors found
+      - name: commit-hash
+        description: commit-hash to provide to any downstream tasks
+      - name: commit-hash-exit-code
+        description: The exit code of the flash step
+    steps:
+      - name: check-git-ref
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        params:
+          repo-url: $(params.repo-url)
+        script: |
+          #!/bin/bash
+
+          # Input parameters
+          git_ref=$(params.commit-id)
+          repo_url=$(params.repo-url)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          # Function to resolve branch name or commit hash
+          resolve_to_commit_hash() {
+              local ref=$1
+              local repo=$2
+              if [ "$ref" == "dev" ]; then
+                  # Get the latest commit hash for 'dev' branch using git ls-remote
+                  latest_commit=$(git ls-remote "$repo" refs/heads/dev | awk '{print $1}')
+                  if [ -z "$latest_commit" ]; then
+                      echo "Error: Unable to retrieve the latest commit for 'dev' branch." >&2
+                      echo -n "1" > $(results.commit-hash-exit-code.path)
+                      exit 1
+                  fi
+                  echo "$latest_commit"
+              else
+                  # If it's not 'dev', assume it's a commit hash and validate it
+                  if [[ "$ref" =~ ^[a-f0-9]{40}$ ]]; then
+                      echo "$ref"
+                  else
+                      echo "Error: Invalid commit hash or unsupported ref format: $ref" >&2
+                      echo -n "1" > $(results.commit-hash-exit-code.path)
+                      exit 1
+                  fi
+              fi
+          }
+
+          # Main logic
+          if [ -z "$git_ref" ] || [ -z "$repo_url" ]; then
+              echo "Usage: $0 <git-ref> <repository-url>" >&2
+              echo -n "1" > $(results.commit-hash-exit-code.path)
+              exit 1
+          fi
+
+          # Resolve the commit hash
+          commit_hash=$(resolve_to_commit_hash "$git_ref" "$repo_url")
+
+          echo -n "$commit_hash" >> $(results.commit-hash.path)
+          echo "Resolved Commit Hash: $commit_hash"
+
+      - name: clean-workspace
+        task: Utils/core-radar-studio-cli@1.0.0
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+            parameters='["$(params.bench-user)","$(params.bench-ip)","cd wrsd/scripts/ & cmd /c","killPythonProcesses.bat",""]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_strings=("Error" "\[Errno")
+
+            for error in "${error_strings[@]}"; do
+              if echo "$target_action_output" | grep -q "$error"; then
+
+                error_message=$(echo "$target_action_output" | grep -i "$error")
+                echo "------------------------------"
+                echo "ERROR: $error_message"
+                echo "------------------------------"
+
+                echo "Clean Stage: $error_message" >> $(results.error-message.path)
+                echo -n "1" > $(results.clean-exit-code.path)
+                exit 2
+              fi
+            done
+
+            echo -n "" >> $(results.error-message.path)
+            echo -n "0" > $(results.clean-exit-code.path)
+
+      - name: shallow-clone
+        task: Utils/core-radar-studio-cli@1.0.0
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+            parameters='["$(params.bench-user)","$(params.bench-ip)","cd wrsd/scripts/ & cmd /c","shallowClone.bat","$(params.project-name) $(params.repo-url) 1  $(params.commit-id) ../workspace/"]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_strings=("Error" "\[Errno")
+
+            for error in "${error_strings[@]}"; do
+              if echo "$target_action_output" | grep -q "$error"; then
+
+                error_message=$(echo "$target_action_output" | grep -i "$error")
+                echo "------------------------------"
+                echo "ERROR: $error_message"
+                echo "------------------------------"
+
+                echo "Clone Stage: $error_message" >> $(results.error-message.path)
+                echo -n "1" > $(results.clone-exit-code.path)
+                exit 2
+              fi
+            done
+
+            echo -n "" >> $(results.error-message.path)
+            echo -n "0" > $(results.clone-exit-code.path)
+
+      - name: download-build-files
+        task: Utils/core-radar-studio-cli@1.0.0
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+            parameters='["$(params.bench-user)","$(params.bench-ip)","cd wrsd/scripts/ & python","downloadfromJfrog.py","$(params.download-path)itf_output_$(params.variant).zip C:/Users/wjrn4y/wrsd/workspace/$(params.project-name)/bazel-bin/outputs/"]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_strings=("Error: Gateway disconnected" "Error: Gateway Not Registered" "Error: Failed to connect with the gateway" "server http error 50" "\[Errno")
+
+            for error in "${error_strings[@]}"; do
+              if echo "$target_action_output" | grep -q "$error"; then
+
+                error_message=$(echo "$target_action_output" | grep -i "$error")
+                echo "------------------------------"
+                echo "ERROR: $error_message"
+                echo "------------------------------"
+
+                echo "Download Stage: $error_message" >> $(results.error-message.path)
+                echo -n "1" > $(results.download-exit-code.path)
+                exit 2
+              fi
+            done
+
+            echo -n "" >> $(results.error-message.path)
+            echo -n "0" > $(results.download-exit-code.path)
+
+      - name: run-matlab
+        task: Utils/core-radar-studio-cli@1.0.0
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+            parameters='["$(params.bench-user)","$(params.bench-ip)","cd wrsd/scripts/ & python","runITF.py",""]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_strings=("ITF Failed To Complete", "Error: Gateway disconnected" "Error: Gateway Not Registered" "Error: Failed to connect with the gateway" "server http error 50" "\[Errno")
+
+            for error in "${error_strings[@]}"; do
+              if echo "$target_action_output" | grep -q "$error"; then
+
+                error_message=$(echo "$target_action_output" | grep -i "$error")
+                echo "------------------------------"
+                echo "ERROR: $error_message"
+                echo "------------------------------"
+
+                echo "ITF Test Stage: $error_message" >> $(results.error-message.path)
+                echo -n "1" > $(results.itf-test-exit-code.path)
+                exit 2
+              fi
+            done
+
+            echo -n "" >> $(results.error-message.path)
+            echo -n "0" > $(results.itf-test-exit-code.path)
+
+      - name: upload-report
+        task: Utils/core-radar-studio-cli@1.0.0
+        WhenVal: false
+        params:
+          # yamllint disable
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            if [ $(cat $(results.itf-test-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "ITF test Stage Failed, skipping the upload stage"
+              echo "------------------------------"
+            else
+
+              # Define the config file path
+              config_file="./config.json"
+
+              if [ -f "$config_file" ]; then
+                  echo "$config_file exists"
+              else
+                  # Provision the gateway config file
+                  studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+              fi
+
+              # Setup parameters for python script call on test bench
+              action_script="target_scripts/run_cmd_on_target.sh"
+
+              # Call the upload to jfrog script with path of reports and destination in jfrog.
+              # At the end there is an exclude file type list, this is to drop files from that reports folder that makes this folder huge, ~50Mb, without those files its < 1Mb
+              parameters='["$(params.bench-user)","$(params.bench-ip)","cd wrsd/scripts/ & python","uploadtoJfrog.py","wrsd/workspace/Core_Radar_Gen7_SAF85xx/tools/ITF/Integrated_Testing/ResimAutoFrameWork/Reports/ $(params.upload-path) $(params.variant) $(config.pipeline.name) $(config.pipeline.runNumber) https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber) --exclude .fig .mat"]'
+
+              echo "Target Action Script Parameters: $parameters"
+
+              studio-cli vlab physical slc target act \
+                --gwid=$(params.gateway) \
+                --target-name=$(params.bench-name) \
+                --action-path="$action_script" \
+                --config-file="$config_file" \
+                --parameters="$parameters" \
+                | tee target_action_output.log
+
+              target_action_output=$(cat target_action_output.log)
+
+              error_strings=("\[Errno" "Error" "returned non-zero exit status")
+
+              for error in "${error_strings[@]}"; do
+                if echo "$target_action_output" | grep -q "$error"; then
+                  error_message=$(echo "$target_action_output" | grep -i "$error")
+                  echo "------------------------------"
+                  echo "ERROR: $error_message"
+                  echo "------------------------------"
+
+                  echo "Upload Stage: $error_message" >> $(results.error-message.path)
+                  echo -n "1" > $(results.upload-exit-code.path)
+                  exit 5
+                fi
+              done
+
+            fi
+            echo -n "https://jfrog.asux.aptiv.com/artifactory/$(params.upload-path)itf_reports_$(params.variant).zip" > $(results.jf-upload-url.path)
+            echo -n "$(params.upload-path)itf_reports_$(params.variant).zip" > $(results.jf-upload-path.path)
+            echo -n "0" > $(results.upload-exit-code.path)
+          # yamllint enable
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: download-exit-codes
+        type: map
+        description: Exit codes for any download tasks
+        ui:
+          name: Download Exit Codes
+        render:
+          templateName: map
+      - name: upload-exit-codes
+        type: map
+        description: Exit codes for any upload tasks
+        ui:
+          name: Upload Exit Codes
+        render:
+          templateName: map
+      - name: clone-exit-codes
+        type: map
+        description: Exit codes for any clone tasks
+        ui:
+          name: Clone Exit Codes
+        render:
+          templateName: map
+      - name: itf-test-exit-codes
+        type: map
+        description: Exit codes for any smoke test tasks
+        ui:
+          name: Smoke Test Exit Codes
+        render:
+          templateName: map
+      - name: error-messages
+        type: map
+        description: Error messages for any smoke test tasks
+        ui:
+          name: Smoke Test Error messages
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-build-codes
+        script: |-
+          # Write in "success" values
+          echo -n "+1" > $(results.vote-value.path)
+          echo -n "0" > $(results.exit-code.path)
+
+          # Read and act on download exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:alnum:]]+[[:space:]]Stage):[[:blank:]](.+) ]]; then
+              echo "${BASH_REMATCH[2]} : ${BASH_REMATCH[3]}" >> $(results.vote-message.path)
+            fi
+          done < $(params.error-messages.path)
+
+          # Read and act on download exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Download Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Download Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.download-exit-codes.path)
+
+          # If any Download failed, that's the important part
+          # So we don't need to worry about checking if the flashing was successful
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+
+          # Read and act on Flash exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Clone Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Clone Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.clone-exit-codes.path)
+
+          # If any Flash failed, that's the important part
+          # So we don't need to worry about checking if the smoke test was successful
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+
+          # Read and act on smoke test exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Smoke Test Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Smoke Test Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.itf-test-exit-codes.path)
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is FLR7
+            value: flr7
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default: ""
+        ui:
+          name: git-ref
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+      - name: report-files-path
+        type: string
+        description: The jfrog path to the builds files zip file.
+        ui:
+          name: report-files-path
+      - name: destination-path
+        type: string
+        description: The path to unzip the downloaded zip file.
+        ui:
+          name: destination-path
+      - name: commit-hash
+        type: string
+        description: commit-hash to provide to any downstream tasks
+        ui:
+          name: commit-hash
+
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: download-report-files
+        task: core-radar-jfrog-download
+        params:
+          downloadPath: $(params.report-files-path)
+          destinationPath: $(params.destination-path)
+        WhenVal: false
+        returnResults:
+          exit-code: exit-code
+
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+
+          import subprocess
+          import sys
+          import os
+          import zipfile
+          import re
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+              sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+              subprocess.check_call([
+                  sys.executable, "-m", "pip", "install",
+                  "--break-system-packages",
+                  "--no-cache-dir",
+                  "--target", TARGET,
+                  "psycopg2-binary"
+              ])
+
+              os.makedirs(TARGET, exist_ok=True)
+              with open(MARKER, "w"):
+                  pass
+
+              os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+              print("Installing Python dependencies...")
+              install_deps_and_restart()
+
+          import psycopg2
+
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+              """
+              Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd.
+              """
+              # Check if the wrsd_tags entry already exists
+              cursor.execute("""
+                  SELECT id FROM wrsd."perception_metrics_wrsd"
+                  WHERE build_no = %s AND pipeline_name = %s;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+              result = cursor.fetchone()
+              # If exists, return id, else insert new and return new id
+              if result:
+                  print("WRSD entry already exists")
+                  return result[0]
+              else:
+                  print("Creating a new WRSD entry")
+
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                      VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                  """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+                  result = cursor.fetchone()[0]
+
+                  return result
+
+          def insert_perception_metrics(cursor, data_list):
+              """
+              Inserts multiple perception_metrics entries into the database.
+
+              Parameters:
+                  data_list (list of dict): List of dictionaries, each containing data for a single entry.
+              """
+              for data in data_list:
+                  # First, insert or get the wrsd_tags ID
+                  wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+
+                  # Insert into PerceptionMetrics with reference to wrsd_id
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                  """, (
+                      data['commitid'],
+                      data['date'],
+                      data['branch'],
+                      data['tag'],
+                      data['project'],
+                      data['metric_name'],
+                      data['metric_value'],
+                      Json(data['metric_tags']),
+                      wrsd_id
+                  ))
+
+          def read_file(file_path):
+              """Read and return the contents of a file."""
+              with open(os.path.expandvars(file_path), 'r') as file:
+                  return file.read().strip()
+
+          def parse_integration_test_summary(file_path):
+              """
+              Parse the integration test summary file and extract metrics.
+              """
+
+              if not os.path.exists(file_path):
+                  raise FileNotFoundError(f"The file '{file_path}' does not exist.")
+
+              with open(file_path, 'r') as file:
+                  lines = file.readlines()
+
+              data = {}
+              cycle_results = []
+
+              # Parse the configuration data
+              for line in lines:
+                  if line.startswith("Test Name:"):
+                      data["test_name"] = line.split(":", 1)[1].strip()
+                  elif line.startswith("Variant:"):
+                      data["variant"] = line.split(":", 1)[1].strip()
+                  elif line.startswith("Test ID:"):
+                      data["test_id"] = line.split(":", 1)[1].strip()
+                  elif line.startswith("Platform ID:"):
+                      data["platform_id"] = line.split(":", 1)[1].strip()
+                  elif line.startswith("Software ID:"):
+                      data["software_id"] = line.split(":", 1)[1].strip()
+                  elif line.startswith("Date of Test:"):
+                      data["test_date"] = line.split(":", 1)[1].strip()
+                  elif line.startswith("Test Duration(min):"):
+                      data["test_duration"] = float(line.split(":", 1)[1].strip())
+                  elif line.startswith("Overall Pass/Fail:"):
+                      pass_fail = line.split(":")[1].strip().split("/")
+                      data["overall_pass"] = int(pass_fail[0])
+                      data["overall_fail"] = int(pass_fail[1])
+                  elif line.startswith("Testcase Pass/Fail:"):
+                      pass_fail = line.split(":")[1].strip().split("/")
+                      data["testcase_pass"] = int(pass_fail[0])
+                      data["testcase_fail"] = int(pass_fail[1])
+
+              # Parse per-testcase results in Cycle 1
+              cycle_start = False
+              for line in lines:
+                  if "Cycle 1" in line:
+                      cycle_start = True
+                      continue
+                  if cycle_start:
+                      match = re.match(r"^\s*(\S+)\s+(\d+)\s*/\s*(\d+)\s+(\S+)", line)
+                      if match:
+                          testcase, passed, total, result = match.groups()
+                          cycle_results.append({
+                              "testcase": testcase,
+                              "passed": int(passed),
+                              "total": int(total),
+                              "result": result
+                          })
+
+              data["cycle_results"] = cycle_results
+              return data
+
+          def package_integration_test_data(base_data, report_data):
+              """
+              Package parsed integration test report data into a list for database insertion.
+
+              Parameters:
+                  base_data (dict): Base data containing common metadata like commit ID, branch, etc.
+                  report_data (dict): Parsed data from the integration test report.
+
+              Returns:
+                  list: A list of dictionaries ready for database insertion.
+              """
+              data_list = []
+
+
+              # Add overall metrics
+              data_list.extend([
+                  {
+                      **base_data,
+                      "metric_name": "itf.results.overall_pass",
+                      "metric_tags": {
+                          "test_name": report_data["test_name"],
+                          "variant": report_data["variant"],
+                          "test_id": report_data["test_id"],
+                          "software_id": report_data["software_id"]
+                      },
+                      "metric_value": report_data["overall_pass"]
+
+                  },
+                  {
+                      **base_data,
+                      "metric_name": "itf.results.overall_fail",
+                      "metric_tags": {
+                          "test_name": report_data["test_name"],
+                          "variant": report_data["variant"],
+                          "test_id": report_data["test_id"]
+                      },
+                      "metric_value": report_data["overall_fail"]
+                  },
+                  {
+                      **base_data,
+                      "metric_name": "itf.results.testcase_pass",
+                      "metric_tags": {
+                          "test_name": report_data["test_name"],
+                          "variant": report_data["variant"],
+                          "test_id": report_data["test_id"]
+                      },
+                      "metric_value": report_data["testcase_pass"]
+                  },
+                  {
+                      **base_data,
+                      "metric_name": "itf.results.testcase_fail",
+                      "metric_tags": {
+                          "test_name": report_data["test_name"],
+                          "variant": report_data["variant"],
+                          "test_id": report_data["test_id"]
+                      },
+                      "metric_value": report_data["testcase_fail"]
+                  }
+              ])
+
+              # Add per-testcase results
+              for cycle_result in report_data["cycle_results"]:
+                  data_list.append({
+                      **base_data,
+                      "metric_name": "itf.results.cycle_results.pass",
+                      "metric_tags": {
+                          "testcase": cycle_result["testcase"],
+                          "variant": report_data["variant"],
+                          "testcase": cycle_result["testcase"],
+                          "result": cycle_result["result"]
+                      },
+                      "metric_value": cycle_result["passed"]
+                  })
+                  data_list.append({
+                      **base_data,
+                      "metric_name": "itf.results.cycle_results.total",
+                      "metric_tags": {
+                          "testcase": cycle_result["testcase"],
+                          "variant": report_data["variant"],
+                          "testcase": cycle_result["testcase"],
+                          "result": cycle_result["result"]
+                      },
+                      "metric_value": cycle_result["total"]
+                  })
+
+              return data_list
+
+          def get_report_file(destination_path, extract_base="/tmp"):
+            """Find and extract memoryStats.txt and flash_memory_stats.txt from a ZIP file."""
+            report_file = "Integration_Test_Summary.txt"
+
+            print(f"Searching for ZIP in workspace: {destination_path}")
+
+            for fname in os.listdir(destination_path):
+              if fname.lower().endswith(".zip"):
+                zip_file_path = os.path.join(destination_path, fname)
+                extract_folder = os.path.join(extract_base, os.path.splitext(fname)[0])
+
+                print(f"Extracting {zip_file_path} to {extract_folder}")
+                os.makedirs(extract_folder, exist_ok=True)
+
+                with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                  zip_ref.extractall(extract_folder)
+
+                for root,dirs,files in os.walk(extract_folder):
+                  if report_file in files:
+                    print(f"Found files: {report_file}")
+                    return (os.path.join(root,report_file))
+
+            raise FileNotFoundError(
+              f"No ZIP file found in workspace directory: {destination_path}"
+            )
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+
+          db_config = {
+              "dbname": "monitoring",
+              "user": pg_user,
+              "password": pg_pass,
+              "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+              "port": "5432"
+          }
+
+          build_name = "$(config.pipeline.name)"
+          build_no = $(config.pipeline.runNumber)
+          build_url = f"https://$(studio.home)/plm/view/{build_name}/runs/{build_no}"
+          variant = "$(params.variant)"
+          branch = "$(params.git-ref)"
+          project_name = "$(params.project-name)"
+          commit_hash = "$(params.commit-hash)"
+          report_path = 'Integration_Test_Summary.txt'
+
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+
+          wrsd_tags = {
+              "build_no": build_no,
+              "pipeline_name": build_name,
+              "status": None,
+              "duration": None,
+              "build_url": build_url
+          }
+
+          base_data = {
+              "commitid": commit_hash,
+              "date": currentDateTime,
+              "branch": branch,
+              "tag": "",
+              "project": project_name,
+              "wrsd_tags": wrsd_tags
+          }
+
+
+          if branch == "dev":
+              # Get the report text file from the zipped up report folder
+              report_path = get_report_file("$(params.destination-path)")
+
+              # Parse the test summary file
+              parsed_report = parse_integration_test_summary(report_path)
+
+              # Package data for PostgreSQL
+              data_list = package_integration_test_data(base_data, parsed_report)
+
+              print(f"Submitting {len(data_list)} memory records for {variant} .")
+              print(data_list)
+              try:
+                  connection = psycopg2.connect(**db_config)
+                  cursor = connection.cursor()
+
+                  # Insert multiple data entries
+                  insert_perception_metrics(cursor, data_list)
+                  connection.commit()
+                  print("Data inserted successfully.")
+
+              except Exception as e:
+                  print("An error occurred:", e)
+
+              finally:
+                  if connection:
+                      cursor.close()
+                      connection.close()
+          else:
+              print("Not Dev branch so nothing will be commited to Platform Health.")
+
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+
+  - name: itf-build
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is flr7
+            value: flr7
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/buildFiles
+        default: ""
+        ui:
+          name: JFrog Upload Path
+    results:
+      - name: jf-upload-url
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: jf-upload-path
+        description: The path the outputs are uploaded to.
+      - name: commit-hash
+        description: Commit hash, only used when building nightly dev branch
+      - name: rapid-build-url
+        description: URL to RapidBuild
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          script: |-
+            cd /workspace/Core_Radar_Gen7_SAF85xx/
+            COMMIT_HASH=$(git rev-parse HEAD)
+            echo -n "$COMMIT_HASH" > $(results.commit-hash.path)
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen7_SAF85xx
+            username: $(secrets.gerrit-cred.username.path)
+          returnResults:
+            commitHash: commit-hash
+        WhenVal: false
+      - name: build-code
+        task: build-code
+        params:
+          git-ref: $(params.git-ref)
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          rapid-build-url: rapid-build-url
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.build-code.results.outputDir.path))
+          uploadPath: $(params.upload-path)itf_output_$(params.variant)
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: jf-upload-url
+          jf-upload-path: jf-upload-path
+
+  - name: build-code
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Build
+        ui:
+          name: variant
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+    results:
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: rapid-build-url
+        description: URL to RapidBuild
+    steps:
+      - name: build
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/bin/bash
+
+          echo repoRoot = $(params.repoRoot)
+          echo repoRoot = $(params.variant)
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          # Path to the build event JSON file
+          BUILD_EVENT_FILE="build_event.json"
+
+          bazelisk --output_user_root=$(params.repoRoot)/bazel_output build //:gen7 --color=no --jenkins --gitBranch=$(params.git-ref) --variant=$(params.variant) --jobs=auto --board=A1 --micro_revision=ES2 --build_event_json_file="$BUILD_EVENT_FILE"
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=$?
+
+          # Extract the invocation ID using jq
+          INVOCATION_ID=$(grep -Po '"uuid":"\K[^"]+' build_event.json)
+
+          # Check if the invocation ID is not empty
+          if [[ -n "$INVOCATION_ID" ]]; then
+              echo "Invocation ID: $INVOCATION_ID"
+
+              # Create the RapidBuild url
+              echo -n "https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen7_saf85xx/invocations/${INVOCATION_ID}" > $(results.rapid-build-url.path)
+          fi
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Build failed with exit code $BAZEL_EXIT_CODE."
+              echo "----------------------------------"
+              # Optionally, you can exit the script with a non-zero status to indicate failure
+              exit 1
+          fi
+
+          # save output directory path for user usages
+          echo -n "$(params.repoRoot)/bazel-bin/outputs" > $(results.outputDir.path)
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          echo -n $(cat $(steps.build.exitCode.path)) > $(results.exit-code.path)
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+
+timeout: 1h

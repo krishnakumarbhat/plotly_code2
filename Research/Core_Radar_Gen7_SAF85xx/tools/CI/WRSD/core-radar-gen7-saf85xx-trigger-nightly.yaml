@@ -1,0 +1,1126 @@
+langVersion: v1
+name: core-radar-gen7-saf85xx-trigger-nightly
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project
+ui:
+  name: core-radar-gen7-saf85xx-trigger-nightly
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/$(config.pipeline.runNumber)
+  - name: latest-upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen7_SAF85xx
+  - name: branch-name
+    type: string
+    default: dev
+  - name: change-url
+    type: string
+    default: ""
+  - name: patchset-id
+    type: string
+    default: "origin/dev"
+compute:
+  - name: linux-16c64g
+    resource: asp-compute-linux-16c64g
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+    compute: linux-1c4g
+  - parallelTasks:
+      - name: precommit
+        # meta:
+        #   disabled: true
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+          target-pipeline: core-radar-gen7-saf85xx-precommit-check
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-precommit-check.yaml
+      - name: build
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/buildFiles/
+            run-all-builds: "true"
+          target-pipeline: core-radar-gen7-saf85xx-build
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-build.yaml
+      - name: unit-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/unitTests/
+          target-pipeline: core-radar-gen7-saf85xx-unit-test
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-unit-test.yaml
+      - name: coverity-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/coverity/
+          target-pipeline: core-radar-gen7-saf85xx-coverity
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-coverity.yaml
+      - name: blackduck-gen7-srr7p
+        task: local/blackduck-gen7
+        params:
+          git-ref: $(params.commit-id)
+          variant: "srr7p"
+          gerrit-url: $(params.gerrit-url)
+          project-name: $(params.project-url-encoded)
+          whitelist: "afbb,Calibration_Handler,sabb,spbb"
+          bd-path: $(params.project-url-encoded)
+          bd-repoRoot: $(params.project-url-encoded)
+          bd-project: "10055799_MY25_Radar_GEN7_SRR_2nd_Source_Platform"
+          bd-version-name: "dev-HEAD"
+      - name: dynamic-analysis
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/dynamicAnalysis/
+          target-pipeline: core-radar-gen7-saf85xx-dynamic-analysis
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-dynamic-analysis.yaml
+          onErrorContinue: "true"
+  - parallelTasks:
+      - name: tics-connector-gen7
+        task: local/tics-connector-gen7
+        compute: linux-16c64g
+        resources:
+          tics-connector-awr:
+            wrrn: wrrn::aws:3387394d-c49d-4da2-826b-2bd9202d97fd::WRStudioNewProd:eucentral1:ecf59c20-c67a-435d-8a92-9638bbf3e943::ticsconnectorawr:f11e79f5-7e1c-4d74-a8f9-f5448af8fb12::project:1c2754f1-9a0b-41b1-8a05-9e1925231064
+        params:
+          defaultDirectory: ${WORPSPACE}
+          gitprojectname: $(params.project-url-encoded)
+          parameters:
+          repoRoot: Core_Radar_Gen7_SAF85xx
+          ticsImageName: aptiv-core-radar/coverity-build-ready
+          ticsImageTag: 1.4.2
+          ticsProjectName: 10055799 Core_Radar_Gen7_SAF85xx
+      # ITF job is not yet configured properly, skipping for now to avoid nightly failures.
+      - name: itf
+        meta:
+          disabled: true
+        # ITF job is disabled in nightly: not yet configured properly, skipping for now.
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/itf/
+            download-path: $(params.upload-path)/buildFiles/
+          target-pipeline: core-radar-gen7-saf85xx-itf
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-itf.yaml
+      - name: hw-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/hwTests/
+            download-path: $(params.upload-path)/buildFiles/
+            testTimeout: "90m"
+            testDuration: "600"
+            powerCycles: "25"
+          target-pipeline: core-radar-gen7-saf85xx-hw-test
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-hw-test.yaml
+
+      - name: fuzz-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            patchset-id: $(params.patchset-id)
+            merge-base-branch: $(params.branch-name)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/fuzzTests/
+            change-url: $(params.change-url)
+          target-pipeline: core-radar-gen7-saf85xx-fuzz-test
+          yaml_path: tools/CI/WRSD/core-radar-gen7-saf85xx-fuzz-test.yaml
+          onErrorContinue: "true"
+final:
+  - name: update-latest-reports
+    task: local/core-radar-jfrog-update-latest-reports
+    compute: linux-2c8g
+    params:
+      uploadPath: $(params.upload-path)
+      latestUploadPath: $(params.latest-upload-path)
+
+  - name: grafana-publish-metrics-platform-flr7v2
+    meta: {}
+    params:
+      image: $(studio.systemRegistry)/devsecops/dashboard:1.0
+      netrccreds: $(secrets.netrc)
+      patchset-revision: $(params.branch-name)
+      pipeline-type: nightly
+      project-name: core-radar-gen7-saf85xx-trigger-nightly
+      scm:
+        branch-name: feature/sw-quality
+        repo-name: 00000000_wrsd/metrics
+      shebang: '#!/usr/bin/env python3'
+    task: Utils/grafana-publish-metrics@1.0.0
+defineTasks:
+  - name: blackduck-gen7
+    langVersion: v1
+    category: local
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is flr7
+            value: flr7
+      - name: gerrit-url
+        type: string
+        default: https://gitgerrit.asux.aptiv.com
+      - name: project-name
+        type: string
+        default: Core_Radar_Gen7_SAF85xx
+      - name: whitelist
+        type: string
+        default: ""
+      - name: bd-path
+        type: string
+        default: Core_Radar_Gen7_SAF85xx
+      - name: bd-repoRoot
+        type: string
+        default: Core_Radar_Gen7_SAF85xx
+      - name: bd-project
+        type: string
+        default: 10055799_MY25_Radar_GEN7_SRR_2nd_Source_Platform
+      - name: bd-version-name
+        type: string
+        default: dev-HEAD
+
+    results:
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        compute: linux-2c8g
+        params:
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: $(params.gerrit-url)/$(params.project-name)
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+      - name: compiledb
+        task: build/compiledb
+        compute: linux-2c8g
+        params:
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          whitelist: $(params.whitelist)
+        WhenVal: false
+        returnResults:
+          unstable: unstable
+          exit-code: build-exit-code
+      - name: blackduck-scan-gen7
+        task: Scan/blackduck-scan-gen7@1.0.2
+        compute: linux-8c32g
+        params:
+          path: $(params.bd-path)
+          project: $(params.bd-project)
+          repoRoot: $(params.bd-repoRoot)
+          versionName: $(params.bd-version-name)
+    wrrn: ""
+  - name: compiledb
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Build
+        ui:
+          name: variant
+      - name: whitelist
+        type: string
+        description: Comma seperated list of folders and/or files to include
+        default: ""
+    results:
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: unstable
+    steps:
+      - name: build
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/bin/bash
+
+          echo repoRoot = $(params.repoRoot)
+          echo variant = $(params.variant)
+
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+
+          cp $(secrets.netrc.path) ~/.netrc
+
+          echo "Running Bazel command: bazelisk run //:compiledb --variant=$(params.variant)"
+
+          bazelisk run //:compiledb --variant=$(params.variant)
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=$?
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Build failed with exit code $BAZEL_EXIT_CODE."
+              echo "----------------------------------"
+
+              # Mark this task unstable
+              echo "true" > $(results.unstable.path)
+              # Optionally, you can exit the script with a non-zero status to indicate failure
+              exit 1
+          fi
+
+          # Check if the whitelist is empty
+          if [ -z "$(params.whitelist)" ]; then
+            echo "Whitelist is empty, copying all files/folders to external"
+            cp -r -L external external_temp
+
+          else
+            echo "Whitelist: $(params.whitelist)"
+
+            # Convert the whitelist into an array by replacing commas with spaces
+            IFS=',' read -r -a whitelist_array <<< "$(params.whitelist)"
+
+            # Create a temp folder to store the selected files/folders
+            mkdir -p external_temp
+
+            # Loop through the whitelist and copy each specified folder/file
+            for item in "${whitelist_array[@]}"; do
+              # Check if the item exists in the external directory
+              if [ -e "external/$item" ]; then
+                cp -r -L "external/$item" "external_temp/$item"
+              else
+                echo "Warning: $item does not exist in the external directory."
+              fi
+            done
+          fi
+
+          # remove the symbolic link
+          unlink external
+
+          # Move the temporary folder to replace the original external folder
+          mv external_temp external
+
+          echo "Whitelist files/folders have been copied."
+
+          # save output directory path for user usages
+          echo -n "$(params.repoRoot)/bazel-bin/outputs" > $(results.outputDir.path)
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          echo -n $(cat $(steps.build.exitCode.path)) > $(results.exit-code.path)
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+  - name: tics-connector-gen7
+    langVersion: v1
+    category: local
+    description: tics Connector unit test Scanner using TICSQServer for gen7
+    meta: {}
+    ui:
+      name: Tiobe tics Connector for Gen7
+    resources:
+      - name: tics-connector-awr
+        default: {}
+        ui:
+          name: tics-connector-awr
+        componentCategory: scanner
+        componentType: tics-connector-awr
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        default: ADVRADAR_AWR294X
+        ui:
+          name: repoRoot
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: gitprojectname
+        type: string
+        description: Project name in gitlab
+        ui:
+          name: Git Project Name
+          order: 1
+      - name: folderName
+        type: string
+        description: Folder name inside the gitlab project
+        default: ""
+        ui:
+          name: Folder name inside Git Project
+          order: 2
+      - name: ticsProjectName
+        type: string
+        description: Tics Project Name
+        ui:
+          name: Tics Project Name
+          order: 3
+      - name: parameters
+        type: string
+        description: TICSQServer parameters, -project, -branchdir and -tmpdir are already included.
+        default: ""
+        ui:
+          name: TICSQServer Parameters
+          order: 3
+      - name: compressFileType
+        type: select
+        description: Compressed file type
+        default: tar
+        ui:
+          name: Compressed file type
+          order: 4
+        options:
+          - name: tar
+            description: Compress result in a tar file
+            value: tar
+          - name: zip
+            description: Compress result in a zip file
+            value: zip
+      - name: defaultDirectory
+        type: string
+        description: Default Persistent Volume directory.
+        ui:
+          name: Default Pipeline Data Directory
+          order: 5
+      - name: OutputS3
+        type: string
+        description: Location on S3 to store the execution results
+        default: ""
+        ui:
+          name: Artifacts Bucket Name
+          order: 6
+      - name: ticsImageName
+        type: string
+        description: Image name for tics connector generated from Dockerfile
+        ui:
+          name: Tics Image Name
+          order: 7
+      - name: ticsImageTag
+        type: string
+        description: Tag for the tics image generated from Dockerfile
+        ui:
+          name: Tics Image Tag
+          order: 8
+    results:
+      - name: build-exit-code
+        description: The exit code of the build step
+        ui: {}
+      - name: result-files-link
+        description: Link for a detailed report
+        ui: {}
+      - name: logResult-link-direct
+        description: Direct Link for a detailed report
+        ui: {}
+      - name: resultfile-PVPath
+        description: Path of build file stored in Persistent Volume.
+        ui: {}
+      - name: logResultPVPath
+        description: Path of log file on PV.
+        ui: {}
+      - name: unit-test-exit-code
+        description: The exit code of the unit test step
+        ui: {}
+      - name: branch-coverage
+        description: Branch coverage results from UT
+        ui: {}
+      - name: function-coverage
+        description: Function coverage results from UT
+        ui: {}
+      - name: line-coverage
+        description: Line coverage results from UT
+        ui: {}
+    steps:
+      - name: clone
+        WhenVal: false
+        task: clone-gerrit-repo
+        params:
+          cloneOptions: --depth 1
+          repository:
+            branch: $(params.git-ref)
+            password: $(secrets.netrc.gerritPass.path)
+            url: https://gitgerrit.asux.aptiv.com/$(params.repoRoot)
+            username: $(secrets.netrc.gerritUser.path)
+          script: |-
+            ls -la
+            cd $(params.repoRoot)
+            git fetch --depth=1 origin $(params.git-ref)
+            git checkout FETCH_HEAD
+      - name: scan
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        env:
+          TICS: $(resources.tics-connector-awr.component.url)
+          TICSAUTHTOKEN_FILE: $(resources.tics-connector-awr.secrets.accessToken.path)
+        script: |
+          #!/bin/bash
+          #set -x
+
+          git config --global --add safe.directory ${WORKSPACE}/$(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          if [[ $TICS = "" ]]; then
+            echo "TICS URL not found"
+            exit 1
+          fi
+
+          #  TODO get this token_file:     export  AUTHTOKEN=$(cat ${TICSAUTHTOKEN_FILE})
+          export TICSAUTHTOKEN="ZmFhMTE1OGEtNjU0OS00ZGEwLTlhZWEtMGE5MmYyZTI4N2JhOlc1LWFfWj1KVEZkJHp6Zg"
+
+          if [[ $TICSAUTHTOKEN = "" ]]; then
+            echo "TOKEN not found"
+            exit 1
+          fi
+
+          repoName=`basename "$(params.gitprojectname)"`
+          repoName=${repoName%.git}
+          TICS_WORKSPACE="$(params.defaultDirectory)"
+          timestamp=$(date +%Y%m%d%H%M%S)
+          ID=${repoName}_${timestamp}
+          LOG_RESULT_FILE=${TICS_WORKSPACE}/log-result_$ID.txt
+          echo ${LOG_RESULT_FILE} > $(results.logResultPVPath.path)
+          ERROR_FILE=${TICS_WORKSPACE}/error_$ID.txt
+
+          echo "-------------------------------------"
+          # TODO: see if defaultDirectory is wrong.      directory="$(params.defaultDirectory)/${repoName}"
+          directory="${WORKSPACE}/${repoName}"
+
+          if [[ "$(params.folderName)" != "" && "$(params.folderName)" != "/" ]];then
+            directory="${directory}/$(params.folderName)"
+          fi
+
+          if [[ -d ${directory} ]]; then
+            echo "cd ${directory}"
+            cd ${directory}
+          else
+            echo -e "directory ${directory} does not exist."
+            exit 1
+          fi
+
+          # Set up ARB remote cache
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+          # The default directory for the output_base isn't user-readable.
+          # Move it into the /tmp folder so that all tools can read it (like TICS)
+          echo "startup --output_base=/tmp/bzl_root" >> user.bazelrc
+
+          echo "----------------------------------"
+          echo "Generating compildb: bazelisk run //:compiledb"
+          echo "----------------------------------"
+          bazelisk run //:compiledb
+
+          echo "----------------------------------"
+          echo "Running Build Command: bazelisk build //:gen7 --variant=srr7p"
+          echo "----------------------------------"
+          bazelisk build //:gen7 --variant=srr7p
+
+          echo "----------------------------------"
+          echo "Running UT Command: bazelisk test //coverage:TICS --variant=srr7p "
+          echo "----------------------------------"
+
+          # Run the Unit Test Build then isolate the results we want
+          bazelisk test //coverage:TICS --variant=srr7p 2>&1 | tee build_output.log
+          rm bazel-bin/coverage/TICS_cobertura.xml
+
+          PATH=$PATH:/root/TICS/Wrapper/BuildServer
+
+          DATA_DIRECTORY=/tmp/tics_data_$ID
+          mkdir -p ${DATA_DIRECTORY}
+          ticsProjectName="$(params.ticsProjectName)"
+          TICSPROJECT="$(params.ticsProjectName)"
+
+          echo "Setting XTENSA environment Variables"
+          export XTENSA_SYSTEM=external/bbe_linux/builds/RI-2021.7-linux/spt_bbe32_vfpu_gold_r1p3/config
+          export XTENSA_CORE=spt_bbe32_vfpu_gold_r1p3
+          export XTENSA_LICENSE_RETRIES='100:1'
+          export XTENSAD_LICENSE_FILE='27001@nlnhsrk-is22.aptiv.com'
+
+          echo "+++ Printing Environment +++"
+          env
+
+          echo "/workspace/Core_Radar_Gen7_SAF85xx/external/bbe_linux/tools/RI-2021.7-linux/XtensaTools/bin/xt-clang --version"
+          /workspace/Core_Radar_Gen7_SAF85xx/external/bbe_linux/tools/RI-2021.7-linux/XtensaTools/bin/xt-clang --version
+
+          echo "Install TICS"
+          # Install TICS
+          curl --silent --show-error 'https://tics.asux.aptiv.com/tiobeweb/TICS/api/public/v1/fapi/installtics/Script?cfg=BMW_SP2025&platform=linux&url=https%3A%2F%2Ftics.asux.aptiv.com%2Ftiobeweb%2FTICS' > installtics.sh
+          chmod +x installtics.sh
+          ./installtics.sh
+          echo "-------------------------------------"
+
+          TICSMaintenance -detach -project "${ticsProjectName}" -setmetrics UNITDECISIONCOVERAGE:1,UNITSTATEMENTCOVERAGE:1 |& tee ${LOG_RESULT_FILE}
+
+          if [[ $(head -n 1 ${LOG_RESULT_FILE} | awk '{print $1}') == "ERROR" ]]; then
+            echo "Error: TICS URL server not found";
+            exit 3
+          fi
+
+          touch ${ERROR_FILE}
+          cat ${LOG_RESULT_FILE} | grep "ERROR 5056" > ${ERROR_FILE}
+
+          if [[ $(head -n 1 ${ERROR_FILE} | awk '{print $2}') == "5056]" ]]; then
+            echo "Error 5056: ${ticsProjectName} not defined in PROJECTS.yaml";
+            exit 4
+          fi
+
+          TICSQServer -nosanity $(params.parameters) -project "${ticsProjectName}" -branchdir ${directory} -tmpdir "${DATA_DIRECTORY}" -config "https://tics.asux.aptiv.com/tiobeweb/TICS/api/cfg?name=BMW_SP2025" |& tee ${LOG_RESULT_FILE}
+
+          # cat ${LOG_RESULT_FILE}
+
+          cat ${LOG_RESULT_FILE} | grep "ERROR 5015" > ${ERROR_FILE}
+
+          if [[ $(head -n 1 ${ERROR_FILE} | awk '{print $2}') == "5015]" ]]; then
+            echo "Error 5015: Unknown option(s) encountered: '$(params.parameters)' ";
+            exit 5
+          fi
+
+          cat ${LOG_RESULT_FILE} | grep "ERROR 5185" > ${ERROR_FILE}
+
+          if [[ $(head -n 1 ${ERROR_FILE} | awk '{print $2}') == "5185]" ]]; then
+            echo "Error 5185: Path $(params.folderName) in branch does not exist.";
+            exit 5
+          fi
+
+          if [[ "$(params.compressFileType)" = "tar" ]]; then
+            tar -cvf ${TICS_WORKSPACE}/tics_data_$ID.tar ${DATA_DIRECTORY}/
+            TICS_RESULT_FILE="${TICS_WORKSPACE}/tics_data_$ID.tar"
+          else
+            zip -r ${TICS_WORKSPACE}/tics_data_$ID.zip ${DATA_DIRECTORY}/
+            TICS_RESULT_FILE="${TICS_WORKSPACE}/tics_data_$ID.zip"
+          fi
+          echo ${TICS_RESULT_FILE} > $(results.resultfile-PVPath.path)
+
+          rm -rf ${DATA_DIRECTORY}
+          rm -rf ${ERROR_FILE}
+
+          exit 0
+      - name: report
+        WhenVal: false
+        task: Utils/studio-cli@1.0.0
+        params:
+          script: |
+            studio-cli artifacts mctoken > mctoken
+            source `pwd`/mctoken > /dev/null 2>&1
+
+            export LOG_RESULT_FILE=$(cat ${LOG_RESULT_FILE})
+            export TICS_RESULT_FILE=$(cat ${TICS_RESULT_FILE})
+
+            LOG_FILE=`basename "${LOG_RESULT_FILE}"`
+
+            if [[ "$(params.OutputS3)" != ""  ]];then
+              studio-cli artifacts mc cp $LOG_RESULT_FILE minio/$(params.OutputS3)/$PLNAME/$PLRNUMBER/
+              studio-cli artifacts mc cp $TICS_RESULT_FILE minio/$(params.OutputS3)/$PLNAME/$PLRNUMBER/
+              echo https://console.$(studio.artifacts)/buckets/$(params.OutputS3)/browse/$PLNAME/$PLRNUMBER > $(results.result-files-link.path)
+              echo $(studio.artifactsHttp)/$(params.OutputS3)/$PLNAME/$PLRNUMBER/$LOG_FILE > $(results.logResult-link-direct.path)
+            else
+              echo 'Skipping uploading reports to S3 due to null value for parameter '\''OutputS3'\''!!!'
+            fi
+        env:
+          LOG_RESULT_FILE: $(results.logResultPVPath.path)
+          PLNAME: $(config.pipeline.name)
+          PLRNUMBER: $(config.pipeline.runNumber)
+          TICS_RESULT_FILE: $(results.resultfile-PVPath.path)
+    wrrn: ""
+
+  - name: core-radar-jfrog-update-latest-reports
+    langVersion: v1
+    category: local
+    params:
+      - name: latestUploadPath
+        type: string
+        description: Jfrog path where latest reports need to be saved
+        default: /latest/path/to/upload
+        ui:
+          name: jfrog path where latest reports need to be saved
+      - name: uploadPath
+        type: string
+        description: Path inside Artifactory to copy the latest files from
+        default: upload/path/
+        ui:
+          name: uploadPath
+      - name: jfrogCreds
+        type: secret
+        description: JFrog Credentials in the WRSD Secrets format using username and password
+        default: $(secrets.jfrog-cred)
+        ui:
+          name: JFrog Credentials Secret
+      - name: jfrogBaseUrl
+        type: string
+        description: Base URL to the JFrog instance
+        default: https://jfrog.asux.aptiv.com
+        ui:
+          name: jfrogBaseUrl
+    results:
+      - name: latestUrl
+        description: The URL to where files were uploaded
+        ui: {}
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+        ui: {}
+    steps:
+      - name: upload-files
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        env:
+          CI: "true"
+        script: |
+          #!/bin/bash
+          set -e
+
+          UPLOAD_PATH="$(params.uploadPath)"
+          LATEST_PATH="$(params.latestUploadPath)"
+          JFROG_BASE_URL="$(params.jfrogBaseUrl)"
+          JFROG_USER=$(cat $(params.jfrogCreds.username.path))
+          JFROG_TOKEN=$(cat $(params.jfrogCreds.password.path))
+
+          echo "========================================"
+          echo "Source path: ${UPLOAD_PATH}"
+          echo "Target path: ${LATEST_PATH}"
+          echo "========================================"
+
+          # The build-format-ready image does not ship with the `zip`/`unzip`
+          # binaries, so wrap Python's stdlib zipfile module to provide the
+          # same functionality without requiring extra package installs.
+          py_unzip() {
+            # py_unzip <archive> <dest_dir>
+            python3 -c 'import sys, zipfile; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])' "$1" "$2"
+          }
+          py_zip_dir() {
+            # py_zip_dir <output_zip> <source_dir>
+            # Recursively zip the contents of <source_dir>, storing paths
+            # relative to <source_dir> (mirrors `cd <dir>; zip -r out.zip .`).
+            # Prints a one-line summary: "<output_zip>: N files, X bytes" so
+            # regressions (empty/short zips) are immediately visible in logs.
+            python3 - "$1" "$2" <<'PY'
+          import os, sys, zipfile
+          out_zip, src_dir = sys.argv[1], sys.argv[2]
+          count = 0
+          with zipfile.ZipFile(out_zip, 'w', zipfile.ZIP_DEFLATED) as zf:
+              for root, _, files in os.walk(src_dir):
+                  for name in files:
+                      if name.startswith('.'):
+                          continue
+                      full = os.path.join(root, name)
+                      zf.write(full, os.path.relpath(full, src_dir))
+                      count += 1
+          size = os.path.getsize(out_zip)
+          print("  Zip summary: {}: {} files, {} bytes".format(out_zip, count, size))
+          PY
+          }
+          py_zip_has() {
+            # py_zip_has <zip_path> <member_basename> -> exit 0 if member is present, 1 if not, 2 if zip is corrupt.
+            # Reads only the zip central directory (fast: milliseconds even for large zips, no extraction).
+            python3 - "$1" "$2" <<'PY'
+          import sys, zipfile
+          zp, needle = sys.argv[1], sys.argv[2]
+          try:
+              with zipfile.ZipFile(zp) as z:
+                  names = z.namelist()
+          except zipfile.BadZipFile:
+              sys.exit(2)
+          sys.exit(0 if any(n == needle or n.endswith('/' + needle) for n in names) else 1)
+          PY
+          }
+
+          # Per-artifact pass/fail tracking for the summary printed before upload.
+          PASSED_ZIPS=()
+          FAILED_ZIPS=()
+          publish_if_has_member() {
+            # publish_if_has_member <src_zip> <dest_zip_in_OUTPUT_DIR> <required_member>
+            # Stages <src_zip> into OUTPUT_DIR only if it contains <required_member>.
+            # On failure (missing file, bad zip, or missing member) the previous copy in
+            # 'latest/' is preserved because we don't wipe latest/ and don't upload a replacement.
+            local src="$1" dest="$2" member="$3"
+            local name; name=$(basename "$dest")
+            if [ ! -f "$src" ]; then
+              echo "  [FAIL] $name  source missing: $src  -> SKIP upload, previous 'latest/' copy preserved"
+              FAILED_ZIPS+=("$name (source missing)")
+              return 1
+            fi
+            local rc=0
+            py_zip_has "$src" "$member" || rc=$?
+            case "$rc" in
+              0)
+                cp "$src" "$dest"
+                local sz; sz=$(stat -c%s "$src" 2>/dev/null || echo 0)
+                echo "  [PASS] $name  contains '$member' (${sz} B)  -> staged for upload"
+                PASSED_ZIPS+=("$name")
+                ;;
+              2)
+                echo "  [FAIL] $name  is a corrupt/unreadable zip  -> SKIP upload, previous 'latest/' copy preserved"
+                FAILED_ZIPS+=("$name (corrupt zip)")
+                ;;
+              *)
+                echo "  [FAIL] $name  does NOT contain '$member'  -> SKIP upload, previous 'latest/' copy preserved"
+                FAILED_ZIPS+=("$name (no $member)")
+                ;;
+            esac
+          }
+
+          # Write latestUrl result
+          echo -n "${JFROG_BASE_URL}/ui/repos/tree/General/${UPLOAD_PATH}" > $(results.latestUrl.path)
+
+          # Configure JFrog CLI
+          jf config add gss --url="${JFROG_BASE_URL}" --user="${JFROG_USER}" --access-token="${JFROG_TOKEN}"
+
+          # ------------------------------------------------
+          # Step 1: (no global wipe by design)
+          # Per-artifact validation below gates each upload. Artifacts that
+          # fail validation are NOT republished, so the previous good copy
+          # in 'latest/' is preserved for SWE6 consumption. Artifacts that
+          # pass are uploaded with --flat=true which overwrites the same
+          # name in 'latest/'.
+          # ------------------------------------------------
+          echo "=== Skipping global wipe of latest/; using per-file conditional upload ==="
+
+          # ------------------------------------------------
+          # Step 2: Download all pipeline artifacts
+          # ------------------------------------------------
+          WORK_DIR="/tmp/latest-reports"
+          OUTPUT_DIR="/tmp/latest-output"
+          mkdir -p "$WORK_DIR" "$OUTPUT_DIR"
+
+          echo "=== Downloading artifacts from ${UPLOAD_PATH}/ ==="
+          jf rt download "${UPLOAD_PATH}/" "$WORK_DIR/" --flat=false || true
+
+          # Find artifact directories within the downloaded structure
+          BUILD_DIR=$(find "$WORK_DIR" -type d -name "buildFiles" | head -1)
+          UNIT_DIR=$(find "$WORK_DIR" -type d -name "unitTests" | head -1)
+          COVERITY_DIR=$(find "$WORK_DIR" -type d -name "coverity" | head -1)
+          DYNAMIC_DIR=$(find "$WORK_DIR" -type d -name "dynamicAnalysis" | head -1)
+
+          # ------------------------------------------------
+          # Step 3: Process BUILD FILES
+          # ------------------------------------------------
+          if [ -n "$BUILD_DIR" ] && [ -d "$BUILD_DIR" ]; then
+            echo "=== Processing build files from: $BUILD_DIR ==="
+
+            # 3a. Satellite builds - validated copy (must contain app.ptp).
+            #     A satellite firmware zip without app.ptp is unusable for SWE6;
+            #     in that case we skip the upload and keep the previous good
+            #     copy in 'latest/' untouched.
+            echo "--- Satellite builds (validating app.ptp) ---"
+            publish_if_has_member "$BUILD_DIR/output_srr7p.zip" "$OUTPUT_DIR/output_srr7p.zip" "app.ptp" || true
+            publish_if_has_member "$BUILD_DIR/output_flr7.zip"  "$OUTPUT_DIR/output_flr7.zip"  "app.ptp" || true
+
+            # 3b. SIL builds - keep separate per variant
+            echo "--- SIL builds (separate) ---"
+            [ -f "$BUILD_DIR/sil/output_srr7p.zip" ] && cp "$BUILD_DIR/sil/output_srr7p.zip" "$OUTPUT_DIR/sil_output_srr7p.zip"
+            [ -f "$BUILD_DIR/sil/output_flr7.zip" ] && cp "$BUILD_DIR/sil/output_flr7.zip" "$OUTPUT_DIR/sil_output_flr7.zip"
+
+            # 3c. Combined builds - merge both variants flat into one zip each.
+            # Build each combined zip into a TEMP location and then gate the
+            # publish on the presence of app.ptp. If neither variant produced
+            # a usable firmware for this build_type, the previous good copy
+            # of <build_type>-outputs.zip in 'latest/' is preserved.
+            echo "--- Combined builds (iso, sqt, sit, sit_core0, alignment, vlan) [validating app.ptp] ---"
+            for BUILD_TYPE in iso sqt sit sit_core0 alignment vlan; do
+              if [ -d "$BUILD_DIR/$BUILD_TYPE" ]; then
+                MERGE_DIR="/tmp/merge_${BUILD_TYPE}"
+                rm -rf "$MERGE_DIR"
+                mkdir -p "$MERGE_DIR"
+
+                for zip_file in "$BUILD_DIR/$BUILD_TYPE"/*.zip; do
+                  if [ -f "$zip_file" ]; then
+                    py_unzip "$zip_file" "$MERGE_DIR" || true
+                    echo "  Extracted: $zip_file -> $MERGE_DIR (flat)"
+                  fi
+                done
+
+                # Create combined zip for this build type (into temp, then gate).
+                if [ "$(ls -A "$MERGE_DIR" 2>/dev/null)" ]; then
+                  TMP_TYPE_ZIP="/tmp/_${BUILD_TYPE}-outputs.zip"
+                  rm -f "$TMP_TYPE_ZIP"
+                  py_zip_dir "$TMP_TYPE_ZIP" "$MERGE_DIR"
+                  publish_if_has_member "$TMP_TYPE_ZIP" "$OUTPUT_DIR/${BUILD_TYPE}-outputs.zip" "app.ptp" || true
+                  rm -f "$TMP_TYPE_ZIP"
+                fi
+                rm -rf "$MERGE_DIR"
+              else
+                echo "  No $BUILD_TYPE directory found, skipping."
+              fi
+            done
+
+            # 3d. Create buildFiles_output_combined.zip with everything
+            echo "--- Creating buildFiles_output_combined.zip ---"
+            FULL_COMBINE="/tmp/full_combine"
+            rm -rf "$FULL_COMBINE"
+            mkdir -p "$FULL_COMBINE"
+
+            # Add satellite (flat merge). Source from the validated/staged
+            # zips in $OUTPUT_DIR (not $BUILD_DIR) so that a satellite that
+            # failed the app.ptp check in 3a is NOT silently re-embedded
+            # into the combined archive. If both satellites failed 3a,
+            # this loop is a no-op and the resulting combined zip won't
+            # contain app.ptp, which is then caught by the publish gate below.
+            for zip_file in "$OUTPUT_DIR"/output_*.zip; do
+              if [ -f "$zip_file" ]; then
+                mkdir -p "$FULL_COMBINE/satellite"
+                py_unzip "$zip_file" "$FULL_COMBINE/satellite" || true
+              fi
+            done
+
+            # Add SIL (flat merge)
+            if [ -d "$BUILD_DIR/sil" ]; then
+              for zip_file in "$BUILD_DIR/sil"/*.zip; do
+                if [ -f "$zip_file" ]; then
+                  mkdir -p "$FULL_COMBINE/sil"
+                  py_unzip "$zip_file" "$FULL_COMBINE/sil" || true
+                fi
+              done
+            fi
+
+            # Add other build types (flat merge). Source from the staged
+            # per-type zips in $OUTPUT_DIR (not $BUILD_DIR) so that a
+            # build_type that failed the app.ptp check in 3c is NOT
+            # silently re-embedded into the combined archive. If 3c
+            # skipped a build_type, its $OUTPUT_DIR/<type>-outputs.zip
+            # won't exist and the inner extraction is skipped.
+            for BUILD_TYPE in iso sqt sit sit_core0 alignment vlan; do
+              STAGED_TYPE_ZIP="$OUTPUT_DIR/${BUILD_TYPE}-outputs.zip"
+              if [ -f "$STAGED_TYPE_ZIP" ]; then
+                mkdir -p "$FULL_COMBINE/$BUILD_TYPE"
+                py_unzip "$STAGED_TYPE_ZIP" "$FULL_COMBINE/$BUILD_TYPE" || true
+              fi
+            done
+
+            # Build the combined zip into a temp path, then run it through
+            # the same publish_if_has_member gate as the satellite zips.
+            # If it contains app.ptp it gets staged for upload to 'latest/';
+            # otherwise the previous good 'latest/buildFiles_output_combined.zip'
+            # is preserved.
+            TMP_COMBINED="/tmp/_buildFiles_output_combined.zip"
+            rm -f "$TMP_COMBINED"
+            py_zip_dir "$TMP_COMBINED" "$FULL_COMBINE"
+            publish_if_has_member "$TMP_COMBINED" "$OUTPUT_DIR/buildFiles_output_combined.zip" "app.ptp" || true
+            rm -f "$TMP_COMBINED"
+            rm -rf "$FULL_COMBINE"
+          else
+            echo "WARNING: No buildFiles directory found in $WORK_DIR"
+          fi
+
+          # ------------------------------------------------
+          # Step 4: Process UNIT TEST artifacts
+          # ------------------------------------------------
+          if [ -n "$UNIT_DIR" ] && [ -d "$UNIT_DIR" ]; then
+            echo "=== Processing unit test artifacts ==="
+            for zip_file in "$UNIT_DIR"/*.zip; do
+              if [ -f "$zip_file" ]; then
+                FNAME=$(basename "$zip_file")
+                NEW_NAME=$(echo "$FNAME" | sed 's/^output_/unitTests_/')
+                cp "$zip_file" "$OUTPUT_DIR/$NEW_NAME"
+                echo "  Copied: $NEW_NAME"
+              fi
+            done
+          fi
+
+          # ------------------------------------------------
+          # Step 5: Process COVERITY artifacts
+          # ------------------------------------------------
+          if [ -n "$COVERITY_DIR" ] && [ -d "$COVERITY_DIR" ]; then
+            echo "=== Processing coverity artifacts ==="
+            find "$COVERITY_DIR" -name "*.zip" | while IFS= read -r zip_file; do
+              FNAME=$(basename "$zip_file")
+              if [[ "$FNAME" != coverity_* ]]; then
+                FNAME="coverity_${FNAME}"
+              fi
+              cp "$zip_file" "$OUTPUT_DIR/$FNAME"
+              echo "  Copied: $FNAME"
+            done
+          fi
+
+          # ------------------------------------------------
+          # Step 6: Process DYNAMIC ANALYSIS artifacts
+          # ------------------------------------------------
+          if [ -n "$DYNAMIC_DIR" ] && [ -d "$DYNAMIC_DIR" ]; then
+            echo "=== Processing dynamic analysis artifacts ==="
+            find "$DYNAMIC_DIR" -name "*.zip" | while IFS= read -r zip_file; do
+              FNAME=$(basename "$zip_file")
+              cp "$zip_file" "$OUTPUT_DIR/$FNAME"
+              echo "  Copied: $FNAME"
+            done
+          fi
+
+          # ------------------------------------------------
+          # Validation summary (satellite firmware zips only)
+          # ------------------------------------------------
+          echo "========================================"
+          echo "Build artifact validation summary (required member: app.ptp)"
+          echo "  PASS = will overwrite the file in 'latest/'"
+          echo "  FAIL = NOT uploaded; previous 'latest/' copy is kept"
+          echo "========================================"
+          if [ "${#PASSED_ZIPS[@]}" -gt 0 ]; then
+            echo "PASS (${#PASSED_ZIPS[@]}):"
+            for f in "${PASSED_ZIPS[@]}"; do echo "  + $f"; done
+          else
+            echo "PASS (0): none"
+          fi
+          if [ "${#FAILED_ZIPS[@]}" -gt 0 ]; then
+            echo "FAIL (${#FAILED_ZIPS[@]}):"
+            for f in "${FAILED_ZIPS[@]}"; do echo "  - $f"; done
+          else
+            echo "FAIL (0): none"
+          fi
+          echo "========================================"
+
+          # ------------------------------------------------
+          # Step 7: Upload processed artifacts to latest
+          # ------------------------------------------------
+          echo "=== Uploading to ${LATEST_PATH}/ ==="
+          echo "Files to upload:"
+          ls -la "$OUTPUT_DIR/"
+
+          jf rt upload "$OUTPUT_DIR/*" "${LATEST_PATH}/" --flat=true
+
+          # ------------------------------------------------
+          # Step 8: Copy raw artifacts as fallback (preserve
+          # directory structure so duplicate basenames such as
+          # output_flr7.zip in buildFiles/, buildFiles/iso/,
+          # buildFiles/sit/, ... do NOT collide and overwrite
+          # the curated top-level files uploaded in Step 7).
+          # ------------------------------------------------
+          echo "=== Copy all artifacts from ${UPLOAD_PATH} to ${LATEST_PATH} (structure preserved) ==="
+          jf rt cp "${UPLOAD_PATH}/*" "${LATEST_PATH}/" --flat=false
+
+          echo "========================================"
+          echo "Nightly publish complete"
+          echo "Latest location: ${LATEST_PATH}/"
+          echo "========================================"
+        onError: continue
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          echo -n $(cat $(steps.upload-files.exitCode.path)) > $(results.exit-code.path)
+    wrrn: ""
+
+storage:
+  - name: shared
+    defaultMount: true
+    mountPath: /volumes/shared
+    readOnly: false
+    resource: Perception_Radar_SRR7E_storage
+timeout: 12h

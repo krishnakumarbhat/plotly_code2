@@ -1,0 +1,10 @@
+# 3rd Party code bypasses
+[ubsan."*/*bbe_*/builds/**/*"]
+"runtime error" = 300
+
+# Unit Test Bypasses
+[ubsan."*/test/*"]
+"runtime error" = 10
+
+[ubsan."*/unit_tests/*"]
+"runtime error" = 300

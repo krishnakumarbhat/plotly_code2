@@ -1,0 +1,852 @@
+langVersion: v1
+name: core-radar-gen7-saf85xx-fuzz-test
+description: Pipeline that Fuzz tests all variants of the code for Gen7 AWR294x
+ui:
+  name: core-radar-gen7-saf85xx-fuzz-test
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen7_SAF85xx
+  - name: patchset-id
+    type: string
+    default: ""
+  - name: merge-base-branch
+    type: string
+    default: ""
+  - name: change-url
+    type: string
+    default: ""
+compute:
+  - name: linux-16c64g
+    resource: asp-compute-linux-16c64g
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+  - resource: asp-compute-linux-1c4g # This becomes the default compute.
+containerSettings:
+  - name: container-16c64g300g
+    resource: asp-container-16c64g300g
+  - name: container-8c32g150g
+    resource: asp-container-8c32g150g
+  - name: container-2c8g50g
+    resource: asp-container-2c8g50g
+  - name: container-1c4g25g
+    resource: asp-container-1c4g25g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+
+  - parallelTasks:
+      - name: fuzz-srr7p
+        task: build/fuzz-test
+        params:
+          git-ref: $(params.commit-id)
+          variant: srr7p
+          patchset-id: $(params.patchset-id)
+          merge-base-branch: $(params.merge-base-branch)
+        steps:
+          - name: fuzz-test-code
+            steps:
+              - name: fuzz-test
+                containerSettings: container-16c64g300g
+
+      - name: fuzz-flr7
+        task: build/fuzz-test
+        params:
+          git-ref: $(params.commit-id)
+          variant: flr7
+          patchset-id: $(params.patchset-id)
+          merge-base-branch: $(params.merge-base-branch)
+        steps:
+          - name: fuzz-test-code
+            steps:
+              - name: fuzz-test
+                containerSettings: container-16c64g300g
+
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    params:
+      fuzz-test-exit-codes:
+        FLR7: $(tasks.fuzz-flr7.results.fuzz-test-exit-code)
+        SRR7p: $(tasks.fuzz-srr7p.results.fuzz-test-exit-code)
+      tests-performed:
+        FLR7: $(tasks.fuzz-flr7.results.tests-performed)
+        SRR7p: $(tasks.fuzz-srr7p.results.tests-performed)
+      test-reports:
+        FLR7: $(tasks.fuzz-flr7.results.test-reports)
+        SRR7p: $(tasks.fuzz-srr7p.results.test-reports)
+      crash-reports:
+        FLR7: $(tasks.fuzz-flr7.results.crash-reports)
+        SRR7p: $(tasks.fuzz-srr7p.results.crash-reports)
+      defect-reports:
+        FLR7: $(tasks.fuzz-flr7.results.defect-reports)
+        SRR7p: $(tasks.fuzz-srr7p.results.defect-reports)
+  - name: fuzz-test-vote
+    task: Utils/post-gerrit-comment-vote@0.0.2
+    params:
+      exit-code: $(tasks.prepare-vote-and-message.results.exit-code)
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Job: https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+      votes:
+        Fuzz-Test: $(tasks.prepare-vote-and-message.results.vote-value)
+  - parallelTasks:
+      - name: publish-metrics-srr7p
+        task: Utils/publish-metrics
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+        params:
+          variant: srr7p
+          git-ref: $(params.commit-id)
+          test-reports: $(tasks.fuzz-srr7p.results.test-reports)
+          destination-path: /workspace/Core_Radar_Gen7_SAF85xx/
+          project-name: $(params.project-url-encoded)
+          commit-hash: $(tasks.fuzz-srr7p.results.commit-hash)
+          tags: "buildVariant=satellite"
+      - name: publish-metrics-flr7
+        task: Utils/publish-metrics
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+        params:
+          variant: flr7
+          git-ref: $(params.commit-id)
+          test-reports: $(tasks.fuzz-flr7.results.test-reports)
+          destination-path: /workspace/Core_Radar_Gen7_SAF85xx/
+          project-name: $(params.project-url-encoded)
+          commit-hash: $(tasks.fuzz-flr7.results.commit-hash)
+          tags: "buildVariant=satellite"
+      - name: auto-submit-check
+        task: Utils/ADVRADAR/auto-submit@1.0.1
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          gerrit-url: $(params.gerrit-url)
+          comment: "False"
+defineTasks:
+  - name: fuzz-test
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: patchset-id
+        type: string
+        default: ""
+      - name: merge-base-branch
+        type: string
+        default: ""
+      - name: variant
+        type: select
+        description: Variant to Fuzz Test
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is FLR7
+            value: flr7
+    results:
+      - name: fuzz-test-exit-code
+        description: The exit code of the Fuzz test step
+      - name: commit-hash
+        description: commit-hash
+      - name: rapid-build-url
+        description: URL to the RapidBuild
+      - name: tests-performed
+        description: Total Fuzz Tests reports
+      - name: test-reports
+        description: Total Fuzz Test reports
+      - name: crash-reports
+        description: Total Fuzz Crash reports
+      - name: defect-reports
+        description: Total Fuzz Defect reports
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen7_SAF85xx
+            username: $(secrets.gerrit-cred.username.path)
+          returnResults:
+            commitHash: commit-hash
+      - name: fuzz-test-code
+        task: fuzz-test-code
+        params:
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          patchset-id: $(params.patchset-id)
+          merge-base-branch: $(params.merge-base-branch)
+        WhenVal: false
+        returnResults:
+          exit-code: fuzz-test-exit-code
+          rapid-build-url: rapid-build-url
+          tests-performed: tests-performed
+          test-reports: test-reports
+          crash-reports: crash-reports
+          defect-reports: defect-reports
+          unstable: unstable
+  - name: fuzz-test-code
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Fuzz Test
+        ui:
+          name: variant
+      - name: patchset-id
+        type: string
+        ui:
+          name: patchset-id
+      - name: merge-base-branch
+        type: string
+        ui:
+          name: merge-base-branch
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: rapid-build-url
+        description: URL to the RapidBuild
+      - name: tests-performed
+        description: Total Fuzz Tests reports
+      - name: test-reports
+        description: Total Fuzz Test reports
+      - name: crash-reports
+        description: Total Fuzz Crash reports
+      - name: defect-reports
+        description: Total Fuzz Defect reports
+      - name: coverage-output-dir
+        description: Path to the directory that contains the output files/folders
+      - name: coverage-exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: untested-files
+        description: The number of source files not covered by UT
+      - name: coverage-error-message
+        description: Failed testcases from build log
+      - name: coverage-rapid-build-url
+        description: URL to the RapidBuild
+      - name: unstable
+    steps:
+      - name: fuzz-test
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/gut-dynamic-ready:2.0
+        script: |
+          #!/bin/bash
+          echo repoRoot = $(params.repoRoot)
+          echo variant = $(params.variant)
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          tests_performed=0
+          test_reports=0
+          crash_reports=0
+          defect_reports=0
+
+          # Path to the build event JSON file
+          BUILD_EVENT_FILE="build_event.json"
+
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          # Download the Mayhem executable, and log in to set up the credentials
+          mkdir -p ~/.local/bin
+          export PATH="$HOME/.local/bin:$PATH"
+          cd ~/.local/bin
+          curl --fail -L https://mayhem.asux.aptiv.com/cli/mapi/linux-musl/latest/mapi -o mapi
+          curl --fail -L https://mayhem.asux.aptiv.com/cli/Linux/mayhem -o mayhem
+          chmod +x mayhem mapi
+          cd $(params.repoRoot)
+          mayhem login https://mayhem.asux.aptiv.com/ $(cat $(secrets.mayhem-cred.path))
+          mapi --mayhem-url https://mayhem.asux.aptiv.com login $(cat $(secrets.mayhem-cred.path))
+
+          # Start showing the commands now that all the secrets are finished:
+          set -x
+
+          echo "build:mayhem --action_env=MERGE_BASE_BRANCH=$(params.merge-base-branch)" >> user.bazelrc
+          echo "build:mayhem --action_env=CI_URL=https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)" >> user.bazelrc
+          echo "build:mayhem --action_env=BRANCH=$(params.patchset-id)" >> user.bazelrc
+
+          jobStatus=0
+          # default to use regression testing for most jobs
+          regression="--regression"
+
+          if [ "$(params.patchset-id)" = "dev" ] || [ "$(params.patchset-id)" = "origin/dev" ]; then
+            # If dev or origin/dev branch, then we want to use the timed test instead of regression
+            regression=""
+          fi
+
+          echo "----------------------------------"
+          echo "Running Fuzz Command"
+          echo "----------------------------------"
+          bazelisk run //:fuzz --variant=$(params.variant) --build_event_json_file="$BUILD_EVENT_FILE" --jenkins --config=mayhem $regression 2>&1 | tee build_output.log
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=${PIPESTATUS[0]}
+          build_output=$(cat build_output.log)
+
+          # Extract the invocation ID using jq
+          INVOCATION_ID=$(grep -Po '"uuid":"\K[^"]+' build_event.json)
+
+          # Check if the invocation ID is not empty
+          if [[ -n "$INVOCATION_ID" ]]; then
+              echo "Invocation ID: $INVOCATION_ID"
+
+              # Create the RapidBuild url
+              echo -n "https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen7_saf85xx/invocations/${INVOCATION_ID}" > $(results.rapid-build-url.path)
+          fi
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Fuzz Test build completed successfully."
+              echo "----------------------------------"
+
+              read tests_performed test_reports crash_reports defect_reports <<< $(echo "$build_output" | awk '
+                /Tests performed:/ { t += $3 }
+                /Test reports:/    { r += $3 }
+                /Crash reports:/   { c += $3 }
+                /Defect:/          { d += $3 }
+                END { printf "%d %d %d %d", t, r, c, d }')
+
+          else
+              echo "----------------------------------"
+              echo "Fuzz Test build failed with exit code $BAZEL_EXIT_CODE."
+
+              # Exit the script with a non-zero status to indicate failure
+              jobStatus=1
+          fi
+
+          if [ "$jobStatus" -eq 0 ]; then # if jobStatus is 0 then process the reports
+            # TODO
+            echo "TODO: process results"
+          fi
+
+          echo -n "$tests_performed" > $(results.tests-performed.path)
+          echo -n "$test_reports" > $(results.test-reports.path)
+          echo -n "$crash_reports" > $(results.crash-reports.path)
+          echo -n "$defect_reports" > $(results.defect-reports.path)
+
+          if [ "$jobStatus" -ne 0 ]; then
+              exit "$jobStatus"
+          fi
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          echo -n $(cat $(steps.fuzz-test.exitCode.path)) > $(results.exit-code.path)
+          if [ $(cat $(steps.fuzz-test.exitCode.path)) -ne 0 ]; then
+            echo "true" > $(results.unstable.path)
+          fi
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+      - name: coverage
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        containerSettings: container-16c64g300g
+        script: |
+          #!/bin/bash
+          echo repoRoot = $(params.repoRoot)
+          echo variant = $(params.variant)
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          # Path to the build event JSON file
+          BUILD_EVENT_FILE="build_event.json"
+
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          # Start showing the commands now that all the secrets are finished:
+          set -x
+          # variables to store report data
+          untested_files=""
+          coverage_target="//coverage:fuzz_report"
+          report_file="$(echo "$coverage_target" | cut -d: -f2)_untested_srcs.txt"
+          jobStatus=0
+
+          total_true="0"
+          total_false="0"
+          total_tests="0"
+          total_coverage="0"
+
+          # Create the test results folder
+          mkdir -p test-results/$(params.variant)
+          mkdir -p test-results/$(params.variant)/profile
+
+          echo "----------------------------------"
+          echo "Running UT Command"
+          echo "----------------------------------"
+          bazelisk build $coverage_target --variant=$(params.variant)  --build_event_json_file="$BUILD_EVENT_FILE" --config mayhem 2>&1 | tee build_output.log
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=${PIPESTATUS[0]}
+          build_output=$(cat build_output.log)
+
+          # Extract the invocation ID using jq
+          INVOCATION_ID=$(grep -Po '"uuid":"\K[^"]+' build_event.json)
+
+          # Check if the invocation ID is not empty
+          if [[ -n "$INVOCATION_ID" ]]; then
+              echo "Invocation ID: $INVOCATION_ID"
+
+              # Create the RapidBuild url
+              echo -n "https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen7_saf85xx/invocations/${INVOCATION_ID}" > $(results.coverage-rapid-build-url.path)
+          fi
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Fuzz Coverage build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Fuzz Coverage build failed with exit code $BAZEL_EXIT_CODE."
+
+              # Search for the line where tests fail and capture the number of failed tests
+              if echo "$build_output" | grep -q '\[  FAILED  \] [0-9]\+ tests, listed below:'; then
+                  # Extract the number of failed tests
+                  num_failed=$(echo "$build_output" | grep '\[  FAILED  \] [0-9]\+ tests, listed below:' | grep -o '[0-9]\+')
+
+                  # Print the header and the failed test cases
+                  echo "----------------------------------"
+                  echo "****** FAILED TESTS DETECTED ******"
+                  # Extract the block starting from the failed line and the next N failed test lines
+                  echo "$build_output" | awk "/\[  FAILED  \] $num_failed tests, listed below:/ {found=1} found {print} NR == (NR + $num_failed) {exit}"
+                  echo -n "$build_output" | awk "/\[  FAILED  \] $num_failed tests, listed below:/ {found=1} found {print} NR == (NR + $num_failed) {exit}" > $(results.coverage-error-message.path)
+
+                  echo "----------------------------------"
+                  jobStatus=2 # Custom status to indicate unit test failure
+
+              # Additional check for coverage-related failures, even if exit code is 0
+              elif echo "$build_output" | grep -q "CoverageReport.*failed" || echo "$build_output" | grep -q "Exit 1"; then
+                  echo "----------------------------------"
+                  echo "****** COVERAGE LIMIT FAILURE DETECTED ******"
+                  # Extract only the coverage results table
+                  echo "$build_output" | awk '/Coverage results/,/Untested source files/ { if ($0 ~ /Untested source files/) exit; print }' | tee -a $(results.coverage-error-message.path)
+                  echo "----------------------------------"
+                  jobStatus=3  # Custom status to indicate coverage limit failure
+
+              else
+                  echo "----------------------------------"
+                  echo "No failed tests found"
+                  echo "----------------------------------"
+              fi
+
+              # Exit the script with a non-zero status to indicate failure
+              jobStatus=1
+          fi
+
+          if [ "$jobStatus" -eq 0 ]; then # if jobStatus is 0 then process the reports
+              cp -r bazel-Core_Radar_Gen7_SAF85xx/external/ external/
+
+              mkdir -p test-results/$(params.variant)/coverage
+              mv bazel-bin/coverage/$report_file  test-results/$(params.variant)/$report_file
+
+              echo "--------------------------------------"
+              # Parse the report_file for number of untested files
+
+              if [[ ! -f "test-results/$(params.variant)/$report_file" ]]; then
+                echo "Error: File '$report_file' not found!"
+                exit 1
+              fi
+
+              # There's one line for each untested file, so count the lines
+              untested_files=$(wc -l "test-results/$(params.variant)/$report_file")
+
+          fi
+
+          echo "Untested Source Files: $untested_files"
+
+          echo "-------------------------------------"
+          # Populate the result variables
+          echo -n "$untested_files" > $(results.untested-files.path)
+
+          echo -n "" >> $(results.coverage-error-message.path)
+
+          # save output directory path for user usages
+          echo -n "$(params.repoRoot)/test-results/" > $(results.coverage-output-dir.path)
+
+          if [ "$jobStatus" -ne 0 ]; then
+              exit "$jobStatus"
+          fi
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+      - name: save-coverage-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          echo -n $(cat $(steps.coverage.exitCode.path)) > $(results.coverage-exit-code.path)
+          if [ $(cat $(steps.coverage.exitCode.path)) -ne 0 ]; then
+            echo "true" > $(results.unstable.path)
+          fi
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: fuzz-test-exit-codes
+        type: map
+        description: Exit codes for any Fuzz test tasks
+        ui:
+          name: Fuzz Test Exit Codes
+        render:
+          templateName: map
+      - name: tests-performed
+        type: map
+        description: Fuzz tests performed
+        ui:
+          name: tests-performed
+        render:
+          templateName: map
+      - name: test-reports
+        type: map
+        description: Fuzz test reports
+        ui:
+          name: test-reports
+        render:
+          templateName: map
+      - name: crash-reports
+        type: map
+        description: Fuzz crash reports
+        ui:
+          name: crash-reports
+        render:
+          templateName: map
+      - name: defect-reports
+        type: map
+        description: Fuzz defect reports
+        ui:
+          name: defect-reports
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-fuzz-test-codes
+        script: |-
+          # Write in "success" values
+          echo -n "+1" > $(results.vote-value.path)
+          echo -n "0" > $(results.exit-code.path)
+
+          # Read and act on Fuzz Test exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]; then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Fuzz Tests Failed! ❌" >> $(results.vote-message.path)
+              else
+                variant="${BASH_REMATCH[1]}"
+                echo "${variant} Fuzz Tests Successful! ✔️" >> $(results.vote-message.path)
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Tests Performed: ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.tests-performed.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Test Reports: ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.test-reports.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Crash Reports: ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.crash-reports.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Defect Reports: ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.defect-reports.path)
+              fi
+            fi
+          done < $(params.fuzz-test-exit-codes.path)
+
+          # If any Fuzz tests failed, that's the important part
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+
+          echo "\n" >> $(results.vote-message.path)
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is FLR7
+            value: flr7
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default:
+        ui:
+          name: git-ref
+      - name: test-reports
+        type: string
+        description: Fuzz test results
+        default:
+        ui:
+          name: test-reports
+
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+      - name: commit-hash
+        type: string
+        description: The current commit hash, it can be the same as the git-ref.
+        ui:
+          name: commit-hash
+      - name: tags
+        type: string
+        description: Any extra tags needed to pass to Platform Health for extra filtering. e.g. "env=test, build=standalone"
+        ui:
+          name: tags
+
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+
+          import subprocess
+          import sys
+          import os
+          import zipfile
+          import json
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+              sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+              subprocess.check_call([
+                  sys.executable, "-m", "pip", "install",
+                  "--break-system-packages",
+                  "--no-cache-dir",
+                  "--target", TARGET,
+                  "psycopg2-binary"
+              ])
+
+              os.makedirs(TARGET, exist_ok=True)
+              with open(MARKER, "w"):
+                  pass
+
+              os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+              print("Installing Python dependencies...")
+              install_deps_and_restart()
+
+          import psycopg2
+
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def parse_extra_tags(extra_tags_str):
+              """Parse a string of extra tags into a dictionary"""
+              extra_tags = {}
+              if extra_tags_str:
+                  try:
+                      extra_tags = json.loads(extra_tags_str)
+                  except json.JSONDecodeError:
+                      # Handle case where input is not valid JSON
+                      for item in extra_tags_str.split(","):
+                          key_value = item.split("=")
+                          if len(key_value) == 2:
+                              key, value = key_value
+                              extra_tags[key.strip()] = value.strip()
+              return extra_tags
+
+          def read_file(file_path):
+              """Reads a file and returns its contents."""
+              with open(os.path.expandvars(file_path), 'r') as file:
+                  return file.read().strip()
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+              """Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd."""
+              cursor.execute("""
+                  SELECT id FROM wrsd."perception_metrics_wrsd"
+                  WHERE build_no = %s AND pipeline_name = %s;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+              result = cursor.fetchone()
+              if result:
+                  return result[0]
+              else:
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                      VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                  """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+                  return cursor.fetchone()[0]
+
+          def insert_perception_metrics(cursor, data_list):
+              """Inserts multiple perception_metrics entries into the database."""
+              for data in data_list:
+                  wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                  """, (
+                      data['commitid'], data['date'], data['branch'], data['tag'],
+                      data['project'], data['metric_name'], data['metric_value'],
+                      Json(data['metric_tags']), wrsd_id
+                  ))
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+
+          db_config = {
+              "dbname": "monitoring",
+              "user": pg_user,
+              "password": pg_pass,
+              "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+              "port": "5432"
+          }
+
+          # Extract metadata
+          branch = "$(params.git-ref)"
+          project_name = "$(params.project-name)"
+          commit_hash = "$(params.commit-hash)"
+          build_no = "$(config.pipeline.runNumber)"
+          pipeline_name = "$(config.pipeline.name)"
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+          extra_tags = parse_extra_tags("$(params.tags)")
+
+          metric_tags = {"variant": "$(params.variant)"}
+          metric_tags.update(extra_tags)
+
+          test_metrics = [
+              ("test-reports", "$(params.test-reports)"),
+          ]
+
+          # Load the coverage results form the UT job
+          data_list = [
+              {
+                  "commitid": commit_hash,"date": currentDateTime, "branch": branch, "tag": "",
+                  "project": project_name, "metric_name": "core_radar.gen7v2.fuzztest",
+                  "metric_value": value, "metric_tags": {**metric_tags, "category": category},
+                  "wrsd_tags": { "build_no": build_no, "pipeline_name": pipeline_name,"status": None,"duration": None,
+                      "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                  },
+              }
+              for category, value in test_metrics
+          ]
+
+          print(f"Prepared {len(data_list)} records for database insertion.")
+
+          for data in data_list:
+            print(data)
+
+          # Insert into the database
+          if branch == "dev":
+              try:
+                  connection = psycopg2.connect(**db_config)
+                  cursor = connection.cursor()
+
+                  insert_perception_metrics(cursor, data_list)
+                  connection.commit()
+                  print("Data inserted successfully.")
+
+              except Exception as e:
+                  print(f"An error occurred: {e}")
+
+              finally:
+                  if connection:
+                      cursor.close()
+                      connection.close()
+          else:
+              print("Not Dev branch so nothing will be committed to Platform Health.")
+
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+
+timeout: 2h

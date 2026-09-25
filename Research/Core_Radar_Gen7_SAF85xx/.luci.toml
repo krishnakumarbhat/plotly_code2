@@ -1,0 +1,32 @@
+# this is an example content of .luci.toml file that is used
+# to store some settings used by LuCI (https://gitgerrit.asux.aptiv.com/admin/repos/q/filter:luci)
+# All paths here are relative to .luci.toml file location, so this
+# file must be located at the project root.
+# Content here must be a valid TOML: https://toml.io/en/
+# You can validate TOML content here: https://www.toml-lint.com/
+
+
+# enumerate folders with a generated code here.
+# it must contain a list of strings (syntax: https://facelessuser.github.io/wcmatch/glob/#)
+generated_code = [
+    # Examples:
+    # "src/generated/**/*",
+    # "src/**/generated/**/*",
+    "**/*saf85xx_autosar_sip/**/*",
+    "**/m7/autosar/**/*",
+    "**/m7/mcal/app/**/*",
+]
+
+# enumerate folders with a third party code here.
+# it must contain a list of strings (syntax: https://facelessuser.github.io/wcmatch/glob/#)
+third_party_code = [
+    # Example:
+    # "src/third_party/**/*",
+    "**/m7/mmic/drivers/**/*",
+    "**/*SAF85xx_MCAL/**/*",
+    # Compilers:
+    "**/*bbe_linux/**/*",
+    "**/*bbe_windows/**/*",
+    "**/*windriver_diab_linux/**/*",
+    "**/*windriver_diab_windows/**/*",
+]

@@ -1,0 +1,3 @@
+Native Compiler and extra args: ./
+Working directory: /root/Core_Radar_Gen7_SAF85xx/tools/coverity
+Comptype: xtclang

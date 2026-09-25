@@ -1,0 +1,66 @@
+# Total max number of warnings (optional)
+max: 0
+
+# Global justification string (optional)
+justification: >
+  All warnings should be fixed, so allow no warnings.
+
+# # List of paths to allow compiler warnings for
+# allow:
+#     # Golang style regex (https://golang.org/s/re2syntax) matching paths
+#   - path: 'src/file.*\.[ch]'
+
+#     # Max number of warnings for matched paths (optional)
+#     max: 10
+
+#     # Path-level justification (optional)
+#     justification: >
+#       Only expect up to 3 '-Wstrict-prototypes' warnings and
+#       several '-Wunused-(parameter|macro)' warnings but no more than 10 in total
+
+#     # Patterns for allowed warnings:
+#     warnings:
+#         # Golang style regex matching a warning code
+#         # Those codes can be found in the compiler-specific documentation
+#         #
+#         # Different compilers will have different formats
+#         # Some (like Tasking) use alphanumeric codes (e.g. `W972`) whereas
+#         # others (like Clang or GCC) use corresponding command line flags (e.g. '-Wunused-variable')
+#         #
+#         # As an example, types of warnings available in the latest version of Clang compiler
+#         # can be found in diagnostic flags reference (https://clang.llvm.org/docs/DiagnosticsReference.html)
+#         # For the latest version of GCC, the same can be found in the 'Warnings Options'
+#         # part of its docs (https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
+#       - code: '-Wunused-.*'
+
+#         # Max number of warnings for matched codes (optional)
+#         # If not present, any number of matched warnings is allowed (limits from upper levels still apply)
+#         max: 3
+
+#       - code: 'strict-prototypes'
+
+# # Examples for other common scenarios:
+#   # Allow warnings in generated code
+#   - path: 'generated/.*'
+#     justification: "Allow all warnings in generated code"
+#     warnings:
+#       - code: '.*'
+
+#   # Reference a Jira ticket
+#   - path: 'warning\.c'
+#     justification: 'DIN-9999: Cleanup unused variables in the warning.c file'
+#     warnings:
+#       - code: '-Wunused-variable'
+
+#   # Allow all warnings of specific kinds
+#   - path: '.*'
+#     warnings:
+#       - code: '-Wreturn-type'
+#       - code: '-Wsign-compare'
+
+#   # Allow all warnings.
+#   # Can be useful to avoid unexpected warnings and only perform validation
+#   # based on the number of warnings in other entries
+#   - path: '.*'
+#     warnings:
+#       - code: '.*'

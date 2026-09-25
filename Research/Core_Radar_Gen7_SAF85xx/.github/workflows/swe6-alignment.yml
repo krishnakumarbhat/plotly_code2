@@ -1,0 +1,135 @@
+# SWE6 Alignment Weekly orchestrator.
+#
+# Thin wrapper around radar-test-reusable.yml: one job per family + a combined
+# Teams/email notification once both finish. All variant-agnostic mechanics
+# (build download, TOML update, test run, JFrog upload, Platform-Health push,
+# per-family Teams notification, runner cleanup) live in radar-test-reusable.yml.
+
+name: SWE6 Alignment Weekly
+
+on:
+  schedule:
+    # 20:30 UTC every Sunday = 02:00 IST Monday (UTC+5:30)
+    - cron: '30 20 * * 0'
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Optional: limit run to one family (FLR7 | SRR7p | all)'
+        required: false
+        default: 'all'
+        type: choice
+        options: [all, FLR7, SRR7p]
+
+concurrency:
+  group: swe6-alignment
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # ---- FLR7 alignment leg ----
+  alignment-flr7:
+    name: SWE6 Alignment (FLR7)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'FLR7' }}
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: SWE6_Alignment
+      family: FLR7
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe6-alignment.yml
+      nightly-artifact-jfrog-path: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/alignment-outputs.zip
+      nightly-artifact-zip-name: alignment-outputs.zip
+      toml-file: FLR7_SQTp_Alignment.toml
+      ci-cd-environment: true
+      markers: 'Module=ALIGNMENT_Module'
+      bench-attributes: 'Variant=FLR7_V2'
+      ph-mode: alignment
+      report-name-filter: SWE6_Alignment_test
+      jfrog-reports-subpath: SWE6/Alignment
+      jfrog-latest-subpath: SWE6/Alignment/latest_report
+      email-subject-prefix: 'Gen7v2 SWE6 Alignment (FLR7) Weekly'
+      extra-pip-packages: 'beautifulsoup4 psycopg2'
+    secrets: inherit
+
+  # ---- SRR7p alignment leg ----
+  alignment-srr7p:
+    name: SWE6 Alignment (SRR7p)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.variant == 'all' || inputs.variant == 'SRR7p' }}
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: SWE6_Alignment
+      family: SRR7p
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe6-alignment.yml
+      nightly-artifact-jfrog-path: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/alignment-outputs.zip
+      nightly-artifact-zip-name: alignment-outputs.zip
+      toml-file: SRR7p_SQTp_Alignment.toml
+      ci-cd-environment: true
+      markers: 'Module=ALIGNMENT_Module'
+      bench-attributes: 'Variant=SRR7p_V2'
+      ph-mode: alignment
+      report-name-filter: SWE6_Alignment_test
+      jfrog-reports-subpath: SWE6/Alignment
+      jfrog-latest-subpath: SWE6/Alignment/latest_report
+      email-subject-prefix: 'Gen7v2 SWE6 Alignment (SRR7p) Weekly'
+      extra-pip-packages: 'beautifulsoup4 psycopg2'
+    secrets: inherit
+
+  # ---- Combined Teams + Email notification after both legs finish ----
+  notify:
+    name: SWE6 Alignment Combined Notification
+    needs: [alignment-flr7, alignment-srr7p]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send combined Teams + Email via Power Automate
+        if: ${{ secrets.ADVRADAR_SWE6_TEAMS_WEBHOOK_URL != '' }}
+        continue-on-error: true
+        shell: bash
+        env:
+          TEAMS_URL: ${{ secrets.ADVRADAR_SWE6_TEAMS_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          FLR7_RESULT: ${{ needs.alignment-flr7.result }}
+          SRR7P_RESULT: ${{ needs.alignment-srr7p.result }}
+          RECIPIENTS: >-
+            Ampavathina.Trivikram@aptiv.com;
+            Arjun.Duraisamy@aptiv.com;
+            Azeej.Shaik@aptiv.com;
+            Bc.Manjunath@aptiv.com;
+            chayadevi.hp@aptiv.com;
+            Dinesh.Chintapalli@aptiv.com;
+            fred.grandlienard@aptiv.com;
+            Jonnalagadda.Sai.Dheeraj@aptiv.com;
+            kavitha.kakarla@aptiv.com;
+            litty.k.p@aptiv.com;
+            mallikarjuna.chirithanal@aptiv.com;
+            Manasa.L@aptiv.com;
+            Manoranjan.Satapathy@aptiv.com;
+            maddi.nagarjuna@aptiv.com;
+            mithun.krishna@aptiv.com;
+            Nikhil.Hc@aptiv.com;
+            Osmane.Gani.Shaik@aptiv.com;
+            Priyanka.Rawat@aptiv.com;
+            Sai.Teja.Kr@aptiv.com;
+            Shaik.Unnisa@aptiv.com;
+            shreedevi.mirji@aptiv.com;
+            Sneha.Murali@aptiv.com;
+            Sriramya.Sanagavarapu@aptiv.com;
+            sneha.kumari.2@aptiv.com;
+            Suma.Patil@aptiv.com;
+            Sumalatha.Bs@aptiv.com;
+            swati.swaroop.gupta@aptiv.com;
+            Venkata.Bharath.Kumar.Nandyala@aptiv.com;
+            Vishal.Patil@aptiv.com
+        run: |
+          set -euo pipefail
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          PAYLOAD=$(jq -n \
+            --arg subject "Gen7v2 SWE6 Alignment Weekly Run #${{ github.run_number }} | Commit ${SHORT_SHA}" \
+            --arg run_url "${RUN_URL}" \
+            --arg commit  "${{ github.sha }}" \
+            --arg branch  "${{ github.ref_name }}" \
+            --arg flr7    "${FLR7_RESULT}" \
+            --arg srr7p   "${SRR7P_RESULT}" \
+            --arg to      "${RECIPIENTS}" \
+            '{job_type:"SWE6_Alignment", gen_version:"Gen7v2", email_subject:$subject, run_url:$run_url, commit:$commit, branch:$branch, flr7_result:$flr7, srr7p_result:$srr7p, email_recipients:$to}')
+          curl -fsS -X POST -H 'Content-Type: application/json' -d "${PAYLOAD}" "${TEAMS_URL}"

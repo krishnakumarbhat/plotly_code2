@@ -1,0 +1,185 @@
+# Build Flavors orchestrator for Gen7 SAF85xx.
+#
+# Central catalog of every build flavor the WRSD pipeline runs (see
+# tools/CI/WRSD/core-radar-gen7-saf85xx-build.yaml). Each flavor maps to a
+# distinct Bazel target / flag combo, and is fanned out across the requested
+# variants via the reusable build.yml engine.
+#
+# Triggers:
+#   - workflow_call:       used by pr-checks / nightly / weekly callers
+#   - workflow_dispatch:   manual re-run of one or more flavors
+#
+# Flavor catalog (mirrors WRSD build-*.task entries):
+#   satellite   //:gen7 --jenkins                                   (always)
+#   sil         //sil/.../rdd_sil_Test ... --psp_sil_config=True    (always)
+#   iso         //:gen7 --rot=standalone --enable_cdc=False         (run-all-builds)
+#   vlan        //:gen7 --enable_vlan=True                          (vlan / run-all-builds)
+#   sqt         //:gen7 --enable_sqt_testcases                      (run-all-builds)
+#   sit         //:gen7 --Integration_Testing=true --Anglefinding_IT=true (run-all-builds)
+#   sit-core0   //:gen7 --enable_sit_testcases                      (run-all-builds)
+#   alignment   //:gen7 --enable_bench_testing=true                 (run-all-builds; weekly)
+
+name: Build · Flavors
+
+on:
+  workflow_call:
+    inputs:
+      flavors:
+        description: 'JSON array of flavor names to build. Subset of [satellite, sil, iso, vlan, sqt, sit, sit-core0, alignment].'
+        required: false
+        type: string
+        default: '["satellite"]'
+      variants:
+        description: 'JSON array of variants per flavor, e.g. ["flr7","srr7p"]. Empty = use the flavor default (flr7+srr7p).'
+        required: false
+        type: string
+        default: '["flr7","srr7p"]'
+      pr-number:
+        required: false
+        type: string
+        default: ''
+    secrets:
+      ADVRADAR_GHCR_USER: {required: true}
+      ADVRADAR_GHCR_TOKEN: {required: true}
+      ADVRADAR_NETRC_CONTENT: {required: true}
+      ADVRADAR_ARB_TOKEN: {required: true}
+  workflow_dispatch:
+    inputs:
+      flavors:
+        description: 'JSON array of flavor names'
+        type: string
+        default: '["satellite","sil","iso","vlan","sqt","sit","sit-core0","alignment"]'
+      variants:
+        description: 'JSON array of variants'
+        type: string
+        default: '["flr7","srr7p"]'
+
+jobs:
+  # -------- Satellite (production) --------
+  satellite:
+    if: contains(fromJson(inputs.flavors), 'satellite')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      pr-number: ${{ inputs.pr-number }}
+      bazel-extra-flags: '--color=yes --jobs=auto --jenkins'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-satellite",  "variant":"flr7",   "upload_artifact_name":"build-flr7.zip"},
+          {"name":"srr7p-satellite", "variant":"srr7p",  "upload_artifact_name":"build-srr7p.zip"},
+          {"name":"srr7e-satellite", "variant":"srr7e",  "upload_artifact_name":"build-srr7e.zip"},
+          {"name":"flr7v3-satellite","variant":"flr7v3", "upload_artifact_name":"build-flr7v3.zip"}
+        ]
+    secrets: inherit
+
+  # -------- SIL (CDC/RDD simulator) --------
+  sil:
+    if: contains(fromJson(inputs.flavors), 'sil')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//sil/rsp_sil/main/rsp_wrapper_interface/rdd_sil_interface/test:rdd_sil_Test'
+      bazel-extra-flags: >-
+        --color=yes --jobs=auto
+        --@spbb//common:use_bbe_cstub_simulator=True
+        --@afbb//module/_common:sil_config_enable=True
+        --//sil/rsp_sil/main/sil_wrapper_interface:enable_logging=True
+        --psp_sil_config=True --copt=-g --copt=-O0
+        --noremote_accept_cached
+      upload-artifact-path: 'bazel-bin/sil'
+      matrix-json: |
+        [
+          {"name":"flr7-sil",  "variant":"flr7",  "upload_artifact_name":"build-flr7-sil.zip"},
+          {"name":"srr7p-sil", "variant":"srr7p", "upload_artifact_name":"build-srr7p-sil.zip"}
+        ]
+    secrets: inherit
+
+  # -------- ISO / standalone (no CDC, tracker standalone) --------
+  iso:
+    if: contains(fromJson(inputs.flavors), 'iso')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      bazel-extra-flags: '--color=yes --jobs=auto --rot=standalone --enable_cdc=False'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-iso",  "variant":"flr7",  "upload_artifact_name":"build-flr7-iso.zip"},
+          {"name":"srr7p-iso", "variant":"srr7p", "upload_artifact_name":"build-srr7p-iso.zip"}
+        ]
+    secrets: inherit
+
+  # -------- VLAN (EthIf VLAN enabled) --------
+  vlan:
+    if: contains(fromJson(inputs.flavors), 'vlan')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      bazel-extra-flags: '--color=yes --jobs=auto --enable_vlan=True'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-vlan",  "variant":"flr7",  "upload_artifact_name":"build-flr7-vlan.zip"},
+          {"name":"srr7p-vlan", "variant":"srr7p", "upload_artifact_name":"build-srr7p-vlan.zip"}
+        ]
+    secrets: inherit
+
+  # -------- SQT (SQT testcases enabled) --------
+  sqt:
+    if: contains(fromJson(inputs.flavors), 'sqt')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      bazel-extra-flags: '--color=yes --jobs=auto --enable_sqt_testcases'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-sqt",  "variant":"flr7",  "upload_artifact_name":"build-flr7-sqt.zip"},
+          {"name":"srr7p-sqt", "variant":"srr7p", "upload_artifact_name":"build-srr7p-sqt.zip"}
+        ]
+    secrets: inherit
+
+  # -------- SIT (Anglefinding Integration Testing) --------
+  sit:
+    if: contains(fromJson(inputs.flavors), 'sit')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      bazel-extra-flags: '--color=yes --jobs=auto --Integration_Testing=true --Anglefinding_IT=true'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-sit",  "variant":"flr7",  "upload_artifact_name":"build-flr7-sit.zip"},
+          {"name":"srr7p-sit", "variant":"srr7p", "upload_artifact_name":"build-srr7p-sit.zip"}
+        ]
+    secrets: inherit
+
+  # -------- SIT CORE0 --------
+  sit-core0:
+    if: contains(fromJson(inputs.flavors), 'sit-core0')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      bazel-extra-flags: '--color=yes --jobs=auto --enable_sit_testcases'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-sit-core0",  "variant":"flr7",  "upload_artifact_name":"build-flr7-sit-core0.zip"},
+          {"name":"srr7p-sit-core0", "variant":"srr7p", "upload_artifact_name":"build-srr7p-sit-core0.zip"}
+        ]
+    secrets: inherit
+
+  # -------- Alignment (bench testing for SWE6 alignment regression) --------
+  alignment:
+    if: contains(fromJson(inputs.flavors), 'alignment')
+    uses: ./.github/workflows/build.yml
+    with:
+      target: '//:gen7'
+      bazel-extra-flags: '--color=yes --jobs=auto --enable_bench_testing=true'
+      upload-artifact-path: 'bazel-bin/outputs'
+      matrix-json: |
+        [
+          {"name":"flr7-alignment",  "variant":"flr7",  "upload_artifact_name":"build-flr7-alignment.zip"},
+          {"name":"srr7p-alignment", "variant":"srr7p", "upload_artifact_name":"build-srr7p-alignment.zip"}
+        ]
+    secrets: inherit

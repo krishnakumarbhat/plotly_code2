@@ -1,0 +1,27 @@
+# On-demand: build the ISO / standalone flavor (--rot=standalone --enable_cdc=False).
+
+name: "On-demand · Build ISO (Standalone)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-iso-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  iso:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["iso"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

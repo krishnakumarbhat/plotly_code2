@@ -1,0 +1,143 @@
+# WRSD integration workflow for Gen7 SAF85xx.
+#
+# Called by `nightly.yml` (and any release pipeline) after a successful build to:
+#   1. Bundle the generated flash images / memory stats per variant.
+#   2. Upload the bundle to the JFrog WRSD landing path so the WRSD pipeline can
+#      pick it up (`core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/<branch>/<run>`).
+#   3. Trigger the downstream WRSD pipeline via its REST hook so SWE6 / HIL / SIL
+#      stages start without waiting for the next WRSD poll cycle.
+#
+# Designed to be `workflow_call`-only; do not add `on: push` here.
+
+name: WRSD Integration
+
+on:
+  workflow_call:
+    inputs:
+      pipeline:
+        description: 'WRSD pipeline name to trigger (nightly | release | adhoc)'
+        required: true
+        type: string
+      branch:
+        description: 'Branch the artifact belongs to'
+        required: true
+        type: string
+      commit-sha:
+        description: 'Source commit SHA'
+        required: true
+        type: string
+      jfrog-base-repo:
+        description: 'JFrog base repo for uploads'
+        required: false
+        type: string
+        default: 'core_radar-aptiv-00000000-gen7_saf85xx-local'
+      jfrog-url:
+        required: false
+        type: string
+        default: 'https://jfrog.asux.aptiv.com'
+      wrsd-trigger-url:
+        description: 'WRSD pipeline trigger endpoint'
+        required: false
+        type: string
+        default: 'https://wrsd.asux.aptiv.com/api/v1/pipelines/Core_Radar_Gen7_SAF85xx/trigger'
+    secrets:
+      ADVRADAR_SID_USERNAME: {required: true}
+      ADVRADAR_JFROG_API_KEY: {required: true}
+      ADVRADAR_WRSD_TRIGGER_TOKEN: {required: true}
+
+jobs:
+  publish:
+    name: Publish to JFrog & trigger WRSD
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    env:
+      JFROG_URL: ${{ inputs.jfrog-url }}
+      JFROG_BASE_REPO: ${{ inputs.jfrog-base-repo }}
+      JFROG_USER: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      JFROG_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+      PIPELINE: ${{ inputs.pipeline }}
+      BRANCH: ${{ inputs.branch }}
+      COMMIT_SHA: ${{ inputs.commit-sha }}
+      RUN_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 1}
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+          pattern: 'build-*.zip'
+          merge-multiple: false
+
+      - name: Bundle artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p bundle
+          find artifacts -name 'build-*' -maxdepth 2 -type d | while read -r DIR; do
+            NAME=$(basename "${DIR}")
+            (cd "${DIR}" && zip -qr "${GITHUB_WORKSPACE}/bundle/${NAME}.zip" .)
+          done
+          (cd bundle && zip -qr ../buildFiles_output_combined.zip .)
+          ls -la buildFiles_output_combined.zip
+
+      - name: Install JFrog CLI
+        run: |
+          curl -fL https://install-cli.jfrog.io | sh
+          jf --version
+
+      - name: Configure JFrog CLI
+        run: |
+          jf c add wrsd \
+            --url="${JFROG_URL}" \
+            --user="${JFROG_USER}" \
+            --password="${JFROG_KEY}" \
+            --interactive=false --overwrite=true
+          jf c use wrsd
+
+      - name: Upload bundle to JFrog
+        id: upload
+        run: |
+          set -euo pipefail
+          TARGET_DIR="${JFROG_BASE_REPO}/wrsd/${BRANCH}/${PIPELINE}/${RUN_NUMBER}"
+          LATEST_DIR="${JFROG_BASE_REPO}/wrsd/${BRANCH}/${PIPELINE}/latest"
+          jf rt u buildFiles_output_combined.zip "${TARGET_DIR}/" --flat=true
+          jf rt u buildFiles_output_combined.zip "${LATEST_DIR}/" --flat=true
+          echo "target_path=${TARGET_DIR}/buildFiles_output_combined.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger WRSD pipeline
+        env:
+          WRSD_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}
+          TRIGGER_URL: ${{ inputs.wrsd-trigger-url }}
+          ARTIFACT_URL: ${{ steps.upload.outputs.target_path }}
+        run: |
+          set -euo pipefail
+          PAYLOAD=$(jq -n \
+            --arg pipeline "${PIPELINE}" \
+            --arg branch   "${BRANCH}" \
+            --arg sha      "${COMMIT_SHA}" \
+            --arg run      "${RUN_NUMBER}" \
+            --arg artifact "${ARTIFACT_URL}" \
+            '{pipeline:$pipeline, branch:$branch, commit:$sha, gh_run:$run, artifact:$artifact}')
+          STATUS=$(curl -sS -o trigger.json -w '%{http_code}' \
+            -X POST "${TRIGGER_URL}" \
+            -H "Authorization: Bearer ${WRSD_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "${PAYLOAD}")
+          echo "WRSD trigger HTTP ${STATUS}"
+          cat trigger.json || true
+          [ "${STATUS}" -ge 200 ] && [ "${STATUS}" -lt 300 ]
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## WRSD Handoff"
+            echo "- Pipeline: \`${PIPELINE}\`"
+            echo "- Branch: \`${BRANCH}\`"
+            echo "- Commit: \`${COMMIT_SHA}\`"
+            echo "- Artifact: \`${{ steps.upload.outputs.target_path }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,1206 @@
+langVersion: v1
+name: core-radar-gen7-saf85xx-coverity
+description: Pipeline that builds coverity for all variants of the code for Gen7v2 SAF85xx
+ui:
+  name: core-radar-gen7-saf85xx-coverity
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen7_SAF85xx
+  - name: upload-path
+    type: string
+    description: |-
+      The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+      Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/coverity/
+    default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/manual/0/coverity/
+    ui:
+      name: JFrog Upload Path
+  - name: branch-name
+    type: string
+    default: dev
+  - name: change-url
+    type: string
+    default: ""
+  - name: patchset-id
+    type: string
+    default: ""
+compute:
+  - name: linux-16c64g
+    resource: asp-compute-linux-16c64g
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+  - resource: asp-compute-linux-1c4g # This becomes the default compute.
+containerSettings:
+  - name: container-16c64g300g
+    resource: asp-container-16c64g300g
+  - name: container-8c32g150g
+    resource: asp-container-8c32g150g
+  - name: container-2c8g50g
+    resource: asp-container-2c8g50g
+  - name: container-1c4g25g
+    resource: asp-container-1c4g25g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+
+  - parallelTasks:
+      - name: build-srr7p-a53
+        task: build/build
+        params:
+          core: a53
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr7p
+          cov-stream: "CORERDR0_Gen7_SAF85xx_SRR7p_A53"
+        steps:
+          - name: build-code
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-flr7-a53
+        task: build/build
+        params:
+          core: a53
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr7
+          cov-stream: "CORERDR0_Gen7_SAF85xx_FLR7_A53"
+        steps:
+          - name: build-code
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-srr7p-m7
+        task: build/build
+        params:
+          core: m7
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr7p
+          cov-stream: "CORERDR0_Gen7_SAF85xx_SRR7p_M7"
+        steps:
+          - name: build-code
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-flr7-m7
+        task: build/build
+        params:
+          core: m7
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr7
+          cov-stream: "CORERDR0_Gen7_SAF85xx_FLR7_M7"
+        steps:
+          - name: build-code
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-srr7p-bbe32
+        task: build/build
+        params:
+          core: bbe32
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr7p
+          cov-stream: "CORERDR0_Gen7_SAF85xx_SRR7p_BBE32"
+        steps:
+          - name: build-code
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-flr7-bbe32
+        task: build/build
+        params:
+          core: bbe32
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr7
+          cov-stream: "CORERDR0_Gen7_SAF85xx_FLR7_BBE32"
+        steps:
+          - name: build-code
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    params:
+      build-exit-codes:
+        FLR7_A53: $(tasks.build-flr7-a53.results.build-exit-code)
+        FLR7_BBE32: $(tasks.build-flr7-bbe32.results.build-exit-code)
+        FLR7_M7: $(tasks.build-flr7-m7.results.build-exit-code)
+        SRR7p_A53: $(tasks.build-srr7p-a53.results.build-exit-code)
+        SRR7p_BBE32: $(tasks.build-srr7p-bbe32.results.build-exit-code)
+        SRR7p_M7: $(tasks.build-srr7p-m7.results.build-exit-code)
+      upload-exit-codes:
+        FLR7_A53: $(tasks.build-flr7-a53.results.upload-exit-code)
+        FLR7_BBE32: $(tasks.build-flr7-bbe32.results.upload-exit-code)
+        FLR7_M7: $(tasks.build-flr7-m7.results.upload-exit-code)
+        SRR7p_A53: $(tasks.build-srr7p-a53.results.upload-exit-code)
+        SRR7p_BBE32: $(tasks.build-srr7p-bbe32.results.upload-exit-code)
+        SRR7p_M7: $(tasks.build-srr7p-m7.results.upload-exit-code)
+      error-messages:
+        FLR7_A53: $(tasks.build-flr7-a53.results.error-message)
+        FLR7_BBE32: $(tasks.build-flr7-bbe32.results.error-message)
+        FLR7_M7: $(tasks.build-flr7-m7.results.error-message)
+        SRR7p_A53: $(tasks.build-srr7p-a53.results.error-message)
+        SRR7p_BBE32: $(tasks.build-srr7p-bbe32.results.error-message)
+        SRR7p_M7: $(tasks.build-srr7p-m7.results.error-message)
+
+  - name: build-vote
+    task: Utils/ADVRADAR/post-gerrit-comment-vote@1.0.0
+    params:
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Outputs: https://jfrog.asux.aptiv.com/ui/repos/tree/General/$(params.upload-path)
+
+        Build Job: https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+      votes:
+        Coverity: $(tasks.prepare-vote-and-message.results.vote-value)
+  - parallelTasks:
+      - name: publish-metrics-srr7p
+        task: Utils/publish-metrics
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+        params:
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: srr7p
+          streams: "CORERDR0_Gen7_SAF85xx_SRR7p_A53, CORERDR0_Gen7_SAF85xx_SRR7p_M7,CORERDR0_Gen7_SAF85xx_SRR7p_BBE32"
+          commit-hash: $(tasks.build-srr7p-a53.results.commit-hash)
+          upload-path: $(params.upload-path)
+      - name: publish-metrics-flr7
+        task: Utils/publish-metrics
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+        params:
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: flr7
+          streams: "CORERDR0_Gen7_SAF85xx_FLR7_A53, CORERDR0_Gen7_SAF85xx_FLR7_M7,CORERDR0_Gen7_SAF85xx_FLR7_BBE32"
+          commit-hash: $(tasks.build-flr7-a53.results.commit-hash)
+          upload-path: $(params.upload-path)
+      - name: auto-submit-check
+        task: Utils/ADVRADAR/auto-submit@1.0.1
+        compute: linux-2c8g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          gerrit-url: $(params.gerrit-url)
+          comment: "False"
+defineTasks:
+  - name: build
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is flr7
+            value: flr7
+      - name: core
+        type: select
+        description: Core to Build
+        ui:
+          name: core
+        options:
+          - name: a53
+            description: Core is a53
+            value: a53
+          - name: bbe32
+            description: Core is bbe32
+            value: bbe32
+          - name: m7
+            description: Core is m7
+            value: m7
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen7_awr294x-local/reviews/45/12345/6/buildFiles
+        default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/awr294x/test-1/coverity/
+        ui:
+          name: JFrog Upload Path
+      - name: cov-stream
+        type: string
+        description: The Coverity stream for this build, will be used to download reports
+        default: ""
+        ui:
+          name: Coverity Stream
+    results:
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: error-message
+        description: A string with any new errors found
+      - name: commit-hash
+        description: commit-hash
+      - name: rapid-build-url
+        description: URL to the RapidBuild
+    steps:
+      - name: clone-awr-repo
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          depth: "1"
+          echo "Commit Hash: $COMMIT_HASH"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen7_SAF85xx
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+        returnResults:
+          commitHash: commit-hash
+      - name: build-code
+        task: build-code
+        params:
+          core: $(params.core)
+          git-ref: $(params.git-ref)
+          repoRoot: $(cat $(steps.clone-awr-repo.results.repoPath.path))
+          variant: $(params.variant)
+          cov-stream: $(params.cov-stream)
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          error-message: error-message
+          rapid-build-url: rapid-build-url
+          unstable: unstable
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.build-code.results.outputDir.path))
+          uploadPath: $(params.upload-path)coverity_$(params.variant)_$(params.core)
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: uploadUrl
+          unstable: unstable
+    wrrn: ""
+  - name: build-code
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Build
+        ui:
+          name: variant
+      - name: core
+        type: string
+        description: Core to Build
+        ui:
+          name: core
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: cov-stream
+        type: string
+        description: The Coverity stream for this build, will be used to download reports
+        default: ""
+        ui:
+          name: Coverity Stream
+    results:
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: error-message
+        description: String to hold any new issues detected.
+      - name: rapid-build-url
+        description: URL to the RapidBuild
+      - name: unstable
+    steps:
+      - name: build
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        # yamllint disable
+        script: |
+          #!/bin/bash
+
+          CPU=`cat /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_quota_us`
+          MEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes | numfmt --to=iec`
+          echo "Compute Resource: $(( $CPU/100000 )) x $MEM"
+          # Show storage resources for the container
+          df -h
+
+          echo "RepoRoot  = $(params.repoRoot)"
+          echo "Variant   = $(params.variant)"
+          echo "Core      = $(params.core)"
+          echo "Git-ref   = $(params.git-ref)"
+
+          # Path to the build event JSON file
+          BUILD_EVENT_FILE="build_event.json"
+
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          # Set up credentials for the ARB remote cache
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          # commit and disable remote cache if we are on the dev branch,
+          # might need to check this for the nightly job vs the post merge job
+          # TODO: confirm we are not also submitting for post-merge
+          commit_param=""
+
+          if [ "$(params.git-ref)" = "dev" ]; then
+            commit_param="--config=cov_commit"
+          fi
+
+          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          # coverity file in the WRSD secrets is saved as base64 encoded
+          # the below commands just decodes the file
+          cp $(secrets.coverity-auth.authstring.path) ~/coverity1.auth
+          base64 --decode ~/coverity1.auth > ~/coverity.auth
+          chmod 600 /home/`whoami`/coverity.auth
+
+          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          # chmod +x ./bazelisk # save output directory path for user usages
+          echo -n "$(params.repoRoot)/covdir" > $(results.outputDir.path)
+          mkdir -p $(params.repoRoot)/covdir/$(params.variant)_$(params.core)
+
+          pwd
+          cd $(params.repoRoot)/tools/coverity
+          pwd
+
+          # Source the .bazeliskrc file manually.
+          source $(params.repoRoot)/.bazeliskrc
+
+          # Run Bazel
+          bazel version
+
+          # get the execution root path to use with --strip-path
+          EXECROOT=$(bazel info execution_root)
+          echo "Exec root = $EXECROOT"
+          # --strip-path="$EXECROOT" is not working
+          echo "----------------------------------"
+          echo "Coverity Build - $(params.variant) - $(params.core)"
+          echo "----------------------------------"
+          bazelisk run //software/$(params.core):commit_defects --jobs=45 --variant=$(params.variant) --build_event_json_file="$BUILD_EVENT_FILE" $commit_param -- --auth-key-file=/home/`whoami`/coverity.auth 2>&1 | tee build_output.log
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=$PIPESTATUS
+
+          build_output=$(cat build_output.log)
+
+          # Extract the invocation ID using jq
+          INVOCATION_ID=$(grep -Po '"uuid":"\K[^"]+' build_event.json)
+
+          # Check if the invocation ID is not empty
+          if [[ -n "$INVOCATION_ID" ]]; then
+              echo "Invocation ID: $INVOCATION_ID"
+
+              # Create the RapidBuild url
+              echo -n "https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen7_saf85xx/invocations/${INVOCATION_ID}" > $(results.rapid-build-url.path)
+          fi
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Build failed with exit code $BAZEL_EXIT_CODE."
+              echo "----------------------------------"
+              # Optionally, you can exit the script with a non-zero status to indicate failure
+              echo -n "1" > $(results.exit-code.path)
+              echo -n "Bazel Build for Coverity Failed" > $(results.error-message.path)
+              echo -n "true" > $(results.unstable.path)
+              exit 1
+          fi
+
+
+
+          cd $(params.repoRoot)
+
+          compilerFolder=""
+
+          if [[ "$(params.core)" == "m7" || "$(params.core)" == "a53" ]]; then
+            compilerFolder="windriver_v7_cov"
+          elif [[ "$(params.core)" == "bbe32" ]]; then
+            compilerFolder="xtensa_bbe32_cov"
+          else
+            echo "Core Not Supported"
+          fi
+
+          echo "Copying Coverity Logs to output directory"
+          # Copy summary logs from the output and output_combined folders to the output directory to send to jfrog
+          cp  "bazel-bin/software/$(params.core)/$compilerFolder/analysis_combined/output_combined/summary.txt" "$(params.repoRoot)/covdir/$(params.variant)_$(params.core)/"
+          cp  "bazel-bin/software/$(params.core)/$compilerFolder/analysis_combined/output_combined/analysis-log.txt" "$(params.repoRoot)/covdir/$(params.variant)_$(params.core)/"
+
+          # Check for any [FATAL] line
+          if echo "$build_output" | grep -q '\[FATAL\]'; then
+            fatal_lines=$(echo "$build_output" | grep '\[FATAL\]')
+            echo "----------------------------------"
+            echo "********* FATAL ERRORS ***********"
+            echo "$fatal_lines"
+            echo "----------------------------------"
+
+            echo -n "> ${fatal_lines}" > $(results.error-message.path)
+            echo -n "1" > $(results.exit-code.path)
+            exit 1
+          elif echo "$build_output" | grep -q 'ERROR: Introduced [0-9]\+ new defects for given change:'; then
+            # error_line=$(echo "$build_output" | grep -A 3 'ERROR: Introduced [0-9]\+ new defects for given change:')
+            error_block=$(echo "$build_output" | awk '/ERROR: Introduced [0-9]+ new defects for given change:/,/^$/')
+
+            echo "----------------------------------"
+            echo "****** NEW ISSUES DETECTED *******"
+            echo "${error_block//\'/}"
+            echo "----------------------------------"
+
+            cleaned_issue=$(echo -e "$error_block" | sed -e "s/cid='[^']\+', //; s/merge_key='[^']\+', //; s/=/:/g")
+            GERRIT_CHAR_LIMIT=500
+
+            # Shorten the Coverity results that get written to the gerrit review
+            while [[ $(echo -n "$cleaned_issue" | wc -c) -gt $GERRIT_CHAR_LIMIT ]]; do
+                cleaned_issue=${cleaned_issue%Issue(*}  # Remove the last full "Issue(" entry
+                cleaned_issue="${cleaned_issue}..."  # Append "..." to indicate truncation
+            done
+            echo -n "> ${cleaned_issue}" > $(results.error-message.path)
+            echo -n "2" > $(results.exit-code.path)
+            exit 2
+          else
+            echo "----------------------------------"
+            echo "No new defects were found"
+            echo "----------------------------------"
+            echo -n "" > $(results.error-message.path)
+            echo -n "0" > $(results.exit-code.path)
+          fi
+
+          echo "----------------------------------"
+          echo "Downloading Coverity Reports for High/Medium/Mandatory"
+          echo "----------------------------------"
+
+          # Set parameters
+          covUser="$(cat $(secrets.netrc.coverityUser.path))"
+          covPassword="$(cat $(secrets.netrc.coverityPass.path))"
+          reportType="issues"
+          outputFolder="$(params.repoRoot)/covdir/$(params.variant)_$(params.core)"
+
+          # Define streamID (Modify this)
+          streamID="$(params.cov-stream)"
+
+          # Define viewIDs (Modify these)
+          declare -A viewIDs
+          viewIDs["201961"]="Issues_High"
+          viewIDs["201962"]="Issues_Medium"
+          viewIDs["201963"]="Issues_Mandatory"
+          viewIDs["201831"]="All_Defects"
+
+          # Loop through each viewID
+          for viewID in "${!viewIDs[@]}"; do
+              url="https://coverity.asux.aptiv.com/api/viewContents/${reportType}/v1/${viewID}?projectId=${streamID}&rowCount=-1"
+              outputFile="${outputFolder}/report_${streamID}_${viewIDs[$viewID]}.csv"
+
+              echo "Downloading report for StreamID: ${streamID}, ViewID: ${viewIDs[$viewID]}..."
+              curl -k --noproxy "*" --silent --header "Accept: text/csv" -u "${covUser}:${covPassword}" "$url" -o "$outputFile"
+              echo "Report saved to $outputFile"
+          done
+          ls -la covdir/$(params.variant)_$(params.core)
+
+        # yamllint enable
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+
+    wrrn: ""
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: build-exit-codes
+        type: map
+        description: Exit codes for any build tasks
+        ui:
+          name: Build Exit Codes
+        render:
+          templateName: map
+      - name: upload-exit-codes
+        type: map
+        description: Exit codes for any upload tasks
+        ui:
+          name: Upload Exit Codes
+        render:
+          templateName: map
+      - name: error-messages
+        type: map
+        description: Error messages from each of the coverity jobs
+        ui:
+          name: Error Message
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-build-codes
+        script: |-
+          #!/bin/bash
+          set -x
+
+          CPU=`cat /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_quota_us`
+          MEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes | numfmt --to=iec`
+          echo "Compute Resource: $(( $CPU/100000 )) x $MEM"
+          # Show storage resources for the container
+          df -h
+
+          # Write initial "success" values
+          echo -n "+1" > "$(results.vote-value.path)"
+          echo -n "0" > "$(results.exit-code.path)"
+
+          # Define paths
+          BUILD_EXIT_CODES_PATH="$(params.build-exit-codes.path)"
+          UPLOAD_EXIT_CODES_PATH="$(params.upload-exit-codes.path)"
+          ERROR_MESSAGES_PATH="$(params.error-messages.path)"
+          VOTE_MESSAGE_PATH="$(results.vote-message.path)"
+          VOTE_VALUE_PATH="$(results.vote-value.path)"
+          EXIT_CODE_PATH="$(results.exit-code.path)"
+
+          # Function to fetch and clean all error messages for a given key
+          get_error_message() {
+            local key="$1"
+            awk -v key="$key" '
+              /^'"$key"':/ {flag=1; next}
+              /^[A-Za-z0-9_]+:/ {flag=0}
+              flag && NF {print}
+            ' "$ERROR_MESSAGES_PATH" | sed -e "s/cid='[^']\+', //" -e "s/merge_key='[^']\+', //"
+          }
+
+          # Read and act on Build exit codes
+          while IFS= read -r build_line <&3; do
+            echo "Processing line: $build_line"
+            if [[ $build_line =~ ^([[:alnum:]_]+)_([[:alnum:]_]+):[[:blank:]]*([[:digit:]]+)$ ]]; then
+              variant=${BASH_REMATCH[1]}    # e.g., FLR7
+              test_name=${BASH_REMATCH[2]}  # e.g., M7
+              exit_code=${BASH_REMATCH[3]}  # e.g., 0, 1, 2
+              key="${variant}_${test_name}"
+
+              if [ "$exit_code" == "0" ]; then
+                # Job passed
+                echo "${key} Coverity Build Successful! ✔️" >> "$VOTE_MESSAGE_PATH"
+              elif [ "$exit_code" == "1" ]; then
+                # Job failed
+                echo -n "-1" > "$VOTE_VALUE_PATH"
+                echo -n "1" > "$EXIT_CODE_PATH"
+                echo "${key} Coverity Build Failed! ⚠" >> "$VOTE_MESSAGE_PATH"
+              elif [ "$exit_code" == "2" ]; then
+                # New issues detected
+                echo -n "-1" > "$VOTE_VALUE_PATH"
+                echo -n "2" > "$EXIT_CODE_PATH"
+                echo "${key} New Issues Detected! 🚧" >> "$VOTE_MESSAGE_PATH"
+
+                # Extract and clean all error messages for the key
+                new_issues="$(get_error_message "$key")"
+
+                if [ -n "$new_issues" ]; then
+                  echo "> ${new_issues}" >> "$VOTE_MESSAGE_PATH"
+                else
+                  echo "Warning: No detailed issue found for $key" >&2
+                fi
+              fi
+            else
+              echo "Warning: Line format not recognized: $build_line" >&2
+            fi
+          done 3< "$BUILD_EXIT_CODES_PATH"
+
+          # Read and act on Upload exit codes
+          while read -r line; do
+            echo "Processing upload line: $line"
+            if [[ $line =~ ^([[:alnum:]_]+)_([[:alnum:]_]+):[[:blank:]]*([[:digit:]]+)$ ]]; then
+              variant=${BASH_REMATCH[1]}
+              test_name=${BASH_REMATCH[2]}
+              exit_code=${BASH_REMATCH[3]}
+              key="${variant}_${test_name}"
+
+              if [ "$exit_code" != "0" ]; then
+                # If this is the first failure, clear the vote-message file
+                if [ "$(cat "$EXIT_CODE_PATH")" == "0" ]; then
+                  echo "" >> "$VOTE_MESSAGE_PATH"
+                fi
+                echo -n "-1" > "$VOTE_VALUE_PATH"
+                echo -n "1" > "$EXIT_CODE_PATH"
+                echo "${key} Upload Failed! ❌" >> "$VOTE_MESSAGE_PATH"
+              fi
+            else
+              echo "Warning: Line format not recognized: $line" >&2
+            fi
+          done < "$UPLOAD_EXIT_CODES_PATH"
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is FLR7
+            value: flr7
+          # - name: flr7v3
+          #   description: Variant is flr7v3
+          #   value: flr7v3
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default: ""
+        ui:
+          name: git-ref
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+      - name: streams
+        type: string
+        description: List of streams
+        ui:
+          name: streams
+      - name: commit-hash
+        type: string
+        description: The current commit hash, it can be the same as the git-ref.
+        ui:
+          name: commit-hash
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen7_awr294x-local/reviews/45/12345/6/buildFiles
+        default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/awr294x/test-1/coverity/
+        ui:
+          name: JFrog Upload Path
+      - name: jfrogCreds
+        type: secret
+        description: JFrog Credentials in the WRSD Secrets format using username and password
+        default: $(secrets.jfrog-cred)
+        ui:
+          name: JFrog Credentials Secret
+      - name: jfrogBaseUrl
+        type: string
+        description: Base URL to the JFrog instance
+        default: https://jfrog.asux.aptiv.com
+        ui:
+          name: jfrogBaseUrl
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: jf-upload-url
+        description: The URL the outputs are uploaded to.
+      - name: jf-upload-path
+        description: The path the outputs are uploaded to.
+      - name: upload-exit-code
+        description: The exit code of the upload step
+    steps:
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+          import subprocess
+          import sys
+          import os
+          import re
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+              sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+              subprocess.check_call([
+                  sys.executable, "-m", "pip", "install",
+                  "--break-system-packages",
+                  "--no-cache-dir",
+                  "--target", TARGET,
+                  "psycopg2-binary",
+                  "pandas"
+              ])
+
+              os.makedirs(TARGET, exist_ok=True)
+              with open(MARKER, "w"):
+                  pass
+
+              os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+              print("Installing Python dependencies...")
+              install_deps_and_restart()
+
+          import psycopg2
+          import pandas as pd
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+              """
+              Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd.
+              """
+              # Check if the wrsd_tags entry already exists
+              cursor.execute("""
+                  SELECT id FROM wrsd."perception_metrics_wrsd"
+                  WHERE build_no = %s AND pipeline_name = %s;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+              result = cursor.fetchone()
+              # If exists, return id, else insert new and return new id
+              if result:
+                  # print("WRSD entry already exists")
+                  return result[0]
+              else:
+                  print("Creating a new WRSD entry")
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                      VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                  """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+                  result = cursor.fetchone()[0]
+                  return result
+
+          def insert_perception_metrics(cursor, data_list):
+              """
+              Inserts multiple perception_metrics entries into the database.
+              Parameters:
+                  data_list (list of dict): List of dictionaries, each containing data for a single entry.
+              """
+              for data in data_list:
+                  # First, insert or get the wrsd_tags ID
+                  wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+                  # Insert into PerceptionMetrics with reference to wrsd_id
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                  """, (
+                      data['commitid'],
+                      data['date'],
+                      data['branch'],
+                      data['tag'],
+                      data['project'],
+                      data['metric_name'],
+                      data['metric_value'],
+                      Json(data['metric_tags']),
+                      wrsd_id
+                  ))
+
+          def read_file(file_path):
+            with open(os.path.expandvars(file_path), 'r') as file:
+                return file.read().strip()
+
+          def download_report(username, password, stream, view_type, view, suffix=None):
+              """
+              Downloads a Coverity report.
+              """
+              print(f"** Stream: {stream} **")
+              baseurl = 'https://coverity.asux.aptiv.com/api/viewContents/'
+              url = '%s%s/v1/%s' % (baseurl, view_type, re.sub(' ', '%20', view))
+
+              REPORT_DIR = "/tmp/latest_reports"
+
+              if not os.path.isdir(REPORT_DIR):
+                  os.makedirs(REPORT_DIR)
+              if suffix is None:
+                  filename = f'{REPORT_DIR}/{stream}.csv'
+                  report = f'{stream}.csv'
+              else:
+                  filename = f'{REPORT_DIR}/{stream}_{suffix}.csv'
+                  report = f'{stream}_{suffix}.csv'
+
+              command = f'curl -s --header "Accept: text/csv" --user {username}:{password} "{url}?' \
+                      f'projectId={stream}&rowCount=-1" -o "{filename}" '
+              c = os.popen(command)
+              c.close()
+              print("Downloaded Report: ", filename)
+              print("--------------------------------------")
+              return filename
+
+          def summarize_defects(allDefectsReport, compListReport, stream, variant, wrsd_tags, commit_hash, currentDateTime, project_name):
+              """
+              Processes the all defects report and generates a dictionary to send to platform health.
+              """
+              # Adding "Various" since the component report will not have it and
+              # the issues report will give the category of "Various" for some issues
+              component_list = {"Various": 0}
+              misra_categories = {
+                  "Mandatory": {"New": {}},
+                  "Required": {"New": {}},
+                  "Advisory": {"New": {}},
+                  "None": {"New": {}},
+              }
+              grouped_issues = {
+                  "High": {"None": {"New": {}}},
+                  "Medium": {"None": {"New": {}}},
+                  "Low": misra_categories,
+              }
+              data_list = []
+              # Read the list of all components and add to the dictionary.
+              # Assign 0 to all of them initially and increment later
+              if os.path.isfile(compListReport):
+                  data = pd.read_csv(compListReport)
+                  df = pd.DataFrame(data, columns=["Component"])
+                  data = df.groupby(["Component"]).size()
+                  for comp, _count in data.items():
+                      component_list[comp] = 0
+
+              # Set a zero for each component in every impact/misra category/status
+              # this helps display default values of 0, otherwise there is no data to be displayed
+              for impact in grouped_issues:
+                  for misraCategory in grouped_issues[impact]:
+                      for status in grouped_issues[impact][misraCategory]:
+                          grouped_issues[impact][misraCategory][status] = dict(component_list)
+              cov_data = pd.read_csv(allDefectsReport)
+
+              # List of expected headers
+              headers = ["Impact", "Standard: MISRA Category", "Status", "Component", "Count"]
+              for header in headers:
+                  if header not in cov_data:
+                      raise LookupError("Coverity All Issues Report file does not have all expected columns.")
+
+              # Create a small data frame with only the needed columns
+              cov_data = pd.DataFrame(cov_data, columns=headers)
+
+              # need this so it reads the high and medium issue.
+              cov_data["Standard: MISRA Category"] = cov_data["Standard: MISRA Category"].fillna("None")
+
+              # Print summary
+              total_high_issues = cov_data[cov_data["Impact"] == "High"]["Count"].sum()
+              total_medium_issues = cov_data[cov_data["Impact"] == "Medium"]["Count"].sum()
+              total_mandatory_issues = cov_data[cov_data["Standard: MISRA Category"] == "Mandatory"]["Count"].sum()
+              total_required_issues = cov_data[cov_data["Standard: MISRA Category"] == "Required"]["Count"].sum()
+              total_advisory_issues = cov_data[cov_data["Standard: MISRA Category"] == "Advisory"]["Count"].sum()
+
+              print("-----------------------------------")
+              print(f"Total High Issues     : {total_high_issues}")
+              print(f"Total Medium Issues   : {total_medium_issues}")
+              print(f"Total Mandatory Issues: {total_mandatory_issues}")
+              print(f"Total Required Issues : {total_required_issues}")
+              print(f"Total Advisory Issues : {total_advisory_issues}")
+              print("-----------------------------------")
+
+              # group by the provided headers.
+              cov_data = cov_data.groupby(headers).size()
+
+              # Iterate through the panda dataframe and add up the issue count for each component
+              for row, count in cov_data.items():
+                  result = dict(zip(headers, row))
+
+                  impact = result["Impact"]
+                  misraCategory = result["Standard: MISRA Category"]
+                  status = result["Status"]
+                  component = result["Component"]
+                  # Convert issue count to integer safely
+                  try:
+                      issueCnt = int(result["Count"]) * count
+                  except ValueError:
+                      issueCnt = 0
+
+                  # Safely initialize component if not already present
+                  if status not in grouped_issues[impact][misraCategory]:
+                      grouped_issues[impact][misraCategory][status] = dict(component_list)
+                  if component not in grouped_issues[impact][misraCategory][status]:
+                      grouped_issues[impact][misraCategory][status][component] = 0
+                  grouped_issues[impact][misraCategory][status][component] += issueCnt
+
+              # Iterate through the grouped_issues and prep them for platform health
+              for impact, misraCategoryDict in grouped_issues.items():
+                  for misraCategory, coverityIssueStatusDict in misraCategoryDict.items():
+                      for status, componentDict in coverityIssueStatusDict.items():
+                          if not componentDict:
+                              # Add blank component for datadog so it can report 0 for this status
+                              componentDict = {"None": 0}
+                          for component, issueCnt in componentDict.items():
+
+                              metric_tags = {
+                                  "variant": variant,
+                                  "impact": impact,
+                                  "misra_category": misraCategory,
+                                  "status": status,
+                                  "component": component,
+                                  "stream": stream
+                              }
+
+                              data_list.append({
+                                  "commitid": commit_hash,
+                                  "date": currentDateTime,
+                                  "branch": "dev",
+                                  "tag": "",
+                                  "project": project_name,
+                                  "metric_name": "core_radar.gen7v2.coverity.defects",
+                                  "metric_value": issueCnt,
+                                  "metric_tags": metric_tags,
+                                  "wrsd_tags": wrsd_tags
+                              })
+
+              return data_list
+
+          def summarize_ccm(ccmReport, stream, variant, wrsd_tags, commit_hash, currentDateTime, project_name):
+              """
+              Processes the CCM report and generates a dictionary to send to platform health.
+              """
+              grouped_ccm = {
+                "CCM_1_to_15": {},
+                "CCM_16_to_50": {},
+                "CCM_51_plus": {},
+              }
+              data_list = []
+
+              ccm_data = pd.read_csv(ccmReport)
+              # list of expected headers
+              headers = ["Component", "CCM"]
+
+              for header in headers:
+                  if header not in ccm_data:
+                      raise LookupError("Coverity CCM Report file does not have all expected columns.")
+
+              # Create a small data frame with only the needed columns for CCM data
+              ccm_data = pd.DataFrame(ccm_data, columns=headers)
+
+              # group by the provided headers.
+              ccm_data = ccm_data.groupby(headers).size()
+
+              # Iterate through the panda dataframe and add up the CCM issues in reach category
+              for row, count in ccm_data.items():
+                  result = dict(zip(headers, row))
+
+                  component = result["Component"]
+                  ccm = result["CCM"]
+
+                  if ccm <= 15:
+                      try:
+                          grouped_ccm["CCM_1_to_15"][component] += count
+                      except KeyError:
+                          grouped_ccm["CCM_1_to_15"][component] = count
+                  elif (ccm > 15) and (ccm <= 50):
+                      try:
+                          grouped_ccm["CCM_16_to_50"][component] += count
+                      except KeyError:
+                          grouped_ccm["CCM_16_to_50"][component] = count
+                  elif ccm > 50:
+                      try:
+                          grouped_ccm["CCM_51_plus"][component] += count
+                      except KeyError:
+                          grouped_ccm["CCM_51_plus"][component] = count
+                  else:
+                      continue
+
+              # Iterate through the grouped_ccm and send to datadog
+              for ccm_group, componentDict in grouped_ccm.items():
+                  if not componentDict:
+                      # Add blank component for datadog so it can report zero for this ccm_group
+                      componentDict = {"None": 0}
+                  for component, issueCnt in componentDict.items():
+
+                      metric_tags = {
+                          "variant" : variant,
+                          "ccm_group" : ccm_group,
+                          "component" : component,
+                          "stream" : stream
+                        }
+
+                      data_list.append({
+                        "commitid": commit_hash,
+                        "date": currentDateTime,
+                        "branch": "dev",
+                        "tag": "",
+                        "project": project_name,
+                        "metric_name": "core_radar.gen7v2.coverity.ccm",
+                        "metric_value": issueCnt,
+                        "metric_tags": metric_tags,
+                        "wrsd_tags": wrsd_tags
+                        })
+              return data_list
+
+          def upload_to_jfrog(path_to_upload, upload_path, stream, jfrog_base_url):
+
+              jfrog_user = read_file(r'$(secrets.jfrog-cred.username.path)')
+              jfrog_pass = read_file(r'$(secrets.jfrog-cred.password.path)')
+
+              print("Current working directory:", os.getcwd())
+              subprocess.run(["ls", "-lah"])
+
+              print(f"path to upload = {path_to_upload}")
+              print(f"uploadPath = {upload_path}")
+
+              result_upload_url_path = f"{jfrog_base_url}/artifactory/{upload_path}{stream}_Reports.zip"
+              result_jf_upload_path_path = f"{upload_path}{stream}_Reports.zip"
+
+              with open("$(results.jf-upload-url.path)", "w+") as f:
+                f.write(f"{jfrog_base_url}/artifactory/{upload_path}")
+
+              print(f"result_upload_url_path = {result_upload_url_path}")
+              print(f"result_jf_upload_path_path = {result_jf_upload_path_path}")
+
+              try:
+                  result = subprocess.run(["jf", "config", "add", "gss",
+                      f"--url={jfrog_base_url}",
+                      f"--user={jfrog_user}",
+                      f"--access-token={jfrog_pass}",
+                      "--overwrite=true",
+                      "--interactive=false"
+                      ], capture_output=True, text=True, check=True)
+                  print("Config Result:", result.stdout.strip())
+              except FileNotFoundError:
+                  print("Error: JFrog config not working.")
+              except subprocess.CalledProcessError as e:
+                  print("Error running 'jf config'. Details:")
+                  print(e.stderr)
+
+              # Upload based on path type
+              if os.path.isdir(path_to_upload):
+                  os.chdir(path_to_upload)
+                  subprocess.run([
+                      "jf", "rt", "upload", "--flat=false", "--recursive", "--archive", "zip",
+                      "(*)", f"{result_jf_upload_path_path}"
+                  ], check=True)
+              elif os.path.isfile(path_to_upload):
+                  subprocess.run([
+                      "jf", "rt", "upload", "--flat=false", "--recursive", "--archive", "zip",
+                      path_to_upload, f"{result_jf_upload_path_path}"
+                  ], check=True)
+              else:
+                  print(f"Invalid Path: {path_to_upload}")
+
+          #------------------------------------------------------------------------------------------
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+          cov_user = read_file(r'$(secrets.netrc.coverityUser_Report.path)')
+          cov_pass = read_file(r'$(secrets.netrc.coverityPass_Report.path)')
+
+          db_config = {
+              "dbname": "monitoring",
+              "user": pg_user,
+              "password": pg_pass,
+              "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+              "port": "5432"
+          }
+
+          variant = "$(params.variant)"
+          branch = "$(params.git-ref)"
+          project_name = "$(params.project-name)"
+          build_no = $(config.pipeline.runNumber)
+          build_name = "$(config.pipeline.name)"
+          commit_hash = "$(params.git-ref)"
+          build_url = f"https://$(studio.home)/plm/view/{build_name}/runs/{build_no}"
+          stream_list = [item.strip() for item in '$(params.streams)'.split(",")]
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+
+          wrsd_tags = {
+            "build_no": build_no,
+            "pipeline_name": build_name,
+            "status": None,
+            "duration": None,
+            "build_url": build_url
+            }
+          if branch == "dev":
+            try:
+                connection = psycopg2.connect(**db_config)
+                cursor = connection.cursor()
+            except Exception as e:
+                print("An error occurred:", e)
+
+            print("----------------------------------------------------------")
+            print("- Download coverity defects, components, and ccm reports -")
+            print("----------------------------------------------------------")
+            for stream in stream_list:
+
+              defects_reports = download_report(cov_user, cov_pass, stream, 'issues', 'All_Defects', 'Defects')
+              components_report = download_report(cov_user, cov_pass, stream, 'components', 'All_Components',   "Components")
+              ccm_report = download_report(cov_user, cov_pass, stream, 'functions', 'All_CCM', 'CCM')
+
+              defect_data = summarize_defects(defects_reports, components_report, stream, variant, wrsd_tags, commit_hash, currentDateTime, project_name)
+              ccm_data = summarize_ccm(ccm_report, stream, variant, wrsd_tags, commit_hash, currentDateTime, project_name)
+
+              upload_to_jfrog("/tmp/latest_reports", "$(params.upload-path)", stream , "$(params.jfrogBaseUrl)")
+
+              try:
+                  # Insert multiple data entries
+                  insert_perception_metrics(cursor, defect_data)
+                  connection.commit()
+                  print(f"Coverity Defects data inserted successfully for stream {stream}.")
+
+                  insert_perception_metrics(cursor, ccm_data)
+                  connection.commit()
+                  print(f"Coverity CCM data inserted successfully for stream {stream}.")
+              except Exception as e:
+                  connection.rollback()
+                  print("An error occurred:", e)
+
+            if connection:
+                cursor.close()
+                connection.close()
+          else:
+            print("Not Dev branch so nothing will be commited to Platform Health.")
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+timeout: 5h

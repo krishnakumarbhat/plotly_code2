@@ -1,0 +1,73 @@
+NXP Static files modification Tracker:
+**************************************************
+1)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\BaseNXP_TS_T40D47M30I0R0\include\CompilerDefinition.h
+	Line No:87
+	Added - #undef _DIABDATA_C_SAF85XX_SAF86XX_S32R41_
+
+2)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\BaseNXP_TS_T40D47M30I0R0\include\Eth_43_GMAC_MemMap.h
+	Line No:3162
+	Change - #pragma clang section bss=".eth_desc_mcal_bss_no_cacheable" data=".eth_desc_mcal_data_no_cacheable" rodata=""
+	Line No:3164
+	Change - #pragma section DATA ".eth_desc_mcal_data_no_cacheable" ".eth_desc_mcal_bss_no_cacheable"
+
+3)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\BaseNXP_TS_T40D47M30I0R0\include\Rte_MemMap.h
+	Line No:11152
+	Commented - // #error "MemMap.h, no valid memory mapping symbol defined."
+
+4)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\BaseNXP_TS_T40D47M30I0R0\include\Det_MemMap.h
+	Line No:2354
+	Commented - //#error "MemMap.h, no valid matching start-stop section defined."
+
+5)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\Eth_43_GMAC_TS_T40D47M30I0R0\src\Gmac_Ip.c
+	Line No:1908-1909
+	Considered only one condition - /* if (((Bd->Des3 & GMAC_TDES3_OWN_MASK) != 0U) || ((Bd->Info1 & GMAC_INFO1_LOCKED_MASK) != 0U)) */if ((Bd->Des3 & GMAC_TDES3_OWN_MASK) != 0U)
+
+6)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\EthIf_TS_T40D47M30I0R0\include\EthIf.h
+	Line No:46
+	Added - #include "Eth.h"
+	Line No:47
+	Commented - //#include "Mka.h"
+	Line No:189
+	Commented - //Std_ReturnType EthIf_MacSecGetMacSecStatsNotification(uint8 CtrlIdx, const Mka_Stats_SecYType* MacSecStatsPtr);
+
+7)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\Mcu_TS_T40D47M30I0R0\src\Clock_Ip_Pll.c
+	Line No:669
+	Modification - Clock_Ip_apxAurora->CIAC &= ~ATP_CIAC_TPIU_CLK_SEL_MASK;
+	Line No:900
+	Modification -  PllStatus = STATUS_PLL_LOCKED;
+
+8)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\Platform_TS_T40D47M30I0R0\startup\src\m7\diab\startup.s
+	Line No:82-83
+	Added - #define CCR 0xE000ED14
+            #define FPCCR 0xE000EF34
+	Line No:317-327
+	Added -   /* Initialize DIVBYZERO in CCR register */
+              ldr r2,=CCR
+              ldr r3,[r2]
+              orr r3,r3,#(1 << 4)
+              str r3,[r2]
+
+              /* Disable LSPEN in FPCCR register */
+              ldr r2,=FPCCR
+              ldr r3,[r2]
+              bic r3,r3,#(1<<30)
+              str r3,[r2]
+
+9)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\Platform_TS_T40D47M30I0R0\startup\src\m7\core.c
+	Line No:225-230
+	Commented & Modified - /*Commented out values from current MCAL pkg(SW32SAF85xx_RTD_R21-11_2.0.0_CD01_P04) & copied below the values from SW32SAF85_S32R41_RTD_4.4_0.9.0_HF01 pkg.
+                           *This is temporarily done to resolve hard fault in Appl_Checksum function, this needs to be looked into.
+                           static const uint32 rbar[] = {0x00000000UL, 0x00000000UL, 0x20000000UL, 0x33C00000UL, 0x34000000UL, 0x34060000UL, 0x3407C000UL, 0x34400000UL, 0x40000000UL, 0xE0000000UL};
+                           static const uint32 rasr[] = {0x1004003FUL, 0x030B0039UL, 0x0308001FUL, 0x030B012BUL, 0x030BC025UL, 0x030C0021UL, 0x130C001BUL, 0x030F001BUL, 0x13050039UL, 0x13040027UL};*/
+
+                           static const uint32 rbar[] = {0x00000000UL, 0x00000000UL, 0x20000000UL, 0x33C00000UL, 0x34000000UL, 0x34000000UL, 0x34060000UL, 0x34400000UL, 0x40000000UL, 0xE0000000UL};
+                           static const uint32 rasr[] = {0x1004003FUL, 0x030B0039UL, 0x1304001FUL, 0x030B002BUL, 0x030B002BUL, 0x130C001BUL, 0x030C0021UL, 0x030F001BUL, 0x13050039UL, 0x13040027UL};
+
+10)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\Rte_TS_T40D47M30I0R0\include\Rte_Dem_Type.h
+	Line No:77
+	Added - typedef uint8 Dem_EventStatusExtendedType;
+
+
+11)Core_Radar_Gen7_SAF85xx_MCAL\tresos\plugins\Serdes_TS_T40D47M30I0R0\include\CDD_Serdes.h
+	Line No:274
+	Added - void Serdes_MainFunction(void);

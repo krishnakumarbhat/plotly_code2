@@ -1,0 +1,914 @@
+langVersion: v1
+name: core-radar-gen7-saf85xx-dynamic-analysis
+description: Pipeline that runs dynamic analysis checks for all variants of the code for Gen7v2 SAF85xx
+ui:
+  name: core-radar-gen7-saf85xx-dynamic-analysis
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen7_SAF85xx
+  - name: upload-path
+    type: string
+    description: |-
+      The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+      Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/dynamicAnalysis/
+    default: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/manual/0/dynamicAnalysis/
+    ui:
+      name: JFrog Upload Path
+  - name: branch-name
+    type: string
+    default: dev
+  - name: change-url
+    type: string
+    default: ""
+  - name: patchset-id
+    type: string
+    default: ""
+compute:
+  - name: linux-16c64g
+    resource: asp-compute-linux-16c64g
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+  - resource: asp-compute-linux-1c4g # This becomes the default compute.
+containerSettings:
+  - name: container-16c64g300g
+    resource: asp-container-16c64g300g
+  - name: container-8c32g150g
+    resource: asp-container-8c32g150g
+  - name: container-2c8g50g
+    resource: asp-container-2c8g50g
+  - name: container-1c4g25g
+    resource: asp-container-1c4g25g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+
+  - parallelTasks:
+      - name: build-srr7p-asan
+        task: build/build-asan
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr7p
+        steps:
+          - name: asan
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-flr7-asan
+        task: build/build-asan
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr7
+        steps:
+          - name: asan
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-srr7p-ubsan
+        task: build/build-ubsan
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr7p
+        steps:
+          - name: ubsan
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-flr7-ubsan
+        task: build/build-ubsan
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr7
+        steps:
+          - name: ubsan
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+
+      - name: build-srr7p-valgrind
+        task: build/build-valgrind
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr7p
+        steps:
+          - name: valgrind
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+      - name: build-flr7-valgrind
+        task: build/build-valgrind
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr7
+        steps:
+          - name: valgrind
+            steps:
+              - name: build
+                containerSettings: container-16c64g300g
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    params:
+      build-exit-codes:
+        SRR7p-asan: $(tasks.build-srr7p-asan.results.build-exit-code)
+        SRR7p-ubsan: $(tasks.build-srr7p-ubsan.results.build-exit-code)
+        SRR7p-valgrind: $(tasks.build-srr7p-valgrind.results.build-exit-code)
+        FLR7-asan: $(tasks.build-flr7-asan.results.build-exit-code)
+        FLR7-ubsan: $(tasks.build-flr7-ubsan.results.build-exit-code)
+        FLR7-valgrind: $(tasks.build-flr7-valgrind.results.build-exit-code)
+      upload-exit-codes:
+        SRR7p-asan: $(tasks.build-srr7p-asan.results.upload-exit-code)
+        SRR7p-ubsan: $(tasks.build-srr7p-ubsan.results.upload-exit-code)
+        SRR7p-valgrind: $(tasks.build-srr7p-valgrind.results.upload-exit-code)
+        FLR7-asan: $(tasks.build-flr7-asan.results.upload-exit-code)
+        FLR7-ubsan: $(tasks.build-flr7-ubsan.results.upload-exit-code)
+        FLR7-valgrind: $(tasks.build-flr7-valgrind.results.upload-exit-code)
+  - name: build-vote
+    task: Utils/ADVRADAR/post-gerrit-comment-vote@1.0.0
+    params:
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Outputs: https://jfrog.asux.aptiv.com/ui/repos/tree/General/$(params.upload-path)
+
+        Build Job: https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+      votes:
+        Dynamic-Analysis: $(tasks.prepare-vote-and-message.results.vote-value)
+  - parallelTasks:
+      - name: publish-metrics-srr7p
+        task: Utils/publish-metrics
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+        params:
+          variant: srr7p
+          git-ref: $(params.commit-id)
+          issue-count-asan: $(tasks.build-srr7p-asan.results.issue-count)
+          issue-count-ubsan: $(tasks.build-srr7p-ubsan.results.issue-count)
+          issue-count-valgrind: $(tasks.build-srr7p-valgrind.results.issue-count)
+          project-name: $(params.project-url-encoded)
+          commit-hash: $(tasks.build-srr7p-valgrind.results.commit-hash)
+          tags: "buildVariant=satellite"
+      - name: publish-metrics-flr7
+        task: Utils/publish-metrics
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+        params:
+          variant: flr7
+          git-ref: $(params.commit-id)
+          issue-count-asan: $(tasks.build-flr7-asan.results.issue-count)
+          issue-count-ubsan: $(tasks.build-flr7-ubsan.results.issue-count)
+          issue-count-valgrind: $(tasks.build-flr7-valgrind.results.issue-count)
+          project-name: $(params.project-url-encoded)
+          commit-hash: $(tasks.build-flr7-valgrind.results.commit-hash)
+          tags: "buildVariant=satellite"
+      - name: auto-submit-check
+        task: Utils/ADVRADAR/auto-submit@1.0.1
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          gerrit-url: $(params.gerrit-url)
+          comment: "False"
+
+defineTasks:
+  - name: build-asan
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is flr7
+            value: flr7
+          # - name: flr7v3
+          #   description: Variant is flr7v3
+          #   value: flr7v3
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/buildFiles
+        default: ""
+        ui:
+          name: JFrog Upload Path
+    results:
+      - name: issue-count
+        description: Total number of ignored issue for this sanitizer
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: commit-hash
+        description: The commit hash of the shallow clone
+      - name: unstable
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen7_SAF85xx
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+        returnResults:
+          commitHash: commit-hash
+      - name: asan
+        task: san
+        params:
+          git-ref: $(params.git-ref)
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          buildCommand: "bazelisk test //:all_unit_tests --config=asan"
+          sanitizerName: asan
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          issue-count: issue-count
+          unstable: unstable
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.asan.results.outputDir.path))
+          uploadPath: $(params.upload-path)output_$(params.variant)_asan
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: uploadUrl
+          unstable: unstable
+    wrrn: ""
+  - name: build-ubsan
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is flr7
+            value: flr7
+          # - name: flr7v3
+          #   description: Variant is flr7v3
+          #   value: flr7v3
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/buildFiles
+        default: ""
+        ui:
+          name: JFrog Upload Path
+    results:
+      - name: issue-count
+        description: Total number of ignored issue for this sanitizer
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: commit-hash
+        description: The commit hash of the shallow clone
+      - name: unstable
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen7_SAF85xx
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+        returnResults:
+          commitHash: commit-hash
+      - name: ubsan
+        task: san
+        params:
+          git-ref: $(params.git-ref)
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          buildCommand: "bazelisk test //:all_unit_tests --config=ubsan"
+          sanitizerName: ubsan
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          issue-count: issue-count
+          unstable: unstable
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.ubsan.results.outputDir.path))
+          uploadPath: $(params.upload-path)output_$(params.variant)_ubsan
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: uploadUrl
+    wrrn: ""
+  - name: build-valgrind
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is flr7
+            value: flr7
+          # - name: flr7v3
+          #   description: Variant is flr7v3
+          #   value: flr7v3
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen7_saf85xx-local/reviews/45/12345/6/buildFiles
+        default: ""
+        ui:
+          name: JFrog Upload Path
+    results:
+      - name: issue-count
+        description: Total number of ignored issue for this sanitizer
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: commit-hash
+        description: The commit hash of the shallow clone
+      - name: unstable
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen7_SAF85xx
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+        returnResults:
+          commitHash: commit-hash
+      - name: valgrind
+        task: san
+        params:
+          git-ref: $(params.git-ref)
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          buildCommand: "bazelisk test //:valgrind_all_unit_tests"
+
+          sanitizerName: valgrind
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          issue-count: issue-count
+          unstable: unstable
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.valgrind.results.outputDir.path))
+          uploadPath: $(params.upload-path)output_$(params.variant)_valgrind
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: uploadUrl
+    wrrn: ""
+  - name: san
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Build
+        ui:
+          name: variant
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: buildCommand
+        type: string
+        description: The bazel command to run for this sanitizer analysis.
+        default: dev
+        ui:
+          name: Sanitizer Build Command
+      - name: sanitizerName
+        type: string
+        description: The name of the sanitizer which is being run.
+        default: asan
+        ui:
+          name: name of sanitizer
+    results:
+      - name: issue-count
+        description: Total number of ignored issue for this sanitizer
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: unstable
+    steps:
+      - name: build
+        # We're only using this image because Bazel isn't hermetic for Dynamic analysis. Fix the dynamic analysis bazel dependencies to enable using build-fomat-ready
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/gut-dynamic-ready:2.0
+        script: |
+          #!/bin/bash
+
+          echo repoRoot = $(params.repoRoot)
+          echo repoRoot = $(params.variant)
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+          echo -n "0" > $(results.issue-count.path)
+
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          virtualenv ~/.venv
+          source ~/.venv/bin/activate
+          pip config set global.trusted-host jfrog.asux.aptiv.com
+          pip config set global.extra-index-url https://jfrog.asux.aptiv.com/artifactory/api/pypi/luci-aptiv-00000000-pypi-local/simple
+          pip install -U luci-cli==0.3.0+250117.b3acc92
+
+          RESULTS_DIR="test-results/$(params.variant)/$(params.sanitizerName)"
+          mkdir -p $RESULTS_DIR
+          FULL_LOG="$RESULTS_DIR/$(config.pipeline.taskName)_full_log.txt"
+          SUMMARY="$RESULTS_DIR/$(config.pipeline.taskName)_summary.txt"
+
+          $(params.buildCommand) --variant=$(params.variant) 2>&1 >$FULL_LOG
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=$?
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Build failed, or $(params.sanitizerName) issues were detected. Exit code: $BAZEL_EXIT_CODE."
+              echo "----------------------------------"
+              # We know that there are some build errors to fix, but we still get some decent outputs despite them, so don't mark the build unstable if bazel fails.
+              # echo -n "true" > $(results.unstable.path)
+          fi
+
+          if [ $(params.sanitizerName) == "valgrind" ]; then
+            echo "Performing Valgrind log gathering"
+            find -H bazel-out -type f -name '*_valgrind.log' -exec cat {} + >>$FULL_LOG
+          fi
+
+          if [ -f $FULL_LOG ]; then
+              echo "Moving log file into position for the aptiv_warnings_analyzer"
+              cp $FULL_LOG $(params.sanitizerName).log
+              echo "Analyzing logs from $(params.sanitizerName) run:"
+              ./awa.sh $(params.sanitizerName) --html-report $RESULTS_DIR/$(params.sanitizerName).html --csv-report $RESULTS_DIR/$(params.sanitizerName).csv --baseline $RESULTS_DIR/$(params.sanitizerName)_baseline.toml >> $SUMMARY
+              ANALYZER_EXIT_CODE=$?
+              # If this ran, then we want to use the aptiv_warnings_analyzer exit code for this stage
+              echo -n "$ANALYZER_EXIT_CODE" > $(results.exit-code.path)
+              echo "----------------------------------"
+              echo "aptiv_warnings_analyzer summary: $SUMMARY"
+              cat $SUMMARY
+              echo "----------------------------------"
+
+              if [ $ANALYZER_EXIT_CODE -ne 0 ]; then
+                # This exited non-zero, so mark this stage unstable
+                echo -n "true" > $(results.unstable.path)
+              fi
+
+              # Try to extract from "Total ignored issues" first, this would be from a job that found new issues
+              IGNORED_ISSUES=$(awk '/Total ignored issues/ { print $NF }' "$SUMMARY")
+
+              # If empty, fall back to "Total ignored: ", this would be from a jobs that found new new issues
+              # This looks for Total ignored and pull the number after that, and checks that its a number
+              if [[ -z "$IGNORED_ISSUES" ]]; then
+                  IGNORED_ISSUES=$(awk '/Total ignored:/ {
+                      for (i = 1; i <= NF; i++) {
+                          if ($i == "ignored:") {
+                              val = $(i+1)
+                              gsub(/\./, "", val)  # remove trailing period if present
+                              print val
+                              break
+                          }
+                      }
+                  }' "$SUMMARY")
+              fi
+
+              # Default to 0 if still empty
+              IGNORED_ISSUES=${IGNORED_ISSUES:-0}
+              echo -n "$IGNORED_ISSUES" > $(results.issue-count.path)
+              echo "Ignored issues: $IGNORED_ISSUES"
+              echo "----------------------------------"
+
+          else
+              echo "No sanitizer results found, returning Bazel exit code"
+              echo -n "$BAZEL_EXIT_CODE" > $(results.exit-code.path)
+          fi
+
+          # save output directory path for user usages
+          echo "Printing current workspace"
+          pwd
+          ls -alh
+          echo "Printing results directory"
+          ls -alh $RESULTS_DIR
+          echo -n "$(params.repoRoot)/$RESULTS_DIR" > $(results.outputDir.path)
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: build-exit-codes
+        type: map
+        description: Exit codes for any build tasks
+        ui:
+          name: Build Exit Codes
+        render:
+          templateName: map
+      - name: upload-exit-codes
+        type: map
+        description: Exit codes for any upload tasks
+        ui:
+          name: Upload Exit Codes
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-build-codes
+        script: |-
+          # Symbols we may want to use:
+          # 🚧  ⚠ ✔️❌ 🛑 ⛔
+
+          # Write in "success" values
+          echo -n "+1" > $(results.vote-value.path)
+          echo -n "0" > $(results.exit-code.path)
+
+          # Read and act on Build exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]\-]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} == 0 ]; then
+                echo "${BASH_REMATCH[1]} ✔️ Dynamic Analysis Successful! " >> $(results.vote-message.path)
+              elif [ ${BASH_REMATCH[2]} == 1 ]; then
+                echo -n "-1" > $(results.vote-value.path)
+                echo "${BASH_REMATCH[1]} 🚧 Dynamic Analysis Found Unjustified Issues! Merge Gate Denied." >> $(results.vote-message.path)
+              elif [ ${BASH_REMATCH[2]} == 3 ]; then
+                echo -n "-1" > $(results.vote-value.path)
+                echo "${BASH_REMATCH[1]} ⚠ Dynamic Analysis Found Issues!" >> $(results.vote-message.path)
+              else
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} ❌ Dynamic Analysis Failed!" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.build-exit-codes.path)
+
+          # If any build failed, that's the important part
+          # So we don't need to worry about checking if the upload was successful
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+
+          # Read and act on Upload exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]\-]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                if [ $(cat $(results.exit-code.path)) == 0 ]
+                then
+                  echo "" >> $(results.vote-message.path)
+                fi
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Upload Failed! ❌" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.upload-exit-codes.path)
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: srr7p
+            description: Variant is SRR7p
+            value: srr7p
+          - name: flr7
+            description: Variant is FLR7
+            value: flr7
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default:
+        ui:
+          name: git-ref
+
+      - name: issue-count-asan
+        type: string
+        description: Total number of ignored issue for this sanitizer
+        default:
+        ui:
+          name: issue-count-asan
+
+      - name: issue-count-ubsan
+        type: string
+        description: Total number of ignored issue for this sanitizer
+        default:
+        ui:
+          name: issue-count-ubsan
+
+      - name: issue-count-valgrind
+        type: string
+        description: Total number of ignored issue for this sanitizer
+        default:
+        ui:
+          name: issue-count-valgrind
+
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+
+      - name: commit-hash
+        type: string
+        description: The current commit hash, it can be the same as the git-ref.
+        ui:
+          name: commit-hash
+
+      - name: tags
+        type: string
+        description: Any extra tags needed to pass to Platform Health for extra filtering. e.g. "env=test, build=standalone"
+        ui:
+          name: tags
+
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+
+          import subprocess
+          import sys
+          import os
+          import zipfile
+          import json
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+              sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+              subprocess.check_call([
+                  sys.executable, "-m", "pip", "install",
+                  "--break-system-packages",
+                  "--no-cache-dir",
+                  "--target", TARGET,
+                  "psycopg2-binary"
+              ])
+
+              os.makedirs(TARGET, exist_ok=True)
+              with open(MARKER, "w"):
+                  pass
+
+              os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+              print("Installing Python dependencies...")
+              install_deps_and_restart()
+
+          import psycopg2
+
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def parse_extra_tags(extra_tags_str):
+              """Parse a string of extra tags into a dictionary"""
+              extra_tags = {}
+              if extra_tags_str:
+                  try:
+                      extra_tags = json.loads(extra_tags_str)
+                  except json.JSONDecodeError:
+                      # Handle case where input is not valid JSON
+                      for item in extra_tags_str.split(","):
+                          key_value = item.split("=")
+                          if len(key_value) == 2:
+                              key, value = key_value
+                              extra_tags[key.strip()] = value.strip()
+              return extra_tags
+
+          def read_file(file_path):
+              """Reads a file and returns its contents."""
+              with open(os.path.expandvars(file_path), 'r') as file:
+                  return file.read().strip()
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+              """Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd."""
+              cursor.execute("""
+                  SELECT id FROM wrsd."perception_metrics_wrsd"
+                  WHERE build_no = %s AND pipeline_name = %s;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+              result = cursor.fetchone()
+              if result:
+                  return result[0]
+              else:
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                      VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                  """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+                  return cursor.fetchone()[0]
+
+          def insert_perception_metrics(cursor, data_list):
+              """Inserts multiple perception_metrics entries into the database."""
+              for data in data_list:
+                  wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                  """, (
+                      data['commitid'], data['date'], data['branch'], data['tag'],
+                      data['project'], data['metric_name'], data['metric_value'],
+                      Json(data['metric_tags']), wrsd_id
+                  ))
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+
+          db_config = {
+              "dbname": "monitoring",
+              "user": pg_user,
+              "password": pg_pass,
+              "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+              "port": "5432"
+          }
+
+          # Extract metadata
+          branch = "$(params.git-ref)"
+          project_name = "$(params.project-name)"
+          commit_hash = "$(params.commit-hash)"
+          build_no = "$(config.pipeline.runNumber)"
+          pipeline_name = "$(config.pipeline.name)"
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+          extra_tags = parse_extra_tags("$(params.tags)")
+
+
+          metric_tags = {"variant": "$(params.variant)"}
+          metric_tags.update(extra_tags)
+
+          sanitizer_metrics = [
+              ("asan", "$(params.issue-count-asan)"),
+              ("ubsan", "$(params.issue-count-ubsan)"),
+              ("valgrind", "$(params.issue-count-valgrind)"),
+          ]
+
+          # Load the coverage results form the UT job
+          data_list = [
+              {
+                  "commitid": commit_hash,"date": currentDateTime, "branch": branch, "tag": "",
+                  "project": project_name, "metric_name": "core_radar.gen7v2.dynamicAnalysis",
+                  "metric_value": value, "metric_tags": {**metric_tags, "sanitizer": category},
+                  "wrsd_tags": { "build_no": build_no, "pipeline_name": pipeline_name,"status": None,"duration": None,
+                      "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                  },
+              }
+              for category, value in sanitizer_metrics
+          ]
+
+          print(f"Prepared {len(data_list)} records for database insertion.")
+
+          for data in data_list:
+            print(data)
+
+          # Insert into the database
+          if branch == "dev":
+              try:
+                  connection = psycopg2.connect(**db_config)
+                  cursor = connection.cursor()
+
+                  insert_perception_metrics(cursor, data_list)
+                  connection.commit()
+                  print("Data inserted successfully.")
+
+              except Exception as e:
+                  print(f"An error occurred: {e}")
+
+              finally:
+                  if connection:
+                      cursor.close()
+                      connection.close()
+          else:
+              print("Not Dev branch so nothing will be committed to Platform Health.")
+
+        onError: continue
+        ComputeResources: {}
+        SecurityContext:
+        Storage:
+        WhenVal: false
+    wrrn: ""
+
+timeout: 1h

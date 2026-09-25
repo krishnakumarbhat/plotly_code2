@@ -1,0 +1,254 @@
+# SWE-Test Runner - friendly manual launcher with UI dropdowns.
+#
+# The most flexible manual launcher. Press "Run workflow" in the Actions UI
+# and the form below appears. Everything is optional except family/variant/xcp.
+#
+# Multi-select trick: GitHub Actions does not have native multi-select for
+# workflow_dispatch, so list-style inputs (modules, WIs, flags, extra -b
+# pairs) are plain text fields where you enter comma- or space-separated
+# tokens. The `prepare` job splits them into the right shape and hands them
+# to radar-test-reusable.yml.
+#
+# Trigger: manual only.
+
+name: SWE-Test Runner (pick & run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      # ---- Target ----
+      family:
+        description: 'Radar family'
+        required: true
+        type: choice
+        default: FLR7
+        options: [FLR7, SRR7p, SRR7e]
+      variant:
+        description: 'Hardware variant (must match launcher_config.toml GEN7_V2.variants)'
+        required: true
+        type: choice
+        default: FLR7_V2
+        options:
+          - FLR7_V2
+          - SRR7p_V2
+          - SRR7e
+      xcp:
+        description: 'XCP protocol'
+        required: true
+        type: choice
+        default: CAN
+        options: [CAN, Eth, Eth_Direct]
+
+      # ---- What to run ----
+      test_folder:
+        description: 'Folder under testcases/GEN7_V2_Test_Cases/ (must exist in launcher_config.toml folder_map)'
+        required: true
+        type: choice
+        default: SWE6_Testing
+        options:
+          - SWE6_Testing
+          - SWE6_TestScript_SQT_MACRO
+          - SWE5_Testing
+          - SWE5_TestScript_SIT_MACRO
+      modules:
+        description: 'Modules (comma-separated; e.g. "ALIGNMENT,DIAG"). Leave empty for ALL.'
+        required: false
+        type: string
+        default: ''
+      test_type:
+        description: 'TestType filter'
+        required: false
+        type: choice
+        default: Any
+        options: [Any, Regression, Smoke, Stress, XCP-Regression]
+      wi_ids:
+        description: 'Work-Item IDs (comma-separated; e.g. "WI-266881,WI-266882")'
+        required: false
+        type: string
+        default: ''
+      srs_ids:
+        description: 'SRS IDs (comma-separated)'
+        required: false
+        type: string
+        default: ''
+      extra_markers:
+        description: 'Raw extra markers appended to -m (escape hatch, e.g. "Priority=P1")'
+        required: false
+        type: string
+        default: ''
+
+      # ---- Run-time knobs ----
+      spc_file:
+        description: 'SPC file to flash (Auto = let framework decide)'
+        required: false
+        type: choice
+        default: Auto
+        options: [Auto, spc_1.s19, spc_2.s19, spc_3.s19, spc_4.s19, spc_5.s19, spc_6.s19, spc_7.s19, spc_8.s19]
+      flags:
+        description: 'Space-separated --flag tokens (e.g. "power_check stress_mode")'
+        required: false
+        type: string
+        default: ''
+      bench_attributes:
+        description: 'Extra -b KEY=VALUE pairs (comma-separated; e.g. "Board=B0,Mars=B0"). Variant is auto-injected from the picker above.'
+        required: false
+        type: string
+        default: ''
+      gui_html:
+        description: 'Generate the GUI HTML report'
+        required: false
+        type: boolean
+        default: true
+      no_reports:
+        description: 'Skip all report generation (fast dev loop)'
+        required: false
+        type: boolean
+        default: false
+      report_subdir:
+        description: 'Report subdir under framework root (Auto = derive from launcher_config folder_map)'
+        required: false
+        type: string
+        default: Auto
+
+permissions:
+  contents: read
+
+jobs:
+  # Tiny composer job that turns the picker form into the marker / bench-attr
+  # / JFrog-path strings the reusable workflow consumes. Runs on a hosted
+  # Linux runner so it never queues behind the self-hosted Windows bench.
+  prepare:
+    name: Compose inputs
+    runs-on: ubuntu-latest
+    outputs:
+      jfrog_path: ${{ steps.build.outputs.jfrog_path }}
+      toml_file: ${{ steps.build.outputs.toml_file }}
+      markers: ${{ steps.build.outputs.markers }}
+      spc_file: ${{ steps.build.outputs.spc_file }}
+      bench_attributes: ${{ steps.build.outputs.bench_attributes }}
+      report_subdir: ${{ steps.build.outputs.report_subdir }}
+    steps:
+      - id: build
+        shell: bash
+        env:
+          FAMILY: ${{ inputs.family }}
+          VARIANT: ${{ inputs.variant }}
+          TEST_FOLDER: ${{ inputs.test_folder }}
+          MODULES: ${{ inputs.modules }}
+          TEST_TYPE: ${{ inputs.test_type }}
+          WI_IDS: ${{ inputs.wi_ids }}
+          SRS_IDS: ${{ inputs.srs_ids }}
+          EXTRA_MARKERS: ${{ inputs.extra_markers }}
+          SPC_FILE: ${{ inputs.spc_file }}
+          BENCH_ATTRIBUTES: ${{ inputs.bench_attributes }}
+          REPORT_SUBDIR: ${{ inputs.report_subdir }}
+        run: |
+          set -euo pipefail
+
+          # ---- jfrog_path + toml_file (family-driven) ----
+          case "$FAMILY" in
+            FLR7)  JFROG_ZIP="output_flr7.zip";  TOML="FLR7_SQTp_pyproject_CICD.toml" ;;
+            SRR7p) JFROG_ZIP="output_srr7p.zip"; TOML="SRR7p_SQTp_pyproject.toml" ;;
+            SRR7e) JFROG_ZIP="output_srr7e.zip"; TOML="" ;;
+            *)     echo "::error::Unknown family $FAMILY"; exit 1 ;;
+          esac
+          echo "jfrog_path=core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/${JFROG_ZIP}" >> "$GITHUB_OUTPUT"
+          echo "toml_file=$TOML" >> "$GITHUB_OUTPUT"
+
+          # ---- markers ----
+          MARKERS=""
+          add_marker() { [ -n "$1" ] && MARKERS="${MARKERS:+$MARKERS }$1"; }
+
+          # Module=[A_Module, B_Module] (bracket form, OR within group)
+          if [ -n "$MODULES" ]; then
+            MOD_LIST=""
+            IFS=',' read -ra MODS <<< "$MODULES"
+            for m in "${MODS[@]}"; do
+              m="$(echo "$m" | xargs)"
+              [ -z "$m" ] && continue
+              MOD_LIST="${MOD_LIST:+$MOD_LIST, }${m}_Module"
+            done
+            [ -n "$MOD_LIST" ] && add_marker "Module=[${MOD_LIST}]"
+          fi
+
+          # TestType=<value>
+          if [ "$TEST_TYPE" != "Any" ]; then
+            add_marker "TestType=$TEST_TYPE"
+          fi
+
+          # WI=[WI-1, WI-2]
+          if [ -n "$WI_IDS" ]; then
+            WI_LIST=$(echo "$WI_IDS" | sed 's/[[:space:]]//g')
+            add_marker "WI=[${WI_LIST}]"
+          fi
+
+          # SRS=[SRS-1, SRS-2]
+          if [ -n "$SRS_IDS" ]; then
+            SRS_LIST=$(echo "$SRS_IDS" | sed 's/[[:space:]]//g')
+            add_marker "SRS=[${SRS_LIST}]"
+          fi
+
+          # Raw extras as-is
+          add_marker "$EXTRA_MARKERS"
+          echo "markers=$MARKERS" >> "$GITHUB_OUTPUT"
+
+          # ---- spc-file: Auto means "don't pass --spc_file" ----
+          if [ "$SPC_FILE" = "Auto" ]; then
+            echo "spc_file=" >> "$GITHUB_OUTPUT"
+          else
+            echo "spc_file=$SPC_FILE" >> "$GITHUB_OUTPUT"
+          fi
+
+          # ---- bench-attributes: always inject Variant first, then user pairs ----
+          ATTRS="Variant=$VARIANT"
+          if [ -n "$BENCH_ATTRIBUTES" ]; then
+            EXTRA=$(echo "$BENCH_ATTRIBUTES" | tr ',' ' ' | xargs)
+            ATTRS="$ATTRS $EXTRA"
+          fi
+          echo "bench_attributes=$ATTRS" >> "$GITHUB_OUTPUT"
+
+          # ---- report-subdir: Auto derives from launcher_config folder_map ----
+          if [ "$REPORT_SUBDIR" = "Auto" ] || [ -z "$REPORT_SUBDIR" ]; then
+            case "$TEST_FOLDER" in
+              SWE6_Testing)              SUBDIR="Reports/SWE6" ;;
+              SWE6_TestScript_SQT_MACRO) SUBDIR="Reports/SWE6_SQT_MACRO" ;;
+              SWE5_Testing)              SUBDIR="Reports/SWE5" ;;
+              SWE5_TestScript_SIT_MACRO) SUBDIR="Reports/SWE5_SIT_MACRO" ;;
+              *)                         SUBDIR="Reports/PICK_RUN" ;;
+            esac
+          else
+            SUBDIR="$REPORT_SUBDIR"
+          fi
+          echo "report_subdir=$SUBDIR" >> "$GITHUB_OUTPUT"
+
+          echo "----------------------------------------"
+          echo "Family/Variant/XCP : $FAMILY / $VARIANT / ${{ inputs.xcp }}"
+          echo "Test folder        : $TEST_FOLDER"
+          echo "Resolved markers   : $MARKERS"
+          echo "Resolved bench     : $ATTRS"
+          echo "Resolved subdir    : $SUBDIR"
+          echo "----------------------------------------"
+
+  run-test:
+    name: Run on ${{ inputs.family }} / ${{ inputs.variant }}
+    needs: prepare
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: PICK_RUN
+      family: ${{ inputs.family }}
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-runner.yml
+      nightly-artifact-jfrog-path: ${{ needs.prepare.outputs.jfrog_path }}
+      toml-file: ${{ needs.prepare.outputs.toml_file }}
+      ci-cd-environment: true
+      test-folder: ${{ inputs.test_folder }}
+      markers: ${{ needs.prepare.outputs.markers }}
+      spc-file: ${{ needs.prepare.outputs.spc_file }}
+      bench-attributes: ${{ needs.prepare.outputs.bench_attributes }}
+      report-subdir: ${{ needs.prepare.outputs.report_subdir }}
+      flags: ${{ inputs.flags }}
+      gui-html: ${{ inputs.gui_html }}
+      no-reports: ${{ inputs.no_reports }}
+      extra-args: '--xcp_protocol ${{ inputs.xcp }}'
+      email-subject-prefix: 'Gen7v2 PICK_RUN (${{ inputs.family }})'
+      email-recipients: ${{ github.actor }}@aptiv.com
+    secrets: inherit

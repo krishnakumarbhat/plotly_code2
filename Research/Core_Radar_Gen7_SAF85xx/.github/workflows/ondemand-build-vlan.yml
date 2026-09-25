@@ -1,0 +1,27 @@
+# On-demand: build the VLAN flavor (--enable_vlan=True).
+
+name: "On-demand · Build VLAN"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-vlan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vlan:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["vlan"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

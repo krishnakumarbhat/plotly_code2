@@ -1,0 +1,30 @@
+# On-demand: build the Alignment flavor (--enable_bench_testing=true).
+#
+# Companion to swe6-alignment.yml — produces the binaries the alignment bench
+# regression consumes. Useful for ad-hoc bench debugging.
+
+name: "On-demand · Build Alignment"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-alignment-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  alignment:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["alignment"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

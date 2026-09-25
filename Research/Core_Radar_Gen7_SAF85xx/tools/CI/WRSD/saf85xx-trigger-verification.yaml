@@ -1,0 +1,29 @@
+name: saf85xx-trigger-verification
+when:
+  eventSource: gerrit
+  eventTypes:
+    - patchset-created
+    - ref-updated
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+        - release/v6.1.x
+        - release/v7.0.x
+        - release/v7.1.x
+        - release/v8.0.x
+        - release/v8.1.x
+        - release/v9.0.x
+        - release/v10.0.x
+        - release/v11.0.x
+        - release/v12.0.x
+run:
+  pipeline: core-radar-gen7-saf85xx-trigger-verification
+  params:
+    change-id: $(body.change.number)
+    commit-id: $(body.patchSet.revision)
+    patchset-id: $(body.patchSet.ref)
+    branch-name: $(body.change.branch)
+    patchset-number: $(body.patchSet.number)
+url: https://389177498442.awsaptiv.com/webhook/triggers/saf85xx-trigger-verification

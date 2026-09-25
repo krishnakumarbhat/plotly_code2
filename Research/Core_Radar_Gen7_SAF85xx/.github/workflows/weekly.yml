@@ -1,0 +1,84 @@
+# Weekly CI for Gen7 SAF85xx.
+#
+# Mirrors tools/CI/WRSD/core-radar-gen7-saf85xx-trigger-weekly.yaml:
+#   - Build every shipping flavor (same set as nightly)
+#   - Long-duration HW smoke tests (6h test window, 14400s duration)
+#   - 13h overall timeout
+#
+# Cadence: every Sunday at 22:00 UTC (Mon 04:00 local).
+
+name: Weekly
+
+on:
+  schedule:
+    - cron: '0 22 * * 0'
+  workflow_dispatch:
+    inputs:
+      test-duration-seconds:
+        description: 'Per-bench test duration (seconds). WRSD default: 14400 (4h).'
+        type: string
+        default: '14400'
+      test-timeout:
+        description: 'Per-bench HW test timeout (e.g. 6h).'
+        type: string
+        default: '6h'
+
+concurrency:
+  group: weekly
+  cancel-in-progress: false  # never abort a 13h run mid-flight
+
+jobs:
+  build:
+    name: Weekly Build (all flavors)
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["satellite","sil","iso","vlan","sqt","sit","sit-core0","alignment"]'
+      variants: '["flr7","srr7p"]'
+    secrets:
+      ADVRADAR_GHCR_USER: ${{ secrets.ADVRADAR_GHCR_USER }}
+      ADVRADAR_GHCR_TOKEN: ${{ secrets.ADVRADAR_GHCR_TOKEN }}
+      ADVRADAR_NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ADVRADAR_ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+
+  hw_test_long:
+    name: Weekly HW Tests (long)
+    needs: build
+    if: success()
+    uses: ./.github/workflows/smoke-test.yml
+    with:
+      commit-sha: ${{ github.sha }}
+      # The smoke-test workflow accepts a test-duration override; weekly uses
+      # the full 4h soak per WRSD trigger-weekly.
+      matrix-json: |
+        [
+          {
+            "variant": "flr7",
+            "quickflash_variant": "flr7_satellite",
+            "artifact_name": "build-flr7.zip",
+            "smoke_test_report_path": "/home/sid_advradar_cicd/wrsd_smoke_test_reports/flr7_satellite_Weekly.html",
+            "test_duration": "${{ inputs.test-duration-seconds || '14400' }}",
+            "test_timeout": "${{ inputs.test-timeout || '6h' }}"
+          },
+          {
+            "variant": "srr7p",
+            "quickflash_variant": "srr7p_satellite",
+            "artifact_name": "build-srr7p.zip",
+            "smoke_test_report_path": "/home/sid_advradar_cicd/wrsd_smoke_test_reports/srr7p_satellite_Weekly.html",
+            "test_duration": "${{ inputs.test-duration-seconds || '14400' }}",
+            "test_timeout": "${{ inputs.test-timeout || '6h' }}"
+          }
+        ]
+
+  wrsd_handoff:
+    name: WRSD Weekly Handoff
+    needs: [build, hw_test_long]
+    if: success()
+    uses: ./.github/workflows/wrsd-integration.yml
+    with:
+      pipeline: weekly
+      branch: ${{ github.ref_name }}
+      commit-sha: ${{ github.sha }}
+    secrets:
+      ADVRADAR_SID_USERNAME: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      ADVRADAR_JFROG_API_KEY: ${{ secrets.ADVRADAR_JFROG_API_KEY }}
+      ADVRADAR_WRSD_TRIGGER_TOKEN: ${{ secrets.ADVRADAR_WRSD_TRIGGER_TOKEN }}

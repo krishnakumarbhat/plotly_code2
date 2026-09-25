@@ -1,0 +1,90 @@
+# Reusable HW Smoke Test workflow for Gen7 SAF85xx.
+# Runs on self-hosted bench runners; downloads the build artifact produced by
+# build.yml, flashes the target via QuickFlash, and runs the smoke suite.
+
+name: Reusable HW Smoke Test (Gen7)
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: 'JSON array; each item: variant, artifact_name, quickflash_variant, smoke_test_report_path'
+        required: true
+        type: string
+      artifact-path:
+        description: 'Where to extract the build artifact on the bench runner'
+        required: false
+        type: string
+        default: 'bazel-bin/outputs'
+      runner-labels:
+        description: 'Self-hosted runner labels (JSON array)'
+        required: false
+        type: string
+        default: '["self-hosted","linux","SmokeTest","Gen7"]'
+      timeout-minutes:
+        required: false
+        type: number
+        default: 45
+      commit-sha:
+        required: false
+        type: string
+        default: ''
+      pr-number:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  smoke-test:
+    name: Smoke Test (${{ matrix.quickflash_variant }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      actions: write
+      issues: write
+      pull-requests: write
+    runs-on: ${{ fromJson(inputs.runner-labels) }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+
+      - name: Prepare bench workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ~/git/ADVRADAR_CICD/RPI
+          chmod +x bench_clone.sh
+          ./bench_clone.sh ADVRADAR_CICD:hw-test/v1.0.22 Core_Radar_Gen7_SAF85xx:${{ inputs.commit-sha || 'dev' }}
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ inputs.artifact-path }}
+          if-no-files-found: error
+
+      - name: Run QuickFlash
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x ${{ inputs.artifact-path }}/quickflash/RunQuickFlash.sh
+          ${{ inputs.artifact-path }}/quickflash/RunQuickFlash.sh ${{ matrix.quickflash_variant }}
+
+      - name: Execute smoke suite
+        id: smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          ~/git/ADVRADAR_CICD/RPI/run_smoke.sh ${{ matrix.quickflash_variant }}
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: smoke-${{ matrix.quickflash_variant }}
+          path: ${{ matrix.smoke_test_report_path }}
+          if-no-files-found: warn

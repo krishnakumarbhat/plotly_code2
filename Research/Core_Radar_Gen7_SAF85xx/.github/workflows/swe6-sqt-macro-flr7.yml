@@ -1,0 +1,38 @@
+# SWE6 SQT_MACRO nightly trigger for the FLR7 family.
+# Thin wrapper around the generic reusable workflow (radar-test-reusable.yml).
+#
+# Source folder + report subdir match launcher_config.toml GEN7_V2.folder_map:
+#   SWE6_TestScript_SQT_MACRO -> Reports/SWE6_SQT_MACRO
+
+name: SWE6 SQT_MACRO FLR7 Nightly
+
+on:
+  # workflow_run:
+  #   workflows: ["SWE6 FLR7 Nightly"]
+  #   types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sqt-macro-flr7:
+    name: SWE6 SQT_MACRO FLR7
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      # job-type appears in JFrog paths, summary title, Teams/email subject,
+      # and the default report-subdir (Reports/<job-type>).
+      job-type: SWE6_SQT_MACRO
+      family: FLR7
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe6-sqt-macro-flr7.yml
+      nightly-artifact-jfrog-path: core_radar-aptiv-00000000-gen7_saf85xx-local/wrsd/saf85xx/nightly/latest/output_flr7.zip
+      toml-file: FLR7_SQTp_pyproject_CICD.toml
+      ci-cd-environment: true
+      test-folder: SWE6_TestScript_SQT_MACRO
+      bench-attributes: 'Variant=FLR7_V2'
+      report-subdir: Reports/SWE6_SQT_MACRO
+      jfrog-reports-subpath: SWE6_SQT_MACRO/Reports
+      jfrog-latest-subpath: SWE6_SQT_MACRO/latest_report
+      email-subject-prefix: 'Gen7v2 SWE6 SQT_MACRO (FLR7)'
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

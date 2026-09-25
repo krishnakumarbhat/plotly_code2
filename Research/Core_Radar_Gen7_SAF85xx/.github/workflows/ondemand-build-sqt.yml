@@ -1,0 +1,27 @@
+# On-demand: build the SQT flavor (--enable_sqt_testcases).
+
+name: "On-demand · Build SQT"
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Variants to build (JSON array)'
+        type: choice
+        options:
+          - '["flr7"]'
+          - '["srr7p"]'
+          - '["flr7","srr7p"]'
+        default: '["flr7","srr7p"]'
+
+concurrency:
+  group: ondemand-sqt-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sqt:
+    uses: ./.github/workflows/build-flavors.yml
+    with:
+      flavors: '["sqt"]'
+      variants: ${{ inputs.variants }}
+    secrets: inherit

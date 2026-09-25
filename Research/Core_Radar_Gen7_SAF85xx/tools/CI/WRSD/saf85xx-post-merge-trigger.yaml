@@ -1,0 +1,17 @@
+name: saf85xx-post-merge-trigger
+when:
+  eventSource: gerrit
+  eventTypes:
+    - change-merged
+  filters:
+    - property: change.branch
+      operator: eq
+      values:
+        - dev
+run:
+  pipeline: core-radar-gen7-saf85xx-trigger-post-merge
+  params:
+    branch-name: $(body.change.branch)
+    change-id: $(body.change.number)
+    commit-id: $(body.patchSet.revision)
+url: https://389177498442.awsaptiv.com/webhook/triggers/saf85xx-post-merge-trigger
