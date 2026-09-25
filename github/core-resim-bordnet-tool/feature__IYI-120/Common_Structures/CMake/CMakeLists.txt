@@ -1,0 +1,26 @@
+##########################
+### Project definition ###
+##########################
+cmake_minimum_required(VERSION 4.0)
+
+set(project_name  "Common_Structures")
+project(${project_name})
+
+set(COMMON_STRUCTURE_PROJECT_ROOT_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+
+set(SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/Common_Structures.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_SRR7P_SOMEIP_HeaderV2.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_SRR7P_SOMEIP_HeaderV2_decoded_types.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_SRR7P_SOMEIP_HeaderV2_encoded_types.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/SOMEIPCommonHeader.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_FLR7_SOMEIP_HeaderV2.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_FLR7_SOMEIP_HeaderV2_encoded_types.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_FLR7_SOMEIP_HeaderV2_decoded_types.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_FLR7_SOMEIP_Common.h")
+list(APPEND SOURCES "${COMMON_STRUCTURE_PROJECT_ROOT_PATH}/CEER_SRR7P_SOMEIP_HeaderV2_Macros.h")
+
+add_library(${project_name} STATIC "")
+set_target_properties(${project_name} PROPERTIES LINKER_LANGUAGE CXX)
+target_sources(${project_name} PUBLIC ${SOURCES})
+
+

@@ -1,0 +1,49 @@
+{
+	"reprocessingInputFileStreams": [
+		{
+			"key": "INPUT_BN_CALIFR",
+			"files": [			
+				
+						
+			]
+		},
+		{
+			"key": "INPUT_BN_FASETH",
+			"files": [	
+			
+			]
+		},
+		{
+			"key":"INPUT_SRR_DEBUG",
+			"files": [
+    "C:/LOGS/CEER/R7_7/SDV_CAN_S05_b01_20250804_150527_0001.MF4"
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_BN_CALIFR",
+			"files": [
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_BN_FASETH",
+			"files": [
+				
+				
+			
+				
+			]
+ 
+		},
+		{
+			"key":"OUTPUT_SRR_DEBUG",
+			"files": [
+			
+
+			]
+ 
+		}
+	]
+}

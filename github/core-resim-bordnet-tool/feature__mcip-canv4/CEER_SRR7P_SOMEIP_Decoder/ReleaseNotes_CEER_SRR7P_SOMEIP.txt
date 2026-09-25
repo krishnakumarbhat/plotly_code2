@@ -1,0 +1,15 @@
+---------------------------------------------------
+	SOMEIP   Release Notes 
+---------------------------------------------------
+This document provides a summary of SOMEIP.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 27-09-2024
+
+Features:
+- Dll will supports the decoding of the BMWSP25 SOME/IP messages.
+- Further information will be available in the design document.	
+Known Issue:      
+--------------------------------------------------------------------------------------------------------------
+
+

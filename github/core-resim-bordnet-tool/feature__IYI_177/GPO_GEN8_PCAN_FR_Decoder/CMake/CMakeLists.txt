@@ -1,0 +1,45 @@
+##########################
+### Project definition ###
+##########################
+cmake_minimum_required(VERSION 4.0)
+
+set(PROJECTNAME  "GPO_GEN8_PCAN_FR_Decoder")
+project(${PROJECTNAME})
+
+
+set(GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+
+set(SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/GPO_GEN8_PCAN_FR_Decoder_V1_0.h")
+
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/IGPO_GEN8_PCAN_FR_DecoderAPI.h")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/Resource.rc")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/Version.h")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/ReleaseNotes_GPO_GEN8_PCAN_FR.txt")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/GPO_GEN8_PCAN_FR_DecoderAPI.cpp")
+
+#V1_0
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/GPO_GEN8_PCAN_FR_Decoder_V1_0.h")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/GPO_GEN8_PCAN_FR_Common_V1_0.h")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/GPO_GEN8_PCANFRDecoderBase_V1_0.h")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/IGPO_GEN8_PCAN_FR_Decoder_V1_0.h")
+list(APPEND SOURCE_ALL "${GPO_GEN8_PCAN_FR_DECODER_ROOT_PATH}/GPO_GEN8_PCAN_FR_Decoder_V1_0.cpp")
+
+set(target_name ${PROJECTNAME})
+add_library(${target_name} SHARED "")
+
+
+target_include_directories(${target_name} PRIVATE ${COMMON_STRUCTURES})
+
+target_sources(${target_name} PRIVATE ${SOURCE_ALL})
+
+target_link_libraries(${PROJECTNAME} PRIVATE Auto_Gen_Files)
+
+if(OUTPUT_PATH)
+set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_PATH}"
+												ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_PATH}")												 				
+endif(OUTPUT_PATH)
+
+if(MSVC)
+	target_compile_definitions(${target_name} PRIVATE  _WIN_PLATFORM) 
+endif(MSVC)

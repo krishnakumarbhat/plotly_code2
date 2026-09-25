@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+  <FILEVERSION>1.5</FILEVERSION>
+  <!--To define the EXECUTION_TYPE for which Bordnet is executing.
+          Options are : SEQUENTIAL, CONTINUOUS -->
+  <EXECUTIONTYPE>CONTINUOUS</EXECUTIONTYPE>
+  <!-- Options available are : CEER_SRR7, MCIP_SRR7 and  -->
+  <CUSTOMER KEY="CEER_SRR7">
+	<INFO KEY="CEER_SRR7">
+	<!-- Options available are CEER_V1, CEER_V2 and CEER_V3 -->
+     <VERSION>CEER_V3</VERSION>
+	  <!-- Options available are : SRR7_CEER -->
+     <VARIANT KEY="SRR7_CEER">
+       <INFO KEY="SRR7_CEER">
+         <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant CEER  - RADAR_CEER_PCAN -->
+         <CANDECODER>RADAR_CEER_PCAN</CANDECODER>
+       </INFO>
+	</VARIANT>
+	</INFO>
+	<INFO KEY="MCIP_SRR7">
+	<!-- Options available are CEER_V1 -->
+     <VERSION>MCIP_V2</VERSION>
+	  <!-- Options available are : SRR7_MCIP-->
+     <VARIANT KEY="SRR7_MCIP">
+       <INFO KEY="SRR7_MCIP">
+         <!-- To define the CAN decoder for which the Bordnet is Executed. 
+			            Options available for variant MCIP  - RADAR_MCIP_PCAN -->
+         <CANDECODER>RADAR_MCIP_PCAN</CANDECODER>
+       </INFO>
+	</VARIANT>
+	</INFO>
+  </CUSTOMER>
+  <!-- To define the LOG_TYPE for which the Bordnet is Executed. 
+			    Options available are :VIGEM ,CANOE -->
+  <LOGTYPE KEY="VIGEM">
+    <INFO KEY="CANOE">
+	<INFO KEY="VIGEM">
+	</INFO>
+	<INFO KEY="ORCAS">
+	</INFO>
+      <!--Options available are :
+					  DEFAULT - Default channel value from attribte Default will be used
+					  USER    - User defined channel value will be used -->
+      <BUSCHANNEL TYPE="USER">
+		<!--PCANCEERFLR DEFAULT="3">36</PCANCEERFLR>
+		<PCANCEERRL DEFAULT="2">32</PCANCEERRL>
+		<PCANCEERRR DEFAULT="2">32</PCANCEERRR>
+		<PCANCEERFL DEFAULT="1">34</PCANCEERFL>
+		<PCANCEERFR DEFAULT="1">34</PCANCEERFR-->
+		<PCANCEERFLR DEFAULT="3">62</PCANCEERFLR>
+		<PCANCEERRL DEFAULT="2">63</PCANCEERRL>
+		<PCANCEERRR DEFAULT="2">63</PCANCEERRR>
+		<PCANCEERFL DEFAULT="1">64</PCANCEERFL>
+		<PCANCEERFR DEFAULT="1">64</PCANCEERFR>
+		<PCANMCIPFLR DEFAULT="3">72</PCANMCIPFLR>
+		<PCANMCIPRL DEFAULT="2">55</PCANMCIPRL>
+		<PCANMCIPRR DEFAULT="2">55</PCANMCIPRR>
+		<PCANMCIPFL DEFAULT="1">54</PCANMCIPFL>
+		<PCANMCIPFR DEFAULT="1">54</PCANMCIPFR>
+      </BUSCHANNEL>
+    </INFO>
+  </LOGTYPE>
+
+  <EXECUTIONINFO>
+    <GENERATEFILE>
+
+      <!-- XML Configuration Control for CAN ID and Timestamp CSV & TXT traces -   
+					    1 - GENERATE CSV & TXT Trace containing Diagnostic Information
+					    0 - SUPPRESS CSV & TXT Trace containing Diagnostic Information -->
+      <TIMESTAMPDIAGNOSTICS>1</TIMESTAMPDIAGNOSTICS>
+
+      <!-- XML Configuration Control for CAN ID and Timestamp XML traces -   
+					    1 - GENERATE XML Trace containing only CAN Ids and Timestamps
+					    0 - SUPPRESS XML Trace containing only CAN Ids and Timestamps -->
+      <CANIDTIMESTAMP>1</CANIDTIMESTAMP>
+
+      <!-- XML Configuration Control for CAN ID and Timestamp XML traces -   
+					    1 - GENERATE XML Trace containing Diagnostic Information
+					    0 - SUPPRESS XML Trace containing Diagnostic Information -->
+      <DIAGNOSTICS>0</DIAGNOSTICS>
+      <!--Options available are :
+              1 to Enable XML file to generate SOMEIP decoded messages
+		          0 to Disable XML file to generate SOMEIP decoded messages -->
+      <CREATEXML>
+		<!-- BMW_SP25 -->
+		<OBJECTLISTFRR>0</OBJECTLISTFRR>
+		<DETECTIONFRR>0</DETECTIONFRR>
+		<PREDETECTIONFRR>0</PREDETECTIONFRR>
+		<PREDETECTIONRR>0</PREDETECTIONRR> 
+        <PREDETECTIONRL>0</PREDETECTIONRL> 
+		<PREDETECTIONFR>0</PREDETECTIONFR> 
+		<PREDETECTIONFL>0</PREDETECTIONFL>
+		<PREDETECTIONFC>0</PREDETECTIONFC>
+		<!-- Common for all customers -->
+        <RESTMESSAGE>0</RESTMESSAGE>
+      </CREATEXML>
+    </GENERATEFILE>
+  </EXECUTIONINFO>
+</Configuration>
