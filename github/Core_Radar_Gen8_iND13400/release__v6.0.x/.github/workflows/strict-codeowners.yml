@@ -1,0 +1,472 @@
+name: Strict CODEOWNERS Enforcement
+# GitHub native CODEOWNERS only requires ONE owner from a matching rule.
+# This action enforces ALL distinct owner groups approved for ALL changed files.
+
+# TEMPORARILY DISABLED — restore the triggers below to re-enable
+# on:
+#   pull_request_review:
+#     types: [submitted, dismissed]
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+on:
+  workflow_dispatch:
+
+jobs:
+  strict-codeowners-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Get changed files
+        id: changed
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const files = [];
+            const prNumber = context.payload.pull_request?.number;
+            if (!prNumber) {
+              core.setFailed('Could not determine PR number from event payload.');
+              return;
+            }
+            let page = 1;
+            while (true) {
+              const { data } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              if (data.length === 0) break;
+              for (const f of data) {
+                if (f.status !== 'removed') files.push(f.filename);
+              }
+              page++;
+            }
+            core.setOutput('files', files.join('\n'));
+
+      - name: Verify all code owners approved
+        uses: actions/github-script@v8
+        env:
+          # Pass via env so file paths never touch a JS template literal (prevents injection)
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            // --- Parse CODEOWNERS ---
+            function parseCodeowners(content) {
+              const rules = [];
+              for (const line of content.split('\n')) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                // Strip inline comments
+                const withoutComment = trimmed.replace(/\s+#.*$/, '');
+                const parts = withoutComment.split(/\s+/);
+                if (parts.length < 2) continue;
+                const pattern = parts[0];
+                const owners = parts.slice(1).filter(o => o.startsWith('@'));
+                if (owners.length === 0) continue;
+                rules.push({ pattern, owners });
+              }
+              return rules;
+            }
+
+            // --- Match file against CODEOWNERS pattern ---
+            function matchPattern(pattern, filePath) {
+              // Track if pattern is rooted (starts with /)
+              const isRooted = pattern.startsWith('/');
+              if (isRooted) {
+                pattern = pattern.slice(1);
+              }
+              // Directory match: pattern ends with /
+              if (pattern.endsWith('/')) {
+                return filePath.startsWith(pattern);
+              }
+              // Convert glob to regex
+              let regex = pattern
+                .replace(/\./g, '\\.')
+                .replace(/\*\*/g, '{{GLOBSTAR}}')
+                .replace(/\*/g, '[^/]*')
+                .replace(/\{\{GLOBSTAR\}\}/g, '.*')
+                .replace(/\?/g, '[^/]');
+              // Rooted or has path separator: anchored to start
+              if (isRooted || pattern.includes('/')) {
+                regex = '^' + regex + '(/.*)?$';
+              } else {
+                // Bare filename pattern matches anywhere in tree
+                regex = '(^|.*/)'+ regex + '$';
+              }
+              return new RegExp(regex).test(filePath);
+            }
+
+            // --- Find owners for a file (last match wins) ---
+            function findOwners(rules, filePath) {
+              let matched = null;
+              for (const rule of rules) {
+                if (matchPattern(rule.pattern, filePath)) {
+                  matched = rule;
+                }
+              }
+              return matched ? matched.owners : [];
+            }
+
+            // --- Main logic ---
+            const codeownersPath = '.github/CODEOWNERS';
+            if (!fs.existsSync(codeownersPath)) {
+              core.setFailed('CODEOWNERS file not found at .github/CODEOWNERS');
+              return;
+            }
+
+            const codeownersContent = fs.readFileSync(codeownersPath, 'utf8');
+            const rules = parseCodeowners(codeownersContent);
+
+            // Get changed files — read from env, never from template literal (injection-safe)
+            const changedFiles = (process.env.CHANGED_FILES || '').trim().split('\n').filter(f => f);
+            if (changedFiles.length === 0) {
+              core.info('No changed files detected.');
+              return;
+            }
+
+            // Collect all required owners across all files
+            const requiredOwners = new Set();
+            const fileOwnerMap = {};
+            const unownedFiles = [];
+
+            for (const file of changedFiles) {
+              const owners = findOwners(rules, file);
+              if (owners.length === 0) {
+                unownedFiles.push(file);
+              } else {
+                fileOwnerMap[file] = owners;
+                owners.forEach(o => requiredOwners.add(o.toLowerCase()));
+              }
+            }
+
+            if (unownedFiles.length > 0) {
+              core.warning(`Files with no CODEOWNERS match (fallback should cover): ${unownedFiles.join(', ')}`);
+            }
+
+            core.info(`Required owner groups: ${[...requiredOwners].join(', ')}`);
+            core.info(`Changed files: ${changedFiles.length}`);
+
+            // Get approved reviews
+            const prNumber = context.payload.pull_request?.number;
+            if (!prNumber) {
+              core.setFailed('Could not determine PR number from event payload.');
+              return;
+            }
+
+            // Only reviews on the CURRENT HEAD commit count.
+            // Reviews from previous commits are stale and are ignored —
+            // equivalent to "Dismiss stale pull request approvals" in branch protection.
+            const headSha = context.payload.pull_request?.head?.sha;
+            core.info(`Current HEAD SHA: ${headSha || '(unknown)'}`);
+
+            let reviewPage = 1;
+            const allReviews = [];
+            while (true) {
+              const { data: reviews } = await github.rest.pulls.listReviews({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                per_page: 100,
+                page: reviewPage,
+              });
+              if (reviews.length === 0) break;
+              allReviews.push(...reviews);
+              if (reviews.length < 100) break;
+              reviewPage++;
+            }
+
+            // Get latest review state per user (only APPROVED counts).
+            // Skip reviews not on the current HEAD SHA — they are stale.
+            const latestReviews = new Map();
+            for (const review of allReviews) {
+              if (!review.user) continue;
+              if (headSha && review.commit_id !== headSha) continue; // stale — skip
+              const login = review.user.login.toLowerCase();
+              latestReviews.set(login, review.state);
+            }
+
+            const approvers = new Set();
+            for (const [login, state] of latestReviews) {
+              if (state === 'APPROVED') {
+                approvers.add(login);
+              }
+            }
+
+            core.info(`Approvers on HEAD commit: ${[...approvers].join(', ') || 'none'}`);
+
+            // --- Resolve team memberships — two-attempt strategy ---
+            //
+            // Attempt 1: listMembersInOrg — fast, one call, gets everyone.
+            //   Requires read:org. GITHUB_TOKEN typically lacks this; may return 404.
+            //
+            // Attempt 2: getMembershipForUserInOrg per approver — checks only the people
+            //   who actually approved. May succeed even when bulk listing is blocked,
+            //   because some GHE policies allow targeted membership checks.
+            //
+            // If both fail: team is marked "unresolvable" — enforcement is SKIPPED
+            //   (warn only). Native GitHub CODEOWNERS branch protection remains the
+            //   backstop. This prevents permanent CI blockage due to a token permission
+            //   gap, while still enforcing when membership CAN be verified.
+
+            // ownerToMembers: null  = unresolvable (skip enforcement)
+            //                 []    = team exists but empty (no one can approve → fail)
+            //                 [...] = resolved member list
+            const ownerToMembers = new Map();
+            // How the team was resolved: 'api-list' | 'per-user-check' | 'individual' | 'unresolvable'
+            const ownerResolutionMethod = new Map();
+
+            for (const owner of requiredOwners) {
+              if (!owner.includes('/')) {
+                // Individual user: @username
+                ownerToMembers.set(owner, [owner.replace('@', '').toLowerCase()]);
+                ownerResolutionMethod.set(owner, 'individual');
+                continue;
+              }
+
+              // Team: @org/team-slug
+              const parts = owner.split('/');
+              const org = parts[0].replace('@', '');
+              const teamSlug = parts[1];
+
+              // --- Attempt 1: list all team members ---
+              let resolvedViaList = false;
+              try {
+                const teamMembers = [];
+                let memberPage = 1;
+                while (true) {
+                  const { data: members } = await github.rest.teams.listMembersInOrg({
+                    org,
+                    team_slug: teamSlug,
+                    per_page: 100,
+                    page: memberPage,
+                  });
+                  if (members.length === 0) break;
+                  teamMembers.push(...members);
+                  if (members.length < 100) break;
+                  memberPage++;
+                }
+                ownerToMembers.set(owner, teamMembers.map(m => m.login.toLowerCase()));
+                ownerResolutionMethod.set(owner, 'api-list');
+                core.info(`[${owner}] Resolved via API list: ${teamMembers.map(m => m.login).join(', ') || '(empty team)'}`);
+                resolvedViaList = true;
+              } catch (listErr) {
+                core.warning(`[${owner}] Cannot list team members (${listErr.message}). Trying per-approver membership check...`);
+              }
+
+              if (resolvedViaList) continue;
+
+              // --- Attempt 2: per-approver membership check ---
+              // Only checks the people who actually approved — avoids needing to list everyone.
+              const verifiedApprovers = [];
+              for (const approver of approvers) {
+                try {
+                  const { data: membership } = await github.rest.teams.getMembershipForUserInOrg({
+                    org,
+                    team_slug: teamSlug,
+                    username: approver,
+                  });
+                  if (membership.state === 'active') {
+                    verifiedApprovers.push(approver);
+                  }
+                } catch (memberErr) {
+                  // 404 = not in team or can't check — skip
+                }
+              }
+
+              if (verifiedApprovers.length > 0) {
+                ownerToMembers.set(owner, verifiedApprovers);
+                ownerResolutionMethod.set(owner, 'per-user-check');
+                core.info(`[${owner}] Resolved via per-user check: ${verifiedApprovers.join(', ')}`);
+              } else if (approvers.size === 0) {
+                // No approvals on current HEAD at all — team listing also failed so we
+                // cannot show who should approve. Use empty array (not null) so this goes
+                // to missingApprovals and the PR is blocked. Approval IS required; we
+                // just can't name the members from the API.
+                ownerToMembers.set(owner, []);
+                ownerResolutionMethod.set(owner, 'unresolvable-no-approvers');
+                core.warning(`[${owner}] No approvals on HEAD and team listing failed — approval required but members unknown.`);
+              } else {
+                // Approvers exist but none could be verified as team members.
+                // This means: we checked, and they are NOT in the team (or per-user
+                // check also lacks permissions). Treat as unresolvable so we warn
+                // but do not permanently block.
+                ownerToMembers.set(owner, null);
+                ownerResolutionMethod.set(owner, 'unresolvable');
+                core.warning(`[${owner}] Both team listing and per-user membership check failed. Marking unresolvable.`);
+              }
+            }
+
+            // --- Determine pass / fail / skip ---
+            const missingApprovals  = []; // resolved, but no team member approved
+            const unresolvableGroups = []; // couldn't verify at all — enforcement skipped
+
+            for (const owner of requiredOwners) {
+              const members = ownerToMembers.get(owner);
+              if (members === null) {
+                unresolvableGroups.push(owner);
+                continue; // skip enforcement — native CODEOWNERS is the backstop
+              }
+              const hasApproval = members.some(m => approvers.has(m));
+              if (!hasApproval) {
+                missingApprovals.push(owner);
+              }
+            }
+
+            // --- Build Job Summary ---
+            let summaryMd = '## 🛡️ Strict CODEOWNERS Enforcement\n\n';
+
+            const hasFailed    = missingApprovals.length > 0;
+            const hasWarnings  = unresolvableGroups.length > 0;
+
+            if (!hasFailed && !hasWarnings) {
+              summaryMd += '> **✅ PASSED** — All required code owner groups have approved.\n\n';
+            } else if (!hasFailed && hasWarnings) {
+              summaryMd += `> **⚠️ PASSED WITH WARNINGS** — No blocking failures, but ${unresolvableGroups.length} team(s) could not be verified (see below).\n\n`;
+            } else {
+              summaryMd += `> **❌ FAILED** — ${missingApprovals.length} owner group(s) still need approval.\n\n`;
+            }
+
+            summaryMd += `**PR:** #${prNumber} | **Files changed:** ${changedFiles.length} | **Owner groups required:** ${requiredOwners.size} | **HEAD:** \`${headSha ? headSha.slice(0, 8) : 'unknown'}\`\n\n`;
+            summaryMd += `> ℹ️ Only reviews on the **current commit** (\`${headSha ? headSha.slice(0, 8) : '?'}\`) count — approvals from previous commits are stale and ignored.\n\n`;
+
+            // Current approvers — most actionable, show first
+            summaryMd += '### Current Approvers (on HEAD commit)\n\n';
+            if (approvers.size > 0) {
+              summaryMd += [...approvers].map(a => `- ✅ @${a}`).join('\n') + '\n';
+            } else {
+              summaryMd += '_No approvals on the current HEAD commit yet. If you previously approved, please re-approve after the latest push._\n';
+            }
+            summaryMd += '\n';
+
+            // Missing approvals section
+            if (missingApprovals.length > 0) {
+              summaryMd += '### ❌ Missing Approvals — Any ONE person from the group can approve\n\n';
+              for (const owner of missingApprovals) {
+                const members = ownerToMembers.get(owner) || [];
+                const method  = ownerResolutionMethod.get(owner);
+                const files   = Object.entries(fileOwnerMap)
+                  .filter(([_, owners]) => owners.map(o => o.toLowerCase()).includes(owner))
+                  .map(([file]) => file);
+                summaryMd += `**${owner}**\n`;
+                summaryMd += `- Resolved via: ${method}\n`;
+                summaryMd += `- Files: ${files.map(f => '`' + f + '`').join(', ')}\n`;
+                if (members.length > 0) {
+                  summaryMd += `- 👉 Any ONE of these can approve: ${members.map(m => `@${m}`).join(', ')}\n\n`;
+                } else {
+                  summaryMd += `- ⚠️ Team members could not be resolved via API (team listing and per-user check both failed).\n`;
+                  summaryMd += `  A member of \`${owner}\` must approve. Contact your org admin to confirm the team exists and is not secret.\n\n`;
+                }
+              }
+            }
+
+            // Unresolvable teams section
+            if (unresolvableGroups.length > 0) {
+              summaryMd += '### ⚠️ Skipped — Team Membership Unresolvable\n\n';
+              summaryMd += 'These groups could not be resolved via GitHub API (both team listing and per-approver membership check failed). ';
+              summaryMd += 'Enforcement is **skipped** for these groups — **native GitHub CODEOWNERS branch protection is your safety net.**\n\n';
+              summaryMd += '**To fix:** ensure the team exists in the org and that it is not a "secret" team (secret teams require org-admin token). ';
+              summaryMd += 'A fine-grained PAT or GitHub App token with `read:org` stored as a repo secret would resolve this permanently.\n\n';
+              for (const owner of unresolvableGroups) {
+                const files = Object.entries(fileOwnerMap)
+                  .filter(([_, owners]) => owners.map(o => o.toLowerCase()).includes(owner))
+                  .map(([file]) => file);
+                summaryMd += `- **${owner}** → files: ${files.map(f => '`' + f + '`').join(', ')}\n`;
+              }
+              summaryMd += '\n';
+            }
+
+            // File → owner → status table
+            summaryMd += '### Files and Approval Status\n\n';
+            summaryMd += '| File | Required Owner | Who can approve | Status |\n';
+            summaryMd += '|------|---------------|----------------|--------|\n';
+            for (const file of changedFiles) {
+              const owners = fileOwnerMap[file] || [];
+              if (owners.length === 0) {
+                summaryMd += `| \`${file}\` | _no owner_ | — | ⚠️ Unowned |\n`;
+              } else {
+                for (const owner of owners) {
+                  const ownerLower = owner.toLowerCase();
+                  const members    = ownerToMembers.get(ownerLower);
+                  const method     = ownerResolutionMethod.get(ownerLower);
+                  let memberList, status;
+                  if (members === null) {
+                    memberList = '⚠️ Unresolvable — see warnings';
+                    status     = '⚠️ Skipped';
+                  } else if (members.length === 0) {
+                    memberList = method === 'unresolvable-no-approvers'
+                      ? '⚠️ Team unresolvable — any member must approve'
+                      : '_(empty team — add members to this team)_';
+                    status = '❌ Needs approval';
+                  } else {
+                    memberList = members.map(m => `@${m}`).join(', ');
+                    status     = members.some(m => approvers.has(m)) ? '✅ Approved' : '❌ Needs approval';
+                  }
+                  summaryMd += `| \`${file}\` | ${owner} | ${memberList} | ${status} |\n`;
+                }
+              }
+            }
+
+            // How-it-works
+            summaryMd += '\n---\n';
+            summaryMd += '### ℹ️ How this works\n\n';
+            summaryMd += '- This workflow requires **at least one member** of **each** required owner group to approve (stricter than native CODEOWNERS which needs only one group).\n';
+            summaryMd += '- **Stale approvals**: only reviews submitted on the current HEAD commit count. Re-approve after new commits are pushed.\n';
+            summaryMd += '- **Team resolution**: tries GitHub API first (full list), then per-approver membership check. If both fail, enforcement is skipped with a warning.\n';
+            summaryMd += '- Re-runs automatically on every review submission or new commit push.\n';
+
+            await core.summary.addRaw(summaryMd).write();
+
+            // --- Labels ---
+            const labelName = 'codeowners-approval-missing';
+            if (hasFailed) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  labels: [labelName],
+                });
+              } catch (e) {
+                core.warning(`Could not add label '${labelName}': ${e.message}`);
+              }
+
+              const errorLines = missingApprovals.map(owner => {
+                const members = ownerToMembers.get(owner) || [];
+                const files   = Object.entries(fileOwnerMap)
+                  .filter(([_, owners]) => owners.map(o => o.toLowerCase()).includes(owner))
+                  .map(([file]) => file);
+                return `  ${owner} — needs approval from: ${members.map(m => '@' + m).join(', ')} (files: ${files.slice(0, 3).join(', ')}${files.length > 3 ? '...' : ''})`;
+              }).join('\n');
+
+              core.setFailed(
+                `Missing approvals from required code owners:\n${errorLines}\n\n` +
+                `One approver from each group is enough. See the Job Summary tab for full details.`
+              );
+            } else {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  name: labelName,
+                });
+              } catch (e) {
+                if (e.status !== 404) core.warning(`Could not remove label '${labelName}': ${e.message}`);
+              }
+              if (hasWarnings) {
+                core.warning(`Passed with warnings: ${unresolvableGroups.length} team(s) could not be verified. Check Job Summary for details.`);
+              } else {
+                core.info('All required code owner groups have approved. ✅');
+              }
+            }

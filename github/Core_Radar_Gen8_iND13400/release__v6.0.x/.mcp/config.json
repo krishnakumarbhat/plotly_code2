@@ -1,0 +1,38 @@
+{
+  "mcpServers": {
+    "gen8-scanner": {
+      "command": "python",
+      "args": [".mcp/server.py"],
+      "cwd": "${workspaceFolder}",
+      "tools": {
+        "scan_interfaces": { "description": "[SWE5] List DCS_X enum entries from IT headers. Saves ~420 lines of header reading." },
+        "scan_hooks": { "description": "[SWE5] List SIT_ macros from hook headers. Saves ~200 lines of header reading." },
+        "scan_memory": { "description": "[SWE5] SRAM1 usage counts from BBE32 IT source. Saves ~300 lines of source reading." },
+        "scan_build": { "description": "[SWE5] IT BUILD target info (alwayslink, select, names). Saves ~150 lines of BUILD reading." },
+        "scan_flags": { "description": "[Build System] All bool_flag/string_flag/config_setting from root BUILD. Saves ~200 lines." },
+        "scan_streams": { "description": "[IPC] Stream headers and source IDs from software/common/. Saves ~500 lines across 14 headers." },
+        "scan_test_targets": { "description": "[Testing] All test targets from root BUILD test_suites (55 R52 + 10 BBE). Saves ~200 lines." },
+        "scan_modules": { "description": "[Architecture] Software modules with BUILD/test presence (39 modules). Saves directory traversal." },
+        "scan_external_deps": { "description": "[Dependencies] All bazel_dep/local_repository/http_archive from MODULE.bazel. Saves ~322 lines." },
+        "scan_coverage_thresholds": { "description": "[Quality] 57 coverage report targets with min thresholds. Saves reading 1054-line coverage/BUILD." },
+        "scan_bazelrc": { "description": "[Build Config] 26 flag aliases + 10 config definitions from .bazelrc. Saves ~115 lines." },
+        "scan_swcs": { "description": "[AUTOSAR] 27 SWC directories with BUILD targets and test info. Saves ~500 lines of dir+BUILD reads." },
+        "scan_includes": { "description": "[Debugging] All #include directives from a source file. Pass file_path relative to repo root. Saves 100-1000 lines per call." },
+        "scan_deps": { "description": "[Debugging] Deps/srcs/hdrs for a BUILD target. Pass build_path and optionally target name. Saves 50-400 lines per call." },
+        "scan_precommit": { "description": "[Coding Standards] Pre-commit hooks + formatting rules for a file. Pass file_path to check which hooks apply and what format rules to follow. Saves ~150 lines." },
+        "scan_functions": { "description": "[Debugging] Function signatures from a .c/.h file. Quick API overview without reading full source. Saves 100-800 lines per call." },
+        "scan_defines": { "description": "[Debugging] All #define macros from a header. Understand config/constants without full file read. Saves 50-500 lines per call." },
+        "scan_git_changes": { "description": "[Debugging] Modified/staged/untracked files from git status. Know what is being worked on without running git commands." },
+        "scan_memory_stats": { "description": "[Debugging] Memory usage stats from build output. Parse bazel-bin/temp/memoryStats.txt without reading raw file." },
+        "scan_structs": { "description": "[Data Types] Extract struct/typedef/enum from a header. Pass file_path. Saves reading 200-1000 line headers." },
+        "scan_ipc_payload": { "description": "[IPC] M2D/D2M/SIT_Data_T structures from ipc_data.h. Complete IPC interface in one call. Saves ~600 lines." },
+        "scan_ci_pipelines": { "description": "[CI/CD] All WRSD pipeline YAML summaries — names, stages, triggers, params. Saves reading 5-10 YAML files." },
+        "scan_build_graph": { "description": "[Dependencies] Recursive dep graph for a BUILD target. Pass build_path, target, depth. Saves multiple scan_deps calls." },
+        "scan_diff": { "description": "[Git] Structured diff summary vs a ref. Files changed, additions, deletions per file. Saves reading raw diff output." },
+        "scan_module_api": { "description": "[Architecture] Combined module overview: functions + defines + includes + structs in one call. Pass module_path. Saves 3-4 separate calls." },
+        "scan_todo_fixme": { "description": "[Quality] Find TODO/FIXME/HACK comments in a path. Pass path and optional pattern. Quick tech debt scan." },
+        "scan_file_summary": { "description": "[Context] High-level file summary: line count, functions, includes, globals, ifdef guards. One call = full file context without reading it." }
+      }
+    }
+  }
+}

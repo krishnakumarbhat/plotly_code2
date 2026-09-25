@@ -1,0 +1,161 @@
+langVersion: v1
+name: core-radar-gen8-ind13400-trigger-verification
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project Gen8 iND13400
+ui:
+  name: core-radar-gen8-ind13400-trigger-verification
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/verification/$(config.pipeline.runNumber)
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: ""
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: branch
+    type: string
+    default: dev
+compute:
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.0.1
+    compute: linux-1c4g
+  - name: pre-gerrit-comment-vote
+    task: Utils/post-gerrit-comment-vote-flr8@1.0.0
+    compute: linux-1c4g
+    params:
+      gerrit-setup: {}
+      message: |
+        🔔 WRSD pipeline started.
+
+        https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+      votes:
+        Verified: "0"
+  - parallelTasks:
+      - name: precommit
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+          target-pipeline: core-radar-gen8-ind13400-precommit-check
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-precommit-check.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - tasks:
+        - name: build
+          task: Utils/YGGDRASIL/custom-run@0.0.2
+          compute: linux-1c4g
+          params:
+            project-name: $(params.project-url-encoded)
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            parameters:
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              project-url-encoded: $(params.project-url-encoded)
+              upload-path: $(params.upload-path)/buildFiles/
+            target-pipeline: core-radar-gen8-ind13400-build
+            yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-build.yaml
+            onErrorContinue: "true"
+          onError: continue
+
+        - name: hw-tests
+          task: Utils/YGGDRASIL/custom-run@0.0.2
+          compute: linux-1c4g
+          params:
+            project-name: $(params.project-url-encoded)
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            parameters:
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              project-url-encoded: $(params.project-url-encoded)
+              upload-path: $(params.upload-path)/hw-tests/
+              download-path: $(params.upload-path)/buildFiles/
+            target-pipeline: core-radar-gen8-ind13400-hw-test
+            yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-hw-test.yaml
+            onErrorContinue: "true"
+          onError: continue
+
+      - name: unit-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/unitTests/
+          target-pipeline: core-radar-gen8-ind13400-unit-test
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-unit-test.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - name: coverity-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/coverity/
+          target-pipeline: core-radar-gen8-ind13400-coverity
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-coverity.yaml
+          onErrorContinue: "true"
+        onError: continue
+  - name: auto-submit-check
+    task: Utils/ADVRADAR/auto-submit@1.0.1
+    compute: linux-2c8g
+    params:
+      project-name: $(params.project-url-encoded)
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      comment: "True"
+  - name: continue-auto-submit
+    when:
+      - input: $(tasks.auto-submit-check.results.trigger-rebase)
+        operator: in
+        values:
+        - "true"
+    task: Utils/ADVRADAR/auto-rebase@1.0.0
+    compute: linux-2c8g
+    params:
+      gerrit-url: $(params.gerrit-url)
+      project-name: $(params.project-url-encoded)
+      branch: $(params.branch)
+timeout: 2h

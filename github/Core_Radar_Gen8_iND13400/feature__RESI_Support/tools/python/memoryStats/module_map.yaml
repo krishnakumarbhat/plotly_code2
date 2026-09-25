@@ -1,0 +1,216 @@
+---
+mapFiles:
+  m7App.elf:
+    Ignored:
+      Data:
+      Code:
+        - .debug_aranges
+        - .debug_abbrev
+        - .debug_info
+        - .debug_line
+        - .debug_loc
+        - .debug_frame
+        - .debug_ranges
+        - .debug_str
+        - .symtab
+        - .strtab
+        - .shstrtab
+    MCAL:
+      Data:
+        - .mcal.bss
+        - .mcal.data
+      Code:
+        - .mcal.text
+        - .mcal.rodata
+    BSW:
+      Data:
+        - .OS_CORE0_VAR_NOINIT
+        - .OS_PUBLIC_CORE0_VAR_NOINIT
+        - .OS_BARRIER_CORE0_VAR_NOCACHE_NOINIT
+        - .OS_CORESTATUS_CORE0_VAR_NOCACHE_NOINIT
+        - .OS_STACK_BSW_TASK_VAR_NOINIT
+        - .OS_STACK_APPL_TASK_RADAR_CONTROL_VAR_NOINIT
+        - .OS_STACK_OSCORE0_ISR_CORE_VAR_NOINIT
+        - .OS_STACK_OSCORE0_TASK_PRIO210_VAR_NOINIT
+        - .OS_STACK_OSCORE0_INIT_VAR_NOINIT
+        - .OS_STACK_PLT_APPL_TASK_VAR_NOINIT
+        - .OS_STACK_OSCORE0_TASK_PRIO4294967295_VAR_NOINIT
+        - .OS_STACK_OSCORE0_TASK_PRIO200_VAR_NOINIT
+        - .OS_STACK_OSCORE0_KERNEL_VAR_NOINIT
+        - .OS_STACK_OSCORE0_ERROR_VAR_NOINIT
+        - .OS_STACK_APPL_TASK_COMMUNICATION_VAR_NOINIT
+        - .OS_STACK_OSCORE0_ISR_LEVEL64_VAR_NOINIT
+        - .OS_VAR_NOCACHE_NOINIT
+        - .bsw.bss
+        - .bsw.data
+      Code:
+        - .OS_INTVEC_CORE0_CONST
+        - .OS_EXCVEC_CORE0_CODE
+        - .OS_CODE
+        - .OS_INTVEC_CODE
+        - .OS_ERRORHOOK_CODE
+        - .OS_OS_COREINITHOOK_CODE
+        - .OS_CONST
+        - .OS_GLOBALSHARED_CONST
+        - .OS_CONST_FAST
+        - .OS_GLOBALSHARED_CONST_FAST
+        - .OS_INTVEC_CORE0_CODE
+        - .OS_CORE0_CONST
+        - .OS_INTVEC_CORE0_CODE
+        - .OS_CORE0_CONST
+        - .bsw.text
+        - .bsw.rodata
+    MMIC:
+      Data:
+        - .mmic.bss
+        - .mmic.data
+        - .rfe_dyn_tbl
+      Code:
+        - .mmic.text
+        - .mmic.rodata
+    App:
+      Data:
+        - .app.bss
+        - .app.data
+      Code:
+        - .app.text
+        - .app.rodata
+    Cals:
+      Data:
+         - .cal.bss
+         - .cal.data
+      Code:
+        - .cal.text
+        - .cal.rodata
+    IPC:
+      Data:
+         - .ipc_sections
+         - .ipc.bss
+         - .ipc.data
+      Code:
+        - .ipc.text
+        - .ipc.rodata
+    Logging:
+      Data:
+         - .logging.bss
+         - .logging.data
+      Code:
+        - .logging.text
+        - .logging.rodata
+    Data Cube:
+      Data:
+        - .sig_proc_data
+      Code:
+    Signal Processing:
+      Data:
+         - .sig_proc.bss
+         - .sig_proc.data
+      Code:
+        - .sig_proc.text
+        - .sig_proc.rodata
+        - .code_spt
+    Angle Finding:
+      Data:
+      Code:
+    Other:
+      Data:
+        - .data
+        - .bss
+        - .boot_shared_data
+      Code:
+        - .text
+        - .rodata
+        - .versions
+        - .lib
+
+  a53App.elf:
+    Ignored:
+      Data:
+      Code:
+        - .debug_aranges
+        - .debug_abbrev
+        - .debug_info
+        - .debug_line
+        - .debug_loc
+        - .debug_frame
+        - .debug_ranges
+        - .debug_str
+        - .symtab
+        - .strtab
+        - .shstrtab
+    Other:
+      Data:
+        - .data
+        - .sdata
+        - .bss
+        - .sbss
+        - .ctors
+        - .dtors
+        - .init_array
+        - .fini_array
+        - .got
+      Code:
+        - .text
+        - .text2
+
+  bbe32App.elf:
+    Ignored:
+      Data:
+      Code:
+        - .comment
+        - .debug_aranges
+        - .debug_abbrev
+        - .debug_info
+        - .debug_line
+        - .debug_loc
+        - .debug_frame
+        - .debug_ranges
+        - .debug_str
+        - .symtab
+        - .strtab
+        - .shstrtab
+    IPC:
+      Data:
+         - .ipc_sections_d2m
+         - .ipc_sections_m2d
+         - .ipc.bss
+         - .ipc.data
+      Code:
+        - .ipc.text
+        - .ipc.rodata
+    Signal Processing:
+      Data:
+        - .dsp_func_inp_sharing
+      Code:
+    Angle Finding:
+      Data:
+        - .dram1.data
+        - .dram1.bss
+      Code:
+    Other:
+      Data:
+        - .data
+        - .sdata
+        - .bss
+        - .sbss
+        - .stack
+        - .rodata
+        - .dram1.mempool
+        - .rtos.rodata
+        - .clib.data
+        - .rtos.percpu.data
+        - .xt.prop
+        - .xtensa.info
+      Code:
+        - .text
+        - .text2
+        - .ResetVector.text
+        - .MemoryExceptionVector.text
+        - .WindowVectors.text
+        - .Level2InterruptVector.text
+        - .Level3InterruptVector.text
+        - .Level4InterruptVector.text
+        - .DebugExceptionVector.text
+        - .KernelExceptionVector.text
+        - .UserExceptionVector.text
+        - .DoubleExceptionVector.text

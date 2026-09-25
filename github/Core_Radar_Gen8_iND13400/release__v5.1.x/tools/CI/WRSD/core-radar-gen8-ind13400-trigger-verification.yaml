@@ -1,0 +1,280 @@
+langVersion: v1
+name: core-radar-gen8-ind13400-trigger-verification
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project Gen8 iND13400
+ui:
+  name: core-radar-gen8-ind13400-trigger-verification
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/verification/$(config.pipeline.runNumber)
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: ""
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: branch
+    type: string
+    default: ""
+  - name: patchset-number
+    type: string
+    default: ""
+compute:
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.0
+    params:
+      change-id: $(params.change-id)
+      branch: $(params.branch)
+      patchset-number: $(params.patchset-number)
+      project: $(params.project-url-encoded)
+    compute: linux-1c4g
+  - name: resolve-gerrit-state
+    task: verification/resolve-gerrit-state
+    compute: linux-1c4g
+    params:
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      project-url-encoded: $(params.project-url-encoded)
+  - parallelTasks:
+      - name: pre-gerrit-comment-no-op
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: in
+            values:
+              - "true"
+        task: Utils/post-gerrit-comment-vote-flr8@1.0.0
+        compute: linux-1c4g
+        params:
+          gerrit-setup: {}
+          message: |
+            ⛔ WRSD pipeline will not run as this review is work-in-progress.
+            Please mark the review as ready for review to trigger the pipeline.
+          votes:
+            Verified: "0"
+      - name: pre-gerrit-comment-vote
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/post-gerrit-comment-vote-flr8@1.0.0
+        compute: linux-1c4g
+        params:
+          gerrit-setup: {}
+          message: |
+            🔔 WRSD pipeline started. [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+          votes:
+            Verified: "0"
+  - parallelTasks:
+      - name: precommit
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            project-url-encoded: $(params.project-url-encoded)
+          target-pipeline: core-radar-gen8-ind13400-precommit-check
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-precommit-check.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - tasks:
+        - name: build
+          when:
+            - input: $(tasks.resolve-gerrit-state.results.wip)
+              operator: notin
+              values:
+                - "true"
+          task: Utils/YGGDRASIL/custom-run@0.0.2
+          compute: linux-1c4g
+          params:
+            project-name: $(params.project-url-encoded)
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            parameters:
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              branch: $(params.branch)
+              patchset-number: $(params.patchset-number)
+              project-url-encoded: $(params.project-url-encoded)
+              upload-path: $(params.upload-path)/buildFiles/
+            target-pipeline: core-radar-gen8-ind13400-build
+            yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-build.yaml
+            onErrorContinue: "true"
+          onError: continue
+
+        - name: hw-tests
+          when:
+            - input: $(tasks.resolve-gerrit-state.results.wip)
+              operator: notin
+              values:
+                - "true"
+          task: Utils/YGGDRASIL/custom-run@0.0.2
+          compute: linux-1c4g
+          params:
+            project-name: $(params.project-url-encoded)
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            parameters:
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              branch: $(params.branch)
+              patchset-number: $(params.patchset-number)
+              project-url-encoded: $(params.project-url-encoded)
+              upload-path: $(params.upload-path)/hw-tests/
+              download-path: $(params.upload-path)/buildFiles/
+            target-pipeline: core-radar-gen8-ind13400-hw-test
+            yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-hw-test.yaml
+            onErrorContinue: "true"
+          onError: continue
+
+      - name: unit-tests
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/unitTests/
+          target-pipeline: core-radar-gen8-ind13400-unit-test
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-unit-test.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - name: coverity-tests
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/coverity/
+          target-pipeline: core-radar-gen8-ind13400-coverity
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-coverity.yaml
+          onErrorContinue: "true"
+        onError: continue
+  - name: auto-submit-check
+    task: Utils/ADVRADAR/auto-submit@1.0.1
+    compute: linux-2c8g
+    params:
+      project-name: $(params.project-url-encoded)
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      comment: "True"
+  - name: continue-auto-submit
+    when:
+      - input: $(tasks.auto-submit-check.results.trigger-rebase)
+        operator: in
+        values:
+        - "true"
+    task: Utils/ADVRADAR/auto-rebase@1.0.0
+    compute: linux-2c8g
+    params:
+      gerrit-url: $(params.gerrit-url)
+      project-name: $(params.project-url-encoded)
+      branch: $(params.branch)
+defineTasks:
+  - name: resolve-gerrit-state
+    langVersion: v1
+    category: verification
+    params:
+      - name: change-id
+        type: string
+        default: ""
+      - name: gerrit-url
+        type: string
+        default: https://gitgerrit.asux.aptiv.com
+      - name: project-url-encoded
+        type: string
+        default: Core_Radar_Gen8_iND13400
+    results:
+      - name: wip
+        description: Gerrit work-in-progress state for the current change
+    steps:
+      - name: fetch-gerrit-state
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+          import base64
+          import json
+          import urllib.request
+
+          def read_secret(path):
+              with open(path, "r", encoding="utf-8") as handle:
+                  return handle.read().strip()
+
+          username = read_secret("$(secrets.gerrit-cred.username.path)")
+          password = read_secret("$(secrets.gerrit-cred.password.path)")
+          url = "$(params.gerrit-url)/a/changes/$(params.project-url-encoded)~$(params.change-id)/detail?o=CURRENT_REVISION&o=ALL_REVISIONS"
+          auth_token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
+          request = urllib.request.Request(
+            url,
+            headers={"Authorization": f"Basic {auth_token}"},
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+            body = response.read().decode("utf-8")
+
+          # Gerrit prepends a 4-byte XSSI guard: )]}'
+          payload = json.loads(body[4:])
+          wip = "true" if payload.get("work_in_progress", False) else "false"
+
+          with open("$(results.wip.path)", "w", encoding="utf-8") as handle:
+              handle.write(wip)
+
+          print(json.dumps({"wip": wip, "change_id": "$(params.change-id)"}))
+    wrrn: ""
+timeout: 2h

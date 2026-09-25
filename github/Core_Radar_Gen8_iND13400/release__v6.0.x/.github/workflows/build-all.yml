@@ -1,0 +1,1620 @@
+name: Build All Variants
+
+# Triggers: manual runs only on release branches (no nightly schedule), via the
+# GitHub "Run workflow" dropdown (any branch/tag).
+on:
+  workflow_dispatch:
+    inputs:
+
+      Is_Release_Build:
+        description: 'Release build - do NOT append dev macros (--disable_int_wdg) to any variant.'
+        type: boolean
+        default: false
+
+      commit_sha:
+        description: 'Optional: build a specific commit (short ≥7 chars or full 40-char SHA). Leave blank to build the branch HEAD.'
+        type: string
+        required: false
+        default: ''
+
+      run_swe6:
+        description: 'Trigger SWE6 FLR8 + SRR8P after combined-outputs are ready (nightly always does this; uncheck to skip on manual runs)'
+        type: boolean
+        default: false
+
+      run_extra_build_validation:
+        description: 'Run Extra Build Validation stage (SIT/CORE0/ALIGNMENT). Off by default.'
+        type: boolean
+        default: false
+
+      run_emblib:
+        description: 'Build emblib shared library (srr8p_emblib_al)? Off by default — enable only when needed.'
+        type: boolean
+        default: false
+
+      Need_Unique_Build:
+        description: 'Build all gen8 variants with extra flags/macros appended? (Unique Build mode)'
+        type: boolean
+        default: false
+      unique_build_flags:
+        description: 'Extra flags/macros appended to every variant [added after: bazelisk build //:gen8 --config={variant} {existing_flags}]'
+        type: string
+        required: false
+      unique_build_name:
+        description: 'Name prefix for unique build artifacts (e.g. my-feature). Artifacts named: unique-<name>-<variant>.'
+        type: string
+        required: false
+        default: ''
+
+      Need_Custom_Build:
+        description: 'Build a single custom variant with Complete Build CMD after //:gen8 --config={variant} ?'
+        type: boolean
+        default: false
+      custom_build_variant:
+        description: 'For Custom build choose the variant'
+        type: choice
+        required: false
+        default: flr8
+        options: [flr8, srr8p]
+      custom_build_flags:
+        description: 'Custom build flags [appended to: bazelisk build //:gen8 --config={variant}]'
+        type: string
+        required: false
+      custom_build_name:
+        description: 'Custom build artifact name'
+        type: string
+        required: false
+        default: ''
+
+
+concurrency:
+  # One run per ref; never cancel a running full-build (set to false intentionally).
+  group: build-all-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PROJECT_NAME: Core_Radar_Gen8_iND13400
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BUILD MATRIX (defined as JSON inside matrix-json inputs below)
+#
+# Sources: WRSD core-radar-gen8-ind13400-build.yaml + README.md build commands
+# Each name must be unique — it becomes the GitHub artifact name (build-<name>).
+#
+# ── Job: build_gen8  (target //:gen8) — PV variants only; all run in parallel ────────────────────────────────────
+#  Unique Build appends extra flags to every PV variant; artifacts: build-PV-{variant}-{unique_build_name}.
+#
+#  PRODUCTION VARIANTS (from WRSD) — included in combined-outputs.zip; artifact_prefix: PV-
+#  ┌──────────────────────────────┬──────────┬────────────────────────────────────────────────────────────────────────┐
+#  │ name                         │ variant  │ bazel_extra_flags                                                      │
+#  ├──────────────────────────────┼──────────┼────────────────────────────────────────────────────────────────────────┤
+#  │ flr8_satellite               │ flr8     │ (none —> default --veh_com=can)                                        │
+#  │ srr8p_satellite              │ srr8p    │ (none —> default --veh_com=can)                                        │
+#  │ srr8p_al_can_standalone      │ srr8p    │ --veh_com=al_can_standalone --tracker_variant=AL --chandra_hw_rev=B0   │
+#  │                              │          │   --mars_hw_rev=B0 --enable_features=true                              │
+#  │ flr8_standalone              │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone    │
+#  │ srr8p_standalone             │ srr8p    │ --tracker_variant=platform_srr8p_standalone --veh_com=can_standalone   │
+#  │ flr8_satellite_someip        │ flr8     │ --veh_com=someip                                                       │
+#  │ srr8p_satellite_someip       │ srr8p    │ --veh_com=someip                                                       │
+#  └──────────────────────────────┴──────────┴────────────────────────────────────────────────────────────────────────┘
+#
+# ── Job: extra_build_validation  (target //:gen8) — normal mode only; skipped for Unique/Custom Build ───────────
+#  Artifacts: build-{name} (no PV- prefix; not included in combined-outputs.zip).
+#
+#  SIT — SWE5 Integration Testing (--Integration_Testing / README §SWE5)
+#  Base is always standalone+CAN: the firmware flashed for SWE5 HW bench runs.
+#  ┌──────────────────────────────┬──────────┬─────────────────────────────────────────────────────────────────────┐
+#  │ flr8_sit_anglefinding        │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --Integration_Testing=true --AF_IT=true                          │
+#  │ flr8_sit_radarcapability     │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --Integration_Testing=true --RC_IT=true                           │
+#  │ flr8_sit_firstpass           │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --Integration_Testing=true --FP_IT=true                           │
+#  │ flr8_sit_toi                 │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --Integration_Testing=true --TOI_IT=true                          │
+#  └──────────────────────────────┴──────────┴─────────────────────────────────────────────────────────────────────┘
+#
+#  CORE0 TESTING — individual separate builds
+#  ┌──────────────────────────────┬──────────┬─────────────────────────────────────────────────────────────────────┐
+#  │ flr8_core0_sit               │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --enable_sit_testcases                                            │
+#  │ flr8_core0_sqt               │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --enable_sqt_testcases                                            │
+#  └──────────────────────────────┴──────────┴─────────────────────────────────────────────────────────────────────┘
+#
+#  ALIGNMENT BENCH TEST (--enable_bench_testing / STEP2 §f16)
+#  ┌──────────────────────────────┬──────────┬─────────────────────────────────────────────────────────────────────┐
+#  │ flr8_standalone_alignment    │ flr8     │ --tracker_variant=platform_flr8_standalone --veh_com=can_standalone │
+#  │                              │          │   --enable_bench_testing=true                                       │
+#  └──────────────────────────────┴──────────┴─────────────────────────────────────────────────────────────────────┘
+#
+# ── Job: build_emblib  (target //sil/emb_lib/sil_source:emb_lib_sharedlib) — on-demand only (run_emblib=true) ──
+#  ┌──────────────────────────────┬──────────┬─────────────────────────────────────────────────────────────────────┐
+#  │ srr8p_emblib_al              │ srr8p    │ --config=emblib --//sil/emb_lib/rsp_emb_lib:sil_mode=RDD            │
+#  │                              │          │   --tracker_variant=AL --enable_features=true                       │
+#  │                              │          │   --//sil/emb_lib/sil_source:customer=al --config=emblib_release    │
+#  │                              │          │   --veh_com=al_can_standalone                                       │
+#  └──────────────────────────────┴──────────┴─────────────────────────────────────────────────────────────────────┘
+#
+# All jobs start in parallel. Each artifact name is unique (build-<name>).
+# Artifacts are stored as GitHub Actions artifacts on this run (no JFrog).
+# artifact_prefix: PV-  → Production Variant; included in combined-outputs.zip.
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+  # ── Input validation (blocks build_gen8 if Unique Build inputs are incomplete) ─
+  validate_inputs:
+    name: Validate workflow inputs
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Unique Build — unique_build_flags and unique_build_name are required
+        if: ${{ inputs.Need_Unique_Build }}
+        env:
+          FLAGS: ${{ inputs.unique_build_flags }}
+          BUILD_NAME: ${{ inputs.unique_build_name }}
+        run: |
+          if [ -z "$FLAGS" ]; then
+            echo "::error::unique_build_flags is required when Need_Unique_Build is true"
+            exit 1
+          fi
+          if [ -z "$BUILD_NAME" ]; then
+            echo "::error::unique_build_name is required when Need_Unique_Build is true"
+            exit 1
+          fi
+      - name: Custom Build — custom_build_flags and custom_build_name are required
+        if: ${{ inputs.Need_Custom_Build }}
+        env:
+          FLAGS: ${{ inputs.custom_build_flags }}
+          BUILD_NAME: ${{ inputs.custom_build_name }}
+        run: |
+          if [ -z "$FLAGS" ]; then
+            echo "::error::custom_build_flags is required when Need_Custom_Build is true"
+            exit 1
+          fi
+          if [ -z "$BUILD_NAME" ]; then
+            echo "::error::custom_build_name is required when Need_Custom_Build is true"
+            exit 1
+          fi
+      - name: Validate commit_sha format
+        if: ${{ inputs.commit_sha != '' }}
+        env:
+          COMMIT_SHA: ${{ inputs.commit_sha }}
+        run: |
+          if ! echo "$COMMIT_SHA" | grep -qE '^[0-9a-fA-F]{7,40}$'; then
+            echo "::error::commit_sha must be 7–40 hex characters (short or full SHA). Got: '$COMMIT_SHA'"
+            exit 1
+          fi
+
+  # ── //:gen8 variants (all run in parallel) ──────────────────────────────────
+  build_gen8:
+    name: Build gen8 - ${{ matrix.name }}
+    needs: [validate_inputs]
+
+    if: ${{ !inputs.Need_Custom_Build }}
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: flr8_satellite
+            variant: flr8
+            bazel_extra_flags: ""
+            artifact_prefix: PV-
+          - name: srr8p_satellite
+            variant: srr8p
+            bazel_extra_flags: ""
+            artifact_prefix: PV-
+          - name: srr8p_al_can_standalone
+            variant: srr8p
+            bazel_extra_flags: "--veh_com=al_can_standalone --tracker_variant=AL --chandra_hw_rev=B0 --mars_hw_rev=B0 --enable_features=true"
+            artifact_prefix: PV-
+          - name: flr8_standalone
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone"
+            artifact_prefix: PV-
+          - name: srr8p_standalone
+            variant: srr8p
+            bazel_extra_flags: "--tracker_variant=platform_srr8p_standalone --veh_com=can_standalone"
+            artifact_prefix: PV-
+          - name: flr8_satellite_someip
+            variant: flr8
+            bazel_extra_flags: "--veh_com=someip"
+            artifact_prefix: PV-
+          - name: srr8p_satellite_someip
+            variant: srr8p
+            bazel_extra_flags: "--veh_com=someip"
+            artifact_prefix: PV-
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      build-type: build
+      analyze-type: none
+      analyze-targets: ''
+      gitsubmodules-pull: false
+      sarif-enabled: false
+      toolchain-cache-enabled: false
+      artifact-name: '${{ inputs.Need_Unique_Build && format(''build-PV-{0}-{1}'', matrix.name, inputs.unique_build_name || ''build'') || format(''build-{0}{1}'', matrix.artifact_prefix, matrix.name) }}'
+      publish-metrics-enabled: false
+      additional-artifacts: |
+        bazel-bin/outputs
+        build_status.txt
+        build-analyze.log
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        if [ -n "${{ inputs.commit_sha }}" ]; then
+          git fetch --unshallow 2>/dev/null || true
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*'
+          git -c advice.detachedHead=false checkout "${{ inputs.commit_sha }}"
+          echo "[COMMIT] Building at: $(git rev-parse HEAD)"
+        fi
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        sudo apt install mono-complete # This installation is temporary until we get the custom runner working
+
+        BUILD_CMD=(./bazelisk build //:gen8 "--config=${{ matrix.variant }}")
+        read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags }}"
+        if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+        fi
+        read -r -a UNIQUE_FLAGS <<< "${{ inputs.unique_build_flags }}"
+        if [ "${#UNIQUE_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${UNIQUE_FLAGS[@]}")
+        fi
+
+        # Dev Build Job macros: skipped entirely for Is_Release_Build. This branch has
+        # no --enable_debug flag, so only manual dev/local dispatch adds a macro
+        # (--disable_int_wdg).
+        if [ "${{ inputs.Is_Release_Build }}" = "true" ]; then
+          echo "[BUILD] Release build - skipping dev macros"
+        elif [ "${{ inputs.run_swe6 }}" = "true" ]; then
+          echo "[BUILD] SWE6 dispatch - no dev macros on this branch"
+        else
+          BUILD_CMD+=(--disable_int_wdg)
+        fi
+
+        BUILD_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${BUILD_CMD[@]}"
+        echo
+        echo "****"
+
+        # build_status.txt = final exit code (0 = PASS, non-zero = FAIL).
+        # build-analyze.log is produced by the reusable workflow at the artifact root
+        # (same location as build_status.txt) and is used for failure details.
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+        BUILD_RC=1
+
+        while true; do
+          echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${BUILD_CMD[@]}"
+          BUILD_RC=$?
+          set -e
+
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "[BUILD] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[BUILD] Failed after ${attempt} attempts (rc=${BUILD_RC})"
+            break
+          fi
+
+          echo "::notice::Build failed (attempt ${attempt}, rc=${BUILD_RC}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${BUILD_RC}" > build_status.txt
+        echo "[BUILD] Final status written to build_status.txt: ${BUILD_RC}"
+        exit "${BUILD_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "NETRC_CUSTOM_USER_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # ── Extra Build Validation: SIT / CORE0 / ALIGNMENT variants ──────────────────────────────────────────────────
+  # Runs only in normal mode (not in Unique Build or Custom Build).
+  # Artifacts: build-{name} — not included in combined-outputs.zip.
+  extra_build_validation:
+    name: Extra Validation - ${{ matrix.name }}
+    needs: [validate_inputs]
+
+    if: ${{ !inputs.run_swe6 && !inputs.run_emblib && !inputs.Need_Custom_Build && !inputs.Need_Unique_Build && inputs.run_extra_build_validation == true }}
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: flr8_sit_anglefinding
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --Integration_Testing=true --AF_IT=true"
+          - name: flr8_sit_radarcapability
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --Integration_Testing=true --RC_IT=true"
+          - name: flr8_sit_firstpass
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --Integration_Testing=true --FP_IT=true"
+          - name: flr8_sit_toi
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --Integration_Testing=true --TOI_IT=true"
+          - name: flr8_standalone_alignment
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --enable_bench_testing=true"
+          - name: flr8_core0_sit
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --enable_sit_testcases"
+          - name: flr8_core0_sqt
+            variant: flr8
+            bazel_extra_flags: "--tracker_variant=platform_flr8_standalone --veh_com=can_standalone --enable_sqt_testcases"
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM }}
+      build-type: build
+      analyze-type: none
+      analyze-targets: ''
+      gitsubmodules-pull: false
+      sarif-enabled: false
+      toolchain-cache-enabled: false
+      artifact-name: 'build-${{ matrix.name }}'
+      publish-metrics-enabled: false
+      additional-artifacts: |
+        bazel-bin/outputs
+        build_status.txt
+        build-analyze.log
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        if [ -n "${{ inputs.commit_sha }}" ]; then
+          git fetch --unshallow 2>/dev/null || true
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*'
+          git -c advice.detachedHead=false checkout "${{ inputs.commit_sha }}"
+          echo "[COMMIT] Building at: $(git rev-parse HEAD)"
+        fi
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        sudo apt install mono-complete # This installation is temporary until we get the custom runner working
+
+        BUILD_CMD=(./bazelisk build //:gen8 "--config=${{ matrix.variant }}")
+        read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags }}"
+        if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+        fi
+
+        # Dev Build Job macros: skipped entirely for Is_Release_Build. This branch has
+        # no --enable_debug flag, so only manual dev/local dispatch adds a macro
+        # (--disable_int_wdg).
+        if [ "${{ inputs.Is_Release_Build }}" = "true" ]; then
+          echo "[BUILD] Release build - skipping dev macros"
+        elif [ "${{ inputs.run_swe6 }}" = "true" ]; then
+          echo "[BUILD] SWE6 dispatch - no dev macros on this branch"
+        else
+          BUILD_CMD+=(--disable_int_wdg)
+        fi
+
+        BUILD_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${BUILD_CMD[@]}"
+        echo
+        echo "****"
+
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+        BUILD_RC=1
+
+        while true; do
+          echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${BUILD_CMD[@]}"
+          BUILD_RC=$?
+          set -e
+
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "[BUILD] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[BUILD] Failed after ${attempt} attempts (rc=${BUILD_RC})"
+            break
+          fi
+
+          echo "::notice::Build failed (attempt ${attempt}, rc=${BUILD_RC}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${BUILD_RC}" > build_status.txt
+        echo "[BUILD] Final status written to build_status.txt: ${BUILD_RC}"
+        exit "${BUILD_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "NETRC_CUSTOM_USER_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # ── Emblib shared-lib (different Bazel target, runs in parallel with build_gen8) ──
+  build_emblib:
+    name: Build emblib - ${{ matrix.name }}
+
+    if: ${{ !inputs.Need_Custom_Build && !inputs.Need_Unique_Build && inputs.run_emblib == true }}
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: srr8p_emblib_al
+            variant: srr8p
+            bazel_extra_flags: "--config=emblib --//sil/emb_lib/rsp_emb_lib:sil_mode=RDD --tracker_variant=AL --enable_features=true --//sil/emb_lib/sil_source:customer=al --config=emblib_release --veh_com=al_can_standalone"
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      build-type: build
+      analyze-type: none
+      analyze-targets: ''
+      gitsubmodules-pull: false
+      sarif-enabled: false
+      toolchain-cache-enabled: false
+      artifact-name: 'build-${{ matrix.name }}'
+      publish-metrics-enabled: false
+      additional-artifacts: |
+        bazel-bin/sil/emb_lib
+        build_status.txt
+        build-analyze.log
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        if [ -n "${{ inputs.commit_sha }}" ]; then
+          git fetch --unshallow 2>/dev/null || true
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*'
+          git -c advice.detachedHead=false checkout "${{ inputs.commit_sha }}"
+          echo "[COMMIT] Building at: $(git rev-parse HEAD)"
+        fi
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        sudo apt install mono-complete # This installation is temporary until we get the custom runner working
+
+        BUILD_CMD=(./bazelisk build //sil/emb_lib/sil_source:emb_lib_sharedlib "--config=${{ matrix.variant }}")
+        read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags }}"
+        if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+        fi
+
+        # Dev Build Job macros: skipped entirely for Is_Release_Build. This branch has
+        # no --enable_debug flag, so only manual dev/local dispatch adds a macro
+        # (--disable_int_wdg).
+        if [ "${{ inputs.Is_Release_Build }}" = "true" ]; then
+          echo "[BUILD] Release build - skipping dev macros"
+        elif [ "${{ inputs.run_swe6 }}" = "true" ]; then
+          echo "[BUILD] SWE6 dispatch - no dev macros on this branch"
+        else
+          BUILD_CMD+=(--disable_int_wdg)
+        fi
+
+        BUILD_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${BUILD_CMD[@]}"
+        echo
+        echo "****"
+
+        # build_status.txt = final exit code (0 = PASS, non-zero = FAIL).
+        # build-analyze.log is produced by the reusable workflow at the artifact root
+        # (same location as build_status.txt) and is used for failure details.
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+        BUILD_RC=1
+
+        while true; do
+          echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${BUILD_CMD[@]}"
+          BUILD_RC=$?
+          set -e
+
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "[BUILD] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[BUILD] Failed after ${attempt} attempts (rc=${BUILD_RC})"
+            break
+          fi
+
+          echo "::notice::Build failed (attempt ${attempt}, rc=${BUILD_RC}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${BUILD_RC}" > build_status.txt
+        echo "[BUILD] Final status written to build_status.txt: ${BUILD_RC}"
+        exit "${BUILD_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "NETRC_CUSTOM_USER_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # -- Custom Build: single variant with user-supplied flags --
+  build_custom:
+    name: Custom Build - ${{ inputs.custom_build_name || 'custom-build' }} [${{ inputs.custom_build_variant }}]
+    needs: [validate_inputs]
+
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.Need_Custom_Build }}
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ${{ inputs.custom_build_name || 'custom-build' }}
+            variant: ${{ inputs.custom_build_variant }}
+            bazel_extra_flags: "${{ inputs.custom_build_flags }}"
+    uses: Aptiv/workflows-library/.github/workflows/build-analyze-linux.yml@v3
+    with:
+      runner: ${{ vars.ADVRADAR_RUNNER_MEDIUM_CORERADAR }}
+      build-type: build
+      analyze-type: none
+      analyze-targets: ''
+      gitsubmodules-pull: false
+      sarif-enabled: false
+      toolchain-cache-enabled: false
+      artifact-name: 'build-${{ matrix.name }}'
+      publish-metrics-enabled: false
+      additional-artifacts: |
+        bazel-bin/outputs
+        build_status.txt
+        build-analyze.log
+      script: |
+        set -euo pipefail
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        if [ -n "${{ inputs.commit_sha }}" ]; then
+          git fetch --unshallow 2>/dev/null || true
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*'
+          git -c advice.detachedHead=false checkout "${{ inputs.commit_sha }}"
+          echo "[COMMIT] Building at: $(git rev-parse HEAD)"
+        fi
+
+        echo "build --bes_header=x-arb-api-key=$ARB_TOKEN" > user.bazelrc
+        echo "build --remote_header=x-arb-api-key=$ARB_TOKEN" >> user.bazelrc
+
+        chmod +x ./bazelisk
+
+        sudo apt install mono-complete # This installation is temporary until we get the custom runner working
+
+        BUILD_CMD=(./bazelisk build //:gen8 "--config=${{ matrix.variant }}")
+        read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags }}"
+        if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+          BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+        fi
+
+        # Dev Build Job macros: skipped entirely for Is_Release_Build. This branch has
+        # no --enable_debug flag, so only manual dev/local dispatch adds a macro
+        # (--disable_int_wdg).
+        if [ "${{ inputs.Is_Release_Build }}" = "true" ]; then
+          echo "[BUILD] Release build - skipping dev macros"
+        elif [ "${{ inputs.run_swe6 }}" = "true" ]; then
+          echo "[BUILD] SWE6 dispatch - no dev macros on this branch"
+        else
+          BUILD_CMD+=(--disable_int_wdg)
+        fi
+
+        BUILD_CMD+=(--build_event_json_file=build_event.json)
+
+        echo "**** Bazel command:"
+        printf '%q ' "${BUILD_CMD[@]}"
+        echo
+        echo "****"
+
+        MAX_RETRIES=2
+        INITIAL_DELAY=5
+        attempt=1
+        delay=$INITIAL_DELAY
+        BUILD_RC=1
+
+        while true; do
+          echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+          set +e
+          "${BUILD_CMD[@]}"
+          BUILD_RC=$?
+          set -e
+
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "[BUILD] Success on attempt ${attempt}"
+            break
+          fi
+
+          if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+            echo "[BUILD] Failed after ${attempt} attempts (rc=${BUILD_RC})"
+            break
+          fi
+
+          echo "::notice::Build failed (attempt ${attempt}, rc=${BUILD_RC}). Retrying in ${delay}s..."
+          sleep "$delay"
+
+          attempt=$((attempt + 1))
+          delay=$((delay * 2))
+        done
+
+        echo "${BUILD_RC}" > build_status.txt
+        echo "[BUILD] Final status written to build_status.txt: ${BUILD_RC}"
+        exit "${BUILD_RC}"
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      GHCR_USER: ${{ secrets.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      CONTEXT_SECRETS: >-
+        {
+          "GERRIT_USER": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "GERRIT_TOKEN": "${{ secrets.ADVRADAR_SID_GERRIT_HTTP_KEY }}",
+          "ACCESS_TOKEN": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "NETRC_CUSTOM_USER_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_jfrog_asux_aptiv_com": "${{ secrets.ADVRADAR_JFROG_API_KEY }}",
+          "NETRC_CUSTOM_USER_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_USERNAME }}",
+          "NETRC_CUSTOM_PASSWORD_raw_aptv_ghe_com": "${{ secrets.ADVRADAR_SID_GITHUB_TOKEN }}",
+          "ARB_TOKEN": "${{ secrets.ARB_TOKEN }}"
+        }
+
+  # ── Combine outputs zip (production or unique build; always runs, pass or fail) ─────────────
+  combine_outputs:
+    name: Combine ${{ inputs.Need_Unique_Build && format('{0} Unique', inputs.unique_build_name) || 'Production' }} Outputs
+    needs: [build_gen8]
+
+    if: ${{ !inputs.Need_Custom_Build && always() }}
+
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Clean workspace
+        run: rm -rf downloads publish
+
+      - name: Download build-PV-* artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: build-PV-*
+          path: downloads
+          merge-multiple: false
+          if-no-files-found: ignore
+
+      - name: Merge build variants
+        env:
+          UNIQUE_BUILD_NAME: ${{ inputs.Need_Unique_Build && inputs.unique_build_name || '' }}
+        run: |
+          set -euo pipefail
+
+          TOTAL=$(find downloads -maxdepth 1 -type d -name 'build-PV-*' 2>/dev/null | wc -l | tr -d ' ')
+          echo " Run ID : ${{ github.run_id }}"
+          echo " Run #  : ${{ github.run_number }}"
+          echo " Ref    : ${{ github.ref }}"
+          echo "=============================================="
+
+          echo ""
+          echo "=== downloads/ top-level ==="
+          if [ -d downloads ]; then
+            ls -la downloads
+            echo ""
+            echo "=== downloads/ tree (depth 4) ==="
+            find downloads -maxdepth 4 \( -type d -o -type f \) | sort
+          else
+            echo "::warning::downloads/ does not exist — no artifacts downloaded"
+          fi
+
+          # publish/ is the EXACT tree that becomes the artifact root when uploaded.
+          #   publish/bazel-bin/outputs/...
+          #   publish/<variant>_<any>.txt
+          # upload-artifact@v4 with path: publish/ puts these at the ROOT of the
+          # downloaded combined-outputs.zip (no extra combined-outputs/ folder).
+          PUBLISH="publish"
+          rm -rf "${PUBLISH}"
+          mkdir -p "${PUBLISH}/bazel-bin/outputs"
+
+          FOUND=0
+          MERGED=()
+
+          for ARTIFACT_DIR in $(find downloads -maxdepth 1 -type d -name 'build-PV-*' 2>/dev/null | sort); do
+            _abase="$(basename "${ARTIFACT_DIR}")"
+            VARIANT="${_abase#build-PV-}"
+            [ -n "${UNIQUE_BUILD_NAME}" ] && VARIANT="${VARIANT%-${UNIQUE_BUILD_NAME}}"
+            VARIANT="${VARIANT%-[0-9]*-[0-9]*}"
+            VARIANT="${VARIANT%-[0-9]*}"
+
+            echo "----------------------------------------------"
+            echo "[${VARIANT}] artifact dir: ${ARTIFACT_DIR}"
+            find "${ARTIFACT_DIR}" -maxdepth 3 \( -type d -o -type f \) | sort | head -50
+
+            # ── bazel-bin/outputs (any nesting depth) ─────────────────────────
+            OUTPUTS_DIR="$(find "${ARTIFACT_DIR}" -type d -path '*/bazel-bin/outputs' | head -n 1 || true)"
+            if [ -n "${OUTPUTS_DIR}" ] && [ -d "${OUTPUTS_DIR}" ]; then
+              echo "[${VARIANT}] merging outputs from: ${OUTPUTS_DIR}"
+              cp -rf "${OUTPUTS_DIR}/." "${PUBLISH}/bazel-bin/outputs/"
+            else
+              echo "::warning::[${VARIANT}] no bazel-bin/outputs under ${ARTIFACT_DIR}"
+            fi
+
+            # ── Root-level .txt and .log files (e.g. build_status.txt, build-analyze.log) ──
+            # Both are renamed to <variant>_<basename> so they stay unique inside combined-outputs.
+            echo "[${VARIANT}] scanning for root-level .txt and .log files (excluding bazel-bin/)..."
+            FILE_COUNT=0
+            STATUS_CODE=""
+            while IFS= read -r -d '' SRC; do
+              [ -z "${SRC}" ] && continue
+              BASENAME="$(basename "${SRC}")"
+              EXT="${BASENAME##*.}"
+              STEM="${BASENAME%.*}"
+              DEST="${PUBLISH}/${VARIANT}_${BASENAME}"
+              if [ -e "${DEST}" ]; then
+                n=2
+                while [ -e "${PUBLISH}/${VARIANT}_${STEM}_${n}.${EXT}" ]; do
+                  n=$((n + 1))
+                done
+                DEST="${PUBLISH}/${VARIANT}_${STEM}_${n}.${EXT}"
+              fi
+              cp "${SRC}" "${DEST}"
+              echo "[${VARIANT}] file: ${SRC}  ->  $(basename "${DEST}")"
+              FILE_COUNT=$((FILE_COUNT + 1))
+
+              # Capture numeric status from build_status.txt (0 = PASS)
+              if [ "${BASENAME}" = "build_status.txt" ]; then
+                STATUS_CODE="$(tr -d '[:space:]' < "${SRC}" || true)"
+              fi
+            done < <(find "${ARTIFACT_DIR}" -maxdepth 3 -type f \( -name '*.txt' -o -name '*.log' \) ! -path '*/bazel-bin/*' -print0)
+
+            if [ "${FILE_COUNT}" -eq 0 ]; then
+              echo "[${VARIANT}] no root-level .txt or .log files found"
+            else
+              echo "[${VARIANT}] root-level files copied: ${FILE_COUNT}"
+            fi
+
+            # ── Status mapping + failure log ──────────────────────────────────
+            # build_status.txt: 0 = PASS, any other value = FAIL (bazel exit code).
+            # On PASS: status file only (no log needed).
+            # On FAIL: include build-analyze.log as <variant>_build-analyze.log for error details.
+            if [ -z "${STATUS_CODE}" ]; then
+              # Fallback: look for build_status.txt anywhere near root
+              STATUS_FILE="$(find "${ARTIFACT_DIR}" -maxdepth 3 -type f -name 'build_status.txt' ! -path '*/bazel-bin/*' | head -n 1 || true)"
+              if [ -n "${STATUS_FILE}" ]; then
+                STATUS_CODE="$(tr -d '[:space:]' < "${STATUS_FILE}" || true)"
+              fi
+            fi
+
+            if [ -z "${STATUS_CODE}" ]; then
+              RESULT_LABEL="UNKNOWN"
+              echo "::warning::[${VARIANT}] build_status.txt missing or empty"
+            elif [ "${STATUS_CODE}" = "0" ]; then
+              RESULT_LABEL="PASS"
+              echo "[${VARIANT}] status=0 → PASS (log not included)"
+            else
+              RESULT_LABEL="FAIL"
+              echo "[${VARIANT}] status=${STATUS_CODE} → FAIL"
+              LOG_FILE="$(find "${ARTIFACT_DIR}" -maxdepth 3 -type f -name 'build-analyze.log' ! -path '*/bazel-bin/*' | head -n 1 || true)"
+              if [ -n "${LOG_FILE}" ] && [ -f "${LOG_FILE}" ]; then
+                # Coverage failures: extract the threshold table + verdict
+                if grep -q '| ERR |' "${LOG_FILE}" 2>/dev/null; then
+                  FAIL_SNIPPET="$(grep -B2 -A1 '| ERR |' "${LOG_FILE}" 2>/dev/null | head -n 20 || true)"
+                  COV_VERDICT="$(grep -E 'Coverage requirements failed|failed to build' "${LOG_FILE}" 2>/dev/null | head -n 2 || true)"
+                  [ -n "${COV_VERDICT}" ] && FAIL_SNIPPET="${FAIL_SNIPPET}"$'\n----\n'"${COV_VERDICT}"
+                else
+                  # Build/linker errors: 6 lines of context before each error hit
+                  FAIL_SNIPPET="$(awk '
+                    BEGIN { n = 0 }
+                    {
+                      buf[n % 6] = $0
+                      n++
+                      if ($0 ~ /^ERROR:|^FAILED:|error:|Error |FATAL|fatal|Build did NOT complete|Cannot allocate|Memory area|undefined reference/) {
+                        start = (n >= 6) ? (n - 6) : 0
+                        for (i = start; i < n; i++) print buf[i % 6]
+                        print "----"
+                      }
+                    }
+                  ' "${LOG_FILE}" | tail -n 60 || true)"
+                fi
+                if [ -z "${FAIL_SNIPPET}" ]; then
+                  FAIL_SNIPPET="$(tail -n 25 "${LOG_FILE}" || true)"
+                fi
+              else
+                echo "::warning::[${VARIANT}] FAIL but build-analyze.log not found under artifact"
+                FAIL_SNIPPET="(build-analyze.log not available)"
+              fi
+            fi
+
+            # Derive a multi-line failure reason for structured downstream consumption
+            FIRST_ERRORS=""
+            COV_ERR=""
+            BUILD_ERR=""
+            if [ "${RESULT_LABEL}" = "FAIL" ] && [ -n "${LOG_FILE}" ] && [ -f "${LOG_FILE}" ]; then
+              # Coverage threshold failures: grab the ERR row + the final verdict
+              COV_ERR="$(grep -E '\| ERR \||Coverage requirements failed|failed to build' "${LOG_FILE}" 2>/dev/null | head -n 3 | sed 's/^[[:space:]]*//' | cut -c1-200 || true)"
+              # Build/linker errors
+              BUILD_ERR="$(grep -m5 -E '^ERROR:|^FAILED:|Build did NOT complete|error: Memory|Cannot allocate|undefined reference' "${LOG_FILE}" 2>/dev/null | sed 's/^[[:space:]]*//' | cut -c1-200 || true)"
+              if [ -n "${COV_ERR}" ]; then
+                FIRST_ERRORS="${COV_ERR}"
+              elif [ -n "${BUILD_ERR}" ]; then
+                FIRST_ERRORS="${BUILD_ERR}"
+              else
+                FIRST_ERRORS="$(grep -m5 -Ei 'error|failed|fatal' "${LOG_FILE}" 2>/dev/null | grep -v '^[[:space:]]*$' | sed 's/^[[:space:]]*//' | cut -c1-200 || true)"
+              fi
+            fi
+
+            # Append to results summary (written after the loop)
+            {
+              echo "### ${VARIANT}"
+              echo "status_code: ${STATUS_CODE:-n/a}"
+              echo "result: ${RESULT_LABEL}"
+              if [ "${RESULT_LABEL}" = "FAIL" ]; then
+                # Classify failure type from log content
+                if [ -n "${COV_ERR}" ]; then
+                  echo "failure_category: Coverage Threshold Failure"
+                else
+                  echo "failure_category: Bazel Build Error"
+                fi
+                echo "failure_reason_start:"
+                if [ -n "${FIRST_ERRORS}" ]; then
+                  echo "${FIRST_ERRORS}"
+                else
+                  echo "(see ${VARIANT}_build-analyze.log)"
+                fi
+                echo "failure_reason_end:"
+                echo "log_file: ${VARIANT}_build-analyze.log"
+                echo "--- error snippet ---"
+                echo "${FAIL_SNIPPET:-}"
+                echo "--- end snippet ---"
+              fi
+              echo ""
+            } >> "${PUBLISH}/.results_partial.txt"
+
+            FOUND=$((FOUND + 1))
+            MERGED+=("${VARIANT}:${RESULT_LABEL}:${STATUS_CODE:-?}")
+          done
+
+          echo ""
+          echo "=============================================="
+          echo " MERGE SUMMARY"
+          echo "=============================================="
+          echo " Configured : ${TOTAL}"
+          echo " Merged     : ${FOUND}"
+          if [ "${#MERGED[@]}" -gt 0 ]; then
+            for entry in "${MERGED[@]}"; do
+              V="${entry%%:*}"
+              REST="${entry#*:}"
+              R="${REST%%:*}"
+              C="${REST#*:}"
+              if [ "${R}" = "PASS" ]; then
+                echo "   ✅ ${V}  status=${C}"
+              elif [ "${R}" = "FAIL" ]; then
+                echo "   ❌ ${V}  status=${C}  (see ${V}_build-analyze.log)"
+              else
+                echo "   ❓ ${V}  status=${C}"
+              fi
+            done
+          fi
+          echo "=============================================="
+
+          {
+            if [ -n "${UNIQUE_BUILD_NAME}" ]; then
+              echo "# Unique build results summary — build name: ${UNIQUE_BUILD_NAME}"
+            else
+              echo "# Build results summary (production variants)"
+              echo "# status_code 0 = PASS, non-zero = FAIL (bazel exit code)"
+              echo "# See <variant>_build-analyze.log for the full build log of each variant"
+              echo "#"
+            fi
+            echo "# Generated for run ${{ github.run_id }} / #${{ github.run_number }}"
+            echo ""
+            if [ -f "${PUBLISH}/.results_partial.txt" ]; then
+              cat "${PUBLISH}/.results_partial.txt"
+              rm -f "${PUBLISH}/.results_partial.txt"
+            fi
+          } > "${PUBLISH}/build_results_summary.txt"
+
+          echo ""
+          echo "=== publish/ tree (ROOT of combined-outputs.zip) ==="
+          find "${PUBLISH}" -maxdepth 5 \( -type d -o -type f \) | sort
+
+          echo ""
+          echo "=== publish/ root-level status/log files ==="
+          ls -la "${PUBLISH}"/*.txt "${PUBLISH}"/*.log 2>/dev/null || echo "(none)"
+
+          echo ""
+          echo "=== build_results_summary.txt ==="
+          cat "${PUBLISH}/build_results_summary.txt"
+
+          # NOTE: build_results_summary.txt is NOT mirrored onto the run's Step Summary
+          # page here — the dedicated "summary" (normal/nightly) and "summary_unique"
+          # (Unique Build) jobs already render this same data on the run summary page.
+          # Writing it here too produced duplicate tables/failure-detail sections.
+
+          if [ "${FOUND}" -eq 0 ]; then
+            echo "::warning::No build-PV-* artifacts found — uploading empty marker"
+            echo "no-outputs" > "${PUBLISH}/README_EMPTY.txt"
+          fi
+
+      - name: Upload combined-outputs${{ inputs.Need_Unique_Build && format('-{0}', inputs.unique_build_name) || '' }}
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: combined-outputs${{ inputs.Need_Unique_Build && format('-{0}', inputs.unique_build_name) || '' }}
+          path: publish/
+          if-no-files-found: warn
+
+      # Standalone copy so downstream jobs can read the verdict without pulling
+      # the multi-hundred-MB firmware artifact.
+      - name: Upload build-results-summary${{ inputs.Need_Unique_Build && format('-{0}', inputs.unique_build_name) || '' }}
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-results-summary${{ inputs.Need_Unique_Build && format('-{0}', inputs.unique_build_name) || '' }}
+          path: publish/build_results_summary.txt
+          if-no-files-found: warn
+
+  # ── Trigger SWE6 jobs (manual dispatch only, when checkbox is checked) ──
+  trigger_swe6:
+    name: Trigger SWE6 Jobs
+    needs: [combine_outputs]
+    # Fires on manual dispatch when run_swe6=true. Release branches have no nightly.
+    if: >-
+      always() &&
+      !inputs.Need_Custom_Build &&
+      !inputs.Need_Unique_Build &&
+      needs.combine_outputs.result != 'skipped' &&
+      (github.event_name == 'workflow_dispatch' && inputs.run_swe6 == true)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Dispatch SWE6 FLR8 + SWE6 SRR8P
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const wfs = ['swe6-flr8.yml', 'swe6-srr8p.yml'];
+            for (const wf of wfs) {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: wf,
+                ref: context.ref,
+                inputs: {
+                  'build-all-run-id': String(context.runId),
+                },
+              });
+              core.info(`Dispatched ${wf} — pinned to build-all run #${context.runId}`);
+            }
+
+  # -- Unique Build Summary (runs after unique build, always) --
+  summary_unique:
+    name: Unique Build Summary
+    needs: [build_gen8, combine_outputs]
+
+    if: |
+      always() &&
+      inputs.Need_Unique_Build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Download build results summary
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: build-results-summary-${{ inputs.unique_build_name }}
+          path: results-summary
+
+      - name: Generate Unique Build Summary
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const jobs = await github.paginate(
+              github.rest.actions.listJobsForWorkflowRun,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.runId,
+                per_page: 100,
+              }
+            );
+
+            const uniqueJobs = jobs.filter(j => j.name.startsWith('Build gen8 -'));
+
+            let passed = 0, failed = 0, other = 0;
+            const rows = [];
+            for (const job of uniqueJobs) {
+              const conclusion = job.conclusion || job.status || 'unknown';
+              let icon = '⏳';
+              if (conclusion === 'success') { icon = '✅'; passed++; }
+              else if (conclusion === 'failure') { icon = '❌'; failed++; }
+              else { icon = '⚠️'; other++; }
+              const label = job.name.replace('Build gen8 - ', '');
+              rows.push(`| ${icon} | ${label} | ${conclusion} |`);
+            }
+
+            const overallIcon = failed > 0 ? '❌' : (other > 0 ? '⚠️' : '✅');
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+            const sha7 = '${{ github.sha }}'.substring(0, 7);
+            const builtSha = '${{ inputs.commit_sha }}';
+            const builtSha7 = builtSha ? builtSha.substring(0, 7) : '';
+            const artifactName = `combined-outputs-${{ inputs.unique_build_name }}`;
+
+            let builtBranch = '', builtCommitMsg = '', builtCommitAuthor = '';
+            if (builtSha) {
+              try {
+                const { data: commit } = await github.rest.repos.getCommit({
+                  owner: context.repo.owner, repo: context.repo.repo, ref: builtSha,
+                });
+                const { data: brs } = await github.rest.repos.listBranchesForHeadCommit({
+                  owner: context.repo.owner, repo: context.repo.repo, commit_sha: commit.sha,
+                });
+                builtBranch = brs.length > 0 ? brs.map(b => b.name).join(', ') : '(historical — not a branch HEAD)';
+                builtCommitMsg = commit.commit.message.split('\n')[0].substring(0, 80);
+                builtCommitAuthor = commit.commit.author?.name || commit.commit.committer?.name || '';
+              } catch(e) {
+                core.warning(`Could not resolve commit ${builtSha}: ${e.message}`);
+              }
+            }
+
+            const metaRows = [
+              `| **Branch / Ref** | \`${{ github.ref_name }}\` |`,
+              `| **HEAD SHA** | \`${sha7}\` |`,
+            ];
+            if (builtSha) {
+              metaRows.push(`| **Built commit** | \`${builtSha7}\`${builtBranch ? ` on \`${builtBranch}\`` : ''} *(dispatch override)* |`);
+              if (builtCommitMsg) metaRows.push(`| **Commit msg** | ${builtCommitMsg} |`);
+              if (builtCommitAuthor) metaRows.push(`| **Author** | ${builtCommitAuthor} |`);
+            }
+            metaRows.push(`| **Triggered by** | @${{ github.actor }} · \`${{ github.event_name }}\` |`);
+            metaRows.push(`| **Build name** | \`${{ inputs.unique_build_name || '(unnamed)' }}\` |`);
+            metaRows.push(`| **Extra flags** | \`${{ inputs.unique_build_flags || '(none)' }}\` |`);
+            const devMacros = '${{ inputs.Is_Release_Build }}' === 'true'
+              ? 'skipped (release build)'
+              : ('${{ inputs.run_swe6 }}' === 'true')
+                ? 'skipped (SWE6 dispatch)'
+                : '`--disable_int_wdg` (manual dev build)';
+            metaRows.push(`| **Dev macros applied** | ${devMacros} |`);
+            metaRows.push(`| **Result** | ${overallIcon} ${passed} passed · ${failed} failed · ${other} other |`);
+            metaRows.push(`| **Run** | [#${{ github.run_number }}](${runUrl}) |`);
+            metaRows.push(`| **Artifact** | \`${artifactName}\` |`);
+
+            const md = [
+              `# ${overallIcon} Unique Build Summary`,
+              '',
+              '| | |',
+              '|---|---|',
+              ...metaRows,
+              '',
+              '## Per-Variant Results',
+              '',
+              '| Status | Variant | Conclusion |',
+              '|--------|---------|------------|',
+              ...rows,
+            ].join('\n');
+
+            // Failure detail lives in build_results_summary.txt (produced by
+            // combine_outputs); surface it here instead of only inside the zip.
+            let failureMd = '';
+            const summaryPath = 'results-summary/build_results_summary.txt';
+            try {
+              if (!fs.existsSync(summaryPath)) {
+                core.warning(`build_results_summary.txt not found at ${summaryPath} -- failure details unavailable.`);
+                if (failed > 0) {
+                  failureMd = '> ⚠️ Build failed but `build_results_summary.txt` was not available. Check the **Combine Outputs** job log.\n';
+                }
+              } else {
+                const text = fs.readFileSync(summaryPath, 'utf8');
+                const blocks = text.split(/^### /m).slice(1);
+                for (const block of blocks) {
+                  if (!/^result:\s*FAIL/m.test(block)) continue;
+                  const variant = block.split('\n')[0].trim() || '(unknown variant)';
+                  const cat = ((block.match(/^failure_category:\s*(.*)$/m) || [, ''])[1] || 'Build Failure').trim();
+                  const reason = ((block.match(/^failure_reason_start:\n([\s\S]*?)\nfailure_reason_end:$/m) || [, ''])[1] || '').trim();
+                  const snippet = ((block.match(/^--- error snippet ---\n([\s\S]*?)\n--- end snippet ---$/m) || [, ''])[1] || '').trim();
+                  const parts = [`<details open><summary>❌ <b>${variant}</b> — ${cat}</summary>`, ''];
+                  if (reason) parts.push('**Reason**', '', '```', reason, '```', '');
+                  if (snippet) parts.push(`**Log excerpt** (\`${variant}_build-analyze.log\`)`, '', '```', snippet, '```', '');
+                  if (!reason && !snippet) parts.push(`_No error detail captured -- see \`${variant}_build-analyze.log\`._`, '');
+                  parts.push('</details>', '');
+                  failureMd += parts.join('\n');
+                }
+                // Verbatim copy so the summary page carries everything the txt has.
+                const MAX_RAW = 200000;
+                const raw = text.length > MAX_RAW
+                  ? `${text.slice(0, MAX_RAW)}\n... [truncated -- see the artifact for the full file]`
+                  : text;
+                failureMd += [
+                  '<details><summary>📄 Full <b>build_results_summary.txt</b></summary>',
+                  '',
+                  '```text', raw.trim(), '```',
+                  '',
+                  '</details>',
+                  '',
+                ].join('\n');
+              }
+            } catch (e) {
+              core.warning(`Could not render failure details: ${e.message}`);
+            }
+
+            const finalMd = failureMd
+              ? `${md}\n\n## Failure Details\n\n${failureMd}`
+              : md;
+
+            try {
+              await core.summary.addRaw(finalMd).write();
+            } catch (e) {
+              // Never fail the run over a summary-rendering problem.
+              core.warning(`Could not write full summary (${e.message}); writing the table only.`);
+              await core.summary.addRaw(md).write();
+            }
+            core.info('Unique build summary written');
+
+  # -- Custom Build Summary (runs after custom build, always) --
+  summary_custom:
+    name: Custom Build Summary
+    needs: [build_custom]
+
+    if: |
+      always() &&
+      inputs.Need_Custom_Build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Generate Custom Build Summary
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const jobs = await github.paginate(
+              github.rest.actions.listJobsForWorkflowRun,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.runId,
+                per_page: 100,
+              }
+            );
+
+            const job =
+              jobs.find(j => j.name.startsWith('Custom Build -')) ||
+              jobs.find(j => j.name.includes('${{ inputs.custom_build_name }}'));
+
+            const conclusion =
+              job?.conclusion ||
+              job?.status ||
+              'unknown';
+
+            let icon = '⏳';
+
+            switch (conclusion) {
+              case 'success':
+                icon = '✅';
+                break;
+              case 'failure':
+                icon = '❌';
+                break;
+              case 'cancelled':
+                icon = '⚠️';
+                break;
+            }
+
+            const runUrl =
+              `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+
+            const devMacros = '${{ inputs.Is_Release_Build }}' === 'true'
+              ? 'skipped (release build)'
+              : ('${{ inputs.run_swe6 }}' === 'true')
+                ? 'skipped (SWE6 dispatch)'
+                : '`--disable_int_wdg` (manual dev build)';
+
+            const md = [
+              `# ${icon} Custom Build Summary`,
+              '',
+              '| Property | Value |',
+              '|----------|-------|',
+              `| Build Name | \`${{ inputs.custom_build_name || 'custom-build' }}\` |`,
+              `| Variant | \`${{ inputs.custom_build_variant }}\` |`,
+              `| Flags | \`${{ inputs.custom_build_flags || '(none)' }}\` |`,
+              `| Dev macros applied | ${devMacros} |`,
+              `| Status | ${icon} ${conclusion} |`,
+              `| Run | [#${{ github.run_number }}](${runUrl}) |`,
+            ].join('\n');
+
+            await core.summary.addRaw(md).write();
+            core.info(`Custom build summary written (${conclusion})`);
+
+  # ── Consolidated summary (runs after all builds, always) ──────────────────
+  summary:
+    name: Build Summary
+    needs: [build_gen8, extra_build_validation, build_emblib, combine_outputs, trigger_swe6]
+
+    if: |
+      always() &&
+      (!inputs.Need_Custom_Build && !inputs.Need_Unique_Build)
+
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Download build-* artifacts for status mapping
+        uses: actions/download-artifact@v4
+        with:
+          pattern: build-*
+          path: summary-downloads
+          merge-multiple: false
+          if-no-files-found: ignore
+
+      - name: Resolve built-SHA metadata
+        if: ${{ inputs.commit_sha != '' }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const sha = '${{ inputs.commit_sha }}';
+            try {
+              const { data: commit } = await github.rest.repos.getCommit({
+                owner: context.repo.owner, repo: context.repo.repo, ref: sha,
+              });
+              const { data: brs } = await github.rest.repos.listBranchesForHeadCommit({
+                owner: context.repo.owner, repo: context.repo.repo, commit_sha: commit.sha,
+              });
+              const branch = brs.length > 0 ? brs.map(b => b.name).join(', ') : '(historical — not a branch HEAD)';
+              core.exportVariable('BUILT_SHA_BRANCH', branch);
+              core.exportVariable('BUILT_SHA_MSG', commit.commit.message.split('\n')[0].substring(0, 80));
+              core.exportVariable('BUILT_SHA_AUTHOR', commit.commit.author?.name || commit.commit.committer?.name || '');
+            } catch(e) {
+              core.warning(`Could not resolve commit ${sha}: ${e.message}`);
+            }
+
+      - name: Build summary table from status + logs
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          BUILT_SHA: ${{ inputs.commit_sha }}
+          ACTOR: ${{ github.actor }}
+          RUN_NUM: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+
+          # Discover builds dynamically from downloaded artifact directories.
+          # Variant → naming convention (srr8p_* = srr8p, else flr8).
+          # Target  → artifact contents (sil_source subdir = emblib target, else //:gen8).
+          # No manual update needed when build_gen8 matrix entries are added or renamed.
+          BUILDS=()
+          while IFS= read -r _dir; do
+            [ -d "${_dir}" ] || continue
+            _base="$(basename "${_dir}")"
+            # Strip run-number/attempt suffixes: build-<name>[-N[-M]] → <name>
+            _N="${_base#build-}"
+            _N="${_N%-[0-9]*-[0-9]*}"
+            _N="${_N%-[0-9]*}"
+            [ -z "${_N}" ] && continue
+            case "${_N}" in *srr8p*) _V="srr8p" ;; *) _V="flr8" ;; esac
+            if find "${_dir}" -maxdepth 5 -type d -name 'sil_source' 2>/dev/null | grep -q .; then
+              _T="//sil/emb_lib/sil_source:emb_lib_sharedlib"
+            else
+              _T="//:gen8"
+            fi
+            BUILDS+=("${_N}|${_V}|${_T}")
+          done < <(find summary-downloads -maxdepth 1 -type d -name 'build-*' ! -name 'build-results-summary*' 2>/dev/null | sort)
+
+          [ "${#BUILDS[@]}" -eq 0 ] && echo "::warning::No build-* artifact directories found — summary will be empty"
+
+          echo "=== summary-downloads top-level ==="
+          ls -la summary-downloads 2>/dev/null || echo "(missing)"
+          echo ""
+          echo "=== build_status.txt files ==="
+          find summary-downloads -type f -name 'build_status.txt' 2>/dev/null | sort || true
+          echo ""
+          echo "=== build-analyze.log files ==="
+          find summary-downloads -type f -name 'build-analyze.log' 2>/dev/null | sort || true
+          echo ""
+
+          # Find a file for this variant without matching longer sibling names
+          # e.g. flr8_satellite must not pick flr8_satellite_someip paths.
+          match_file_for_variant() {
+            local name="$1"
+            local basename="$2"
+            local f
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              case "$f" in
+                */build-"${name}"/*|*/build-"${name}"-*)
+                  echo "$f"
+                  return 0
+                  ;;
+              esac
+            done < <(find summary-downloads -type f -name "${basename}" 2>/dev/null | sort)
+            return 1
+          }
+
+          # Returns the first ERROR/FAILED line only -- clean single line for the table cell.
+          extract_first_error() {
+            local log_file="$1"
+            local line
+            # Prefer coverage threshold failure (most actionable)
+            line="$(grep -m1 -E '\| ERR \|' "${log_file}" 2>/dev/null || true)"
+            if [ -z "$line" ]; then
+              line="$(grep -m1 -E '^ERROR:|^FAILED:|Build did NOT complete|error: Memory|Cannot allocate' "${log_file}" 2>/dev/null || true)"
+            fi
+            printf '%s' "${line}" | sed 's/|/\\|/g' | cut -c1-160
+          }
+
+          # Returns a multi-line error-context snippet for the collapsible details block.
+          extract_full_snippet() {
+            local log_file="$1"
+            local snippet
+            # For coverage failures: extract the header + ERR row + surrounding OK rows for context
+            local cov_snippet=""
+            if grep -q '| ERR |' "${log_file}" 2>/dev/null; then
+              cov_snippet="$(grep -B2 -A1 '| ERR |' "${log_file}" 2>/dev/null | head -n 20 || true)"
+              local cov_reason="$(grep -E 'Coverage requirements failed|failed to build' "${log_file}" 2>/dev/null | head -n 2 || true)"
+              if [ -n "${cov_reason}" ]; then
+                cov_snippet="${cov_snippet}"$'\n----\n'"${cov_reason}"
+              fi
+            fi
+            if [ -n "${cov_snippet}" ]; then
+              printf '%s' "${cov_snippet}"
+              return
+            fi
+            snippet="$(awk '
+              BEGIN { n = 0 }
+              {
+                buf[n % 6] = $0
+                n++
+                if ($0 ~ /^ERROR:|^FAILED:|error:|Error |FATAL|fatal|Build did NOT complete|Cannot allocate|Memory area|undefined reference|exit code|returned [1-9]/) {
+                  start = (n >= 6) ? (n - 6) : 0
+                  for (i = start; i < n; i++) print buf[i % 6]
+                  print "----"
+                }
+              }
+            ' "${log_file}" | tail -n 80 || true)"
+            if [ -z "${snippet}" ]; then
+              snippet="$(grep -v '^[[:space:]]*$' "${log_file}" | tail -n 25 || true)"
+            fi
+            printf '%s' "${snippet}"
+          }
+
+          PASSED=0
+          FAILED=0
+          UNKNOWN=0
+          PROD_PASSED=0
+          PROD_FAILED=0
+          PROD_UNKNOWN=0
+          ROWS=""
+          DETAILS=""
+
+          for entry in "${BUILDS[@]}"; do
+            IFS='|' read -r NAME VARIANT TARGET <<< "${entry}"
+
+            STATUS=""
+            REASON="—"
+            ICON="⏳"
+            LABEL="unknown"
+
+            STATUS_FILE="$(match_file_for_variant "${NAME}" 'build_status.txt' || true)"
+            LOG_FILE="$(match_file_for_variant "${NAME}" 'build-analyze.log' || true)"
+
+            if [ -n "${STATUS_FILE}" ]; then
+              STATUS="$(tr -d '[:space:]' < "${STATUS_FILE}" || true)"
+              echo "[${NAME}] status_file=${STATUS_FILE} value='${STATUS}'"
+            else
+              echo "[${NAME}] status_file=NOT FOUND"
+            fi
+
+            if [ -n "${LOG_FILE}" ]; then
+              echo "[${NAME}] log_file=${LOG_FILE}"
+            else
+              echo "[${NAME}] log_file=NOT FOUND"
+            fi
+
+            if [ "${STATUS}" = "0" ]; then
+              ICON="✅"
+              LABEL="PASS (0)"
+              REASON="—"
+              PASSED=$((PASSED + 1))
+            elif [ -n "${STATUS}" ]; then
+              ICON="❌"
+              LABEL="FAIL (${STATUS})"
+              if [ -n "${LOG_FILE}" ]; then
+                REASON="$(extract_first_error "${LOG_FILE}")"
+                [ -z "${REASON}" ] && REASON="(no ERROR\/FAILED line found)"
+                SNIPPET="$(extract_full_snippet "${LOG_FILE}")"
+                DETAILS="${DETAILS}<details><summary>❌ <b>${NAME}</b> — build-analyze.log excerpt</summary>\n\n\`\`\`\n${SNIPPET}\n\`\`\`\n\n</details>\n\n"
+              else
+                REASON="(build-analyze.log not in artifact)"
+                DETAILS="${DETAILS}<details><summary>❌ <b>${NAME}</b> — log not available</summary>\n\nbuild-analyze.log was not found in the downloaded artifact. Check the job logs directly.\n\n</details>\n\n"
+              fi
+              FAILED=$((FAILED + 1))
+              echo "[${NAME}] FAIL first error: ${REASON:0:200}"
+            else
+              # No status file — cannot know pass/fail from artifact
+              ICON="⏳"
+              LABEL="unknown"
+              REASON="build_status.txt not found in artifact"
+              UNKNOWN=$((UNKNOWN + 1))
+            fi
+
+            # Job logs link (run page; user can open the matrix job from there)
+            LINK="${RUN_URL}"
+            ROWS="${ROWS}| ${ICON} | [${NAME}](${LINK}) |"$'\n'
+            if [ "${REASON}" != "—" ] && [ -n "${REASON}" ]; then
+              ROWS="${ROWS}|  | ↳ *${REASON}* |"$'\n'
+            fi
+
+            # gen8 firmware builds gate the overall result (consistent with workflow badge).
+            if [ "${TARGET}" = "//:gen8" ]; then
+              [ "${ICON}" = "✅" ] && PROD_PASSED=$((PROD_PASSED + 1))
+              [ "${ICON}" = "❌" ] && PROD_FAILED=$((PROD_FAILED + 1))
+              [ "${ICON}" = "⏳" ] && PROD_UNKNOWN=$((PROD_UNKNOWN + 1))
+            fi
+          done
+
+          TOTAL=$((PASSED + FAILED + UNKNOWN))
+          PROD_TOTAL=$((PROD_PASSED + PROD_FAILED + PROD_UNKNOWN))
+          if [ "${PROD_FAILED}" -eq 0 ] && [ "${PROD_UNKNOWN}" -eq 0 ]; then
+            OVERALL_ICON="✅"
+            OVERALL_LABEL="All ${PROD_TOTAL} gen8 firmware builds passed"
+            NONPROD_FAILED=$((FAILED - PROD_FAILED))
+            [ "${NONPROD_FAILED}" -gt 0 ] && OVERALL_LABEL="${OVERALL_LABEL} · ${NONPROD_FAILED} supplementary failed"
+          else
+            OVERALL_ICON="❌"
+            PARTS=()
+            [ "${PROD_PASSED}" -gt 0 ] && PARTS+=("${PROD_PASSED} passed")
+            [ "${PROD_FAILED}" -gt 0 ] && PARTS+=("${PROD_FAILED} failed")
+            [ "${PROD_UNKNOWN}" -gt 0 ] && PARTS+=("${PROD_UNKNOWN} unknown")
+            OVERALL_LABEL="$(IFS=' · '; echo "${PARTS[*]}") of ${PROD_TOTAL} gen8 firmware total"
+          fi
+
+          SHA7="$(echo "${SHA}" | cut -c1-7)"
+          BUILT_SHA7="$([ -n "${BUILT_SHA}" ] && echo "${BUILT_SHA}" | cut -c1-7 || echo "${SHA7}")"
+
+          # Same Is_Release_Build/SWE6-aware logic used by every build job's BUILD_CMD --
+          # kept in sync manually since each job computes it independently in its own script.
+          if [ "${{ inputs.Is_Release_Build }}" = "true" ]; then
+            DEV_MACROS_LABEL="skipped (release build)"
+          elif [ "${{ inputs.run_swe6 }}" = "true" ]; then
+            DEV_MACROS_LABEL="skipped (SWE6 dispatch)"
+          else
+            DEV_MACROS_LABEL="\`--disable_int_wdg\` (manual dev build)"
+          fi
+
+          {
+            echo "# ${OVERALL_ICON} Build All Variants"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Ref** | \`${REF_NAME}\` @ \`${SHA7}\` |"
+            if [ -n "${BUILT_SHA}" ]; then
+              _branch="${BUILT_SHA_BRANCH:-}"
+              echo "| **Built commit** | \`${BUILT_SHA7}\`${_branch:+ on \`${_branch}\`} *(dispatch override)* |"
+              [ -n "${BUILT_SHA_MSG:-}" ] && echo "| **Commit msg** | ${BUILT_SHA_MSG} |"
+              [ -n "${BUILT_SHA_AUTHOR:-}" ] && echo "| **Author** | ${BUILT_SHA_AUTHOR} |"
+            fi
+            echo "| **Triggered by** | @${ACTOR} |"
+            echo "| **Dev macros applied** | ${DEV_MACROS_LABEL} |"
+            echo "| **Run** | [#${RUN_NUM}](${RUN_URL}) |"
+            echo "| **Result** | ${OVERALL_ICON} ${OVERALL_LABEL} |"
+            echo ""
+            echo "## Per-Variant Results"
+            echo ""
+            echo "| Status | Build Name |"
+            echo "|--------|------------|"
+            printf '%s' "${ROWS}"
+            echo ""
+            echo "> ↳ rows show the first ERROR line from \`build-analyze.log\`."
+            echo "> Full \`build-analyze.log\` for every variant is in the \`combined-outputs\` artifact as \`<variant>_build-analyze.log\`."
+            echo "> Build names prefixed **PV-** are Production Variants included in \`combined-outputs.zip\`."
+            if [ -n "${DETAILS}" ]; then
+              echo ""
+              echo "## Failure Details"
+              echo ""
+              printf '%b' "${DETAILS}"
+            fi
+          } | tee -a "${GITHUB_STEP_SUMMARY}"
+
+          echo ""
+          echo "Summary written: ${OVERALL_LABEL}"

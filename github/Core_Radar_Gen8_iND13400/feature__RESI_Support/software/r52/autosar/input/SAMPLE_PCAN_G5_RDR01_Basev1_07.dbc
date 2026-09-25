@@ -1,0 +1,397 @@
+VERSION "created by canmatrix"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: External_Tool ASDM G5_RDR01
+VAL_TABLE_ VitSig_HED_AF_ALGO_PLATFORM 1 "FLR4p" 0 "GEN5" ;
+VAL_TABLE_ vtSig_CAN_PLATFORM_VARIANT 0 "VARIANT_INVALID" 1 "VARIANT_MRR3" 2 "VARIANT_SRR5" 3 "VARIANT_RACAM" 4 "VARIANT_MRR360" 5 "VARIANT_MRR3LLP_A01" 6 "VARIANT_MRR3LLP" ;
+VAL_TABLE_ vtSig_HED_TIME_SYNC_SRC_MASTER 1 "GLOBAL" 0 "LOCAL" ;
+VAL_TABLE_ vtSig_STS_HARDWARE 5 "RESERVED2" 4 "RESERVED1" 3 "RCM_RDI3_HIL" 2 "RCM_RDI3_LOG" 1 "RCM" 0 "UNKNOWN" ;
+
+
+BO_ 2 SYS_VEHICLE_STATUS: 64 ASDM
+ SG_ SSTS_SW_VERSION_ASDM : 23|32@0+ (1,0) [0|4294967295] ""  G5_RDR01
+ SG_ SSTS_CAN_PCAN_MINOR_ASDM : 7|8@0+ (1,0) [0|255] ""  G5_RDR01
+ SG_ SSTS_CAN_PCAN_MAJOR_ASDM : 15|8@0+ (1,0) [0|255] ""  G5_RDR01
+ SG_ SSTS_YAW_RATE_CALC_QF : 71|2@0+ (1,0) [0|3] ""  G5_RDR01
+ SG_ SSTS_YAW_RATE_BIAS : 54|4@0+ (0.025,0) [0|0.375] "rad/s"  G5_RDR01
+ SG_ SSTS_YAW_RATE_CALC : 49|10@0+ (0.005,-2.24) [-2.24|2.24] "rad/s"  G5_RDR01
+ SG_ SSTS_VEH_SPD_COMP_FACTOR : 69|8@0- (0.001953125,1) [0.75|1.248046875] "NA"  G5_RDR01
+ SG_ SSTS_VEHICLE_SPEED_CALC_QF : 73|2@0+ (1,0) [0|3] ""  G5_RDR01
+ SG_ SSTS_VEHICLE_SPEED_CALC : 85|14@0+ (0.01,0) [0|163.83] "m/s"  G5_RDR01
+ SG_ SSTS_VEH_BATT_VOLT : 151|8@0+ (0.0625,0) [0|15.875] "V"  G5_RDR01
+ SG_ SSTS_IGN_STATUS : 139|4@0+ (1,0) [0|15] ""  G5_RDR01
+ SG_ SSTS_GEAR_POSITION : 143|4@0+ (1,0) [0|15] ""  G5_RDR01
+ SG_ SSTS_WIPER_STATUS : 128|1@0+ (1,0) [0|1] ""  G5_RDR01
+ SG_ SSTS_PWPCKTQ_D_STAT : 108|2@0+ (1,0) [0|3] "SED"  G5_RDR01
+ SG_ SSTS_CC_STAT_D_ACTL : 111|3@0+ (1,0) [0|7] "SED"  G5_RDR01
+ SG_ SSTS_ElPW_D_STAT : 106|3@0+ (1,0) [0|7] "SED"  G5_RDR01
+ SG_ SSTS_VEHOVERGND_V_EST : 119|16@0+ (0.01,0) [0|655.33] "kph"  G5_RDR01
+ SG_ SSTS_LROS_DRIVE_DIR : 133|4@0+ (1,0) [0|3] ""  G5_RDR01
+ SG_ SSTS_LROS_DRIVE_REVERSE : 129|1@0+ (1,0) [0|1] ""  G5_RDR01
+ SG_ SSTS_LEFT_BLINK : 134|1@0+ (1,0) [0|1] ""  G5_RDR01
+ SG_ SSTS_RIGHT_BLINK : 135|1@0+ (1,0) [0|1] ""  G5_RDR01
+ SG_ SSTS_STEERING_ANGLE_SIGN : 167|1@0+ (1,0) [0|1] ""  G5_RDR01
+ SG_ SSTS_STEERING_ANGLE : 166|8@0+ (0.0174533,0) [0|3.141599] "rad"  G5_RDR01
+ SG_ SSTS_MH_VS_CYCLE_COUNTER : 191|8@0+ (1,0) [0|255] ""  G5_RDR01
+ SG_ SSTS_MH_VS_CRC16 : 199|16@0+ (1,0) [0|65535] ""  G5_RDR01
+
+BO_ 323 RDR_TRACKER_OBJ_004: 64 G5_RDR01
+ SG_ OBJ_ALIVE_TIME_004 : 255|16@0+ (1,0) [0|65535] "ms"  ASDM
+ SG_ OBJ_ACCELERATION_LONG_ERR_004 : 215|8@0+ (0.025,0) [0|6.375] "m/s^2"  ASDM
+ SG_ OBJ_ACCELERATION_LAT_ERR_004 : 223|8@0+ (0.025,0) [0|6.375] "m/s^2"  ASDM
+ SG_ OBJ_VELOCITY_LONG_ERR_004 : 143|8@0+ (0.05,0) [0|12.75] "m/s"  ASDM
+ SG_ OBJ_VELOCITY_LAT_ERR_004 : 151|8@0+ (0.05,0) [0|12.75] "m/s"  ASDM
+ SG_ OBJ_POS_LONG_ERR_004 : 95|8@0+ (0.025,0) [0|6.375] "m"  ASDM
+ SG_ OBJ_POS_LAT_ERR_004 : 103|8@0+ (0.025,0) [0|6.375] "m"  ASDM
+ SG_ OBJ_TRACK_MOTION_MODEL_004 : 9|2@0+ (1,0) [1|3] "NA"  ASDM
+ SG_ OBJ_DIMENSION_WIDTH_004 : 17|10@0+ (0.01,0) [0|10.23] "m"  ASDM
+ SG_ OBJ_DIMENSION_LENGTH_004 : 37|12@0+ (0.01,0) [0|40.95] "m"  ASDM
+ SG_ OBJ_EXISTENCE_PROB_004 : 229|14@0+ (0.0001,0) [0|1] "NA"  ASDM
+ SG_ OBJ_YAW_ANGLE_004 : 155|12@0+ (0.005,-10) [-10|10.475] "rad"  ASDM
+ SG_ OBJ_YAW_ANGLE_ERR_004 : 175|7@0+ (0.01,0) [0|1.27] "rad"  ASDM
+ SG_ OBJ_ID_004 : 7|8@0+ (1,0) [0|255] "NA"  ASDM
+ SG_ OBJ_MOVEMENT_STATUS_004 : 196|3@0+ (1,0) [0|3] "NA"  ASDM
+ SG_ OBJ_MEASUREMENT_STATUS_004 : 14|3@0+ (1,0) [0|7] "NA"  ASDM
+ SG_ OBJ_POS_LONG_004 : 63|16@0+ (0.01,-327) [-327|327] "m"  ASDM
+ SG_ OBJ_POS_LAT_004 : 79|16@0+ (0.01,-327) [-327|327] "m"  ASDM
+ SG_ OBJ_VELOCITY_LONG_004 : 110|15@0+ (0.01,-163) [-163|163] "m/s"  ASDM
+ SG_ OBJ_VELOCITY_LAT_004 : 126|15@0+ (0.01,-163) [-163|163] "m/s"  ASDM
+ SG_ OBJ_ACCELERATION_LONG_004 : 193|10@0+ (0.05,-20) [-20|20] "m/s^2"  ASDM
+ SG_ OBJ_ACCELERATION_LAT_004 : 177|10@0+ (0.05,-20) [-20|20] "m/s^2"  ASDM
+ SG_ OBJ_VEH_TRACK_FLAG_004 : 10|1@0+ (1,0) [0|1] "NA"  ASDM
+ SG_ OBJ_MH_CYCLE_COUNTER_004 : 487|8@0+ (1,0) [0|255] "NA"  ASDM
+ SG_ OBJ_MH_CRC16_004 : 495|16@0+ (1,0) [0|65535] "NA"  ASDM
+ SG_ OBJ_TIMESTAMP_OFFSET_004 : 247|8@0+ (1,-127) [-127|128] "ms"  ASDM
+ SG_ OBJ_DIMENSION_WIDTH_ERR_004 : 23|6@0+ (0.01,0) [0|0.63] "m"  ASDM
+ SG_ OBJ_DIMENSION_LENGTH_ERR_004 : 41|10@0+ (0.01,0) [0|10.23] "m"  ASDM
+ SG_ OBJ_CLS_TYPE1_004 : 271|4@0+ (1,0) [0|15] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE1_PROB_004 : 303|8@0+ (0.004,0) [0|1] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE2_004 : 267|4@0+ (1,0) [0|15] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE2_PROB_004 : 311|8@0+ (0.004,0) [0|1] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE3_004 : 279|4@0+ (1,0) [0|15] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE3_PROB_004 : 319|8@0+ (0.004,0) [0|1] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE4_004 : 275|4@0+ (1,0) [0|15] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE4_PROB_004 : 327|8@0+ (0.004,0) [0|1] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE5_004 : 287|4@0+ (1,0) [0|15] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE5_PROB_004 : 335|8@0+ (0.004,0) [0|1] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE6_004 : 282|4@0+ (1,0) [0|15] "NA"  ASDM
+ SG_ OBJ_CLS_TYPE6_PROB_004 : 343|8@0+ (0.004,0) [0|1] "NA"  ASDM
+ SG_ OBJ_RCS_004 : 351|7@0+ (1,-64) [-64|63] "dBsm"  ASDM
+ SG_ OBJ_REF_PT_LONG_OFFSET_004 : 357|14@0+ (0.0001,0) [0|1] "NA"  ASDM
+ SG_ OBJ_REF_PT_LAT_OFFSET_004 : 370|14@0+ (0.0001,0) [0|1] "NA"  ASDM
+ SG_ OBJ_YAW_RATE_004 : 399|10@0+ (0.005,-2.24) [-2.24|2.24] "rad/s"  ASDM
+ SG_ OBJ_YAW_RATE_ERR_004 : 388|5@0+ (0.025,0) [0|0.775] "rad/s"  ASDM
+ SG_ OBJ_GROUP_ID_004 : 405|6@0+ (1,0) [0|63] "NA"  ASDM
+ SG_ OBJ_POS_ERR_CRR_COEF_004 : 415|8@0+ (0.01,-1.2) [-1.2|1] "NA"  ASDM
+ SG_ OBJ_VELOCITY_ERR_CRR_COEF_004 : 423|8@0+ (0.01,-1.2) [-1.2|1] "NA"  ASDM
+ SG_ OBJ_ACCEL_ERR_CRR_COEF_004 : 431|8@0+ (0.01,-1.2) [-1.2|1] "NA"  ASDM
+
+
+
+CM_ SG_ 2 SSTS_YAW_RATE_CALC_QF "Yaw Rate quallity factor";
+CM_ SG_ 2 SSTS_VEHICLE_SPEED_CALC_QF "Speed Quality factor";
+CM_ SG_ 2 SSTS_VEH_BATT_VOLT "absolute battery voltage";
+CM_ SG_ 2 SSTS_PWPCKTQ_D_STAT "Indicates if the power pack is a motive (wheel torque producing) or non-motive (non-wheel torque producing) mode. It also indicates to if a transition from a non-motive to a motive mode is in progress.";
+CM_ SG_ 2 SSTS_CC_STAT_D_ACTL "Status of cruise  controls.";
+CM_ SG_ 2 SSTS_ElPW_D_STAT "Indicates if the power pack is supporting the 12V bus with energy, supporting but about to stop, not supporting and undergoing a large power draw (e.g. starting MHEV ICE), or in a fault limited support mode.";
+CM_ SG_ 2 SSTS_VEHOVERGND_V_EST "Estimated vehicle speed over ground.";
+CM_ SG_ 2 SSTS_STEERING_ANGLE_SIGN "Actual steering angle direction, from the centre position of the steering wheel.";
+CM_ SG_ 2 SSTS_STEERING_ANGLE "Actual steering wheel angle. Datum (zero) of the steering wheel position is determined at the time of calibration in the factory.   This is only the magnitude of the steering wheel angle.";
+CM_ SG_ 323 OBJ_ALIVE_TIME_004 "Time since object initialization in msec. Tracker internal may have bigger values. On the output interface, we should saturate the signal in that case.";
+CM_ SG_ 323 OBJ_ACCELERATION_LONG_ERR_004 "acceleration along Longi  direction";
+CM_ SG_ 323 OBJ_ACCELERATION_LAT_ERR_004 "acceleration along Lat direction error";
+CM_ SG_ 323 OBJ_POS_LONG_ERR_004 "Lat-position error of object track's centroid in VCS coordinate";
+CM_ SG_ 323 OBJ_POS_LAT_ERR_004 "Lat-position error of object track's centroid in VCS coordinate";
+CM_ SG_ 323 OBJ_TRACK_MOTION_MODEL_004 "Object tracking uses a motion model for tracking moving items";
+CM_ SG_ 323 OBJ_DIMENSION_WIDTH_004 "Lat distance from centroid to edge of bounding box.";
+CM_ SG_ 323 OBJ_DIMENSION_LENGTH_004 "Longi distance from centroid to edge of bounding box.";
+CM_ SG_ 323 OBJ_EXISTENCE_PROB_004 "Probability that the target is an actual target";
+CM_ SG_ 323 OBJ_YAW_ANGLE_004 "Orientation of track's bounding box in VCS coordinate";
+CM_ SG_ 323 OBJ_ID_004 "ID of object tracks, zero-ID represents an inactive track";
+CM_ SG_ 323 OBJ_MOVEMENT_STATUS_004 "Information about a possible movement of the object during tracking";
+CM_ SG_ 323 OBJ_MEASUREMENT_STATUS_004 "Objects should be sent out as fast as possible, even if not all statuses are observed and the object’s
+signals might not be fully filled.";
+CM_ SG_ 323 OBJ_POS_LONG_004 "Long-position of object track's centroid in VCS coordinate";
+CM_ SG_ 323 OBJ_POS_LAT_004 "Lat-position of object track's centroid in VCS coordinate";
+CM_ SG_ 323 OBJ_VELOCITY_LONG_004 "Over-the-ground velocity of object track's centroid along Long direction (in VCS coordinate)";
+CM_ SG_ 323 OBJ_VELOCITY_LAT_004 "Over-the-ground velocity of object track's centroid along Lat direction (in VCS coordinate)";
+CM_ SG_ 323 OBJ_ACCELERATION_LONG_004 "Over-the-ground track acceleration along Longi direction (in VCS coordinate)";
+CM_ SG_ 323 OBJ_ACCELERATION_LAT_004 "Over-the-ground track acceleration along Lat direction (in VCS coordinate)";
+CM_ SG_ 323 OBJ_VEH_TRACK_FLAG_004 "Indicates if current track is a vehicle";
+CM_ SG_ 323 OBJ_TIMESTAMP_OFFSET_004 "A timestamp offset from the object list header timestamp for each object as we have different timestamps from different sensors leading to different timestamps on each object";
+CM_ SG_ 323 OBJ_DIMENSION_WIDTH_ERR_004 "Lat distance or length error";
+CM_ SG_ 323 OBJ_DIMENSION_LENGTH_ERR_004 "Longi distance or length error";
+CM_ SG_ 323 OBJ_CLS_TYPE1_004 "Classification Type 1(Highest Prob), selected from ENUM list";
+CM_ SG_ 323 OBJ_CLS_TYPE1_PROB_004 "Classification Type 1 probablity";
+CM_ SG_ 323 OBJ_CLS_TYPE6_004 "Classification Type 6(Lowest Prob), selected from ENUM list";
+CM_ SG_ 323 OBJ_CLS_TYPE6_PROB_004 "Classification Type 1 probablity";
+CM_ SG_ 323 OBJ_RCS_004 "Representative RCS of the complete recognized object, Not implemented";
+CM_ SG_ 323 OBJ_REF_PT_LONG_OFFSET_004 "Outer edges of the recognized object’s bounding box in Y axis";
+CM_ SG_ 323 OBJ_REF_PT_LAT_OFFSET_004 "Outer edges of the recognized object’s bounding box in X axis";
+CM_ SG_ 323 OBJ_YAW_RATE_004 "Orientation rate of track's bounding box in VCS coordinate";
+CM_ SG_ 323 OBJ_GROUP_ID_004 "Objects which are linked together shall have same group ID";
+CM_ SG_ 323 OBJ_POS_ERR_CRR_COEF_004 "vx-vy correlation due to small error in radial direction and big in cross radial - position Correlation Coefficient Error";
+CM_ SG_ 323 OBJ_VELOCITY_ERR_CRR_COEF_004 "vx-vy correlation due to small error in radial direction and big in cross radial - velocity Correlation Coefficient Error";
+CM_ SG_ 323 OBJ_ACCEL_ERR_CRR_COEF_004 "vx-vy correlation due to small error in radial direction and big in cross radial - Acceleration Correlation Coefficient Error";
+BA_DEF_ BO_  "CanTpBs" INT 0 255;
+BA_DEF_ BO_  "ConfiguredTransmitter" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagConnection" INT 0 65535;
+BA_DEF_ BO_  "DiagRequest" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagResponse" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagState" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagUUDTResponse" ENUM  "No","Yes";
+BA_DEF_ BO_  "EventRateOfChange" INT 10 10000;
+BA_DEF_ BO_  "FrameGatewayNetwork" STRING ;
+BA_DEF_ BO_  "GenMsgCmt" STRING ;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 100000;
+BA_DEF_ BO_  "GenMsgCycleTimeFast" INT 0 100000;
+BA_DEF_ BO_  "GenMsgDelayTime" INT 0 1000;
+BA_DEF_ BO_  "GenMsgHandlingTypeCode" STRING ;
+BA_DEF_ BO_  "GenMsgHandlingTypeDoc" STRING ;
+BA_DEF_ BO_  "GenMsgILSupport" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgMarked" STRING ;
+BA_DEF_ BO_  "GenMsgNrOfRepetition" INT 0 100;
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "FixedPeriodic","Event","EnabledPeriodic","NotUsed","NotUsed","EventPeriodic","NotUsed","NotUsed","NoMsgSendType";
+BA_DEF_ BO_  "GenMsgStartDelayTime" INT 0 10000;
+BA_DEF_ BO_  "MessageGateway" ENUM  "No","Yes";
+BA_DEF_ BO_  "Mulitplexer" ENUM  "No","Yes";
+BA_DEF_ BO_  "NetworkInitialization" ENUM  "No","Yes";
+BA_DEF_ BO_  "NetworkInitializationCommand" ENUM  "No","Yes";
+BA_DEF_ BO_  "NmAsrMessage" ENUM  "No","Yes";
+BA_DEF_ BO_  "NmMessage" ENUM  "No","Yes";
+BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","StandardCAN_FD","ExtendedCAN_FD";
+BA_DEF_ SG_  "GenSigCmt" STRING ;
+BA_DEF_ SG_  "GenSigCycleTime" INT 0 0;
+BA_DEF_ SG_  "GenSigInactiveValue" INT 0 100000;
+BA_DEF_ SG_  "GenSigMarked" STRING ;
+BA_DEF_ SG_  "GenSigMissingSourceValue" INT 0 1000000000;
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cyclic","OnWrite","vector_leerstring","OnChange","vector_leerstring","IfActive","vector_leerstring","NoSigSendType";
+BA_DEF_ SG_  "GenSigStartValue" INT 0 1000000000;
+BA_DEF_ SG_  "GenSigTimeoutTime" INT 0 0;
+BA_DEF_ SG_  "GenSigVtEn" STRING ;
+BA_DEF_ SG_  "GenSigVtIndex" STRING ;
+BA_DEF_ SG_  "GenSigVtName" STRING ;
+BA_DEF_ SG_  "WakeupSignal" ENUM  "No","Yes";
+BA_DEF_ BU_  "GatewayECU" ENUM  "No","Yes";
+BA_DEF_ BU_  "NetworkInitializationUsed" ENUM  "No","Yes";
+BA_DEF_ BU_  "NmAsrNode" ENUM  "No","Yes";
+BA_DEF_ BU_  "NmAsrNodeIdentifier" HEX 128 255;
+BA_DEF_ BU_  "NmNode" ENUM  "No","Yes";
+BA_DEF_ BU_  "NmStationAddress" HEX 0 0;
+BA_DEF_ BU_  "NodeLayerModules" STRING ;
+BA_DEF_ BU_  "NodeStartUpTime" INT 0 10000;
+BA_DEF_ BU_  "NodeWakeUpTime" INT 0 10000;
+BA_DEF_ BU_  "PowerType" ENUM  "Switched","Latched","Sleep","vector_leerstring","vector_leerstring";
+BA_DEF_ BU_  "TpOwnSystemEcuNumber" HEX 0 255;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "GenAuthor" STRING ;
+BA_DEF_  "GenCompany" STRING ;
+BA_DEF_  "GenDescription" STRING ;
+BA_DEF_  "GenNetworkBaudrate" STRING ;
+BA_DEF_  "GenNetworkMuxEn" STRING ;
+BA_DEF_  "GenNetworkName" STRING ;
+BA_DEF_  "GenRevision" STRING ;
+BA_DEF_  "GenRevisionDate" STRING ;
+BA_DEF_  "Manufacturer" STRING ;
+BA_DEF_  "NetworkSpeed" ENUM  "500kBits/s","125kBit/s","2MBits/s";
+BA_DEF_  "NmAsrBaseAddress" HEX 1408 1408;
+BA_DEF_  "NmAsrMessageCount" INT 64 128;
+BA_DEF_  "NmBaseAddress" HEX 1280 1280;
+BA_DEF_  "NmMessageCount" INT 0 128;
+BA_DEF_  "NmType" STRING ;
+BA_DEF_  "VersionDay" INT 1 31;
+BA_DEF_  "VersionMonth" INT 1 12;
+BA_DEF_  "VersionYear" INT 2000 3000;
+BA_DEF_DEF_  "CanTpBs" 255;
+BA_DEF_DEF_  "ConfiguredTransmitter" "No";
+BA_DEF_DEF_  "DiagConnection" 0;
+BA_DEF_DEF_  "DiagRequest" "No";
+BA_DEF_DEF_  "DiagResponse" "No";
+BA_DEF_DEF_  "DiagState" "No";
+BA_DEF_DEF_  "DiagUUDTResponse" "No";
+BA_DEF_DEF_  "EventRateOfChange" 10000;
+BA_DEF_DEF_  "FrameGatewayNetwork" "NONE";
+BA_DEF_DEF_  "GenMsgCmt" "";
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenMsgCycleTimeFast" 0;
+BA_DEF_DEF_  "GenMsgDelayTime" 0;
+BA_DEF_DEF_  "GenMsgHandlingTypeCode" "";
+BA_DEF_DEF_  "GenMsgHandlingTypeDoc" "";
+BA_DEF_DEF_  "GenMsgILSupport" "Yes";
+BA_DEF_DEF_  "GenMsgMarked" "";
+BA_DEF_DEF_  "GenMsgNrOfRepetition" 0;
+BA_DEF_DEF_  "GenMsgSendType" "NoMsgSendType";
+BA_DEF_DEF_  "GenMsgStartDelayTime" 0;
+BA_DEF_DEF_  "MessageGateway" "No";
+BA_DEF_DEF_  "Mulitplexer" "No";
+BA_DEF_DEF_  "NetworkInitialization" "Yes";
+BA_DEF_DEF_  "NetworkInitializationCommand" "No";
+BA_DEF_DEF_  "NmAsrMessage" "No";
+BA_DEF_DEF_  "NmMessage" "No";
+BA_DEF_DEF_  "VFrameFormat" "StandardCAN_FD";
+BA_DEF_DEF_  "GenSigCmt" "";
+BA_DEF_DEF_  "GenSigCycleTime" 0;
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenSigMarked" "";
+BA_DEF_DEF_  "GenSigMissingSourceValue" 0;
+BA_DEF_DEF_  "GenSigSendType" "NoSigSendType";
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_DEF_DEF_  "GenSigTimeoutTime" 0;
+BA_DEF_DEF_  "GenSigVtEn" "";
+BA_DEF_DEF_  "GenSigVtIndex" "";
+BA_DEF_DEF_  "GenSigVtName" "";
+BA_DEF_DEF_  "WakeupSignal" "No";
+BA_DEF_DEF_  "GatewayECU" "No";
+BA_DEF_DEF_  "NetworkInitializationUsed" "No";
+BA_DEF_DEF_  "NmAsrNode" "No";
+BA_DEF_DEF_  "NmAsrNodeIdentifier" 128;
+BA_DEF_DEF_  "NmNode" "No";
+BA_DEF_DEF_  "NmStationAddress" 0;
+BA_DEF_DEF_  "NodeLayerModules" "CANoeILNLFord.dll";
+BA_DEF_DEF_  "NodeStartUpTime" 250;
+BA_DEF_DEF_  "NodeWakeUpTime" 10;
+BA_DEF_DEF_  "PowerType" "Switched";
+BA_DEF_DEF_  "TpOwnSystemEcuNumber" 0;
+BA_DEF_DEF_  "BusType" "CAN";
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "GenAuthor" "xx";
+BA_DEF_DEF_  "GenCompany" "APTIV";
+BA_DEF_DEF_  "GenDescription" "CAN bus that communicates the radars";
+BA_DEF_DEF_  "GenNetworkBaudrate" "500 kbps";
+BA_DEF_DEF_  "GenNetworkMuxEn" "FALSE";
+BA_DEF_DEF_  "GenNetworkName" "PCAN";
+BA_DEF_DEF_  "GenRevision" "v1.00";
+BA_DEF_DEF_  "GenRevisionDate" "March 30, 2021";
+BA_DEF_DEF_  "Manufacturer" "Ford";
+BA_DEF_DEF_  "NetworkSpeed" "2MBits/s";
+BA_DEF_DEF_  "NmAsrBaseAddress" 1408;
+BA_DEF_DEF_  "NmAsrMessageCount" 64;
+BA_DEF_DEF_  "NmBaseAddress" 1280;
+BA_DEF_DEF_  "NmMessageCount" 128;
+BA_DEF_DEF_  "NmType" "NmAsr";
+BA_DEF_DEF_  "VersionDay" 2;
+BA_DEF_DEF_  "VersionMonth" 1;
+BA_DEF_DEF_  "VersionYear" 2021;
+BA_ "VersionYear" 2021;
+BA_ "VersionMonth" 3;
+BA_ "VersionDay" 30;
+BA_ "NmType" "NmAsr";
+BA_ "NmBaseAddress" 1280;
+BA_ "Manufacturer" "";
+BA_ "GenRevision" "V01.07";
+BA_ "GenNetworkName" "PCAN";
+BA_ "GenNetworkMuxEn" "FALSE";
+BA_ "GenNetworkBaudrate" "500000";
+BA_ "GenCompany" "Aptiv";
+BA_ "BusType" "CAN FD";
+BA_ "DBName" "PCAN_RADAR";
+BA_ "NodeLayerModules" BU_ External_Tool "CANoeILNLFord.dll";
+BA_ "NmStationAddress" BU_ External_Tool 0;
+BA_ "TpOwnSystemEcuNumber" BU_ ASDM 0;
+BA_ "NodeLayerModules" BU_ ASDM "CANoeILNLFord.dll";
+BA_ "NmStationAddress" BU_ ASDM 0;
+BA_ "NodeLayerModules" BU_ G5_RDR01 "CANoeILNLFord.dll";
+BA_ "GenMsgSendType" BO_ 2 0;
+BA_ "GenMsgCycleTime" BO_ 2 25;
+BA_ "VFrameFormat" BO_ 2 14;
+BA_ "GenMsgSendType" BO_ 323 1;
+BA_ "VFrameFormat" BO_ 323 14;
+BA_ "GenSigVtName" SG_ 2 SSTS_YAW_RATE_CALC_QF "VtSig_CAN_YAW_RATE_CALC_QF";
+BA_ "GenSigVtEn" SG_ 2 SSTS_YAW_RATE_CALC_QF "TRUE";
+BA_ "GenSigSendType" SG_ 2 SSTS_YAW_RATE_CALC_QF 7;
+BA_ "GenSigCmt" SG_ 2 SSTS_YAW_RATE_CALC_QF "Quality factor of the CAN_YAW_RATE_CALC signal";
+BA_ "GenSigStartValue" SG_ 2 SSTS_YAW_RATE_BIAS 0;
+BA_ "GenSigSendType" SG_ 2 SSTS_YAW_RATE_BIAS 7;
+BA_ "GenSigCmt" SG_ 2 SSTS_YAW_RATE_BIAS "Yaw rate bias";
+BA_ "GenSigStartValue" SG_ 2 SSTS_YAW_RATE_CALC 448;
+BA_ "GenSigSendType" SG_ 2 SSTS_YAW_RATE_CALC 7;
+BA_ "GenSigCmt" SG_ 2 SSTS_YAW_RATE_CALC "Contains the bias-compensated yaw rate";
+BA_ "GenSigStartValue" SG_ 2 SSTS_VEH_SPD_COMP_FACTOR 0;
+BA_ "GenSigSendType" SG_ 2 SSTS_VEH_SPD_COMP_FACTOR 7;
+BA_ "GenSigCmt" SG_ 2 SSTS_VEH_SPD_COMP_FACTOR "Compensated vehicle speed factor";
+BA_ "GenSigVtName" SG_ 2 SSTS_VEHICLE_SPEED_CALC_QF "VtSig_CAN_VEHICLE_SPEED_CALC_QF";
+BA_ "GenSigVtEn" SG_ 2 SSTS_VEHICLE_SPEED_CALC_QF "TRUE";
+BA_ "GenSigSendType" SG_ 2 SSTS_VEHICLE_SPEED_CALC_QF 7;
+BA_ "GenSigCmt" SG_ 2 SSTS_VEHICLE_SPEED_CALC_QF "Quality factor of the CAN_VEHICLE_SPEED_CALC";
+BA_ "GenSigStartValue" SG_ 2 SSTS_VEHICLE_SPEED_CALC 0;
+BA_ "GenSigSendType" SG_ 2 SSTS_VEHICLE_SPEED_CALC 7;
+BA_ "GenSigCmt" SG_ 2 SSTS_VEHICLE_SPEED_CALC "Contains the compensated vehicle speed used within the FCR";
+BA_ "GenSigVtName" SG_ 2 SSTS_GEAR_POSITION "VtSig_CAN_GEAR_POSITION";
+BA_ "GenSigVtEn" SG_ 2 SSTS_GEAR_POSITION "TRUE";
+BA_ "GenSigCmt" SG_ 2 SSTS_GEAR_POSITION "Gear Position";
+BA_ "GenSigStartValue" SG_ 323 OBJ_TRACK_MOTION_MODEL_004 0;
+BA_ "GenSigStartValue" SG_ 323 OBJ_YAW_ANGLE_004 2000;
+BA_ "GenSigStartValue" SG_ 323 OBJ_POS_LONG_004 32700;
+BA_ "GenSigStartValue" SG_ 323 OBJ_POS_LAT_004 32700;
+BA_ "GenSigStartValue" SG_ 323 OBJ_VELOCITY_LONG_004 16300;
+BA_ "GenSigStartValue" SG_ 323 OBJ_VELOCITY_LAT_004 16300;
+BA_ "GenSigStartValue" SG_ 323 OBJ_ACCELERATION_LONG_004 400;
+BA_ "GenSigStartValue" SG_ 323 OBJ_ACCELERATION_LAT_004 400;
+BA_ "GenSigStartValue" SG_ 323 OBJ_TIMESTAMP_OFFSET_004 127;
+BA_ "GenSigStartValue" SG_ 323 OBJ_RCS_004 64;
+BA_ "GenSigStartValue" SG_ 323 OBJ_YAW_RATE_004 448;
+BA_ "GenSigStartValue" SG_ 323 OBJ_YAW_RATE_ERR_004 0;
+BA_ "GenSigStartValue" SG_ 323 OBJ_POS_ERR_CRR_COEF_004 120;
+BA_ "GenSigStartValue" SG_ 323 OBJ_VELOCITY_ERR_CRR_COEF_004 120;
+BA_ "GenSigStartValue" SG_ 323 OBJ_ACCEL_ERR_CRR_COEF_004 120;
+VAL_ 2 SSTS_YAW_RATE_CALC_QF 0 "Undefined" 1 "Temporarily Undefined" 2 "Innaccurate" 3 "Accurate" ;
+VAL_ 2 SSTS_VEHICLE_SPEED_CALC_QF 0 "Undefined" 1 "Temporarily Undefined" 2 "Innaccurate" 3 "Accurate" ;
+VAL_ 2 SSTS_VEH_BATT_VOLT 255 "Fault" ;
+VAL_ 2 SSTS_IGN_STATUS 0 "Unknown" 1 "Off" 2 "Accessory" 4 "Run" 8 "Start" 15 "Invalid" ;
+VAL_ 2 SSTS_GEAR_POSITION 0 "Park" 1 "Reverse" 2 "Neutral" 3 "Drive" 4 "Sport_DriveSport" 5 "Low" 6 "first" 7 "second" 8 "third" 9 "fourth" 10 "fifth" 11 "sixth" 12 "NotUsed_1" 13 "NotUsed_2" 14 "Unknown_Position" 15 "Fault" ;
+VAL_ 2 SSTS_WIPER_STATUS 0 "Off" 1 "On" ;
+VAL_ 2 SSTS_PWPCKTQ_D_STAT 0 "PwPckOff_TqNotAvailable" 1 "PwPckOn_TqNotAvailable" 2 "StartInPrgrss_TqNotAvail" 3 "PwPckOn_TqAvailable" ;
+VAL_ 2 SSTS_CC_STAT_D_ACTL 0 "Off" 1 "Denied" 2 "Standby_Denied" 3 "Standby" 4 "Active_Que_Assist" 5 "Active" 6 "Undefined_1" 7 "Undefined_2" ;
+VAL_ 2 SSTS_ElPW_D_STAT 0 "Not_Supported" 1 "Supported" 2 "Not_Supported_Imminent" 3 "LV_Event_In_Progress" 4 "Fault_Limited" 5 "NotUsed_1" 6 "NotUsed_2" 7 "NotUsed_3" ;
+VAL_ 2 SSTS_VEHOVERGND_V_EST 65534 "Unknown" 65535 "Invalid" ;
+VAL_ 2 SSTS_LROS_DRIVE_DIR 0 "Unknown" 1 "Backward" 2 "Forward" 4 "-" ;
+VAL_ 2 SSTS_LROS_DRIVE_REVERSE 0 "Not_Reverse" 1 "Reverse" ;
+VAL_ 2 SSTS_LEFT_BLINK 0 "Off" 1 "On" ;
+VAL_ 2 SSTS_RIGHT_BLINK 0 "Off" 1 "On" ;
+VAL_ 323 OBJ_TRACK_MOTION_MODEL_004 0 "INVALID" 1 "CCV" 2 "CTCA" 3 "CCA" ;
+VAL_ 323 OBJ_MOVEMENT_STATUS_004 0 "UNKNOWN" 1 "MOVING" 2 "SLOW_MOVING" 3 "FAST_MOVING" 4 "STATIONARY" 5 "STOPPED" 6 "RESERVED1" 7 "RESERVED2" ;
+VAL_ 323 OBJ_MEASUREMENT_STATUS_004 0 "Invalid" 1 "New" 2 "Predicted" 3 "PartlyMeasured" 4 "Measured" 5 "Occluded" ;
+VAL_ 323 OBJ_CLS_TYPE1_004 0 "UNKNOWN_MOVING_OBJ" 1 "CAR" 2 "TRUCK" 3 "MOTOR_BIKE" 4 "BICYCLE" 5 "PEDESTRIAN" 6 "ROAD_BOUNDRY" 7 "STATIC_OBJECT" 8 "TRAFFIC_LIGHT" 9 "TRAFFIC_SIGN" 10 "TWO_WHEELERS" 11 "RESERVED" 12 "RESERVED" 14 "OBJECT_UNDETERMIND" 15 "VEHICLE_UNDETERMIND" ;
+VAL_ 323 OBJ_CLS_TYPE2_004 0 "UNKNOWN_MOVING_OBJ" 1 "CAR" 2 "TRUCK" 3 "MOTOR_BIKE" 4 "BICYCLE" 5 "PEDESTRIAN" 6 "ROAD_BOUNDRY" 7 "STATIC_OBJECT" 8 "TRAFFIC_LIGHT" 9 "TRAFFIC_SIGN" 10 "TWO_WHEELERS" 11 "RESERVED" 12 "RESERVED" 14 "OBJECT_UNDETERMIND" 15 "VEHICLE_UNDETERMIND" ;
+VAL_ 323 OBJ_CLS_TYPE3_004 0 "UNKNOWN_MOVING_OBJ" 1 "CAR" 2 "TRUCK" 3 "MOTOR_BIKE" 4 "BICYCLE" 5 "PEDESTRIAN" 6 "ROAD_BOUNDRY" 7 "STATIC_OBJECT" 8 "TRAFFIC_LIGHT" 9 "TRAFFIC_SIGN" 10 "TWO_WHEELERS" 11 "RESERVED" 12 "RESERVED" 14 "OBJECT_UNDETERMIND" 15 "VEHICLE_UNDETERMIND" ;
+VAL_ 323 OBJ_CLS_TYPE4_004 0 "UNKNOWN_MOVING_OBJ" 1 "CAR" 2 "TRUCK" 3 "MOTOR_BIKE" 4 "BICYCLE" 5 "PEDESTRIAN" 6 "ROAD_BOUNDRY" 7 "STATIC_OBJECT" 8 "TRAFFIC_LIGHT" 9 "TRAFFIC_SIGN" 10 "TWO_WHEELERS" 11 "RESERVED" 12 "RESERVED" 14 "OBJECT_UNDETERMIND" 15 "VEHICLE_UNDETERMIND" ;
+VAL_ 323 OBJ_CLS_TYPE5_004 0 "UNKNOWN_MOVING_OBJ" 1 "CAR" 2 "TRUCK" 3 "MOTOR_BIKE" 4 "BICYCLE" 5 "PEDESTRIAN" 6 "ROAD_BOUNDRY" 7 "STATIC_OBJECT" 8 "TRAFFIC_LIGHT" 9 "TRAFFIC_SIGN" 10 "TWO_WHEELERS" 11 "RESERVED" 12 "RESERVED" 14 "OBJECT_UNDETERMIND" 15 "VEHICLE_UNDETERMIND" ;
+VAL_ 323 OBJ_CLS_TYPE6_004 0 "UNKNOWN_MOVING_OBJ" 1 "CAR" 2 "TRUCK" 3 "MOTOR_BIKE" 4 "BICYCLE" 5 "PEDESTRIAN" 6 "ROAD_BOUNDRY" 7 "STATIC_OBJECT" 8 "TRAFFIC_LIGHT" 9 "TRAFFIC_SIGN" 10 "TWO_WHEELERS" 11 "RESERVED" 12 "RESERVED" 14 "OBJECT_UNDETERMIND" 15 "VEHICLE_UNDETERMIND" ;
+SIG_GROUP_ 2 SystemStatusVehicle 1 : SSTS_STEERING_ANGLE SSTS_STEERING_ANGLE_SIGN SSTS_VEHICLE_SPEED_CALC SSTS_VEHICLE_SPEED_CALC_QF SSTS_VEH_SPD_COMP_FACTOR SSTS_YAW_RATE_CALC SSTS_YAW_RATE_BIAS SSTS_YAW_RATE_CALC_QF;
+SIG_GROUP_ 2 SystemStatusVehicleState 1 : SSTS_RIGHT_BLINK SSTS_LEFT_BLINK SSTS_LROS_DRIVE_REVERSE SSTS_LROS_DRIVE_DIR SSTS_VEHOVERGND_V_EST SSTS_ElPW_D_STAT SSTS_CC_STAT_D_ACTL SSTS_PWPCKTQ_D_STAT SSTS_WIPER_STATUS SSTS_GEAR_POSITION SSTS_IGN_STATUS SSTS_VEH_BATT_VOLT;
+SIG_GROUP_ 2 SytemStatus_ASDMVersion 1 : SSTS_CAN_PCAN_MAJOR_ASDM SSTS_CAN_PCAN_MINOR_ASDM SSTS_SW_VERSION_ASDM;
+SIG_GROUP_ 323 TrackerObject004 1 : OBJ_ACCEL_ERR_CRR_COEF_004 OBJ_VELOCITY_ERR_CRR_COEF_004 OBJ_POS_ERR_CRR_COEF_004 OBJ_YAW_RATE_004 OBJ_YAW_RATE_ERR_004 OBJ_GROUP_ID_004 OBJ_REF_PT_LAT_OFFSET_004 OBJ_REF_PT_LONG_OFFSET_004 OBJ_RCS_004 OBJ_YAW_ANGLE_ERR_004 OBJ_CLS_TYPE6_004 OBJ_CLS_TYPE6_PROB_004 OBJ_CLS_TYPE5_PROB_004 OBJ_CLS_TYPE5_004 OBJ_CLS_TYPE4_PROB_004 OBJ_CLS_TYPE4_004 OBJ_CLS_TYPE3_PROB_004 OBJ_CLS_TYPE3_004 OBJ_CLS_TYPE2_PROB_004 OBJ_CLS_TYPE2_004 OBJ_DIMENSION_WIDTH_ERR_004 OBJ_DIMENSION_LENGTH_ERR_004 OBJ_TIMESTAMP_OFFSET_004 OBJ_CLS_TYPE1_PROB_004 OBJ_VEH_TRACK_FLAG_004 OBJ_ACCELERATION_LAT_004 OBJ_ACCELERATION_LONG_004 OBJ_VELOCITY_LAT_004 OBJ_VELOCITY_LONG_004 OBJ_POS_LAT_004 OBJ_POS_LONG_004 OBJ_MEASUREMENT_STATUS_004 OBJ_MOVEMENT_STATUS_004 OBJ_CLS_TYPE1_004 OBJ_ID_004 OBJ_YAW_ANGLE_004 OBJ_EXISTENCE_PROB_004 OBJ_DIMENSION_LENGTH_004 OBJ_DIMENSION_WIDTH_004 OBJ_TRACK_MOTION_MODEL_004 OBJ_POS_LAT_ERR_004 OBJ_POS_LONG_ERR_004 OBJ_VELOCITY_LAT_ERR_004 OBJ_VELOCITY_LONG_ERR_004 OBJ_ACCELERATION_LAT_ERR_004 OBJ_ACCELERATION_LONG_ERR_004 OBJ_ALIVE_TIME_004;
+

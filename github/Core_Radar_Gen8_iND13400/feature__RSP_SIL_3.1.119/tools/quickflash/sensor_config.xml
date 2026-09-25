@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<file>
+   <header Description="PBL Sensor Flash Tool configuration"/>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>flr8_satellite_can</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+      <DownloadFile>../flr8_satellite_can/app.s19</DownloadFile>
+      <DownloadFile>../flr8_satellite_can/smc_cal.ptp</DownloadFile>
+      <DownloadFile>../flr8_satellite_can/usc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>flr8_satellite_eth_high_det</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+      <DownloadFile>../flr8_satellite_eth_high_det/app.s19</DownloadFile>
+      <DownloadFile>../flr8_satellite_eth_high_det/smc_cal.ptp</DownloadFile>
+      <DownloadFile>../flr8_satellite_eth_high_det/usc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>flr8_standalone</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+      <DownloadFile>../flr8_standalone/app.s19</DownloadFile>
+      <DownloadFile>../flr8_standalone/smc_cal.ptp</DownloadFile>
+      <DownloadFile>../flr8_standalone/usc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>srr8p_satellite_can</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+      <DownloadFile>../srr8p_satellite_can/app.s19</DownloadFile>
+      <DownloadFile>../srr8p_satellite_can/smc_cal.ptp</DownloadFile>
+      <DownloadFile>../srr8p_satellite_can/usc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>srr8p_satellite_eth_high_det</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+      <DownloadFile>../srr8p_satellite_eth_high_det/app.s19</DownloadFile>
+      <DownloadFile>../srr8p_satellite_eth_high_det/smc_cal.ptp</DownloadFile>
+      <DownloadFile>../srr8p_satellite_eth_high_det/usc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>srr8p_standalone</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+      <DownloadFile>../srr8p_standalone/app.s19</DownloadFile>
+      <DownloadFile>../srr8p_standalone/smc_cal.ptp</DownloadFile>
+      <DownloadFile>../srr8p_standalone/usc_cal.ptp</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>pbl_merged_v33a</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v33a.s19</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>pbl_merged_v20h</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/edu/pbl_merged_v20h.s19</DownloadFile>
+   </Variant>
+      <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.1.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>pbl_merged_v35e</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/chandra_a0/pbl_merged_v35e.s19</DownloadFile>
+   </Variant>
+</file>

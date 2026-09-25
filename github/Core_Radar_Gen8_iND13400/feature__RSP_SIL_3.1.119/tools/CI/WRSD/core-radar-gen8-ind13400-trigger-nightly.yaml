@@ -1,0 +1,378 @@
+langVersion: v1
+name: core-radar-gen8-ind13400-trigger-nightly
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project
+ui:
+  name: core-radar-gen8-ind13400-trigger-nightly
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/nightly/$(config.pipeline.runNumber)
+  - name: latest-upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/nightly/latest
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: trigger-url
+    type: string
+    default: $(params.trigger-url)
+compute:
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.0.1
+    compute: linux-1c4g
+  - parallelTasks:
+      - name: precommit
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+          target-pipeline: core-radar-gen8-ind13400-precommit-check
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-precommit-check.yaml
+      - name: build
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/buildFiles/
+          target-pipeline: core-radar-gen8-ind13400-build
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-build.yaml
+
+      - name: unit-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/unitTests/
+          target-pipeline: core-radar-gen8-ind13400-unit-test
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-unit-test.yaml
+      - name: coverity-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.1
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/coverity/
+          target-pipeline: core-radar-gen8-ind13400-coverity
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-coverity.yaml
+      - name: blackduck-gen8-flr8
+        # meta:
+        #   disabled: true
+        task: local/blackduck-gen8
+        compute: linux-8c32g
+        params:
+          git-ref: $(params.commit-id)
+          variant: "flr8"
+          gerrit-url: $(params.gerrit-url)
+          project-name: $(params.project-url-encoded)
+          whitelist: "afbb,Calibration_Handler,sabb,spbb"
+          bd-path: $(params.project-url-encoded)
+          bd-repoRoot: $(params.project-url-encoded)
+          bd-project: "10034606_MYXX_Radar_GEN8_SRR_FLR_Platform"
+          bd-version-name: "Dev-HEAD"
+  - parallelTasks:
+      - name: hw-tests
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/hw-tests/
+            download-path: $(params.upload-path)/buildFiles/
+            testTimeout: "20m"
+            testDuration: "600"
+          target-pipeline: core-radar-gen8-ind13400-hw-test
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-hw-test.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - name: update-latest-reports
+        task: core-radar-jfrog-update-latest-reports
+        compute: linux-2c8g
+        params:
+          uploadPath: $(params.upload-path)
+          latestUploadPath: $(params.latest-upload-path)
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: uploadUrl
+
+      - name: tics-connector-gen8
+        task: Scan/tics-connector-flr8@1.1.2
+        compute: linux-8c32g
+        resources:
+          tics-connector-awr:
+            wrrn: wrrn::aws:3387394d-c49d-4da2-826b-2bd9202d97fd::WRStudioNewProd:eucentral1:ecf59c20-c67a-435d-8a92-9638bbf3e943::ticsconnectorawr:f11e79f5-7e1c-4d74-a8f9-f5448af8fb12::project:1c2754f1-9a0b-41b1-8a05-9e1925231064
+        params:
+          defaultDirectory: ${WORKSPACE}
+          git-ref: "dev"
+          gitprojectname: $(params.project-url-encoded)
+          parameters:
+          repoRoot: Core_Radar_Gen8_iND13400
+          ticsImageName: 3ptools/staging/tics-connector-cd/tics-connector
+          ticsImageTag: 1.2.2
+          ticsProjectName: 10034606 Core_Radar_Gen8_iND13400
+final:
+- name: grafana-publish-metrics-platform-flr8
+  meta: {}
+  params:
+    image: $(studio.systemRegistry)/devsecops/dashboard:1.0
+    netrccreds: $(secrets.netrc)
+    patchset-revision: $(params.commit-id)
+    pipeline-type: nightly
+    project-name: core-radar-gen8-ind13400-trigger-nightly
+    scm:
+      branch-name: feature/sw-quality
+      repo-name: 00000000_wrsd/metrics
+    shebang: '#!/usr/bin/env python3'
+  task: Utils/grafana-publish-metrics@1.0.0
+defineTasks:
+  - langVersion: v1
+    name: blackduck-gen8
+    category: local
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+      - name: gerrit-url
+        type: string
+        default: https://gitgerrit.asux.aptiv.com
+      - name: project-name
+        type: string
+        default:
+      - name: whitelist
+        type: string
+        default: ""
+      - name: bd-path
+        type: string
+        default:
+      - name: bd-repoRoot
+        type: string
+        default:
+      - name: bd-project
+        type: string
+        default:
+      - name: bd-version-name
+        type: string
+        default: dev-HEAD
+
+    results:
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.2
+        params:
+          repository:
+            depth: "1"
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: $(params.gerrit-url)/$(params.project-name)
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+      - name: compiledb
+        task: build/compiledb
+        params:
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          whitelist:  $(params.whitelist)
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          unstable: unstable
+      - name: blackduck-scan-gen8
+        task: Scan/blackduck-scan-gen7@1.0.2
+        params:
+          path: $(params.bd-path)
+          project: $(params.bd-project)
+          repoRoot: $(params.bd-repoRoot)
+          versionName: $(params.bd-version-name)
+    wrrn: ""
+  - name: compiledb
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Build
+        ui:
+          name: variant
+      - name: whitelist
+        type: string
+        description: Comma seperated list of folders and/or files to include
+        default: ""
+    results:
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: unstable
+    steps:
+      - name: build
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:1.6
+        script: |
+          #!/bin/bash
+
+          echo repoRoot = $(params.repoRoot)
+          echo variant = $(params.variant)
+
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+
+          cp $(secrets.netrc.path) ~/.netrc
+
+          echo "Running Bazel command: bazelisk run //:compiledb --config=$(params.variant)"
+
+          bazelisk run //:compiledb --config=$(params.variant)
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=$?
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Build failed with exit code $BAZEL_EXIT_CODE."
+              echo "----------------------------------"
+              # Mark this task unstable
+              echo "true" > $(results.unstable.path)
+              # Optionally, you can exit the script with a non-zero status to indicate failure
+              exit 1
+          fi
+
+          # Check if the whitelist is empty
+          if [ -z "$(params.whitelist)" ]; then
+            echo "Whitelist is empty, copying all files/folders to external"
+            cp -r -L external external_temp
+
+          else
+            echo "Whitelist: $(params.whitelist)"
+
+            # Convert the whitelist into an array by replacing commas with spaces
+            IFS=',' read -r -a whitelist_array <<< "$(params.whitelist)"
+
+            # Create a temp folder to store the selected files/folders
+            mkdir -p external_temp
+
+            # Loop through the whitelist and copy each specified folder/file
+            for item in "${whitelist_array[@]}"; do
+              # Check if the item exists in the external directory
+              if [ -e "external/$item" ]; then
+                cp -r -L "external/$item" "external_temp/$item"
+              else
+                echo "Warning: $item does not exist in the external directory."
+              fi
+            done
+          fi
+
+          # remove the symbolic link
+          unlink external
+
+          # Move the temporary folder to replace the original external folder
+          mv external_temp external
+
+          echo "Whitelist files/folders have been copied."
+
+          # save output directory path for user usages
+          echo -n "$(params.repoRoot)/bazel-bin/outputs" > $(results.outputDir.path)
+        onError: continue
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:1.6
+        script: |
+          echo -n $(cat $(steps.build.exitCode.path)) > $(results.exit-code.path)
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+storage:
+  - name: shared
+    defaultMount: true
+    mountPath: /volumes/shared
+    readOnly: false
+    resource: Perception_Radar_FLR8_storage
+timeout: 8h

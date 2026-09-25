@@ -1,0 +1,178 @@
+grfanaConfigVersion: v1
+projectDetails:
+  oemName: 'PLATFORM'                       # Please enter company name e.g. VGTT
+  projectName: 'FLR8'                   # Please enter Project Name e.g. ICM
+  jiraProjectName: 'EMH'               # Please enter Jira Project Name e.g. GVS
+  jiraProjectKey: 'PLATFORM_FLR8'                # Please enter Jira Project Key e.g. 10055531_ICM_PRG
+  rosterName: '10034606'                    # Please enter Roster Name e.g. 10055531
+  wrsdAccessConfigName: 'Perception_Radar_FLR8'          # WRSD Access Config Name is the access config name which will be referred for running the new pipeline
+  wrsdLeadGroup: 'Perception_Radar_FLR8_lead'                 # WRSD Lead Group is the group name which will be referred for running the new pipeline
+  SID: 'sid_cci'                           # SID is the user id that will use to access the pipeline
+  jiraAdditionalQuery:  ' AND "Product Name" IN ("GEN8")'
+componentJiraMapping:
+- compJiraProject: 'EMH'               # Please enter jira project name e.g. GVS
+  compName: 'all'                      # Please enter component name e.g. ICM
+  jiraAdditionalCompQuery:  ' AND "Product Name" IN ("GEN8")'
+pipelineProjectDetails:
+- pipelineUrl: 'https://389177498442.awsaptiv.com/plm/view/core-radar-gen8-ind13400-trigger-nightly/runs/363'                   # Pipeline URL is the url to the pipeline
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'           # Please enter project name e.g. volvotruck-icm
+  env: 'linux'                           # Please enter project environment or domain e.g. linux
+  pipelineType: 'nightly'                  # Please enter pipeline type e.g. nightly
+  reportBasePath: 'core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/nightly/%build_number%/'                # Please enter jfrog base path e.g. icm-volvotrucks-10055531-swe.4_swe.5-generic-local/Linux/WRSD/nightly/luci-nightly-volvotrucks-icm-linux-%build_number%/
+  compilerReportPath: '["buildFiles/warnings_flr8/compiler.html"]'            # Please enter filepath of compiler warning report e.g. '/compiler_warnings.html
+  unittestReportPath: '["unitTests/flr8/coverage/report_html/coverage_report/index.html"]'            # Please enter filepaths of unit test coverage reports e.g. '["/.luci/coverage/coverage_report.html"]'
+  coverityReportPath: '#SERVER#'            # Please enter filepath coverity report e.g. coverity_report.html
+  streams: '["10034606_Core_Radar_Gen8_IND13400_FLR8_R52","10034606_Core_Radar_Gen8_IND13400_FLR8_BBE32"]'                       # Please enter coverity streams for CCM e.g. '["10055531_00_VGTT_ICM_LINUX_X86"]'
+  blackduckReportUrl: ‘https://blackduck.asux.aptiv.com/api/projects/4cbd4193-a3f9-4650-a524-6c47a0f28cc2'            # the url for blackduck
+  blackduckProjectName: '10034606_MYXX_Radar_GEN8_SRR_FLR_Platform'          # Please enter the blackduck project name e.g. 10055531_vgtt_icm_manifest_linux
+  blackduckVersionName: 'Dev-HEAD'          # Please enter version name for blackduck e.g. Develop-HEAD
+  utReportType: "['gcov']"       # If the ut coverage report type is Gcov then gcov or if JaCoCo then jacoco.Example gcov/jacoco
+- pipelineUrl: 'https://389177498442.awsaptiv.com/plm/view/core-radar-gen8-ind13400-trigger-verification/runs/5241'                   # Pipeline URL is the url to the pipeline
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-verification'           # Please enter project name e.g. volvotruck-icm
+  env: 'linux'                           # Please enter project environment or domain e.g. linux
+  pipelineType: 'verification'                  # Please enter pipeline type e.g. nightly
+  reportBasePath: ''
+  compilerReportPath: ''
+  unittestReportPath: "['']"
+  coverityReportPath: "['']"
+  streams: "['']"
+  blackduckReportUrl: ''
+  blackduckProjectName: ''
+  blackduckVersionName: ''
+  utReportType: "['']"
+- pipelineUrl: 'https://389177498442.awsaptiv.com/plm/view/core-radar-gen8-ind13400-trigger-post-merge/runs/811'                   # Pipeline URL is the url to the pipeline
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'           # Please enter project name e.g. volvotruck-icm
+  env: 'linux'                           # Please enter project environment or domain e.g. linux
+  pipelineType: 'post-merge'                  # Please enter pipeline type e.g. nightly
+  reportBasePath: 'core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/post-merge/%build_number%/'                # Please enter jfrog base path e.g. icm-volvotrucks-10055531-swe.4_swe.5-generic-local/Linux/WRSD/nightly/luci-nightly-volvotrucks-icm-linux-%build_number%/
+  compilerReportPath: '["buildFiles/warnings_flr8/compiler.html"]'            # Please enter filepath of compiler warning report e.g. '/compiler_warnings.html
+  unittestReportPath: '["unitTests/flr8/coverage/report_html/coverage_report/index.html"]'            # Please enter filepaths of unit test coverage reports e.g. '["/.luci/coverage/coverage_report.html"]'
+  coverityReportPath: '#SERVER#'            # Please enter filepath coverity report e.g. coverity_report.html
+  streams: '["10034606_Core_Radar_Gen8_IND13400_FLR8_R52","10034606_Core_Radar_Gen8_IND13400_FLR8_BBE32"]'                       # Please enter coverity streams for CCM e.g. '["10055531_00_VGTT_ICM_LINUX_X86"]'
+  blackduckReportUrl: ‘https://blackduck.asux.aptiv.com/api/projects/4cbd4193-a3f9-4650-a524-6c47a0f28cc2'            # the url for blackduck
+  blackduckProjectName: '10034606_MYXX_Radar_GEN8_SRR_FLR_Platform'          # Please enter the blackduck project name e.g. 10055531_vgtt_icm_manifest_linux
+  blackduckVersionName: 'Dev-HEAD'          # Please enter version name for blackduck e.g. Develop-HEAD
+  utReportType: "['gcov']"       # If the ut coverage report type is Gcov then gcov or if JaCoCo then jacoco.Example gcov/jacoco
+manifest:
+  manifestAvailable: 'No'       # Please Enter Yes or No
+  manifestFiles:
+    - file_name: 'NA'
+componentMapping:
+- compName: 'reuse'
+  repoPath: ['external/_main~_repo_rules~_main~_repo_rules~reuse/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'iND13400_autosar_sip'
+  repoPath: ['external/_main~_repo_rules~iND13400_autosar_sip/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'spbb'
+  repoPath: ['external/_main~_repo_rules~spbb/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'PlatformTime'
+  repoPath: ['external/_main~_repo_rules~PlatformTime/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'Mode_Manager'
+  repoPath: ['external/_main~_repo_rules~Mode_Manager/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'Appl_Diag'
+  repoPath: ['external/_main~_repo_rules~Appl_Diag/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'Appl_FaultMgr'
+  repoPath: ['external/_main~_repo_rules~Appl_FaultMgr/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'IoHwAb_ADC_Appl'
+  repoPath: ['external/_main~_repo_rules~IoHwAb_ADC_Appl/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'afbb'
+  repoPath: ['external/_main~_repo_rules~afbb/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'dabb'
+  repoPath: ['external/_main~_repo_rules~dabb/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'sabb'
+  repoPath: ['external/_main~_repo_rules~sabb/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'rcbb'
+  repoPath: ['external/_main~_repo_rules~rcbb/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'iND13400_sdk'
+  repoPath: ['external/_main~_repo_rules~iND13400_sdk/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'boot'
+  repoPath: ['external/_main~_repo_rules~boot/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'Calibration_Handler'
+  repoPath: ['external/_main~_repo_rules~Calibration_Handler/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'smc_flr8'
+  repoPath: ['external/_main~_repo_rules~smc_flr8/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'usc_flr8'
+  repoPath: ['external/_main~_repo_rules~usc_flr8/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'smc_srr8p'
+  repoPath: ['external/_main~_repo_rules~smc_srr8p/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'usc_srr8p'
+  repoPath: ['external/_main~_repo_rules~usc_srr8p/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'StreamHeader_Gen'
+  repoPath: ['external/_main~_repo_rules~StreamHeader_Gen/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'quickflash'
+  repoPath: ['external/_main~_repo_rules~quickflash/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'Sensor_Position'
+  repoPath: ['external/_main~_repo_rules~Sensor_Position/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+- compName: 'MAF_BIN'
+  repoPath: ['external/_main~_repo_rules~MAF_BIN/']
+  env: 'linux'
+  pipelineProjectName: 'core-radar-gen8-ind13400-trigger-nightly'
+categoryMapping:
+- categoryName: 'aptiv-owned'
+  categoryPaths:
+    - categoryPath: 'external/_main~_repo_rules~reuse'
+    - categoryPath: 'external/_main~_repo_rules~iND13400_autosar_sip'
+    - categoryPath: 'external/_main~_repo_rules~spbb'
+    - categoryPath: 'external/_main~_repo_rules~PlatformTime'
+    - categoryPath: 'external/_main~_repo_rules~Mode_Manager'
+    - categoryPath: 'external/_main~_repo_rules~Appl_Diag'
+    - categoryPath: 'external/_main~_repo_rules~Appl_FaultMgr'
+    - categoryPath: 'external/_main~_repo_rules~IoHwAb_ADC_Appl'
+    - categoryPath: 'external/_main~_repo_rules~afbb'
+    - categoryPath: 'external/_main~_repo_rules~dabb'
+    - categoryPath: 'external/_main~_repo_rules~sabb'
+    - categoryPath: 'external/_main~_repo_rules~rcbb'
+    - categoryPath: 'external/_main~_repo_rules~iND13400_sdk'
+    - categoryPath: 'external/_main~_repo_rules~boot'
+    - categoryPath: 'external/_main~_repo_rules~Calibration_Handler'
+    - categoryPath: 'external/_main~_repo_rules~smc_flr8'
+    - categoryPath: 'external/_main~_repo_rules~usc_flr8'
+    - categoryPath: 'external/_main~_repo_rules~smc_srr8p'
+    - categoryPath: 'external/_main~_repo_rules~usc_srr8p'
+    - categoryPath: 'external/_main~_repo_rules~StreamHeader_Gen'
+    - categoryPath: 'external/_main~_repo_rules~quickflash'
+    - categoryPath: 'external/_main~_repo_rules~Sensor_Position'
+    - categoryPath: 'external/_main~_repo_rules~MAF_BIN'

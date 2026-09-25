@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<testmodule title="AmdRtmGen" version="3.02.00" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance">
+  <variants>
+    <variant name="PARALLEL">Selected measurement sections are measured simultaneously</variant>
+    <variant name="SERIAL">Selected measurement sections are measured consecutively</variant>
+    <variant name="LIVE">Selected measurement sections remain active until manually stopped </variant>
+  </variants>
+  <testgroup title="Active Measurement Selection: Only the following selected measurement points or measurement groups will be considered in the RTM measurement session. Note: All auto start measurements are registered for measurement by default."> 
+    <testgroup title="Sd">
+      <testcase ident="Sd_EventServer_Process" title="Sd_EventServer_Process (ID 49)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">49</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Sd_RxIndication" title="Sd_RxIndication (ID 50)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">50</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Sd_State_HandleRunMode" title="Sd_State_HandleRunMode (ID 51)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">51</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Sd_State_Process__ClientSMs" title="Sd_State_Process__ClientSMs (ID 52)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">52</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Sd_State_Process__ServerSMs" title="Sd_State_Process__ServerSMs (ID 53)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">53</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Sd_Tx_ProcessPendingMessages" title="Sd_Tx_ProcessPendingMessages (ID 54)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">54</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="CanNm">
+      <testcase ident="CANNM_SID_DISABLECOMMUNICATION" title="CANNM_SID_DISABLECOMMUNICATION (ID 12)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">12</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_ENABLECOMMUNICATION" title="CANNM_SID_ENABLECOMMUNICATION (ID 13)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">13</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_GETLOCALNODEIDENTIFIER" title="CANNM_SID_GETLOCALNODEIDENTIFIER (ID 14)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">14</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_GETNODEIDENTIFIER" title="CANNM_SID_GETNODEIDENTIFIER (ID 15)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">15</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_GETPDUDATA" title="CANNM_SID_GETPDUDATA (ID 16)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">16</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_GETSTATE" title="CANNM_SID_GETSTATE (ID 17)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">17</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_INIT" title="CANNM_SID_INIT (ID 18)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">18</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_MAINFUNCTION" title="CANNM_SID_MAINFUNCTION (ID 19)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">19</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_NETWORKRELEASE" title="CANNM_SID_NETWORKRELEASE (ID 20)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">20</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_NETWORKREQUEST" title="CANNM_SID_NETWORKREQUEST (ID 21)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">21</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_PASSIVESTARTUP" title="CANNM_SID_PASSIVESTARTUP (ID 22)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">22</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_REPEATMESSAGEREQUEST" title="CANNM_SID_REPEATMESSAGEREQUEST (ID 23)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">23</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_RXINDICATION" title="CANNM_SID_RXINDICATION (ID 24)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">24</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="CANNM_SID_TXCONFIRMATION" title="CANNM_SID_TXCONFIRMATION (ID 25)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">25</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="CpuLoad">
+      <testcase ident="Rtm_CpuLoadMeasurement" title="Rtm_CpuLoadMeasurement (ID 48)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">48</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="EthTrcv_30_Rtl9010">
+      <testcase ident="EthTrcv_30_Rtl9010_TransceiverInit" title="EthTrcv_30_Rtl9010_TransceiverInit (ID 26)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">26</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="Default">
+      <testcase ident="Appl_IPC_Task" title="Appl_IPC_Task (ID 4)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">4</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task" title="Appl_Task (ID 5)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">5</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Communication" title="Appl_Task_Communication (ID 6)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">6</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Fast" title="Appl_Task_Fast (ID 7)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">7</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_High_Prio" title="Appl_Task_High_Prio (ID 8)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">8</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Appl_Task_Logging" title="Appl_Task_Logging (ID 9)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">9</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="BSW_Task" title="BSW_Task (ID 10)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">10</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="BackgroundTask" title="BackgroundTask (ID 11)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">11</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="IdleTask_OsCore0" title="IdleTask_OsCore0 (ID 27)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">27</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="Radar_Ctrl_Task" title="Radar_Ctrl_Task (ID 47)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">47</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+    <testgroup title="Nm">
+      <testcase ident="NM_SID_BUSSLEEPMODE" title="NM_SID_BUSSLEEPMODE (ID 28)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">28</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_DISABLECOMMUNICATION" title="NM_SID_DISABLECOMMUNICATION (ID 29)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">29</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_ENABLECOMMUNICATION" title="NM_SID_ENABLECOMMUNICATION (ID 30)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">30</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_GETLOCALNODEIDENTIFIER" title="NM_SID_GETLOCALNODEIDENTIFIER (ID 31)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">31</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_GETNODEIDENTIFIER" title="NM_SID_GETNODEIDENTIFIER (ID 32)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">32</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_GETPDUDATA" title="NM_SID_GETPDUDATA (ID 33)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">33</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_GETSTATE" title="NM_SID_GETSTATE (ID 34)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">34</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_INIT" title="NM_SID_INIT (ID 35)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">35</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_MAINFUNCTION" title="NM_SID_MAINFUNCTION (ID 36)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">36</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_NETWORKMODE" title="NM_SID_NETWORKMODE (ID 37)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">37</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_NETWORKRELEASE" title="NM_SID_NETWORKRELEASE (ID 38)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">38</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_NETWORKREQUEST" title="NM_SID_NETWORKREQUEST (ID 39)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">39</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_NETWORKSTARTINDICATION" title="NM_SID_NETWORKSTARTINDICATION (ID 40)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">40</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_PASSIVESTARTUP" title="NM_SID_PASSIVESTARTUP (ID 41)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">41</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_PDURXINDICATION" title="NM_SID_PDURXINDICATION (ID 42)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">42</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_PREPAREBUSSLEEPMODE" title="NM_SID_PREPAREBUSSLEEPMODE (ID 43)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">43</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_REPEATMESSAGEREQUEST" title="NM_SID_REPEATMESSAGEREQUEST (ID 44)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">44</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_STATECHANGENOTIFICATION" title="NM_SID_STATECHANGENOTIFICATION (ID 45)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">45</caplparam>
+        </capltestfunction>
+      </testcase>
+      <testcase ident="NM_SID_TXTIMEOUTEXCEPTION" title="NM_SID_TXTIMEOUTEXCEPTION (ID 46)">
+        <capltestfunction name="RegisterActiveSection" title="">
+          <caplparam name="measurementSectionId" type="int">46</caplparam>
+        </capltestfunction>
+      </testcase>
+    </testgroup>
+
+  </testgroup>
+
+  <testgroup title="Measurement">
+    <testcase ident="Clear Results On ECU" title="Clear Results On ECU (If this option is deactivated the results of the previous measurement session affect upcoming measurement results)">
+      <capltestfunction name="ClearResultsOnEcu" title=""/>
+    </testcase>
+
+    <testcase ident="Perform Measurement" title="Perform Parallel Measurement: With parallel measurement, all measurement points enabled at pre-compile time and activated in CANoe are measured simultaneously. The measurement duration is specified at measurement start and applies to all selected measurements." variants="PARALLEL"> 
+      <capltestfunction name="RuntimeMeasurement" title="">
+        <caplparam name="variant" type="int">2</caplparam>
+      </capltestfunction>
+    </testcase>
+
+    <testcase ident="Perform Measurement" title="Perform Serial Measurement: With serial measurement, all measurement points enabled at pre-compile time and activated in CANoe are measured consecutively. The measurement duration is specified at measurement start and applies for each measurement individually." variants="SERIAL"> 
+      <capltestfunction name="RuntimeMeasurement" title="">
+        <caplparam name="variant" type="int">3</caplparam>
+      </capltestfunction>
+    </testcase>
+    <testcase ident="Perform Live Measurement" title="Perform Live Measurement: In contrast to Parallel and Serial Measurement, Live Measurement sends data on a cyclic basis. There is no pre-defiend measurement duration. Instead the measurement has to be stopped by the user." variants="LIVE"> 
+      <capltestfunction name="RuntimeMeasurement" title="">
+        <caplparam name="variant" type="int">1</caplparam>
+      </capltestfunction>
+    </testcase>
+  </testgroup>
+</testmodule>

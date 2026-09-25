@@ -1,0 +1,240 @@
+# SWE-Test Runner - friendly manual launcher with UI dropdowns.
+#
+# Most flexible manual launcher. Press "Run workflow" in the Actions UI and
+# the form below appears. Everything is optional except family/variant/xcp.
+#
+# Multi-select trick: GitHub Actions does not have native multi-select for
+# workflow_dispatch, so list-style inputs (modules, WIs, flags, extra -b
+# pairs) are plain text fields where you enter comma- or space-separated
+# tokens. The `prepare` job splits them into the right shape.
+#
+# Trigger: manual only.
+
+name: SWE-Test Runner (pick & run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      # ---- Target ----
+      family:
+        description: 'Radar family'
+        required: true
+        type: choice
+        default: FLR8
+        options: [FLR8, SRR8P]
+      variant:
+        description: 'Build variant'
+        required: true
+        type: choice
+        default: flr8_can
+        options:
+          - flr8_can
+          - flr8_someip
+          - flr8_standalone
+          - srr8p_can
+          - srr8p_someip
+          - srr8p_al_can_standalone
+      xcp:
+        description: 'XCP protocol'
+        required: true
+        type: choice
+        default: CAN
+        options: [CAN, Eth, Eth_Direct]
+
+      # ---- What to run ----
+      test_folder:
+        description: 'Folder under testcases/GEN8_Test_Cases/'
+        required: true
+        type: choice
+        default: SWE6_Testing
+        options:
+          - SWE6_Testing
+          - SWE6_TestScript_SQT_MACRO
+          - SWE5_Testing
+          - SWE5_TestScript_SIT_MACRO
+      modules:
+        description: 'Modules (comma-separated; e.g. "ALIGNMENT,DIAG"). Leave empty for ALL.'
+        required: false
+        type: string
+        default: ''
+      test_type:
+        description: 'TestType filter'
+        required: false
+        type: choice
+        default: Any
+        options: [Any, Regression, Smoke, Stress, XCP-Regression]
+      wi_ids:
+        description: 'Work-Item IDs (comma-separated; e.g. "WI-266881,WI-266882")'
+        required: false
+        type: string
+        default: ''
+      srs_ids:
+        description: 'SRS IDs (comma-separated)'
+        required: false
+        type: string
+        default: ''
+      extra_markers:
+        description: 'Raw extra markers appended to -m (escape hatch, e.g. "Priority=P1")'
+        required: false
+        type: string
+        default: ''
+
+      # ---- Run-time knobs ----
+      spc_file:
+        description: 'SPC file to flash (Auto = let framework decide)'
+        required: false
+        type: choice
+        default: Auto
+        options: [Auto, spc_1.s19, spc_2.s19, spc_3.s19, spc_4.s19, spc_5.s19, spc_6.s19, spc_7.s19, spc_8.s19]
+      flags:
+        description: 'Space-separated --flag tokens (e.g. "power_check stress_mode")'
+        required: false
+        type: string
+        default: ''
+      bench_attributes:
+        description: 'Extra -b KEY=VALUE pairs (comma-separated; e.g. "Board=B0,Mars=B0")'
+        required: false
+        type: string
+        default: ''
+      gui_html:
+        description: 'Generate the GUI HTML report'
+        required: false
+        type: boolean
+        default: true
+      no_reports:
+        description: 'Skip all report generation (fast dev loop)'
+        required: false
+        type: boolean
+        default: false
+      report_subdir:
+        description: 'Report subdir under framework root (Auto = Reports/PICK_RUN)'
+        required: false
+        type: string
+        default: Auto
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  # Tiny composer job that turns the picker form into the JSON / marker
+  # / bench-attribute strings the reusable workflow consumes.
+  prepare:
+    name: Compose inputs
+    runs-on: ubuntu-latest
+    outputs:
+      matrix:           ${{ steps.build.outputs.matrix }}
+      markers:          ${{ steps.build.outputs.markers }}
+      spc_file:         ${{ steps.build.outputs.spc_file }}
+      bench_attributes: ${{ steps.build.outputs.bench_attributes }}
+      report_subdir:    ${{ steps.build.outputs.report_subdir }}
+    steps:
+      - id: build
+        shell: bash
+        env:
+          MODULES:          ${{ inputs.modules }}
+          TEST_TYPE:        ${{ inputs.test_type }}
+          WI_IDS:           ${{ inputs.wi_ids }}
+          SRS_IDS:          ${{ inputs.srs_ids }}
+          EXTRA_MARKERS:    ${{ inputs.extra_markers }}
+          SPC_FILE:         ${{ inputs.spc_file }}
+          BENCH_ATTRIBUTES: ${{ inputs.bench_attributes }}
+          REPORT_SUBDIR:    ${{ inputs.report_subdir }}
+          VARIANT:          ${{ inputs.variant }}
+          XCP:              ${{ inputs.xcp }}
+        run: |
+          set -euo pipefail
+
+          # ---- matrix ----
+          MATRIX=$(printf '[{"variant":"%s","xcp":"%s"}]' "$VARIANT" "$XCP")
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+          # ---- markers ----
+          MARKERS=""
+          add_marker() { [ -n "$1" ] && MARKERS="${MARKERS:+$MARKERS }$1"; }
+
+          # Module=[A_Module, B_Module] (bracket form, OR within group)
+          if [ -n "$MODULES" ]; then
+            MOD_LIST=""
+            IFS=',' read -ra MODS <<< "$MODULES"
+            for m in "${MODS[@]}"; do
+              m="$(echo "$m" | xargs)"   # trim
+              [ -z "$m" ] && continue
+              MOD_LIST="${MOD_LIST:+$MOD_LIST, }${m}_Module"
+            done
+            [ -n "$MOD_LIST" ] && add_marker "Module=[${MOD_LIST}]"
+          fi
+
+          # TestType=<value>
+          if [ "$TEST_TYPE" != "Any" ]; then
+            add_marker "TestType=$TEST_TYPE"
+          fi
+
+          # WI=[WI-1, WI-2]
+          if [ -n "$WI_IDS" ]; then
+            WI_LIST=$(echo "$WI_IDS" | sed 's/[[:space:]]//g')
+            add_marker "WI=[${WI_LIST}]"
+          fi
+
+          # SRS=[SRS-1, SRS-2]
+          if [ -n "$SRS_IDS" ]; then
+            SRS_LIST=$(echo "$SRS_IDS" | sed 's/[[:space:]]//g')
+            add_marker "SRS=[${SRS_LIST}]"
+          fi
+
+          # Raw extra markers as-is
+          add_marker "$EXTRA_MARKERS"
+
+          echo "markers=$MARKERS" >> "$GITHUB_OUTPUT"
+
+          # ---- spc-file: Auto means "don't pass --spc_file" ----
+          if [ "$SPC_FILE" = "Auto" ]; then
+            echo "spc_file=" >> "$GITHUB_OUTPUT"
+          else
+            echo "spc_file=$SPC_FILE" >> "$GITHUB_OUTPUT"
+          fi
+
+          # ---- bench-attributes: convert comma-list to newline-list ----
+          if [ -n "$BENCH_ATTRIBUTES" ]; then
+            ATTRS=$(echo "$BENCH_ATTRIBUTES" | tr ',' '\n' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' || true)
+            {
+              echo "bench_attributes<<EOF"
+              echo "$ATTRS"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "bench_attributes=" >> "$GITHUB_OUTPUT"
+          fi
+
+          # ---- report-subdir: Auto means "let reusable workflow default" ----
+          if [ "$REPORT_SUBDIR" = "Auto" ] || [ -z "$REPORT_SUBDIR" ]; then
+            echo "report_subdir=" >> "$GITHUB_OUTPUT"
+          else
+            echo "report_subdir=$REPORT_SUBDIR" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "----------------------------------------"
+          echo "Resolved matrix : $MATRIX"
+          echo "Resolved markers: $MARKERS"
+          echo "----------------------------------------"
+
+  run-test:
+    name: Run on ${{ inputs.family }} / ${{ inputs.variant }}
+    needs: prepare
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: PICK_RUN
+      family: ${{ inputs.family }}
+      rotation-strategy: fixed
+      test-matrix-json:  ${{ needs.prepare.outputs.matrix }}
+      test-folder:       ${{ inputs.test_folder }}
+      markers:           ${{ needs.prepare.outputs.markers }}
+      spc-file:          ${{ needs.prepare.outputs.spc_file }}
+      bench-attributes:  ${{ needs.prepare.outputs.bench_attributes }}
+      report-subdir:     ${{ needs.prepare.outputs.report_subdir }}
+      flags:             ${{ inputs.flags }}
+      gui-html:          ${{ inputs.gui_html }}
+      no-reports:        ${{ inputs.no_reports }}
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-runner.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

@@ -1,0 +1,215 @@
+{
+   "variants": [
+
+      {
+         "name": "flr8_satellite_can",
+         "sensor_id": "Gen8",
+         "description": "FLR8 Satellite CAN variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../flr8_satellite_can/app.s19"
+            },
+            {
+               "path": "../flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               "path": "../flr8_satellite_can/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_can",
+         "sensor_id": "Gen8",
+         "description": "SRR8p Satellite CAN variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../srr8p_satellite_can/app.s19"
+            },
+            {
+               "path": "../srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_satellite_can/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "flr8_standalone",
+         "sensor_id": "Gen8",
+         "description": "FLR8 Standalone variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../flr8_standalone/app.s19"
+            },
+            {
+               "path": "../flr8_standalone/smc_cal.ptp"
+            },
+            {
+               "path": "../flr8_standalone/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_standalone",
+         "sensor_id": "Gen8",
+         "description": "SRR8p Standalone variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../srr8p_standalone/app.s19"
+            },
+            {
+               "path": "../srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_standalone/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_eth_high_det",
+         "sensor_id": "Gen8",
+         "description": "FLR8 Satellite High Detection and Eth SOMEIP variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               "path": "../flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               "path": "../flr8_satellite_eth_high_det/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_eth_high_det",
+         "sensor_id": "Gen8",
+         "description": "SRR8p Satellite High Detection and Eth SOMEIP variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               "path": "../srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_satellite_eth_high_det/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_al_can_standalone",
+         "sensor_id": "Gen8",
+         "description": "SRR8p Ashok Leyland AL Standalone variant application with default SMC and default USC",
+         "server_config": {
+            "sensor_ip": "192.168.1.71",
+            "request_port": 5016,
+            "response_port": 5009
+         },
+         "images": [
+            {
+               "path": "../pbl/chandra_b0/eth/pbl_b0_eth_signed.s19"
+            },
+            {
+               "path": "../pbl/chandra_b0/eth/hsm_container_b0_v50a_225.s19"
+            },
+            {
+               "path": "../srr8p_al_can_standalone/app.s19"
+            },
+            {
+               "path": "../srr8p_al_can_standalone/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_al_can_standalone/usc_cal.ptp"
+            },
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      }
+   ]
+}

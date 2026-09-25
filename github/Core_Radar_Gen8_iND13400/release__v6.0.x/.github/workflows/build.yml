@@ -1,0 +1,338 @@
+name: Reusable Bazel Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: 'Bazel build target (e.g., //:gen8)'
+        required: true
+        type: string
+      config:
+        description: 'Bazel config name (e.g., flr8, srr8p)'
+        required: false
+        type: string
+        default: 'flr8'
+      matrix-json:
+        description: 'Optional JSON array for internal matrix (e.g., [{"name":"flr8-standalone","variant":"flr8"},{"name":"srr8p-al","variant":"srr8p"}])'
+        required: false
+        type: string
+        default: ''
+      pr-number:
+        description: 'Pull request number for failure label management'
+        required: false
+        type: string
+        default: ''
+      nightly:
+        description: 'When true, generate and publish build memory metrics payloads'
+        required: false
+        type: boolean
+        default: false
+      container-image:
+        description: 'Container image to use for the build'
+        required: false
+        type: string
+        default: 'containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593'
+      upload-artifact-name:
+        description: 'Name for the uploaded artifact'
+        required: false
+        type: string
+        default: 'build-output'
+      upload-artifact-path:
+        description: 'Path(s) to upload as artifact (semicolon-separated for multiple)'
+        required: false
+        type: string
+        default: 'bazel-bin/outputs'
+      runner:
+        description: 'Runner label (e.g., gh-injected-gpo-linux-medium)'
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+      bazel-extra-flags:
+        description: 'Extra Bazel flags to append to the build command'
+        required: false
+        type: string
+        default: '--color=yes --jobs=auto'
+    secrets:
+      GHCR_USER:
+        required: true
+      GHCR_TOKEN:
+        required: true
+      NETRC_CONTENT:
+        required: true
+      ARB_TOKEN:
+        required: true
+      METRICS_DB_USER:
+        required: false
+      METRICS_DB_PASSWORD:
+        required: false
+      METRICS_DB_HOST:
+        required: false
+      METRICS_DB_PORT:
+        required: false
+      METRICS_DB_NAME:
+        required: false
+
+jobs:
+  build:
+    name: Build (${{ matrix.name || matrix.variant || matrix.config || inputs.config }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.GHCR_USER }}
+        password: ${{ secrets.GHCR_TOKEN }}
+      options: -v /var/run/docker.sock:/var/run/docker.sock
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Configure git safe.directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure netrc
+        uses: ./.github/actions/configure-netrc
+        with:
+          netrc-content: ${{ secrets.NETRC_CONTENT }}
+
+      - name: Configure bazel remote cache
+        uses: ./.github/actions/configure-bazel-cache
+        with:
+          arb-token: ${{ secrets.ARB_TOKEN }}
+
+      - name: Setup bazelisk
+        id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Build
+        id: build
+        shell: bash
+        env:
+          BUILD_CONFIG: ${{ matrix.variant || matrix.config || inputs.config }}
+        run: |
+          set -euo pipefail
+
+          BAZELISK_PATH="${{ steps.bazelisk.outputs.bazelisk-path }}"
+          BUILD_TARGET="${{ inputs.target }}"
+
+          # Build the command as an array so optional flags remain tokenized correctly.
+          BUILD_CMD=(
+            "${BAZELISK_PATH}"
+            build
+            "${BUILD_TARGET}"
+            "--config=${BUILD_CONFIG}"
+          )
+
+          read -r -a EXTRA_FLAGS <<< "${{ matrix.bazel_extra_flags || inputs.bazel-extra-flags }}"
+          if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+            BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+          fi
+
+          BUILD_CMD+=("--build_event_json_file=build_event.json")
+
+          # Echo the full command
+          echo "**** Bazel command:"
+          printf '**** '
+          printf '%q ' "${BUILD_CMD[@]}"
+          echo
+          echo "****"
+
+          # -------- RETRY WITH BACKOFF --------
+          MAX_RETRIES=2
+          INITIAL_DELAY=5
+
+          attempt=1
+          delay=$INITIAL_DELAY
+
+          while true; do
+            echo "[BUILD] Attempt ${attempt}/${MAX_RETRIES}"
+
+            set +e
+            "${BUILD_CMD[@]}"
+            BUILD_RC=$?
+            set -e
+
+            if [ "$BUILD_RC" -eq 0 ]; then
+              echo "[BUILD] Success on attempt ${attempt}"
+              break
+            fi
+
+            if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+              echo "[BUILD] Failed after ${attempt} attempts"
+              break
+            fi
+
+            echo "::notice::Build failed (attempt ${attempt}). Retrying in ${delay}s..."
+            sleep "$delay"
+
+            attempt=$((attempt + 1))
+            delay=$((delay * 2))
+          done
+
+          exit "${BUILD_RC}"
+
+
+      - name: Report build results
+        if: always()
+        shell: bash
+        env:
+          BUILD_CONFIG: ${{ matrix.variant || matrix.config || inputs.config }}
+        run: |
+          FLASH_FILE=""
+          MEMORY_FILE=""
+          FLASH_LINE=""
+          MEMORY_UNUSED_LINE=""
+          FLASH_USED_PCT=""
+          FLASH_FREE_PCT=""
+          MEMORY_UNUSED_PCT=""
+          MEMORY_USED_PCT=""
+
+          if [ -d "bazel-bin/outputs" ]; then
+            FLASH_FILE=$(find bazel-bin/outputs -type f -name "flash_memory_stats.txt" | head -n 1 || true)
+            MEMORY_FILE=$(find bazel-bin/outputs -type f -name "memoryStats.txt" | head -n 1 || true)
+          fi
+
+          if [ -n "${FLASH_FILE}" ] && [ -f "${FLASH_FILE}" ]; then
+            FLASH_LINE=$(grep -m 1 -E "Flash utilization:" "${FLASH_FILE}" || true)
+            FLASH_USED_PCT=$(echo "${FLASH_LINE}" | sed -E 's/.*Flash utilization:[[:space:]]*([0-9.]+)%.*/\1/' 2>/dev/null || true)
+            if echo "${FLASH_USED_PCT}" | grep -Eq '^[0-9]+(\.[0-9]+)?$'; then
+              FLASH_FREE_PCT=$(awk -v used="${FLASH_USED_PCT}" 'BEGIN { printf "%.2f", 100 - used }')
+            else
+              FLASH_USED_PCT=""
+            fi
+          fi
+
+          if [ -n "${MEMORY_FILE}" ] && [ -f "${MEMORY_FILE}" ]; then
+            MEMORY_UNUSED_LINE=$(grep -m 1 -E "^[[:space:]]*Unused" "${MEMORY_FILE}" || true)
+            MEMORY_UNUSED_PCT=$(echo "${MEMORY_UNUSED_LINE}" | grep -Eo '[0-9]+(\.[0-9]+)?%' | tail -n 1 | tr -d '%' || true)
+            if echo "${MEMORY_UNUSED_PCT}" | grep -Eq '^[0-9]+(\.[0-9]+)?$'; then
+              MEMORY_USED_PCT=$(awk -v unused="${MEMORY_UNUSED_PCT}" 'BEGIN { printf "%.2f", 100 - unused }')
+            else
+              MEMORY_UNUSED_PCT=""
+            fi
+          fi
+
+          # Extract MB values from flash line (e.g., "Flash utilization: 48.75% (1.95 MB of 4.00 MB)")
+          FLASH_MB_VALUES=""
+          if [ -n "${FLASH_LINE}" ]; then
+            FLASH_MB_VALUES=$(echo "${FLASH_LINE}" | grep -oE '\([^)]+\)' | head -n 1 || true)
+          fi
+
+          {
+            BUILD_STATUS="Build Failed"
+            BUILD_ICON="❌"
+            if [ "${{ steps.build.outcome }}" = "success" ]; then
+              BUILD_STATUS="Build Successful"
+              BUILD_ICON="✅"
+            fi
+
+            FLASH_DISPLAY="Not found"
+            if [ -n "${FLASH_USED_PCT}" ] && [ -n "${FLASH_MB_VALUES}" ]; then
+              FLASH_DISPLAY="${FLASH_USED_PCT}%<br/><em>${FLASH_MB_VALUES}</em>"
+            elif [ -n "${FLASH_USED_PCT}" ]; then
+              FLASH_DISPLAY="${FLASH_USED_PCT}%"
+            fi
+
+            MEMORY_DISPLAY="Not found"
+            if [ -n "${MEMORY_USED_PCT}" ]; then
+              MEMORY_DISPLAY="${MEMORY_USED_PCT}%"
+            fi
+
+            echo "${BUILD_ICON} **${BUILD_STATUS}**"
+            echo ""
+            echo "| Property | Value |"
+            echo "|----------|-------|"
+            echo "| Target | \`${{ inputs.target }}\` |"
+            echo "| Config | \`${BUILD_CONFIG}\` |"
+            echo "| Status | ${{ steps.build.outcome }} |"
+            echo "| Used Flash | ${FLASH_DISPLAY} |"
+            echo "| Used Memory | ${MEMORY_DISPLAY} |"
+
+            if [ -n "${FLASH_USED_PCT}" ] && [ -n "${FLASH_FREE_PCT}" ] && [ -n "${MEMORY_USED_PCT}" ] && [ -n "${MEMORY_UNUSED_PCT}" ]; then
+              echo ""
+              echo "<details>"
+              echo "<summary><strong>Show Utilization Pie Charts</strong></summary>"
+              echo ""
+              echo "#### Flash Usage"
+              echo '```mermaid'
+              echo "%%{init: {'themeVariables': {'fontSize': '11px', 'pie1': '#bf8700', 'pie2': '#2da44e'}}}%%"
+              echo 'pie showData'
+              echo "    \"Used (${FLASH_USED_PCT}%)\" : ${FLASH_USED_PCT}"
+              echo "    \"Free (${FLASH_FREE_PCT}%)\" : ${FLASH_FREE_PCT}"
+              echo '```'
+              echo ""
+              echo "#### Memory Usage"
+              echo '```mermaid'
+              echo "%%{init: {'themeVariables': {'fontSize': '11px', 'pie1': '#bf8700', 'pie2': '#2da44e'}}}%%"
+              echo 'pie showData'
+              echo "    \"Used (${MEMORY_USED_PCT}%)\" : ${MEMORY_USED_PCT}"
+              echo "    \"Unused (${MEMORY_UNUSED_PCT}%)\" : ${MEMORY_UNUSED_PCT}"
+              echo '```'
+              echo ""
+              echo "</details>"
+            elif [ -n "${FLASH_USED_PCT}" ] && [ -n "${FLASH_FREE_PCT}" ]; then
+              echo ""
+              echo "<details>"
+              echo "<summary><strong>Show Flash Usage Pie Chart</strong></summary>"
+              echo ""
+              echo '```mermaid'
+              echo "%%{init: {'themeVariables': {'fontSize': '11px', 'pie1': '#bf8700', 'pie2': '#2da44e'}}}%%"
+              echo 'pie showData'
+              echo "    \"Used (${FLASH_USED_PCT}%)\" : ${FLASH_USED_PCT}"
+              echo "    \"Free (${FLASH_FREE_PCT}%)\" : ${FLASH_FREE_PCT}"
+              echo '```'
+              echo ""
+              echo "</details>"
+            fi
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.upload_artifact_name || inputs.upload-artifact-name }}
+          path: ${{ matrix.upload_artifact_path || inputs.upload-artifact-path }}
+          if-no-files-found: error
+
+      - name: Publish Metrics
+        id: publish_metrics
+        if: always() && inputs.nightly && steps.build.outcome == 'success'
+        uses: ./.github/actions/publish-build-metrics
+        with:
+          variant: ${{ matrix.variant || matrix.config || inputs.config }}
+          build-name: ${{ matrix.name || matrix.variant || matrix.config || inputs.config }}
+          source-root: bazel-bin/outputs
+          output-file: build-metrics/${{ matrix.name || matrix.variant || matrix.config || inputs.config }}.jsonl
+          db-publish-enabled: ${{ github.event_name != 'pull_request' && github.ref_name == 'dev' }}
+          metrics-db-user: ${{ secrets.METRICS_DB_USER }}
+          metrics-db-password: ${{ secrets.METRICS_DB_PASSWORD }}
+          metrics-db-host: ${{ secrets.METRICS_DB_HOST }}
+          metrics-db-port: ${{ secrets.METRICS_DB_PORT }}
+          metrics-db-name: ${{ secrets.METRICS_DB_NAME }}
+          commit-id: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          project-name: ${{ github.event.repository.name }}
+          tag: ''
+          pipeline-name: ${{ github.workflow }}
+          build-no: ${{ github.run_number }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Update build failure label
+        if: always() && inputs.pr-number != '' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/update-failure-label
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ inputs.pr-number }}
+          failed-flag: ${{ steps.build.outcome != 'success' }}
+          label-name: build failed - ${{ matrix.name || matrix.variant || matrix.config || inputs.config }}
+          label-description: Indicates this build variant failed on the latest PR run

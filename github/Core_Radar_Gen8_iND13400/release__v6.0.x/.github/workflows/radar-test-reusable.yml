@@ -1,0 +1,1064 @@
+# Reusable Radar Test Workflow
+#
+# Generic across job-types (SWE6 / SWE5 / SWE6_SQT_MACRO / SWE5_SIT_MACRO /
+# ALIGNMENT / future) and variant families (FLR8 / SRR8P / future).
+#
+# This replaces the previous swe6.yml. The reusable workflow does not assume
+# anything about "SWE6" -- every literal that used to be "SWE6" is now driven by
+# `inputs.job-type` (concurrency group, build name, summary titles, Teams /
+# email subject, Platform-Health `--job_type` argument, ...).
+#
+# The variation surface across job-types is captured by these inputs:
+#   * job-type           : "SWE6" | "SWE5" | "SWE6_SQT_MACRO" | ...
+#   * test-folder        : subfolder under testcases/<gen>_Test_Cases/   (--tests_dirs)
+#   * report-subdir      : Reports/<X>      (defaults to Reports/<job-type>)
+#   * report-name-glob   : filename glob; {family} and {date} are substituted
+#   * markers / extra-args / spc-file / project-name / team-name
+#   * rotation-strategy  : "daily" (DOY rotation) | "fixed" (matrix[0])
+#   * variant-override / xcp-override : manual dispatch pin, bypasses rotation
+#
+# The Run_Test_Cases.bat invocation is composed from these inputs at runtime,
+# so each caller is a thin ~25-line file.
+#
+# Stages: Setup -> Submodule sync -> Repo init -> Download GH build artifact ->
+# Test -> GH artifact upload -> Grafana / Platform-Health -> Notification email ->
+# Cleanup.
+#
+# Build artifacts come only from GitHub Actions (`actions/download-artifact`).
+# JFrog is not used.
+#
+# Notifications:
+#   - GitHub built-in workflow notifications cover failure alerts.
+#   - HTML report email sent directly via the Aptiv internal SMTP relay
+#     (bulkmail.aptiv.com, unauthenticated) to `email-recipients`. Power
+#     Automate / Teams webhooks are blocked by admin policy, so this is the
+#     only notification channel -- it covers every case that used to be
+#     split across the Teams card and email (build/infra failures, offline
+#     runners, cancelled runs, new-failure lists, schedule), sent for every
+#     run. Set `send-email: false` on the caller to opt out.
+#
+# Re-use:
+#   jobs:
+#     run:
+#       uses: ./.github/workflows/radar-test-reusable.yml
+#       with:
+#         job-type: SWE6
+#         family: FLR8
+#         test-folder: SWE6_Testing
+#         test-matrix-json: |
+#           [{"variant":"flr8_standalone","xcp":"Eth_Direct"}]
+#       secrets: inherit
+#
+# Dummy Teams dry-run (no tests / no build / no submodule):
+#   - Pass test-teams-notification: true from a caller, OR
+#   - Run this file via Actions -> Reusable Radar Test Workflow -> Run workflow.
+
+name: Reusable Radar Test Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      test-teams-notification:
+        description: 'Skip the real test pipeline and only send a dummy Teams notification.'
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      # ---- Identity ----
+      job-type:
+        description: 'Job type label (SWE6, SWE5, SWE6_SQT_MACRO, SWE5_SIT_MACRO, ALIGNMENT, ...). Drives build name, Platform-Health --job_type, concurrency group, and all UI labels.'
+        required: true
+        type: string
+      family:
+        description: 'Radar variant family (FLR8, SRR8P, ...). Used for report filename matching and labels.'
+        required: true
+        type: string
+      gen:
+        description: 'Generation label (GEN8, GEN7_V2, ...). Used to resolve testcases/<gen>_Test_Cases/<test-folder>/.'
+        required: false
+        type: string
+        default: 'GEN8'
+      gen-version:
+        description: 'Generation version label passed to Platform-Health scripts (--gen_version).'
+        required: false
+        type: string
+        default: 'Gen8'
+
+      # ---- Test selection ----
+      test-matrix-json:
+        description: 'JSON array of {variant, xcp} combinations. With rotation-strategy=daily one entry is picked per day; with rotation-strategy=fixed only the first entry is used.'
+        required: true
+        type: string
+      rotation-strategy:
+        description: '`daily` = pick one entry per IST day-of-year (current SWE6 behavior). `fixed` = always use matrix[0] (on-demand / single-variant jobs). Ignored when `variant-override` / `xcp-override` are set.'
+        required: false
+        type: string
+        default: 'daily'
+      variant-override:
+        description: 'Manual run only: force this variant instead of the rotation pick. Empty = use rotation-strategy.'
+        required: false
+        type: string
+        default: ''
+      xcp-override:
+        description: 'Manual run only: force this XCP transport (CAN | Eth_Direct). Empty = use the XCP paired with the selected variant.'
+        required: false
+        type: string
+        default: ''
+      test-folder:
+        description: 'Subfolder under testcases/<gen>_Test_Cases/. If set, becomes `--tests_dirs .\testcases\<gen>_Test_Cases\<folder>\`. Leave empty to use framework defaults.'
+        required: false
+        type: string
+        default: ''
+      markers:
+        description: 'Value passed to `-m` (markers). Supports the framework`s flexible format, e.g. `Module=ALIGNMENT_Module TestType=XCP-Regression` or `WI=[WI-1, WI-2]`.'
+        required: false
+        type: string
+        default: ''
+      extra-args:
+        description: 'Free-form extra arguments appended to Run_Test_Cases.bat (escape hatch for anything not exposed as a first-class input).'
+        required: false
+        type: string
+        default: ''
+      no-reports:
+        description: 'When true, passes `--no_reports` to skip report generation.'
+        required: false
+        type: boolean
+        default: false
+      gui-html:
+        description: 'When true, passes `--gui_html` to force the GUI_HTML enhanced interactive report (regardless of pyproject.toml).'
+        required: false
+        type: boolean
+        default: true
+      flags:
+        description: 'Space-separated list of values for repeated `--flag` arguments (e.g. `power_check stress_mode`). Each token becomes a separate `--flag <token>`.'
+        required: false
+        type: string
+        default: ''
+      python-files:
+        description: 'Space-separated patterns passed to `--python-files` (overrides python_files in pyproject.toml).'
+        required: false
+        type: string
+        default: ''
+      python-functions:
+        description: 'Space-separated patterns passed to `--python-functions` (overrides python_functions in pyproject.toml).'
+        required: false
+        type: string
+        default: ''
+      bench-attributes:
+        description: 'Extra `-b KEY VALUE` pairs (one per line, format `KEY=VALUE`) appended after the auto-added `-b Variant <variant>`. Example: `Board=B0` on its own line.'
+        required: false
+        type: string
+        default: ''
+      spc-file:
+        description: 'SPC file to flash (e.g. `spc_5.s19`). Overrides framework auto-detection. Leave empty to let the framework choose per launcher_config.toml.'
+        required: false
+        type: string
+        default: ''
+      project-name:
+        description: 'Override project name in reports (--project_name). Leave empty to use framework default.'
+        required: false
+        type: string
+        default: ''
+      team-name:
+        description: 'Override team name in reports (--team_name). Leave empty to use framework default.'
+        required: false
+        type: string
+        default: ''
+
+      # ---- Report discovery / upload ----
+      report-subdir:
+        description: 'Reports sub-directory under the framework root (e.g. `Reports/SWE6`, `Reports/SWE6_SQT_MACRO`). Leave empty to default to `Reports/<job-type>`.'
+        required: false
+        type: string
+        default: ''
+      report-name-glob:
+        description: 'Filename glob used to locate the GUI HTML report. `{family}` and `{date}` are substituted with the family input and today`s date in `MMM_dd_yyyy` format. Default: `*{family}*{date}*.html` (the step additionally filters for `GUI` in the name, so it tolerates both `..._Report_GUI_<date>.html` and `..._Report_<date>_GUI.html` orderings).'
+        required: false
+        type: string
+        default: '*{family}*{date}*.html'
+
+      # ---- URLs / labels ----
+      job-url:
+        description: 'URL displayed in the email footer linking back to this workflow.'
+        required: false
+        type: string
+        default: ''
+      grafana-dashboard-url:
+        description: 'Grafana dashboard URL shown in the email.'
+        required: false
+        type: string
+        default: 'https://platformhealth.389177498442.awsaptiv.com/grafana/d/feap0ghfcaxhcd/core-radar-gen8-ind13400?orgId=1&from=now-2d&to=now&timezone=America%2FIndianapolis'
+
+      # ---- Build artifact source (GitHub Actions artifacts only) ----
+      gh-artifact-name:
+        description: 'Artifact name produced by the upstream build workflow. Empty = skip download (bench already has firmware).'
+        required: false
+        type: string
+        default: ''
+      gh-artifact-run-id:
+        description: '[gh-artifact] Workflow run ID containing the artifact. Empty = latest successful run of `gh-artifact-workflow` on `gh-artifact-branch`.'
+        required: false
+        type: string
+        default: ''
+      gh-artifact-workflow:
+        description: '[gh-artifact] Upstream workflow filename used to resolve latest run when `gh-artifact-run-id` is empty.'
+        required: false
+        type: string
+        default: 'nightly.yml'
+      gh-artifact-branch:
+        description: '[gh-artifact] Branch used to resolve latest run when `gh-artifact-run-id` is empty.'
+        required: false
+        type: string
+        default: 'dev'
+      gh-artifact-repository:
+        description: '[gh-artifact] owner/repo for cross-repo artifact transfer. Empty = current repo.'
+        required: false
+        type: string
+        default: ''
+      gh-artifact-sha256:
+        description: '[gh-artifact] SHA256 digest of the artifact (sha256:hexvalue). Resolved to run-id in the caller -- logged after download for traceability.'
+        required: false
+        type: string
+        default: ''
+
+      # ---- Runner / timeout ----
+      runner-labels:
+        description: 'Self-hosted runner labels (JSON array). Must be a Gen8 CICD Windows agent with the Python testing framework prerequisites.'
+        required: false
+        type: string
+        default: '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]'
+      timeout-minutes:
+        description: 'Job timeout in minutes.'
+        required: false
+        type: number
+        default: 360
+
+      # ---- Notifications ----
+      email-recipients:
+        description: 'Semicolon-separated list of email recipients. Sent directly via the Aptiv internal SMTP relay (bulkmail.aptiv.com) -- Power Automate / Teams webhooks are blocked by admin policy.'
+        required: false
+        type: string
+        default: ''
+      send-email:
+        description: 'When false, skip the notification email entirely (recipients still resolved/logged, nothing sent).'
+        required: false
+        type: boolean
+        default: true
+      test-teams-notification:
+        description: 'When true, skip setup/build/test and only run send_email_notification.ps1 with dummy values (dry-run of the notification email).'
+        required: false
+        type: boolean
+        default: false
+
+      # ---- Python framework submodule source ----
+      submodule-source:
+        description: 'Where the Core_Radar_Python_Framework submodule is hosted: `gerrit` or `github` (GHE).'
+        required: false
+        type: string
+        default: 'github'
+      submodule-github-url:
+        description: '[github] HTTPS URL of the migrated submodule on GitHub / GHE.'
+        required: false
+        type: string
+        default: 'https://aptv.ghe.com/GPO/core-radar-python-framework.git'
+
+    secrets:
+      GH_ARTIFACT_TOKEN:
+        required: false
+      SUBMODULE_TOKEN:
+        required: false
+
+# Concurrency at the reusable-workflow level: one in-flight run per
+# (job-type, family). Different job-types on the same family are NOT
+# blocked here -- bench-level serialization is handled implicitly by the
+# self-hosted runner being single-job-at-a-time.
+concurrency:
+  group: radar-test-${{ inputs.job-type || 'SWE6' }}-${{ inputs.family || 'FLR8' }}${{ (inputs.test-teams-notification == true) && '-teams-dry-run' || '' }}
+  cancel-in-progress: false
+
+jobs:
+  # Isolated dry-run: checkout + dummy env + send_email_notification.ps1
+  # (email-only now; Teams webhooks are blocked by admin policy).
+  # Does not run tests, download artifacts, or occupy the real pipeline path.
+  test-teams:
+    # NOTE: do not fall back to `github.event_name == 'workflow_dispatch'` here --
+    # when this workflow is invoked via `workflow_call` from a caller whose own
+    # trigger is `workflow_dispatch` (e.g. swe6-flr8.yml), `github.event_name`
+    # reflects the TOP-LEVEL run's trigger, not this reusable workflow's own
+    # `on:` block, so it would always be `workflow_dispatch` and this dummy
+    # job would always run instead of the real pipeline.
+    if: ${{ inputs.test-teams-notification == true }}
+    name: Dummy notification email
+    runs-on: ${{ fromJson(inputs.runner-labels || '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]') }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          submodules: false
+
+      - name: Detect email capability
+        id: teams_gate
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          _EMAIL_RECIPIENTS: ${{ inputs.email-recipients || '' }}
+        run: |
+          $haveTeams = -not [string]::IsNullOrWhiteSpace($env:_EMAIL_RECIPIENTS)
+          "have_teams=$($haveTeams.ToString().ToLower())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          if (-not $haveTeams) {
+            Write-Host "::error::email-recipients is empty -- cannot test the notification email."
+            exit 1
+          }
+
+      - name: Send dummy notification email
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          SEND_EMAIL:             ${{ inputs.send-email }}
+          JOB_TYPE:               ${{ inputs.job-type || 'SWE6' }}
+          FAMILY:                 ${{ inputs.family || 'FLR8' }}
+          PASSED:                 '9'
+          FAILED:                 '1'
+          SKIPPED:                '1'
+          ERRORS:                 '0'
+          SRS_PASSED:             '8'
+          SRS_FAILED:             '1'
+          SRS_ERRORS:             '0'
+          NEW_TEST:               '1'
+          NEW_SRS:                '1'
+          NEW_TEST_NAMES:         "dummy_test_case_alpha\ndummy_test_case_beta"
+          NEW_SRS_NAMES:          "SRS-DUMMY-001"
+          VARIANT:                'flr8_standalone'
+          XCP:                    'Eth_Direct'
+          BRANCH:                 ${{ github.ref_name }}
+          JOB_URL:                ${{ inputs.job-url || format('{0}/{1}/actions/workflows/radar-test-reusable.yml', github.server_url, github.repository) }}
+          RUN_URL:                ${{ format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
+          BUILD_OUTPUTS_URL:      ''
+          MATRIX_JSON:            ${{ inputs.test-matrix-json || '[{"variant":"flr8_standalone","xcp":"Eth_Direct"}]' }}
+          ROTATION:               'fixed'
+          REPORT_DIR:             ${{ github.workspace }}
+          GH_ARTIFACT_UPLOADED:   'false'
+          GH_ARTIFACT_URL:        ${{ format('{0}/{1}/actions/runs/{2}#artifacts', github.server_url, github.repository, github.run_id) }}
+          HTML_ARTIFACT_URL:      ''
+          SUBMODULE_SYNC_OUTCOME: 'success'
+          REPO_INIT_OUTCOME:      'success'
+          BUILD_DL_GH_OUTCOME:    'skipped'
+          TEST_OUTCOME:           'success'
+          GITHUB_TOKEN:           ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_API_URL:         ${{ github.api_url }}
+          RUNNER_LABELS_JSON:     ${{ inputs.runner-labels || '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]' }}
+          EMAIL_RECIPIENTS:       ${{ inputs.email-recipients || '' }}
+        run: .\tools\CI\send_email_notification.ps1
+
+  run:
+    if: ${{ inputs.test-teams-notification != true }}
+    name: ${{ inputs.job-type }} (${{ inputs.family }})
+    runs-on: ${{ fromJson(inputs.runner-labels) }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    permissions:
+      contents: read
+      actions: write
+    defaults:
+      run:
+        shell: cmd
+    env:
+      JOB_TYPE: ${{ inputs.job-type }}
+      FAMILY: ${{ inputs.family }}
+      GEN: ${{ inputs.gen }}
+      GEN_VERSION: ${{ inputs.gen-version }}
+      FULL_COMMIT_HASH: ${{ github.sha }}
+      GRAFANA_DASHBOARD: ${{ inputs.grafana-dashboard-url }}
+      JOB_URL: ${{ inputs.job-url }}
+
+    steps:
+      # -------- Setup --------
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1   # shallow clone -- full history not needed for test runs
+          submodules: false  # we sync Core_Radar_Python_Framework explicitly to track latest dev
+
+      - name: Record job start time
+        id: job_timer
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $utcNow = [DateTime]::UtcNow.ToString('o')
+          "start_utc=$utcNow" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # Some files in the workspace may be owned by NT AUTHORITY\NETWORK SERVICE
+      # from a previous checkout under the runner service account, while the
+      # current job's git invocations run under a different user (e.g.
+      # APTIV\sid_advradar_cicd). Git 2.35.2+ rejects this with "dubious
+      # ownership in repository" unless the path is on the safe.directory
+      # allow-list. Mark both the main repo and the submodule path as safe
+      # for all users on this runner so every subsequent `git` step works.
+      - name: Mark workspace as a git safe.directory
+        shell: cmd
+        run: |
+          git config --global --add safe.directory "%GITHUB_WORKSPACE%" || ver > nul
+          git config --global --add safe.directory "%GITHUB_WORKSPACE%/tools/python/testing_framework/Core_Radar_Python_Framework" || ver > nul
+          git config --global --add safe.directory "*" || ver > nul
+
+      # NOTE on PowerShell steps: every `shell: powershell` step in this
+      # workflow uses an explicit `-ExecutionPolicy Bypass` invocation
+      # (see the custom `shell:` template on each step) so the runner's
+      # configured execution policy (often `Restricted` on locked-down
+      # self-hosted Windows agents) does not block the temp `.ps1` GitHub
+      # Actions generates for each step.
+
+      - name: Compute report subdir
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          REPORT_SUBDIR_INPUT: ${{ inputs.report-subdir }}
+        run: |
+          # Resolve report-subdir default: empty input -> "Reports/<job-type>"
+          $sub = $env:REPORT_SUBDIR_INPUT
+          if ([string]::IsNullOrWhiteSpace($sub)) { $sub = "Reports/$env:JOB_TYPE" }
+          Write-Host "Resolved report subdir: $sub"
+          "RESOLVED_REPORT_SUBDIR=$sub" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Configure submodule credentials
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          SUB_SOURCE: ${{ inputs.submodule-source }}
+          SUB_GH_URL: ${{ inputs.submodule-github-url }}
+          SUB_TOKEN:  ${{ secrets.SUBMODULE_TOKEN || github.token }}
+        run: |
+          if ($env:SUB_SOURCE -eq 'github') {
+            if ([string]::IsNullOrWhiteSpace($env:SUB_GH_URL)) {
+              Write-Error "submodule-source=github requires submodule-github-url"; exit 1
+            }
+            $uri = [System.Uri]$env:SUB_GH_URL
+            $uriHost = $uri.Host
+            $scheme = $uri.Scheme
+            $authedBase = "$scheme`://x-access-token:$env:SUB_TOKEN@$uriHost/"
+            $plainBase  = "$scheme`://$uriHost/"
+            Write-Host "Token-auth rewrite: $plainBase -> (authed via x-access-token)"
+            git config --local "url.$authedBase.insteadOf" "$plainBase"
+            $gerritUrl = git config --file .gitmodules --get submodule."tools/python/Core_Radar_Python_Framework".url
+            Write-Host "Rewriting submodule URL: $gerritUrl -> $env:SUB_GH_URL"
+            git config --local "url.$env:SUB_GH_URL.insteadOf" "$gerritUrl"
+          } else {
+            Write-Host "submodule-source=gerrit; relying on runner .netrc / SSH agent"
+          }
+
+      - name: Sync Core_Radar_Python_Framework submodule to latest dev
+        id: submodule_sync
+        # Hard cap so a hanging credential prompt against the gerrit/GHE
+        # submodule host can't burn the whole job slot.
+        timeout-minutes: 10
+        env:
+          # Force git to FAIL FAST instead of blocking on an interactive
+          # username/password prompt when the runner's .netrc / SSH agent
+          # / token rewrite isn't set up for the submodule host.
+          GIT_TERMINAL_PROMPT: '0'
+          GCM_INTERACTIVE: 'Never'
+        run: |
+          git submodule sync -- tools/python/testing_framework/Core_Radar_Python_Framework || exit /b 1
+          git submodule update --init --remote --force tools/python/testing_framework/Core_Radar_Python_Framework || exit /b 1
+          pushd tools\python\testing_framework\Core_Radar_Python_Framework
+          git log -1 --pretty="format:Core_Radar_Python_Framework @ %%h %%s (%%ci)"
+          popd
+
+      - name: Repo init & Python framework setup
+        id: repo_init
+        # NOTE on cwd handling:
+        #   - STEP1_REPO_INIT.bat does `cd ./../../../` internally (3 levels up),
+        #     so it MUST be invoked from `tools\python\testing_framework` for the
+        #     relative jump to land at the repo root. It also ends with `pause`
+        #     (returns immediately in non-interactive shells) and leaves cwd at
+        #     the repo root.
+        #   - STEP4_Python_FM_Dependency_Installer.bat does
+        #     `cd Core_Radar_Python_Framework\installation` (relative), so it
+        #     also requires cwd = `tools\python\testing_framework`.
+        #   - STEP3 is cwd-independent (resolves repo root via
+        #     `git rev-parse --show-toplevel`).
+        # We therefore reset cwd to `%GITHUB_WORKSPACE%\tools\python\testing_framework`
+        # before EVERY call (STEP1 silently leaves the shell at the repo root for
+        # the rest of the step, so a single `working-directory:` is not enough).
+        run: |
+          set "FW_DIR=%GITHUB_WORKSPACE%\tools\python\testing_framework"
+          echo ---- Running Precommit ----
+          cd /d "%FW_DIR%" || exit /b 1
+          call STEP1_REPO_INIT.bat || exit /b 1
+          echo ---- Initiate Python Repo ----
+          REM --CICD flag skips the interactive `pause` at script end and
+          REM forces a clean deinit+reinit of the submodule from scratch.
+          cd /d "%FW_DIR%" || exit /b 1
+          call STEP3_Initiate_Python_Automation_Repo.bat --CICD || exit /b 1
+          echo ---- Downloading Dependencies ----
+          cd /d "%FW_DIR%" || exit /b 1
+          call STEP4_Python_FM_Dependency_Installer.bat || exit /b 1
+          python -m pip install beautifulsoup4 psycopg2 matplotlib pandas || exit /b 1
+
+      # Gate the notification step: only run it when recipients are configured
+      # and the caller has not opted out via send-email: false.
+      - name: Detect notification capability
+        id: gates
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          _EMAIL_RECIPIENTS: ${{ inputs.email-recipients }}
+          _SEND_EMAIL:       ${{ inputs.send-email }}
+        run: |
+          $haveRecipients = -not [string]::IsNullOrWhiteSpace($env:_EMAIL_RECIPIENTS)
+          $sendEmail = $env:_SEND_EMAIL -ine 'false'
+          $haveTeams = $haveRecipients -and $sendEmail
+          "have_teams=$($haveTeams.ToString().ToLower())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # -------- Rotation selection (manual override | daily | fixed) --------
+      - name: Select today's variant + XCP
+        id: rotation
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          MATRIX_JSON:      ${{ inputs.test-matrix-json }}
+          ROTATION:         ${{ inputs.rotation-strategy }}
+          VARIANT_OVERRIDE: ${{ inputs.variant-override }}
+          XCP_OVERRIDE:     ${{ inputs.xcp-override }}
+        run: |
+          $matrix = $env:MATRIX_JSON | ConvertFrom-Json
+          if ($matrix.Count -eq 0) { Write-Error "test-matrix-json is empty"; exit 1 }
+          $ovVariant = "$($env:VARIANT_OVERRIDE)".Trim()
+          $ovXcp     = "$($env:XCP_OVERRIDE)".Trim()
+          if ($ovVariant -or $ovXcp) {
+            $candidates = @($matrix)
+            if ($ovVariant) { $candidates = @($candidates | Where-Object { $_.variant -ieq $ovVariant }) }
+            if ($ovXcp)     { $candidates = @($candidates | Where-Object { $_.xcp     -ieq $ovXcp }) }
+            if ($candidates.Count -gt 0) {
+              $today = $candidates[0]
+            } elseif ($ovVariant -and $ovXcp) {
+              # Both sides pinned but the pair is absent from the matrix -- honour it anyway.
+              $today = [pscustomobject]@{ variant = $ovVariant; xcp = $ovXcp }
+              Write-Host "::warning::Override pair '$ovVariant' / '$ovXcp' not in test-matrix-json -- running it anyway."
+            } else {
+              Write-Error "Override (variant='$ovVariant' xcp='$ovXcp') matches no entry in test-matrix-json. Set BOTH variant and xcp to run a combination that is not in the matrix."
+              exit 1
+            }
+            Write-Host "Rotation=manual -> $($today.variant) [$($today.xcp)]"
+          } elseif ($env:ROTATION -ieq 'fixed') {
+            $today = $matrix[0]
+            Write-Host "Rotation=fixed -> $($today.variant) [$($today.xcp)]"
+          } else {
+            # Pin day-of-year to IST so the choice is deterministic regardless
+            # of runner timezone (cron fires at 18:30 UTC = 00:00 IST).
+            $istNow = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, "India Standard Time")
+            $dayOfYear = $istNow.DayOfYear
+            $idx = $dayOfYear % $matrix.Count
+            $today = $matrix[$idx]
+            Write-Host "Rotation=daily IST day $dayOfYear (index $idx / $($matrix.Count)) -> $($today.variant) [$($today.xcp)]"
+          }
+          "TODAY_VARIANT=$($today.variant)"  | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "TODAY_XCP=$($today.xcp)"          | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "today_variant=$($today.variant)"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "today_xcp=$($today.xcp)"          | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # -------- Build (download nightly combined output from GH Actions) --------
+      - name: Download build artifact from GH Actions
+        id: build_download_gh
+        if: inputs.gh-artifact-name != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.gh-artifact-name }}
+          path: .
+          github-token: ${{ secrets.GH_ARTIFACT_TOKEN || github.token }}
+          repository: ${{ inputs.gh-artifact-repository || github.repository }}
+          run-id: ${{ inputs.gh-artifact-run-id }}
+
+      - name: Extract GH artifact zip if needed
+        if: inputs.gh-artifact-name != ''
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          # Artifact root is workspace root -- combined-outputs expands to bazel-bin/outputs/ directly.
+          # Zip search covers workspace root (legacy per-variant zips) and bazel-bin/outputs fallback.
+          $outDir = "bazel-bin/outputs"
+          $zips = Get-ChildItem -Path "." -Filter *.zip -ErrorAction SilentlyContinue
+          foreach ($z in $zips) {
+            Write-Host "Expanding $($z.FullName) -> $outDir"
+            New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+            Expand-Archive -LiteralPath $z.FullName -DestinationPath $outDir -Force
+            Remove-Item -LiteralPath $z.FullName -Force
+          }
+          if (Test-Path $outDir) {
+            Get-ChildItem -Path $outDir | Format-Table -AutoSize
+          } else {
+            Write-Host "bazel-bin/outputs not found after extraction"
+          }
+
+      - name: Log artifact sha256 reference
+        if: inputs.gh-artifact-name != '' && inputs.gh-artifact-sha256 != ''
+        shell: bash
+        run: |
+          echo "Artifact digest (sha256 reference used to resolve run): ${{ inputs.gh-artifact-sha256 }}"
+
+      # -------- Test --------
+      # Derive per-job-type command defaults; caller inputs override when non-empty.
+      - name: Resolve job-type defaults
+        id: resolve_defaults
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          INPUT_TEST_FOLDER:  ${{ inputs.test-folder }}
+          INPUT_PYTHON_FILES: ${{ inputs.python-files }}
+          INPUT_EXTRA_ARGS:   ${{ inputs.extra-args }}
+        run: |
+          $folder      = $env:INPUT_TEST_FOLDER
+          $pythonFiles = $env:INPUT_PYTHON_FILES
+          $extraArgs   = $env:INPUT_EXTRA_ARGS
+
+          switch ($env:JOB_TYPE) {
+            'SWE6_SQT_MACRO' {
+              if ([string]::IsNullOrWhiteSpace($folder))      { $folder      = 'SWE6_TestScript_SQT_MACRO' }
+              if ([string]::IsNullOrWhiteSpace($pythonFiles)) { $pythonFiles = 'test_SWE6*.py' }
+              if ($extraArgs -notmatch '--pbl_protocol')       { $extraArgs   = "$extraArgs --pbl_protocol eth_1Gbps".Trim() }
+            }
+          }
+
+          "test_folder=$folder"       | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "python_files=$pythonFiles" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "extra_args=$extraArgs"     | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "test_folder  : $folder"
+          Write-Host "python_files : $pythonFiles"
+          Write-Host "extra_args   : $extraArgs"
+
+      # Build the Run_Test_Cases.bat command line dynamically from resolved values.
+      # Empty values are skipped -- the framework falls back to pyproject.toml defaults.
+      - name: Run test cases
+        id: test
+        continue-on-error: true
+        working-directory: tools\python\testing_framework\Core_Radar_Python_Framework
+        env:
+          TEST_FOLDER:      ${{ steps.resolve_defaults.outputs.test_folder }}
+          SPC_FILE:         ${{ inputs.spc-file }}
+          PROJECT_NAME:     ${{ inputs.project-name }}
+          TEAM_NAME:        ${{ inputs.team-name }}
+          MARKERS:          ${{ inputs.markers }}
+          EXTRA_ARGS:       ${{ steps.resolve_defaults.outputs.extra_args }}
+          NO_REPORTS:       ${{ inputs.no-reports }}
+          GUI_HTML:         ${{ inputs.gui-html }}
+          FLAGS:            ${{ inputs.flags }}
+          PYTHON_FILES:     ${{ steps.resolve_defaults.outputs.python_files }}
+          PYTHON_FUNCTIONS: ${{ inputs.python-functions }}
+          BENCH_ATTRIBUTES: ${{ inputs.bench-attributes }}
+        run: |
+          @echo off
+          setlocal enabledelayedexpansion
+          echo ------- Running %JOB_TYPE%: %TODAY_VARIANT% [%TODAY_XCP%] -------
+          set "CMD=Run_Test_Cases.bat --ci_cd_environment -b Variant %TODAY_VARIANT% --xcp_protocol %TODAY_XCP%"
+          if defined TEST_FOLDER  if not "%TEST_FOLDER%"==""  set "CMD=%CMD% --tests_dirs .\testcases\%GEN%_Test_Cases\%TEST_FOLDER%\"
+          if defined SPC_FILE     if not "%SPC_FILE%"==""     set "CMD=%CMD% --spc_file %SPC_FILE%"
+          if defined PROJECT_NAME if not "%PROJECT_NAME%"=="" set "CMD=%CMD% --project_name %PROJECT_NAME%"
+          if defined TEAM_NAME    if not "%TEAM_NAME%"==""    set "CMD=%CMD% --team_name %TEAM_NAME%"
+          if defined MARKERS    if not "%MARKERS%"==""    set "CMD=%CMD% -m %MARKERS%"
+          if /i "%NO_REPORTS%"=="true"    set "CMD=%CMD% --no_reports"
+          if /i "%GUI_HTML%"=="true"      set "CMD=%CMD% --gui_html"
+          if defined PYTHON_FILES     if not "%PYTHON_FILES%"==""     set "CMD=%CMD% --python-files %PYTHON_FILES%"
+          if defined PYTHON_FUNCTIONS if not "%PYTHON_FUNCTIONS%"=="" set "CMD=%CMD% --python-functions %PYTHON_FUNCTIONS%"
+          rem --- repeated --flag tokens ---
+          if defined FLAGS if not "%FLAGS%"=="" (
+            for %%F in (%FLAGS%) do set "CMD=!CMD! --flag %%F"
+          )
+          rem --- extra -b KEY VALUE pairs, one per line as KEY=VALUE ---
+          rem     Write to a temp file first so multi-line values are iterated correctly.
+          if defined BENCH_ATTRIBUTES if not "%BENCH_ATTRIBUTES%"=="" (
+            echo %BENCH_ATTRIBUTES%>"%TEMP%\_bench_attrs.txt"
+            for /f "usebackq tokens=1,2 delims==" %%K in ("%TEMP%\_bench_attrs.txt") do if not "%%K"=="" set "CMD=!CMD! -b %%K %%L"
+            del /q "%TEMP%\_bench_attrs.txt" 2>nul
+          )
+          if defined EXTRA_ARGS if not "%EXTRA_ARGS%"=="" set "CMD=%CMD% %EXTRA_ARGS%"
+          echo Executing: %CMD%
+          %CMD%
+
+      - name: Locate latest GUI HTML report
+        id: find_report
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          REPORT_GLOB_TEMPLATE: ${{ inputs.report-name-glob }}
+        run: |
+          $reportDir = Join-Path "tools\python\testing_framework\Core_Radar_Python_Framework" $env:RESOLVED_REPORT_SUBDIR
+          if (-not (Test-Path $reportDir)) {
+            Write-Warning "Report directory not found: $reportDir"
+            "report_path=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_dir="  | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            return
+          }
+          $currentDate = Get-Date -Format "MMM_dd_yyyy"
+          $glob = $env:REPORT_GLOB_TEMPLATE.Replace('{family}', $env:FAMILY).Replace('{date}', $currentDate)
+          # Required substring filters applied after the glob match:
+          #   1. `GUI`            - we only want the enhanced GUI HTML, not the plain HTML report
+          #   2. each variant tok - e.g. variant `flr8_standalone` -> filename must contain both
+          #                         `flr8` AND `standalone` (case-insensitive). Framework writes
+          #                         the variant as uppercase segments like `..._FLR8_..._STANDALONE_...`
+          #                         so token-by-token matching is robust to ordering / extra tags
+          #                         (AL, CAN, etc.) inserted by the framework between segments.
+          $variantTokens = @()
+          if (-not [string]::IsNullOrWhiteSpace($env:TODAY_VARIANT)) {
+            $variantTokens = $env:TODAY_VARIANT.Split('_') | Where-Object { $_ -ne '' }
+          }
+          $requiredTokens = @('GUI') + $variantTokens
+          Write-Host "Searching $reportDir with glob: $glob"
+          Write-Host "Required substring filters (case-insensitive): $($requiredTokens -join ', ')"
+          $latest = Get-ChildItem -Path $reportDir -Filter $glob -ErrorAction SilentlyContinue |
+            Where-Object {
+              $name = $_.Name
+              $ok = $true
+              foreach ($tok in $requiredTokens) {
+                if ($name -notmatch [regex]::Escape($tok)) { $ok = $false; break }
+              }
+              $ok
+            } |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
+          if ($latest) {
+            Write-Host "Latest report: $($latest.FullName)"
+            "report_path=$($latest.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_name=$($latest.Name)"     | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_date=$currentDate"        | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_dir=$reportDir"           | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          } else {
+            Write-Warning "No matching GUI HTML report found in $reportDir for $currentDate (glob: $glob)"
+            "report_path=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "report_dir=$reportDir" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          }
+
+      # -------- Grafana / Platform-Health --------
+      - name: Push results + delta failures to Platform-Health
+        id: grafana
+        if: ${{ steps.find_report.outputs.report_path != '' }}
+        continue-on-error: true
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          REPORT_PATH: ${{ steps.find_report.outputs.report_path }}
+          REPORT_DIR:  ${{ steps.find_report.outputs.report_dir }}
+        run: |
+          # Keep `swe6_results_summary.txt` for SWE6 job-type (backwards compat
+          # with anything that still reads that exact filename). For other
+          # job-types use `<job-type-lower>_results_summary.txt`.
+          $jobTypeLower = $env:JOB_TYPE.ToLower()
+          if ($env:JOB_TYPE -ieq 'SWE6') {
+            $summary = Join-Path $env:REPORT_DIR "swe6_results_summary.txt"
+          } else {
+            $summary = Join-Path $env:REPORT_DIR "${jobTypeLower}_results_summary.txt"
+          }
+          $newFails = Join-Path $env:REPORT_DIR "new_failures_test_srs.txt"
+
+          python tools\python\platformHealthMetrices\sendSwe6GuiResultsToPH.py `
+            --htmlfile "$env:REPORT_PATH" `
+            --variant "$env:FAMILY" `
+            --job_type "$env:JOB_TYPE" `
+            --gen_version "$env:GEN_VERSION" `
+            --commit_id "$env:FULL_COMMIT_HASH" | Out-File -FilePath $summary -Encoding utf8
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          python tools\python\platformHealthMetrices\sendNewFailuresToPH.py `
+            --variant "$env:FAMILY" `
+            --gen_version "$env:GEN_VERSION" `
+            --job_type "$env:JOB_TYPE" | Out-File -FilePath $newFails -Encoding utf8
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          "summary_file=$summary"   | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "newfails_file=$newFails" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # -------- Parse counts + pie charts + step summary --------
+      - name: Parse summary, generate pie charts, build step summary
+        id: summarize
+        if: always()
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          SUMMARY_FILE:      ${{ steps.grafana.outputs.summary_file }}
+          NEWFAILS_FILE:     ${{ steps.grafana.outputs.newfails_file }}
+          REPORT_PATH:       ${{ steps.find_report.outputs.report_path }}
+          REPORT_NAME:       ${{ steps.find_report.outputs.report_name }}
+          # Step outcomes for infrastructure failure diagnosis
+          SUBMODULE_SYNC_OUTCOME: ${{ steps.submodule_sync.outcome }}
+          REPO_INIT_OUTCOME:     ${{ steps.repo_init.outcome }}
+          BUILD_DL_GH_OUTCOME:   ${{ steps.build_download_gh.outcome }}
+          TEST_OUTCOME:          ${{ steps.test.outcome }}
+          RUN_URL: ${{ format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
+          JOB_URL: ${{ inputs.job-url }}
+          JOB_START_UTC: ${{ steps.job_timer.outputs.start_utc }}
+        run: |
+          $TOTAL=$PASSED=$FAILED=$SKIPPED=$ERRORS=0
+          $SRS_PASSED=$SRS_FAILED=$SRS_ERRORS=0
+          $NEW_TEST_FAIL=0; $NEW_SRS_FAIL=0
+
+          if ($env:SUMMARY_FILE -and (Test-Path $env:SUMMARY_FILE)) {
+            $s = Get-Content $env:SUMMARY_FILE -Raw
+            if ($s -match 'TOTAL:\s*(\d+),\s*PASSED:\s*(\d+),\s*FAILED:\s*(\d+),\s*SKIPPED:\s*(\d+),\s*ERRORS:\s*(\d+)') {
+              $TOTAL=$Matches[1]; $PASSED=$Matches[2]; $FAILED=$Matches[3]; $SKIPPED=$Matches[4]; $ERRORS=$Matches[5]
+            }
+            if ($s -match 'SRS RESULTS =+[\s\S]*?TOTAL:\s*(\d+),\s*PASSED:\s*(\d+),\s*FAILED:\s*(\d+),\s*ERRORS:\s*(\d+)') {
+              $SRS_PASSED=$Matches[2]; $SRS_FAILED=$Matches[3]; $SRS_ERRORS=$Matches[4]
+            }
+          } else {
+            Write-Warning "Summary file not produced; using zeros."
+          }
+          $newTestNames = @(); $newSrsNames = @()
+          if ($env:NEWFAILS_FILE -and (Test-Path $env:NEWFAILS_FILE)) {
+            $c = Get-Content $env:NEWFAILS_FILE -Raw
+            if ($c -match 'New Failed Test Count:\s*(\d+)') { $NEW_TEST_FAIL = $Matches[1] }
+            if ($c -match 'New Failed SRS Count:\s*(\d+)')  { $NEW_SRS_FAIL  = $Matches[1] }
+            $inT = $false; $inS = $false
+            foreach ($ln in ($c -split '\r?\n')) {
+              if ($ln -match 'New Failed Tests:\s*$')   { $inT = $true;  $inS = $false; continue }
+              if ($ln -match 'New Failed SRS IDs:\s*$') { $inS = $true;  $inT = $false; continue }
+              if ($ln -match '^={3,}')                   { $inT = $false; $inS = $false; continue }
+              if ($inT -and $ln -match '^\s*-\s+(.+)') { $newTestNames += $Matches[1].Trim() }
+              if ($inS -and $ln -match '^\s*-\s+(.+)') { $newSrsNames  += $Matches[1].Trim() }
+            }
+          }
+
+          # Pie charts (best-effort). Skip if no test data was produced --
+          # matplotlib raises NaN errors when all wedge values are zero.
+          $testSum = [int]$PASSED + [int]$FAILED + [int]$SKIPPED + [int]$ERRORS
+          $srsSum  = [int]$SRS_PASSED + [int]$SRS_FAILED + [int]$SRS_ERRORS
+          if ($testSum -eq 0 -and $srsSum -eq 0) {
+            Write-Warning "All counts are zero; skipping pie chart generation."
+          } else {
+            try {
+              python tools\python\platformHealthMetrices\generate_ci_piecharts.py `
+                --passed-tests $PASSED --failed-tests $FAILED --skipped-tests $SKIPPED --error-tests $ERRORS `
+                --passed-srs $SRS_PASSED --failed-srs $SRS_FAILED --error-srs $SRS_ERRORS
+              if ($LASTEXITCODE -ne 0) { Write-Warning "pie chart script exited with code $LASTEXITCODE" }
+            } catch { Write-Warning "pie chart generation failed: $_" }
+          }
+          $global:LASTEXITCODE = 0
+
+          # Export for downstream (email)
+          @(
+            "total=$TOTAL","passed=$PASSED","failed=$FAILED","skipped=$SKIPPED","errors=$ERRORS",
+            "srs_passed=$SRS_PASSED","srs_failed=$SRS_FAILED","srs_errors=$SRS_ERRORS",
+            "new_test_fail=$NEW_TEST_FAIL","new_srs_fail=$NEW_SRS_FAIL"
+          ) | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          # Export top-10 failure names using multiline output delimiter syntax
+          $t10 = $newTestNames | Select-Object -First 10
+          if ($newTestNames.Count -gt 10) { $t10 += "... and $($newTestNames.Count - 10) more" }
+          $s10 = $newSrsNames  | Select-Object -First 10
+          if ($newSrsNames.Count  -gt 10) { $s10 += "... and $($newSrsNames.Count - 10) more" }
+          if ($t10.Count -gt 0) {
+            (@("new_test_names<<GHEOF_T") + $t10 + @("GHEOF_T")) | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          } else { "new_test_names=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8 }
+          if ($s10.Count -gt 0) {
+            (@("new_srs_names<<GHEOF_S") + $s10 + @("GHEOF_S")) | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          } else { "new_srs_names=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8 }
+
+          # Infrastructure failure diagnosis
+          $failureReason = ""
+          $failureCategory = ""
+          if ($env:SUBMODULE_SYNC_OUTCOME -eq 'failure') {
+              $failureCategory = ":globe_with_meridians: Infrastructure / Network"
+              $failureReason = "Submodule sync failed - Gerrit host (``gitgerrit.asux.aptiv.com``) could not be resolved. Likely cause: VPN disconnected, DNS resolution failure, or Gerrit server unreachable."
+          } elseif ($env:REPO_INIT_OUTCOME -eq 'failure') {
+              $failureCategory = ":wrench: Setup / Environment"
+              $failureReason = "Repo init or Python framework setup failed. Check runner environment, Python installation, and dependency availability."
+          } elseif ($env:BUILD_DL_GH_OUTCOME -eq 'failure') {
+              $failureCategory = ":package: Build Artifact"
+              $failureReason = "GitHub Actions artifact download failed. Check upstream workflow run, artifact name, and ``GH_ARTIFACT_TOKEN``."
+          } elseif ($env:TEST_OUTCOME -eq 'failure') {
+              $failureCategory = ":test_tube: Test Execution"
+              $failureReason = "Test execution returned a non-zero exit code. Review Run_Test_Cases.bat output and test logs for details."
+          } elseif ([int]$TOTAL -eq 0) {
+              $failureCategory = ":question: Unknown"
+              $failureReason = "No test results produced. An earlier step may have failed silently - check the workflow run log for the first red step."
+          }
+
+          # Step summary
+          $md = @"
+          ## $env:JOB_TYPE ($env:FAMILY) Nightly Result
+
+          | Field | Value |
+          |---|---|
+          | Job Type | ``$env:JOB_TYPE`` |
+          | Variant | ``$env:TODAY_VARIANT`` |
+          | XCP | ``$env:TODAY_XCP`` |
+          | Commit | ``$env:FULL_COMMIT_HASH`` |
+          | Report | $env:REPORT_NAME |
+
+          ### Test Summary
+          PASS: **$PASSED**  FAIL: **$FAILED**  SKIP: **$SKIPPED**  ERROR: **$ERRORS**
+
+          ### SRS Summary
+          PASS: **$SRS_PASSED**  FAIL: **$SRS_FAILED**  ERROR: **$SRS_ERRORS**
+
+          ### Delta failures
+          New test failures: **$NEW_TEST_FAIL** &nbsp; New SRS failures: **$NEW_SRS_FAIL**
+          "@
+          # Emit GitHub Actions error annotation so the failure reason is
+          # visible on the workflow summary banner (not just buried in the log).
+          if ($failureReason) {
+              Write-Host "::error::$failureCategory - $failureReason"
+              $md += "`n`n### :x: Failure Diagnosis`n| Category | Reason |`n|---|---|`n| $failureCategory | $failureReason |"
+          }
+
+          # Elapsed time
+          $elapsed = ''
+          if ($env:JOB_START_UTC) {
+              try {
+                  $start = [DateTime]::Parse($env:JOB_START_UTC).ToUniversalTime()
+                  $dur = [DateTime]::UtcNow - $start
+                  $elapsed = '{0}h {1}m {2}s' -f [int]$dur.TotalHours, $dur.Minutes, $dur.Seconds
+              } catch { $elapsed = 'N/A' }
+          }
+          if ($elapsed) { $md += "`n`n> :stopwatch: **Elapsed:** $elapsed" }
+
+          $md += "`n`n### :link: Links`n| Resource | |`n|---|---|`n| This Run | [View]($env:RUN_URL) |"
+          $md += "`n| Workflow | [View]($env:JOB_URL) |"
+          $md += "`n| Grafana Dashboard | [View]($env:GRAFANA_DASHBOARD) |"
+          $md += "`n| HTML Report (GitHub Artifact) | [Download]($env:RUN_URL#artifacts) |"
+          $md | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      # -------- Artifact upload (always, when present) --------
+      # GitHub always wraps artifacts in a zip. Staging the HTML into a flat
+      # temp dir means unzip yields Report.html at the zip root (not buried
+      # under tools/python/.../Reports/SWE6/). GH cannot serve a raw .html
+      # download without a zip wrapper.
+      - name: Stage HTML report for flat artifact
+        id: stage_html
+        if: always() && steps.find_report.outputs.report_path != ''
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          REPORT_PATH: ${{ steps.find_report.outputs.report_path }}
+        run: |
+          $src = $env:REPORT_PATH
+          if (-not (Test-Path -LiteralPath $src)) {
+            Write-Warning "HTML report missing: $src"
+            "staged_dir=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            return
+          }
+          $stage = Join-Path $env:RUNNER_TEMP 'html-artifact'
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Get-ChildItem -LiteralPath $stage -Force -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse
+          $dest = Join-Path $stage (Split-Path $src -Leaf)
+          Copy-Item -LiteralPath $src -Destination $dest -Force
+          Write-Host "Staged HTML: $dest"
+          "staged_dir=$stage"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "staged_file=$dest"  | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Upload HTML report artifact
+        id: gh_artifact_upload
+        if: always() && steps.stage_html.outputs.staged_file != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-${{ inputs.job-type }}-${{ inputs.family }}-${{ steps.rotation.outputs.today_variant }}-report-run${{ github.run_number }}-html
+          path: ${{ steps.stage_html.outputs.staged_file }}
+          if-no-files-found: warn
+          overwrite: true
+          compression-level: 0
+
+      - name: Upload results summary artifact
+        if: always() && steps.find_report.outputs.report_dir != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-${{ inputs.job-type }}-${{ inputs.family }}-${{ steps.rotation.outputs.today_variant }}-report-run${{ github.run_number }}-results-summary
+          path: ${{ steps.find_report.outputs.report_dir }}/*_results_summary.txt
+          if-no-files-found: warn
+          overwrite: true
+
+      - name: Upload new failures artifact
+        if: always() && steps.find_report.outputs.report_dir != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-${{ inputs.job-type }}-${{ inputs.family }}-${{ steps.rotation.outputs.today_variant }}-report-run${{ github.run_number }}-new-failures
+          path: ${{ steps.find_report.outputs.report_dir }}/new_failures_test_srs.txt
+          if-no-files-found: warn
+          overwrite: true
+
+      - name: Upload pie chart artifacts
+        if: always() && steps.find_report.outputs.report_dir != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-${{ inputs.job-type }}-${{ inputs.family }}-${{ steps.rotation.outputs.today_variant }}-report-run${{ github.run_number }}-charts
+          path: |
+            ${{ steps.find_report.outputs.report_dir }}/test_results_pie.png
+            ${{ steps.find_report.outputs.report_dir }}/srs_results_pie.png
+          if-no-files-found: ignore
+          overwrite: true
+
+      # -------- Notification: HTML email via the Aptiv internal SMTP relay --------
+      # Power Automate / Teams webhooks are blocked by admin policy, so email is
+      # now the sole channel and is ALWAYS sent (even on infra failures with zero
+      # results) so the team knows a run happened -- the email banner/diagnosis
+      # section already differentiates HEALTHY/DEGRADED/CRITICAL/BUILD/INFRA
+      # failures. Set `send-email: false` on the caller to opt out entirely.
+      - name: Send notification email
+        if: always() && steps.gates.outputs.have_teams == 'true'
+        continue-on-error: true
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          SEND_EMAIL: ${{ inputs.send-email }}
+          PASSED:     ${{ steps.summarize.outputs.passed }}
+          FAILED:     ${{ steps.summarize.outputs.failed }}
+          SKIPPED:    ${{ steps.summarize.outputs.skipped }}
+          ERRORS:     ${{ steps.summarize.outputs.errors }}
+          SRS_PASSED: ${{ steps.summarize.outputs.srs_passed }}
+          SRS_FAILED: ${{ steps.summarize.outputs.srs_failed }}
+          SRS_ERRORS: ${{ steps.summarize.outputs.srs_errors }}
+          NEW_TEST:       ${{ steps.summarize.outputs.new_test_fail }}
+          NEW_SRS:        ${{ steps.summarize.outputs.new_srs_fail }}
+          NEW_TEST_NAMES: ${{ steps.summarize.outputs.new_test_names }}
+          NEW_SRS_NAMES:  ${{ steps.summarize.outputs.new_srs_names }}
+          VARIANT:    ${{ steps.rotation.outputs.today_variant }}
+          XCP:        ${{ steps.rotation.outputs.today_xcp }}
+          BRANCH:     ${{ github.ref_name }}
+          JOB_URL:    ${{ inputs.job-url }}
+          RUN_URL:    ${{ format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id) }}
+          BUILD_OUTPUTS_URL: ${{ inputs.gh-artifact-run-id != '' && format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, inputs.gh-artifact-run-id) || '' }}
+          MATRIX_JSON: ${{ inputs.test-matrix-json }}
+          ROTATION:   ${{ (inputs.variant-override != '' || inputs.xcp-override != '') && 'manual' || inputs.rotation-strategy }}
+          REPORT_DIR: ${{ steps.find_report.outputs.report_dir }}
+          REPORT_NAME: ${{ steps.find_report.outputs.report_name }}
+          GH_ARTIFACT_UPLOADED: ${{ steps.gh_artifact_upload.outcome == 'success' && 'true' || 'false' }}
+          GH_ARTIFACT_URL: ${{ format('{0}/{1}/actions/runs/{2}#artifacts', github.server_url, github.repository, github.run_id) }}
+          # artifact-url is the direct per-artifact download link output by actions/upload-artifact@v4+.
+          HTML_ARTIFACT_URL: ${{ steps.gh_artifact_upload.outputs.artifact-url }}
+          # Step outcomes so the notification can explain WHY the run failed
+          SUBMODULE_SYNC_OUTCOME: ${{ steps.submodule_sync.outcome }}
+          REPO_INIT_OUTCOME:      ${{ steps.repo_init.outcome }}
+          BUILD_DL_GH_OUTCOME:    ${{ steps.build_download_gh.outcome }}
+          TEST_OUTCOME:           ${{ steps.test.outcome }}
+          GITHUB_TOKEN:           ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_API_URL:         ${{ github.api_url }}
+          RUNNER_LABELS_JSON:     ${{ inputs.runner-labels }}
+          GH_ARTIFACT_RUN_ID:   ${{ inputs.gh-artifact-run-id }}
+          GH_ARTIFACT_WORKFLOW: ${{ inputs.gh-artifact-workflow }}
+          GH_ARTIFACT_BRANCH:   ${{ inputs.gh-artifact-branch }}
+          EMAIL_RECIPIENTS:     ${{ inputs.email-recipients }}
+        run: .\tools\CI\send_email_notification.ps1
+
+      # -------- Final gate: propagate test outcome to job status --------
+      # The test step uses `continue-on-error: true` so that report upload,
+      # Platform-Health, and notification steps still run after test
+      # failures. This final step re-asserts the real exit status so the
+      # workflow run correctly shows as failed (red) when tests fail.
+      - name: Fail job if tests failed
+        if: always() && steps.test.outcome == 'failure'
+        run: |
+          echo ::error::Test execution failed - see test logs for details.
+          exit 1
+
+      # -------- Post-job credential cleanup (persistent self-hosted runner safety) --------
+      - name: Cleanup credentials
+        if: always()
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        continue-on-error: true
+        run: |
+          $ErrorActionPreference = 'Continue'
+          $sections = & git config --local --name-only --get-regexp '^url\..*\.insteadof$' 2>$null
+          if ($LASTEXITCODE -eq 0 -and $sections) {
+            foreach ($key in $sections) {
+              if ($key -match '^url\.(.+)\.insteadof$') {
+                $section = "url.$($Matches[1])"
+                Write-Host "Removing leftover git section: $section"
+                & git config --local --remove-section "$section" 2>$null | Out-Null
+              }
+            }
+          }
+          $globalKeys = & git config --global --name-only --get-regexp '^url\..*x-access-token.*\.insteadof$' 2>$null
+          if ($LASTEXITCODE -eq 0 -and $globalKeys) {
+            foreach ($key in $globalKeys) {
+              if ($key -match '^url\.(.+)\.insteadof$') {
+                & git config --global --remove-section "url.$($Matches[1])" 2>$null | Out-Null
+              }
+            }
+          }
+          $global:LASTEXITCODE = 0
+          exit 0

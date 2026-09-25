@@ -1,0 +1,25 @@
+{
+    "filename": "spc",
+    "fixed_position": 0,
+    "start_address": "90000",
+    "position_id_map": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+    ],
+    "fill": true,
+    "fill_align": "10000"
+}

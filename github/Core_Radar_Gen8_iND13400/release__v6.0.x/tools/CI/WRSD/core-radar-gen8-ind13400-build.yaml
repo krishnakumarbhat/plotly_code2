@@ -1,0 +1,1355 @@
+﻿langVersion: v1
+name: core-radar-gen8-ind13400-build
+description: Pipeline that builds all variants of the code for Gen8 iND13400
+ui:
+  name: core-radar-gen8-ind13400-build
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: upload-path
+    type: string
+    description: |-
+      The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+      Ex. core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/manual/build/$(config.pipeline.runNumber)/
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/manual/build/$(config.pipeline.runNumber)/
+    ui:
+      name: JFrog Upload Path
+  - name: branch
+    type: string
+    default: dev
+  - name: patchset-number
+    type: string
+    default: ""
+  - name: run-all-builds
+    type: string
+    description: Set to "true" to run all build variants including nightly-only builds
+    default: "false"
+  - name: custom-build-cmd
+    type: string
+    description: |-
+      Custom bazel build command. Do NOT include bazelisk prefix or --config (added automatically).
+      Examples (set custom-variant accordingly):
+        build //:gen8                                                              (variant: flr8 or srr8p)
+        build //:gen8 --veh_com=someip                                             (variant: flr8 or srr8p)
+        build //:gen8 --veh_com=al_can_standalone --tracker_variant=AL --enable_features=true  (variant: srr8p)
+        build //:gen8 --veh_com=can_standalone --tracker_variant=platform_flr8_standalone    (variant: flr8)
+        build //:gen8 --veh_com=can_standalone --tracker_variant=platform_srr8p_standalone   (variant: srr8p)
+        build //:gen8 --enable_adc_logging=True --enable_cdc=True                  (variant: flr8 or srr8p)
+      Leave empty to skip custom build (default behavior - only standard variants run).
+    default: ""
+    ui:
+      name: Custom Build Command
+  - name: custom-variant
+    type: string
+    description: |-
+      Variant for the custom build (flr8 or srr8p). Used as --config=<variant>.
+      REQUIRED when custom-build-cmd is provided. Build will fail if left empty.
+    default: "flr8"
+    ui:
+      name: Custom Build Variant
+  - name: custom-upload-folder
+    type: string
+    description: |-
+      Folder name in JFrog where custom build outputs will be uploaded.
+      Ex: adc-logging-test, someip-debug, standalone-tracker
+    default: "custom"
+    ui:
+      name: Custom JFrog Folder Name
+compute:
+  - name: linux-16c64g
+    resource: asp-compute-linux-16c64g
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+  - resource: asp-compute-linux-1c4g # This becomes the default compute.
+containerSettings:
+  - name: container-16c64g300g
+    resource: asp-container-16c64g300g
+  - name: container-8c32g150g
+    resource: asp-container-8c32g150g
+  - name: container-2c8g50g
+    resource: asp-container-2c8g50g
+  - name: container-1c4g25g
+    resource: asp-container-1c4g25g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+    compute: linux-1c4g
+
+  - name: resolve-build-scope
+    task: Utils/resolve-build-scope
+    compute: linux-1c4g
+    params:
+      commit-id: $(params.commit-id)
+      run-all-builds: $(params.run-all-builds)
+
+  - parallelTasks:
+      - name: build-custom
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: notin
+            values:
+              - ""
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)$(params.custom-upload-folder)/
+          variant: $(params.custom-variant)
+          build-cmd: $(params.custom-build-cmd)
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+      - name: build-flr8  # Nightly Only
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+          - input: $(tasks.resolve-build-scope.results.run-all)
+            operator: in
+            values:
+              - "true"
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr8
+          build-cmd: build //:gen8
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+      - name: build-srr8p  # Nightly Only
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+          - input: $(tasks.resolve-build-scope.results.run-all)
+            operator: in
+            values:
+              - "true"
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr8p
+          build-cmd: build //:gen8
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+      - name: build-al-srr8p # Verification and Nightly
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)AshokLeyland/
+          variant: srr8p
+          build-cmd: build //:gen8 --veh_com=al_can_standalone --tracker_variant=AL --enable_features=true
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+      - name: build-standalone-flr8 # Verification & Nightly
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)standalone/
+          variant: flr8
+          build-cmd: build //:gen8 --tracker_variant=platform_flr8_standalone --veh_com=can_standalone
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+  - parallelTasks:
+
+      - name: build-standalone-srr8p # Nightly Only
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+          - input: $(tasks.resolve-build-scope.results.run-all)
+            operator: in
+            values:
+              - "true"
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)standalone/
+          variant: srr8p
+          build-cmd: build //:gen8 --tracker_variant=platform_srr8p_standalone --veh_com=can_standalone
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+      - name: build-satellite-someip-flr8 # Nightly Only
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+          - input: $(tasks.resolve-build-scope.results.run-all)
+            operator: in
+            values:
+              - "true"
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)satellite-someip/
+          variant: flr8
+          build-cmd: build //:gen8 --veh_com=someip
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+      - name: build-satellite-someip-srr8p # Verification & Nightly
+        when:
+          - input: $(params.custom-build-cmd)
+            operator: in
+            values:
+              - ""
+        task: build/build
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)satellite-someip/
+          variant: srr8p
+          build-cmd: build //:gen8 --veh_com=someip
+        steps:
+        - name: build-code
+          steps:
+          - name: build
+            containerSettings: container-8c32g150g
+
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    compute: linux-1c4g
+    params:
+      build-exit-codes:
+        AL-SRR8p: $(tasks.build-al-srr8p.results.build-exit-code)
+        Standalone-FLR8: $(tasks.build-standalone-flr8.results.build-exit-code)
+        Satellite-SomeIP-SRR8p: $(tasks.build-satellite-someip-srr8p.results.build-exit-code)
+      upload-exit-codes:
+        AL-SRR8p: $(tasks.build-al-srr8p.results.upload-exit-code)
+        Standalone-FLR8: $(tasks.build-standalone-flr8.results.upload-exit-code)
+        Satellite-SomeIP-SRR8p: $(tasks.build-satellite-someip-srr8p.results.upload-exit-code)
+
+  - name: build-vote
+    task: Utils/post-gerrit-comment-vote-flr8@1.1.1
+    compute: linux-1c4g
+    params:
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Outputs: [buildFiles](https://jfrog.asux.aptiv.com/ui/repos/tree/General/$(params.upload-path))
+        Build Job: [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+      votes:
+        Build: $(tasks.prepare-vote-and-message.results.vote-value)
+
+  - parallelTasks:
+      # Send memory stats to Platform Health
+      - name: publish-metrics-satellite-flr8
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-flr8.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-flr8.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: flr8
+          build-files-path: $(tasks.build-flr8.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=satellite"
+
+      - name: publish-metrics-satellite-srr8p
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-srr8p.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-srr8p.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: srr8p
+          build-files-path: $(tasks.build-srr8p.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=satellite"
+
+      - name: publish-metrics-standalone-flr8
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-standalone-flr8.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-standalone-flr8.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: flr8
+          build-files-path: $(tasks.build-standalone-flr8.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=standalone"
+
+      - name: publish-metrics-standalone-srr8p
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-standalone-srr8p.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-standalone-srr8p.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: srr8p
+          build-files-path: $(tasks.build-standalone-srr8p.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=standalone"
+
+      - name: publish-metrics-satellite-someip-flr8
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-satellite-someip-flr8.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-satellite-someip-flr8.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: flr8
+          build-files-path: $(tasks.build-satellite-someip-flr8.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=satellite-someip"
+
+      - name: publish-metrics-satellite-someip-srr8p
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-satellite-someip-srr8p.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-satellite-someip-srr8p.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: srr8p
+          build-files-path: $(tasks.build-satellite-someip-srr8p.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=satellite-someip"
+
+      - name: publish-metrics-al-srr8p
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.build-al-srr8p.results.build-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          commit-hash: $(tasks.build-al-srr8p.results.commit-hash)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          git-ref: $(params.commit-id)
+          project-name: $(params.project-url-encoded)
+          variant: srr8p
+          build-files-path: $(tasks.build-al-srr8p.results.jf-upload-path)
+          destination-path: /workspace/$(params.project-url-encoded)/
+          tags: "buildVariant=al"
+
+      - name: auto-submit-check
+        task: Utils/ADVRADAR/auto-submit@1.0.1
+        compute: linux-2c8g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          gerrit-url: $(params.gerrit-url)
+          comment: "False"
+defineTasks:
+  - name: build
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Build
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen8_ind13400-local/reviews/45/12345/6/buildFiles
+        default: ""
+        ui:
+          name: JFrog Upload Path
+      - name: build-cmd
+        type: string
+        description: |-
+          The bazel build command starting from "BUILD xxx".
+          Below are all the default settings, dont include them in this build-cmd
+
+          bazelisk --output_user_root=$(params.repoRoot)/bazel_output <BUILD-CMD> --color=yes --variant=$(params.variant) --jobs=auto --build_event_json_file="$BUILD_EVENT_FILE"
+        default: ""
+        ui:
+          name: Build Command
+    results:
+      - name: jf-upload-url
+        description: The URL the outputs are uploaded to.
+      - name: jf-upload2-url
+        description: The URL the outputs are uploaded to.
+      - name: build-exit-code
+        description: The exit code of the build step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: upload2-exit-code
+        description: The exit code of the upload step
+      - name: jf-upload-path
+        description: The path the outputs are uploaded to.
+      - name: jf-upload2-path
+        description: The path the outputs are uploaded to.
+      - name: commit-hash
+        description: Commit hash, only used when building nightly dev branch
+      - name: rapid-build-url
+        description: URL to the RapidBuild
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          repository:
+            depth: "1"
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen8_iND13400
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+        returnResults:
+          commitHash: commit-hash
+      - name: build-code
+        task: build-code
+        params:
+          git-ref: $(params.git-ref)
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+          build-cmd: $(params.build-cmd)
+        WhenVal: false
+        returnResults:
+          exit-code: build-exit-code
+          rapid-build-url: rapid-build-url
+          unstable: unstable
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.build-code.results.outputDir.path))
+          uploadPath: $(params.upload-path)output_$(params.variant)
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: jf-upload-url
+          jf-upload-path: jf-upload-path
+      - name: upload-warnings
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.build-code.results.warningsOutputDir.path))
+          uploadPath: $(params.upload-path)warnings_$(params.variant)
+        WhenVal: false
+        returnResults:
+          exit-code: upload2-exit-code
+          uploadUrl: jf-upload2-url
+          jf-upload-path: jf-upload2-path
+      - name: stable-check
+        script: |
+          #!/bin/bash
+
+          if [ $(cat $(results.build-exit-code.path)) -ne 0 ]; then
+            echo "true" > $(results.unstable.path)
+          fi
+          if [ $(cat $(results.upload-exit-code.path)) -ne 0 ]; then
+            echo "true" > $(results.unstable.path)
+          fi
+    wrrn: ""
+  - name: build-code
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Build
+        ui:
+          name: variant
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: build-cmd
+        type: string
+        description: The bazel build build command
+        default:
+        ui:
+          name: build-cmd
+    results:
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: warningsOutputDir
+        description: Path to the directory that contains the output files/folders
+      - name: issue-count
+        description: Total number of ignored issue for this sanitizer
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: rapid-build-url
+        description: URL to RapidBuild
+      - name: unstable
+        description: Unstable status to propagate up to parent tasks
+    steps:
+      - name: build
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/bin/bash
+
+          echo repoRoot = $(params.repoRoot)
+          echo variant = $(params.variant)
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          # Set up credentials for the ARB remote cache
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          # save output directory path for user usages
+          echo -n "$(params.repoRoot)/bazel-bin/outputs" > $(results.outputDir.path)
+
+          virtualenv ~/.venv
+          source ~/.venv/bin/activate
+          pip config set global.trusted-host jfrog.asux.aptiv.com
+          pip config set global.extra-index-url https://jfrog.asux.aptiv.com/artifactory/api/pypi/luci-aptiv-00000000-pypi-local/simple
+          pip install -U luci-cli==0.3.0+250117.b3acc92
+
+          BUILD_EVENT_FILE="build_event.json"
+          RESULTS_DIR="test-results/$(params.variant)/compiler"
+          mkdir -p $RESULTS_DIR
+          FULL_LOG="$RESULTS_DIR/$(config.pipeline.taskName)_full_log.txt"
+          SUMMARY="$RESULTS_DIR/$(config.pipeline.taskName)_summary.txt"
+          echo -n "$(params.repoRoot)/$RESULTS_DIR" > $(results.warningsOutputDir.path)
+
+          echo "bazelisk --output_user_root=$(params.repoRoot)/bazel_output $(params.build-cmd) --config=$(params.variant) --jobs=auto --build_event_json_file="$BUILD_EVENT_FILE""
+
+          bazelisk --output_user_root=$(params.repoRoot)/bazel_output $(params.build-cmd) --config=$(params.variant) --jobs=auto --build_event_json_file="$BUILD_EVENT_FILE" 2>&1 >$FULL_LOG
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=$PIPESTATUS
+
+          # Extract the invocation ID using jq
+          INVOCATION_ID=$(grep -Po '"uuid":"\K[^"]+' build_event.json)
+
+          # Check if the invocation ID is not empty
+          if [[ -n "$INVOCATION_ID" ]]; then
+              echo "Invocation ID: $INVOCATION_ID"
+
+              # Create the RapidBuild url
+              echo -n "https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen8_ind13400/invocations/${INVOCATION_ID}" > $(results.rapid-build-url.path)
+          fi
+
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Build failed with exit code $BAZEL_EXIT_CODE."
+              echo "----------------------------------"
+              echo -n "true" > $(results.unstable.path)
+              # Optionally, you can exit the script with a non-zero status to indicate failure
+              echo -n "1" > $(results.exit-code.path)
+              exit 1
+          fi
+
+          if [ -f $FULL_LOG ]; then
+              echo "Moving log file into position for the aptiv_warnings_analyzer"
+              cp $FULL_LOG compiler.log
+              echo "Analyzing logs from compiler run:"
+              ./awa.sh compiler --html-report $RESULTS_DIR/compiler.html --csv-report $RESULTS_DIR/compiler.csv --baseline $RESULTS_DIR/compiler_baseline.toml >> $SUMMARY
+              ANALYZER_EXIT_CODE=$?
+              # If this ran, then we want to use the aptiv_warnings_analyzer exit code for this stage
+              echo -n "$ANALYZER_EXIT_CODE" > $(results.exit-code.path)
+              echo "----------------------------------"
+              echo "aptiv_warnings_analyzer summary: $SUMMARY"
+              cat $SUMMARY
+              echo "----------------------------------"
+
+              # Try to extract from "Total ignored issues" first, this would be from a job that found new issues
+              IGNORED_ISSUES=$(awk '/Total ignored issues/ { print $NF }' "$SUMMARY")
+
+              # If empty, fall back to "Total ignored: ", this would be from a jobs that found new new issues
+              # This looks for Total ignored and pull the number after that, and checks that its a number
+              if [[ -z "$IGNORED_ISSUES" ]]; then
+                  IGNORED_ISSUES=$(awk '/Total ignored:/ {
+                      for (i = 1; i <= NF; i++) {
+                          if ($i == "ignored:") {
+                              val = $(i+1)
+                              gsub(/\./, "", val)  # remove trailing period if present
+                              print val
+                              break
+                          }
+                      }
+                  }' "$SUMMARY")
+              fi
+
+              # Default to 0 if still empty
+              IGNORED_ISSUES=${IGNORED_ISSUES:-0}
+              echo -n "$IGNORED_ISSUES" > $(results.issue-count.path)
+              echo "Ignored issues: $IGNORED_ISSUES"
+              echo "----------------------------------"
+
+          else
+              echo "No sanitizer results found, returning Bazel exit code"
+              echo -n "$BAZEL_EXIT_CODE" > $(results.exit-code.path)
+          fi
+
+        onError: continue
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          echo -n $(cat $(steps.build.exitCode.path)) > $(results.exit-code.path)
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: build-exit-codes
+        type: map
+        description: Exit codes for any build tasks
+        ui:
+          name: Build Exit Codes
+        render:
+          templateName: map
+      - name: upload-exit-codes
+        type: map
+        description: Exit codes for any upload tasks
+        ui:
+          name: Upload Exit Codes
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-build-codes
+        script: |-
+          # Write in "success" values
+          echo -n "+1" > $(results.vote-value.path)
+          echo -n "0" > $(results.exit-code.path)
+
+          # Read and act on Build exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Build Failed! ⚠" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Build Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.build-exit-codes.path)
+
+          # If any build failed, that's the important part
+          # So we don't need to worry about checking if the upload was successful
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+
+          # Read and act on Upload exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                if [ $(cat $(results.exit-code.path)) == 0 ]
+                then
+                  echo "" >> $(results.vote-message.path)
+                fi
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Upload Failed! ❌" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.upload-exit-codes.path)
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default: ""
+        ui:
+          name: git-ref
+      - name: change-number
+        type: string
+        description: The Gerrit change number
+        default: ""
+        ui:
+          name: change-number
+      - name: branch
+        type: string
+        description: The Gerrit branch
+        default: ""
+        ui:
+          name: branch
+      - name: patchset-number
+        type: string
+        description: The Gerrit patchset number
+        default: ""
+        ui:
+          name: patchset-number
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+      - name: commit-hash
+        type: string
+        description: The current commit hash, it can be the same as the git-ref.
+        ui:
+          name: commit-hash
+      - name: build-files-path
+        type: string
+        description: The jfrog path to the builds files zip file.
+        ui:
+          name: build-files-path
+      - name: destination-path
+        type: string
+        description: The path to unzip the downloaded zip file.
+        ui:
+          name: destination-path
+      - name: tags
+        type: string
+        description: Any extra tags needed to pass to Platform Health for extra filtering. e.g. "env=test, build=standalone"
+        ui:
+          name: tags
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: uploadUrl
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: download-build-files
+        task: core-radar-jfrog-download
+        params:
+          downloadPath: $(params.build-files-path)
+          destinationPath: $(params.destination-path)
+        WhenVal: false
+        returnResults:
+          exit-code: exit-code
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+
+          import subprocess
+          import sys
+          import os
+          import zipfile
+          import re
+          import json
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+            sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+            subprocess.check_call([
+              sys.executable, "-m", "pip", "install",
+              "--break-system-packages",
+              "--no-cache-dir",
+              "--target", TARGET,
+              "psycopg2-binary"
+            ])
+
+            os.makedirs(TARGET, exist_ok=True)
+            with open(MARKER, "w", encoding="utf-8"):
+              pass
+
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+            print("Installing Python dependencies...")
+            install_deps_and_restart()
+
+          import psycopg2
+
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+            """
+            Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd.
+            """
+            # Check if the wrsd_tags entry already exists
+            cursor.execute("""
+                SELECT id FROM wrsd."perception_metrics_wrsd"
+                WHERE build_no = %s AND pipeline_name = %s;
+            """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+            result = cursor.fetchone()
+            # If exists, return id, else insert new and return new id
+            if result:
+              print("WRSD entry already exists")
+              return result[0]
+            else:
+              print("Creating a new WRSD entry")
+
+              cursor.execute("""
+                  INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                  VALUES (%s, %s, %s, %s, %s) RETURNING id;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+              result = cursor.fetchone()[0]
+
+              return result
+
+          def insert_perception_metrics(cursor, data_list):
+            """
+            Inserts multiple perception_metrics entries into the database.
+
+            Parameters:
+                data_list (list of dict): List of dictionaries, each containing data for a single entry.
+            """
+            for data in data_list:
+              # First, insert or get the wrsd_tags ID
+              wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+
+              # Insert into PerceptionMetrics with reference to wrsd_id
+              cursor.execute("""
+                  INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+              """, (
+                  data['commitid'],
+                  data['date'],
+                  data['branch'],
+                  data['tag'],
+                  data['project'],
+                  data['metric_name'],
+                  data['metric_value'],
+                  Json(data['metric_tags']),
+                  wrsd_id
+              ))
+
+          def read_file(file_path):
+            """Read and return the contents of a file."""
+            with open(os.path.expandvars(file_path), 'r') as file:
+              return file.read().strip()
+
+          def get_build_files(destination_path):
+            """Find and extract memoryStats.txt and flash_memory_stats.txt from a ZIP file."""
+            memory_file = "memoryStats.txt"
+            flash_file = "flash_memory_stats.txt"
+
+            os.chdir(destination_path)
+            current_path = os.getcwd()
+            print(f"Current directory: {current_path}")
+
+            # List contents of the current directory
+            contents = os.listdir('.')
+
+            # Find the ZIP file
+            zip_file = [file for file in contents if file.endswith('.zip')]
+
+            if zip_file:
+              zip_file_path = zip_file[0]  # Take the first ZIP file
+              print(f"Unzipping {zip_file_path}...")
+
+              # Create an extraction folder
+              extract_folder = os.path.splitext(zip_file_path)[0]  # Remove the .zip extension
+              os.makedirs(extract_folder, exist_ok=True)
+
+              # Unzip the file
+              with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_folder)
+
+              print(f"Extracted to: {extract_folder}")
+
+              for root,dirs,files in os.walk(extract_folder):
+                if memory_file in files and flash_file in files:
+                  print(f"Found files: {memory_file} and {flash_file}")
+                  return (os.path.join(root,memory_file)),(os.path.join(root,flash_file))
+            else:
+              print("No ZIP files found in the current directory.")
+
+            return none
+
+          def parse_memory_stats(file_path):
+            """Parse memory statistics from the memoryStats.txt file."""
+            memory_sections = []
+            module_breakdown = []
+            section = "memory_sections"  # Start with memory sections
+
+            with open(file_path, 'r') as file:
+              for line in file:
+                if line.strip().startswith("Module"):
+                  section = "module_breakdown"
+                  continue
+
+                if section == "memory_sections":
+                  match = re.match(
+                    r"^\s*(\S.*?):\s+([\d.]+)%\s+\(\s*([\d.]+)\s+KB\s+out\s+of\s+([\d.]+)\s+KB\)\s*(\([\w.]+\))?\s*(\*)?$",
+                    line
+                  )
+                  if match:
+                    name, percent, used_kb, total_kb, map_file, overlap = match.groups()
+                    memory_sections.append({
+                      'section_name': name.strip(),
+                      'percentage_used': float(percent),
+                      'used_kb': float(used_kb),
+                      'total_kb': float(total_kb),
+                      'map_file': map_file.strip("()") if map_file else None,
+                      'overlap': overlap == "*"
+                    })
+
+                elif section == "module_breakdown":
+                  match = re.match(
+                    r"^\s*([\w\s-]+)\s+([\d.-]+|\-)\s+([\d.-]+|\-)\s+([\d.-]+|\-)\s+([\d.-]+|\-)\s+([\d.-]+|\-)\s+([\d.]+)%",
+                    line
+                  )
+                  if match:
+                    module, code_kb, data_kb, bss_kb, other_kb, total_kb, percentage = match.groups()
+                    module_breakdown.append({
+                      'module_name': module.strip(),
+                      'code_kb': float(code_kb) if code_kb != "-" else 0,
+                      'data_kb': float(data_kb) if data_kb != "-" else 0,
+                      'bss_kb': float(bss_kb) if bss_kb != "-" else 0,
+                      'other_kb': float(other_kb) if other_kb != "-" else 0,
+                      'total_kb': float(total_kb) if total_kb != "-" else 0,
+                      'percentage': float(percentage)
+                    })
+
+            return memory_sections, module_breakdown
+
+          def parse_flash_memory(file_path):
+            """Parse flash memory statistics from flash_memory_stats.txt."""
+            flash_memory = []
+            with open(file_path, 'r') as file:
+              for line in file:
+                # Parse utilization lines
+                match = re.match(
+                  r"^\s*(\S.*?):\s+([\d.]+)%\s+-\s+([\d.]+)\s+MB\s+of\s+([\d.]+)\s+MB", line
+                )
+                if match:
+                  name, percentage, used_mb, total_mb = match.groups()
+                  flash_memory.append({
+                    'name': name.strip(),
+                    'percentage': float(percentage),
+                    'used_mb': float(used_mb),
+                    'total_mb': float(total_mb)
+                  })
+                  continue
+
+                # Parse total lines and addressed sections
+                match = re.match(
+                  r"^\s*(\S.*?):\s+([\d.]+)\s+KB\s+over\s+([\d.]+)\s+KB\s+span\s*\(\s*([\d.]+)%\s*\)\s+-\s+0x([\da-fA-F]+)\s+to\s+0x([\da-fA-F]+)",
+                  line
+                )
+                if match:
+                  name, used_kb, span_kb, percentage, start_address, end_address = match.groups()
+                  flash_memory.append({
+                    'name': name.strip(),
+                    'used_kb': float(used_kb),
+                    'span_kb': float(span_kb),
+                    'percentage': float(percentage),
+                    'start_address': f"0x{start_address}",
+                    'end_address': f"0x{end_address}"
+                  })
+                  continue
+
+                # Parse individual flash sections
+                match = re.match(
+                  r"^\s*(\S.*?):\s+([\d.]+)\s+KB\s+over\s+([\d.]+)\s+KB\s+span\s+\(([\d.]+)%\)", line
+                )
+                if match:
+                  name, used_kb, span_kb, percentage = match.groups()
+                  flash_memory.append({
+                    'name': name.strip(),
+                    'used_kb': float(used_kb),
+                    'span_kb': float(span_kb),
+                    'percentage': float(percentage)
+                  })
+
+                  continue
+
+            return flash_memory
+
+          def package_data_for_postgresql(base_data, extra_tags, variant, memory_sections, module_breakdown, flash_memory):
+            """Package parsed data into a list for database insertion."""
+            data_list = []
+
+            # Memory Sections
+            for section in memory_sections:
+              metric_name = "core_radar.gen8.memoryStats.sections"
+              metric_tags = {"section": section["section_name"], "variant": variant}
+              metric_tags.update(extra_tags)
+
+              data_list.append({
+                **base_data,
+                "metric_name": metric_name,
+                "metric_tags": {**metric_tags, "type": "total_kb"},
+                "metric_value": float(section["total_kb"]),
+              })
+              data_list.append({
+                **base_data,
+                "metric_name": metric_name,
+                "metric_tags": {**metric_tags, "type": "used_kb"},
+                "metric_value": float(section["used_kb"]),
+              })
+
+            # Module Breakdown
+            for module in module_breakdown:
+              metric_name = "core_radar.gen8.memoryStats.modules"
+              metric_tags = {"module": module["module_name"], "variant": variant}
+              metric_tags.update(extra_tags)
+
+              data_list.extend([
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "code_kb"},
+                  "metric_value": float(module["code_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "data_kb"},
+                  "metric_value": float(module["data_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "bss_kb"},
+                  "metric_value": float(module["bss_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "other_kb"},
+                  "metric_value": float(module["other_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "total_kb"},
+                  "metric_value": float(module["total_kb"]),
+                }
+              ])
+
+            # Flash Memory
+            for flash in flash_memory:
+              metric_name = "core_radar.gen8.memoryStats.flash"
+              metric_tags = {"name": flash["name"], "variant": variant}
+              metric_tags.update(extra_tags)
+
+              if "used_mb" in flash:
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "total_mb"},
+                  "metric_value": float(flash["total_mb"]),
+                })
+
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "used_mb"},
+                  "metric_value": float(flash["used_mb"]),
+                })
+
+              elif "used_kb" in flash:
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "span_kb"},
+                  "metric_value": float(flash["span_kb"]),
+                })
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "used_kb"},
+                  "metric_value": float(flash["used_kb"]),
+                })
+
+            return data_list
+
+          def parse_extra_tags(extra_tags_str):
+              """Parse a string of extra tags into a dictionary"""
+              extra_tags = {}
+              if extra_tags_str:
+                  try:
+                      extra_tags = json.loads(extra_tags_str)
+                  except json.JSONDecodeError:
+                      # Handle case where input is not valid JSON
+                      for item in extra_tags_str.split(","):
+                          key_value = item.split("=")
+                          if len(key_value) == 2:
+                              key, value = key_value
+                              extra_tags[key.strip()] = value.strip()
+              return extra_tags
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+
+          db_config = {
+            "dbname": "monitoring",
+            "user": pg_user,
+            "password": pg_pass,
+            "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+            "port": "5432"
+          }
+
+          build_name = "$(config.pipeline.name)"
+          build_no = $(config.pipeline.runNumber)
+          build_url = f"https://$(studio.home)/plm/view/{build_name}/runs/{build_no}"
+          variant = "$(params.variant)"
+          branch = "$(params.branch)"
+          project_name = "$(params.project-name)"
+          commit_hash = "$(params.commit-hash)"
+          change_number = "$(params.change-number)"
+          patchset_number = "$(params.patchset-number)"
+          extra_tags_str = "$(params.tags)"
+
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+
+          wrsd_tags = {
+            "build_no": build_no,
+            "pipeline_name": build_name,
+            "status": None,
+            "duration": None,
+            "build_url": build_url
+          }
+
+          base_data = {
+            "commitid": commit_hash,
+            "date": currentDateTime,
+            "branch": branch,
+            "tag": "",
+            "project": project_name,
+            "wrsd_tags": wrsd_tags,
+          }
+
+          if branch == "dev":
+
+            memory_stats_path,flash_memory_path = get_build_files("$(params.destination-path)")
+
+            # Parse the files
+            memory_sections, module_breakdown = parse_memory_stats(memory_stats_path)
+            flash_memory = parse_flash_memory(flash_memory_path)
+
+            extra_tags = parse_extra_tags(extra_tags_str)
+
+            # Package data for PostgreSQL
+            data_list = package_data_for_postgresql(base_data, extra_tags, variant, memory_sections, module_breakdown, flash_memory)
+
+            print(f"Submitting {len(data_list)} memory records for {variant} .")
+
+            try:
+              connection = psycopg2.connect(**db_config)
+              cursor = connection.cursor()
+
+              # Insert multiple data entries
+              insert_perception_metrics(cursor, data_list)
+              connection.commit()
+              print("Data inserted successfully.")
+
+            except Exception as e:
+              print("An error occurred:", e)
+
+            finally:
+              if connection:
+                cursor.close()
+                connection.close()
+
+          else:
+            print("Not Dev branch so nothing will be commited to Platform Health.")
+        onError: continue
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+  - name: resolve-build-scope
+    langVersion: v1
+    category: Utils
+    params:
+      - name: commit-id
+        type: string
+        description: The git commit hash or branch
+      - name: run-all-builds
+        type: string
+        description: Whether to run all builds
+        default: "false"
+    results:
+      - name: run-all
+        description: Whether all builds (including nightly-only) should run
+    steps:
+      - name: check
+        script: |-
+          #!/bin/bash
+          if [[ "$(params.commit-id)" == "dev" || "$(params.run-all-builds)" == "true" ]]; then
+            echo -n "true" > $(results.run-all.path)
+          else
+            echo -n "false" > $(results.run-all.path)
+          fi
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+timeout: 2h

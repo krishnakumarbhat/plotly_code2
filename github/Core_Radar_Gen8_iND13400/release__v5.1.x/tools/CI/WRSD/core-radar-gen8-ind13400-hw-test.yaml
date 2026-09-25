@@ -1,0 +1,1680 @@
+langVersion: v1
+name: core-radar-gen8-ind13400-hw-test
+description: Pipeline that flashes the software and runs a smoke test on all variants of the code for Gen8 ind13400
+ui:
+  name: core-radar-gen8-ind13400-hw-test
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: upload-path
+    type: string
+    description: |-
+      The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+      Ex. core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/manual/hw-test/$(config.pipeline.runNumber)
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/manual/hw-test/$(config.pipeline.runNumber)
+    ui:
+      name: JFrog Upload Path
+  - name: download-path
+    type: string
+    description: |-
+      The path inside of JFrog to download the outputs from. Note - this does not include the base URL of the JFrog Artifactory
+      Ex. core_radar-aptiv-00000000-gen8_ind13400-local/reviews/45/12345/6/buildFiles/
+    default: "core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/manual/0/buildFiles/"
+    ui:
+      name: JFrog Download Path
+  - name: gateway
+    type: string
+    default: perceptionGateway
+  - name: branch
+    type: string
+    default: dev
+  - name: change-url
+    type: string
+    default: ""
+  - name: patchset-number
+    type: string
+    default: ""
+  - name: testTimeout
+    type: string
+    default: "10m"
+    description: |-
+      Timeout of the smoke test stage in case there is an issue. Needs "m" or "h" at the end.
+      Default is 10m, nightly is 20m, and weekly should be 12h
+  - name: testDuration
+    type: string
+    default: "60"
+    description: |-
+      Duration of the smoke test in seconds. Default is 60 seconds, nightly is 600 (10min), and weekly is 36000 (10hrs)
+  - name: overallTimeout
+    type: string
+    default: "90m"
+    description: |-
+      Timeout of overall smoke test, this should at least be double the testTime + reserve timeout.
+compute:
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.0.1
+    compute: linux-1c4g
+    timeout: 2m
+
+  - name: pre-gerrit-comment-vote
+    task: Utils/ADVRADAR/post-gerrit-comment-vote@1.0.0
+    params:
+      gerrit-setup: {}
+      message: |
+        🔔 WRSD Smoke Test job has been added to the queue. [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+      votes:
+        Smoke-Test: "0"
+
+  - name: reserve-bench
+    task: Utils/core-radar-reserve-bench@0.0.2
+    params:
+      gateway: $(params.gateway)
+      group-name: "core_radar_gen8_cicd"
+    timeout: 55m
+
+  - name: smoke-test-flr8
+    task: test/smoke-test
+    compute: linux-2c8g
+    onError: continue
+    params:
+      variant: flr8
+      build-variant: flr8_standalone
+      project-name: $(params.project-url-encoded)
+      commit-id: $(params.commit-id)
+      upload-path: $(params.upload-path)
+      download-path: $(params.download-path)standalone/
+      comment: flr8_standalone
+      gateway: $(params.gateway)
+      bench-name: $(tasks.reserve-bench.results.bench-name)
+      bench-user: $(tasks.reserve-bench.results.bench-user)
+      bench-ip: $(tasks.reserve-bench.results.bench-ip)
+      repo-url: "$(params.gerrit-url)/a/$(params.project-url-encoded)"
+      testDuration: $(params.testDuration)
+      architecture: $(tasks.reserve-bench.results.architecture)
+    timeout: $(params.testTimeout)
+
+  - name: smoke-test-srr8p
+    task: test/smoke-test
+    compute: linux-2c8g
+    onError: continue
+    params:
+      variant: srr8p
+      build-variant: srr8p_al_can_standalone
+      project-name: $(params.project-url-encoded)
+      commit-id: $(params.commit-id)
+      upload-path: $(params.upload-path)
+      download-path: $(params.download-path)AshokLeyland/
+      comment: srr8p_al_can_standalone
+      gateway: $(params.gateway)
+      bench-name: $(tasks.reserve-bench.results.bench-name)
+      bench-user: $(tasks.reserve-bench.results.bench-user)
+      bench-ip: $(tasks.reserve-bench.results.bench-ip)
+      repo-url: "$(params.gerrit-url)/a/$(params.project-url-encoded)"
+      testDuration: $(params.testDuration)
+      architecture: $(tasks.reserve-bench.results.architecture)
+    timeout: $(params.testTimeout)
+
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    compute: linux-1c4g
+    params:
+      setup-exit-codes:
+        FLR8: $(tasks.smoke-test-flr8.results.setup-exit-code)
+        SRR8p: $(tasks.smoke-test-srr8p.results.setup-exit-code)
+      download-exit-codes:
+        FLR8: $(tasks.smoke-test-flr8.results.download-exit-code)
+        SRR8p: $(tasks.smoke-test-srr8p.results.download-exit-code)
+      upload-exit-codes:
+        FLR8: $(tasks.smoke-test-flr8.results.upload-exit-code)
+        SRR8p: $(tasks.smoke-test-srr8p.results.upload-exit-code)
+      flash-exit-codes:
+        FLR8: $(tasks.smoke-test-flr8.results.flash-exit-code)
+        SRR8p: $(tasks.smoke-test-srr8p.results.flash-exit-code)
+      smoke-test-exit-codes:
+        FLR8: $(tasks.smoke-test-flr8.results.smoke-test-exit-code)
+        SRR8p: $(tasks.smoke-test-srr8p.results.smoke-test-exit-code)
+      error-messages:
+        FLR8: $(tasks.smoke-test-flr8.results.error-message)
+        SRR8p: $(tasks.smoke-test-srr8p.results.error-message)
+
+  - name: hw-test-vote
+    task: Utils/post-gerrit-comment-vote-flr8@1.1.0
+    compute: linux-1c4g
+    params:
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Outputs: [Smoke Test Reports](https://jfrog.asux.aptiv.com/ui/repos/tree/General/$(params.upload-path))
+        Build Job: [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+      votes:
+        Smoke-Test: $(tasks.prepare-vote-and-message.results.vote-value)
+    timeout: 2m
+
+  - parallelTasks:
+      - name: publish-metrics-flr8
+        when:
+        - input: $(params.commit-id)
+          operator: in
+          values:
+            - dev
+        - input: $(tasks.smoke-test-flr8.results.upload-exit-code)
+          operator: in
+          values:
+            - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          git-ref: $(params.commit-id)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          project-name: $(params.project-url-encoded)
+          variant: flr8
+          report-files-path: $(tasks.smoke-test-flr8.results.jf-upload-path)
+          destination-path: /workspace/Core_Radar_Gen8_iND13400/
+          commit-hash: $(tasks.smoke-test-flr8.results.commit-hash)
+        timeout: 2m
+      - name: publish-metrics-srr8p
+        when:
+        - input: $(params.commit-id)
+          operator: in
+          values:
+            - dev
+        - input: $(tasks.smoke-test-srr8p.results.upload-exit-code)
+          operator: in
+          values:
+            - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          git-ref: $(params.commit-id)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          project-name: $(params.project-url-encoded)
+          variant: srr8p
+          report-files-path: $(tasks.smoke-test-srr8p.results.jf-upload-path)
+          destination-path: /workspace/Core_Radar_Gen8_iND13400/
+          commit-hash: $(tasks.smoke-test-srr8p.results.commit-hash)
+      - name: auto-submit-check
+        task: Utils/ADVRADAR/auto-submit@1.0.1
+        compute: linux-2c8g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          gerrit-url: $(params.gerrit-url)
+          comment: "False"
+final:
+  - name: unreserve-bench
+    task: Utils/core-radar-unreserve-bench@0.0.2
+    params:
+      bench-name: $(tasks.reserve-bench.results.bench-name)
+      target-id: $(tasks.reserve-bench.results.target-id)
+    timeout: 1m
+    when:
+      - input: $(tasks.status)
+        operator: in
+        values:
+          - Completed
+          - Succeeded
+          - Failed
+          - Unstable
+defineTasks:
+  - name: smoke-test
+    langVersion: v1
+    category: test
+    params:
+      - name: commit-id
+        type: string
+        default: "1234567890"
+      - name: project-name
+        type: string
+        default: $(params.project-name)
+      - name: comment
+        type: string
+        default: ""
+        description: |-
+          Comment field passed to html report. Can be used for build type, like AshokLeyland or standalone.
+      - name: repo-url
+        type: string
+        description: Project git repo url
+        ui:
+          name: repo-url
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+        default: flr8
+      - name: build-variant
+        type: string
+        description: The specific build variant to flash and test, this is used to differentiate between different builds of the same variant (like standalone vs satellite)
+        default: ""
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the JFrog Artifactory
+          Ex. core_radar-aptiv-00000000-gen8_ind13400-local/reviews/45/12345/6/hw-tests/
+        default: "core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/verification/1381/hw-tests/"
+        ui:
+          name: JFrog Upload Path
+      - name: download-path
+        type: string
+        description: |-
+          The path inside of JFrog to download the outputs from. Note - this does not include the base URL of the JFrog Artifactory
+          Ex. core_radar-aptiv-00000000-gen8_ind13400-local/reviews/45/12345/6/buildFiles/
+        default: "core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/verification/1381/buildFiles/"
+        ui:
+          name: JFrog Download Path
+      - name: gateway
+        type: string
+        default: perceptionGateway
+      - name: bench-name
+        type: string
+        default: ""
+      - name: bench-user
+        type: string
+        description: The user of the reserved test bench
+      - name: bench-ip
+        type: string
+        description: The ip of the reserved test bench
+      - name: testDuration
+        type: string
+        description: The test duration in seconds
+      - name: architecture
+        type: string
+        description: The architecture of the test bench (ex. x86, arm64)
+        default: "windows"
+    results:
+      - name: jf-upload-url
+        description: The URL the outputs are uploaded to.
+      - name: jf-upload-path
+        description: The path the outputs are uploaded to.
+      - name: download-exit-code
+        description: The exit code of the download step
+      - name: setup-exit-code
+        description: The exit code of the setup step
+      - name: flash-exit-code
+        description: The exit code of the flash step
+      - name: smoke-test-exit-code
+        description: The exit code of the smoke test step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: error-message
+        description: A string with any new errors found
+      - name: commit-hash
+        description: commit-hash to provide to any downstream tasks
+      - name: commit-hash-exit-code
+        description: The exit code of the commit hash resolution step
+    steps:
+      - name: check-git-ref
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        params:
+          repo-url: $(params.repo-url)
+        script: |
+          #!/bin/bash
+
+          # set default return values
+          echo -n "" > $(results.commit-hash.path)
+          echo -n "1" > $(results.commit-hash-exit-code.path)
+          echo -n "" > $(results.error-message.path)
+
+          # Check input values
+          if [ "$(params.bench-name)" == "" ]; then
+            echo "No bench name, skipping stage"
+            exit -1
+          fi
+          if [ "$(params.bench-user)" == "" ]; then
+            echo "No bench user, skipping stage"
+            exit -1
+          fi
+          if [ "$(params.bench-ip)" == "" ]; then
+            echo "No bench IP, skipping stage"
+            exit -1
+          fi
+
+          # Input parameters
+          git_ref=$(params.commit-id)
+          repo_url=$(params.repo-url)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          # Function to resolve branch name or commit hash
+          resolve_to_commit_hash() {
+              local ref=$1
+              local repo=$2
+              if [ "$ref" == "dev" ]; then
+                  # Get the latest commit hash for 'dev' branch using git ls-remote
+                  latest_commit=$(git ls-remote "$repo" refs/heads/dev | awk '{print $1}')
+                  if [ -z "$latest_commit" ]; then
+                      echo "Error: Unable to retrieve the latest commit for 'dev' branch." >&2
+                      echo -n "1" > $(results.commit-hash-exit-code.path)
+                      exit 1
+                  fi
+                  echo "$latest_commit"
+              else
+                  # If it's not 'dev', assume it's a commit hash and validate it
+                  if [[ "$ref" =~ ^[a-f0-9]{40}$ ]]; then
+                      echo "$ref"
+                  else
+                      echo "Error: Invalid commit hash or unsupported ref format: $ref" >&2
+                      echo -n "1" > $(results.commit-hash-exit-code.path)
+                      exit 1
+                  fi
+              fi
+          }
+
+          # Main logic
+          if [ -z "$git_ref" ] || [ -z "$repo_url" ]; then
+              echo "Usage: $0 <git-ref> <repository-url>" >&2
+              echo -n "1" > $(results.commit-hash-exit-code.path)
+              exit 1
+          fi
+
+          # Resolve the commit hash
+          commit_hash=$(resolve_to_commit_hash "$git_ref" "$repo_url")
+
+          echo -n "$commit_hash" >> $(results.commit-hash.path)
+          echo "Resolved Commit Hash: $commit_hash"
+          echo -n "0" > $(results.commit-hash-exit-code.path)
+
+      - name: setup-workspace
+        task: Utils/core-radar-studio-cli@1.0.0
+        onError: continue
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            echo -n "1" > $(results.setup-exit-code.path)
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+
+            architecture="$(params.architecture)"
+            architecture_lc="${architecture,,}"
+
+            if [[ "$architecture_lc" == *windows* ]]; then
+              echo "Using Windows Bench"
+              cmd_prefix="cd wrsd_ci_scripts/WRSD/ & cmd /c"
+              setup_script="bench_clone.bat"
+              repo_tag="hw-test/v1.0.18"
+            else
+              echo "Using Linux Bench"
+              cmd_prefix="cd git/ADVRADAR_CICD/RPI && chmod +x bench_clone.sh && bash"
+              setup_script="bench_clone.sh"
+              repo_tag="ADVRADAR_CICD:hw-test/v1.0.18 Core_Radar_Gen8_iND13400:$(params.commit-id)"
+            fi
+
+            parameters='["$(params.bench-user)","$(params.bench-ip)","'"$cmd_prefix"'","'"$setup_script"'","'"$repo_tag"'"]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            echo "------------------------------ TAS OUTPUT"
+            cat target_action_output.log
+            echo "------------------------------"
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_patterns=(
+              "^fatal:"
+              "reference is not a tree"
+              "\[rejected\]"
+              "would clobber existing tag"
+              "Permission denied"
+              "\[Errno"
+            )
+
+            for pattern in "${error_patterns[@]}"; do
+              if echo "$target_action_output" | grep -Eiq "$pattern"; then
+
+                error_message=$(echo "$target_action_output" | grep -Ei "$pattern" | head -n 1)
+                echo "------------------------------"
+                echo "ERROR DETECTED:"
+                echo "$error_message"
+                echo "------------------------------"
+                echo "Error setting up workspace" >> $(results.error-message.path)
+                echo "true" > $(results.unstable.path)
+                exit 2
+              fi
+            done
+            echo -n "0" > $(results.setup-exit-code.path)
+
+      - name: clean-workspace
+        task: Utils/core-radar-studio-cli@1.0.0
+        onError: continue
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+
+            # Normalize architecture so matching works for Windows-10/11 and mixed-case values.
+            architecture="$(params.architecture)"
+            architecture_lc="${architecture,,}"
+
+            # Treat any architecture containing "windows" as Windows; otherwise default to Linux.
+            if [[ "$architecture_lc" == *windows* ]]; then
+              echo "Using Windows Bench"
+              bench_cmd="cd wrsd/scripts/ & cmd /c"
+              script_name="killPythonProcesses.bat"
+            else
+              echo "Using Linux Bench"
+              bench_cmd="echo"
+              script_name="[Linux Bench] No action required — skipping kill step"
+            fi
+
+            # run_cmd_on_target expects: [user, ip, command prefix, script name, script args]
+            parameters='["$(params.bench-user)","$(params.bench-ip)","'"$bench_cmd"'","'"$script_name"'",""]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            echo "------------------------------ TAS OUTPUT"
+            cat target_action_output.log
+            echo "------------------------------"
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_strings=("Error" "\[Errno")
+
+            for error in "${error_strings[@]}"; do
+              if echo "$target_action_output" | grep -q "$error"; then
+
+                error_message=$(echo "$target_action_output" | grep -i "$error")
+                echo "------------------------------"
+                echo "ERROR: $error_message"
+                echo "------------------------------"
+
+                echo "Clean Stage: $error_message" >> $(results.error-message.path)
+                exit 2
+              fi
+            done
+
+      - name: download-build-files
+        task: Utils/core-radar-studio-cli@1.0.0
+        onError: continue
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            echo -n "0" > $(results.download-exit-code.path)
+
+            if [  $(cat $(results.setup-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Setup Stage Failed, skipping the download stage."
+              echo "------------------------------"
+              exit 0
+            fi
+
+            # Define the config file path
+            config_file="./config.json"
+
+            if [ -f "$config_file" ]; then
+                echo "$config_file exists"
+            else
+                # Provision the gateway config file
+                studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+            fi
+
+            # Setup parameters for python script call on test bench
+            action_script="target_scripts/run_cmd_on_target.sh"
+
+            architecture="$(params.architecture)"
+            architecture_lc="${architecture,,}"
+
+            if [[ "$architecture_lc" == *windows* ]]; then
+              echo "Using Windows Bench"
+              cmd_prefix="cd wrsd/scripts/ & python"
+              jfrog_target_path="C:/Users/SID_ADVRADAR_CICD/wrsd_jfrog/"
+            else
+              echo "Using Linux Bench"
+              cmd_prefix="cd /home/sid_advradar_cicd/git/ADVRADAR_CICD/WRSD/jfrog/ && python3"
+              jfrog_target_path="/home/sid_advradar_cicd/wrsd_jfrog/"
+            fi
+
+            parameters='["$(params.bench-user)","$(params.bench-ip)","'"$cmd_prefix"'","downloadfromJfrog.py","$(params.download-path)output_$(params.variant).zip '"$jfrog_target_path"'"]'
+
+            echo "Target Action Script Parameters: $parameters"
+
+            studio-cli vlab physical slc target act \
+              --gwid=$(params.gateway) \
+              --target-name=$(params.bench-name) \
+              --action-path="$action_script" \
+              --config-file="$config_file" \
+              --parameters="$parameters" \
+              | tee target_action_output.log
+
+            target_action_output=$(cat target_action_output.log)
+
+            error_found=false
+            error_type=""
+            error_message=""
+
+            # Check for Python ValueError (invalid file/data issues)
+            if echo "$target_action_output" | grep -q "ValueError:"; then
+              error_found=true
+              error_type="Python ValueError Detected"
+              error_message=$(echo "$target_action_output" | grep -o "ValueError:[^E]*" | sed 's/Exit status code.*//' | sed 's/[[:space:]]*$//')
+              echo "true" > $(results.unstable.path)
+            # Check for invalid ZIP file specifically
+            elif echo "$target_action_output" | grep -q "is not a valid ZIP file"; then
+              error_found=true
+              error_type="Invalid ZIP File Error"
+              error_message=$(echo "$target_action_output" | grep -o "ValueError:.*is not a valid ZIP file\.")
+              echo "true" > $(results.unstable.path)
+            # Check for other known errors (fallback)
+            else
+              error_strings=("Error: Gateway disconnected" "Error: Gateway Not Registered" "Error: Failed to connect with the gateway" "server http error 50" "\[Errno")
+
+              for error in "${error_strings[@]}"; do
+                if echo "$target_action_output" | grep -q "$error"; then
+                  error_found=true
+                  error_type="ERROR"
+                  error_message=$(echo "$target_action_output" | grep -i "$error")
+                  break
+                fi
+              done
+            fi
+
+            # If any error was found, handle it once
+            if [ "$error_found" = true ]; then
+              echo "------------------------------"
+              echo "$error_type:"
+              echo "$error_message"
+              echo "------------------------------"
+
+              echo "Download Stage: $error_message" >> $(results.error-message.path)
+              echo -n "1" > $(results.download-exit-code.path)
+              exit 2
+            fi
+
+            echo -n "0" > $(results.download-exit-code.path)
+
+      - name: flash-build
+        task: Utils/core-radar-studio-cli@1.0.0
+        onError: continue
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            echo -n "0" > $(results.flash-exit-code.path)
+
+            architecture="$(params.architecture)"
+            architecture_lc="${architecture,,}"
+
+            if [[ "$architecture_lc" == *windows* ]]; then
+              echo "Using Windows Bench"
+              cmd_prefix="cmd /c C:/Users/SID_ADVRADAR_CICD/wrsd_ci_scripts/WRSD/power/power_on.bat & cd wrsd_jfrog/quickflash/ & cmd /c"
+              flash_script="RunQuickFlash.bat"
+              flash_args=" -c sensor_config.json -v $(params.build-variant)"
+            else
+              echo "Using Linux Bench"
+            cmd_prefix="python3 ./git/ADVRADAR_CICD/RPI/smoke_test/libs/power_on.py && cd wrsd_jfrog/quickflash/ && chmod +x RunQuickFlash.sh && bash"
+              flash_script="RunQuickFlash.sh"
+              flash_args=" -c ./sensor_config.json -v $(params.build-variant)"
+            fi
+
+            if [  $(cat $(results.setup-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Setup Stage Failed, skipping the flashing."
+              echo "------------------------------"
+              exit 0
+            elif [ $(cat $(results.download-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Download Stage Failed, skipping the flashing stage."
+              echo "------------------------------"
+              exit 0
+            else
+
+              # Define the config file path
+              config_file="./config.json"
+
+              if [ -f "$config_file" ]; then
+                  echo "$config_file exists"
+              else
+                  # Provision the gateway config file
+                  studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+              fi
+
+              echo "Running smoke test for $(params.testDuration) seconds"
+
+              # Setup parameters for python script call on test bench
+              action_script="target_scripts/run_cmd_on_target.sh"
+
+              parameters='["$(params.bench-user)","$(params.bench-ip)","'"$cmd_prefix"'","'"$flash_script"'","'"$flash_args"'"]'
+
+              echo "Target Action Script Parameters: $parameters"
+
+              attempt=1
+              max_attempts=2
+              success=false
+
+              while [ $attempt -le $max_attempts ]; do
+                echo "Attempt $attempt of $max_attempts..."
+                studio-cli vlab physical slc target act \
+                  --gwid=$(params.gateway) \
+                  --target-name=$(params.bench-name) \
+                  --action-path="$action_script" \
+                  --config-file="$config_file" \
+                  --parameters="$parameters" \
+                  | tee target_action_output.log || true
+
+                target_action_output=$(cat target_action_output.log)
+
+                if echo "$target_action_output" | grep -q 'Successfully flashed variant:'; then
+                  echo "------------------------------"
+                  echo "Flashing Complete"
+                  echo "------------------------------"
+                  success=true
+                  break
+                fi
+
+                if echo "$target_action_output" | grep -q "Error: Gateway disconnected"; then
+                  echo "Detected 'Gateway Disconnected' error. Retrying..."
+                  ((attempt++))
+                else
+                  break
+                fi
+              done
+
+              if [ "$success" = false ]; then
+                error_found=false
+                error_type=""
+                error_message=""
+
+                # Check for power supply connection errors first (critical hardware issue)
+                if echo "$target_action_output" | grep -q "ERROR: Unable to connect to port.*for the power supply"; then
+                  error_found=true
+                  error_type="Power Supply Connection Error"
+                  error_message=$(echo "$target_action_output" | grep -o "ERROR: Unable to connect to port[^.]*\.")
+                  echo "true" > $(results.unstable.path)
+                # Extract all ERROR:QuickFlash lines from the output
+                elif echo "$target_action_output" | grep -q "ERROR:QuickFlash:"; then
+                  error_found=true
+                  error_type="QuickFlash Errors Detected"
+                  # Extract only the ERROR:QuickFlash lines and add newlines before each
+                  error_message=$(echo "$target_action_output" | sed 's/ERROR:QuickFlash:/\nERROR:QuickFlash:/g' | grep "ERROR:QuickFlash:" | sed 's/INFO.*$//' | sed 's/[[:space:]]*$//')
+
+                  echo "true" > $(results.unstable.path)
+                # Check for Python AttributeError (usually indicates a code/hardware issue)
+                elif echo "$target_action_output" | grep -q "AttributeError:"; then
+                  error_found=true
+                  error_type="Python AttributeError Detected"
+                  error_message=$(echo "$target_action_output" | grep -o "AttributeError:[^I]*" | head -1)
+
+                # No specific errors found, check for other known errors (fallback)
+                else
+                  error_strings=("Error: Gateway disconnected" "Error: Gateway Not Registered" "Failed to flash variant" "\[Errno" "Error:")
+
+                  for error in "${error_strings[@]}"; do
+                    if echo "$target_action_output" | grep -q "$error"; then
+                      error_found=true
+                      error_type="ERROR"
+                      # Extract just the relevant error portion
+                      error_message=$(echo "$target_action_output" | grep -o "$error[^I]*" | head -1 | sed 's/INFO.*$//' | sed 's/[[:space:]]*$//')
+                      break
+                    fi
+                  done
+                fi
+
+                # If any error was found, handle it once
+                if [ "$error_found" = true ]; then
+                  echo "------------------------------"
+                  echo "$error_type:"
+                  echo "$error_message"
+                  echo "------------------------------"
+
+                  echo "Flashing Stage: $error_message" >> $(results.error-message.path)
+                  echo -n "1" > $(results.flash-exit-code.path)
+
+                  echo "true" > "$(results.unstable.path)"
+                  # Set sane defaults for future steps:
+                  echo -n "" > $(results.smoke-test-exit-code.path)
+                  echo -n "" > $(results.upload-exit-code.path)
+                  echo -n "" > $(results.jf-upload-url.path)
+                  echo -n "" > $(results.jf-upload-path.path)
+
+                  exit 3
+                fi
+              fi
+
+              if echo "$target_action_output" | grep -q 'Successfully flashed variant:'; then
+                echo "------------------------------"
+                echo "Flashing Complete"
+                echo "------------------------------"
+              fi
+            fi
+
+            echo -n "0" > $(results.flash-exit-code.path)
+
+      - name: smoke-test
+        task: Utils/core-radar-studio-cli@1.0.0
+        onError: continue
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            echo -n "0" > $(results.smoke-test-exit-code.path)
+
+            if [  $(cat $(results.setup-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Setup Stage Failed, skipping the download, flashing, smoke test, and upload stages."
+              echo "------------------------------"
+              exit 0
+            elif [ $(cat $(results.download-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Download Stage Failed, skipping the flashing and smoke test stage."
+              echo "------------------------------"
+              exit 0
+            elif [ $(cat $(results.flash-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Flash Stage Failed, skipping the smoke test stage."
+              echo "------------------------------"
+              exit 0
+            else
+
+              # Define the config file path
+              config_file="./config.json"
+
+              if [ -f "$config_file" ]; then
+                  echo "$config_file exists"
+              else
+                  # Provision the gateway config file
+                  studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+              fi
+
+              echo "Running smoke test for $(params.testDuration) seconds"
+
+              # Setup parameters for python script call on test bench
+              action_script="target_scripts/run_cmd_on_target.sh"
+
+              architecture="$(params.architecture)"
+              architecture_lc="${architecture,,}"
+
+              if [[ "$architecture_lc" == *windows* ]]; then
+                echo "Using Windows Bench"
+                parameters='["$(params.bench-user)","$(params.bench-ip)","cd wrsd_ci_scripts/WRSD/smoke_test_scripts/python/ & python","Gen8_IntegrationTest.py","-o Gen8_$(params.variant)_Integration_Test -v $(params.variant) -t $(params.testDuration) -c $(params.comment)_$(params.commit-id) -b $(params.commit-id) -m true -k COM4 -e \"Ethernet 3\" -w wrsd_jfrog/$(params.variant)_satellite_can/streamdefs/wiresharkDissector.lua -a wrsd_jfrog/$(params.variant)/r52App.elf --expectedStreams \"1, 2, 3, 4, 5, 7, 8, 9, 14, 15, 20, 45\""]'
+              else
+                echo "Using Linux Bench"
+                parameters='["$(params.bench-user)","$(params.bench-ip)","cd git/ADVRADAR_CICD/RPI/smoke_test/ && chmod +x run_smoke_test.sh && bash","run_smoke_test.sh"," -- --spec git/Core_Radar_Gen8_iND13400/tools/CI/WRSD/smoke_test_spec_gen8.yaml -o Gen8_$(params.variant)_Integration_Test -v $(params.variant) -t $(params.testDuration) -c $(params.comment)_$(params.commit-id) -e \"eth0\" -L wrsd_jfrog/$(params.variant)_satellite_can/streamdefs/wiresharkDissector.lua -E wrsd_jfrog/$(params.variant)_satellite_can/r52App.elf"]'
+              fi
+
+              echo "Target Action Script Parameters: $parameters"
+
+              studio-cli vlab physical slc target act \
+                --gwid=$(params.gateway) \
+                --target-name=$(params.bench-name) \
+                --action-path="$action_script" \
+                --config-file="$config_file" \
+                --parameters="$parameters" \
+                | tee target_action_output.log
+
+              target_action_output=$(cat target_action_output.log)
+
+              if echo "$target_action_output" | grep -Eq \
+                'Overall Test Status:[[:space:]]*FAIL|^Result:[[:space:]]*FAIL'; then
+
+                  # Try to extract Passing/Failing summary if present
+                  summary=$(echo "$target_action_output" | grep '^Passing:' || true)
+
+                  {
+                      echo "Completed smoke test but failed testcase(s). See report in JFrog."
+                      [ -n "$summary" ] && echo "$summary"
+                    } >> $(results.error-message.path)
+
+                    echo -n "2" > $(results.smoke-test-exit-code.path)
+
+                  # Mark this task unstable
+                  echo "true" > "$(results.unstable.path)"
+
+                  exit 3
+              fi
+
+              error_strings=("\[Errno" "ERROR: No BRR" "Error" "ERROR:" "Overall Test Status: FAIL")
+              for error in "${error_strings[@]}"; do
+                if echo "$target_action_output" | grep -q "$error"; then
+                  error_message=$(echo "$target_action_output" | grep -i "$error")
+                  echo "------------------------------"
+                  echo "ERROR: $error_message"
+                  echo "------------------------------"
+
+                  echo "Testing Stage: $error_message" >> $(results.error-message.path)
+                  echo -n "1" > $(results.smoke-test-exit-code.path)
+
+                  # Mark this task unstable
+                  echo "true" > $(results.unstable.path)
+                  exit 4
+                fi
+              done
+            fi
+            echo -n "0" > $(results.smoke-test-exit-code.path)
+
+      - name: upload-report
+        task: Utils/core-radar-studio-cli@1.0.0
+        onError: continue
+        WhenVal: false
+        params:
+          script: |-
+            #!/bin/bash
+            set +e # Disable immediate exit on error
+            set +x # Disable command tracing globally
+
+            echo -n "1" > $(results.upload-exit-code.path)
+            echo -n "" > $(results.jf-upload-url.path)
+            echo -n "" > $(results.jf-upload-path.path)
+
+            if [  $(cat $(results.setup-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Setup Stage Failed, skipping the download, flashing, smoke test, and upload stage."
+              echo "------------------------------"
+              exit 0
+            elif [ $(cat $(results.download-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Download Stage Failed, skipping the flashing, smoke test, and upload stage"
+              echo "------------------------------"
+              exit 0
+            elif [ $(cat $(results.flash-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Flash Stage Failed, skipping the smoke test and upload stage"
+              echo "------------------------------"
+              exit 0
+            elif [ $(cat $(results.smoke-test-exit-code.path)) == 1 ]; then
+              echo "------------------------------"
+              echo "Smoke test Stage Failed, skipping the upload stage"
+              echo "------------------------------"
+              exit 0
+            else
+
+              # Define the config file path
+              config_file="./config.json"
+
+              if [ -f "$config_file" ]; then
+                  echo "$config_file exists"
+              else
+                  # Provision the gateway config file
+                  studio-cli vlab physical slc gateway provision --gwid "$(params.gateway)" -f "$config_file"
+              fi
+
+              # Setup parameters for python script call on test bench
+              action_script="target_scripts/run_cmd_on_target.sh"
+
+              architecture="$(params.architecture)"
+              architecture_lc="${architecture,,}"
+
+              if [[ "$architecture_lc" == *windows* ]]; then
+                echo "Using Windows Bench"
+                cmd_prefix="cd wrsd/scripts/ & python"
+                jfrog_params="wrsd_smoke_test_reports/ $(params.upload-path) $(params.variant) $(config.pipeline.name) $(config.pipeline.runNumber) https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)"
+              else
+                echo "Using Linux Bench"
+                cmd_prefix="cd /home/sid_advradar_cicd/git/ADVRADAR_CICD/WRSD/jfrog/ && python3"
+                jfrog_params="wrsd_smoke_test_reports/ $(params.upload-path) $(params.variant) $(config.pipeline.name) $(config.pipeline.runNumber) https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)"
+              fi
+
+              parameters='["$(params.bench-user)","$(params.bench-ip)","'"$cmd_prefix"'","uploadtoJfrog.py","'"$jfrog_params"'"]'
+
+              echo "Target Action Script Parameters: $parameters"
+
+              studio-cli vlab physical slc target act \
+                --gwid=$(params.gateway) \
+                --target-name=$(params.bench-name) \
+                --action-path="$action_script" \
+                --config-file="$config_file" \
+                --parameters="$parameters" \
+                | tee target_action_output.log
+
+              target_action_output=$(cat target_action_output.log)
+
+              error_strings=("\[Errno" "Error" "returned non-zero exit status")
+
+              for error in "${error_strings[@]}"; do
+                if echo "$target_action_output" | grep -q "$error"; then
+                  error_message=$(echo "$target_action_output" | grep -i "$error")
+                  echo "------------------------------"
+                  echo "ERROR: $error_message"
+                  echo "------------------------------"
+
+                  echo "Upload Stage: $error_message" >> $(results.error-message.path)
+                  echo -n "1" > $(results.upload-exit-code.path)
+                  exit 5
+                fi
+              done
+
+            fi
+            echo -n "https://jfrog.asux.aptiv.com/artifactory/$(params.upload-path)reports_$(params.variant).zip" > $(results.jf-upload-url.path)
+            echo -n "$(params.upload-path)reports_$(params.variant).zip" > $(results.jf-upload-path.path)
+            echo -n "0" > $(results.upload-exit-code.path)
+
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: setup-exit-codes
+        type: map
+        description: Exit codes for any setup tasks
+        ui:
+          name: Setup Exit Codes
+        render:
+          templateName: map
+      - name: download-exit-codes
+        type: map
+        description: Exit codes for any download tasks
+        ui:
+          name: Download Exit Codes
+        render:
+          templateName: map
+      - name: upload-exit-codes
+        type: map
+        description: Exit codes for any upload tasks
+        ui:
+          name: Upload Exit Codes
+        render:
+          templateName: map
+      - name: flash-exit-codes
+        type: map
+        description: Exit codes for any flash tasks
+        ui:
+          name: Flash Exit Codes
+        render:
+          templateName: map
+      - name: smoke-test-exit-codes
+        type: map
+        description: Exit codes for any smoke test tasks
+        ui:
+          name: Smoke Test Exit Codes
+        render:
+          templateName: map
+      - name: error-messages
+        type: map
+        description: Error messages for any smoke test tasks
+        ui:
+          name: Smoke Test Error messages
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-build-codes
+        script: |-
+          # Write in default "success" values
+          echo -n "+1" > $(results.vote-value.path)
+          echo -n "" > $(results.vote-message.path)
+          echo -n "0" > $(results.exit-code.path)
+
+          ERROR_MESSAGES_PATH="$(params.error-messages.path)"
+          VOTE_MESSAGE_PATH="$(results.vote-message.path)"
+          VOTE_VALUE_PATH="$(results.vote-value.path)"
+          EXIT_CODE_PATH="$(results.exit-code.path)"
+
+          # Function to fetch and clean all error messages for a given key
+          get_error_message() {
+            local key="$1"
+            awk -v key="$key" '
+              /^'"$key"':/ {flag=1; next}
+              /^[A-Za-z0-9_]+:/ {flag=0}
+              flag && NF {print}
+            ' "$ERROR_MESSAGES_PATH" | sed -e "s/cid='[^']\+', //" -e "s/merge_key='[^']\+', //"
+          }
+
+          #------------------------------------------------------------------------
+          # Read and act on error messages
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:alnum:]]+[[:space:]]Stage):[[:blank:]](.+) ]]; then
+              echo "${BASH_REMATCH[2]} : ${BASH_REMATCH[3]}" >> $(results.vote-message.path)
+            fi
+          done < $(params.error-messages.path)
+          #------------------------------------------------------------------------
+          # Read and act on setup exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Setup Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Setup Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.setup-exit-codes.path)
+
+          # If any Setup failed, stop here and don't show subsequent stages
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+          #------------------------------------------------------------------------
+          # Read and act on download exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Download Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Download Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.download-exit-codes.path)
+
+          # If any Download failed, stop here and don't show subsequent stages
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+          #------------------------------------------------------------------------
+          # Read and act on Flash exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Flash Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Flash Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.flash-exit-codes.path)
+
+          # If any Flash failed, stop here and don't show smoke test or upload status
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+          #------------------------------------------------------------------------
+          # Read and act on smoke test exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              variant=${BASH_REMATCH[1]}    # e.g., FLR8
+              exit_code=${BASH_REMATCH[2]}  # e.g., 0, 1, 2
+
+              if [ "$exit_code" == "0" ]; then
+                # Job passed
+                echo "${variant} Smoke Test Job was Successful! ✔️" >> $(results.vote-message.path)
+              elif [ "$exit_code" == "1" ]; then
+                # Job failed
+                echo -n "-1" > "$VOTE_VALUE_PATH"
+                echo -n "1" > "$EXIT_CODE_PATH"
+                echo "${variant} Smoke Test Job Failed! ❌" >> "$VOTE_MESSAGE_PATH"
+              elif [ "$exit_code" == "2" ]; then
+                # New issues detected
+                echo -n "-1" > "$VOTE_VALUE_PATH"
+                echo -n "2" > "$EXIT_CODE_PATH"
+                echo "${variant} Smoke Test Completed with Failures! 🚧" >> "$VOTE_MESSAGE_PATH"
+              fi
+            fi
+          done < $(params.smoke-test-exit-codes.path)
+
+          #------------------------------------------------------------------------
+          # Read and act on upload exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Upload Failed! ❌" >> $(results.vote-message.path)
+              else
+                echo "${BASH_REMATCH[1]} Upload Successful! ✔️" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.upload-exit-codes.path)
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default: ""
+        ui:
+          name: git-ref
+      - name: change-number
+        type: string
+        description: The Gerrit change number
+        default: ""
+        ui:
+          name: change-number
+      - name: branch
+        type: string
+        description: The Gerrit branch
+        default: ""
+        ui:
+          name: branch
+      - name: patchset-number
+        type: string
+        description: The Gerrit patchset number
+        default: ""
+        ui:
+          name: patchset-number
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+      - name: report-files-path
+        type: string
+        description: The jfrog path to the builds files zip file.
+        ui:
+          name: report-files-path
+      - name: destination-path
+        type: string
+        description: The path to unzip the downloaded zip file.
+        ui:
+          name: destination-path
+      - name: commit-hash
+        type: string
+        description: commit-hash to provide to any downstream tasks
+        ui:
+          name: commit-hash
+
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: download-report-files
+        task: core-radar-jfrog-download
+        params:
+          downloadPath: $(params.report-files-path)
+          destinationPath: $(params.destination-path)
+        WhenVal: false
+        returnResults:
+          exit-code: exit-code
+
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+
+          import subprocess
+          import sys
+          import os
+          import zipfile
+          import re
+          import json
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+            sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+            subprocess.check_call([
+              sys.executable, "-m", "pip", "install",
+              "--break-system-packages",
+              "--no-cache-dir",
+              "--target", TARGET,
+              "psycopg2-binary"
+            ])
+
+            os.makedirs(TARGET, exist_ok=True)
+            with open(MARKER, "w", encoding="utf-8"):
+              pass
+
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+            print("Installing Python dependencies...")
+            install_deps_and_restart()
+
+          import psycopg2
+
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+            """
+            Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd.
+            """
+            # Check if the wrsd_tags entry already exists
+            cursor.execute("""
+                SELECT id FROM wrsd."perception_metrics_wrsd"
+                WHERE build_no = %s AND pipeline_name = %s;
+            """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+            result = cursor.fetchone()
+            # If exists, return id, else insert new and return new id
+            if result:
+              print("WRSD entry already exists")
+              return result[0]
+            else:
+              print("Creating a new WRSD entry")
+
+              cursor.execute("""
+                  INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                  VALUES (%s, %s, %s, %s, %s) RETURNING id;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+              result = cursor.fetchone()[0]
+
+              return result
+
+          def insert_perception_metrics(cursor, data_list):
+            """
+            Inserts multiple perception_metrics entries into the database.
+
+            Parameters:
+                data_list (list of dict): List of dictionaries, each containing data for a single entry.
+            """
+            for data in data_list:
+              # First, insert or get the wrsd_tags ID
+              wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+
+              # Insert into PerceptionMetrics with reference to wrsd_id
+              cursor.execute("""
+                  INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+              """, (
+                  data['commitid'],
+                  data['date'],
+                  data['branch'],
+                  data['tag'],
+                  data['project'],
+                  data['metric_name'],
+                  data['metric_value'],
+                  Json(data['metric_tags']),
+                  wrsd_id
+              ))
+
+          def read_file(file_path):
+            """Read and return the contents of a file."""
+            with open(os.path.expandvars(file_path), 'r') as file:
+              return file.read().strip()
+
+          def get_json_file(destination_path, variant):
+            """Find and extract json file from a ZIP file."""
+            json_file = f"{variant}_platformHealth.json"
+            print(f"json_file: {json_file}")
+
+            os.chdir(destination_path)
+            current_path = os.getcwd()
+            print(f"Current directory: {current_path}")
+
+            # List contents of the current directory
+            contents = os.listdir('.')
+
+            # Find the ZIP file
+            zip_file = [file for file in contents if file.endswith('.zip')]
+
+            if zip_file:
+              zip_file_path = zip_file[0]  # Take the first ZIP file
+              print(f"Unzipping {zip_file_path}...")
+
+              # Create an extraction folder
+              extract_folder = os.path.splitext(zip_file_path)[0]  # Remove the .zip extension
+              os.makedirs(extract_folder, exist_ok=True)
+
+              # Unzip the file
+              with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_folder)
+
+              print(f"Extracted to: {extract_folder}")
+
+              for root,dirs,files in os.walk(extract_folder):
+                print(files)
+                if json_file in files:
+                  print(f"Found files: {json_file}")
+                  return (os.path.join(root,json_file))
+            else:
+              print("No ZIP files found in the current directory.")
+
+            return None
+
+          def parse_smoke_test_results(file_path):
+            """Parse smoke test resuts from the <variant>_platformHealth.json file."""
+            try:
+              with open(file_path, 'r') as file:
+                  data = json.load(file)
+              print(data)
+              return data
+            except FileNotFoundError:
+              print(f"Error: File {file_path} not found.")
+            except json.JSONDecodeError as e:
+              print(f"Error parsing JSON: {e}")
+            except Exception as e:
+              print(f"Unexpected error: {e}")
+
+          def parse_flash_memory(file_path):
+            """Parse flash memory statistics from flash_memory_stats.txt."""
+            flash_memory = []
+            with open(file_path, 'r') as file:
+              for line in file:
+                # Parse utilization lines
+                match = re.match(
+                  r"^\s*(\S.*?):\s+([\d.]+)%\s+-\s+([\d.]+)\s+MB\s+of\s+([\d.]+)\s+MB", line
+                )
+                if match:
+                  name, percentage, used_mb, total_mb = match.groups()
+                  flash_memory.append({
+                    'name': name.strip(),
+                    'percentage': float(percentage),
+                    'used_mb': float(used_mb),
+                    'total_mb': float(total_mb)
+                  })
+                  continue
+
+                # Parse total lines and addressed sections
+                match = re.match(
+                  r"^\s*(\S.*?):\s+([\d.]+)\s+KB\s+over\s+([\d.]+)\s+KB\s+span\s*\(\s*([\d.]+)%\s*\)\s+-\s+0x([\da-fA-F]+)\s+to\s+0x([\da-fA-F]+)",
+                  line
+                )
+                if match:
+                  name, used_kb, span_kb, percentage, start_address, end_address = match.groups()
+                  flash_memory.append({
+                    'name': name.strip(),
+                    'used_kb': float(used_kb),
+                    'span_kb': float(span_kb),
+                    'percentage': float(percentage),
+                    'start_address': f"0x{start_address}",
+                    'end_address': f"0x{end_address}"
+                  })
+                  continue
+
+                # Parse individual flash sections
+                match = re.match(
+                  r"^\s*(\S.*?):\s+([\d.]+)\s+KB\s+over\s+([\d.]+)\s+KB\s+span\s+\(([\d.]+)%\)", line
+                )
+                if match:
+                  name, used_kb, span_kb, percentage = match.groups()
+                  flash_memory.append({
+                    'name': name.strip(),
+                    'used_kb': float(used_kb),
+                    'span_kb': float(span_kb),
+                    'percentage': float(percentage)
+                  })
+
+                  continue
+
+            return flash_memory
+
+          def package_data_for_postgresql(base_data, variant, smoke_test_values):
+            """Package parsed data into a list for database insertion."""
+            data_list = []
+
+            # smoke test results
+            for values in smoke_test_values:
+              data_list.append({
+                **base_data,
+                "metric_name": values["metricName"],
+                "metric_tags": values["metricTags"] ,
+                "metric_value": float(values["metricValue"]),
+              })
+
+            return data_list
+
+            # Memory Sections
+            for section in memory_sections:
+              metric_name = "core_radar.gen8.memoryStats.sections"
+              metric_tags = {"section": section["section_name"], "variant": variant}
+              data_list.append({
+                **base_data,
+                "metric_name": metric_name,
+                "metric_tags": {**metric_tags, "type": "total_kb"},
+                "metric_value": float(section["total_kb"]),
+              })
+              data_list.append({
+                **base_data,
+                "metric_name": metric_name,
+                "metric_tags": {**metric_tags, "type": "used_kb"},
+                "metric_value": float(section["used_kb"]),
+              })
+
+            # Module Breakdown
+            for module in module_breakdown:
+              metric_name = "core_radar.gen8.memoryStats.modules"
+              metric_tags = {"module": module["module_name"], "variant": variant}
+              data_list.extend([
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "code_kb"},
+                  "metric_value": float(module["code_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "data_kb"},
+                  "metric_value": float(module["data_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "bss_kb"},
+                  "metric_value": float(module["bss_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "other_kb"},
+                  "metric_value": float(module["other_kb"]),
+                },
+                {
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "total_kb"},
+                  "metric_value": float(module["total_kb"]),
+                }
+              ])
+
+            # Flash Memory
+            for flash in flash_memory:
+              metric_name = "core_radar.gen8.memoryStats.flash"
+              metric_tags = {"name": flash["name"], "variant": variant}
+
+              if "used_mb" in flash:
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "total_mb"},
+                  "metric_value": float(flash["total_mb"]),
+                })
+
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "used_mb"},
+                  "metric_value": float(flash["used_mb"]),
+                })
+
+              elif "used_kb" in flash:
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "span_kb"},
+                  "metric_value": float(flash["span_kb"]),
+                })
+                data_list.append({
+                  **base_data,
+                  "metric_name": metric_name,
+                  "metric_tags": {**metric_tags, "type": "used_kb"},
+                  "metric_value": float(flash["used_kb"]),
+                })
+
+            return data_list
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+
+          db_config = {
+            "dbname": "monitoring",
+            "user": pg_user,
+            "password": pg_pass,
+            "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+            "port": "5432"
+          }
+
+          build_name = "$(config.pipeline.name)"
+          build_no = $(config.pipeline.runNumber)
+          build_url = f"https://$(studio.home)/plm/view/{build_name}/runs/{build_no}"
+          variant = "$(params.variant)"
+          branch = "$(params.git-ref)"
+          project_name = "$(params.project-name)"
+          commit_hash = "$(params.commit-hash)"
+
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+
+          wrsd_tags = {
+            "build_no": build_no,
+            "pipeline_name": build_name,
+            "status": None,
+            "duration": None,
+            "build_url": build_url
+          }
+
+          base_data = {
+            "commitid": commit_hash,
+            "date": currentDateTime,
+            "branch": branch,
+            "tag": "",
+            "project": project_name,
+            "wrsd_tags": wrsd_tags,
+          }
+
+
+          if branch == "dev":
+
+            json_path = get_json_file("$(params.destination-path)", "$(params.variant)" )
+
+            # Parse the file
+            smoke_test_results = parse_smoke_test_results(json_path)
+
+            # Package data for PostgreSQL
+            data_list = package_data_for_postgresql(base_data, variant, smoke_test_results)
+
+            print(f"Submitting {len(data_list)} memory records for {variant} .")
+
+            try:
+              connection = psycopg2.connect(**db_config)
+              cursor = connection.cursor()
+
+              # Insert multiple data entries
+              insert_perception_metrics(cursor, data_list)
+              connection.commit()
+              print("Data inserted successfully.")
+
+            except Exception as e:
+              print("An error occurred:", e)
+
+            finally:
+              if connection:
+                cursor.close()
+                connection.close()
+          else:
+            print("Not Dev branch so nothing will be commited to Platform Health.")
+
+        onError: continue
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+
+timeout: 90m

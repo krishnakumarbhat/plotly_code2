@@ -1,0 +1,220 @@
+{
+    "VEH_TRACKER": {
+        "dest_dir": "VEH_TRACKER",
+        "bsw_files": {
+            "EcuM_Init_Cfg_file": {
+                "name": "EcuM_Init_Cfg.c",
+                "mod": [
+                    "CanIf_Config_RDR_01_Ptr",
+                    "Com_Config_RDR_01_Ptr",
+                    "CanIf_Config_RDR_02_Ptr",
+                    "Com_Config_RDR_02_Ptr",
+                    "CanIf_Config_RDR_03_Ptr",
+                    "Com_Config_RDR_03_Ptr",
+                    "CanIf_Config_RDR_04_Ptr",
+                    "Com_Config_RDR_04_Ptr",
+                    "CanIf_Config_RDR_05_Ptr",
+                    "Com_Config_RDR_05_Ptr",
+                    "CanIf_Config_RDR_06_Ptr",
+                    "Com_Config_RDR_06_Ptr",
+                    "CanIf_Config_RDR_07_Ptr",
+                    "Com_Config_RDR_07_Ptr",
+                    "CanIf_Config_RDR_08_Ptr",
+                    "Com_Config_RDR_08_Ptr"
+                ]
+            },
+            "PduR_Lcfg_c_file": {
+                "name": "PduR_Lcfg.c",
+                "mod": [
+                    "CanIf_Transmit",
+                    "Com_RxIndication",
+					"LdCom_CopyRxData",
+					"LdCom_CopyTxData",
+					"LdCom_RxIndication",
+					"LdCom_StartOfReception",
+					"LdCom_TpRxIndication",
+					"LdCom_TpTxConfirmation",
+					"SomeIpTp_TriggerTransmit",
+					"SomeIpTp_Transmit",
+					"SomeIpTp_Transmit",
+					"SomeIpTp_TxConfirmation",
+					"SomeIpTp_RxIndication"
+				]
+            },
+
+			"SoAd_Lcfg_file": {
+                "name": "SoAd_Lcfg.c",
+                "mod": [
+                    "Sd_RxIndication",
+					"Sd_SoConModeChg",
+					"Sd_LocalIpAddrAssignmentChg"
+                ]
+			},
+            "LdCom_Lcfg_file": {
+                "name": "LdCom_Lcfg.c",
+                "mod": [
+                    "Rte_LdComCbkRxIndication_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx",
+                    "Rte_LdComCbkCopyTxData_signalPdu_RDR_1_Detections_52b391ee_Tx",
+                    "Rte_LdComCbkTpTxConfirmation_signalPdu_RDR_1_Detections_52b391ee_Tx"
+                ]
+			}
+
+		},
+        "rte_mods": [
+            "Com_MainFunctionTx_ComMainFunctionTx_Periodic()",
+			"Com_MainFunctionTx_ComMainFunctionTx_Event()",
+            "Com_MainFunctionRx_ComMainFunctionRx()",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx[22140];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx_Length;",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdCom_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx[79];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdCom_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx_Length;",
+            "Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx_Length = 0;",
+            "Rte_LdCom_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx_Length = 0;",
+            "CanSM_MainFunction()",
+			"Sd_MainFunction()",
+			"SomeIpTp_MainFunctionRx()",
+			"SomeIpTp_MainFunctionTx()",
+            "CanXcp_MainFunction()",
+            "ComM_MainFunction_2()",
+            "ComM_MainFunction_1();"
+		],
+		"BswMm_Lcfg_mods": [
+            "Sd_PreInit(Sd_Config_Ptr)",
+     		"Sd_Init(Sd_Config_Ptr)",
+			"Sd_PostInit()",
+			"LdCom_Init(LdCom_Config_Ptr)",
+			"SomeIpTp_Init(SomeIpTp_Config_Ptr)",
+            "User_Com_Init();",
+            "CanIf_Init(EcuM_GlobalPCConfig_Ptr->CfgPtr_CanIf_Init);",
+            "CanSM_Init(CanSM_Config_Ptr);",
+            "Can_Init(&Can_Config);",
+            "User_CAN_ComPduGroupHandling();",
+            "CanXcp_Init(NULL_PTR);",
+            "return Sd_ServerServiceSetState(BswM_GetIdOfSdServerParameters(handleId, partitionIdx), BswM_GetStateOfSdServerParameters(handleId, partitionIdx));",
+            "return Sd_ConsumedEventGroupSetState(BswM_GetIdOfSdConsumedParameters(handleId, partitionIdx), BswM_GetStateOfSdConsumedParameters(handleId, partitionIdx));",
+            "return Sd_ClientServiceSetState(BswM_GetIdOfSdClientParameters(handleId, partitionIdx), BswM_GetStateOfSdClientParameters(handleId, partitionIdx));"
+        ]
+    },
+
+    "VEH_SOMEIP": {
+        "dest_dir": "VEH_SOMEIP",
+        "bsw_files": {
+            "EcuM_Init_Cfg_file": {
+                "name": "EcuM_Init_Cfg.c",
+                "mod": [
+                    "CanIf_Config_RDR_01_Ptr",
+                    "Com_Config_RDR_01_Ptr",
+                    "CanIf_Config_RDR_02_Ptr",
+                    "Com_Config_RDR_02_Ptr",
+                    "CanIf_Config_RDR_03_Ptr",
+                    "Com_Config_RDR_03_Ptr",
+                    "CanIf_Config_RDR_04_Ptr",
+                    "Com_Config_RDR_04_Ptr",
+                    "CanIf_Config_RDR_05_Ptr",
+                    "Com_Config_RDR_05_Ptr",
+                    "CanIf_Config_RDR_06_Ptr",
+                    "Com_Config_RDR_06_Ptr",
+                    "CanIf_Config_RDR_07_Ptr",
+                    "Com_Config_RDR_07_Ptr",
+                    "CanIf_Config_RDR_08_Ptr",
+                    "Com_Config_RDR_08_Ptr"
+                ]
+            },
+            "PduR_Lcfg_c_file": {
+                "name": "PduR_Lcfg.c",
+                "mod": [
+                    "CanIf_Transmit",
+                    "Com_RxIndication"
+				]
+            },
+
+			"SoAd_Lcfg_file": {
+                "name": "SoAd_Lcfg.c",
+                "mod": []
+			},
+            "LdCom_Lcfg_file": {
+                "name": "LdCom_Lcfg.c",
+                "mod": []
+			}
+
+		},
+        "rte_mods": [
+            "Com_MainFunctionTx_ComMainFunctionTx_Periodic()",
+			"Com_MainFunctionTx_ComMainFunctionTx_Event()",
+            "Com_MainFunctionRx_ComMainFunctionRx()",
+            "CanSM_MainFunction()",
+            "CanXcp_MainFunction()",
+            "ComM_MainFunction_2()",
+            "ComM_MainFunction_1();"
+		],
+		"BswMm_Lcfg_mods": [
+            "User_Com_Init();",
+            "CanIf_Init(EcuM_GlobalPCConfig_Ptr->CfgPtr_CanIf_Init);",
+            "CanSM_Init(CanSM_Config_Ptr);",
+            "Can_Init(&Can_Config);",
+            "CanXcp_Init(NULL_PTR);",
+            "User_CAN_ComPduGroupHandling();"
+        ]
+    },
+
+    "VEH_CAN": {
+        "dest_dir": "VEH_CAN",
+        "bsw_files": {
+            "PduR_Lcfg_c_file": {
+                "name": "PduR_Lcfg.c",
+                "mod": [
+					"LdCom_CopyRxData",
+					"LdCom_CopyTxData",
+					"LdCom_RxIndication",
+					"LdCom_StartOfReception",
+					"LdCom_TpRxIndication",
+					"LdCom_TpTxConfirmation",
+					"SomeIpTp_TriggerTransmit",
+					"SomeIpTp_Transmit",
+					"SomeIpTp_Transmit",
+					"SomeIpTp_TxConfirmation",
+					"SomeIpTp_RxIndication"
+				]
+            },
+        	"SoAd_Lcfg_file": {
+                "name": "SoAd_Lcfg.c",
+                "mod": [
+                    "Sd_RxIndication",
+					"Sd_SoConModeChg",
+					"Sd_LocalIpAddrAssignmentChg"
+                ]
+			},
+            "LdCom_Lcfg_file": {
+                "name": "LdCom_Lcfg.c",
+                "mod": [
+                    "Rte_LdComCbkRxIndication_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx",
+                    "Rte_LdComCbkCopyTxData_signalPdu_RDR_1_Detections_52b391ee_Tx",
+                    "Rte_LdComCbkTpTxConfirmation_signalPdu_RDR_1_Detections_52b391ee_Tx"
+                ]
+			}
+		},
+        "rte_mods": [
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx[22140];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx_Length;",
+            "VAR(uint8, RTE_VAR_NOINIT) Rte_LdCom_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx[79];",
+            "VAR(uint32, RTE_VAR_NOINIT) Rte_LdCom_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx_Length;",
+            "Rte_LdComTp_signalPdu_RDR_1_Detections_52b391ee_Tx_Length = 0;",
+            "Rte_LdCom_signalPdu_ADAS_Vehicle_Status_638dcd82_Rx_Length = 0;",
+			"Com_MainFunctionTx_ComMainFunctionTx_Event()",
+			"Sd_MainFunction()",
+			"SomeIpTp_MainFunctionRx()",
+		    "SomeIpTp_MainFunctionTx()"
+		],
+		"BswMm_Lcfg_mods": [
+            "Sd_PreInit(Sd_Config_Ptr)",
+     		"Sd_Init(Sd_Config_Ptr)",
+			"Sd_PostInit()",
+			"LdCom_Init(LdCom_Config_Ptr)",
+			"SomeIpTp_Init(SomeIpTp_Config_Ptr)",
+            "return Sd_ServerServiceSetState(BswM_GetIdOfSdServerParameters(handleId, partitionIdx), BswM_GetStateOfSdServerParameters(handleId, partitionIdx));",
+            "return Sd_ConsumedEventGroupSetState(BswM_GetIdOfSdConsumedParameters(handleId, partitionIdx), BswM_GetStateOfSdConsumedParameters(handleId, partitionIdx));",
+            "return Sd_ClientServiceSetState(BswM_GetIdOfSdClientParameters(handleId, partitionIdx), BswM_GetStateOfSdClientParameters(handleId, partitionIdx));"
+        ]
+
+    }
+}

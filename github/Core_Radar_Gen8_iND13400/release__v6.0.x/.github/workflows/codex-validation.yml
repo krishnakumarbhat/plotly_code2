@@ -1,0 +1,196 @@
+name: CODEX Catalog Validation
+# This workflow validates catalog-info.yaml/yml changes for CODEX/Backstage onboarding
+#
+# BEHAVIOR:
+# - If catalog-info.yaml/yml changed: Run validation
+# - If catalog-info.yaml/yml NOT changed: Skip validation, pass check immediately
+#
+# REQUIREMENTS:
+# - This workflow must ALWAYS run on every PR (no paths: filtering in trigger)
+# - Suitable for use as an organization-level required status check
+# - Never leaves status check in "pending" state
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  # This job detects if catalog-info.yaml/yml was changed (to decide if validation is needed)
+  check-catalog-changed:
+    name: Detect Catalog File Changes
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    outputs:
+      catalog-changed: ${{ steps.set-output.outputs.catalog-changed }}
+    steps:
+      - name: Checkout repository
+        if: github.event_name == 'merge_group' || github.event_name == 'push'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Default for Schedule/Manual
+        id: set-default
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: echo "catalog-changed=false" >> $GITHUB_OUTPUT
+
+      - name: Get current and previous commit SHAs
+        if: github.event_name == 'push'
+        id: shas
+        run: |
+          echo "current=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "previous=$(git rev-parse HEAD~1)" >> $GITHUB_OUTPUT
+
+      - name: Detect catalog-info changes
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push'
+        uses: Aptiv/action-paths-filter@v1
+        id: filter-catalog
+        with:
+          list-files: csv
+          filters: |
+            catalog_files:
+              - 'catalog-info.yaml'
+              - 'catalog-info.yml'
+          base: ${{ github.event_name == 'push' && steps.shas.outputs.previous || '' }}
+          ref: ${{ github.event_name == 'push' && steps.shas.outputs.current || '' }}
+
+      - name: Set job output
+        id: set-output
+        run: |
+          CATALOG_CHANGED="false"
+
+          # Check if we're in schedule/workflow_dispatch
+          if [ "${{ github.event_name }}" == "schedule" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            CATALOG_CHANGED="${{ steps.set-default.outputs.catalog-changed }}"
+          else
+            # Check if any catalog files changed
+            CATALOG_FILES="${{ steps.filter-catalog.outputs.catalog_files_files }}"
+            if [ -n "$CATALOG_FILES" ]; then
+              CATALOG_CHANGED="true"
+            fi
+          fi
+
+          echo "catalog-changed=$CATALOG_CHANGED" >> $GITHUB_OUTPUT
+          echo "### 📊 Catalog Detection Result" >> $GITHUB_STEP_SUMMARY
+          echo "Catalog files changed: **$CATALOG_CHANGED**" >> $GITHUB_STEP_SUMMARY
+
+  validate-codex-catalog:
+    name: Validate catalog-info and Promotion Gates
+    needs: check-catalog-changed
+    if: false #job is skipped
+    # Only run validation if catalog-info.yaml/yml was changed
+    # if: needs.check-catalog-changed.outputs.catalog-changed == 'true' uncomment if this job is enabled
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if catalog file exists
+        id: check-file
+        run: |
+          if [ -f "catalog-info.yaml" ] || [ -f "catalog-info.yml" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✓ Catalog file found - proceeding with validation"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ No catalog file to validate - skipping"
+            echo "### ⚠️ No Catalog File Present" >> $GITHUB_STEP_SUMMARY
+            echo "The catalog-info.yaml/yml file is not present in the repository." >> $GITHUB_STEP_SUMMARY
+            echo "Validation will be skipped as there is nothing to validate." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Set up Python
+        if: steps.check-file.outputs.exists == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        if: steps.check-file.outputs.exists == 'true'
+        shell: bash
+        run: pip install pyyaml psycopg2-binary
+
+      - name: Validate CODEX catalog
+        if: steps.check-file.outputs.exists == 'true'
+        uses: Aptiv/action-codex-validation@v0
+        with:
+          catalog-path: catalog-info.yaml
+          db-host: ${{ vars.METRICS_PROD_DB_HOST }}
+          db-port: ${{ vars.METRICS_DB_PORT }}
+          db-user: ${{ vars.METRICS_DB_USER }}
+          db-pass: ${{ secrets.METRICS_DB_PASSWORD }}
+          db-name: ${{ vars.METRICS_DB_NAME }}
+
+  # This job ensures a required check always reports status (never pending)
+  # Suitable for use as an organization-level required status check
+  codex-validation-status:
+    name: codex/catalog-validation
+    runs-on: ubuntu-latest
+    needs: [check-catalog-changed]
+    # needs: [check-catalog-changed, validate-codex-catalog]
+    if: always()
+    permissions:
+      contents: read
+    steps:
+      - name: Determine final status
+        run: |
+          echo "### 📋 CODEX Catalog Validation Status Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          CATALOG_CHANGED="${{ needs.check-catalog-changed.outputs.catalog-changed }}"
+          # If the validate job was skipped/removed, default to 'skipped'
+          VALIDATION_RESULT="${{ needs.validate-codex-catalog.result || 'skipped' }}"
+
+          echo "- **Catalog Changed:** $CATALOG_CHANGED" >> $GITHUB_STEP_SUMMARY
+          echo "- **Validation Result:** $VALIDATION_RESULT" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # If catalog didn't change, no validation needed - pass
+          if [ "$CATALOG_CHANGED" != "true" ]; then
+            echo "### ✅ Status Check: PASS" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason:** No catalog-info.yaml/yml changes detected." >> $GITHUB_STEP_SUMMARY
+            echo "Validation was skipped - no changes to validate." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✓ No catalog changes - passing validation"
+            exit 0
+          fi
+
+          # If validation ran and succeeded
+          if [ "$VALIDATION_RESULT" == "success" ]; then
+            echo "### ✅ Status Check: PASS" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason:** Catalog validation completed successfully." >> $GITHUB_STEP_SUMMARY
+            echo "All mandatory fields, TechDocs, and quality gates are satisfied." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✓ Catalog validation passed"
+            exit 0
+          fi
+
+          # If validation was skipped for other reasons
+          if [ "$VALIDATION_RESULT" == "skipped" ]; then
+            echo "### ✅ Status Check: PASS" >> $GITHUB_STEP_SUMMARY
+            echo "**Reason:** Validation not needed for this event type." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✓ Validation not needed"
+            exit 0
+          fi
+
+          # If validation failed
+          echo "### ❌ Status Check: FAIL" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** Catalog validation failed." >> $GITHUB_STEP_SUMMARY
+          echo "Please review the validation errors above and fix catalog-info.yaml/yml." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✗ Catalog validation failed"
+          exit 1

@@ -1,0 +1,100 @@
+"""
+Bazel file defining all building blocks, local and remote.
+
+Many times, developers will need to override the http_archive calls to develop their building block code locally.
+To do this, use the override_repository flag during build.
+This can be either added on the command line, or for convenience it can be added to a user.bazelrc file in the root of the repo.
+Simply create this user.bazelrc file and add one of the following lines (or similar) and that parameter will be appended to all build commands.
+
+Example for Linux:
+common --override_repository=afbb=/home/timb/Projects/Core_Radar_Gen7_SAF85xx_Angle_Finding
+Example for Windows:
+common --override_repository=afbb=C:/Projects/Core_Radar_Gen7_SAF85xx_Angle_Finding
+
+If not using the user.bazelrc file, the build command might look like this:
+bazel build //:gen7 --override_repository=afbb=C:/Projects/Core_Radar_Gen7_SAF85xx_Angle_Finding
+"""
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "sfl",
+    build_file = "//sil/emb_lib/ff_emb_lib:sfl/archive.BUILD",
+    patch_cmds_win = ["rm (Get-ChildItem -Filter BUILD -Recurse -ErrorAction SilentlyContinue -Force).fullname"],
+    url = "https://gitgerrit.asux.aptiv.com/a/plugins/gitiles/CORECOMP/ALSW/SFL_SideFeatureLogic/+archive/refs/tags/24_PI3_S6.tar",
+)
+
+http_archive(
+    name = "calibtool",
+    build_file = "//sil/emb_lib/ff_emb_lib:sfl/calibration_tool/archive.BUILD",
+    url = "https://gitgerrit.asux.aptiv.com/a/plugins/gitiles/CORECOMP/ALSW/CT_CalibrationTool/+archive/9af0b0f52d5d04406dda9565b06b8717ffedd075.tar.gz",
+)
+
+http_archive(
+    name = "math_library",
+    build_file = "//sil/emb_lib/ff_emb_lib/sfl/math_library:archive.BUILD",
+    url = "https://gitgerrit.asux.aptiv.com/a/plugins/gitiles/CORECOMP/ALSW/ML_MathLibrary/+archive/21c6195075f35592112c9dedd7abe85716e67bcc.tar.gz",
+)
+
+http_archive(
+    name = "pugixml",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+cc_library(
+    name = "pugixml",
+    srcs = [
+        "pugixml.cpp",
+    ],
+    hdrs = [
+        "pugiconfig.hpp",
+        "pugixml.hpp",
+    ],
+    copts = ["-w"],
+    # SIL engine and emb lib both link statically to possibly different
+    # versions of pugixml, this leads to emb_lib calling into SIL engine's
+    # copy of pugixml which might not be compatible
+    #
+    # To fix this, we rename pugi's namespace to ensure different symbols
+    defines = ["pugi=pugi_emb_lib"],
+    visibility = ["//visibility:public"],
+)
+    """,
+    sha256 = "86a2b2f16d3e107b9ea5043ef9c458306b94d38f6203d58a196dc9b9dc6351a6",
+    strip_prefix = "pugixml-1.14/src",
+    url = "https://github.com/zeux/pugixml/archive/refs/tags/v1.14.zip",
+)
+
+http_archive(
+    name = "boost_pfr",
+    build_file = "//sil/emb_lib/boost_pfr:archive.BUILD",
+    patch_args = ["-p1"],
+    patch_cmds = ["python ./misc/generate_cpp17.py 450 > include/boost/pfr/detail/core17_generated.hpp"],
+    patch_cmds_win = ["python ./misc/generate_cpp17.py 450 | Set-Content -Encoding utf8 include/boost/pfr/detail/core17_generated.hpp"],
+    patches = ["//sil/emb_lib/boost_pfr:array_fix.patch"],
+    # sha256 = "c26d93ba963f86b32ae6a24bc88b3bef9200b1d83aa6ba8114a587ece3279663",
+    strip_prefix = "pfr-8cd1a9675d327a058101ef0802789f1830ac2a7e",
+    url = "https://github.com/boostorg/pfr/archive/8cd1a9675d327a058101ef0802789f1830ac2a7e.zip",
+)
+
+http_archive(
+    name = "hdf5",
+    build_file = "//sil/emb_lib/hdf5:hdf5.archive.BUILD",
+    sha256 = "ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44",
+    strip_prefix = "hdf5-1.14.5",
+    url = "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.5/hdf5.tar.gz",
+)
+
+http_archive(
+    name = "highfive",
+    build_file = "//sil/emb_lib/hdf5:highfive.archive.BUILD",
+    strip_prefix = "HighFive-2.10.0",
+    url = "https://github.com/BlueBrain/HighFive/archive/refs/tags/v2.10.0.tar.gz",
+)
+
+http_archive(
+    name = "mingw",
+    build_file = "@bazel_platform//:toolchains/mingw/archive.BUILD",
+    sha256 = "ed2097a9546b7a5c935f63ee3d969900a52a6a491c35e9708cbec1fcc54a0442",
+    strip_prefix = "mingw64",
+    url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/mingw/windows/x86_64-14.2.0-release-mcf-seh-ucrt-rt_v12-rev0.tar.zst",
+)

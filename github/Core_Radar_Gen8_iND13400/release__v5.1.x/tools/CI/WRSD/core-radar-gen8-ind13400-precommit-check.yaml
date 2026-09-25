@@ -1,0 +1,127 @@
+langVersion: v1
+name: core-radar-gen8-ind13400-precommit-check
+description: Pipeline that checks that the formatter was run on the change
+ui:
+  name: core-radar-gen8-ind13400-precommit-check
+params:
+  - name: change-id
+    type: string
+  - name: commit-id
+    type: string
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: branch
+    type: string
+    default: dev
+  - name: patchset-number
+    type: string
+    default: ""
+compute:
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.0.1
+    compute: linux-1c4g
+  - name: format-check
+    task: utils/format-check
+    compute: linux-2c8g
+    params:
+      git-ref: $(params.commit-id)
+  - name: verified-vote
+    task: Utils/post-gerrit-comment-vote-flr8@1.0.0
+    compute: linux-1c4g
+    params:
+      exit-code: $(tasks.format-check.results.exit-code)
+      gerrit-setup: {}
+      message: $(tasks.format-check.results.vote-message)
+      votes:
+        Verified: $(tasks.format-check.results.vote-value)
+  - name: auto-submit-check
+    task: Utils/ADVRADAR/auto-submit@1.0.1
+    compute: linux-2c8g
+    params:
+      project-name: $(params.project-url-encoded)
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      comment: "False"
+defineTasks:
+  - langVersion: v1
+    name: format-check
+    category: utils
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          repository:
+            git-ref: $(params.git-ref)
+            depth: "2"
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen8_iND13400
+            username: $(secrets.gerrit-cred.username.path)
+      - name: run-precommit
+        image: system.registry.389177498442.awsaptiv.com/luci/build-format-ready:1.4
+        script: |
+          cd $(cat $(steps.shallow-clone.results.repoPath.path))
+          git config --global --add safe.directory $(cat $(steps.shallow-clone.results.repoPath.path))
+          pre-commit install
+          git diff HEAD~1 --name-status
+          pre-commit run --from-ref HEAD~1 --to-ref HEAD
+        onError: continue
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+      - name: turn-exit-code-into-vote
+        script: |
+          echo -n $(cat $(steps.run-precommit.exitCode.path)) > $(results.exit-code.path)
+          if [ $(cat $(steps.run-precommit.exitCode.path)) -ne 0 ]; then
+            echo "Error found"
+            echo -n "-1" > $(results.vote-value.path)
+            echo -e """
+          Formatter Check Failed! 🚧
+
+          Run repo_init.py from the root of this repository to install the pre-commit hooks!
+          Then run 'python -m pre_commit run --from-ref HEAD~1 --to-ref HEAD', commit, and upload a new patchset.
+
+          Formatter Job: https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+            """ > $(results.vote-message.path)
+
+            # Mark this task unstable
+            echo "true" > $(results.unstable.path)
+          else
+            echo "Success!"
+            echo -n "+1" > $(results.vote-value.path)
+            echo """
+          Formatter Check Passed.
+
+          Formatter Job: https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber)
+            """ > $(results.vote-message.path)
+          fi
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""

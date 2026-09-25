@@ -1,0 +1,45 @@
+# SWE6 SQT_MACRO nightly trigger for the FLR8 family.
+# Thin wrapper around the generic reusable workflow (radar-test-reusable.yml).
+#
+# SKELETON — adjust the variant/xcp matrix, runner-labels, email-recipients,
+# and any markers/extra-args to taste.
+#
+# Triggers:
+#   - workflow_dispatch: manual trigger via the Actions UI (ONLY trigger today).
+#
+#   TODO: when ready to chain after SWE6 FLR8 Nightly, uncomment the
+#   `workflow_run` block below.
+
+name: SWE6 SQT_MACRO FLR8 Nightly
+
+on:
+  # workflow_run:
+  #   workflows: ["SWE6 FLR8 Nightly"]
+  #   types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sqt-macro-flr8:
+    name: SWE6 SQT_MACRO FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      # job-type is used in JFrog paths, build name, summary title, Teams /
+      # email subject, and the default report-subdir (Reports/<job-type>).
+      job-type: SWE6_SQT_MACRO
+      family: FLR8
+      # Source folder under testcases/GEN8_Test_Cases/
+      test-folder: SWE6_TestScript_SQT_MACRO
+      # Reports directory under the framework root (matches launcher_config.toml
+      # folder_map for SWE6_TestScript_SQT_MACRO).
+      report-subdir: Reports/SWE6_SQT_MACRO
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_standalone", "xcp":"Eth_Direct"}
+        ]
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe6-sqt-macro-flr8.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

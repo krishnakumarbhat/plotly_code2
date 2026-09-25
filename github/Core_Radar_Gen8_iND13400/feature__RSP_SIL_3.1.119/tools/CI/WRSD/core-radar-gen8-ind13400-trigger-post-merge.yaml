@@ -1,0 +1,121 @@
+langVersion: v1
+name: core-radar-gen8-ind13400-trigger-post-merge
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project
+ui:
+  name: core-radar-gen8-ind13400-trigger-post-merge
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/post-merge/$(config.pipeline.runNumber)
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: ""
+  - name: branch
+    type: string
+    default: ""
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+compute:
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - parallelTasks:
+    - name: auto-rebase
+      task: Utils/ADVRADAR/auto-rebase@1.0.0
+      compute: linux-2c8g
+      params:
+        gerrit-url: $(params.gerrit-url)
+        project-name: $(params.project-url-encoded)
+        branch: $(params.branch)
+    - name: update
+      task: local/update-pipelines
+      compute: linux-1c4g
+      when:
+      - input: $(params.branch)
+        operator: in
+        values:
+        - dev
+      params:
+        git-ref: $(params.commit-id)
+        gerrit-url: $(params.gerrit-url)
+        project-name: $(params.project-url-encoded)
+final:
+- name: grafana-publish-metrics-platform-flr8
+  meta: {}
+  params:
+    image: $(studio.systemRegistry)/devsecops/dashboard:1.0
+    netrccreds: $(secrets.netrc)
+    patchset-revision: $(params.branch)
+    pipeline-type: post-merge
+    project-name: core-radar-gen8-ind13400-trigger-nightly
+    scm:
+      branch-name: feature/sw-quality
+      repo-name: 00000000_wrsd/metrics
+    shebang: '#!/usr/bin/env python3'
+  task: Utils/grafana-publish-metrics@1.0.0
+defineTasks:
+  - langVersion: v1
+    name: update-pipelines
+    category: local
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: gerrit-url
+        type: string
+        default: https://gitgerrit.asux.aptiv.com
+      - name: project-name
+        type: string
+        default: Core_Radar_Gen8_iND13400
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.1
+        params:
+          depth: "1"
+          repository:
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: $(params.gerrit-url)/$(params.project-name)
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+      - name: studio-update-pipelines
+        task: Utils/studio-cli@1.0.0
+        params:
+          overrides:
+            plm_URIBASE: $(studio.plmURIBase)
+          script: |
+            cd $(params.project-name)/tools/CI/WRSD
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-build" -f "core-radar-gen8-ind13400-build.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-coverity" -f "core-radar-gen8-ind13400-coverity.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-hw-test" -f "core-radar-gen8-ind13400-hw-test.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-precommit-check" -f "core-radar-gen8-ind13400-precommit-check.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-trigger-nightly" -f "core-radar-gen8-ind13400-trigger-nightly.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-trigger-post-merge" -f "core-radar-gen8-ind13400-trigger-post-merge.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-trigger-verification" -f "core-radar-gen8-ind13400-trigger-verification.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-unit-test" -f "core-radar-gen8-ind13400-unit-test.yaml"
+            studio-cli plm pipeline update --name "core-radar-gen8-ind13400-trigger-weekly" -f "core-radar-gen8-ind13400-trigger-weekly.yaml"
+            studio-cli plm trigger update -f "ind13400-trigger-verification.yaml"
+            studio-cli plm trigger update -f "ind13400-trigger-post-merge.yaml"
+        WhenVal: false
+    wrrn: ""
+storage:
+  - name: shared
+    defaultMount: true
+    mountPath: /volumes/shared
+    readOnly: false
+    resource: Perception_Radar_FLR8_storage
+timeout: 1h

@@ -1,0 +1,1271 @@
+﻿langVersion: v1
+name: core-radar-gen8-ind13400-unit-test
+description: Pipeline that unit tests all variants of the code for Gen8 iND13400
+ui:
+  name: core-radar-gen8-ind13400-unit-test
+params:
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: dev
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: upload-path
+    type: string
+    description: |-
+      The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+      Ex. core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/manual/unitTests/$(config.pipeline.runNumber)
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/manual/unitTests/$(config.pipeline.runNumber)
+    ui:
+      name: JFrog Upload Path
+  - name: branch
+    type: string
+    default: dev
+  - name: patchset-number
+    type: string
+    default: ""
+compute:
+  - name: linux-8c32g
+    resource: asp-compute-linux-8c32g
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+    compute: linux-1c4g
+  - parallelTasks:
+      - name: ut-flr8
+        task: build/unit-test
+        compute: linux-8c32g
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: flr8
+      - name: ut-srr8p
+        task: build/unit-test
+        compute: linux-8c32g
+        params:
+          git-ref: $(params.commit-id)
+          upload-path: $(params.upload-path)
+          variant: srr8p
+  - name: prepare-vote-and-message
+    task: Utils/prepare-vote-and-message
+    compute: linux-1c4g
+    params:
+      branch-coverages:
+        FLR8: $(tasks.ut-flr8.results.branch-coverage)
+        SRR8p: $(tasks.ut-srr8p.results.branch-coverage)
+      build-exit-codes:
+        FLR8: $(tasks.ut-flr8.results.build-exit-code)
+        SRR8p: $(tasks.ut-srr8p.results.build-exit-code)
+      function-coverages:
+        FLR8: $(tasks.ut-flr8.results.function-coverage)
+        SRR8p: $(tasks.ut-srr8p.results.function-coverage)
+      decision-coverages:
+        FLR8: $(tasks.ut-flr8.results.decision-coverage)
+        SRR8p: $(tasks.ut-srr8p.results.decision-coverage)
+      line-coverages:
+        FLR8: $(tasks.ut-flr8.results.line-coverage)
+        SRR8p: $(tasks.ut-srr8p.results.line-coverage)
+      error-messages:
+        FLR8: $(tasks.ut-flr8.results.error-message)
+        SRR8p: $(tasks.ut-srr8p.results.error-message)
+      untested-files:
+        FLR8: $(tasks.ut-flr8.results.untested-files)
+        SRR8p: $(tasks.ut-srr8p.results.untested-files)
+      unit-test-exit-codes:
+        FLR8: $(tasks.ut-flr8.results.unit-test-exit-code)
+        SRR8p: $(tasks.ut-srr8p.results.unit-test-exit-code)
+      true-counts:
+        FLR8: $(tasks.ut-flr8.results.true-count)
+        SRR8p: $(tasks.ut-srr8p.results.true-count)
+      false-counts:
+        FLR8: $(tasks.ut-flr8.results.false-count)
+        SRR8p: $(tasks.ut-srr8p.results.false-count)
+      upload-exit-codes:
+        FLR8: $(tasks.ut-flr8.results.upload-exit-code)
+        SRR8p: $(tasks.ut-srr8p.results.upload-exit-code)
+  - name: unit-test-vote
+    task: Utils/post-gerrit-comment-vote-flr8@1.1.1
+    compute: linux-1c4g
+    params:
+      gerrit-setup: {}
+      message: |-
+        $(tasks.prepare-vote-and-message.results.vote-message)
+
+        Build Outputs: [Unit Test Reports](https://jfrog.asux.aptiv.com/ui/repos/tree/General/$(params.upload-path))
+        Build Job: [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+      votes:
+        Unit-Test: $(tasks.prepare-vote-and-message.results.vote-value)
+
+  - parallelTasks:
+      # Send memory stats to Platform Health
+      - name: publish-metrics-flr8
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.ut-flr8.results.unit-test-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          variant: flr8
+          git-ref: $(params.commit-id)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          branch-coverage: $(tasks.ut-flr8.results.branch-coverage)
+          decision-coverage: $(tasks.ut-flr8.results.decision-coverage)
+          function-coverage: $(tasks.ut-flr8.results.function-coverage)
+          line-coverage: $(tasks.ut-flr8.results.line-coverage)
+          untested-files: $(tasks.ut-flr8.results.untested-files)
+          project-name: $(params.project-url-encoded)
+          commit-hash: $(tasks.ut-flr8.results.commit-hash)
+          ut-files-path: $(tasks.ut-flr8.results.jf-upload-path)
+          destination-path: /workspace/Core_Radar_Gen8_iND13400/
+          tags: "buildVariant=satellite"
+      - name: publish-metrics-srr8p
+        when:
+          - input: $(params.commit-id)
+            operator: in
+            values:
+              - dev
+          - input: $(tasks.ut-srr8p.results.unit-test-exit-code)
+            operator: in
+            values:
+              - "0"
+        task: Utils/publish-metrics
+        compute: linux-2c8g
+        params:
+          variant: srr8p
+          git-ref: $(params.commit-id)
+          change-number : $(params.change-id)
+          branch: $(params.branch)
+          patchset-number: $(params.patchset-number)
+          branch-coverage: $(tasks.ut-srr8p.results.branch-coverage)
+          decision-coverage: $(tasks.ut-srr8p.results.decision-coverage)
+          function-coverage: $(tasks.ut-srr8p.results.function-coverage)
+          line-coverage: $(tasks.ut-srr8p.results.line-coverage)
+          untested-files: $(tasks.ut-srr8p.results.untested-files)
+          project-name: $(params.project-url-encoded)
+          commit-hash: $(tasks.ut-srr8p.results.commit-hash)
+          ut-files-path: $(tasks.ut-srr8p.results.jf-upload-path)
+          destination-path: /workspace/Core_Radar_Gen8_iND13400/
+          tags: "buildVariant=satellite"
+      - name: auto-submit-check
+        task: Utils/ADVRADAR/auto-submit@1.0.1
+        compute: linux-2c8g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          gerrit-url: $(params.gerrit-url)
+          comment: "False"
+defineTasks:
+  - name: unit-test
+    langVersion: v1
+    category: build
+    params:
+      - name: git-ref
+        type: string
+        description: The git commit hash or branch to check out from Gerrit
+        default: dev
+        ui:
+          name: Commit Hash or Branch
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+      - name: upload-path
+        type: string
+        description: |-
+          The path inside of JFrog to upload the outputs to. Note - this does not include the base URL of the repository
+          Ex. core_radar-aptiv-00000000-gen8_ind13400-local/reviews/45/12345/6/buildFiles
+        default: ""
+        ui:
+          name: JFrog Upload Path
+    results:
+      - name: uploadUrl
+        description: The URL the outputs are uploaded to.
+      - name: unit-test-exit-code
+        description: The exit code of the unit test step
+      - name: upload-exit-code
+        description: The exit code of the upload step
+      - name: jf-upload-path
+        description: The path the outputs are uploaded to.
+      - name: jf-upload-url
+        description: The URL the outputs are uploaded to.
+      - name: branch-coverage
+        description: The branch coverage calculated from UT
+      - name: line-coverage
+        description: The line coverage calculated from UT
+      - name: function-coverage
+        description: The function coverage calculated from UT
+      - name: decision-coverage
+        description: The decision coverage calculated from UT
+      - name: untested-files
+        description: The number of source files not covered by UT
+      - name: true-count
+        description: The number of UT functions that have asserts/expects
+      - name: false-count
+        description: The number of UT functions that do not have asserts/expects
+      - name: error-message
+        description: The failed unit tests
+      - name: commit-hash
+        description: commit-hash
+      - name: rapid-build-url
+        description: URL to the RapidBuild
+    steps:
+      - name: shallow-clone
+        task: Utils/YGGDRASIL/git-shallow-clone@0.0.3
+        params:
+          repository:
+            depth: "1"
+            git-ref: $(params.git-ref)
+            password: $(secrets.gerrit-cred.password.path)
+            url: https://gitgerrit.asux.aptiv.com/Core_Radar_Gen8_iND13400
+            username: $(secrets.gerrit-cred.username.path)
+        WhenVal: false
+        returnResults:
+          commitHash: commit-hash
+      - name: unit-test-code
+        task: unit-test-code
+        params:
+          repoRoot: $(cat $(steps.shallow-clone.results.repoPath.path))
+          variant: $(params.variant)
+        WhenVal: false
+        returnResults:
+          branch-coverage: branch-coverage
+          exit-code: unit-test-exit-code
+          function-coverage: function-coverage
+          line-coverage: line-coverage
+          decision-coverage: decision-coverage
+          true-count: true-count
+          false-count: false-count
+          untested-files: untested-files
+          error-message: error-message
+          rapid-build-url: rapid-build-url
+      - name: upload-files
+        task: Utils/ADVRADAR/core-radar-jfrog-upload@1.0.1
+        params:
+          pathToUpload: $(cat $(steps.unit-test-code.results.outputDir.path))
+          uploadPath: $(params.upload-path)unitTests_$(params.variant)
+        WhenVal: false
+        returnResults:
+          exit-code: upload-exit-code
+          uploadUrl: jf-upload-url
+          jf-upload-path: jf-upload-path
+      - name: stable-check
+        script: |
+          #!/bin/bash
+
+          if [ $(cat $(results.unit-test-exit-code.path)) -ne 0 ]; then
+            echo "true" > $(results.unstable.path)
+          fi
+          if [ $(cat $(results.upload-exit-code.path)) -ne 0 ]; then
+            echo "true" > $(results.unstable.path)
+          fi
+    wrrn: ""
+  - name: unit-test-code
+    langVersion: v1
+    category: build
+    params:
+      - name: repoRoot
+        type: string
+        description: Path to the root of the repo
+        ui:
+          name: repoRoot
+      - name: variant
+        type: string
+        description: Variant to Unit Test
+        ui:
+          name: variant
+    results:
+      - name: outputDir
+        description: Path to the directory that contains the output files/folders
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+      - name: branch-coverage
+        description: Branch coverage results from UT
+      - name: function-coverage
+        description: Function coverage results from UT
+      - name: line-coverage
+        description: Line coverage results from UT
+      - name: decision-coverage
+        description: Decision coverage results from UT
+      - name: untested-files
+        description: The number of source files not covered by UT
+      - name: false-count
+        description: The False UT function count
+      - name: true-count
+        description: The True UT function count
+      - name: error-message
+        description: Any error during the unit test job
+      - name: rapid-build-url
+        description: URL to RapidBuild
+    steps:
+      - name: unit-test
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/bin/bash
+          echo repoRoot = $(params.repoRoot)
+          echo variant = $(params.variant)
+          cd $(params.repoRoot)
+          git config --global --add safe.directory $(params.repoRoot)
+          cp $(secrets.netrc.path) ~/.netrc
+
+          # Path to the build event JSON file
+          BUILD_EVENT_FILE="build_event.json"
+          # Set up credentials for the ARB remote cache
+          echo "build --bes_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" > user.bazelrc
+          echo "build --remote_header=x-arb-api-key=$(cat $(secrets.arb-token.path))" >> user.bazelrc
+
+          # variables to store report data
+          branch_coverage="0"
+          function_coverage="0"
+          line_coverage="0"
+          decision_coverage="0"
+          untested_files="0"
+          report_file="report.txt"
+          coverage_target="//coverage:report"
+          jobStatus=0
+
+          total_true="0"
+          total_false="0"
+          total_tests="0"
+          total_coverage="0"
+
+          # Create the test results folder
+          mkdir -p test-results/$(params.variant)
+          mkdir -p test-results/$(params.variant)/profile
+
+          echo "----------------------------------"
+          echo "Running UT Command: bazelisk test $coverage_target --tracker_variant=AL --config=$(params.variant)"
+          echo "----------------------------------"
+
+          # Run the Unit Test Build
+          bazelisk test $coverage_target --config=$(params.variant) --tracker_variant=AL --build_event_json_file="$BUILD_EVENT_FILE" 2>&1 | tee build_output.log
+
+          # Capture the exit status of the bazelisk command
+          BAZEL_EXIT_CODE=${PIPESTATUS[0]}
+          build_output=$(cat build_output.log)
+
+          # Extract the invocation ID using jq
+          INVOCATION_ID=$(grep -Po '"uuid":"\K[^"]+' build_event.json)
+
+          # Check if the invocation ID is not empty
+          if [[ -n "$INVOCATION_ID" ]]; then
+              echo "Invocation ID: $INVOCATION_ID"
+
+              # Create the RapidBuild url
+              echo -n "https://rapidbuild.asux.aptiv.com/organizations/gpo/projects/core_radar_gen8_ind13400/invocations/${INVOCATION_ID}" > $(results.rapid-build-url.path)
+          fi
+
+          # Check if the build passed or failed
+          if [ $BAZEL_EXIT_CODE -eq 0 ]; then
+              echo "----------------------------------"
+              echo "Unit Test build completed successfully."
+              echo "----------------------------------"
+          else
+              echo "----------------------------------"
+              echo "Unit Test build failed with exit code $BAZEL_EXIT_CODE."
+
+              # Search for the line where tests fail and capture the number of failed tests
+              if echo "$build_output" | grep -q '\[  FAILED  \] [0-9]\+ tests, listed below:'; then
+                  # Extract the number of failed tests
+                  num_failed=$(echo "$build_output" | grep '\[  FAILED  \] [0-9]\+ tests, listed below:' | grep -o '[0-9]\+')
+
+                  # Print the header and the failed test cases
+                  echo "----------------------------------"
+                  echo "****** FAILED TESTS DETECTED ******"
+                  # Extract the block starting from the failed line and the next N failed test lines
+                  echo "$build_output" | awk "/\[  FAILED  \] $num_failed tests, listed below:/ {found=1} found {print} NR == (NR + $num_failed) {exit}"
+                  echo -n "$build_output" | awk "/\[  FAILED  \] $num_failed tests, listed below:/ {found=1} found {print} NR == (NR + $num_failed) {exit}" > $(results.error-message.path)
+
+                  echo "----------------------------------"
+                  echo -n "2" > $(results.exit-code.path)
+                  jobStatus=2 # Custom status to indicate unit test failure
+
+              # Additional check for coverage-related failures, even if exit code is 0
+              elif echo "$build_output" | grep -q "CoverageReport.*failed" || echo "$build_output" | grep -q "Exit 1"; then
+                  echo "----------------------------------"
+                  echo "****** COVERAGE LIMIT FAILURE DETECTED ******"
+                  # Extract only the coverage results table
+
+                  # Only the summary line
+                  echo "$build_output" | awk '/^\/\/coverage:report/ { print; exit }' | tee -a $(results.error-message.path)
+
+                  echo "----------------------------------"
+                  echo -n "3" > $(results.exit-code.path)
+                  jobStatus=3  # Custom status to indicate coverage limit failure
+              else
+                  echo "----------------------------------"
+                  echo "No failed tests found"
+                  echo "----------------------------------"
+                  # Exit the script with a non-zero status to indicate failure
+                  jobStatus=1
+              fi
+          fi
+
+          if [ "$jobStatus" -eq 0 ]; then # if jobStatus is 0 then process the reports
+              cp -r bazel-Core_Radar_Gen8_iND13400/external/ external/
+
+              mkdir -p test-results/$(params.variant)/coverage
+              mv bazel-bin/coverage/report_html test-results/$(params.variant)/coverage
+              mv bazel-bin/coverage/report.txt  test-results/$(params.variant)/$report_file
+              mv bazel-bin/coverage/report_gcovr_report.json  test-results/$(params.variant)/report_gcovr_report.json
+
+              echo "--------------------------------------"
+              # Parse the report.txt for coverage values and number of untested files
+
+              if [[ ! -f "test-results/$(params.variant)/$report_file" ]]; then
+                echo "Error: File '$report_file' not found!"
+                exit 1
+              fi
+
+              while IFS= read -r line; do
+                # check
+                if [[ "$line" == *"$coverage_target"* ]]; then
+                  echo "Found Coverage Line"
+
+                  # Split the line by '|' and assign coverage numbers (ignoring the first 2 fields)
+                  IFS='|' read -r _ _ line_coverage _ decision_coverage _ function_coverage _ branch_coverage _ <<< "$line"
+
+                  # Trim leading/trailing whitespaces
+                  line_coverage=$(echo "$line_coverage" | xargs)
+                  decision_coverage=$(echo "$decision_coverage" | xargs)
+                  function_coverage=$(echo "$function_coverage" | xargs)
+                  branch_coverage=$(echo "$branch_coverage" | xargs)
+                fi
+
+                # Check if the line contains "Untested source files"
+                if [[ "$line" == *"Untested source files"* ]]; then
+                    # Extract the number between parentheses
+                    untested_files=$(echo "$line" | grep -oP '(?<=\().*(?=\))')
+                fi
+
+              done < "test-results/$(params.variant)/$report_file"
+
+              # This runs the True Count python script. It generates two files outputs.
+              bazel run //tools/python/unitTestTrueCount:getUTTrueCount
+
+              if [ -f "ut_true_count_report.json" ]; then
+                mv ut_true_count_report.json test-results/$(params.variant)/ut_true_count_report.json
+                mv ut_true_count_report.xlsx test-results/$(params.variant)/ut_true_count_report.xlsx
+
+                TRUE_COUNT_JSON_FILE="test-results/$(params.variant)/ut_true_count_report.json"
+
+                # Check if the true count file exists before attempting to extract values
+                if [[ -f "$TRUE_COUNT_JSON_FILE" ]]; then
+                    total_true=$(grep -o '"total_true":[ ]*[0-9]*' "$TRUE_COUNT_JSON_FILE" | awk -F: '{sum += $2} END {print sum+0}')
+                    total_false=$(grep -o '"total_false":[ ]*[0-9]*' "$TRUE_COUNT_JSON_FILE" | awk -F: '{sum += $2} END {print sum+0}')
+                    total_tests=$(grep -o '"total_tests":[ ]*[0-9]*' "$TRUE_COUNT_JSON_FILE" | awk -F: '{sum += $2} END {print sum+0}')
+                    total_coverage=$(grep -o '"total_coverage":[ ]*[0-9.]*' "$TRUE_COUNT_JSON_FILE" | awk -F: '{sum += $2} END {print sum+0}')
+                else
+                    echo "Warning: JSON file '$TRUE_COUNT_JSON_FILE' not found. Defaulting values to 0."
+                fi
+              fi
+          fi
+          echo "-------------------------------------"
+          echo "Line Coverage          : $line_coverage"
+          echo "Decision Coverage      : $decision_coverage"
+          echo "Function Coverage      : $function_coverage"
+          echo "Branch Coverage        : $branch_coverage"
+          echo "Untested Source Files  : $untested_files"
+          echo "True UT Function Count : $total_true"
+          echo "False UT Function Count: $total_false"
+          echo "-------------------------------------"
+
+          # Populate the result variables
+          echo -n "$branch_coverage" > $(results.branch-coverage.path)
+          echo -n "$function_coverage" > $(results.function-coverage.path)
+          echo -n "$line_coverage" > $(results.line-coverage.path)
+          echo -n "$decision_coverage" > $(results.decision-coverage.path)
+          echo -n "$untested_files" > $(results.untested-files.path)
+          echo -n "$total_true" > $(results.true-count.path)
+          echo -n "$total_false" > $(results.false-count.path)
+
+          echo -n "" >> $(results.error-message.path)
+
+          # save output directory path for user usages
+          echo -n "$(params.repoRoot)/test-results/" > $(results.outputDir.path)
+
+          if [ "$jobStatus" -ne 0 ]; then
+              echo -n "$jobStatus" > $(results.exit-code.path)
+              exit "$jobStatus"
+          fi
+        onError: continue
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+      - name: save-exit-code
+        image: system.registry.389177498442.awsaptiv.com/luci/gut-ready:1.4
+        script: |
+          echo -n $(cat $(steps.unit-test.exitCode.path)) > $(results.exit-code.path)
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+  - name: prepare-vote-and-message
+    langVersion: v1
+    category: Utils
+    params:
+      - name: unit-test-exit-codes
+        type: map
+        description: Exit codes for any unit test tasks
+        ui:
+          name: Unit Test Exit Codes
+        render:
+          templateName: map
+      - name: upload-exit-codes
+        type: map
+        description: Exit codes for any upload tasks
+        ui:
+          name: Upload Exit Codes
+        render:
+          templateName: map
+      - name: decision-coverages
+        type: map
+        description: Decision Coverage results from UT
+        ui:
+          name: Decision Coverage Results
+        render:
+          templateName: map
+      - name: branch-coverages
+        type: map
+        description: Branch Coverage results from UT
+        ui:
+          name: Branch Coverage Results
+        render:
+          templateName: map
+      - name: function-coverages
+        type: map
+        description: Function Coverage results from UT
+        ui:
+          name: Function Coverage Results
+        render:
+          templateName: map
+      - name: line-coverages
+        type: map
+        description: Line Coverage results from UT
+        ui:
+          name: Line Coverage Results
+        render:
+          templateName: map
+      - name: untested-files
+        type: map
+        description: Untested files results from UT
+        ui:
+          name: Untested files
+        render:
+          templateName: map
+      - name: true-counts
+        type: map
+        description: True count for UT functions
+        ui:
+          name: true-counts
+        render:
+          templateName: map
+      - name: false-counts
+        type: map
+        description: False count for UT functions
+        ui:
+          name: false-counts
+        render:
+          templateName: map
+      - name: error-messages
+        type: map
+        description: Error messages from UT build
+        ui:
+          name: Error messages
+        render:
+          templateName: map
+    results:
+      - name: vote-value
+        description: Value to vote back to Gerrit
+      - name: vote-message
+        description: Message to write back to Gerrit
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: analyze-unit-test-codes
+        script: |-
+          # Write in "success" values
+          echo -n "+1" > $(results.vote-value.path)
+          echo -n "0" > $(results.exit-code.path)
+
+          # Read and act on Unit Test exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              variant="${BASH_REMATCH[1]}"
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                if [ ${BASH_REMATCH[2]} == 2 ]
+                then
+                  echo "${BASH_REMATCH[1]} Unit Tests Failed! ⚠" >> $(results.vote-message.path)
+                elif [ ${BASH_REMATCH[2]} == 3 ]
+                then
+                  echo "${BASH_REMATCH[1]} Unit Tests Coverage Limit Exceeded! 🚧" >> $(results.vote-message.path)
+                  # Add header for coverage results since pulling this out of log causes overflow issues.
+                  echo ">  Coverage results |     |      Line     |    Decision   |    Function   |     Branch    |" >> $(results.vote-message.path)
+                  echo ">                   |     |  act  |  req  |  act  |  req  |  act  |  req  |  act  |  req  |" >> $(results.vote-message.path)
+
+                else
+                  echo "${BASH_REMATCH[1]} Unit Tests Unknown Error! ❌" >> $(results.vote-message.path)
+                fi
+
+                while read line; do
+                  if [[ $line =~ ^([[:alnum:]]+):[[:blank:]]*(.*) ]]; then
+                    echo "~~~~~~~~~~~~~~~~~~~~~~~"
+                    echo $line
+                    echo "${BASH_REMATCH[1]}"
+                    echo "${BASH_REMATCH[2]}"
+
+                    if [ ${BASH_REMATCH[1]} == ${variant} ]; then
+                      echo "> ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.error-messages.path)
+
+              else
+                variant="${BASH_REMATCH[1]}"
+
+                echo "${variant} Unit Tests Successful! ✔️" >> $(results.vote-message.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Line Coverage: ${BASH_REMATCH[2]}%" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.line-coverages.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Decision Coverage: ${BASH_REMATCH[2]}%" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.decision-coverages.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Function Coverage: ${BASH_REMATCH[2]}%" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.function-coverages.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Branch Coverage: ${BASH_REMATCH[2]}%" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.branch-coverages.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> Untested Files: ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.untested-files.path)
+
+                while read line; do
+                  if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+                    if [ ${BASH_REMATCH[1]} = ${variant} ]; then
+                      echo "> False Count UT Functions: ${BASH_REMATCH[2]}" >> $(results.vote-message.path)
+                    fi
+                  fi
+                done < $(params.false-counts.path)
+
+                echo "\n" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.unit-test-exit-codes.path)
+
+          # If any unit tests failed, that's the important part
+          # So we don't need to worry about checking if the upload was successful
+          if [ $(cat $(results.exit-code.path)) == 1 ]
+          then
+            exit
+          fi
+
+          # Read and act on Upload exit codes
+          while read line; do
+            echo $line
+            if [[ $line =~ ([[:alnum:]]+):[[:blank:]]([[:digit:]]+) ]]; then
+              if [ ${BASH_REMATCH[2]} != 0 ]
+              then
+                if [ $(cat $(results.exit-code.path)) == 0 ]
+                then
+                  echo "" >> $(results.vote-message.path)
+                fi
+                echo -n "-1" > $(results.vote-value.path)
+                echo -n "1" > $(results.exit-code.path)
+                echo "${BASH_REMATCH[1]} Upload Failed! ❌" >> $(results.vote-message.path)
+              fi
+            fi
+          done < $(params.upload-exit-codes.path)
+          echo "\n" >> $(results.vote-message.path)
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+  - name: publish-metrics
+    langVersion: v1
+    category: Utils
+    params:
+      - name: variant
+        type: select
+        description: Variant to Unit Test
+        ui:
+          name: variant
+        options:
+          - name: flr8
+            description: Variant is flr8
+            value: flr8
+          - name: srr8p
+            description: Variant is srr8p
+            value: srr8p
+      - name: git-ref
+        type: string
+        description: The review ID or branch to check out from Gerrit
+        default:
+        ui:
+          name: git-ref
+      - name: change-number
+        type: string
+        description: The Gerrit change number
+        default: ""
+        ui:
+          name: change-number
+      - name: branch
+        type: string
+        description: The Gerrit branch
+        default: ""
+        ui:
+          name: branch
+      - name: patchset-number
+        type: string
+        description: The Gerrit patchset number
+        default: ""
+        ui:
+          name: patchset-number
+      - name: branch-coverage
+        type: string
+        description: Branch coverage results from UT
+        default:
+        ui:
+          name: branch-coverage
+      - name: function-coverage
+        type: string
+        description: Function coverage results from UT
+        ui:
+          name: function-coverage
+      - name: line-coverage
+        type: string
+        description: Line coverage results from UT
+        ui:
+          name: line-coverage
+      - name: decision-coverage
+        type: string
+        description: Decision coverage results from UT
+        ui:
+          name: decision-coverage
+      - name: untested-files
+        type: string
+        description: Untested files results from UT
+        ui:
+          name: Untested files
+      - name: project-name
+        type: string
+        description: Project name
+        ui:
+          name: project-name
+      - name: commit-hash
+        type: string
+        description: The current commit hash, it can be the same as the git-ref.
+        ui:
+          name: commit-hash
+      - name: ut-files-path
+        type: string
+        description: The jfrog path to the ut files zip file.
+        ui:
+          name: ut-files-path
+      - name: destination-path
+        type: string
+        description: The path to unzip the downloaded zip file.
+        ui:
+          name: destination-path
+      - name: tags
+        type: string
+        description: Any extra tags needed to pass to Platform Health for extra filtering. e.g. "env=test, build=standalone"
+        ui:
+          name: tags
+
+    results:
+      - name: exit-code
+        description: Exit code to provide to any downstream tasks
+    steps:
+      - name: download-ut-files
+        task: core-radar-jfrog-download
+        params:
+          downloadPath: $(params.ut-files-path)
+          destinationPath: $(params.destination-path)
+        WhenVal: false
+        returnResults:
+          exit-code: exit-code
+      - name: publish
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/gut-ready:1.5
+        script: |
+          #!/usr/bin/env python3
+
+          import subprocess
+          import sys
+          import os
+          import zipfile
+          import json
+
+          TARGET = "/tmp/python-packages"
+          MARKER = os.path.join(TARGET, ".deps_installed")
+
+          if TARGET not in sys.path:
+            sys.path.insert(0, TARGET)
+
+          def install_deps_and_restart():
+            # Remove PEP 668 EXTERNALLY-MANAGED marker so pip works in this ephemeral CI container
+            import glob
+            for marker in glob.glob("/usr/lib/python3.*/EXTERNALLY-MANAGED"):
+              os.remove(marker)
+            os.makedirs(TARGET, exist_ok=True)
+            subprocess.check_call([
+              sys.executable, "-m", "pip", "install",
+              "--no-cache-dir",
+              "--target", TARGET,
+              "psycopg2-binary"
+            ])
+
+            with open(MARKER, "w", encoding="utf-8"):
+              pass
+
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+
+          if not os.path.exists(MARKER):
+            print("Installing Python dependencies...")
+            install_deps_and_restart()
+
+          import psycopg2
+
+          from psycopg2 import sql, extras
+          from datetime import datetime
+          from psycopg2.extras import Json
+
+          def parse_extra_tags(extra_tags_str):
+              """Parse a string of extra tags into a dictionary"""
+              extra_tags = {}
+              if extra_tags_str:
+                  try:
+                      extra_tags = json.loads(extra_tags_str)
+                  except json.JSONDecodeError:
+                      # Handle case where input is not valid JSON
+                      for item in extra_tags_str.split(","):
+                          key_value = item.split("=")
+                          if len(key_value) == 2:
+                              key, value = key_value
+                              extra_tags[key.strip()] = value.strip()
+              return extra_tags
+
+          def read_file(file_path):
+              """Reads a file and returns its contents."""
+              with open(os.path.expandvars(file_path), 'r') as file:
+                  return file.read().strip()
+
+          def read_json_file(file_path):
+              """Reads a JSON file and returns its content as a dictionary."""
+              try:
+                  with open(file_path, "r") as f:
+                      return json.load(f)
+              except Exception as e:
+                  print(f"Error reading JSON file {file_path}: {e}")
+                  return None
+
+          def read_text_file(file_path):
+            try:
+              with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+                lines = content.splitlines()
+                untested_files = []
+                capture = False
+
+                for line in lines:
+                    line = line.strip()
+                    if "Untested source file" in line:
+                        capture = True
+                        continue
+                    if capture:
+
+                        # Only consider lines that look like file paths
+                        if '.' in line and '/' in line:
+                            cleaned_line = line.rstrip('|').strip()
+                            if cleaned_line:
+                              untested_files.append(cleaned_line)
+
+                return untested_files
+
+            except Exception as e:
+                print(f"Error reading report.txt file {file_path}:{e}")
+                return None
+
+          def construct_data_list_from_ut_true_json(ut_true_count_data, metric_tags, commit_hash, currentDateTime, branch, project_name, build_no, pipeline_name):
+              """Process UT True Count JSON and prepare data for insertion into the database."""
+              data_list = []
+
+              for filename, values in ut_true_count_data.items():
+                  # skip the summary keys
+                  if filename in ["total_true","total_false","total_tests","total_coverage"]:
+                    continue
+
+                  true_count = values.get("True Count", 0)
+                  total_count = values.get("Total", 0)
+
+                  data_list.extend([
+                      {
+                          "commitid": commit_hash, "date": currentDateTime, "branch": branch, "tag": "",
+                          "project": project_name, "metric_name": "core_radar.gen8.unittest.true_count",
+                          "metric_value": true_count, "metric_tags": {**metric_tags, "category": "true_count", "filename": filename},
+                          "wrsd_tags": {
+                              "build_no": build_no, "pipeline_name": pipeline_name, "status": None, "duration": None,
+                              "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                          }
+                      },
+                      {
+                          "commitid": commit_hash, "date": currentDateTime, "branch": branch, "tag": "",
+                          "project": project_name, "metric_name": "core_radar.gen8.unittest.true_count",
+                          "metric_value": total_count, "metric_tags": {**metric_tags, "category": "total_count", "filename": filename},
+                          "wrsd_tags": {
+                              "build_no": build_no, "pipeline_name": pipeline_name, "status": None, "duration": None,
+                              "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                          }
+                      }
+                  ])
+
+              return data_list
+
+          def insert_wrsd_tags(cursor, wrsd_tags):
+              """
+              Inserts or retrieves an existing wrsd_tags ID from perception_metrics_wrsd.
+              """
+              # Check if the wrsd_tags entry already exists
+              cursor.execute("""
+                  SELECT id FROM wrsd."perception_metrics_wrsd"
+                  WHERE build_no = %s AND pipeline_name = %s;
+              """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name']))
+              result = cursor.fetchone()
+              # If exists, return id, else insert new and return new id
+              if result:
+                  print("WRSD entry already exists")
+                  return result[0]
+              else:
+                  print("Creating a new WRSD entry")
+
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics_wrsd" (build_no, pipeline_name, status, duration, build_url)
+                      VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                  """, (wrsd_tags['build_no'], wrsd_tags['pipeline_name'], wrsd_tags['status'], wrsd_tags['duration'], wrsd_tags['build_url']))
+                  return cursor.fetchone()[0]
+
+          def insert_perception_metrics(cursor, data_list):
+              """
+              Inserts multiple perception_metrics entries into the database.
+
+              Parameters:
+                  data_list (list of dict): List of dictionaries, each containing data for a single entry.
+              """
+              for data in data_list:
+                  # First, insert or get the wrsd_tags ID
+                  wrsd_id = insert_wrsd_tags(cursor, data['wrsd_tags'])
+
+                  # Insert into PerceptionMetrics with reference to wrsd_id
+                  cursor.execute("""
+                      INSERT INTO wrsd."perception_metrics" ("CommitId", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id)
+                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                  """, (
+                      data['commitid'],
+                      data['date'],
+                      data['branch'],
+                      data['tag'],
+                      data['project'],
+                      data['metric_name'],
+                      data['metric_value'],
+                      Json(data['metric_tags']),
+                      wrsd_id
+                  ))
+
+          def construct_data_list_from_json(ut_data, metric_tags, commit_hash, currentDateTime, branch, project_name, build_no, pipeline_name):
+              """Constructs data_list dynamically based on UT report JSON."""
+
+              # Define metric categories and their corresponding ut_data keys
+              metrics = [
+                  ("overall_branch_covered", "branch_covered"),
+                  ("overall_branch_total", "branch_total"),
+                  ("overall_decision_covered", "decision_covered"),
+                  ("overall_decision_total", "decision_total"),
+                  ("overall_function_covered", "function_covered"),
+                  ("overall_function_total", "function_total"),
+                  ("overall_line_covered", "line_covered"),
+                  ("overall_line_total", "line_total"),
+              ]
+
+              # add overall coverage and total numbers
+              data_list = [
+                  {
+                      "commitid": commit_hash, "date": currentDateTime, "branch": branch, "tag": "",
+                      "project": project_name, "metric_name": "core_radar.gen8.unittest.details",
+                      "metric_value": ut_data.get(metric_key, []), "metric_tags": {**metric_tags, "category": category},
+                      "wrsd_tags": {"build_no": build_no,"pipeline_name": pipeline_name, "status": None, "duration": None,
+                          "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                      },
+                  }
+                  for category, metric_key in metrics
+              ]
+
+              for file_entry in ut_data.get("files", []):
+                  filename = file_entry["filename"]
+
+                  for metric, category in [
+                      ("branch_covered", "branch_covered"),
+                      ("branch_total", "branch_total"),
+                      ("decision_covered", "decision_covered"),
+                      ("decision_total", "decision_total"),
+                      ("function_covered", "function_covered"),
+                      ("function_total", "function_total"),
+                      ("line_covered", "line_covered"),
+                      ("line_total", "line_total"),
+                  ]:
+                      if metric in file_entry:
+                          data_list.append({
+                              "commitid": commit_hash, "date": currentDateTime, "branch": branch, "tag": "", "project": project_name,
+                              "metric_name": "core_radar.gen8.unittest.details", "metric_value": file_entry[metric],
+                              "metric_tags": {**metric_tags, "category": category, "filename": filename},
+                              "wrsd_tags": {
+                                  "build_no": build_no, "pipeline_name": pipeline_name, "status": None,
+                                  "duration": None, "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}"
+                              }
+                          })
+              return data_list
+
+          def construct_data_list_from_untested(untested_data, metric_tags, commit_hash, currentDateTime, branch, project_name, build_no, pipeline_name):
+              """Constructs data_list dynamically based on UT untested txt report."""
+              data_list = []
+
+              for filename in untested_data:
+
+                  for metric, category in [
+                      ("branch_covered", "branch_covered"),
+                      ("branch_total", "branch_total"),
+                      ("decision_covered", "decision_covered"),
+                      ("decision_total", "decision_total"),
+                      ("function_covered", "function_covered"),
+                      ("function_total", "function_total"),
+                      ("line_covered", "line_covered"),
+                      ("line_total", "line_total"),
+                  ]:
+                    data_list.append({
+                        "commitid": commit_hash, "date": currentDateTime, "branch": branch, "tag": "", "project": project_name,
+                        "metric_name": "core_radar.gen8.unittest.details", "metric_value": -1,
+                        "metric_tags": {**metric_tags, "category": category, "filename": filename},
+                        "wrsd_tags": {
+                            "build_no": build_no, "pipeline_name": pipeline_name, "status": None,
+                            "duration": None, "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}"
+                        }
+                    })
+              return data_list
+
+          def unzip_file(destination_path):
+            """Extract a ZIP file."""
+            os.chdir(destination_path)
+            current_path = os.getcwd()
+            print(f"Current directory: {current_path}")
+
+            # List contents of the current directory
+            contents = os.listdir('.')
+
+            # Find the ZIP file
+            zip_file = [file for file in contents if file.endswith('.zip')]
+
+            if zip_file:
+              zip_file_path = zip_file[0]  # Take the first ZIP file
+              print(f"Unzipping {zip_file_path}...")
+
+              # Create an extraction folder
+              extract_folder = os.path.splitext(zip_file_path)[0]  # Remove the .zip extension
+              os.makedirs(extract_folder, exist_ok=True)
+
+              # Unzip the file
+              with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_folder)
+
+              print(f"Extracted to: {extract_folder}")
+
+              return extract_folder
+            else:
+              print("No ZIP files found in the current directory.")
+
+            return None
+
+          def get_file(destination_path, des_file):
+            """Find and extract des_file from a given folder."""
+            for root,dirs,files in os.walk(destination_path):
+              if des_file in files:
+                print(f"Found file: {des_file}")
+                return (os.path.join(root,des_file))
+
+            return None
+
+          # Database connection details
+          pg_user = read_file(r'$(secrets.postgresql-auth.username.path)')
+          pg_pass = read_file(r'$(secrets.postgresql-auth.password.path)')
+
+          db_config = {
+              "dbname": "monitoring",
+              "user": pg_user,
+              "password": pg_pass,
+              "host": "monitoring-wrds.c9qq8e0oklwk.eu-central-1.rds.amazonaws.com",
+              "port": "5432"
+          }
+
+          # Unzip the downloaded UT folder
+          unzipped_folder = unzip_file("$(params.destination-path)")
+
+          # Load the True Count JSON file
+          ut_true_count_json_file_path = get_file(unzipped_folder, "ut_true_count_report.json")
+          ut_true_count_data = read_json_file(ut_true_count_json_file_path)
+
+          # Load the GCOVR JSON file
+          json_file_path = get_file(unzipped_folder, "report_gcovr_report.json")
+          ut_data = read_json_file(json_file_path)
+
+          # Load the untested files
+          text_file_path = get_file(unzipped_folder, "report.txt")
+          untested_file_array = read_text_file(text_file_path)
+
+          # Extract metadata
+          branch = "$(params.git-ref)"
+          project_name = "$(params.project-name)"
+          commit_hash = "$(params.commit-hash)"
+          build_no = "$(config.pipeline.runNumber)"
+          pipeline_name = "$(config.pipeline.name)"
+          now = datetime.now()
+          currentDateTime = now.strftime("%Y-%m-%d %H:%M:%S")
+          extra_tags = parse_extra_tags("$(params.tags)")
+          untested_files = $(params.untested-files)
+
+          metric_tags = {"variant": "$(params.variant)"}
+          metric_tags.update(extra_tags)
+
+          coverage_metrics = [
+              ("BranchCoverage", "$(params.branch-coverage)"),
+              ("DecisionCoverage", "$(params.decision-coverage)"),
+              ("LineCoverage", "$(params.line-coverage)"),
+              ("FunctionCoverage", "$(params.function-coverage)"),
+          ]
+
+          # Load the coverage results form the UT job
+          data_list = [
+              {
+                  "commitid": commit_hash,"date": currentDateTime, "branch": branch, "tag": "",
+                  "project": project_name, "metric_name": "core_radar.gen8.unittest",
+                  "metric_value": value, "metric_tags": {**metric_tags, "category": category},
+                  "wrsd_tags": { "build_no": build_no, "pipeline_name": pipeline_name,"status": None,"duration": None,
+                      "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                  },
+              }
+              for category, value in coverage_metrics
+          ]
+
+          # add untested
+          data_list.extend([
+              {
+                  "commitid": commit_hash, "date": currentDateTime, "branch": branch, "tag": "",
+                  "project": project_name, "metric_name": "core_radar.gen8.unittest",
+                  "metric_value": untested_files, "metric_tags": {"variant":"$(params.variant)","category":"UntestedFiles"},
+                  "wrsd_tags": {
+                      "build_no": build_no, "pipeline_name": pipeline_name, "status": None, "duration": None,
+                      "build_url": f"https://$(studio.home)/plm/view/{pipeline_name}/runs/{build_no}",
+                  }
+              }
+          ])
+
+          # Now add the additional JSON data
+          if ut_data:
+              print("Adding UT results to data_list...")
+              data_list.extend(construct_data_list_from_json(ut_data, metric_tags, commit_hash, currentDateTime, branch, project_name, build_no, pipeline_name))
+
+          if untested_file_array:
+              print("Adding untested files to data_list...")
+              data_list.extend(construct_data_list_from_untested(untested_file_array,metric_tags, commit_hash, currentDateTime, branch, project_name, build_no, pipeline_name))
+
+          if ut_true_count_data:
+              print("Adding true count results to data_list...")
+              data_list.extend(construct_data_list_from_ut_true_json(ut_true_count_data, metric_tags, commit_hash, currentDateTime, branch, project_name, build_no, pipeline_name))
+
+          print(f"Prepared {len(data_list)} records for database insertion.")
+
+          for data in data_list:
+            print(data)
+
+          # Insert into the database
+          if branch == "dev":
+              try:
+                  connection = psycopg2.connect(**db_config)
+                  cursor = connection.cursor()
+
+                  insert_perception_metrics(cursor, data_list)
+                  connection.commit()
+                  print("Data inserted successfully.")
+
+              except Exception as e:
+                  print(f"An error occurred: {e}")
+
+              finally:
+                  if connection:
+                      cursor.close()
+                      connection.close()
+          else:
+              print("Not Dev branch so nothing will be committed to Platform Health.")
+
+        onError: continue
+        ComputeResources: {}
+        SecurityContext: null
+        Storage: null
+        WhenVal: false
+    wrrn: ""
+
+timeout: 2h

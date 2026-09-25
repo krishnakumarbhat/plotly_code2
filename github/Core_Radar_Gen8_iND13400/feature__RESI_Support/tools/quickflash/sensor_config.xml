@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<file>
+   <header Description="PBL Sensor Flash Tool configuration"/>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.0.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>flr8</Name>
+      <Description></Description>
+      <DownloadFile>../flr8/app.s19</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.0.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>pbl_merged</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/pbl_merged.s19</DownloadFile>
+   </Variant>
+   <Variant>
+      <ChannelConfig0>ChannelType=ETHERNET; sensorIp=192.168.0.88; RequestPort=5016; responsePort=5009; version=1; srcAddress=1; destAddress=2; payloadType=32771</ChannelConfig0>
+      <Name>pbl_merged_v20h</Name>
+      <Description></Description>
+      <DownloadFile>../pbl/pbl_merged_v20h.s19</DownloadFile>
+   </Variant>
+</file>

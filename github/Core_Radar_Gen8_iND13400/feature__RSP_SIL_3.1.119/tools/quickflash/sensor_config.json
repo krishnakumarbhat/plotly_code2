@@ -1,0 +1,659 @@
+{
+   "variants": [
+      {
+         "name": "flr8_satellite_can_app_only",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite CAN variant application only. SMC and USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_can/app.s19"
+            }
+         ]
+      },
+            {
+         "name": "flr8_satellite_eth_high_det_app_only",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite Ethernet/Someip with high dets variant application only. SMC and USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_eth_high_det/app.s19"
+            }
+         ]
+      },
+            {
+         "name": "flr8_standalone_app_only",
+         "sensorId": "Gen8",
+         "description": "FLR8 Standalone variant application only. SMC and USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_standalone/app.s19"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_can_app_smc",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite CAN variant application and default SMC. USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_can/app.s19"
+            },
+            {
+               "path": "../flr8_satellite_can/smc_cal.ptp"
+            }
+         ]
+      },
+            {
+         "name": "flr8_satellite_eth_high_det_app_smc",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite Ethernet/Someip with high dets variant application and default SMC. USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               "path": "../flr8_satellite_eth_high_det/smc_cal.ptp"
+            }
+         ]
+      },
+            {
+         "name": "flr8_standalone_app_smc",
+         "sensorId": "Gen8",
+         "description": "FLR8 Standalone variant application and default SMC. USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_standalone/app.s19"
+            },
+            {
+               "path": "../flr8_standalone/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_can",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite CAN variant application with default SMC and default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_can/app.s19"
+            },
+            {
+               "path": "../flr8_satellite_can/smc_cal.ptp"
+            },
+            {
+               "path": "../flr8_satellite_can/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_eth_high_det",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite Ethernet/Someip with high dets variant application with default SMC and default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_eth_high_det/app.s19"
+            },
+            {
+               "path": "../flr8_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               "path": "../flr8_satellite_eth_high_det/usc_cal.ptp"
+            }
+         ]
+      },
+            {
+         "name": "flr8_standalone",
+         "sensorId": "Gen8",
+         "description": "FLR8 Standalone variant application with default SMC and default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_standalone/app.s19"
+            },
+            {
+               "path": "../flr8_standalone/smc_cal.ptp"
+            },
+            {
+               "path": "../flr8_standalone/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_can_smc_default",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite CAN variant SMC default",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_can/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_eth_high_det_smc_default",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite Ethernet/Someip with high dets variant SMC default",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_eth_high_det/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_standalone_smc_default",
+         "sensorId": "Gen8",
+         "description": "FLR8 Standalone variant SMC default",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_standalone/smc_cal.ptp"
+            }
+         ]
+      },
+
+      {
+         "name": "flr8_satellite_can_usc_default",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite CAN variant Default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_can/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_satellite_eth_high_det_usc_default",
+         "sensorId": "Gen8",
+         "description": "FLR8 Satellite Ethernet/Someip with high dets variant Default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_satellite_eth_high_det/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_standalone_usc_default",
+         "sensorId": "Gen8",
+         "description": "FLR8 Standalone variant Default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../flr8_standalone/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_USC_2525995",
+         "sensorId": "Gen8",
+         "description": "FLR8 USC 2525995",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "C:/BC/Gen8/USC/USC_2525995_5_82_0_0.ptp"
+            }
+         ]
+      },
+      {
+         "name": "flr8_Pos5",
+         "sensorId": "Gen8",
+         "description": "FLR8 SPC Position5 ",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../spc/spc_5.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_can_app_only",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite CAN variant application only. SMC and USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_can/app.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_eth_high_det_app_only",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite Ethernet/Someip with high dets variant application only. SMC and USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_eth_high_det/app.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_standalone_app_only",
+         "sensorId": "Gen8",
+         "description": "SRR8p Standalone variant application only. SMC and USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_standalone/app.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_can_app_smc",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite CAN variant application with default SMC. USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_can/app.s19"
+            },
+            {
+               "path": "../srr8p_satellite_can/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_eth_high_det_app_smc",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite Ethernet/Someip with high dets variant application with default SMC. USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               "path": "../srr8p_satellite_eth_high_det/smc_cal.ptp"
+            }
+         ]
+      },
+            {
+         "name": "srr8p_standalone_app_smc",
+         "sensorId": "Gen8",
+         "description": "SRR8p Standalone variant application with default SMC. USC is not flashed",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_standalone/app.s19"
+            },
+            {
+               "path": "../srr8p_standalone/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_can",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite CAN variant application with default SMC and default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_can/app.s19"
+            },
+            {
+               "path": "../srr8p_satellite_can/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_satellite_can/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_eth_high_det",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite Ethernet/Someip with high dets variant application with default SMC and default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_eth_high_det/app.s19"
+            },
+            {
+               "path": "../srr8p_satellite_eth_high_det/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_satellite_eth_high_det/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_standalone",
+         "sensorId": "Gen8",
+         "description": "SRR8p Standalone variant application with default SMC and default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_standalone/app.s19"
+            },
+            {
+               "path": "../srr8p_standalone/smc_cal.ptp"
+            },
+            {
+               "path": "../srr8p_standalone/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_can_smc_default",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite CAN variant SMC default",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_can/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_eth_high_det_smc_default",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite Ethernet/Someip with high dets variant SMC default",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_eth_high_det/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_standalone_smc_default",
+         "sensorId": "Gen8",
+         "description": "SRR8p Standalone variant  SMC default",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_standalone/smc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_can_usc_default",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite CAN variant  default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_can/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_satellite_eth_high_det_usc_default",
+         "sensorId": "Gen8",
+         "description": "SRR8p Satellite Ethernet/Someip with high dets variant default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_satellite_eth_high_det/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8p_standalone_usc_default",
+         "sensorId": "Gen8",
+         "description": "SRR8p Standalone variant default USC",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../srr8p_standalone/usc_cal.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8_USC_2525995",
+         "sensorId": "Gen8",
+         "description": "SRR8 USC 2525995",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "C:/BC/Gen8/USC/USC_2525995_5_82_0_0.ptp"
+            }
+         ]
+      },
+      {
+         "name": "srr8_Pos1",
+         "sensorId": "Gen8",
+         "description": "SRR8 SPC Position1 ",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../spc/spc_1.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8_Pos2",
+         "sensorId": "Gen8",
+         "description": "SRR8 SPC Position2 ",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../spc/spc_2.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8_Pos3",
+         "sensorId": "Gen8",
+         "description": "SRR8 SPC Position3 ",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../spc/spc_3.s19"
+            }
+         ]
+      },
+      {
+         "name": "srr8_Pos4",
+         "sensorId": "Gen8",
+         "description": "SRR8 SPC Position4 ",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../spc/spc_4.s19"
+            }
+         ]
+      },
+      {
+         "name": "pbl_EDU_merged_v33a",
+         "sensorId": "Gen8",
+         "description": "PBL merged v33a for EDU",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../pbl/edu/pbl_merged_v33a.s19"
+            }
+         ]
+      },
+      {
+         "name": "pbl_EDU_merged_v20h",
+         "sensorId": "Gen8",
+         "description": "PBL merged v20h for EDU",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../pbl/edu/pbl_merged_v20h.s19"
+            }
+         ]
+      },
+      {
+         "name": "pbl_ASample_merged_v35e",
+         "sensorId": "Gen8",
+         "description": "PBL merged v35e for A Sample",
+         "serverConfig": {
+            "sensorIp": "192.168.1.88",
+            "requestPort": 5016,
+            "responsePort": 5009
+         },
+         "downloadImages": [
+            {
+               "path": "../pbl/chandra_a0/pbl_merged_v35e.s19"
+            }
+         ]
+      }
+   ]
+}

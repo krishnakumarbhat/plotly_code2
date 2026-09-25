@@ -1,0 +1,194 @@
+"""
+Bazel file defining all building blocks, local and remote.
+
+Many times, developers will need to override the http_archive calls to develop their building block code locally.
+To do this, use the override_repository flag during build.
+This can be either added on the command line, or for convenience it can be added to a user.bazelrc file in the root of the repo.
+Simply create this user.bazelrc file and add one of the following lines (or similar) and that parameter will be appended to all build commands.
+
+Example for a repo named "my_repo":
+common --override_repository=_main~_repo_rules~my_repo=../my_repo_git/
+Absolute paths are supported, but differ between Windows and Unix.
+Relative paths are supported, but are relative to the current directory where you are executing bazel.
+
+If not using the user.bazelrc file, the build command might look like this:
+bazel build //:gen7 --override_repository=_main~_repo_rules~my_repo=../my_repo_git/
+"""
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_archive(
+    name = "reuse",
+    sha256 = "627bebee054b6dc140600bcba9a091dcc653a696846b1fadf67f4a74d245bd7f",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/reuse/reuse_v1.1.1.zip"],
+)
+
+http_archive(
+    name = "iND13400_autosar_sip",
+    sha256 = "8723852d980e5e0a66e1f7d9e82646cbb6c1dc01a3aafa57faeceaeb1abce3bc",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_SIP/v1/Core_Radar_Gen8_iND13400_SIP_v1.102.47.zip"],
+)
+
+http_archive(
+    name = "spbb",
+    sha256 = "c2d4d849956ba1a20e97c533c63c60c255c9eee35b3206802e0e1a3f305e0ab7",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/spbb/iND13400/releases/4.13/spbb_iND13400_4.13.04.zip"],
+)
+
+http_archive(
+    name = "PlatformTime",
+    sha256 = "d21d23b21883bd20fed42c388c4f4143614fce4b90899d101215cdb4cc6b775c",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/core0_building_blocks/Platform_Time/Appl_PlatformTime_v01/Core_Radar_SWC_PLT_Appl_PlatformTime_V1_01.zip"],
+)
+
+http_archive(
+    name = "Mode_Manager",
+    sha256 = "31694fa0ae6b752a8cdc518f327bbd1a2dab96a0502556777586b33d377c5a4d",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/core0_building_blocks/Core_Radar_SWC_PLT_Appl_ModeManager/v1/Core_Radar_SWC_PLT_Appl_ModeManager_v1.29.0.zip"],
+)
+
+http_archive(
+    name = "Appl_Diag",
+    sha256 = "48a35efcd7601839129e0412983ee92fae2daabcbc5655666f09372ccb731ec5",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/core0_building_blocks/Core_Radar_SWC_PLT_Appl_Diag/v2/Core_Radar_SWC_PLT_Appl_Diag_v2.19.0.zip"],
+)
+
+http_archive(
+    name = "Appl_FaultMgr",
+    sha256 = "5bb0515147f04d173b6a4b497e144cfedd84b04dabdfb1d7f5b645a8babb4ba8",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/core0_building_blocks/Core_Radar_SWC_PLT_Appl_FaultMgr/v2/Core_Radar_SWC_PLT_Appl_FaultMgr_v2.17.0.zip"],
+)
+
+http_archive(
+    name = "IoHwAb_ADC_Appl",
+    sha256 = "880f940c7adab40ccdb65dfb5f8cc5ff3dafcc060ca97e258ed8014664d28780",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/core0_building_blocks/Core_Radar_SWC_PLT_Appl_IoHwAb/v1/Core_Radar_SWC_PLT_Appl_IoHwAb_v1.19.0.zip"],
+)
+
+http_archive(
+    name = "SWC_PLT_CDD_WdgHandler",
+    sha256 = "f0275da6a60d596fc36ffcd739386d0ae8151de996b87b016cac0b7765f8d33e",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_SWC_PLT_CDD_WdgHandler/v0/Core_Radar_SWC_PLT_CDD_WdgHandler_v0.5.0.zip"],
+)
+
+# AFBB repository
+http_archive(
+    name = "afbb",
+    sha256 = "869211b57c5331c9e9919c0b62b862b8e1bec37fe1e160663e3c5b40d326220e",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_Angle_Finding/v4/Core_Radar_Gen8_iND13400_Angle_Finding_v4.2.101.zip"],
+)
+
+# DABB repository
+http_archive(
+    name = "dabb",
+    sha256 = "9f3c79c89799e3fffc1a3166c585d87a23d96b554c21009aa88fc1279f2db96b",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-building_blocks-local/dabb/awr294x/releases/19.2.0/Core_Radar_Dynamic_Alignment_19.2.0_02.zip"],
+)
+
+# SABB repository
+http_archive(
+    name = "sabb",
+    sha256 = "8191a232dc0e054badc833685833f536e31701cd5d5bcae9c3994c3a2e77f677",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-building_blocks-local/sabb/awr294x/releases/8.5/Core_Radar_Static_Alignment_8.5_03.zip"],
+)
+
+# RCBB repository
+http_archive(
+    name = "rcbb",
+    sha256 = "a78ba3b9e1481a1f8d2ca7646941636c1efb3028f0720e4b98032840479872dd",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Capability/v3/Core_Radar_Capability_v3.22.2010.zip"],
+)
+
+http_archive(
+    name = "iND13400_sdk",
+    sha256 = "d943947f89934703a79cef68e054f0f367a8fe3a70d3a71f9b430c38c8143b7c",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_SDK/v1/Core_Radar_Gen8_iND13400_SDK_v1.37.42.zip"],
+)
+
+# boot
+http_archive(
+    name = "boot",
+    sha256 = "29cce81551fb3500e30ee181039507f1fba44f516b03b9a39e32ac040957b55f",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_Boot/v1/Core_Radar_Gen8_iND13400_Boot_v1.5.8.zip"],
+)
+
+http_archive(
+    name = "Calibration_Handler",
+    sha256 = "dcfa451019372464b65b4bdae093b36b267bd3dd80b920f0fc4afaf602c6cbe6",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Calibration_Handler/v1/Core_Radar_Calibration_Handler_v1.0.5.zip"],
+)
+
+# This SMC is the normal satellite SMC
+http_archive(
+    name = "smc_flr8",  # Formerly named smc_flr8_can
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "54fbf7b6cfdeba3e3507efcf150d5e79d9b51e42502d40f9bfbd3d0846dc3464",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v25/FLR8/FLR8_EDU_Aptiv_Satellite_25_82_0_3_SMC_2026-03-05_11-27-32.zip"],
+)
+
+# This SMC is from Tiger branch that has 2000 dets
+http_archive(
+    name = "smc_flr8_high_det",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "bc63e66105f10db9693ec2ca52700da0463f91e86128854ec94dd47257bbb92f",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/TIGER_TEAM/v25/FLR8/FLR8_EDU_Aptiv_Tiger_25_82_255_3_SMC_2026-03-05_12-57-58.zip"],
+)
+
+http_archive(
+    name = "usc_flr8",
+    build_file = "//software/common/calibrations/usc:archive.BUILD",
+    sha256 = "69374fc1d02a124f8f7d803a5bc5e512c46a67333b2ccac134ae0dffb7ee5399",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/USC/Gen8/v5/FLR8/FLR8_EDU_Default_5_82_0_0_USC_2025-05-09_09-50-06_Patch2.zip"],
+)
+
+# This SMC is the normal satellite SMC
+http_archive(
+    name = "smc_srr8p",  # Formerly named smc_srr8p_can
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "c47ba574af68c25f331302aa5507741902a58e71a36c916261bd43201878742d",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v25/SRR8P/SRR8P_EDU_Aptiv_Satellite_25_83_0_3_SMC_2026-03-05_11-31-19.zip"],
+)
+
+# This SMC is from Tiger branch that has 2000 dets
+http_archive(
+    name = "smc_srr8p_high_det",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "dd676d06a60f4965ddff04397b3c53033158a96ca39a7736e1ea0c0d2e1a2c43",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/TIGER_TEAM/v25/SRR8P/SRR8P_EDU_Aptiv_Tiger_25_83_255_3_SMC_2026-03-05_01-03-42.zip"],
+)
+
+http_archive(
+    name = "usc_srr8p",
+    build_file = "//software/common/calibrations/usc:archive.BUILD",
+    sha256 = "830f3327e521a697246811d92455b20b9199ee723ad25dd3273d7419648117e5",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/USC/Gen8/v7/SRR8P/SRR8%2B_EDU_Default_7_83_0_0_USC_2025-09-02_11-42-37_patch.zip"],
+)
+
+http_archive(
+    name = "StreamHeader_Gen",
+    sha256 = "f55261deb4b68f765fc6f815cb64aedb4402fe768929f6c9e96af41c3aa32d44",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-common_3rd_party-local/LogStruct_Gen/LogStruct_Gen_1_14.tar.gz"],
+)
+
+bazel_dep(name = "quickflash", version = "2.0.3")
+
+http_archive(
+    name = "Sensor_Position",
+    sha256 = "4e7ea7bb0644e09e08d9a93a9ee4199794258d01ba7e447122fb560b50f5ab07",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Sensor-Position/Sensor_Position_v03/V03_BB_Sensor_Position.zip"],
+)
+
+http_archive(
+    name = "MAF_BIN",
+    build_file_content = "exports_files([\"MAF.bin\",])",
+    sha256 = "00018f822f886c34c03665daab36b185cdcb0a0601ec3da3e6a803bc309e335c",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-gen8_ind13400_3rd_party-local/indie/MAF/MAF_0x00001304_crc_0xdda1ba5f.zip"],
+)
+
+http_archive(
+    name = "rotbb",
+    sha256 = "8fa1fff40dbbe40cf00447d6a3ca23775e3b9dc88befd8008636fa84ca390869",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Object_Tracker/v1/Core_Radar_Object_Tracker_v1.2.101.zip"],
+)

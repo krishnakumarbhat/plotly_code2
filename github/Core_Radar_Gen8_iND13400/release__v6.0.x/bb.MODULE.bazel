@@ -1,0 +1,259 @@
+"""
+Bazel file defining all building blocks, local and remote.
+
+Many times, developers will need to override the http_archive calls to develop their building block code locally.
+To do this, use the override_repository flag during build.
+This can be either added on the command line, or for convenience it can be added to a user.bazelrc file in the root of the repo.
+Simply create this user.bazelrc file and add one of the following lines (or similar) and that parameter will be appended to all build commands.
+
+Example for a repo named "my_repo":
+common --override_repository=_main~_repo_rules~my_repo=../my_repo_git/
+Absolute paths are supported, but differ between Windows and Unix.
+Relative paths are supported, but are relative to the current directory where you are executing bazel.
+
+If not using the user.bazelrc file, the build command might look like this:
+bazel build //:gen7 --override_repository=_main~_repo_rules~my_repo=../my_repo_git/
+"""
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+http_archive(
+    name = "reuse",
+    sha256 = "798129c9985ff91411fab461b7f2e4ede7fd5d9cdfa0eb0177f2c6e3cf4ba9b9",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Reuse/v1/Core_Radar_Reuse_v1.2.4.zip"],
+)
+
+# SIP repository / v3.x for Chandra_B0 and Chandra_A0
+http_archive(
+    name = "iND13400_autosar_sip",
+    integrity = "sha256-huBFwHOImZl/dXxOBNzI8CwPYC0HSmoV7ex15JRyXdY=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_SIP/v4/Core_Radar_Gen8_iND13400_SIP_v4.52.6.zip"],
+)
+
+# SPBB repository / v6.x for Chandra_B0 and MAP/RIDM
+http_archive(
+    name = "spbb",
+    sha256 = "b26ba2df7033f291dcdbec6db376f1485238d72bcc172402f4c6d827503cc31b",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/spbb/iND13400/releases/7.13/spbb_iND13400_7.13.00.zip"],
+)
+
+http_archive(
+    name = "SWC_PLT_Appl_ModeManager",
+    sha256 = "a89e893deb8d76bf1194d9400485e54ae2bf7bffb68f7eaf832fb63d75ec9ea0",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/core0_building_blocks/Core_Radar_SWC_PLT_Appl_ModeManager/v1/Core_Radar_SWC_PLT_Appl_ModeManager_v1.30.0.zip"],
+)
+
+bazel_dep(name = "core_radar_swc_plt_appl_diag", version = "2.44.0", repo_name = "SWC_PLT_Appl_Diag")
+
+bazel_dep(name = "core_radar_swc_plt_appl_faultmgr", version = "2.42.0", repo_name = "SWC_PLT_Appl_FaultMgr")
+
+bazel_dep(name = "core_radar_swc_plt_appl_iohwab", version = "1.26.0", repo_name = "SWC_PLT_Appl_IoHwAb")
+
+bazel_dep(name = "core_radar_sensor_position", repo_name = "Sensor_Position", version = "0.0.22")
+
+http_archive(
+    name = "SWC_PLT_CDD_WdgHandler",
+    sha256 = "f0275da6a60d596fc36ffcd739386d0ae8151de996b87b016cac0b7765f8d33e",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_SWC_PLT_CDD_WdgHandler/v0/Core_Radar_SWC_PLT_CDD_WdgHandler_v0.5.0.zip"],
+)
+
+bazel_dep(name = "core_radar_swc_plt_appl_ecu_sync", version = "1.5.3", repo_name = "SWC_PLT_Appl_TimeSync")
+
+# AFBB repository
+http_archive(
+    name = "afbb",
+    integrity = "sha256-87X96hl2Ii/BU45dmpfK9MSDiyAdr0w+nOKco9bvTP8=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_Angle_Finding/v6/Core_Radar_Gen8_iND13400_Angle_Finding_v6.1.0.zip"],
+)
+
+# IDBB repository
+http_archive(
+    name = "idbb",
+    integrity = "sha256-xMvpUPtxsVTDrT0UwTdIv4a8RG+NP8tWD7ZV7P+hn3k=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Interference_Detection/v4/Core_Radar_Interference_Detection_v4.0.4.zip"],
+)
+
+# DABB repository
+http_archive(
+    name = "dabb",
+    integrity = "sha256-DbCXjMAW9eK09Mm1yiXBp2Dt94lYHI6+nH3Qenc2uTM=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Dynamic_Alignment/v20/Core_Radar_Dynamic_Alignment_v20.1.1.zip"],
+)
+
+# SABB repository
+http_archive(
+    name = "sabb",
+    integrity = "sha256-BxNkjotAwCL7IPRM1DvbA7YGipXj+IYYfcOMS4YUBBo=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Static_Alignment/v8/Core_Radar_Static_Alignment_v8.5.2005.zip"],
+)
+
+# RCBB repository
+http_archive(
+    name = "rcbb",
+    integrity = "sha256-ihqX3qiLAu+Y/JlS6WmYUl4mtSaKCi2uFfqFSKFuv28=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Capability/v3/Core_Radar_Capability_v3.25.2008.zip"],
+)
+
+# HILBB repository
+http_archive(
+    name = "hilbb",
+    integrity = "sha256-waMBNjeT/AZPOFtYeH2cqNykeY9KGoS5eP3e4quQ/5k=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_HIL/v5/Core_Radar_HIL_v5.1.2.zip"],
+)
+
+# SDK Repo / v3.x for Chandra_B0 and Chandra_A0
+http_archive(
+    name = "iND13400_sdk",
+    integrity = "sha256-pi/olror75BxcYhIGkQt73P85hi6ezDfmfAXDV9G10k=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_SDK/v3/Core_Radar_Gen8_iND13400_SDK_v3.44.52.zip"],
+)
+
+http_archive(
+    name = "boot",
+    integrity = "sha256-B7jWgXyhwh5EVIIRUhT02jM9MIZyNFQ80Gnbr1cr/6o=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Gen8_iND13400_Boot/v2/Core_Radar_Gen8_iND13400_Boot_v2.0.4.zip"],
+)
+
+http_archive(
+    name = "Calibration_Handler",
+    sha256 = "dcfa451019372464b65b4bdae093b36b267bd3dd80b920f0fc4afaf602c6cbe6",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Calibration_Handler/v1/Core_Radar_Calibration_Handler_v1.0.5.zip"],
+)
+
+# This is default / Standard (768 AF Det) SMC for Satellite build
+http_archive(
+    name = "smc_flr8",  # Formerly named smc_flr8_can
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "af8dec0669e5dd8f12bbd6ee5da6d06de27f98f80293123bcc885829e05c6443",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v32/FLR8/FLR8_A2_Aptiv_Standard_Satellite_3DMAP_Wdg_En_32_82_0_4_SMC_2026-07-03_11-41-43.zip"],
+)
+
+# This is Standard (768 AF Det) SMC for Standalone build
+http_archive(
+    name = "smc_flr8_standalone",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "36cff66efdac5f179e430d8f6a03d09be05f0b8a8e38dd6218ae0cbb674af3a2",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v32/FLR8/FLR8_A2_Aptiv_Standard_Standalone_3DMAP_Wdg_En_32_82_0_516_SMC_2026-07-03_11-42-39.zip"],
+)
+
+# This is High Det (2048 AF Det) SMC for High Det Variant (previously called Tiger)
+http_archive(
+    name = "smc_flr8_high_det",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "603b2d31db13aff84fe27e79acd5e9081707a5a0cb7614875b7758b0b97c095b",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v32/FLR8/FLR8_A2_Aptiv_HighDet_Satellite_3DMAP_Wdg_En_32_82_0_1028_SMC_2026-07-03_11-43-08.zip"],
+)
+
+http_archive(
+    name = "usc_flr8",
+    build_file = "//software/common/calibrations/usc:archive.BUILD",
+    sha256 = "d709eaa5e8ed8dc94d950dbfb57e40ec1652d3eda2926251985da880949652bd",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/USC/Gen8/v8/FLR8/FLR8_EDU_Aptiv_Default_8_82_0_0_USC_2026-02-11_11-34-09_patch.zip"],
+)
+
+# This is default / Standard (768 AF Det) SMC for Satellite build
+http_archive(
+    name = "smc_srr8p",  # Formerly named smc_srr8p_can
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "a6e71df02ece0ce5faab0372606e7798324d1e7650e474afaa0696b25beb7700",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v32/SRR8P/SRR8P_A2_Aptiv_Standard_Satellite_3DMAP_Wdg_En_32_83_0_4_SMC_2026-07-03_11-44-14.zip"],
+)
+
+# This is Standard (768 AF Det ) SMC for Standalone build
+http_archive(
+    name = "smc_srr8p_standalone",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "bf27135bbf5417aac0956c5653b7c0fb3b0ff1a02b9524e2b8c0397126d40b19",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v32/SRR8P/SRR8P_A2_Aptiv_Standard_Standalone_3DMAP_Wdg_En_32_83_0_516_SMC_2026-07-03_11-44-46.zip"],
+)
+
+# This is Standard (768 AF Det) SMC for AL CAN Standalone build
+http_archive(
+    name = "smc_srr8p_al_can_standalone",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "cbb2bd729daa71e2f3eb356fb6ef901479e3ffae92ff9e260782e7e7374bace0",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/AL/SRR8P/SRR8P_A2_AshokLeyland_Standard_Standalone_3DMAP_Wdg_En_32_83_128_516_SMC_2026-07-03_06-54-06.zip"],
+)
+
+# This is High Det (2048 AF Det) SMC for High Det Variant (previously called Tiger)
+http_archive(
+    name = "smc_srr8p_high_det",
+    build_file = "//software/common/calibrations/smc:archive.BUILD",
+    sha256 = "a91577cd3e827eeeb840e825214c572261615536619928e27463ead0c91c63d4",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/Gen8/v32/SRR8P/SRR8P_A2_Aptiv_HighDet_Satellite_3DMAP_Wdg_En_32_83_0_1028_SMC_2026-07-03_11-46-49.zip"],
+)
+
+http_archive(
+    name = "usc_srr8p",
+    build_file = "//software/common/calibrations/usc:archive.BUILD",
+    sha256 = "7e39faf925b49eb94912cf93a4c07dc7e40d15decd98b0f8e9dce06e6b8d04cb",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/USC/Gen8/v10/SRR8P/SRR8%2B_EDU_Aptiv_Default_10_83_0_0_USC_2026-02-11_11-38-53_patch.zip"],
+)
+
+bazel_dep(name = "core_radar_log_struct_gen", version = "1.33.0", repo_name = "StreamHeader_Gen")
+
+http_archive(
+    name = "quickflash",
+    sha256 = "f1e9a03eda22636b10f3e56b3fa10d286192515f1790093f903d03905f0cd20c",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-common_3rd_party-local/QuickFlash/2.3.0/QuickFlash_2.3.0.zip"],
+)
+
+http_archive(
+    name = "MAF_BIN_A",
+    build_file_content = "exports_files([\"MAF.bin\",])",
+    sha256 = "80b9cb2d594e3d4ea5d37ce0e774d9527cbcc7ef1140ad9e6ab7223498430b56",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-gen8_ind13400_3rd_party-local/indie/MAF/MAF_0x00001800_crc_0x280408a1.zip"],
+)
+
+http_archive(
+    name = "MAF_BIN_B",
+    build_file_content = "exports_files([\"MAF.bin\",])",
+    sha256 = "cd176e8a395b2e691d9f01c84a1cc1c53900e9067e337776385915b752c998de",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-gen8_ind13400_3rd_party-local/indie/MAF/MAF_0x10030401_crc_0xec1a098a.zip"],
+)
+
+http_archive(
+    name = "rotbb",
+    integrity = "sha256-7yL3R6TGolskdSQldO1d5YxxtXHLrCayenIAl/kwwXE=",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Object_Tracker/v2/Core_Radar_Object_Tracker_v2.0.6.zip"],
+)
+
+http_archive(
+    name = "TOI_Char_Quality_Determination",
+    sha256 = "a2d8e238d2652ed5ec3751294d7bdde37b2bea4260f49525da7c9ed303592c8b",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_TOI_Char_Quality_Determination/v1/Core_Radar_TOI_Char_Quality_Determination_v1.2.2.zip"],
+)
+
+git_repository(
+    name = "sfl_core_bb",
+    remote = "https://gitgerrit.asux.aptiv.com/CORECOMP/ALSW/SFL_SideFeatureLogic",
+    tag = "v7.0.0",
+    init_submodules = True,
+    recursive_init_submodules = True,
+    build_file = "//software/bbe32/Cust/SFL/SFL_Core:BUILD",
+)
+
+git_repository(
+    name = "math_library_bb",
+    remote = "https://gitgerrit.asux.aptiv.com/CORECOMP/ALSW/ML_MathLibrary",
+    tag = "release/24_PI1_S5",
+    build_file = "//software/bbe32/Cust/SFL/Math_Library:BUILD",
+)
+
+git_repository(
+    name = "mode_manager_bb",
+    remote = "https://gitgerrit.asux.aptiv.com/CORECOMP/ALSW/SFL_Mode_Manager",
+    tag = "Release_AL_v1.0.0",
+    build_file = "//software/bbe32/Cust/SFL/Mode_Manager:BUILD",
+)
+
+git_repository(
+    name = "olp_bb",
+    remote = "https://gitgerrit.asux.aptiv.com/CORECOMP/ALSW/OLP_ObjectListPostprocessor",
+    tag = "Release_AL_v1.0.0",
+    build_file = "//software/bbe32/Cust/OLP:BUILD",
+)
