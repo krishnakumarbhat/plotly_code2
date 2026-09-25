@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SRR7 APTIV SIL Framework Release notes -->
+<SIL_ENGINE_RELEASE_NOTE>
+<SIL_ENGINE_FRAMEWORK_RELEASE_Change_ID_7bc5045d8b3621b243fc12b043f9050091f978ca>
+		<RELEASE_DESCRIPTION>
+			<RELEASE_NAME>SIL Engine Framework</RELEASE_NAME>
+			<SIL_ENGINE_Version> 
+				Major version: 108
+				Minor version: 14
+				Release week : 42
+				Release year : 2025
+			</SIL_ENGINE_Version>
+			<Release_Date> 11-11-2025 </Release_Date>
+			<Framework_GIT_Repo>10030156_03_Analysis_Framework_Suite</Framework_GIT_Repo>
+			<Framework_GIT_Repo_Release_Change_ID>7bc5045d8b3621b243fc12b043f9050091f978ca</Framework_GIT_Repo_Release_Change_ID>
+			<Release_Repo_GIT>10028634_01_SRR_RESIM_Release</Release_Repo_GIT>
+			<Release_Repo_GIT_Change_ID>...</Release_Repo_GIT_Change_ID>
+			
+			<ChangeLog_Details>	
+				Updating GEN7 LIME SIL ENGINE Binaries from Latest GIT Repo.
+			</ChangeLog_Details>
+			
+			<JIRA_Tickets>
+				
+			</JIRA_Tickets>
+			
+			<Known_Issues>
+				
+			</Known_Issues>
+			
+		</RELEASE_DESCRIPTION> 
+</SIL_ENGINE_FRAMEWORK_RELEASE_Change_ID_7bc5045d8b3621b243fc12b043f9050091f978ca>
+<SIL_ENGINE_FRAMEWORK_RELEASE_Change_ID_c2a42fd15536dfce752942a196d89dc70311e3e4>
+		<RELEASE_DESCRIPTION>
+			<RELEASE_NAME>SIL Engine Framework</RELEASE_NAME>
+			<SIL_ENGINE_Version> 
+				Major version: 106
+				Minor version: 30
+				Release week : 46
+				Release year : 2024
+			</SIL_ENGINE_Version>
+			<Release_Date> 12-12-2024 </Release_Date>
+			<Framework_GIT_Repo>10030156_03_Analysis_Framework_Suite</Framework_GIT_Repo>
+			<Framework_GIT_Repo_Release_Change_ID>c2a42fd15536dfce752942a196d89dc70311e3e4</Framework_GIT_Repo_Release_Change_ID>
+			<Release_Repo_GIT>10028634_01_SRR_RESIM_Release</Release_Repo_GIT>
+			<Release_Repo_GIT_Change_ID>...</Release_Repo_GIT_Change_ID>
+			
+			<ChangeLog_Details>	
+				Updating SIL ENGINE Binaries from Latest GIT Repo.
+			</ChangeLog_Details>
+			
+			<JIRA_Tickets>
+				
+			</JIRA_Tickets>
+			
+			<Known_Issues>
+				
+			</Known_Issues>
+			
+		</RELEASE_DESCRIPTION> 
+</SIL_ENGINE_FRAMEWORK_RELEASE_Change_ID_c2a42fd15536dfce752942a196d89dc70311e3e4>
+<SIL_ENGINE_FRAMEWORK_RELEASE_CS_23367>
+		<RELEASE_DESCRIPTION>
+			<RELEASE_NAME>SIL Engine Framework</RELEASE_NAME>
+			<SIL_ENGINE_Version> 
+				Major version: 106
+				Minor version: 30
+				Release week : 46
+				Release year : 2024
+			</SIL_ENGINE_Version>
+			<Release_Date> 12-12-2024 </Release_Date>
+			<Framework_Plastic_Repo>10030156_03_Analysis_Framework_Suite</Framework_Plastic_Repo>
+			<Framework_Release_CS>23367</Framework_Release_CS>
+			<Framework_Release_Plastic_Repo>10028634_01_SRR_RESIM_Release</Framework_Release_Plastic_Repo>
+			<Framework_Release_CS>4500</Framework_Release_CS>
+			
+			<ChangeLog_Details>	
+				Added support for Platform Gen7
+			</ChangeLog_Details>
+			
+			<JIRA_Tickets>
+				DUF-2616 [RNA_Gen7_V1] Debug Release FMU issue
+			</JIRA_Tickets>
+			
+			<Known_Issues>
+				
+			</Known_Issues>
+			
+		</RELEASE_DESCRIPTION> 
+</SIL_ENGINE_FRAMEWORK_RELEASE_CS_23367>
+</SIL_ENGINE_RELEASE_NOTE>
