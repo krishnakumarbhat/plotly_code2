@@ -1,0 +1,111 @@
+
+Log Path: (D:/HIL_team/V2_Veh_Logs/R8/ORCAS/CCA_9010_3100099_DEBUG_20251006_145316_0005_ORCAS.mf4)
+
+-------------------------------------------------------------------------
+
+              * *     * * *   * * * * * *  * * * * *  *       *              
+             *   *    *    *       *           *       *     *               
+            * *** *   * * *        *           *        *   *                
+           *       *  *            *       * * * * *     * *                 
+
+			SRR HiL Resimulation			2024
+
+-------------------------------------------------------------------------
+
+	     Info  :     Now          	: 
+			 Released     	:  22/ 4/2025
+			 Build Date   	:  22/ 4/2025
+			 Changeset No 	: 22243
+------------------------------------------------------------------------------
+
+			 HIL Release Info  	:   26
+			 HIL Release Major 	:   5
+			 HIL Release Minor 	:   0
+------------------------------------------------------------------------------
+	   Config  :     
+			 Input Options	    	:   MDF4_INPUT
+			 Continuous_run_mode	:   YES
+			 Vehicle_Dynamic_Source   :   UDP
+			 VehicleTimestampSource :   UDP
+			 Fusion_Det_Source  	:   UDP
+			 Radar_Fusion_Enable	:   YES
+			 Radar_RadiationMode	:   ON
+			 FDX_SYNCH_MODE	    	:   DISABLED
+			 Debuging_Hil_Enable	:   ENABLED
+			 Input SrcType	    	:   LOG_SIMULATION
+			 ResimExecution_Mode	:   IDLE
+			 SENSOR_RL	    	:   Connected
+			 SENSOR_RR	    	:   Connected
+			 SENSOR_FR	    	:   Connected
+			 SENSOR_FL	    	:   Connected
+			 SENSOR_FC	    	:   DisConnected
+			 SENSOR_BPR_Left  	:   DisConnected
+			 SENSOR_BPR_Right 	:   DisConnected
+			 SENSOR_Radar_ECU 	:   DisConnected
+			 Log Path	    	:   D:/HIL_team/V2_Veh_Logs/R8/ORCAS/CCA_9010_3100099_DEBUG_20251006_145316_0005_ORCAS.mf4
+			 Used Network driver	:   NPcap
+			 NW Driver Available	:   Yes
+------------------------------------------------------------------------------+-----------------------------+---------------+
+|        Customer Name        | PLATFORM_GEN7 |
++-----------------------------+---------------+
+| RadarStream Decoder Version |  2025 25 71   |
++-----------------------------+---------------+
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+|      SENSOR       |    RL     |    RR     | FR        | FL        | FC            | Status              |
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+| Connection Status | CONNECTED | CONNECTED | CONNECTED | CONNECTED | NOT_CONNECTED | 4 Sensors Connected |
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+|  No Of Requests   |     1     |     1     | 1         | 1         | 0             | 4 Sensors Connected |
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+
+ Sensor 		 RL 	 RR 	 FR 	 FL 
+ UDP logging Mode 	 HIL 	  HIL 	 HIL 	 HIL 
+
+ Sensor 		 RL 	 RR 	 FR 	 FL 
+ UDP logging Mode 	 HIL 	  HIL 	 HIL 	 HIL 
+
+ Sensor 		 RL 	 RR 	 FR 	 FL 
+ UDP logging Mode 	 HIL 	  HIL 	 HIL 	 HIL 
+
+ 	 Total record read from MDF4 file 213095 !!
+
+ [Sensor_23] ,HiL Execution ran for 15.425000 Seconds
+
+ [Sensor_24] ,HiL Execution ran for 15.422000 Seconds
++------------+-------------+--------------+---------+--------------------------+----+---------------------------+-----+
+|  Sensor :  | FRONT RIGHT |  KPI Pass =  | 95.8934 | Scan Index Drop Count =  | 37 |  Total Sent Scan_Count =  | 901 |
++------------+-------------+--------------+---------+--------------------------+----+---------------------------+-----+
++------------+------------+--------------+----+--------------------------+----+---------------------------+-----+
+|  Sensor :  | FRONT LEFT |  KPI Pass =  | 93 | Scan Index Drop Count =  | 63 |  Total Sent Scan_Count =  | 902 |
++------------+------------+--------------+----+--------------------------+----+---------------------------+-----+
+
+ [Sensor_22] ,HiL Execution ran for 15.506000 Seconds
+
+ [Sensor_21] ,HiL Execution ran for 15.510000 Seconds
++------------+------------+--------------+---------+--------------------------+----+---------------------------+-----+
+|  Sensor :  | REAR RIGHT |  KPI Pass =  | 95.1111 | Scan Index Drop Count =  | 44 |  Total Sent Scan_Count =  | 900 |
++------------+------------+--------------+---------+--------------------------+----+---------------------------+-----+
++------------+-----------+--------------+---------+--------------------------+----+---------------------------+-----+
+|  Sensor :  | REAR LEFT |  KPI Pass =  | 96.8889 | Scan Index Drop Count =  | 28 |  Total Sent Scan_Count =  | 900 |
++------------+-----------+--------------+---------+--------------------------+----+---------------------------+-----+
+
+------ RADAR LEVEL SUMMARY ------
++-----------------+-------------------+-------------+-------------+----------------+-------------+
+| Sensor Position | Average Kpi Pass  | Total Drops | Total Scans | Total Run time | Drops / Min |
++-----------------+-------------------+-------------+-------------+----------------+-------------+
+|    REAR LEFT    | 96.888885 Percent | 28          | 900         | 15 sec         | 112         |
+|   REAR RIGHT    | 95.111115 Percent | 44          | 900         | 15 sec         | 176         |
+|   FRONT RIGHT   | 95.893448 Percent | 37          | 901         | 15 sec         | 148         |
+|   FRONT LEFT    | 93.015518 Percent | 63          | 902         | 15 sec         | 252         |
++-----------------+-------------------+-------------+-------------+----------------+-------------+
+
+------ TOTAL SESSION SUMMARY ------
++--------------------------+------------------+---------------+-------------------+
+| Total Scans Transmitted  | Total Scan Drops | Drops Per Min | Total KPI Pass    |
++--------------------------+------------------+---------------+-------------------+
+| 3603                     | 172              | 172           | 95.226196 Percent |
++--------------------------+------------------+---------------+-------------------+
+
+
+ <-------- End of injection ----->
+

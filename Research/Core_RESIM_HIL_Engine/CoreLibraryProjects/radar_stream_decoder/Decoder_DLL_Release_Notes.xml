@@ -1,0 +1,773 @@
+<Decoder_DLL_Release>
+	
+	<Sprint_PI1_SP4_SRR5_Decoder_DLL_Ver_21_80_0>
+		<RELEASE_NAME>Sprint PI1 SP4 SRR5 Decoder_DLL Release Verion 21_80_0</RELEASE_NAME>
+		<Decoder_DLL_Version>21.80.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="20" Z4_Core_Streams = "8" Z7B_CUST_Streams ="17"  Z4_CUST_Streams ="22" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="17" Z4_Core_Streams = "8" Z7B_CUST_Streams = "8"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "8" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<SGM_Streams  	  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "8" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>16</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>19</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>35</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>8</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+			CYW-1701 Z7A_Z7B_IPC_SRR5_210RBIN_CORE stream update for RFBIST changes
+			CYW-1721 [Decoder]: RECU_A480 ATS-1 Radar ECU Stream updates
+		</JIRA_Tickets>
+	</Sprint_PI1_SP4_SRR5_Decoder_DLL_Ver_21_80_0>
+	
+	<Sprint_PI1_SP3_SRR5_Decoder_DLL_Ver_21_78_0>
+		<RELEASE_NAME>Sprint PI1 SP3 SRR5 Decoder_DLL Release Verion 21_78_0</RELEASE_NAME>
+		<Decoder_DLL_Version>21.78.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="20" Z4_Core_Streams = "8" Z7B_CUST_Streams ="17"  Z4_CUST_Streams ="22" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="17" Z4_Core_Streams = "8" Z7B_CUST_Streams = "8"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "8" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<SGM_Streams  	  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "8" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>15</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>18</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>35</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>7</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+			CYW-1682:[Decoder]: Stream Updates for GWM/GEELY/ SGM SRR5 china Program
+			CYW_1687-[Decoder]:RECU_A470 ATS+6 Radar ECU Stream updates
+		</JIRA_Tickets>
+	</Sprint_PI1_SP3_SRR5_Decoder_DLL_Ver_21_78_0>
+
+	<Sprint_PI1_SP1_SRR5_Decoder_DLL_Ver_21_76_0>
+		<RELEASE_NAME>Sprint PI1 SP1 SRR5 Decoder_DLL Release Verion 21_76_0</RELEASE_NAME>
+		<Decoder_DLL_Version>21.76.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="20" Z4_Core_Streams = "8" Z7B_CUST_Streams ="17"  Z4_CUST_Streams ="22" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="17" Z4_Core_Streams = "8" Z7B_CUST_Streams = "8"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "8" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>15</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>18</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>34</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>7</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1638 [Decoder]:RECU_A470 ATS+4 Engineering release Radar ECU Stream updates
+		CYW-1646 Resim update done for stream changes in A470_ATS+4
+		</JIRA_Tickets>
+	</Sprint_PI1_SP1_SRR5_Decoder_DLL_Ver_21_76_0>
+	
+	<Sprint_PI4_DRP_SRR5_Decoder_DLL_Ver_20_74_0>
+		<RELEASE_NAME>Sprint PI4 DRP SRR5 Decoder_DLL Release Verion 20_74_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.74.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="19" Z4_Core_Streams = "8" Z7B_CUST_Streams ="17"  Z4_CUST_Streams ="22" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="20" Z7B_Core_Streams ="16" Z4_Core_Streams = "8" Z7B_CUST_Streams = "8"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>15</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>18</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>33</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>7</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1594 BMW SRR5 [Low & Mid]: Stream Updates for A470 ATS-1 Release
+		CYW-1622 [Decoder]:RECU_A470 ATS Radar ECU Stream updates
+		</JIRA_Tickets>
+	</Sprint_PI4_DRP_SRR5_Decoder_DLL_Ver_20_74_0>
+	
+	<Sprint_PI4_SP5_SRR5_Decoder_DLL_Ver_20_72_0>
+		<RELEASE_NAME>Sprint PI4 SP5 SRR5 Decoder_DLL Release Verion 20_72_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.72.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="19" Z4_Core_Streams = "8" Z7B_CUST_Streams ="16"  Z4_CUST_Streams ="22" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="16" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "6" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>15</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>17</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>33</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>6</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1569 [RNA_SRR5]:Z4_Z7B_Cust stream update for SW7.0.0_SUV_F1
+		CYW_1567 Z7A CORE stream update
+		CYW-1581 [BMW SRR5] : Z7B Stream update
+		CYW-1582 RNA Z4_Z7B_CUST Stream update
+		CYW-1598 [Decoder]:RECU_A450 ATS+6 Radar ECU Stream updates
+		</JIRA_Tickets>
+	</Sprint_PI4_SP5_SRR5_Decoder_DLL_Ver_20_72_0>
+	
+	<Sprint_PI4_SP4_SRR5_Decoder_DLL_Ver_20_67_0>
+		<RELEASE_NAME>Sprint PI4 SP4 SRR5 Decoder_DLL Release Verion 20_67_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.67.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="18" Z4_Core_Streams = "8" Z7B_CUST_Streams ="16"  Z4_CUST_Streams ="22" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="15" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>15</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>17</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>32</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>6</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1542 [Decoder]:RECU_A450 ATS+2 Radar ECU Stream updates
+		CYW-1561 [Decoder]:RECU_A450 ATS+3 Radar ECU Stream updates
+		CYW-1564 [BMW_SRR5][All] RESIM update for UDP stream changes done in A450_ATS+4 
+		</JIRA_Tickets>
+	</Sprint_PI4_SP4_SRR5_Decoder_DLL_Ver_20_67_0>
+	
+	<Sprint_PI4_SP3_SRR5_Decoder_DLL_Ver_20_64_0>
+		<RELEASE_NAME>Sprint PI4 SP3 SRR5 Decoder_DLL Release Verion 20_64_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.64.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="18" Z4_Core_Streams = "8" Z7B_CUST_Streams ="16"  Z4_CUST_Streams ="21" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="15" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>14</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>16</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>30</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>5</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1509 [Decoder]:RECU_A450 ATS Radar ECU Stream updates
+		CYW-1523 [Decoder] : [HKMC_SRR] Stream updates
+		CYW_1536 [Decoder]:RECU_A450 ATS+1 Radar ECU Stream updates
+		</JIRA_Tickets>
+	</Sprint_PI4_SP3_SRR5_Decoder_DLL_Ver_20_64_0>
+	
+	<Sprint_PI4_SP2_SRR5_Decoder_DLL_Ver_20_61_0>
+		<RELEASE_NAME>Sprint PI4 SP2 SRR5 Decoder_DLL Release Verion 20_61_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.61.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="18" Z4_Core_Streams = "8" Z7B_CUST_Streams ="16"  Z4_CUST_Streams ="21" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="15" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>14</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>15</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>29</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>4</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1473[Decoder]:RECU_A430 ATS+6 Radar ECU Stream updates
+		CYW-1489 BMW SRR5: Stream Updates for A450 ATS Release
+		</JIRA_Tickets>
+	</Sprint_PI4_SP2_SRR5_Decoder_DLL_Ver_20_61_0>
+	
+    <Sprint_PI4_SP1_SRR5_Decoder_DLL_Ver_20_58_0>
+		<RELEASE_NAME>Sprint PI4 SP1 SRR5 Decoder_DLL Release Verion 20_58_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.58.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="17" Z4_Core_Streams = "8" Z7B_CUST_Streams ="15"  Z4_CUST_Streams ="20" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="14" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>13</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>15</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>29</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>4</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1437 [Decoder ]: GEELY_Stream_Update : Z7A CORE stream update
+		CYW-1308 [Decoder]: BMW_SRR5- Resim update for UDP stream changes on A430_ATS+4
+		CYW-1441 [Decoder]:RECU_A430 ATS+4 Radar ECU Stream updates
+		CYW-1439 [Decoder]:[Decoder ]: RNA_Stream_Updates Z7A CORE stream update
+		CYW-1334 Release Activities for BMW
+		CYW-1451 [Decoder]:RECU_A430 ATS+5 Radar ECU Stream updates
+		</JIRA_Tickets>
+	</Sprint_PI4_SP1_SRR5_Decoder_DLL_Ver_20_58_0>
+	
+	<Sprint_PI3_DRP_SRR5_Decoder_DLL_Ver_20_52_0>
+		<RELEASE_NAME>Sprint PI3 DRP SRR5 Decoder_DLL Release Verion 20_52_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.52.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="17" Z4_Core_Streams = "8" Z7B_CUST_Streams ="15"  Z4_CUST_Streams ="20" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="14" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="11" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="19" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "2"  />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>13</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>15</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>28</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>2</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1437 [Decoder ]: GEELY_Stream_Update : Z7A CORE stream update
+		CYW-1246 [Decoder]:RECU_A430 ATS+2 Radar ECU Stream updates
+		CYW-1150 [Decoder]:Z7B core stream update
+		CYW-1165 [Decoder][BMW_SRR5] Resim update for UDP stream changes done on A430_ATS+3 SW
+		CYW-1274 [Decoder]: CHANGAN_SRR5 : UDP Stream update for B4.1 Release
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_DRP_SRR5_Decoder_DLL_Ver_20_52_0>
+	
+	<Sprint_PI3_DRP_SRR5_Decoder_DLL_Ver_20_48_0>
+		<RELEASE_NAME>Sprint PI3 DRP SRR5 Decoder_DLL Release Verion 20_48_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.48.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="16" Z4_Core_Streams = "8" Z7B_CUST_Streams ="15"  Z4_CUST_Streams ="19" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="13" Z4_Core_Streams = "8" Z7B_CUST_Streams = "7"  Z4_CUST_Streams ="10" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="10" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "4"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>12</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>14</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>27</Ecu_Core3_Streams>
+			<Ecu_VRU_CLASSIFIER_Streams>1</Ecu_VRU_CLASSIFIER_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1131 [Decoder]:RECU_A430 ATS Radar ECU Stream updates
+		CYW-1145 [BMW_SRR5][LOW/MID] Resim updates for UDP stream changes in A430_ATS+2 Release
+		CYW-1129 [Decoder]:RECU_A410 ATS+6 Radar ECU Stream for VRU Classifier
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_DRP_SRR5_Decoder_DLL_Ver_20_48_0>
+	
+	<Sprint_PI3_S5_SRR5_Decoder_DLL_Ver_20_45_0>
+		<RELEASE_NAME>Sprint PI3 S5 SRR5 Decoder_DLL Release Verion 20_45_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.45.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="15" Z4_Core_Streams = "8" Z7B_CUST_Streams ="14"  Z4_CUST_Streams ="18" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="12" Z4_Core_Streams = "8" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "9" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="10" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="18" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "4"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>12</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>13</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>26</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1099 [Decoder]:RECU_A410 ATS+6 Radar ECU Stream updates
+		CYW-1065 [Decoder]:Z7A_Z7B_IPC_SRR5_210RBIN_CORE stream update
+		CYW-1089 [Decoder]:Z7A CORE stream update
+		CYW-1115 [Decoder]: [BMW_SRR5][LOW/MID] RESIM Update for UDP stream changes in A430_ATS SW release
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_S5_SRR5_Decoder_DLL_Ver_20_45_0>
+	
+	<Sprint_PI3_S4_SRR5_Decoder_DLL_Ver_20_41_0>
+		<RELEASE_NAME>Sprint PI3 s4 SRR5 Decoder_DLL Release Verion 20_41_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.41.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="14" Z4_Core_Streams = "7" Z7B_CUST_Streams ="14"  Z4_CUST_Streams ="17" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="11" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="10" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "4"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+			<PSA_MRR_Streams  CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "3" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>12</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>12</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>26</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1026 Z7A_Z7B_IPC_MRR_CORE stream update
+		CYW-1071 [Decoder]:RECU_A410 ATS+5 Radar ECU Stream updates
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_S4_SRR5_Decoder_DLL_Ver_20_41_0>
+	
+	<Sprint_PI3_S3_SRR5_Decoder_DLL_Ver_20_39_0>
+		<RELEASE_NAME>Sprint PI3 s3 SRR5 Decoder_DLL Release Verion 20_39_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.39.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="14" Z4_Core_Streams = "7" Z7B_CUST_Streams ="14"  Z4_CUST_Streams ="17" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="11" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="12" Z4_Core_Streams = "7" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "8" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="14" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="17" Z7B_Core_Streams ="10" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "4"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>11</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>12</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>26</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-1001 A410 ATS- Radar ECU Core 3( stream number 92) - v25 stream updates
+		CYW-990 [BMW_SRR5][All] Resim update for stream changes in A410_BF(ATS+3) SW release
+		CYW-1006 [Geely SRR5]:FW update required for Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION (17)	
+		CYW-1015 [BMW][SRR5][All]RESIM update for UDP stream update done for A410 ATS+4
+		CYW-1022 A410 ATS+3- Radar ECU Stream updates
+		CYW-981 Z7A_Z7B_IPC_SRR5_210RBIN_CORE stream update
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_S3_SRR5_Decoder_DLL_Ver_20_39_0>
+	
+	<Sprint_PI3_S2_SRR5_Decoder_DLL_Ver_20_33_0>
+		<RELEASE_NAME>Sprint PI3 s2 SRR5 Decoder_DLL Release Verion 20_33_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.33.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="13" Z4_Core_Streams = "7" Z7B_CUST_Streams ="13"  Z4_CUST_Streams ="16" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "7" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="11" Z4_Core_Streams = "7" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="10" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "4" Z4_Core_Streams = "5" Z7B_CUST_Streams = "4"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>10</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>11</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>24</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-951 UDP stream update for Chang'An B2.1 release
+		CYW-953 [BMW_SRR5] Resim update on UDP stream changes for A410 FH SW release
+		CYW-984 Resim update on UDP stream changes for Z4_Z7B_Core V7
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_S2_SRR5_Decoder_DLL_Ver_20_33_0>
+		
+	<Sprint_PI3_S1_SRR5_Decoder_DLL_Ver_20_31_0>
+		<RELEASE_NAME>Sprint PI3 s1 SRR5 Decoder_DLL Release Verion 20_31_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.31.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="12" Z7B_Core_Streams ="12" Z4_Core_Streams = "6" Z7B_CUST_Streams ="13"  Z4_CUST_Streams ="16" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="12" Z7B_Core_Streams = "9" Z4_Core_Streams = "6" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="12" Z7B_Core_Streams ="10" Z4_Core_Streams = "6" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="11" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams ="10" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "2" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>10</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>11</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>24</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-917 [BMW_SRR5] Resim update on UDP stream changes for A410_ATS SW release
+		CYW-948 A410 ATS- Radar ECU Core 3( stream number 92) - v24 stream updates
+		CYW-930 PSA SRR5 : Z7B CORE STREAM V2
+		CYW-935 [DECODER] : Z7B core stream update
+		</JIRA_Tickets>
+		
+	</Sprint_PI3_S1_SRR5_Decoder_DLL_Ver_20_31_0>
+
+	<Sprint_PI2_DRP_SRR5_Decoder_DLL_Ver_20_27_0>
+		<RELEASE_NAME>Sprint PI2 DRP SRR5 Decoder_DLL Release Verion 20_27_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.27.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="11" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams ="13"  Z4_CUST_Streams ="15" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="11" Z7B_Core_Streams = "8" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "6" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="11" Z7B_Core_Streams = "9" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="16" Z7B_Core_Streams = "9" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>10</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>11</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>23</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-888 [BMW][SRR5][Low]Customer stream update for A410 PD
+		CYW-933 [Geely SRR5]:FW update required for Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION (16)
+		</JIRA_Tickets>
+		
+	</Sprint_PI2_DRP_SRR5_Decoder_DLL_Ver_20_27_0>
+
+	<Sprint_PI2_S5_SRR5_Decoder_DLL_Ver_20_25_0>
+		<RELEASE_NAME>Sprint PI2 S5 SRR5 Decoder_DLL Release Verion 20_25_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.25.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="11" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams ="12"  Z4_CUST_Streams ="14" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="11" Z7B_Core_Streams = "8" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "6" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="11" Z7B_Core_Streams = "9" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "9" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "3" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>10</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>11</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>23</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+		
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-870 A370BF3 Eng Drop - Radar ECU Core 1( stream number 91) - v11 stream updates
+		CYW-867 CLONE - Changan_SRR5 :Free Space for Frame work Development
+		CYW-876 [BMW_SRR5][All] RESIM update for UDP stream update for A390_BF Release
+		CYW-884 A390 BF- Radar ECU Core 3( stream number 92) - v23 stream updates
+		CYW_882 UDP stream update for Chang'An F.2.0 release
+		CYW-858 [Geely SRR5]:FW update required for Z7B_FRNT_128D_SAT_CORE_VERSION 9
+		CYW-873 PSA SRR5 : Z7A core stream update v2
+		</JIRA_Tickets>
+		
+	</Sprint_PI2_S5_SRR5_Decoder_DLL_Ver_20_25_0>
+		
+	<Sprint_PI2_S4_SRR5_Decoder_DLL_Ver_20_16_0>
+		<RELEASE_NAME>Sprint PI2 S4 SRR5 Decoder_DLL Release Verion 20_16_0</RELEASE_NAME>
+		<Decoder_DLL_Version>20.16.0</Decoder_DLL_Version>
+		<Release_Date>_</Release_Date>
+		
+		<SIL_SRR5_UDP_Streams_Info>
+			<BMW_LOW_Streams  CDC ="4" Z7A_Core_Streams ="10" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams ="12"  Z4_CUST_Streams ="14" />
+			<BMW_MID_Streams  CDC ="4" Z7A_Core_Streams ="10" Z7B_Core_Streams = "8" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "6" />
+			<BMW_HIGH_Streams CDC ="4" Z7A_Core_Streams ="10" Z7B_Core_Streams = "9" Z4_Core_Streams = "5" Z7B_CUST_Streams = "5"  Z4_CUST_Streams = "7" />
+			<RNA_SUV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<RNA_CDV_Streams  CDC ="4" Z7A_Core_Streams ="13" Z7B_Core_Streams ="10" Z4_Core_Streams = "4" Z7B_CUST_Streams = "6"  Z4_CUST_Streams = "3" />
+			<Geely_Streams    CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "9" Z4_Core_Streams = "5" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "2" />
+			<HKMC_Streams     CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams ="11" Z4_Core_Streams = "5" Z7B_CUST_Streams = "3"  Z4_CUST_Streams = "2" />
+			<Changan_Streams  CDC ="4" Z7A_Core_Streams ="15" Z7B_Core_Streams = "2" Z4_Core_Streams = "5" Z7B_CUST_Streams = "2"  Z4_CUST_Streams = "1" />
+			<PSA_SRR5_Streams CDC ="4" Z7A_Core_Streams = "2" Z7B_Core_Streams = "1" Z4_Core_Streams = "1" Z7B_CUST_Streams = "1"  Z4_CUST_Streams = "1" />
+		</SIL_SRR5_UDP_Streams_Info>
+		
+		<BMW_SRR5_Radar_ECU_Info>
+			<Ecu_Core0_Streams>10</Ecu_Core0_Streams>
+			<Ecu_Core1_Streams>10</Ecu_Core1_Streams>
+			<Ecu_Core3_Streams>22</Ecu_Core3_Streams>
+		</BMW_SRR5_Radar_ECU_Info>
+			
+		<SIL_SRR5_DSPACE_Streams_Info>
+			<BMW_LOW_Streams>2</BMW_LOW_Streams>
+			<BMW_MID_Streams>2</BMW_MID_Streams>
+			<BMW_HIGH_Streams>2</BMW_HIGH_Streams>
+			<GEELY_Streams>2</GEELY_Streams>
+		</SIL_SRR5_DSPACE_Streams_Info>
+		
+		
+		<JIRA_Tickets>
+		CYW-821 [RNA_SRR5]:Z7A_Z7B_210_RBIN_CORE stream update (v13) for SW7.0.0_CDV_F1
+		CYW-849 A390FH Radar ECU Core 3( stream number 92) - v22 stream updates
+		CYW-814 [BMW_SRR5]Resim update for stream update on A390_FH
+		CYW-820 [Geely SRR5]: Z7A_Z7B_IPC_SRR5_116RBIN_CORE_VERSION (15)
+		CYW-853 Changan_SRR5 : 2nd Iterationn of FF (RECW)
+		CYW-784 [HKMC_SRR5] Z7A_Core stream update for Dolphin versions and OSM error reg info
+		</JIRA_Tickets>
+
+	</Sprint_PI2_S4_SRR5_Decoder_DLL_Ver_20_16_0>
+
+</Decoder_DLL_Release>		

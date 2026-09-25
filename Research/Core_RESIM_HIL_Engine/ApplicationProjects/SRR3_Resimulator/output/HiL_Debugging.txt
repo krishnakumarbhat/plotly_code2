@@ -1,0 +1,70 @@
+main() called
+Reading inputs
+Started reading Infrastructure
+
+XML Version Comparision done Here
+ Used XML Version : 9.6Input file argument memcpy
+Input file argument customer name
+do loop directory path
+Create Event failed
+CThMudpGrab() start
+CThMudpGrab() end
+HIL_LIVE_DATA
+Before Calling Online
+SRR_DETECTION running mode
+Online: do
+exec.cpp Init
+exec.cpp Controller Instance
+exec.cpp Controller Init call
+exec.cpp Controller Init success
+exec.cpp Controller IsSensorConnected api
+Ctrl.cpp HiL Dispatched
+exec.cpp Controller Instance success
+exec.cpp Init
+exec.cpp Controller IsSensorConnected api
+Ctrl.cpp HiL Dispatched
+exec.cpp Controller Instance success
+exec.cpp Init
+exec.cpp Controller IsSensorConnected api
+Ctrl.cpp HiL Dispatched
+exec.cpp Controller Instance success
+exec.cpp Init
+exec.cpp Controller IsSensorConnected api
+Ctrl.cpp HiL Dispatched
+exec.cpp Controller Instance success
+exec.cpp Init
+exec.cpp E_HIL_SENSOR_NOT_CONNECTED in else loop
+exec.cpp Init
+exec.cpp Controller IsSensorConnected api
+Ctrl.cpp HiL Dispatched
+exec.cpp Controller Instance success
+exec.cpp Init
+exec.cpp E_HIL_SENSOR_NOT_CONNECTED in else loop
+exec.cpp Init
+exec.cpp E_HIL_SENSOR_NOT_CONNECTED in else loop
+Online api Before InitMUDP
+InitMUDP: Stream
+InitMUDP: Before Grabber
+InitMUDP: After Grabber
+Grabber create
+Grabber create Data initialised
+Grabber create assignment
+HIL_ENGINE_IPADDRES
+SCALEXIO_IPADDRES
+Scalexio_Port
+strtoul
+Grab Thread create success
+Grab: Exc
+Grab first copy with xml ip = 127.0.0.1..... copied ipaddress 127.0.0.1
+Grab: new data
+Grab second copy 
+Grab Before ConfigDevice, port = 5050...nw_config.port = 5050
+Online api After InitMUDP
+StartMUDP: inside
+StartMUDP Grab start
+Grab: release
+StartMUDP: reading starts
+Grab: init
+StartMUDP: completes
+Online api After StartMUDP
+Grab: release

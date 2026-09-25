@@ -1,0 +1,101 @@
+
+Log Path: (/home/lime/Downloads/R8_VEH_LOGS/CHANDAN_LOGS/CCA_9010_3100099_DEBUG_20251006_145301_0004.MF4)
+
+-------------------------------------------------------------------------
+
+              * *     * * *   * * * * * *  * * * * *  *       *              
+             *   *    *    *       *           *       *     *               
+            * *** *   * * *        *           *        *   *                
+           *       *  *            *       * * * * *     * *                 
+
+			SRR HiL Resimulation			2024
+
+-------------------------------------------------------------------------
+
+	     Info  :     Now          	: 
+			 Released     	:  22/ 4/2025
+			 Build Date   	:  22/ 4/2025
+			 Changeset No 	: 22243
+------------------------------------------------------------------------------
+
+			 HIL Release Info  	:   26
+			 HIL Release Major 	:   5
+			 HIL Release Minor 	:   0
+------------------------------------------------------------------------------
+	   Config  :     
+			 Input Options	    	:   MDF4_INPUT
+			 Continuous_run_mode	:   YES
+			 Vehicle_Dynamic_Source   :   UDP
+			 VehicleTimestampSource :   UDP
+			 Fusion_Det_Source  	:   UDP
+			 Radar_Fusion_Enable	:   YES
+			 Radar_RadiationMode	:   ON
+			 FDX_SYNCH_MODE	    	:   DISABLED
+			 Debuging_Hil_Enable	:   ENABLED
+			 Input SrcType	    	:   LOG_SIMULATION
+			 ResimExecution_Mode	:   IDLE
+			 SENSOR_RL	    	:   Connected
+			 SENSOR_RR	    	:   Connected
+			 SENSOR_FR	    	:   Connected
+			 SENSOR_FL	    	:   Connected
+			 SENSOR_FC	    	:   DisConnected
+			 SENSOR_BPR_Left  	:   DisConnected
+			 SENSOR_BPR_Right 	:   DisConnected
+			 SENSOR_Radar_ECU 	:   DisConnected
+			 Log Path	    	:   /home/lime/Downloads/R8_VEH_LOGS/CHANDAN_LOGS/CCA_9010_3100099_DEBUG_20251006_145301_0004.MF4
+			 Used Network driver	:   NPcap
+			 NW Driver Available	:   No
+------------------------------------------------------------------------------+-----------------------------+---------------+
+|        Customer Name        | PLATFORM_GEN7 |
++-----------------------------+---------------+
+| RadarStream Decoder Version |  2026 25 71   |
++-----------------------------+---------------+
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+|      SENSOR       |    RL     |    RR     | FR        | FL        | FC            | Status              |
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+| Connection Status | CONNECTED | CONNECTED | CONNECTED | CONNECTED | NOT_CONNECTED | 4 Sensors Connected |
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+|  No Of Requests   |     1     |     1     | 1         | 1         | 0             | 4 Sensors Connected |
++-------------------+-----------+-----------+-----------+-----------+---------------+---------------------+
+
+ Sensor 		 RL 	 RR 	 FR 	 FL 
+ UDP logging Mode 	 HIL 	  HIL 	 HIL 	 HIL 
+
+ [Sensor_23] ,HiL Execution ran for 14 Seconds
++------------+-------------+--------------+---------+--------------------------+---+---------------------------+-----+
+|  Sensor :  | FRONT RIGHT |  KPI Pass =  | 98.3444 | Scan Index Drop Count =  | 5 |  Total Sent Scan_Count =  | 302 |
++------------+-------------+--------------+---------+--------------------------+---+---------------------------+-----+
+
+ [Sensor_21] ,HiL Execution ran for 15 Seconds
++------------+-----------+--------------+-----+--------------------------+---+---------------------------+-----+
+|  Sensor :  | REAR LEFT |  KPI Pass =  | 100 | Scan Index Drop Count =  | 0 |  Total Sent Scan_Count =  | 302 |
++------------+-----------+--------------+-----+--------------------------+---+---------------------------+-----+
+
+ [Sensor_24] ,HiL Execution ran for 15 Seconds
++------------+------------+--------------+-----+--------------------------+---+---------------------------+-----+
+|  Sensor :  | FRONT LEFT |  KPI Pass =  | 100 | Scan Index Drop Count =  | 0 |  Total Sent Scan_Count =  | 301 |
++------------+------------+--------------+-----+--------------------------+---+---------------------------+-----+
+
+ [Sensor_22] ,HiL Execution ran for 15 Seconds
++------------+------------+--------------+-----+--------------------------+---+---------------------------+-----+
+|  Sensor :  | REAR RIGHT |  KPI Pass =  | 100 | Scan Index Drop Count =  | 0 |  Total Sent Scan_Count =  | 302 |
++------------+------------+--------------+-----+--------------------------+---+---------------------------+-----+
+
+------ RADAR LEVEL SUMMARY ------
++-----------------+--------------------+-------------+-------------+----------------+-------------+
+| Sensor Position |  Average Kpi Pass  | Total Drops | Total Scans | Total Run time | Drops / Min |
++-----------------+--------------------+-------------+-------------+----------------+-------------+
+|    REAR LEFT    | 100.000000 Percent | 0           | 302         | 15 sec         | 0           |
+|   REAR RIGHT    | 100.000000 Percent | 0           | 302         | 15 sec         | 0           |
+|   FRONT RIGHT   | 98.344368 Percent  | 5           | 302         | 14 sec         | 21          |
+|   FRONT LEFT    | 100.000000 Percent | 0           | 301         | 15 sec         | 0           |
++-----------------+--------------------+-------------+-------------+----------------+-------------+
+
+------ TOTAL SESSION SUMMARY ------
++--------------------------+------------------+---------------+-------------------+-------------+
+| Total Scans Transmitted  | Total Scan Drops | Drops Per Min | Avg KPI Pass      | Total Chunk |
++--------------------------+------------------+---------------+-------------------+-------------+
+| 1207                     | 5                | 5             | 99.585747 Percent | 45448       |
++--------------------------+------------------+---------------+-------------------+-------------+
+
+HiL Injection Completed Successfully!!
