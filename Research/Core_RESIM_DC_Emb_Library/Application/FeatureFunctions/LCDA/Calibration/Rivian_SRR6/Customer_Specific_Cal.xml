@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_lcda_host_activation_speed_min</NAME>
+    <VALUE>2.8f</VALUE>
+    <!-- 10 kph -->
+  </record>
+  <record>
+    <NAME>k_lcda_host_activation_speed_max</NAME>
+    <VALUE>48.61111f</VALUE>
+    <!-- 175 kph -->
+  </record>
+  <record>
+    <NAME>k_lcda_min_lane_width</NAME>
+    <VALUE>1.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_warntrigger_early</NAME>
+    <VALUE>0.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_warntrigger_late</NAME>
+    <VALUE>-0.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_enable_dynspeed_zone</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_f_disable_due_to_small_curve_radius</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_min_curve_radius</NAME>
+    <VALUE>100.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_min_curve_radius_hys</NAME>
+    <VALUE>25.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_use_curvi_coordinates</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_fallback_rel_vel_thres</NAME>
+    <VALUE>-5.55f</VALUE>
+    <!-- 20 kph -->
+  </record>
+  <record>
+    <NAME>k_cvw_zone_calculation_mode</NAME>
+    <VALUE>2</VALUE>
+    <!-- CVW_ZONE_CALC_FIXED_INPUT -->
+  </record>
+  <record>
+    <NAME>k_cvw_ttc</NAME>
+    <VALUE>3.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_ttc_hys</NAME>
+    <VALUE>2.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_enable_trailer_zone_extension</NAME>
+    <VALUE>1u</VALUE>
+  </record> 
+  <record>
+    <NAME>k_lcda_f_enable_suppress_alert_object_overhangs_zone_edge</NAME>
+    <VALUE>1u</VALUE>
+    <!-- DDG-3341 -->
+  </record>
+  <record>
+    <NAME>k_bsw_uses_cvw_alert_state_enabled</NAME>
+    <VALUE>0</VALUE>
+    <!-- DDG-3487 -->
+  </record>
+  <record>
+    <NAME>k_cvw_min_obj_curvi_long_vel</NAME>
+    <VALUE>2.78f</VALUE>
+  </record>
+</data-set>

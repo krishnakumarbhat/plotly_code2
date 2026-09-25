@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_pt_kill_path_exceed_dist_thres</NAME>
+    <VALUE>30.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_path_change_match_hyst_more_established</NAME>
+    <VALUE>0.2</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_dist_obj_to_path_lut</NAME>
+    <VALUE>[0.0 1.0 2.5 4.0 5.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_dist_obj_to_path_conf_lut</NAME>
+    <VALUE>[1.0 0.8 0.7 0.25 0.1]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_dist_obj_to_border_lut</NAME>
+    <VALUE>[0 1 3 5]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_dist_obj_to_border_conf_lut</NAME>
+    <VALUE>[1.0 0.9 0.7 0.25]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_similarity_trail_path_lut</NAME>
+    <VALUE>[0.0 1.0 1.50 2.05 2.55]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_similarity_trail_path_conf_lut</NAME>
+    <VALUE>[1.0 0.8 0.50 0.3 0.1]</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_path_change_match_hyst_default</NAME>
+    <VALUE>0.1</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_path_track_long_range_limit</NAME>
+    <VALUE>52.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_start_of_lane_change_processing</NAME>
+    <VALUE>4u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_end_of_lane_change_processing</NAME>
+    <VALUE>28u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_en_algo_min_vel_inactive</NAME>
+    <VALUE>2.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_en_algo_max_val_active</NAME>
+    <VALUE>2.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_enable_host_trail</NAME>
+    <VALUE>1</VALUE>
+  </record>
+</data-set>
