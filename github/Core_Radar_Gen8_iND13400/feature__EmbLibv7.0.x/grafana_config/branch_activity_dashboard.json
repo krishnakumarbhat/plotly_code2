@@ -1,0 +1,453 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_POSTGRES",
+      "label": "PostgreSQL Metrics DB",
+      "description": "WRSD PostgreSQL metrics database (same datasource used by other Gen8 dashboards)",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "postgres", "name": "PostgreSQL", "version": "1.0.0" },
+    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" },
+    { "type": "panel", "id": "barchart", "name": "Bar chart", "version": "" },
+    { "type": "panel", "id": "table", "name": "Table", "version": "" },
+    { "type": "panel", "id": "stat", "name": "Stat", "version": "" }
+  ],
+  "annotations": { "list": [] },
+  "description": "GitHub branch activity for Core_Radar_Gen8_iND13400: daily merges, open/WIP feature branches, commit counts. Filterable by date range, week, month, and target branch.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Summary",
+      "type": "row"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 5 },
+              { "color": "red", "value": 15 }
+            ]
+          },
+          "unit": "short",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT metric_value::int AS \"Open / WIP Branches\" FROM perception_metrics WHERE metric_name = 'branch_open_count' AND metric_tags->>'target_branch' = '${target_branch}' ORDER BY date DESC LIMIT 1",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Open / WIP Branches",
+      "type": "stat"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          },
+          "unit": "short",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 2,
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT SUM(metric_value)::int AS \"Total WIP Commits\" FROM perception_metrics WHERE metric_name = 'branch_open_wip' AND metric_tags->>'target_branch' = '${target_branch}' AND date >= $__timeFrom() AND date <= $__timeTo()",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Commits in WIP Branches",
+      "type": "stat"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "short",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 3,
+      "options": {
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT SUM(metric_value)::int AS \"Merged in Period\" FROM perception_metrics WHERE metric_name = 'branch_daily_merged_count' AND metric_tags->>'target_branch' = '${target_branch}' AND date >= $__timeFrom() AND date <= $__timeTo()",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Branches Merged (Period)",
+      "type": "stat"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "purple", "value": null }
+            ]
+          },
+          "unit": "short",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 4,
+      "options": {
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT SUM(metric_value)::int AS \"New PRs Created\" FROM perception_metrics WHERE metric_name = 'branch_daily_created_count' AND metric_tags->>'target_branch' = '${target_branch}' AND date >= $__timeFrom() AND date <= $__timeTo()",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Feature Branches Created (Period)",
+      "type": "stat"
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 101,
+      "title": "Daily Activity",
+      "type": "row"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "showPoints": "auto"
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Merged" },
+            "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } } ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Created" },
+            "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } } ]
+          }
+        ]
+      },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 6 },
+      "id": 5,
+      "options": {
+        "legend": { "calcs": ["sum", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT\n  to_timestamp(metric_tags->>'date', 'YYYY-MM-DD') AS time,\n  SUM(CASE WHEN metric_name = 'branch_daily_merged_count' THEN metric_value ELSE 0 END) AS \"Merged\",\n  SUM(CASE WHEN metric_name = 'branch_daily_created_count' THEN metric_value ELSE 0 END) AS \"Created\"\nFROM perception_metrics\nWHERE metric_name IN ('branch_daily_merged_count', 'branch_daily_created_count')\n  AND metric_tags->>'target_branch' = '${target_branch}'\n  AND date >= $__timeFrom()\n  AND date <= $__timeTo()\nGROUP BY 1\nORDER BY 1",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ],
+      "title": "Daily Branch Activity — Created vs Merged into ${target_branch}",
+      "type": "timeseries"
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+      "id": 102,
+      "title": "Merged Feature Branches",
+      "type": "row"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "PR" },
+            "properties": [
+              { "id": "custom.width", "value": 70 },
+              { "id": "links", "value": [{ "title": "Open PR", "url": "${__data.fields.URL}", "targetBlank": true }] }
+            ]
+          },
+          { "matcher": { "id": "byName", "options": "Branch" },           "properties": [ { "id": "custom.width", "value": 220 } ] },
+          { "matcher": { "id": "byName", "options": "Title" },            "properties": [ { "id": "custom.width", "value": 420 } ] },
+          { "matcher": { "id": "byName", "options": "Merged At" },        "properties": [ { "id": "custom.width", "value": 140 } ] },
+          { "matcher": { "id": "byName", "options": "Days to Merge" },    "properties": [ { "id": "custom.width", "value": 110 }, { "id": "custom.displayMode", "value": "color-background-solid" }, { "id": "color", "value": { "mode": "thresholds" } }, { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 14 }] } } ] }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 16 },
+      "id": 7,
+      "options": {
+        "sortBy": [{ "displayName": "Merged At", "desc": true }],
+        "footer": { "show": false }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT\n  metric_tags->>'pr_number'     AS \"PR\",\n  metric_tags->>'branch_name'   AS \"Branch\",\n  metric_tags->>'pr_title'      AS \"Title\",\n  metric_tags->>'merged_at'     AS \"Merged At\",\n  (metric_tags->>'days_to_merge')::int AS \"Days to Merge\",\n  metric_tags->>'pr_url'        AS \"URL\"\nFROM perception_metrics\nWHERE metric_name = 'branch_merged_to_dev'\n  AND metric_tags->>'target_branch' = '${target_branch}'\n  AND date >= $__timeFrom()\n  AND date <= $__timeTo()\nORDER BY metric_tags->>'merged_at' DESC\nLIMIT 200",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Feature Branches Merged → ${target_branch}",
+      "type": "table"
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+      "id": 103,
+      "title": "Open / Work In Progress",
+      "type": "row"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "PR" },
+            "properties": [
+              { "id": "custom.width", "value": 70 },
+              { "id": "links", "value": [{ "title": "Open PR", "url": "${__data.fields.URL}", "targetBlank": true }] }
+            ]
+          },
+          { "matcher": { "id": "byName", "options": "Branch" },        "properties": [ { "id": "custom.width", "value": 220 } ] },
+          { "matcher": { "id": "byName", "options": "Title" },         "properties": [ { "id": "custom.width", "value": 420 } ] },
+          { "matcher": { "id": "byName", "options": "Created At" },    "properties": [ { "id": "custom.width", "value": 140 } ] },
+          {
+            "matcher": { "id": "byName", "options": "Days Open" },
+            "properties": [
+              { "id": "custom.width", "value": 90 },
+              { "id": "custom.displayMode", "value": "color-background-solid" },
+              { "id": "color", "value": { "mode": "thresholds" } },
+              { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 7 }, { "color": "red", "value": 21 }] } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Commits" },
+            "properties": [
+              { "id": "custom.width", "value": 80 },
+              { "id": "custom.displayMode", "value": "color-background-solid" },
+              { "id": "color", "value": { "mode": "thresholds" } },
+              { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }, { "color": "orange", "value": 20 }] } }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 27 },
+      "id": 8,
+      "options": {
+        "sortBy": [{ "displayName": "Days Open", "desc": true }],
+        "footer": { "show": false }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT\n  metric_tags->>'pr_number'   AS \"PR\",\n  metric_tags->>'branch_name' AS \"Branch\",\n  metric_tags->>'pr_title'    AS \"Title\",\n  metric_tags->>'created_at'  AS \"Created At\",\n  (metric_tags->>'days_open')::int    AS \"Days Open\",\n  metric_value::int                   AS \"Commits\",\n  metric_tags->>'pr_url'              AS \"URL\"\nFROM perception_metrics\nWHERE metric_name = 'branch_open_wip'\n  AND metric_tags->>'target_branch' = '${target_branch}'\n  AND date = (\n    SELECT MAX(date) FROM perception_metrics\n    WHERE metric_name = 'branch_open_wip'\n      AND metric_tags->>'target_branch' = '${target_branch}'\n  )\nORDER BY (metric_tags->>'days_open')::int DESC",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "title": "Open / WIP Feature Branches → ${target_branch}",
+      "type": "table"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+      "id": 9,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right", "showLegend": true },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT\n  date AS time,\n  metric_value AS \"Open Branches\"\nFROM perception_metrics\nWHERE metric_name = 'branch_open_count'\n  AND metric_tags->>'target_branch' = '${target_branch}'\n  AND date >= $__timeFrom()\n  AND date <= $__timeTo()\nORDER BY 1",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ],
+      "title": "Open Branch Count Over Time",
+      "type": "timeseries"
+    },
+
+    {
+      "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+      "id": 10,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right", "showLegend": true },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+          "rawSql": "SELECT\n  date AS time,\n  metric_value AS \"WIP Commits\"\nFROM perception_metrics\nWHERE metric_name = 'branch_open_total_commits'\n  AND metric_tags->>'target_branch' = '${target_branch}'\n  AND date >= $__timeFrom()\n  AND date <= $__timeTo()\nORDER BY 1",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Commits in WIP Branches Over Time",
+      "type": "timeseries"
+    }
+
+  ],
+
+  "refresh": "1h",
+  "schemaVersion": 38,
+  "tags": ["branch-activity", "github", "gen8", "radar"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": { "type": "postgres", "uid": "${DS_POSTGRES}" },
+        "definition": "SELECT DISTINCT metric_tags->>'target_branch' FROM perception_metrics WHERE metric_name = 'branch_open_count' ORDER BY 1",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "target_branch",
+        "options": [],
+        "query": "SELECT DISTINCT metric_tags->>'target_branch' FROM perception_metrics WHERE metric_name = 'branch_open_count' ORDER BY 1",
+        "refresh": 2,
+        "sort": 1,
+        "type": "query",
+        "label": "Target Branch"
+      }
+    ]
+  },
+  "time": { "from": "now-30d", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "GitHub Branch Activity — Core Radar Gen8",
+  "uid": "gen8-branch-activity",
+  "version": 1
+}

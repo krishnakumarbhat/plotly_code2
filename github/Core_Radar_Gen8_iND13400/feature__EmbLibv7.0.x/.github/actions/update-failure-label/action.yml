@@ -1,0 +1,101 @@
+name: Update Failure Label
+description: Add a failure label when a job fails and remove it when the job passes.
+
+inputs:
+  github-token:
+    description: 'GitHub token with issues: write permission'
+    required: true
+  pr-number:
+    description: 'Pull request number to update'
+    required: true
+  failed-flag:
+    description: 'Whether the workflow variant failed'
+    required: true
+  label-name:
+    description: 'Label name to add or remove'
+    required: true
+  label-description:
+    description: 'Label description used when creating the label'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Update failure label
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        FAILED_FLAG: ${{ inputs.failed-flag }}
+        LABEL_NAME: ${{ inputs.label-name }}
+        LABEL_DESCRIPTION: ${{ inputs.label-description }}
+      run: |
+        set -euo pipefail
+
+        API_BASE="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}"
+        LABEL_PATH=$(python3 -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['LABEL_NAME'], safe=''))")
+
+        api_status() {
+          local action="$1"
+          shift
+
+          local status=""
+          local rc=0
+          set +e
+          status=$(curl "$@")
+          rc=$?
+          if [ "${rc}" -ne 0 ]; then
+            echo "::notice::${action} failed once due to network/API error; retrying once."
+            status=$(curl "$@")
+            rc=$?
+          fi
+          set -e
+
+          if [ "${rc}" -ne 0 ]; then
+            echo "::warning::${action} failed after retry; skipping this API call."
+            echo "000"
+            return
+          fi
+
+          echo "${status}"
+        }
+
+        if [ "${FAILED_FLAG}" = "true" ]; then
+          STATUS_CODE=$(api_status "Lookup label ${LABEL_NAME}" -sS -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${API_BASE}/labels/${LABEL_PATH}")
+
+          if [ "${STATUS_CODE}" = "404" ]; then
+            CREATE_STATUS=$(api_status "Create label ${LABEL_NAME}" -sS -o /dev/null -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "Content-Type: application/json" \
+              "${API_BASE}/labels" \
+              -d "{\"name\":\"${LABEL_NAME}\",\"color\":\"d73a4a\",\"description\":\"${LABEL_DESCRIPTION}\"}")
+            if [ "${CREATE_STATUS}" != "201" ] && [ "${CREATE_STATUS}" != "200" ]; then
+              echo "::warning::Unable to create label '${LABEL_NAME}' (HTTP ${CREATE_STATUS})."
+            fi
+          fi
+
+          ADD_STATUS=$(api_status "Add label ${LABEL_NAME} to PR #${PR_NUMBER}" -sS -o /dev/null -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "${API_BASE}/issues/${PR_NUMBER}/labels" \
+            -d "[\"${LABEL_NAME}\"]")
+          if [ "${ADD_STATUS}" != "200" ] && [ "${ADD_STATUS}" != "201" ]; then
+            echo "::warning::Unable to add label '${LABEL_NAME}' to PR #${PR_NUMBER} (HTTP ${ADD_STATUS})."
+          fi
+        else
+          REMOVE_STATUS=$(api_status "Remove label ${LABEL_NAME} from PR #${PR_NUMBER}" -sS -o /dev/null -w '%{http_code}' -X DELETE \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${API_BASE}/issues/${PR_NUMBER}/labels/${LABEL_PATH}")
+
+          if [ "${REMOVE_STATUS}" = "200" ] || [ "${REMOVE_STATUS}" = "204" ] || [ "${REMOVE_STATUS}" = "404" ]; then
+            echo "No failure detected for '${LABEL_NAME}'; stale label removed if present."
+          else
+            echo "::warning::Unable to remove label '${LABEL_NAME}' from PR #${PR_NUMBER} (HTTP ${REMOVE_STATUS})."
+          fi
+        fi

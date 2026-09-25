@@ -1,0 +1,11 @@
+site_name: Core_Radar_Gen8_iND13400
+site_description: >
+  Gen8 embedded firmware for the indie iND13400 microcontroller, featuring AUTOSAR software
+  components for R52 and BBe32 processors with Bazel build system.
+docs_dir: docs
+
+plugins:
+  - techdocs-core
+
+nav:
+  - Home: index.md

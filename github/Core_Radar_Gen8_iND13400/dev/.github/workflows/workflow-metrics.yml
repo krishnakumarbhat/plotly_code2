@@ -1,0 +1,32 @@
+name: Workflow Metrics Collection
+run-name: "Workflow Metrics Collection (run #${{ github.event.client_payload.pipeline_info.workflow_run_number }}, id: ${{ github.event.client_payload.pipeline_info.workflow_run_id }}, branch: ${{ github.event.client_payload.git_info.branch_name }})"
+on:
+  repository_dispatch:
+    types: [workflow-metrics]
+
+jobs:
+  collect-workflow-metrics:
+    name: Collect Workflow Metrics
+    uses: Aptiv/workflows-library/.github/workflows/workflow-metrics.yml@v2
+    permissions:
+      contents: read
+      actions: read
+    with:
+      workflow-run-id: ${{ github.event.client_payload.pipeline_info.workflow_run_id }}
+      workflow-run-attempt: ${{ github.event.client_payload.pipeline_info.workflow_run_attempt }}
+      repo-id: ${{ github.event.client_payload.repo_info.repo_id }}
+      run-number: ${{ github.event.client_payload.pipeline_info.workflow_run_number }}
+      grafana-project-key: ${{ github.event.client_payload.grafana_project_key }}
+      runner: ${{ github.event.client_payload.runner }}
+      image: ${{ github.event.client_payload.image }}
+      container-options: ${{ github.event.client_payload.container_options }}
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+      GHCR_USER: ${{ vars.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      METRICS_DB_HOST: ${{ secrets.METRICS_DB_HOST }}
+      METRICS_DB_USER: ${{ secrets.METRICS_DB_USER }}
+      METRICS_DB_PASSWORD: ${{ secrets.METRICS_DB_PASSWORD }}
+      METRICS_DB_PORT: ${{ secrets.METRICS_DB_PORT }}
+      METRICS_DB_NAME: ${{ secrets.METRICS_DB_NAME }}

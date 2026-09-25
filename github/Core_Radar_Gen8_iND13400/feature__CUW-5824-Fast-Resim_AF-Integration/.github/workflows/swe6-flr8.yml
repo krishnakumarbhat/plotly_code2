@@ -1,0 +1,42 @@
+# SWE6 nightly trigger for the FLR8 family.
+# Thin wrapper around the generic reusable workflow (radar-test-reusable.yml).
+
+name: SWE6 FLR8 Nightly
+
+on:
+  workflow_dispatch:
+    inputs:
+      build-all-run-id:
+        description: 'build-all.yml run ID whose combined-outputs to use'
+        required: true
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  swe6-flr8:
+    name: SWE6 FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: SWE6
+      family: FLR8
+      test-folder: SWE6_Testing
+      rotation-strategy: daily
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe6-flr8.yml
+      gh-artifact-name: 'combined-outputs'
+      gh-artifact-workflow: 'build-all.yml'
+      gh-artifact-branch: ${{ github.ref_name }}
+      gh-artifact-run-id: ${{ inputs.build-all-run-id }}
+      runner-labels: '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]'
+      test-matrix-json: |
+        [
+          {"variant":"flr8_standalone",             "xcp":"Eth_Direct"},
+          {"variant":"flr8_al_can_standalone",      "xcp":"CAN"},
+          {"variant":"flr8_al_can_standalone",      "xcp":"Eth_Direct"},
+          {"variant":"flr8_satellite_can",          "xcp":"CAN"},
+          {"variant":"flr8_satellite_can",          "xcp":"Eth_Direct"},
+          {"variant":"flr8_satellite_eth_high_det", "xcp":"Eth_Direct"}
+        ]
+      email-recipients: ${{ vars.ADVRADAR_EMAIL_RECIPIENTS }}
+    secrets: inherit

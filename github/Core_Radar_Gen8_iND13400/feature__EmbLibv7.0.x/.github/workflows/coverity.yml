@@ -1,0 +1,448 @@
+name: Reusable Coverity Workflow
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: 'JSON array of matrix configurations (must include: variant, core, coverity_target, coverity_stream)'
+        required: true
+        type: string
+      pr-number:
+        description: 'Pull request number for failure label management'
+        required: false
+        type: string
+        default: ''
+      container-image:
+        description: 'Container image to use for Coverity'
+        required: false
+        type: string
+        default: 'containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593'
+      runner:
+        description: 'Runner label (e.g., gh-injected-gpo-linux-medium)'
+        required: false
+        type: string
+        default: 'gpo-coreradar-medium'
+      bazel-extra-flags:
+        description: 'Extra Bazel flags to append to the coverity command'
+        required: false
+        type: string
+        default: '--jobs=45'
+      nightly:
+        description: 'When true, adds --config=cov_commit and --noremote_accept_cached'
+        required: false
+        type: boolean
+        default: false
+      upload-artifact-paths:
+        description: 'Path(s) to upload as artifact'
+        required: false
+        type: string
+        default: 'coverity_build.log'
+    secrets:
+      GHCR_USER:
+        required: true
+      GHCR_TOKEN:
+        required: true
+      NETRC_CONTENT:
+        required: true
+      ARB_TOKEN:
+        required: true
+      COVERITY_COMMITTER_AUTH:
+        required: true
+      METRICS_DB_USER:
+        required: false
+      METRICS_DB_PASSWORD:
+        required: false
+      METRICS_DB_HOST:
+        required: false
+      METRICS_DB_PORT:
+        required: false
+      METRICS_DB_NAME:
+        required: false
+
+jobs:
+  coverity:
+    name: Coverity (${{ matrix.variant }}-${{ matrix.core }})
+    outputs:
+      coverity-high: ${{ steps.coverity_new.outputs.high }}
+      coverity-medium: ${{ steps.coverity_new.outputs.medium }}
+      coverity-low: ${{ steps.coverity_new.outputs.low }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.GHCR_USER }}
+        password: ${{ secrets.GHCR_TOKEN }}
+      options: -v /var/run/docker.sock:/var/run/docker.sock
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configure git safe.directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure netrc
+        uses: ./.github/actions/configure-netrc
+        with:
+          netrc-content: ${{ secrets.NETRC_CONTENT }}
+
+      - name: Configure bazel remote cache
+        uses: ./.github/actions/configure-bazel-cache
+        with:
+          arb-token: ${{ secrets.ARB_TOKEN }}
+
+      - name: Set up Coverity Auth
+        uses: ./.github/actions/setup-coverity-auth
+        with:
+          coverity-auth: ${{ secrets.COVERITY_COMMITTER_AUTH }}
+
+      - name: Setup bazelisk
+        id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Run coverity build
+        id: coverity_build
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+
+          BAZELISK_PATH="${{ steps.bazelisk.outputs.bazelisk-path }}"
+
+          NIGHTLY_FLAGS=()
+          if [ "${{ inputs.nightly }}" = "true" ]; then
+            NIGHTLY_FLAGS=(--config=cov_commit --noremote_accept_cached)
+          fi
+
+          BUILD_CMD=(
+            "$BAZELISK_PATH"
+            run
+            "${{ matrix.coverity_target }}"
+            "--config=${{ matrix.variant }}"
+          )
+
+          read -r -a EXTRA_FLAGS <<< "${{ inputs.bazel-extra-flags }}"
+          if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+            BUILD_CMD+=("${EXTRA_FLAGS[@]}")
+          fi
+
+          if [ "${#NIGHTLY_FLAGS[@]}" -gt 0 ]; then
+            BUILD_CMD+=("${NIGHTLY_FLAGS[@]}")
+          fi
+
+          BUILD_CMD+=(
+            "--build_event_json_file=build_event.json"
+            --
+            "--auth-key-file=/root/coverity.auth"
+          )
+
+          echo "**** Coverity command:"
+          printf '**** '
+          printf '%q ' "${BUILD_CMD[@]}"
+          echo
+          echo "****"
+
+          # -------- RETRY WITH BACKOFF --------
+          MAX_RETRIES=2
+          INITIAL_DELAY=5
+
+          attempt=1
+          delay=$INITIAL_DELAY
+          BUILD_RC=0
+
+          while true; do
+            echo "[COVERITY] Attempt ${attempt}/${MAX_RETRIES}"
+
+            set +e
+            stdbuf -oL -eL "${BUILD_CMD[@]}" 2>&1 | tee coverity_build.log
+            BUILD_RC=${PIPESTATUS[0]}
+            set -e
+
+            if [ "$BUILD_RC" -eq 0 ]; then
+              echo "[COVERITY] Success on attempt ${attempt}"
+              break
+            fi
+
+            # Optional: detect transient failures (network/DNS/infra)
+            if ! grep -qiE "temporarily unavailable|timeout|connection|network|fetch" coverity_build.log; then
+              echo "[COVERITY] Non-transient failure detected, not retrying."
+              break
+            fi
+
+            if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+              echo "[COVERITY] Failed after ${attempt} attempts"
+              break
+            fi
+
+            echo "::warning::Coverity failed (attempt ${attempt}). Retrying in ${delay}s..."
+            sleep "$delay"
+
+            attempt=$((attempt + 1))
+            delay=$((delay * 2))
+          done
+
+          exit "$BUILD_RC"
+
+      - name: Parse and summarize Coverity results
+        id: coverity_new
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VARIANT="${{ matrix.variant }}"
+          CORE="${{ matrix.core }}"
+          OUTCOME="${{ steps.coverity_build.outcome }}"
+          HIGH=0
+          MED=0
+          LOW=0
+          NEW_ISSUES=0
+          FATAL=0
+          INTRO_LINE=""
+          ISSUES_LINE=""
+          ISSUE_ROWS=""
+
+          if [ -f coverity_build.log ]; then
+            LOG_TAIL=$(tail -n 800 coverity_build.log)
+          else
+            LOG_TAIL=""
+          fi
+
+          if [ -n "$LOG_TAIL" ]; then
+            INTRO_LINE=$(printf '%s' "$LOG_TAIL" | grep -iE 'Introduced[[:space:]]+[0-9]+' | tail -n1 || true)
+            ISSUES_LINE=$(printf '%s' "$LOG_TAIL" | grep -E 'Issues[[:space:]]*\([0-9]+\):' | tail -n1 || true)
+
+            if [ -n "$INTRO_LINE" ] || [ -n "$ISSUES_LINE" ]; then
+              ISSUE_ROWS=$(printf '%s' "$LOG_TAIL" | awk '
+                BEGIN{capture=0;started=0}
+                /[Ii]ntroduced[[:space:]]+[0-9]+[[:space:]]+new defects/ {capture=1; next}
+                capture && /Issues[[:space:]]*\([0-9]+\):/ {capture=2; next}
+                capture == 2 && /^CID[[:space:]]/ {started=1; print; next}
+                capture == 2 && /^-+/ {started=1; print; next}
+                capture == 2 {
+                  if ($0 ~ /^\s*$/) {
+                    if (started) exit
+                    next
+                  }
+                  if ($0 ~ /^grep:|^---|^Build failed|^INFO:|^WARNING:|^ERROR:|^\[COVERITY\]/) {
+                    if (started) exit
+                    next
+                  }
+                  started=1
+                  print
+                }
+              ' || true)
+            fi
+
+            if printf '%s\n' "$LOG_TAIL" | grep -iE 'Unknown host:|Error in download|Build did NOT complete successfully|Analysis of target .* failed' >/dev/null 2>&1; then
+              FATAL=1
+            fi
+          fi
+
+          # Extract failure reason and detect network/transient issues for summary.
+          FAIL_REASON=""
+          LOG_TAIL_SNIPPET=""
+          IS_NETWORK="no"
+          if [ -f coverity_build.log ]; then
+            FAIL_REASON=$(grep -iE "^ERROR:|^FATAL:|Build did NOT complete successfully|Analysis of target .* failed|Unknown host:|Error in download|cov-build.*failed|cov-analyze.*failed" coverity_build.log || true)
+            LOG_TAIL_SNIPPET=$(tail -30 coverity_build.log || true)
+            if grep -qiE "temporarily unavailable|timeout|connection|network|fetch|Unknown host:" coverity_build.log 2>/dev/null; then
+              IS_NETWORK="yes"
+            fi
+          fi
+
+          if [ -n "$ISSUE_ROWS" ]; then
+            HIGH=$(printf '%s' "$ISSUE_ROWS" | awk 'BEGIN{h=0} { if($1 ~ /^[0-9]+$/){ if(tolower($2)=="high") h++ }} END{print h}')
+            MED=$(printf '%s' "$ISSUE_ROWS" | awk 'BEGIN{m=0} { if($1 ~ /^[0-9]+$/){ if(tolower($2)=="medium") m++ }} END{print m}')
+            LOW=$(printf '%s' "$ISSUE_ROWS" | awk 'BEGIN{l=0} { if($1 ~ /^[0-9]+$/){ if(tolower($2)=="low") l++ }} END{print l}')
+          fi
+
+          if [ -n "$INTRO_LINE" ]; then
+            INTRO_COUNT=$(printf '%s' "$INTRO_LINE" | sed -nE 's/.*[Ii]ntroduced[[:space:]]+([0-9]+).*/\1/p' || true)
+            if [ -n "$INTRO_COUNT" ]; then
+              NEW_ISSUES="$INTRO_COUNT"
+            fi
+          fi
+
+          if [ -z "$NEW_ISSUES" ] || [ "$NEW_ISSUES" -eq 0 ]; then
+            if [ -n "$ISSUES_LINE" ]; then
+              ISSUES_COUNT=$(printf '%s' "$ISSUES_LINE" | sed -nE 's/.*Issues[[:space:]]*\(([0-9]+)\).*/\1/p' || true)
+              if [ -n "$ISSUES_COUNT" ]; then
+                NEW_ISSUES="$ISSUES_COUNT"
+              fi
+            fi
+          fi
+
+          TOTAL=$((HIGH + MED + LOW))
+
+          echo "high=${HIGH}" >> "$GITHUB_OUTPUT"
+          echo "medium=${MED}" >> "$GITHUB_OUTPUT"
+          echo "low=${LOW}" >> "$GITHUB_OUTPUT"
+
+          {
+            if [ "$NEW_ISSUES" -gt 0 ]; then
+              echo "❌ **New Defects Detected**"
+            elif [ "$OUTCOME" = "failure" ] || [ "$FATAL" -gt 0 ]; then
+              echo "❌ **Coverity Build/Analysis Failed**"
+              echo ""
+              if [ -n "$FAIL_REASON" ]; then
+                echo "**Errors found in log:**"
+                echo '```'
+                echo "$FAIL_REASON"
+                echo '```'
+                echo ""
+              fi
+              if [ "$IS_NETWORK" = "yes" ]; then
+                echo "> ⚠️ **Network/transient issue detected.** Please [re-run the failed jobs](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) before investigating further."
+                echo ""
+              fi
+              if [ -n "$LOG_TAIL_SNIPPET" ]; then
+                echo "<details><summary>Last 30 lines of log</summary>"
+                echo ""
+                echo '```'
+                echo "$LOG_TAIL_SNIPPET"
+                echo '```'
+                echo ""
+                echo "</details>"
+              fi
+            else
+              echo "✅ **No New Defects**"
+            fi
+            echo ""
+            echo "| Property | Value |"
+            echo "|----------|-------|"
+            echo "| Variant | \`$VARIANT\` |"
+            echo "| Core | \`$CORE\` |"
+            echo "| Target | \`${{ matrix.coverity_target }}\` |"
+            echo "| Stream | \`${{ matrix.coverity_stream }}\` |"
+            echo "| Status | $OUTCOME |"
+            if [ "$NEW_ISSUES" -gt 0 ]; then
+              echo "| New Issues | $NEW_ISSUES |"
+            fi
+            if [ "$HIGH" -gt 0 ]; then
+              echo "| High | $HIGH |"
+            fi
+            if [ "$MED" -gt 0 ]; then
+              echo "| Medium | $MED |"
+            fi
+            if [ "$LOW" -gt 0 ]; then
+              echo "| Low | $LOW |"
+            fi
+
+            # Show issue rows only when there are non-zero new issues.
+            if [ "$TOTAL" -gt 0 ] && [ -n "$ISSUE_ROWS" ]; then
+              echo ""
+              echo "<details><summary>New Issues (${TOTAL})</summary>"
+              echo ""
+              echo '```'
+              printf '%s\n' "$ISSUE_ROWS"
+              echo '```'
+              echo ""
+              echo "</details>"
+            fi
+          } >> $GITHUB_STEP_SUMMARY
+
+          if [ "$NEW_ISSUES" -gt 0 ]; then
+            if [ -n "$ISSUE_ROWS" ]; then
+              echo "[COVERITY] New issue details:"
+              printf '%s\n' "$ISSUE_ROWS"
+            fi
+            echo "::error::Coverity introduced new issues: ${NEW_ISSUES}. High=${HIGH}, Medium=${MED}, Low=${LOW}. Failing job."
+            exit 1
+          fi
+
+          if [ "$FATAL" -gt 0 ]; then
+            echo "::error::Coverity build failed during analysis or dependency fetch. See coverity_build.log for details."
+            exit 1
+          fi
+
+      - name: Run coverity summary
+        if: always() && steps.coverity_build.outcome == 'success'
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+
+          BAZELISK_PATH="${{ steps.bazelisk.outputs.bazelisk-path }}"
+          CORE="${{ matrix.core }}"
+
+          SUMMARY_CMD=(
+            "$BAZELISK_PATH"
+            build
+            "//software/${CORE}:coverity_summary"
+            "--config=${{ matrix.variant }}"
+          )
+
+          printf 'Running coverity summary command:'
+          printf ' %q' "${SUMMARY_CMD[@]}"
+          printf '\n'
+
+          "${SUMMARY_CMD[@]}" 2>&1 | tee coverity_summary.log
+
+          BAZEL_BIN="$($BAZELISK_PATH info bazel-bin)"
+          SUMMARY_SRC="${BAZEL_BIN}/software/${CORE}/${CORE}_coverity_summary.txt"
+          SUMMARY_DST="${CORE}_coverity_summary.txt"
+
+          if [ -f "$SUMMARY_SRC" ]; then
+            cp "$SUMMARY_SRC" "$SUMMARY_DST"
+            echo "Copied summary to $SUMMARY_DST"
+          else
+            echo "::warning::Expected summary file not found at $SUMMARY_SRC"
+          fi
+
+      - name: Upload coverity logs
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: "coverity-${{ matrix.variant }}-${{ matrix.core }}.zip"
+          path: |
+            ${{ inputs.upload-artifact-paths }}
+            coverity_summary.log
+            ${{ matrix.core }}_coverity_summary.txt
+          if-no-files-found: warn
+
+      - name: Publish Metrics
+        id: publish_metrics
+        if: always() && inputs.nightly
+        uses: ./.github/actions/publish-coverity-metrics
+        with:
+          variant: ${{ matrix.variant }}
+          core: ${{ matrix.core }}
+          coverity-stream: ${{ matrix.coverity_stream }}
+          high-count: ${{ steps.coverity_new.outputs.high }}
+          medium-count: ${{ steps.coverity_new.outputs.medium }}
+          low-count: ${{ steps.coverity_new.outputs.low }}
+          output-file: coverity-metrics/${{ matrix.variant }}-${{ matrix.core }}.jsonl
+          db-publish-enabled: ${{ github.event_name != 'pull_request' && github.ref_name == 'dev' }}
+          metrics-db-user: ${{ secrets.METRICS_DB_USER }}
+          metrics-db-password: ${{ secrets.METRICS_DB_PASSWORD }}
+          metrics-db-host: ${{ secrets.METRICS_DB_HOST }}
+          metrics-db-port: ${{ secrets.METRICS_DB_PORT }}
+          metrics-db-name: ${{ secrets.METRICS_DB_NAME }}
+          commit-id: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          project-name: ${{ github.event.repository.name }}
+          tag: ''
+          pipeline-name: ${{ github.workflow }}
+          build-no: ${{ github.run_number }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Update coverity failure label
+        if: always() && inputs.pr-number != '' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/update-failure-label
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ inputs.pr-number }}
+          failed-flag: ${{ steps.coverity_build.outcome != 'success' || steps.coverity_new.outcome != 'success' }}
+          label-name: coverity failed - ${{ matrix.variant }}-${{ matrix.core }}
+          label-description: Indicates this coverity variant failed on the latest PR run

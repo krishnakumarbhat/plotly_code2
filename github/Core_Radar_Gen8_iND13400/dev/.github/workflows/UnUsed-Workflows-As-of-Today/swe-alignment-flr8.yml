@@ -1,0 +1,42 @@
+# Alignment nightly trigger for the FLR8 family.
+# Thin wrapper around the generic reusable workflow (radar-test-reusable.yml).
+#
+# SKELETON — uses the SWE6_Testing folder but narrows execution to the
+# Alignment module via the -m marker. Adjust the variant/xcp matrix, markers,
+# runner-labels, and email-recipients to taste.
+#
+# Triggers:
+#   - workflow_dispatch: manual trigger via the Actions UI (ONLY trigger today).
+#
+#   TODO: when ready to chain after SWE6 FLR8 Nightly, uncomment the
+#   `workflow_run` block below.
+
+name: SWE Alignment FLR8 Nightly
+
+on:
+  # workflow_run:
+  #   workflows: ["SWE6 FLR8 Nightly"]
+  #   types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  alignment-flr8:
+    name: SWE Alignment FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: ALIGNMENT
+      family: FLR8
+      # Run from the SWE6_Testing folder; filter to alignment tests via marker.
+      test-folder: SWE6_Testing
+      markers: 'Module=ALIGNMENT_Module'
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_standalone", "xcp":"Eth_Direct"}
+        ]
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/alignment-flr8.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

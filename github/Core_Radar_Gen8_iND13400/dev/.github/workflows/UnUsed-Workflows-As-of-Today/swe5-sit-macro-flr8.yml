@@ -1,0 +1,43 @@
+# SWE5 SIT_MACRO nightly trigger for the FLR8 family.
+# Thin wrapper around the generic reusable workflow (radar-test-reusable.yml).
+#
+# SKELETON — adjust the variant/xcp matrix, runner-labels, email-recipients,
+# and any markers/extra-args to taste.
+#
+# Triggers:
+#   - workflow_dispatch: manual trigger via the Actions UI (ONLY trigger today).
+#
+#   TODO: when ready to chain after SWE6 FLR8 Nightly, uncomment the
+#   `workflow_run` block below.
+
+name: SWE5 SIT_MACRO FLR8 Nightly
+
+on:
+  # workflow_run:
+  #   workflows: ["SWE6 FLR8 Nightly"]
+  #   types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sit-macro-flr8:
+    name: SWE5 SIT_MACRO FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: SWE5_SIT_MACRO
+      family: FLR8
+      # Source folder under testcases/GEN8_Test_Cases/
+      test-folder: SWE5_TestScript_SIT_MACRO
+      # Reports directory under the framework root (matches launcher_config.toml
+      # folder_map for SWE5_TestScript_SIT_MACRO).
+      report-subdir: Reports/SWE5_SIT_MACRO
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_standalone", "xcp":"Eth_Direct"}
+        ]
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe5-sit-macro-flr8.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

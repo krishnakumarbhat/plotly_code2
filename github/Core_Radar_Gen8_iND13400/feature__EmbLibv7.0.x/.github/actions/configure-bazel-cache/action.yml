@@ -1,0 +1,24 @@
+name: Configure Bazel Remote Cache
+description: Configure Bazel remote cache with ARB token
+
+inputs:
+  arb-token:
+    description: 'ARB_TOKEN secret for remote cache'
+    required: true
+  output-file:
+    description: 'Output file for bazel config (default: user.bazelrc)'
+    required: false
+    default: 'user.bazelrc'
+
+runs:
+  using: composite
+  steps:
+    - name: Configure bazel remote cache
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.arb-token }}" ]; then
+          echo "Missing ARB_TOKEN secret for remote cache." >&2
+          exit 1
+        fi
+        echo "build --bes_header=x-arb-api-key=${{ inputs.arb-token }}" > ${{ inputs.output-file }}
+        echo "build --remote_header=x-arb-api-key=${{ inputs.arb-token }}" >> ${{ inputs.output-file }}

@@ -1,0 +1,81 @@
+name: Create Annotated Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name (e.g., v6.2.1 or v6.1.0.120)'
+        required: true
+        type: string
+      git_ref:
+        description: 'Git reference - branch or commit SHA (e.g., release/v6.0.x or 67f92af676c466a600062c4400e76eb6e97213fd)'
+        required: true
+        type: string
+      comment:
+        description: 'Tag comment/annotation (e.g., "AL B Sample Bringup" or "Test package 47")'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate app token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.DSO_BOT_APP_ID }}
+          private-key: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Trim whitespace from inputs
+        run: |
+          echo "TAG_NAME=$(echo '${{ inputs.tag_name }}' | xargs)" >> $GITHUB_ENV
+          echo "GIT_REF=$(echo '${{ inputs.git_ref }}' | xargs)" >> $GITHUB_ENV
+          echo "COMMENT=$(echo '${{ inputs.comment }}' | xargs)" >> $GITHUB_ENV
+
+      - name: Verify tag does not exist
+        run: |
+          git fetch --tags
+          if git rev-parse "${{ env.TAG_NAME }}" >/dev/null 2>&1; then
+            echo "❌ Error: Tag '${{ env.TAG_NAME }}' already exists in the repository"
+            echo "Please choose a different tag name or delete the existing tag before retrying."
+            exit 1
+          else
+            echo "✓ Tag '${{ env.TAG_NAME }}' is available"
+          fi
+
+      - name: Verify git reference exists
+        run: |
+          if ! git rev-parse "${{ env.GIT_REF }}"^{commit} >/dev/null 2>&1; then
+            echo "❌ Error: Git reference '${{ env.GIT_REF }}' does not exist"
+            echo "Please provide a valid branch name or commit SHA."
+            exit 1
+          else
+            echo "✓ Git reference '${{ env.GIT_REF }}' found"
+          fi
+
+      - name: Create annotated tag
+        run: |
+          git config user.name "DSO Bot"
+          git config user.email "dso-bot@aptiv.com"
+          git tag -a "${{ env.TAG_NAME }}" "${{ env.GIT_REF }}"^{commit} -m "${{ env.COMMENT }}"
+
+      - name: Push tag
+        run: |
+          git push origin "${{ env.TAG_NAME }}"
+
+      - name: Output tag info
+        run: |
+          echo "Tag created successfully"
+          echo "Tag name: ${{ env.TAG_NAME }}"
+          echo "Git ref: ${{ env.GIT_REF }}"
+          echo "Comment: ${{ env.COMMENT }}"

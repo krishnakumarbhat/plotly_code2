@@ -1,0 +1,608 @@
+name: Reusable Unit Tests Workflow
+
+on:
+  workflow_call:
+    inputs:
+      test-target:
+        description: 'Bazel test target (e.g., //coverage:report or //:all_unit_tests)'
+        required: true
+        type: string
+      config:
+        description: 'Bazel config name (e.g., flr8, srr8p)'
+        required: false
+        type: string
+        default: 'flr8'
+      matrix-json:
+        description: 'Optional JSON array for internal matrix (e.g., [{"config":"flr8"},{"config":"srr8p"}])'
+        required: false
+        type: string
+        default: ''
+      pr-number:
+        description: 'Pull request number for failure label management'
+        required: false
+        type: string
+        default: ''
+      nightly:
+        description: 'When true, generate and print unit test metrics payloads for publish flow'
+        required: false
+        type: boolean
+        default: false
+      force-db-publish:
+        description: 'When true, bypass branch/event DB gating and force PostgreSQL metrics publish attempt'
+        required: false
+        type: boolean
+        default: false
+      container-image:
+        description: 'Container image to use for tests'
+        required: false
+        type: string
+        default: 'containers.aptv.ghe.com/devsecops/core-radar/build-format-ready:1861593'
+      upload-artifact-name:
+        description: 'Name for the uploaded artifact'
+        required: false
+        type: string
+        default: 'unit-test-output'
+      upload-artifact-paths:
+        description: 'Path(s) to upload as artifact (newline-separated for multiple)'
+        required: false
+        type: string
+        default: |
+          bazel-bin/coverage/report_html
+          bazel-bin/coverage/report.txt
+          test-results
+          unit_test.log
+      runner:
+        description: 'Runner label (e.g., gh-injected-gpo-linux-medium)'
+        required: false
+        type: string
+        default: 'gh-injected-gpo-linux-medium'
+      bazel-extra-flags:
+        description: 'Extra Bazel flags to append to the test command'
+        required: false
+        type: string
+        default: '--color=yes'
+      artifact-if-no-files-found:
+        description: 'Behavior if no files found: error, warn, ignore'
+        required: false
+        type: string
+        default: 'warn'
+    secrets:
+      GHCR_USER:
+        required: true
+      GHCR_TOKEN:
+        required: true
+      NETRC_CONTENT:
+        required: true
+      ARB_TOKEN:
+        required: true
+      METRICS_DB_USER:
+        required: false
+      METRICS_DB_PASSWORD:
+        required: false
+      METRICS_DB_HOST:
+        required: false
+      METRICS_DB_PORT:
+        required: false
+      METRICS_DB_NAME:
+        required: false
+
+jobs:
+  unit-test:
+    name: Unit Test (${{ matrix.config || inputs.config }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ${{ inputs.runner }}
+    container:
+      image: ${{ inputs.container-image }}
+      credentials:
+        username: ${{ secrets.GHCR_USER }}
+        password: ${{ secrets.GHCR_TOKEN }}
+      options: -v /var/run/docker.sock:/var/run/docker.sock
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Configure git safe.directory
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure netrc
+        uses: ./.github/actions/configure-netrc
+        with:
+          netrc-content: ${{ secrets.NETRC_CONTENT }}
+
+      - name: Configure bazel remote cache
+        uses: ./.github/actions/configure-bazel-cache
+        with:
+          arb-token: ${{ secrets.ARB_TOKEN }}
+
+      - name: Setup bazelisk
+        id: bazelisk
+        uses: ./.github/actions/setup-bazelisk
+
+      - name: Run unit tests
+        id: tests
+        shell: bash
+        continue-on-error: true
+        env:
+          TEST_CONFIG: ${{ matrix.config || inputs.config }}
+        run: |
+          set -euo pipefail
+
+          BAZELISK_PATH="${{ steps.bazelisk.outputs.bazelisk-path }}"
+          TEST_TARGET="${{ inputs.test-target }}"
+
+          TEST_CMD=(
+            "${BAZELISK_PATH}"
+            test
+            "${TEST_TARGET}"
+            "--config=${TEST_CONFIG}"
+          )
+
+          read -r -a EXTRA_FLAGS <<< "${{ inputs.bazel-extra-flags }}"
+          if [ "${#EXTRA_FLAGS[@]}" -gt 0 ]; then
+            TEST_CMD+=("${EXTRA_FLAGS[@]}")
+          fi
+
+          TEST_CMD+=("--build_event_json_file=build_event.json")
+
+          echo "**** Bazel test command:"
+          printf '**** '
+          printf '%q ' "${TEST_CMD[@]}"
+          echo
+          echo "****"
+
+          # -------- RETRY WITH BACKOFF --------
+          MAX_RETRIES=2
+          INITIAL_DELAY=5
+
+          attempt=1
+          delay=$INITIAL_DELAY
+          TEST_RC=0
+
+          while true; do
+            echo "[UNIT TEST] Attempt ${attempt}/${MAX_RETRIES}"
+
+            set +e
+            stdbuf -oL -eL "${TEST_CMD[@]}" 2>&1 | tee unit_test.log
+            TEST_RC=${PIPESTATUS[0]}
+            set -e
+
+            if [ "$TEST_RC" -eq 0 ]; then
+              echo "[UNIT TEST] Success on attempt ${attempt}"
+              break
+            fi
+
+            # 🔍 Detect transient infra issues ONLY
+            if ! grep -qiE "temporarily unavailable|timeout|connection|network|fetch|remote cache" unit_test.log; then
+              echo "[UNIT TEST] Real test failure detected — not retrying."
+              break
+            fi
+
+            if [ "$attempt" -ge "$MAX_RETRIES" ]; then
+              echo "[UNIT TEST] Failed after ${attempt} attempts"
+              break
+            fi
+
+            echo "::warning::Unit test run failed (attempt ${attempt}). Retrying in ${delay}s..."
+            sleep $((delay + RANDOM % 5))   # jitter added
+
+            attempt=$((attempt + 1))
+            delay=$((delay * 2))
+          done
+
+          exit "$TEST_RC"
+
+      - name: Run true count
+        if: always()
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+
+          RUN_CMD=(
+            "${{ steps.bazelisk.outputs.bazelisk-path }}"
+            run
+            "//tools/python/unitTestTrueCount:getUTTrueCount"
+          )
+
+          # Echo the full command
+          echo "**** Bazel run command:"
+          printf '**** '
+          printf '%q ' "${RUN_CMD[@]}"
+          echo
+          echo "****"
+
+          "${RUN_CMD[@]}"
+
+          if [ -f "ut_true_count_report.json" ]; then
+            mkdir -p "bazel-bin/coverage"
+            cp "ut_true_count_report.json" "bazel-bin/coverage/ut_true_count_report.json"
+          fi
+
+      - name: Report test results
+        id: report_results
+        if: always()
+        shell: bash
+        env:
+          TEST_CONFIG: ${{ matrix.config || inputs.config }}
+        run: |
+          set -euo pipefail
+
+          COVERAGE_REPORT_TXT="bazel-bin/coverage/report.txt"
+          COVERAGE_INDEX="bazel-bin/coverage/report_html/index.html"
+          COVERAGE_SUMMARY_TXT="bazel-bin/coverage/coverage_summary.txt"
+          GCOVR_JSON="bazel-bin/coverage/report_gcovr_report.json"
+          TRUE_COUNT_JSON="ut_true_count_report.json"
+          if [ ! -f "${TRUE_COUNT_JSON}" ] && [ -f "bazel-bin/coverage/ut_true_count_report.json" ]; then
+            TRUE_COUNT_JSON="bazel-bin/coverage/ut_true_count_report.json"
+          fi
+          TEST_OUTCOME="${{ steps.tests.outcome }}"
+          BAZEL_FAILED="false"
+          MISSING_FILES=""
+          UNTESTED_COUNT=""
+          TOTAL_TESTS=""
+          TRUE_COUNT_COVERAGE=""
+          LINE_ACT=""
+          LINE_REQ=""
+          LINE_STATUS=""
+          DECISION_ACT=""
+          DECISION_REQ=""
+          DECISION_STATUS=""
+          FUNCTION_ACT=""
+          FUNCTION_REQ=""
+          FUNCTION_STATUS=""
+          BRANCH_ACT=""
+          BRANCH_REQ=""
+          BRANCH_STATUS=""
+          FAILURE_KIND=""
+          FAILURE_DETAIL=""
+          FAILURE_NOTE=""
+          TEST_EXECUTION_NOTE=""
+
+          metric_status() {
+            local act="$1"
+            local req="$2"
+            if awk -v a="${act}" -v r="${req}" 'BEGIN { exit (a+0 >= r+0) ? 0 : 1 }'; then
+              echo "🟢"
+            else
+              echo "🔴"
+            fi
+          }
+
+          # Prefer parsing gcovr text report because it is simpler and more stable than HTML.
+          if [ -f "${COVERAGE_REPORT_TXT}" ]; then
+            COVERAGE_ROW=$(grep -m 1 -E '//coverage:report' "${COVERAGE_REPORT_TXT}" || true)
+            UNTESTED_COUNT=$(grep -m 1 -E 'Untested source files \([0-9]+\)' "${COVERAGE_REPORT_TXT}" | grep -Eo '[0-9]+' || true)
+
+            if [ -n "${COVERAGE_ROW}" ]; then
+              mapfile -t PCTS < <(echo "${COVERAGE_ROW}" | grep -Eo '[0-9]+(\.[0-9]+)?' || true)
+
+              if [ "${#PCTS[@]}" -ge 8 ]; then
+                LINE_ACT="${PCTS[0]}"
+                LINE_REQ="${PCTS[1]}"
+                DECISION_ACT="${PCTS[2]}"
+                DECISION_REQ="${PCTS[3]}"
+                FUNCTION_ACT="${PCTS[4]}"
+                FUNCTION_REQ="${PCTS[5]}"
+                BRANCH_ACT="${PCTS[6]}"
+                BRANCH_REQ="${PCTS[7]}"
+              fi
+            fi
+          fi
+
+          # Fallback: parse the top summary row from gcovr HTML report.
+          if [ -z "${LINE_ACT}" ] && [ -f "${COVERAGE_INDEX}" ]; then
+            INDEX_ONE_LINE=$(tr '\n' ' ' < "${COVERAGE_INDEX}" | tr -s ' ' || true)
+            COVERAGE_ROW=$(echo "${INDEX_ONE_LINE}" | grep -oP '//coverage:report.*?</tr>' | head -n 1 || true)
+
+            if [ -n "${COVERAGE_ROW}" ]; then
+              CLEAN_ROW=$(echo "${COVERAGE_ROW}" | sed -E 's/<[^>]+>/ /g' | tr -s ' ' || true)
+              mapfile -t PCTS < <(echo "${CLEAN_ROW}" | grep -Eo '[0-9]+(\.[0-9]+)?' || true)
+
+              if [ "${#PCTS[@]}" -ge 8 ]; then
+                LINE_ACT="${PCTS[0]}"
+                LINE_REQ="${PCTS[1]}"
+                DECISION_ACT="${PCTS[2]}"
+                DECISION_REQ="${PCTS[3]}"
+                FUNCTION_ACT="${PCTS[4]}"
+                FUNCTION_REQ="${PCTS[5]}"
+                BRANCH_ACT="${PCTS[6]}"
+                BRANCH_REQ="${PCTS[7]}"
+              fi
+            fi
+
+            if [ -z "${UNTESTED_COUNT}" ]; then
+              UNTESTED_COUNT=$(grep -oP 'Untested source files \(\K[0-9]+' "${COVERAGE_INDEX}" | head -n 1 || true)
+            fi
+          fi
+
+          if [ -n "${LINE_ACT}" ] && [ -n "${LINE_REQ}" ]; then
+            LINE_STATUS=$(metric_status "${LINE_ACT}" "${LINE_REQ}")
+          fi
+          if [ -n "${DECISION_ACT}" ] && [ -n "${DECISION_REQ}" ]; then
+            DECISION_STATUS=$(metric_status "${DECISION_ACT}" "${DECISION_REQ}")
+          fi
+          if [ -n "${FUNCTION_ACT}" ] && [ -n "${FUNCTION_REQ}" ]; then
+            FUNCTION_STATUS=$(metric_status "${FUNCTION_ACT}" "${FUNCTION_REQ}")
+          fi
+          if [ -n "${BRANCH_ACT}" ] && [ -n "${BRANCH_REQ}" ]; then
+            BRANCH_STATUS=$(metric_status "${BRANCH_ACT}" "${BRANCH_REQ}")
+          fi
+
+          # Required outputs: at least one human-readable coverage artifact should exist.
+          if [ ! -f "${COVERAGE_REPORT_TXT}" ] && [ ! -f "${COVERAGE_INDEX}" ] && [ ! -f "${COVERAGE_SUMMARY_TXT}" ]; then
+            MISSING_FILES="${COVERAGE_REPORT_TXT}\n${COVERAGE_INDEX}\n${COVERAGE_SUMMARY_TXT}"
+          fi
+
+          # Extract total_coverage from true count JSON if available.
+          if [ -f "${TRUE_COUNT_JSON}" ]; then
+            TRUE_COUNT_COVERAGE=$(python3 -c "import json; print(json.load(open('${TRUE_COUNT_JSON}'))['total_coverage'])" 2>/dev/null || true)
+          fi
+
+          if [ "${TEST_OUTCOME}" != "success" ] || [ -n "${MISSING_FILES}" ]; then
+            BAZEL_FAILED="true"
+          fi
+
+          if [ -f "unit_test.log" ]; then
+            LOG_TAIL=$(tail -n 800 unit_test.log)
+
+            if printf '%s\n' "${LOG_TAIL}" | grep -iE 'Unknown host:|Error in download_and_extract:|Error downloading \[|Analysis of target .* failed' >/dev/null 2>&1; then
+              FAILURE_KIND="Dependency fetch / network infrastructure failure"
+              FAILURE_NOTE="This looks like an external dependency fetch or DNS/network issue, not a normal unit-test assertion failure."
+              FAILURE_DETAIL=$(printf '%s\n' "${LOG_TAIL}" | grep -im1 -E 'Unknown host:|Error in download_and_extract:|Error downloading \[|Analysis of target .* failed' || true)
+              echo "::warning::Detected likely dependency fetch/network infrastructure failure during unit tests."
+            fi
+
+            TOTAL_TESTS=$(awk '
+              $0 ~ /^\[[^]]+\][[:space:]]+[0-9]+[[:space:]]+tests?[[:space:]]+from[[:space:]]+/ {
+                line = $0
+                sub(/^\[[^]]+\][[:space:]]+/, "", line)
+                split(line, parts, /[[:space:]]+tests?[[:space:]]+from[[:space:]]+/)
+                if (length(parts[1]) == 0 || length(parts[2]) == 0) {
+                  next
+                }
+                count = parts[1] + 0
+                suite = parts[2]
+                sub(/[[:space:]]+\([0-9]+[[:space:]]+ms[[:space:]]+total\)[[:space:]]*$/, "", suite)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", suite)
+                if (suite == "") {
+                  next
+                }
+                if (!(suite in max_count) || count > max_count[suite]) {
+                  max_count[suite] = count
+                }
+              }
+              END {
+                total = 0
+                for (s in max_count) {
+                  total += max_count[s]
+                }
+                if (total > 0) {
+                  printf "%d", total
+                }
+              }
+            ' unit_test.log)
+          fi
+
+          if [ -n "${TOTAL_TESTS}" ]; then
+            TOTAL_TESTS_DISPLAY="${TOTAL_TESTS}"
+          elif [ "${BAZEL_FAILED}" = "true" ]; then
+            TOTAL_TESTS_DISPLAY="Not executed"
+            TEST_EXECUTION_NOTE="Unit tests did not reach gtest execution because Bazel failed during analysis/setup."
+          else
+            TOTAL_TESTS_DISPLAY="N/A"
+          fi
+          UNTESTED_COUNT_DISPLAY="${UNTESTED_COUNT:-N/A}"
+          TRUE_COUNT_COVERAGE_DISPLAY="N/A"
+          if [ -n "${TRUE_COUNT_COVERAGE}" ]; then
+            TRUE_COUNT_COVERAGE_DISPLAY="${TRUE_COUNT_COVERAGE}%"
+          fi
+
+          {
+            if [ "${BAZEL_FAILED}" = "false" ]; then
+              echo "✅ **All Tests Passed**"
+            elif [ -n "${FAILURE_KIND}" ]; then
+              echo "❌ **Tests Failed (${FAILURE_KIND})**"
+            else
+              echo "❌ **Tests Failed (Bazel Build/Test Failure)**"
+            fi
+            echo ""
+            echo "| Property | Value |"
+            echo "|----------|-------|"
+            echo "| Test Target | \`${{ inputs.test-target }}\` |"
+            echo "| Config | \`${TEST_CONFIG}\` |"
+            echo "| Status | ${TEST_OUTCOME} |"
+            echo "| Total tests | ${TOTAL_TESTS_DISPLAY} |"
+            echo "| Untested source files | ${UNTESTED_COUNT_DISPLAY} |"
+            echo "| True count coverage | ${TRUE_COUNT_COVERAGE_DISPLAY} |"
+
+            if [ "${BAZEL_FAILED}" = "true" ]; then
+              echo ""
+              echo "### Bazel Failure Details"
+              if [ -n "${FAILURE_KIND}" ]; then
+                echo "- Failure classification: ${FAILURE_KIND}"
+              fi
+              if [ "${TEST_OUTCOME}" != "success" ]; then
+                echo "- Bazel test command failed before completing coverage generation."
+              fi
+              if [ -n "${FAILURE_NOTE}" ]; then
+                echo "- ${FAILURE_NOTE}"
+              fi
+              if [ -n "${TEST_EXECUTION_NOTE}" ]; then
+                echo "- ${TEST_EXECUTION_NOTE}"
+              fi
+              if [ -n "${FAILURE_DETAIL}" ]; then
+                echo "- First matching failure detail:"
+                echo '```'
+                printf '%s\n' "${FAILURE_DETAIL}"
+                echo '```'
+              fi
+              if [ -n "${MISSING_FILES}" ]; then
+                echo "- Required coverage outputs were missing (treated as Bazel build failure):"
+                echo '```'
+                printf '%b\n' "${MISSING_FILES}"
+                echo '```'
+              fi
+            fi
+
+            if [ -n "${LINE_ACT}" ] && [ -n "${LINE_REQ}" ] && [ -n "${DECISION_ACT}" ] && [ -n "${DECISION_REQ}" ] && [ -n "${FUNCTION_ACT}" ] && [ -n "${FUNCTION_REQ}" ] && [ -n "${BRANCH_ACT}" ] && [ -n "${BRANCH_REQ}" ]; then
+              echo ""
+              echo "### Coverage Summary"
+              echo ""
+              echo "| Metric | Actual | Required | Status |"
+              echo "|---|---:|---:|:---:|"
+              echo "| Line | ${LINE_ACT}% | ${LINE_REQ}% | ${LINE_STATUS} |"
+              echo "| Decision | ${DECISION_ACT}% | ${DECISION_REQ}% | ${DECISION_STATUS} |"
+              echo "| Function | ${FUNCTION_ACT}% | ${FUNCTION_REQ}% | ${FUNCTION_STATUS} |"
+              echo "| Branch | ${BRANCH_ACT}% | ${BRANCH_REQ}% | ${BRANCH_STATUS} |"
+            elif [ -f "bazel-bin/coverage/coverage_summary.txt" ]; then
+              # Fallback for non-HTML coverage layouts.
+              echo ""
+              echo "### Coverage Summary"
+              echo '```'
+              head -n 20 bazel-bin/coverage/coverage_summary.txt
+              echo '```'
+            fi
+
+          } >> $GITHUB_STEP_SUMMARY
+
+          # --- Capture failed test details and append to the summary ---
+          # Prefer the GoogleTest "N tests, listed below" block to avoid duplicate entries.
+          FAILED_LIST_BLOCK=""
+          FAIL_COUNT=""
+
+          if [ -f "unit_test.log" ]; then
+            FAILED_LIST_BLOCK=$(awk '
+              BEGIN{capture=0}
+              /^\[[[:space:]]*FAILED[[:space:]]*\][[:space:]]+[0-9]+[[:space:]]+tests,[[:space:]]+listed below:/ {capture=1}
+              capture {print}
+              capture && /^[[:space:]]*[0-9]+[[:space:]]+FAILED TESTS$/ {exit}
+            ' unit_test.log || true)
+
+            # Fallback if the "listed below" block is unavailable.
+            if [ -z "${FAILED_LIST_BLOCK}" ]; then
+              FAILED_LIST_BLOCK=$(grep -E '^\[[[:space:]]*FAILED[[:space:]]*\]' unit_test.log 2>/dev/null | awk '!seen[$0]++' || true)
+            fi
+
+            FAIL_COUNT=$(printf '%s\n' "${FAILED_LIST_BLOCK}" | sed -nE 's/^\[[[:space:]]*FAILED[[:space:]]*\][[:space:]]+([0-9]+)[[:space:]]+tests, listed below:.*/\1/p' | head -n1 || true)
+          fi
+
+          if [ -n "${FAILED_LIST_BLOCK}" ]; then
+            if [ -z "${FAIL_COUNT}" ]; then
+              FAIL_COUNT="unknown"
+            fi
+            {
+              echo ""
+              echo "<details><summary>Failed Tests (${FAIL_COUNT})</summary>"
+              echo ""
+              echo '```'
+              # Keep summary compact but complete for typical failures.
+              echo "${FAILED_LIST_BLOCK}" | sed -n '1,250p'
+              echo '```'
+              echo "</details>"
+            } >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Build per-suite test counts from gtest lines like:
+          # [----------] 12 tests from Compute_Rcs_Test_Suite
+          SUITE_SUMMARY_FILE="test-results/unit_test_suite_summary.txt"
+          if [ -f "unit_test.log" ]; then
+            mkdir -p "$(dirname "${SUITE_SUMMARY_FILE}")"
+            awk '
+              $0 ~ /^\[[^]]+\][[:space:]]+[0-9]+[[:space:]]+tests?[[:space:]]+from[[:space:]]+/ {
+                line = $0
+                sub(/^\[[^]]+\][[:space:]]+/, "", line)
+                split(line, parts, /[[:space:]]+tests?[[:space:]]+from[[:space:]]+/)
+                if (length(parts[1]) == 0 || length(parts[2]) == 0) {
+                  next
+                }
+                count = parts[1] + 0
+                suite = parts[2]
+                sub(/[[:space:]]+\([0-9]+[[:space:]]+ms[[:space:]]+total\)[[:space:]]*$/, "", suite)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", suite)
+                if (suite == "") {
+                  next
+                }
+                if (!(suite in max_count) || count > max_count[suite]) {
+                  max_count[suite] = count
+                }
+              }
+              END {
+                for (s in max_count) {
+                  printf "%s: %d\n", s, max_count[s]
+                }
+              }
+            ' unit_test.log | sort > "${SUITE_SUMMARY_FILE}"
+
+            if [ -s "${SUITE_SUMMARY_FILE}" ]; then
+              SUITE_TOTAL_TESTS=$(awk -F': ' '/: [0-9]+$/ {sum += $2} END {print sum + 0}' "${SUITE_SUMMARY_FILE}")
+              echo "Total tests: ${SUITE_TOTAL_TESTS}" >> "${SUITE_SUMMARY_FILE}"
+            fi
+
+            # Test suite case counts are saved to artifact but not displayed in summary
+            if [ ! -s "${SUITE_SUMMARY_FILE}" ]; then
+              if [ "${BAZEL_FAILED}" = "true" ]; then
+                echo "::notice::No gtest suite count lines found because unit tests did not reach execution; ${SUITE_SUMMARY_FILE} is empty."
+              else
+                echo "::notice::No gtest suite count lines found in unit_test.log; ${SUITE_SUMMARY_FILE} is empty."
+              fi
+            fi
+          fi
+
+          echo "bazel-failed=${BAZEL_FAILED}" >> "$GITHUB_OUTPUT"
+
+          # Fail this step so downstream status and PR labels reflect Bazel/test failures.
+          if [ "${BAZEL_FAILED}" = "true" ]; then
+            exit 1
+          fi
+
+      - name: Upload unit test outputs
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.upload_artifact_name || inputs.upload-artifact-name }}
+          path: ${{ matrix.upload_artifact_paths || inputs.upload-artifact-paths }}
+          if-no-files-found: ${{ inputs.artifact-if-no-files-found }}
+
+      - name: Publish Metrics
+        id: publish_metrics
+        if: always() && inputs.nightly
+        uses: ./.github/actions/publish-ut-metrics
+        with:
+          variant: ${{ matrix.config || inputs.config }}
+          report-txt: bazel-bin/coverage/report.txt
+          gcovr-json: bazel-bin/coverage/report_gcovr_report.json
+          true-count-json: bazel-bin/coverage/ut_true_count_report.json
+          output-file: unit-test-metrics/${{ matrix.config || inputs.config }}.jsonl
+          db-publish-enabled: ${{ inputs.force-db-publish || (github.event_name != 'pull_request' && github.ref_name == 'dev') }}
+          metrics-db-user: ${{ secrets.METRICS_DB_USER }}
+          metrics-db-password: ${{ secrets.METRICS_DB_PASSWORD }}
+          metrics-db-host: ${{ secrets.METRICS_DB_HOST }}
+          metrics-db-port: ${{ secrets.METRICS_DB_PORT }}
+          metrics-db-name: ${{ secrets.METRICS_DB_NAME }}
+          commit-id: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          project-name: ${{ github.event.repository.name }}
+          tag: ''
+          pipeline-name: ${{ github.workflow }}
+          build-no: ${{ github.run_number }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Update unit test failure label
+        if: always() && inputs.pr-number != '' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/update-failure-label
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ inputs.pr-number }}
+          failed-flag: ${{ steps.tests.outcome != 'success' || steps.report_results.outputs.bazel-failed == 'true' }}
+          label-name: unit tests failed - ${{ matrix.config || inputs.config }}
+          label-description: Indicates this unit test variant failed on the latest PR run

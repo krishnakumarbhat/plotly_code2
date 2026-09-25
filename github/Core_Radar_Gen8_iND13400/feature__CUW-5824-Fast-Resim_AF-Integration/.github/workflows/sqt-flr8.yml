@@ -1,0 +1,320 @@
+# SQT (Software Qualification Testing) trigger for the FLR8 family.
+#
+# -- HOW TO REUSE FOR SIT / ALIGNMENT / OTHER --------------------------------
+# Copy this file and update the `default:` values under workflow_dispatch inputs.
+# Nothing else in the file body needs to change -- all config flows from inputs.
+# ----------------------------------------------------------------------------
+#
+# Nightly (schedule): auto-dispatches build-all.yml with the unique build
+#   inputs below, waits for it to finish, then gates and runs tests.
+# Manual (workflow_dispatch): provide build-all-run-id to skip the build step
+#   and jump straight to the gate + test, or leave it empty to auto-trigger.
+#
+# Job flow:
+#   trigger_sqt_build  (skipped when run-id is provided)
+#         |
+#   check_build        (resolves effective run-id; gates on all variants passing)
+#         |
+#   sqt-flr8           (calls radar-test-reusable.yml)
+
+name: SQT FLR8
+
+on:
+  schedule:
+    - cron: '30 20 * * *'  # 02:00 IST nightly -- adjust as needed
+  workflow_dispatch:
+    inputs:
+
+      # -- Build inputs --------------------------------------------------------
+      build-all-run-id:
+        description: 'build-all.yml run ID with the unique artifact. Leave empty to auto-trigger a new build.'
+        required: false
+        default: ''
+      unique-build-name:
+        description: 'Unique build name -- artifact produced will be combined-outputs-<name>'
+        required: false
+        default: 'sqt'
+      unique-build-flags:
+        description: 'Bazel flags appended to every variant in the unique build'
+        required: false
+        default: '--enable_sqt_testcases --enable_debug'
+
+      # -- Test inputs ---------------------------------------------------------
+      job-type:
+        description: 'Job type label (drives report path, Platform-Health, Teams subject)'
+        required: false
+        default: 'SWE6_SQT_MACRO'
+      family:
+        description: 'Radar variant family (FLR8, SRR8P, ...)'
+        required: false
+        default: 'FLR8'
+      gen:
+        description: 'Generation label (GEN8, GEN7_V2, ...)'
+        required: false
+        default: 'GEN8'
+      test-folder:
+        description: 'Test cases subfolder under testcases/<gen>_Test_Cases/'
+        required: false
+        default: 'SWE6_TestScript_SQT_MACRO'
+      python-files:
+        description: 'Pattern passed to --python-files in Run_Test_Cases.bat'
+        required: false
+        default: 'test_SWE6*.py'
+      extra-args:
+        description: 'Extra arguments appended to Run_Test_Cases.bat'
+        required: false
+        default: '--pbl_protocol eth_1Gbps'
+
+      # -- Runner --------------------------------------------------------------
+      runner-labels:
+        description: 'Self-hosted runner labels JSON array'
+        required: false
+        default: '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  # -- Trigger build-all.yml (skipped when a run-id is provided manually) ------
+  trigger_sqt_build:
+    name: "Trigger ${{ inputs.unique-build-name || 'sqt' }} unique build"
+    if: github.event_name == 'schedule' || inputs.build-all-run-id == ''
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    outputs:
+      run-id: ${{ steps.wait_build.outputs.run_id }}
+    steps:
+      - name: Dispatch build-all.yml
+        id: dispatch_build
+        uses: actions/github-script@v8
+        with:
+          script: |
+            // Record time just before dispatch to filter by created_at >= dispatchedAt.
+            // This avoids the race where comparing run IDs picks up a concurrent dispatch.
+            const dispatchedAt = new Date().toISOString();
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              workflow_id: 'build-all.yml',
+              ref:   context.ref,
+              inputs: {
+                Need_Unique_Build:  'true',
+                unique_build_name:  "${{ inputs.unique-build-name  || 'sqt' }}",
+                unique_build_flags: "${{ inputs.unique-build-flags || '--enable_sqt_testcases --enable_debug' }}",
+              },
+            });
+            core.info(`Dispatched at ${dispatchedAt} on ${context.ref}`);
+
+            // Wait 30 s for GitHub to register the run, then locate it by creation timestamp.
+            await new Promise(r => setTimeout(r, 30000));
+            const branch = context.ref.replace('refs/heads/', '');
+            for (let i = 0; i < 12; i++) {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                owner:       context.repo.owner,
+                repo:        context.repo.repo,
+                workflow_id: 'build-all.yml',
+                branch,
+                event:       'workflow_dispatch',
+                created:     `>=${dispatchedAt}`,
+                per_page:    5,
+              });
+              if (data.workflow_runs.length > 0) {
+                const run = data.workflow_runs[0];
+                core.info(`Found run ID: ${run.id} (created ${run.created_at})`);
+                core.setOutput('run_id', String(run.id));
+                return;
+              }
+              core.info(`No run found yet -- retry ${i + 1}/12`);
+              await new Promise(r => setTimeout(r, 10000));
+            }
+            core.setFailed('Could not find dispatched build-all.yml run after polling');
+
+      - name: Wait for build-all.yml to complete
+        id: wait_build
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const runId   = parseInt('${{ steps.dispatch_build.outputs.run_id }}');
+            const maxWait = 150 * 60 * 1000;  // 2.5 h
+            const poll    =  60 * 1000;        // 1 min
+            const start   = Date.now();
+
+            while (Date.now() - start < maxWait) {
+              await new Promise(r => setTimeout(r, poll));
+              const { data: run } = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                run_id: runId,
+              });
+              const elapsed = Math.round((Date.now() - start) / 60000);
+              core.info(`build-all #${runId}: status=${run.status} conclusion=${run.conclusion ?? 'n/a'} elapsed=${elapsed}min`);
+              if (run.status === 'completed') {
+                core.setOutput('run_id', String(runId));
+                if (run.conclusion !== 'success') {
+                  core.setFailed(`build-all.yml run #${runId} completed with conclusion=${run.conclusion}`);
+                }
+                return;
+              }
+            }
+            core.setFailed(`Timed out (${maxWait / 60000}min) waiting for build-all.yml run #${runId}`);
+
+  # -- Gate: resolve effective run-id; verify all variants passed ---------------
+  check_build:
+    name: "Check ${{ inputs.unique-build-name || 'sqt' }} build status"
+    needs: [trigger_sqt_build]
+    # trigger_sqt_build is skipped when run-id is provided -- still allow this job to run.
+    if: always() && needs.trigger_sqt_build.result != 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      effective-run-id: ${{ steps.resolve.outputs.effective_run_id }}
+      failure-category: ${{ steps.verify.outputs.failure_category }}
+      failure-reason: ${{ steps.verify.outputs.failure_reason }}
+    steps:
+      - name: Resolve effective build-all run ID
+        id: resolve
+        run: |
+          MANUAL="${{ inputs.build-all-run-id }}"
+          TRIGGERED="${{ needs.trigger_sqt_build.outputs.run-id }}"
+          EFFECTIVE="${MANUAL:-$TRIGGERED}"
+          if [ -z "$EFFECTIVE" ]; then
+            echo "::error::No build-all run ID available -- neither provided nor triggered"
+            exit 1
+          fi
+          echo "effective_run_id=$EFFECTIVE" >> "$GITHUB_OUTPUT"
+          echo "Using build-all run ID: $EFFECTIVE"
+
+      - name: "Download combined-outputs-${{ inputs.unique-build-name || 'sqt' }} artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: "combined-outputs-${{ inputs.unique-build-name || 'sqt' }}"
+          path: combined
+          github-token: ${{ secrets.GH_ARTIFACT_TOKEN || github.token }}
+          run-id: ${{ steps.resolve.outputs.effective_run_id }}
+
+      - name: Verify all variants passed
+        id: verify
+        run: |
+          SUMMARY="combined/build_results_summary.txt"
+          if [ ! -f "$SUMMARY" ]; then
+            echo "::error::build_results_summary.txt not found in artifact"
+            echo "failure_category=Build Artifact" >> "$GITHUB_OUTPUT"
+            echo "failure_reason=build_results_summary.txt not found in combined-outputs -- build-all.yml may have failed before producing it." >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "=== build_results_summary.txt ==="
+          cat "$SUMMARY"
+          echo "================================="
+          if grep -qE "result: (FAIL|UNKNOWN)" "$SUMMARY"; then
+            # Extract structured failure info from the summary
+            CATEGORY="$(grep -m1 '^failure_category:' "$SUMMARY" | sed 's/^failure_category:[[:space:]]*//' || true)"
+            # Multi-line reason is between failure_reason_start: and failure_reason_end:
+            REASON="$(sed -n '/^failure_reason_start:$/,/^failure_reason_end:$/{//!p;}' "$SUMMARY" | head -n 10 || true)"
+            FAILED_VARIANTS="$(grep -B2 'result: FAIL' "$SUMMARY" | grep '^### ' | sed 's/^### //' | tr '\n' ',' | sed 's/,$//' || true)"
+            [ -z "$CATEGORY" ] && CATEGORY="Build Variant Failure"
+            [ -z "$REASON" ] && REASON="Variant(s) failed: ${FAILED_VARIANTS:-unknown}"
+            echo "failure_category=${CATEGORY}" >> "$GITHUB_OUTPUT"
+            # Use heredoc delimiter for multi-line output
+            {
+              echo "failure_reason<<REASON_EOF"
+              echo "Variant(s): ${FAILED_VARIANTS}"
+              echo "${REASON}"
+              echo "REASON_EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "::error::One or more variants FAILED or have UNKNOWN status -- tests will not run"
+            exit 1
+          fi
+          echo "All variants passed -- proceeding to test run"
+
+  # -- Test --------------------------------------------------------------------
+  sqt-flr8:
+    name: "${{ inputs.job-type || 'SWE6_SQT_MACRO' }} (${{ inputs.family || 'FLR8' }})"
+    needs: [check_build]
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type:     ${{ inputs.job-type     || 'SWE6_SQT_MACRO' }}
+      family:       ${{ inputs.family       || 'FLR8' }}
+      gen:          ${{ inputs.gen          || 'GEN8' }}
+      test-folder:  ${{ inputs.test-folder  || 'SWE6_TestScript_SQT_MACRO' }}
+      python-files: ${{ inputs.python-files || 'test_SWE6*.py' }}
+      extra-args:   ${{ inputs.extra-args   || '--pbl_protocol eth_1Gbps' }}
+      rotation-strategy: daily
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/sqt-flr8.yml
+      gh-artifact-name: "combined-outputs-${{ inputs.unique-build-name || 'sqt' }}"
+      gh-artifact-workflow: 'build-all.yml'
+      gh-artifact-branch: ${{ github.ref_name }}
+      gh-artifact-run-id: ${{ needs.check_build.outputs.effective-run-id }}
+      runner-labels: ${{ inputs.runner-labels || '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]' }}
+      test-matrix-json: |
+        [
+          {"variant":"flr8_standalone",             "xcp":"Eth_Direct"},
+          {"variant":"flr8_al_can_standalone",      "xcp":"CAN"},
+          {"variant":"flr8_al_can_standalone",      "xcp":"Eth_Direct"},
+          {"variant":"flr8_satellite_can",          "xcp":"CAN"},
+          {"variant":"flr8_satellite_can",          "xcp":"Eth_Direct"},
+          {"variant":"flr8_satellite_eth_high_det", "xcp":"Eth_Direct"}
+        ]
+      email-recipients: ${{ vars.ADVRADAR_EMAIL_RECIPIENTS }}
+    secrets: inherit
+
+  # -- Notify on build failure (test job is skipped when build gate fails) -----
+  notify_build_failure:
+    name: Notify build failure
+    needs: [trigger_sqt_build, check_build]
+    if: always() && (needs.trigger_sqt_build.result == 'failure' || needs.check_build.result == 'failure')
+    runs-on: ${{ fromJson(inputs.runner-labels || '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]') }}
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          submodules: false
+
+      - name: Send build-failure notification email
+        shell: powershell -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          SEND_EMAIL:                'true'
+          JOB_TYPE:                  ${{ inputs.job-type || 'SWE6_SQT_MACRO' }}
+          FAMILY:                    ${{ inputs.family || 'FLR8' }}
+          PASSED:                    '0'
+          FAILED:                    '0'
+          SKIPPED:                   '0'
+          ERRORS:                    '0'
+          SRS_PASSED:                '0'
+          SRS_FAILED:                '0'
+          SRS_ERRORS:                '0'
+          NEW_TEST:                  '0'
+          NEW_SRS:                   '0'
+          VARIANT:                   ${{ inputs.unique-build-name || 'sqt' }}
+          XCP:                       'N/A (build stage)'
+          BRANCH:                    ${{ github.ref_name }}
+          GITHUB_WORKFLOW:           ${{ github.workflow }}
+          JOB_URL:                   ${{ github.server_url }}/${{ github.repository }}/actions/workflows/sqt-flr8.yml
+          RUN_URL:                   ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          BUILD_OUTPUTS_URL:        "${{ (needs.trigger_sqt_build.outputs.run-id || inputs.build-all-run-id) && format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, needs.trigger_sqt_build.outputs.run-id || inputs.build-all-run-id) || '' }}"
+          MATRIX_JSON:               ''
+          ROTATION:                  'fixed'
+          REPORT_DIR:                ''
+          GH_ARTIFACT_UPLOADED:      'false'
+          GH_ARTIFACT_URL:           ''
+          HTML_ARTIFACT_URL:         ''
+          SUBMODULE_SYNC_OUTCOME:    'success'
+          REPO_INIT_OUTCOME:         'success'
+          BUILD_DL_GH_OUTCOME:       'failure'
+          TEST_OUTCOME:              'skipped'
+          FAILURE_CATEGORY_OVERRIDE: ${{ needs.check_build.outputs.failure-category || 'Build Trigger / Dispatch' }}
+          FAILURE_REASON_OVERRIDE:   ${{ needs.check_build.outputs.failure-reason || 'build-all.yml dispatch or execution failed. Check the upstream build run.' }}
+          GITHUB_TOKEN:              ${{ github.token }}
+          GITHUB_API_URL:            ${{ github.api_url }}
+          RUNNER_LABELS_JSON:        ${{ inputs.runner-labels || '["self-hosted","windows","ADVRADAR-GEN8-SWE6"]' }}
+          EMAIL_RECIPIENTS:          ${{ vars.ADVRADAR_EMAIL_RECIPIENTS }}
+        run: .\tools\CI\send_email_notification.ps1

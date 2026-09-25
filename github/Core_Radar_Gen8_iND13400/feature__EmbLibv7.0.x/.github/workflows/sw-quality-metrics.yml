@@ -1,0 +1,35 @@
+name: SW Quality Metrics Publishing
+run-name: "SW Quality Metrics Publishing (run #${{ github.event.client_payload.pipeline_info.build_number }}, id: ${{ github.event.client_payload.pipeline_info.workflow_run_id }}, job: ${{ github.event.client_payload.pipeline_info.pipeline_name }})"
+
+on:
+  repository_dispatch:
+    types: [sw-quality-metrics]
+
+jobs:
+  sw-quality-metrics:
+    name: Publish SW Quality Metrics
+    uses: Aptiv/workflows-library/.github/workflows/sw-quality-metrics.yml@v3
+    permissions:
+      contents: read
+      actions: read
+    with:
+      grafana-project-key: ${{ github.event.client_payload.grafana_project_key }}
+      runner: ${{ vars.ADVRADAR_RUNNER_SMALL }}
+      image: containers.aptv.ghe.com/devsecops/asc/minimal-linux:1.2.1
+      container-options: ${{ github.event.client_payload.runtime_info.container_options || '--cpus 1' }}
+      bd-project: ${{ github.event.client_payload.blackduck_project }}
+      bd-version: ${{ github.event.client_payload.blackduck_version }}
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+      GHCR_USER: ${{ vars.GHCR_USER }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      METRICS_DB_HOST: ${{ secrets.METRICS_DB_HOST }}
+      METRICS_DB_USER: ${{ secrets.METRICS_DB_USER }}
+      METRICS_DB_PASSWORD: ${{ secrets.METRICS_DB_PASSWORD }}
+      METRICS_DB_PORT: ${{ secrets.METRICS_DB_PORT }}
+      METRICS_DB_NAME: ${{ secrets.METRICS_DB_NAME }}
+      BD_USER: ${{ secrets.ADVRADAR_SID_USERNAME }}
+      BD_PASSWORD: ${{ secrets.ADVRADAR_SID_BLACKDUCK_KEY }}
+      COV_USER: ${{ vars.ADVRADAR_COV_USERNAME }}
+      COV_PASSWORD: ${{ secrets.ADVRADAR_COV_USINKOK03_PASSWORD }}

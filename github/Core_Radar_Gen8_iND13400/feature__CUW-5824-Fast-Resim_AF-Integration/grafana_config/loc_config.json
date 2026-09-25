@@ -1,0 +1,71 @@
+{
+  "github": {
+    "host": "aptv.ghe.com",
+    "token": "TOKEN",
+    "owner": "GPO",
+    "repo": "Core_Radar_Gen8_iND13400",
+    "branch": "dev"
+  },
+  "filters": {
+    "include_extensions": [],
+    "include_path_patterns": [],
+    "exclude_extensions": [
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".bmp",
+      ".svg",
+      ".ico",
+      ".webp",
+      ".pdf",
+      ".docx",
+      ".xlsx",
+      ".zip",
+      ".tar",
+      ".gz",
+      ".rar",
+      ".exe",
+      ".dll",
+      ".so",
+      ".dylib",
+      ".lock",
+      ".sum"
+    ],
+    "exclude_path_patterns": [
+      "node_modules/.*",
+      "\\.git/.*",
+      "vendor/.*",
+      "dist/.*",
+      "build/.*",
+      "__pycache__/.*",
+      "external/.*com_google_googletest~?.*/.*",
+      "external/.*mingw64_10_0_0_rev0~?.*/.*",
+      "external/.*gcc-glibc~?.*/.*",
+      "external/.*bbe_(linux|windows).*/.*",
+      ".*/test/.*",
+      ".*/_test/.*",
+      ".*/mocks/.*"
+    ]
+  },
+  "options": {
+    "top_n_files": 10,
+    "window_hours": 24,
+    "max_workers": 10,
+    "output_file": "loc_report.json",
+    "cloc": {
+      "enabled": false,
+      "clone_dir": ".cloc_workspace",
+      "keep_clone": false
+    },
+    "manifest": {
+      "enabled": false,
+      "owner": "NA",
+      "repo": "NA",
+      "file": "none.xml",
+      "branch": "dev",
+      "default_owner": "Aptiv",
+      "groups": []
+    }
+  }
+}

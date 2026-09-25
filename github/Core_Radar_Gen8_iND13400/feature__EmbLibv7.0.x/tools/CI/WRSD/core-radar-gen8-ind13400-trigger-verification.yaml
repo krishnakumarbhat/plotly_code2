@@ -1,0 +1,515 @@
+﻿langVersion: v1
+name: core-radar-gen8-ind13400-trigger-verification
+description: Pipeline that is triggered by Gerrit and then launches all downstream pipelines for the project Gen8 iND13400
+ui:
+  name: core-radar-gen8-ind13400-trigger-verification
+params:
+  - name: upload-path
+    type: string
+    default: core_radar-aptiv-00000000-gen8_ind13400-local/wrsd/ind13400/verification/$(config.pipeline.runNumber)
+  - name: change-id
+    type: string
+    default: ""
+  - name: commit-id
+    type: string
+    default: ""
+  - name: gerrit-url
+    type: string
+    default: https://gitgerrit.asux.aptiv.com
+  - name: project-url-encoded
+    type: string
+    default: Core_Radar_Gen8_iND13400
+  - name: branch
+    type: string
+    default: ""
+  - name: patchset-number
+    type: string
+    default: ""
+  - name: github-url
+    type: string
+    default: https://aptv.ghe.com
+  - name: github-owner
+    type: string
+    default: GPO
+  - name: github-repo
+    type: string
+    default: Core_Radar_Gen8_iND13400
+compute:
+  - name: linux-2c8g
+    resource: asp-compute-linux-2c8g
+  - name: linux-1c4g
+    resource: asp-compute-linux-1c4g
+tasks:
+  - name: publish-run
+    task: Utils/core-radar-publish-run@0.1.1
+    params:
+      change-id: $(params.change-id)
+      branch: $(params.branch)
+      patchset-number: $(params.patchset-number)
+      project: $(params.project-url-encoded)
+    compute: linux-1c4g
+  - name: resolve-gerrit-state
+    task: verification/resolve-gerrit-state
+    compute: linux-1c4g
+    params:
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      project-url-encoded: $(params.project-url-encoded)
+  - parallelTasks:
+      - name: pre-gerrit-comment-no-op
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: in
+            values:
+              - "true"
+        task: Utils/post-gerrit-comment-vote-flr8@1.1.1
+        compute: linux-1c4g
+        params:
+          gerrit-setup: {}
+          message: |
+            ⛔ WRSD pipeline will not run as this review is work-in-progress.
+            Please mark the review as ready for review to trigger the pipeline.
+          votes:
+            Verified: "0"
+      - name: pre-gerrit-comment-vote
+        when:
+          - input: $(params.branch)
+            operator: in
+            values:
+              - "dev"
+        task: Utils/post-gerrit-comment-vote-flr8@1.1.1
+        compute: linux-1c4g
+        params:
+          gerrit-setup: {}
+          message: |
+            🔔 WRSD pipeline started. [$(config.pipeline.name)_$(config.pipeline.runNumber)](https://$(studio.home)/plm/view/$(config.pipeline.name)/runs/$(config.pipeline.runNumber))
+          votes:
+            Verified: "0"
+  - parallelTasks:
+      - name: precommit
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            project-url-encoded: $(params.project-url-encoded)
+          target-pipeline: core-radar-gen8-ind13400-precommit-check
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-precommit-check.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - tasks:
+        - name: build
+          when:
+            - input: $(tasks.resolve-gerrit-state.results.wip)
+              operator: notin
+              values:
+                - "true"
+          task: Utils/YGGDRASIL/custom-run@0.0.2
+          compute: linux-1c4g
+          params:
+            project-name: $(params.project-url-encoded)
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            parameters:
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              branch: $(params.branch)
+              patchset-number: $(params.patchset-number)
+              project-url-encoded: $(params.project-url-encoded)
+              upload-path: $(params.upload-path)/buildFiles/
+            target-pipeline: core-radar-gen8-ind13400-build
+            yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-build.yaml
+            onErrorContinue: "true"
+          onError: continue
+
+        - name: hw-tests
+          when:
+            - input: $(tasks.resolve-gerrit-state.results.wip)
+              operator: notin
+              values:
+                - "true"
+          task: Utils/YGGDRASIL/custom-run@0.0.2
+          compute: linux-1c4g
+          params:
+            project-name: $(params.project-url-encoded)
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            parameters:
+              change-id: $(params.change-id)
+              commit-id: $(params.commit-id)
+              gerrit-url: $(params.gerrit-url)
+              branch: $(params.branch)
+              patchset-number: $(params.patchset-number)
+              project-url-encoded: $(params.project-url-encoded)
+              upload-path: $(params.upload-path)/hw-tests/
+              download-path: $(params.upload-path)/buildFiles/
+            target-pipeline: core-radar-gen8-ind13400-hw-test
+            yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-hw-test.yaml
+            onErrorContinue: "true"
+          onError: continue
+
+      - name: unit-tests
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/unitTests/
+          target-pipeline: core-radar-gen8-ind13400-unit-test
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-unit-test.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - name: coverity-tests
+        when:
+          - input: $(tasks.resolve-gerrit-state.results.wip)
+            operator: notin
+            values:
+              - "true"
+        task: Utils/YGGDRASIL/custom-run@0.0.2
+        compute: linux-1c4g
+        params:
+          project-name: $(params.project-url-encoded)
+          change-id: $(params.change-id)
+          commit-id: $(params.commit-id)
+          gerrit-url: $(params.gerrit-url)
+          parameters:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            gerrit-url: $(params.gerrit-url)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            project-url-encoded: $(params.project-url-encoded)
+            upload-path: $(params.upload-path)/coverity/
+          target-pipeline: core-radar-gen8-ind13400-coverity
+          yaml_path: tools/CI/WRSD/core-radar-gen8-ind13400-coverity.yaml
+          onErrorContinue: "true"
+        onError: continue
+
+      - tasks:
+        - name: github-review-sync
+          task: verification/sync-gerrit-review-to-github
+          compute: linux-1c4g
+          params:
+            change-id: $(params.change-id)
+            commit-id: $(params.commit-id)
+            branch: $(params.branch)
+            patchset-number: $(params.patchset-number)
+            gerrit-url: $(params.gerrit-url)
+            project-url-encoded: $(params.project-url-encoded)
+            github-url: $(params.github-url)
+            github-owner: $(params.github-owner)
+            github-repo: $(params.github-repo)
+          onError: continue
+        - name: github-review-comment
+          task: Utils/post-gerrit-comment-vote-flr8@1.1.1
+          compute: linux-1c4g
+          params:
+            gerrit-setup: {}
+            message: |
+              GitHub review synced.  Review Link: $(tasks.github-review-sync.results.pr-url)
+            votes:
+              Code-Review: "0"
+  - name: auto-submit-check
+    task: Utils/ADVRADAR/auto-submit@1.0.1
+    compute: linux-2c8g
+    params:
+      project-name: $(params.project-url-encoded)
+      change-id: $(params.change-id)
+      gerrit-url: $(params.gerrit-url)
+      comment: "True"
+  - name: continue-auto-submit
+    when:
+      - input: $(tasks.auto-submit-check.results.trigger-rebase)
+        operator: in
+        values:
+        - "true"
+    task: Utils/ADVRADAR/auto-rebase@1.0.0
+    compute: linux-2c8g
+    params:
+      gerrit-url: $(params.gerrit-url)
+      project-name: $(params.project-url-encoded)
+      branch: $(params.branch)
+defineTasks:
+  - name: resolve-gerrit-state
+    langVersion: v1
+    category: verification
+    params:
+      - name: change-id
+        type: string
+        default: ""
+      - name: gerrit-url
+        type: string
+        default: https://gitgerrit.asux.aptiv.com
+      - name: project-url-encoded
+        type: string
+        default: Core_Radar_Gen8_iND13400
+    results:
+      - name: wip
+        description: Gerrit work-in-progress state for the current change
+    steps:
+      - name: fetch-gerrit-state
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+          import base64
+          import json
+          import urllib.request
+
+          def read_secret(path):
+              with open(path, "r", encoding="utf-8") as handle:
+                  return handle.read().strip()
+
+          username = read_secret("$(secrets.gerrit-cred.username.path)")
+          password = read_secret("$(secrets.gerrit-cred.password.path)")
+          url = "$(params.gerrit-url)/a/changes/$(params.project-url-encoded)~$(params.change-id)/detail"
+          auth_token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
+          request = urllib.request.Request(
+            url,
+            headers={"Authorization": f"Basic {auth_token}"},
+          )
+          with urllib.request.urlopen(request, timeout=120) as response:
+            body = response.read().decode("utf-8")
+
+          # Gerrit prepends a 4-byte XSSI guard: )]}'
+          payload = json.loads(body[4:])
+          wip = "true" if payload.get("work_in_progress", False) else "false"
+
+          with open("$(results.wip.path)", "w", encoding="utf-8") as handle:
+              handle.write(wip)
+
+          print(json.dumps({"wip": wip, "change_id": "$(params.change-id)"}))
+
+  - name: sync-gerrit-review-to-github
+    langVersion: v1
+    category: verification
+    params:
+      - name: change-id
+        type: string
+        default: ""
+      - name: commit-id
+        type: string
+        default: ""
+      - name: branch
+        type: string
+        default: dev
+      - name: patchset-number
+        type: string
+        default: ""
+      - name: gerrit-url
+        type: string
+        default: https://gitgerrit.asux.aptiv.com
+      - name: project-url-encoded
+        type: string
+        default: Core_Radar_Gen8_iND13400
+      - name: github-url
+        type: string
+        default: https://aptv.ghe.com
+      - name: github-owner
+        type: string
+        default: GPO
+      - name: github-repo
+        type: string
+        default: Core_Radar_Gen8_iND13400
+    results:
+      - name: pr-url
+        description: Pull request URL for the mirrored Gerrit review branch
+      - name: action
+        description: created-or-updated PR action
+    steps:
+      - name: sync-review-branch-and-pr
+        image: system.registry.389177498442.awsaptiv.com/aptiv-core-radar/build-format-ready:2.0
+        script: |
+          #!/usr/bin/env python3
+          import base64
+          import json
+          import os
+          import re
+          import shutil
+          import stat
+          import subprocess
+          import tarfile
+          import urllib.parse
+          import urllib.request
+
+          def read_secret(path):
+              with open(path, "r", encoding="utf-8") as handle:
+                  return handle.read().strip()
+
+          def run(cmd, cwd=None, redacted=None):
+              completed = subprocess.run(cmd, check=False, cwd=cwd)
+              if completed.returncode != 0:
+                  detail = redacted if redacted else " ".join(cmd)
+                  raise RuntimeError(f"Command failed ({completed.returncode}): {detail}")
+
+          def api_call(method, url, token, payload=None):
+              data = None
+              headers = {
+                  "Authorization": f"token {token}",
+                  "Accept": "application/vnd.github+json",
+                  "Content-Type": "application/json",
+              }
+              if payload is not None:
+                  data = json.dumps(payload).encode("utf-8")
+              req = urllib.request.Request(url, data=data, headers=headers, method=method)
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.loads(resp.read().decode("utf-8"))
+
+          try:
+              gerrit_user = read_secret("$(secrets.gerrit-cred.username.path)")
+              gerrit_pass = read_secret("$(secrets.gerrit-cred.password.path)")
+              github_user = read_secret("$(secrets.github-cred.username.path)")
+              print(f"{github_user} is syncing Gerrit review $(params.change-id) to GitHub repository $(params.github-owner)/$(params.github-repo)")
+              github_token = read_secret("$(secrets.github-cred.password.path)")
+
+              github_url = "$(params.github-url)".rstrip("/")
+              github_owner = "$(params.github-owner)"
+              github_repo = "$(params.github-repo)"
+              gerrit_url = "$(params.gerrit-url)".rstrip("/")
+              project = "$(params.project-url-encoded)"
+              change_id = "$(params.change-id)"
+              commit_id = "$(params.commit-id)"
+              base_branch = "$(params.branch)" or "dev"
+              patchset_number = "$(params.patchset-number)"
+
+              if not change_id:
+                  raise RuntimeError("change-id is required for GitHub review synchronization")
+              if not commit_id:
+                  raise RuntimeError("commit-id is required for GitHub review synchronization")
+
+              safe_change = re.sub(r"[^A-Za-z0-9._/-]", "-", change_id)
+              review_branch = f"gerrit/change-{safe_change}"
+
+              github_host = github_url.removeprefix("https://")
+              gerrit_host = gerrit_url.removeprefix("https://")
+              git_origin = f"https://{github_host}/{github_owner}/{github_repo}.git"
+              github_basic_auth = base64.b64encode(f"{github_user}:{github_token}".encode("utf-8")).decode("ascii")
+              github_header = f"AUTHORIZATION: basic {github_basic_auth}"
+              gerrit_fetch_url = (
+                  f"https://{urllib.parse.quote(gerrit_user, safe='')}:"
+                  f"{urllib.parse.quote(gerrit_pass, safe='')}@{gerrit_host}/a/{project}"
+              )
+
+              workspace = os.environ.get("WORKSPACE", os.getcwd())
+              workdir = os.path.join(workspace, "github-review-sync")
+              if os.path.exists(workdir):
+                  shutil.rmtree(workdir)
+              run(["git", "-c", f"http.https://{github_host}/.extraheader={github_header}", "clone", git_origin, workdir], redacted="git clone <github-origin>")
+              run(["git", "config", "user.name", "SID-ADVRADAR-CICD"], cwd=workdir)
+              run(["git", "config", "user.email", "sid_advradar_cicd@aptiv.com"], cwd=workdir)
+              run(["git", "fetch", "--no-tags", gerrit_fetch_url, commit_id], cwd=workdir, redacted="git fetch --no-tags <gerrit-auth-url> <commit-id>")
+              run(["git", "checkout", "-B", review_branch, "FETCH_HEAD"], cwd=workdir)
+
+              # Download git-lfs binary at runtime (not installed in container image)
+              lfs_version = "3.6.1"
+              lfs_url = f"https://github.com/git-lfs/git-lfs/releases/download/v{lfs_version}/git-lfs-linux-amd64-v{lfs_version}.tar.gz"
+              lfs_archive = os.path.join(workspace, "git-lfs.tar.gz")
+              lfs_bin_dir = os.path.join(workspace, "git-lfs-bin")
+              os.makedirs(lfs_bin_dir, exist_ok=True)
+              with urllib.request.urlopen(lfs_url, timeout=120) as resp:
+                  with open(lfs_archive, "wb") as fh:
+                      fh.write(resp.read())
+              with tarfile.open(lfs_archive) as tar:
+                  tar.extractall(path=lfs_bin_dir)
+              lfs_bin = None
+              for root, _dirs, files in os.walk(lfs_bin_dir):
+                  if "git-lfs" in files:
+                      lfs_bin = os.path.join(root, "git-lfs")
+                      os.chmod(lfs_bin, os.stat(lfs_bin).st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+                      os.environ["PATH"] = root + ":" + os.environ.get("PATH", "")
+                      break
+              if not lfs_bin:
+                  raise RuntimeError("git-lfs binary not found after extraction")
+              # Set up JFrog LFS authentication via netrc (LFS backend is JFrog Artifactory)
+              netrc_src = "$(secrets.netrc.path)"
+              netrc_dst = os.path.expanduser("~/.netrc")
+              shutil.copy(netrc_src, netrc_dst)
+              os.chmod(netrc_dst, 0o600)
+              run(["git", "lfs", "install", "--local"], cwd=workdir)
+              run(["git", "config", "lfs.https://jfrog.asux.aptiv.com/artifactory/api/lfs/core_radar-aptiv-00000000-gen8_ind13400-gitlfs-local.locksverify", "false"], cwd=workdir)
+              run(["git", "lfs", "migrate", "import", "--above=100 MB", f"--include-ref={review_branch}"], cwd=workdir)
+
+              run(["git", "-c", f"http.https://{github_host}/.extraheader={github_header}", "push", "--force", "origin", f"{review_branch}:{review_branch}"], cwd=workdir, redacted="git push --force origin <review-branch>")
+
+              api_base = f"{github_url}/api/v3/repos/{github_owner}/{github_repo}"
+              query = urllib.parse.urlencode(
+                  {
+                      "state": "open",
+                      "head": f"{github_owner}:{review_branch}",
+                      "base": base_branch,
+                  }
+              )
+              pulls_url = f"{api_base}/pulls?{query}"
+              pulls = api_call("GET", pulls_url, github_token)
+
+              if pulls:
+                  pr_url = pulls[0]["html_url"]
+                  action = "updated"
+              else:
+                  title = f"[Gerrit {change_id}] Mirror to GitHub"
+                  body = (
+                      "Automated PR generated by WRSD Gerrit verification pipeline.\\n\\n"
+                      f"- Gerrit change: {change_id}\\n"
+                      f"- Patchset: {patchset_number or 'n/a'}\\n"
+                      f"- Gerrit commit: {commit_id}\\n"
+                  )
+                  pr = api_call(
+                      "POST",
+                      f"{api_base}/pulls",
+                      github_token,
+                      {
+                          "title": title,
+                          "head": review_branch,
+                          "base": base_branch,
+                          "body": body,
+                      },
+                  )
+                  pr_url = pr["html_url"]
+                  action = "created"
+
+              with open("$(results.pr-url.path)", "w", encoding="utf-8") as handle:
+                  handle.write(pr_url)
+              with open("$(results.action.path)", "w", encoding="utf-8") as handle:
+                  handle.write(action)
+
+              print(json.dumps({"action": action, "pr_url": pr_url, "branch": review_branch}))
+          except Exception as e:
+              print(f"Error during GitHub review synchronization: {e}")
+              print("Continuing despite error...")
+              with open("$(results.pr-url.path)", "w", encoding="utf-8") as handle:
+                  handle.write("error")
+              with open("$(results.action.path)", "w", encoding="utf-8") as handle:
+                  handle.write("error")
+    wrrn: ""
+timeout: 2h

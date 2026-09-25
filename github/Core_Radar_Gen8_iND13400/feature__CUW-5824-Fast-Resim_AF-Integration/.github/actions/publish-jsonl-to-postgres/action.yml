@@ -1,0 +1,401 @@
+name: Publish JSONL Metrics To PostgreSQL
+description: Publish normalized metrics JSONL rows to WRSD PostgreSQL tables.
+
+inputs:
+  metrics-file:
+    description: Absolute or relative path to JSONL metrics file
+    required: true
+  metrics-db-user:
+    description: PostgreSQL username
+    required: true
+  metrics-db-password:
+    description: PostgreSQL password
+    required: true
+  metrics-db-host:
+    description: PostgreSQL host
+    required: true
+  metrics-db-port:
+    description: PostgreSQL port
+    required: true
+  metrics-db-name:
+    description: PostgreSQL database name
+    required: true
+  commit-id:
+    description: Commit SHA or identifier for CommitId column
+    required: true
+  branch:
+    description: Branch name for branch column
+    required: true
+  project-name:
+    description: Project name for project column
+    required: true
+  tag:
+    description: Tag column value
+    required: false
+    default: ''
+  pipeline-name:
+    description: Pipeline/workflow name used in perception_metrics_wrsd
+    required: true
+  build-no:
+    description: Pipeline run number used in perception_metrics_wrsd
+    required: true
+  build-url:
+    description: URL for this workflow run
+    required: true
+  wrsd-status:
+    description: Optional WRSD status field value
+    required: false
+    default: ''
+  wrsd-duration:
+    description: Optional WRSD duration field value
+    required: false
+    default: ''
+
+outputs:
+  inserted-count:
+    description: Number of inserted metric rows
+    value: ${{ steps.publish.outputs.inserted-count }}
+
+runs:
+  using: composite
+  steps:
+    - name: Publish JSONL metrics
+      id: publish
+      shell: bash
+      env:
+        METRICS_FILE: ${{ inputs.metrics-file }}
+        PG_USER: ${{ inputs.metrics-db-user }}
+        PG_PASSWORD: ${{ inputs.metrics-db-password }}
+        PG_HOST: ${{ inputs.metrics-db-host }}
+        PG_PORT: ${{ inputs.metrics-db-port }}
+        PG_DBNAME: ${{ inputs.metrics-db-name }}
+        COMMIT_ID: ${{ inputs.commit-id }}
+        BRANCH_NAME: ${{ inputs.branch }}
+        PROJECT_NAME: ${{ inputs.project-name }}
+        TAG_VALUE: ${{ inputs.tag }}
+        PIPELINE_NAME: ${{ inputs.pipeline-name }}
+        BUILD_NO: ${{ inputs.build-no }}
+        BUILD_URL: ${{ inputs.build-url }}
+        WRSD_STATUS: ${{ inputs.wrsd-status }}
+        WRSD_DURATION: ${{ inputs.wrsd-duration }}
+      run: |
+        set -euo pipefail
+
+        # Use an isolated venv to avoid global pip installs and root-user warnings.
+        VENV_DIR="${RUNNER_TEMP:-/tmp}/publish-jsonl-to-postgres-venv"
+        if python3 -c "import importlib.util, sys; sys.exit(0 if importlib.util.find_spec('ensurepip') else 1)"; then
+          python3 -m venv "${VENV_DIR}"
+        else
+          if ! python3 -m virtualenv --version >/dev/null 2>&1; then
+            python3 -m pip install --user --no-cache-dir virtualenv
+          fi
+          python3 -m virtualenv "${VENV_DIR}"
+        fi
+        "${VENV_DIR}/bin/python" -m pip install --no-cache-dir --upgrade pip
+        "${VENV_DIR}/bin/python" -m pip install --no-cache-dir psycopg2-binary
+
+        "${VENV_DIR}/bin/python" - <<'PY'
+        import json
+        import os
+        import sys
+        from datetime import datetime
+        from pathlib import Path
+
+        import psycopg2
+        from psycopg2 import sql
+        from psycopg2.extras import Json
+
+        metrics_file = Path(os.environ["METRICS_FILE"]) if os.environ.get("METRICS_FILE") else None
+        if metrics_file is None or not metrics_file.is_file():
+          print(f"Metrics file not found: {metrics_file}")
+          inserted_count = 0
+          github_output = os.environ.get("GITHUB_OUTPUT")
+          if github_output:
+            with open(github_output, "a", encoding="utf-8") as fh:
+              fh.write(f"inserted-count={inserted_count}\n")
+          sys.exit(0)
+
+        rows = []
+        with metrics_file.open("r", encoding="utf-8", errors="ignore") as fh:
+          for line in fh:
+            line = line.strip()
+            if not line:
+              continue
+            try:
+              obj = json.loads(line)
+            except json.JSONDecodeError:
+              continue
+            metric_name = obj.get("metric_name")
+            metric_value = obj.get("metric_value")
+            metric_tags = obj.get("metric_tags", {})
+            if metric_name is None or metric_value is None:
+              continue
+            if not isinstance(metric_tags, dict):
+              metric_tags = {}
+            rows.append((metric_name, float(metric_value), metric_tags))
+
+        if not rows:
+          print("No metric rows to insert.")
+          inserted_count = 0
+          github_output = os.environ.get("GITHUB_OUTPUT")
+          if github_output:
+            with open(github_output, "a", encoding="utf-8") as fh:
+              fh.write(f"inserted-count={inserted_count}\n")
+          sys.exit(0)
+
+        db_config = {
+          "dbname": os.environ["PG_DBNAME"],
+          "user": os.environ["PG_USER"],
+          "password": os.environ["PG_PASSWORD"],
+          "host": os.environ["PG_HOST"],
+          "port": os.environ["PG_PORT"],
+        }
+
+        # Set to "true" to enable dry-run mode (explore schema without writing)
+        db_debug_mode = os.environ.get("DB_DEBUG_MODE", "true").lower() == "true"
+
+        pipeline_name = os.environ["PIPELINE_NAME"]
+        build_no = os.environ["BUILD_NO"]
+        build_url = os.environ["BUILD_URL"]
+        wrsd_status = os.environ.get("WRSD_STATUS") or None
+        wrsd_duration = os.environ.get("WRSD_DURATION") or None
+
+        commit_id = os.environ["COMMIT_ID"]
+        branch_name = os.environ["BRANCH_NAME"]
+        project_name = os.environ["PROJECT_NAME"]
+        tag_value = os.environ.get("TAG_VALUE", "")
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        connection = None
+        inserted_count = 0
+
+        try:
+          print(
+            f"[db-debug] Attempting DB connection host={db_config['host']} port={db_config['port']} db={db_config['dbname']} user={db_config['user']}"
+          )
+          connection = psycopg2.connect(**db_config)
+          cursor = connection.cursor()
+
+          cursor.execute("SELECT current_database(), current_user;")
+          db_name_runtime, db_user_runtime = cursor.fetchone()
+          print(f"[db-debug] Connected successfully to db={db_name_runtime} as user={db_user_runtime}")
+
+          cursor.execute(
+            """
+            SELECT schema_name
+            FROM information_schema.schemata
+            WHERE schema_name NOT IN ('pg_catalog', 'information_schema')
+            ORDER BY schema_name;
+            """
+          )
+          available_schemas = [row[0] for row in cursor.fetchall()]
+          print(f"[db-debug] Available schemas: {', '.join(available_schemas)}")
+
+          for debug_schema in ("wrsd", "public", "pipeline_metrics", "sw_quality"):
+            if debug_schema not in available_schemas:
+              continue
+            cursor.execute(
+              """
+              SELECT table_name
+              FROM information_schema.tables
+              WHERE table_schema = %s
+              ORDER BY table_name
+              LIMIT 200;
+              """,
+              (debug_schema,),
+            )
+            schema_tables = [row[0] for row in cursor.fetchall()]
+            if schema_tables:
+              print(f"[db-debug] Tables in schema {debug_schema}: {', '.join(schema_tables)}")
+            else:
+              print(f"[db-debug] Tables in schema {debug_schema}: <none>")
+
+          cursor.execute(
+            """
+            SELECT table_schema
+            FROM information_schema.tables
+            WHERE table_name = 'perception_metrics'
+            ORDER BY
+              CASE
+                WHEN table_schema = 'wrsd' THEN 0
+                WHEN table_schema = 'public' THEN 1
+                ELSE 2
+              END,
+              table_schema
+            LIMIT 1;
+            """
+          )
+          metrics_schema_row = cursor.fetchone()
+          metrics_schema = metrics_schema_row[0] if metrics_schema_row else None
+
+          if not metrics_schema:
+            cursor.execute(
+              """
+              SELECT table_schema, table_name
+              FROM information_schema.tables
+              WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+                AND table_name ILIKE '%perception%metric%'
+              ORDER BY table_schema, table_name
+              LIMIT 10;
+              """
+            )
+            similar_tables = cursor.fetchall()
+            if similar_tables:
+              print("[db-debug] Similar tables found:")
+              for schema_name, table_name in similar_tables:
+                print(f"[db-debug]   {schema_name}.{table_name}")
+            print("::warning::Target table perception_metrics does not exist in this database; skipping DB metrics publish.")
+            metrics_schema = None
+
+          if metrics_schema:
+            cursor.execute(
+              """
+              SELECT table_schema
+              FROM information_schema.tables
+              WHERE table_name = 'perception_metrics_wrsd'
+              ORDER BY
+                CASE
+                  WHEN table_schema = %s THEN 0
+                  WHEN table_schema = 'wrsd' THEN 1
+                  WHEN table_schema = 'public' THEN 2
+                  ELSE 3
+                END,
+                table_schema
+              LIMIT 1;
+              """,
+              (metrics_schema,),
+            )
+            wrsd_schema_row = cursor.fetchone()
+            wrsd_schema = wrsd_schema_row[0] if wrsd_schema_row else None
+            wrsd_table_exists = wrsd_schema is not None
+
+            print(
+              f"[db-debug] Table availability: {metrics_schema}.perception_metrics=True, "
+              f"{(wrsd_schema + '.perception_metrics_wrsd') if wrsd_schema else 'perception_metrics_wrsd'}={wrsd_table_exists}"
+            )
+
+            cursor.execute(
+              """
+              SELECT 1
+              FROM information_schema.columns
+              WHERE table_schema = %s
+                AND table_name = 'perception_metrics'
+                AND column_name = 'wrsd_id'
+              LIMIT 1;
+              """,
+              (metrics_schema,),
+            )
+            wrsd_id_column_exists = cursor.fetchone() is not None
+            print(
+              f"[db-debug] Column availability: {metrics_schema}.perception_metrics.wrsd_id={wrsd_id_column_exists}"
+            )
+
+            wrsd_id = None
+            if wrsd_table_exists and wrsd_id_column_exists:
+              cursor.execute(
+                sql.SQL("SELECT id FROM {}.{} WHERE build_no = %s AND pipeline_name = %s;")
+                .format(sql.Identifier(wrsd_schema), sql.Identifier("perception_metrics_wrsd")),
+                (build_no, pipeline_name),
+              )
+              found = cursor.fetchone()
+              if found:
+                wrsd_id = found[0]
+              else:
+                cursor.execute(
+                  sql.SQL(
+                    "INSERT INTO {}.{} (build_no, pipeline_name, status, duration, build_url) "
+                    "VALUES (%s, %s, %s, %s, %s) RETURNING id;"
+                  ).format(sql.Identifier(wrsd_schema), sql.Identifier("perception_metrics_wrsd")),
+                  (build_no, pipeline_name, wrsd_status, wrsd_duration, build_url),
+                )
+                wrsd_id = cursor.fetchone()[0]
+            elif wrsd_id_column_exists and not wrsd_table_exists:
+              print(
+                f"::notice::{metrics_schema}.perception_metrics_wrsd does not exist; "
+                "inserting metrics without wrsd_id linkage."
+              )
+            else:
+              print("::notice::wrsd_id linkage is unavailable; inserting metrics without wrsd_id linkage.")
+
+            if db_debug_mode:
+              print("[db-debug] DRY-RUN MODE ENABLED - No data will be written to database")
+              print(f"[db-debug] Would insert {len(rows)} metric row(s) into {metrics_schema}.perception_metrics")
+              for i, (metric_name, metric_value, metric_tags) in enumerate(rows[:5], 1):
+                print(f"[db-debug]   Row {i}: metric_name={metric_name}, metric_value={metric_value}, metric_tags={metric_tags}")
+              if len(rows) > 5:
+                print(f"[db-debug]   ... and {len(rows) - 5} more rows")
+            else:
+              for metric_name, metric_value, metric_tags in rows:
+                if wrsd_id is not None:
+                  cursor.execute(
+                    sql.SQL(
+                      "INSERT INTO {}.{} "
+                      "(\"CommitId\", date, branch, tag, project, metric_name, metric_value, metric_tags, wrsd_id) "
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+                    ).format(sql.Identifier(metrics_schema), sql.Identifier("perception_metrics")),
+                    (
+                      commit_id,
+                      now,
+                      branch_name,
+                      tag_value,
+                      project_name,
+                      metric_name,
+                      metric_value,
+                      Json(metric_tags),
+                      wrsd_id,
+                    ),
+                  )
+                else:
+                  cursor.execute(
+                    sql.SQL(
+                      "INSERT INTO {}.{} "
+                      "(\"CommitId\", date, branch, tag, project, metric_name, metric_value, metric_tags) "
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
+                    ).format(sql.Identifier(metrics_schema), sql.Identifier("perception_metrics")),
+                    (
+                      commit_id,
+                      now,
+                      branch_name,
+                      tag_value,
+                      project_name,
+                      metric_name,
+                      metric_value,
+                      Json(metric_tags),
+                    ),
+                  )
+                inserted_count += 1
+
+            if not db_debug_mode:
+              connection.commit()
+              print(f"Inserted {inserted_count} row(s) into {metrics_schema}.perception_metrics")
+            else:
+              connection.rollback()
+              print("[db-debug] Rolled back transaction (dry-run mode)")
+
+        except psycopg2.OperationalError as exc:
+          print(f"::warning::PostgreSQL connection failed; skipping DB metrics publish. Reason: {exc}")
+          inserted_count = 0
+          if connection is not None:
+            try:
+              connection.rollback()
+            except Exception:
+              pass
+
+        except Exception as exc:
+          print(f"::warning::PostgreSQL publish failed; skipping DB metrics publish. Reason: {exc}")
+          inserted_count = 0
+          if connection is not None:
+            try:
+              connection.rollback()
+            except Exception:
+              pass
+
+        finally:
+          if connection is not None:
+            connection.close()
+
+        github_output = os.environ.get("GITHUB_OUTPUT")
+        if github_output:
+          with open(github_output, "a", encoding="utf-8") as fh:
+            fh.write(f"inserted-count={inserted_count}\n")
+        PY

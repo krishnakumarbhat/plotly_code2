@@ -1,0 +1,9 @@
+{
+    "file:Core_Radar_Permissions:dev:/CI_OWNERS": "@GPO/coreradars-devops",
+    "file:Core_Radar_Permissions:dev:/AFBB_OWNERS": "@GPO/core-radar-afbb-owners",
+    "file:Core_Radar_Permissions:dev:/MCAL_OWNERS": "@GPO/core-radar-mcal-owners",
+    "file:Core_Radar_Permissions:dev:/SDMF_OWNERS": "@GPO/core-radar-sdmf-owners",
+    "file:Core_Radar_Permissions:dev:/AUTOSAR_OWNERS": "@GPO/core-radar-autosar-owners",
+    "file:Core_Radar_Permissions:dev:/BOOT_OWNERS": "@GPO/core-radar-boot-owners",
+    "file:Core_Radar_Permissions:dev:/MEMORY_OWNERS": "@GPO/core-radar-memory-owners"
+}

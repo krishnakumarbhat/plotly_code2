@@ -1,0 +1,1338 @@
+meta:
+  name: "Default Gen8"
+  description: "Schema-driven smoke test groups for Gen8"
+  shelves:
+    detail: "${HOME}/wrsd_testData/brr.shelf"
+    index:  "${HOME}/wrsd_testData/brr_index.shelf"
+    can:    "${HOME}/wrsd_testData/can_index.shelf"
+    xcp:    "${HOME}/wrsd_testData/xcp.shelf"
+
+  can:
+    dbc: "git/ADVRADAR_CICD/RPI/smoke_test/example/radar.dbc"
+    interface: "socketcan"
+    channel: "can0"
+    header_id: 0x80                         # ID used for header stats (scan index, timing)
+    expected_period_ms: 50.0
+    period_tolerance_ms: 5.0
+    scan_index_signal: "HED_SCAN_INDEX"
+    num_valid_signal: "HED_NUM_OF_VALID_DETECTIONS"
+
+  xcp:
+    enabled: true
+    transport: "eth"                  # "can" or "eth"
+    elf_file: "Projects/Smoke_Test/example/r52App.elf"
+
+    # CAN transport settings
+    bustype: "socketcan"                   # auto, socketcan, vector, pcan
+    channel: 0
+    tx_id: 0x10
+    rx_id: 0x11
+    fd: true
+    extended: false
+
+    # ETH transport settings (used when transport: "eth")
+    local_ip: "192.168.1.40"
+    local_port: 65000
+    target_ip: "192.168.1.71"
+    target_port: 5557
+    eth_timeout: 20.0
+    eth_buffer_size: 1480
+
+    poll_interval: 0.05
+    bypass_unlock: true
+    init_delay: 3.0
+    unlock_levels: [0x01, 0x04, 0x08, 0x10]
+    initial_writes:
+      XCP_RDD_Vary_Xput_Flag: 170
+      XCP_Max_Static_Target_Case_Enable: 170
+
+  udp:
+    lua_script: git/ADVRADAR_CICD/RPI/smoke_test/example/wiresharkDissector.lua
+
+  someip:
+    enabled: false
+    sensor: "RADAR"
+    asdm_ip: "192.168.1.100"
+    udp_port_sd: 30490
+    sd_option_port: 30501
+
+  startup_thresholds:
+    min_current: 0.3           # Minimum current in Amps
+    bandwidth_threshold: 20.0  # Minimum bandwidth in Mbps
+    startup_retries: 1         # Number of start retries
+
+  stream_bandwidth:
+    # Intentionally leave out csv here since it varies run-to-run.
+    tolerance_pct: 10.0
+    exclude_streams:
+      - 14
+      - 15
+      - 20
+      - 128
+      - 129
+capture:
+  # Fields the detail listener should collect (subset of your Gen8 list; add more as needed)
+  detail_fields:
+    # Stream indices (detail listener can carry them if desired)
+    - s1_scanindex
+    - s2_scanindex
+    - s3_scanindex
+    - s4_scanindex
+
+    # Gen8 xput (both legacy *_xput_* and xput_info_* variants you already read)
+    - s2_RFFT_xput_inst
+    - s2_RFFT_xput_peak
+    - s2_RDD_xput_inst
+    - s2_RDD_xput_peak
+    - s2_af_xput_inst
+    - s2_af_xput_peak
+
+    - s2_xput_info_dsp_total_xput_inst
+    - s2_xput_info_dsp_total_xput_peak
+    - s2_xput_info_RDD_xput_inst
+    - s2_xput_info_RDD_xput_peak
+    - s2_xput_info_RFFT_xput_inst
+    - s2_xput_info_RFFT_xput_peak
+    - s2_xput_info_tracker_xput_inst
+    - s2_xput_info_tracker_xput_peak
+    - s2_xput_info_range_process_inst
+    - s2_xput_info_range_process_peak
+    - s2_xput_info_af_xput_inst
+    - s2_xput_info_af_xput_peak
+    - s2_xput_info_rc_xput_inst
+    - s2_xput_info_rc_xput_peak
+    - s2_xput_info_alignment_xput_inst
+    - s2_xput_info_alignment_xput_peak
+    - s2_xput_info_idle_xput_inst
+    - s2_xput_info_idle_xput_peak
+
+    - s2_mss_stream_data_reset_reason_info_0
+    - s2_mss_stream_data_reset_reason_info_1
+    - s2_mss_stream_data_reset_reason_info_2
+    - s2_mss_stream_data_reset_reason_info_3
+    - s2_mss_stream_data_reset_reason_info_4
+    - s2_mss_stream_data_reset_counter
+    - s2_mss_stream_data_reset_reason_crnt_indx
+    - s2_mss_stream_data_repetitive_reset_counter
+
+    # Versions (Gen8)
+    - s3_app_version_Info_board_type
+    - s3_app_version_Info_generation
+    - s3_pbl_version_maj
+    - s3_pbl_version_min
+    - s3_pbl_version_patch
+    - s3_software_version_maj
+    - s3_software_version_min
+    - s3_software_version_patch
+    - s3_smc_version_platform
+    - s3_smc_version_major
+    - s3_smc_version_minor
+    - s3_smc_version_patch
+    - s3_usc_version_platform
+    - s3_usc_version_major
+    - s3_usc_version_minor
+    - s3_usc_version_patch
+    - s3_platform_variant
+    - s3_stream1_version
+    - s3_stream2_version
+    - s3_stream3_version
+    - s3_stream4_version
+    - s3_stream5_version
+    - s3_stream6_version
+    - s3_app_version_Info_major_release_revision
+    - s3_app_version_Info_minor_release_revision
+    - s3_app_version_Info_patch_release_revision
+    - s3_app_version_Info_pre_release_revision
+
+
+    # Temperatures / counters
+    - s3_mmic_temp_tx0
+    - s3_mmic_temp_tx1
+    - s3_mmic_temp_tx2
+    - s3_mmic_temp_tx3
+    - s3_mmic_temp_rx0
+    - s3_mmic_temp_rx1
+    - s3_mmic_temp_rx2
+    - s3_mmic_temp_rx3
+    - s3_c66_temp
+    - s3_radar_temp
+    - s3_tmu_temp
+    - s3_dsp_temp
+    - s3_hwa_temp
+    - s3_hsm_temp
+    - s3_mmic_err_counter
+    - s3_mmic_err_code
+    - s3_mipi_err_counter
+
+    - s3_ipc_dsp_to_sram_cnt
+    - s3_range_overrun_cnt
+    - s3_doppler_overrun_cnt
+    - s3_chirp_out_of_sync_cnt
+    - s3_AF_overrun_cnt
+    - s3_RDD_overrun_cnt
+    - s3_ipc_r50_to_dsp_err_cnt
+    - s3_evt_disp_overrun_cnt
+    - s3_dsp_spt_look_id_err_cnt
+    - s3_rbin_error_cnt
+    - s3_mipi_status
+    - s3_gem_status
+    - s3_enet_sw_status
+    - s3_gpio_status
+    - s3_axidma_status
+    - s3_adma_status
+    - s3_gdma_status
+    - s3_boot_status_DSP
+    - s3_boot_status_C66
+    - s3_usc_load_status
+    - s3_smc_load_status
+
+
+
+    # Look ID (Gen8 places it on stream 4)
+    - s4_look_data_look_id
+
+  # Summaries for the index listener (scan index, timing, lookid, etc.)
+  index_summaries:
+    - scanindexhdr
+    - targetcnt
+    - modetrigcnt
+    - radarpostdaqcnt
+    - radarpostrddcnt
+    - tssec
+    - tsnsec
+    - lookid
+
+  can_signals:
+    scan_index:           { message_id: 0x80, signal: HED_SCAN_INDEX }
+    num_valid_detections: { message_id: 0x80, signal: HED_NUM_OF_VALID_DETECTIONS }
+    max_detections:       { message_id: 0x80, signal: HED_MAX_NUM_OF_DETECTIONS }
+
+    sp_xput_peak:        { message_id: 0x80, signal: HED_SP_CORE_TIME_PEAK }
+    sp_xput_inst:        { message_id: 0x80, signal: HED_SP_CORE_TIME_INST }
+    rdd_xput_peak:       { message_id: 0x80, signal: HED_RDD_CORE_TIME_PEAK }
+    rdd_xput_inst:       { message_id: 0x80, signal: HED_RDD_CORE_TIME_INST }
+    af_xput_peak:        { message_id: 0x80, signal: HED_AF_TIME_PEAK }
+    af_xput_inst:        { message_id: 0x80, signal: HED_AF_TIME_INST }
+    main_xput_peak:      { message_id: 0x80, signal: HED_MAIN_CORE_TIME_PEAK }
+    main_xput_inst:      { message_id: 0x80, signal: HED_MAIN_CORE_TIME_INST }
+
+    num_1pass:      { message_id: 0x80, signal: HED_DET_NUM_OF_1PASS }
+    num_2pass:      { message_id: 0x80, signal: HED_DET_NUM_OF_2PASS }
+
+    sw_ver_1:      { message_id: 0x83, signal: STS_SW_VERSION_FIELD1 }
+    sw_ver_2:      { message_id: 0x83, signal: STS_SW_VERSION_FIELD2 }
+    sw_ver_3:      { message_id: 0x83, signal: STS_SW_VERSION_FIELD3 }
+    sw_ver_4:      { message_id: 0x83, signal: STS_SW_VERSION_FIELD4 }
+
+    pbl_ver_1:      { message_id: 0x83, signal: STS_PBL_VERSION_FIELD1 }
+    pbl_ver_2:      { message_id: 0x83, signal: STS_PBL_VERSION_FIELD2 }
+    pbl_ver_3:      { message_id: 0x83, signal: STS_PBL_VERSION_FIELD3 }
+    pbl_ver_4:      { message_id: 0x83, signal: STS_PBL_VERSION_FIELD4 }
+
+    usc_maj:        { message_id: 0x83, signal: STS_USC_CAL_VER_MAJOR }
+    usc_min:        { message_id: 0x83, signal: STS_USC_CAL_VER_MINOR }
+    usc_comp:       { message_id: 0x83, signal: STS_USC_SECTION_COMPTBLITY }
+
+    smc_maj:        { message_id: 0x83, signal: STS_SMC_CAL_VER_MAJOR }
+    smc_min:        { message_id: 0x83, signal: STS_SMC_CAL_VER_MINOR }
+    smc_comp:       { message_id: 0x83, signal: STS_SMC_SECTION_COMPTBLITY }
+
+  # XCP variable names from ELF symbols.
+  # These are polled by the XCP listener and stored under shelf key: xcp_data.
+  xcp_signals:
+    - XCP_RDD_Vary_Xput_Flag
+    - XCP_Max_Static_Target_Case_Enable
+    - XCP_ADC_Log_Chirp_Num
+    - XCP_Doppler_Idx
+    - XCP_Range_Idx
+    - XCP_Angle_Idx
+    - XCP_Max_Fp_Tgt_Cnt
+    - XCP_Max_Fp_Per_Rbin_Target_Cnt
+    - Sensor_Dead_Fault_Error_Count
+    - Source_Tx_Cnt
+    - Frame_Failure_Cnt
+    - Frame_Tx_Failure_Cnt
+    - Frame_Tx_Success_Cnt
+    - Stream_Count
+    - RE_2ms_Task_Cnt
+    - Frame_Counter
+
+groups:
+  - title: "-- SOFTWARE CONFIG SUMMARY --"
+    items:
+      - label: "App Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_platform_variant
+            - s{stream}_app_version_Info_major_release_revision
+            - s{stream}_app_version_Info_minor_release_revision
+            - s{stream}_app_version_Info_patch_release_revision
+            - s{stream}_app_version_Info_pre_release_revision
+
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "PBL Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_pbl_version_maj
+            - s{stream}_pbl_version_min
+            - s{stream}_pbl_version_patch
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "SMC Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_smc_version_major
+            - s{stream}_smc_version_minor
+            - s{stream}_smc_version_patch
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "USC Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_usc_version_major
+            - s{stream}_usc_version_minor
+            - s{stream}_usc_version_patch
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Board Type"
+        shelf: detail
+        source:
+          stream_any: 3
+          fields:
+            - s3_app_version_Info_board_type
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Generation"
+        shelf: detail
+        source:
+          stream_any: 3
+          fields:
+            - s3_app_version_Info_generation
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Stream 1 Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_stream1_version
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Stream 2 Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_stream2_version
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Stream 3 Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_stream3_version
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Stream 4 Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_stream4_version
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Stream 5 Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_stream5_version
+        combine: { type: "version" }
+        render: { type: "value" }
+
+      - label: "UDP Stream 6 Version"
+        shelf: detail
+        source:
+          stream_any: true
+          fields:
+            - s{stream}_stream6_version
+        combine: { type: "version" }
+        render: { type: "value" }
+
+  - title: "-- STARTUP CURRENT --"
+    items:
+      - label: "Startup Current"
+        shelf: index
+        source: { field: startup_current }
+        aggregate: { type: "max" }
+        render: { type: "value", units: "A" }
+        checks:
+          - { type: "gt", expected: 0.3 }
+
+      - label: "Startup Time To Threshold"
+        shelf: index
+        source: { field: startup_time_to_threshold_s }
+        aggregate: { type: "scalar" }
+        render: { type: "value", units: "s" }
+
+      - label: "Startup Current Over Time"
+        shelf: index
+        source: { field: startup_current }
+        aggregate: { type: "series" }
+        render:
+          type: "plot"
+          plot:
+            title: "Startup Current Over Time"
+            x: "Samples (seconds)"
+            y: "Current (A)"
+            filename: "startup_current.png"
+
+  - title: "-- ETHERNET BANDWIDTH --"
+    items:
+      - label: "UDP Total Ethernet Bandwidth Avg"
+        shelf: index
+        source: { field: bandwidth_avg }
+        aggregate: { type: "scalar" }
+        render: { type: "value", units: "Mbps" }
+        checks:
+          - { type: "gt", expected: 20.0 }
+
+      - label: "Ethernet Bandwidth Over Time"
+        shelf: index
+        source: { field: bandwidth_measurements }
+        aggregate: { type: "series" }
+        render:
+          type: "plot"
+          plot:
+            title: "Ethernet Bandwidth Over Time"
+            x: "Samples (seconds)"
+            y: "Bandwidth (Mbps)"
+            filename: "ethernet_bandwidth.png"
+
+      # NEW: per-stream bandwidth rows
+      - label: "UDP Stream"
+        shelf: index
+        source: { field: stream_bandwidth_avg }   # this is a dict on the index shelf
+        aggregate: { type: "first" }               # ignored (we override in code to pass the dict)
+        render:
+          type: "dict_rows"
+          units: "Mbps"
+          # 'label' becomes the prefix; each row becomes "UDP Stream <key> : <value> Mbps"
+
+  - title: "-- SCAN INDEX --"
+    items:
+      - label: ""
+        shelf: index
+        source: { field: scanindexhdr }
+        aggregate: { type: "series" }
+        checks:
+          type: "lt"
+          expected: 0.3
+          # Avg transmission limit in ms.
+          # - default applies to all streams unless overridden in per_stream.
+          avg_transmission_ms:
+            default: 50
+            tolerance_ms: 5
+            # per_stream:
+            #   "1": 51
+            #   "2": 55
+
+        render:
+          type: "scanindex_multi"
+          units: "%"
+          exclude_streams: [41, 162]        # report-only for these BRR streams (no scan-index limit checks)
+          plot:
+            title_scan: "Stream {stream} Scan Index"
+            filename_scan: "udpStream{stream}ScanIndex.png"
+            title_diff: "Stream {stream} Scan Index Difference"
+            filename_diff: "udpStream{stream}ScanIndexDiff.png"
+            x: "Samples"
+            y: "Scan Index"
+            y_diff: "Scan Index Diff"
+
+  - title: "-- XPUT SUMMARY --"
+    items:
+      - label: "RFFT Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_RFFT_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: {title: "UDP - RFFT Xput", x: "Samples", y: "xput (ms)", filename: "udpRFFTXput.png"}
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.xput"
+          metricTags:
+            type: "RFFT_avg"
+
+      - label: "RFFT Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_RFFT_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render:
+          type: "value"
+          units: "ms"
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.MaxXput"
+          metricTags:
+            type: "RFFT_max"
+
+      - label: "RF0 Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_R5_0_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: {title: "UDP - RF0 Xput", x: "Samples", y: "xput (ms)", filename: "udpRF0Xput.png"}
+        checks:
+          - { type: "lt", expected: 70.0 }
+
+      - label: "R50 Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_R5_0_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        # checks:
+        #   - { type: "lt", expected: 70.0 }
+
+      - label: "RDD Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_RDD_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: {title: "UDP - RDD Xput", x: "Samples", y: "xput (ms)", filename: "udpRDDXput.png"}
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.xput"
+          metricTags:
+            type: "RDD_avg"
+
+      - label: "RDD Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_RDD_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.MaxXput"
+          metricTags:
+            type: "RDD_max"
+
+      - label: "Tracker Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_Tracker_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: {title: "UDP - Tracker Xput", x: "Samples", y: "xput (ms)", filename: "udpTrackerXput.png"}
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.xput"
+          metricTags:
+            type: "Tracker_avg"
+
+      - label: "Tracker Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_Tracker_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.MaxXput"
+          metricTags:
+            type: "Tracker_max"
+
+      - label: "Range Process Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_range_process_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: { title: "UDP - Range Process Xput", x: "Samples", y: "xput (ms)", filename: "udpRPXput.png" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+
+      - label: "Range Process Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_range_process_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+
+      - label: "AF Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_af_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: { title: "UDP - AF Xput", x: "Samples", y: "xput (ms)", filename: "udpAFXput.png" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.xput"
+          metricTags:
+            type: "AF_avg"
+
+      - label: "AF Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_af_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.MaxXput"
+          metricTags:
+            type: "AF_max"
+
+      - label: "RC Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_rc_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: { title: "UDP - RC Xput", x: "Samples", y: "xput (ms)", filename: "udpRCXput.png" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.xput"
+          metricTags:
+            type: "RC_avg"
+
+      - label: "RC Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_rc_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+        json_output:
+          file: "${HOME}/wrsd_smoke_test_reports/{variant}_platformHealth.json"
+          metricName: "core_radar.gen8.smokeTest.MaxXput"
+          metricTags:
+            type: "RC_max"
+
+      - label: "Alignment Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_alignment_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: { title: "UDP - Alignment Xput", x: "Samples", y: "xput (ms)", filename: "udpAlignmentXput.png" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+
+      - label: "Alignment Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_alignment_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+
+      - label: "Idle Xput Avg"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_idle_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "ms"
+          plot: { title: "UDP - Idle Xput", x: "Samples", y: "xput (ms)", filename: "udpIdleXput.png" }
+        checks:
+          - { type: "lt", expected: 30.0 }
+
+      - label: "Idle Xput Max"
+        shelf: detail
+        source: { stream_any: true, field: s2_xput_info_idle_xput_peak }  # already a peak metric
+        aggregate: { type: "max" }                                       # take the last value seen
+        render: { type: "value", units: "ms" }
+        # checks:
+        #   - { type: "lt", expected: 200.0 }
+
+  - title: "-- TEMPERATURE INFO --"
+    items:
+
+      - label: "MMIC TX0 Temp"
+        shelf: detail
+        source: { stream_any: true, field: s3_mmic_temp_tx0 }
+        aggregate: { type: "min" }
+        render: { type: "value", units: "C" }
+        checks:
+          - type: "range"
+            expected: [40, 85]
+
+      - label: "MMIC TX1 Temp"
+        shelf: detail
+        source: { stream_any: true, field: s3_mmic_temp_tx1 }
+        aggregate: { type: "min" }
+        render: { type: "value", units: "C" }
+        checks:
+          - type: "range"
+            expected: [40, 85]
+
+      - label: "MMIC TX2 Temp"
+        shelf: detail
+        source: { stream_any: true, field: s3_mmic_temp_tx2 }
+        aggregate: { type: "min" }
+        render: { type: "value", units: "C" }
+        checks:
+          - type: "range"
+            expected: [40, 85]
+
+      - label: "MMIC TX3 Temp"
+        shelf: detail
+        source: { stream_any: true, field: s3_mmic_temp_tx3 }
+        aggregate: { type: "min" }
+        render: { type: "value", units: "C" }
+        checks:
+          - type: "range"
+            expected: [40, 85]
+
+  - title: "-- LOOK ID --"
+    items:
+      # Gen8 look ID is under stream 4 (detail name s4_look_data_look_id), but
+      # the index listener summarizes 'lookid' for plotting/checking.
+      # - label: "Look ID"
+      #   shelf: index
+      #   source: { field: lookid, stream: 4 }
+      #   aggregate: { type: "min" }
+      #   render: { type: "value" }
+      #   checks:
+      #     - type: "cycling"
+      #       args: { min: 0, max: 3 }
+
+      - label: "Look ID (min)"
+        shelf: index
+        source: { field: lookid, stream: 4 }
+        aggregate: { type: "min" }
+        render: { type: "value" }
+        # checks:
+        #   - { type: "eq", expected: 0 }
+
+      - label: "Look ID (max)"
+        shelf: index
+        source: { field: lookid, stream: 4 }
+        aggregate: { type: "max" }
+        render: { type: "value" }
+        # checks:
+        #   - { type: "eq", expected: 3 }
+
+      - label: "Look ID Cycling"
+        shelf: index
+        source: { field: lookid, stream: 4 }
+        aggregate: { type: "series" }
+        render:
+          type: "plot"
+          plot:
+            title: "Stream 4 Look ID"
+            x: "Samples"
+            y: "Look ID"
+            filename: "UDPlookID.png"
+        checks:
+          - type: "cycling"
+            args: { min: 0, max: 3 }
+
+  - title: "-- SYSTEM STATUS INFO --"
+    items:
+    - label: "UDP IPC DSP to SRAM Count"
+      shelf: detail
+      source: { field: s3_ipc_dsp_to_sram_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP Range Overrun Count"
+      shelf: detail
+      source: { field: s3_range_overrun_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "lt", expected: 3}
+
+    - label: "UDP Doppler Overrun Count"
+      shelf: detail
+      source: { field: s3_doppler_overrun_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP Chirp Out of Sync Count"
+      shelf: detail
+      source: { field: s3_chirp_out_of_sync_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP AF Overrun Count"
+      shelf: detail
+      source: { field: s3_AF_overrun_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP RDD Overrun Count"
+      shelf: detail
+      source: { field: s3_RDD_overrun_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP IPC R50 to DSP Err Count"
+      shelf: detail
+      source: { field: s3_ipc_r50_to_dsp_err_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP Evt Disp Overrun Count"
+      shelf: detail
+      source: { field: s3_evt_disp_overrun_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP DSP Spt Look ID Err Count"
+      shelf: detail
+      source: { field: s3_dsp_spt_look_id_err_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP Rbin Err Count"
+      shelf: detail
+      source: { field: s3_rbin_error_cnt , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP MIPI Status"
+      shelf: detail
+      source: { field: s3_mipi_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP GEM Status"
+      shelf: detail
+      source: { field: s3_gem_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP Enet SW Status"
+      shelf: detail
+      source: { field: s3_enet_sw_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP GPIO Status"
+      shelf: detail
+      source: { field: s3_gpio_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP AXIDMA Status"
+      shelf: detail
+      source: { field: s3_axidma_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP ADMA Status"
+      shelf: detail
+      source: { field: s3_adma_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP GDMA Status"
+      shelf: detail
+      source: { field: s3_gdma_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP DSP Boot Status"
+      shelf: detail
+      source: { field: s3_boot_status_DSP , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP C66 Boot Status"
+      shelf: detail
+      source: { field: s3_boot_status_C66 , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP USC Load Status"
+      shelf: detail
+      source: { field: s3_usc_load_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP SMC Load Status"
+      shelf: detail
+      source: { field: s3_smc_load_status , stream: 3}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      checks:
+        - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Reason 0"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_reason_info_0 , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Reason 1"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_reason_info_1 , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Reason 2"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_reason_info_2 , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Reason 3"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_reason_info_3 , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Reason 4"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_reason_info_4 , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Counter"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_counter , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Reset Reason Index"
+      shelf: detail
+      source: { field: s2_mss_stream_data_reset_reason_crnt_indx , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+    - label: "UDP Repetitive Reset Counter"
+      shelf: detail
+      source: { field: s2_mss_stream_data_repetitive_reset_counter , stream: 2}
+      aggregate: { type: "max" }
+      render: { type: "value", units: "-" }
+      # checks:
+      #   - { type: "eq", expected: 0 }
+
+  - title: "-- CAN SCAN INDEX --"
+    items:
+      - label: ""
+        shelf: can
+        source: { field: scan_index }
+        aggregate: { type: "series" }
+        checks: { type: "lt", expected: 0.2 }
+        render:
+          type: "scanindex_multi"
+          units: "%"
+          plot:
+            title_scan: "CAN Scan Index"
+            filename_scan: "canScanIndex.png"
+            title_diff: "CAN Scan Index Difference"
+            filename_diff: "canScanIndexDiff.png"
+            x: "Samples"
+            y: "Scan Index"
+            y_diff: "Scan Index Diff"
+
+  - title: "-- CAN SIGNALS --"
+    items:
+
+      - label: "CAN App Version"
+        shelf: can
+        source:
+          fields:
+            - sw_ver_1
+            - sw_ver_2
+            - sw_ver_3
+            - sw_ver_4
+        render:   { type: "version"}
+
+      - label: "CAN Pbl Version"
+        shelf: can
+        source:
+          fields:
+            - pbl_ver_1
+            - pbl_ver_2
+            - pbl_ver_3
+            - pbl_ver_4
+        render:   { type: "version"}
+
+      - label: "CAN SMC Version"
+        shelf: can
+        source:
+          fields:
+            - smc_maj
+            - smc_min
+            - smc_comp
+        render:   { type: "version"}
+
+      - label: "CAN USC Version"
+        shelf: can
+        source:
+          fields:
+            - usc_maj
+            - usc_min
+            - usc_comp
+        render:   { type: "version"}
+
+      - label: "CAN Max Detections"
+        shelf: can
+        source:    { field: max_detections }
+        aggregate: { type: "avg" }
+        render:    { type: "value", units: "-" }
+        checks:
+          - { type: "gt", expected: 10.0 }
+
+      - label: "CAN Valid Detections"
+        shelf: can
+        source: { stream_any: true, field: num_valid_detections }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN Valid Detections", x: "Samples", y: "Valid Detections", filename: "canValidDetections.png"}
+        checks:
+          - { type: "gt", expected: 10.0 }
+
+      - label: "CAN SP Core Xput"
+        shelf: can
+        source: { stream_any: true, field: sp_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN SP Core Xput", x: "Samples", y: "xput (ms)", filename: "cansp_xput_inst.png"}
+        checks:
+          - { type: "lt", expected: 25.0 }
+
+      - label: "CAN RDD Core Xput"
+        shelf: can
+        source: { stream_any: true, field: rdd_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN RDD Core Xput", x: "Samples", y: "xput (ms)", filename: "canrdd_xput_inst.png"}
+        checks:
+          - { type: "lt", expected: 25.0 }
+
+      - label: "CAN AF Xput"
+        shelf: can
+        source: { stream_any: true, field: af_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN AF Xput", x: "Samples", y: "xput (ms)", filename: "canaf_xput_inst.png"}
+        checks:
+          - { type: "lt", expected: 25.0 }
+
+      - label: "CAN Main Xput"
+        shelf: can
+        source: { stream_any: true, field: main_xput_inst }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN Main Xput", x: "Samples", y: "xput (ms)", filename: "canmain_xput_inst.png"}
+        checks:
+          - { type: "lt", expected: 25.0 }
+
+      - label: "CAN 1st Pass Detections"
+        shelf: can
+        source: { stream_any: true, field: num_1pass }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN 1st Pass Detections", x: "Samples", y: "Detections", filename: "cannum_1pass.png"}
+        checks:
+          - { type: "gt", expected: 5.0 }
+
+      - label: "CAN 2st Pass Detections"
+        shelf: can
+        source: { stream_any: true, field: num_2pass }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot: {title: "CAN 2st Pass Detections", x: "Samples", y: "Detections", filename: "cannum_2pass.png"}
+        checks:
+          - { type: "gt", expected: 5.0 }
+
+  - title: "-- CAN TIMING METRICS --"
+    items:
+
+      - label: "CAN Bus Load"
+        shelf: can
+        source: { field: can_bus_load_pct }
+        aggregate: { type: "last" }
+        render:
+          units: "%"
+
+      - label: "CAN Startup Latency"
+        shelf: can
+        source: { field: can_timing_startup_latency }
+        aggregate: { type: "first" }
+        render:
+          type: "dict_rows"
+          units: "ms"
+
+      - label: "CAN Avg Period"
+        shelf: can
+        source: { field: can_timing_avg_period }
+        aggregate: { type: "first" }
+        render:
+          type: "dict_rows"
+          units: "ms"
+
+      - label: "CAN Min Period"
+        shelf: can
+        source: { field: can_timing_min_period }
+        aggregate: { type: "first" }
+        render:
+          type: "dict_rows"
+          units: "ms"
+
+      - label: "CAN Max Period"
+        shelf: can
+        source: { field: can_timing_max_period }
+        aggregate: { type: "first" }
+        render:
+          type: "dict_rows"
+          units: "ms"
+
+      - label: "CAN Jitter Stddev"
+        shelf: can
+        source: { field: can_timing_jitter_stddev }
+        aggregate: { type: "first" }
+        render:
+          type: "dict_rows"
+          units: "ms"
+
+      - label: "CAN Jitter Peak-to-Peak"
+        shelf: can
+        source: { field: can_timing_jitter_p2p }
+        aggregate: { type: "first" }
+        render:
+          type: "dict_rows"
+          units: "ms"
+
+  - title: "-- XCP SIGNALS --"
+    items:
+      - label: "XCP RDD Vary Xput Flag (avg)"
+        shelf: xcp
+        source: { field: XCP_RDD_Vary_Xput_Flag }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot:
+            title: "XCP_RDD_Vary_Xput_Flag"
+            x: "Samples"
+            y: "Value"
+            filename: "xcp_rdd_vary_xput_flag.png"
+        checks:
+          - { type: "eq", expected: 170 }
+
+      - label: "XCP Max Static Target Case Enable (avg)"
+        shelf: xcp
+        source: { field: XCP_Max_Static_Target_Case_Enable }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "-"
+          plot:
+            title: "XCP_Max_Static_Target_Case_Enable"
+            x: "Samples"
+            y: "Value"
+            filename: "xcp_max_static_target_case_enable.png"
+        checks:
+          - { type: "eq", expected: 170 }
+
+      # Extra XCP
+      - label: "XCP ADC Log Chirp Number (avg)"
+        shelf: xcp
+        source: { field: XCP_ADC_Log_Chirp_Num }
+        aggregate: { type: "avg" }
+        render: {type: "value", units: "-"}
+
+      - label: "XCP Doppler Index (avg)"
+        shelf: xcp
+        source: { field: XCP_Doppler_Idx }
+        aggregate: { type: "avg" }
+        render: {type: "value", units: "-"}
+
+      - label: "XCP Range Index (avg)"
+        shelf: xcp
+        source: { field: XCP_Range_Idx }
+        aggregate: { type: "avg" }
+        render: {type: "value", units: "-"}
+
+      - label: "XCP Angle Idx (avg)"
+        shelf: xcp
+        source: { field: XCP_Angle_Idx }
+        aggregate: { type: "avg" }
+        render: {type: "value", units: "-"}
+
+      - label: "XCP Max Fp Tgt Cnt (avg)"
+        shelf: xcp
+        source: { field: XCP_Max_Fp_Tgt_Cnt }
+        aggregate: { type: "avg" }
+        render: {type: "value", units: "-"}
+
+      - label: "XCP Max Fp Per Rbin Target Cnt (avg)"
+        shelf: xcp
+        source: { field: XCP_Max_Fp_Per_Rbin_Target_Cnt }
+        aggregate: { type: "avg" }
+        render: {type: "value", units: "-"}
+
+      - label: "Frame Counter (avg)"
+        shelf: xcp
+        source: { field: Frame_Counter }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "frames"
+          plot:
+            title: "Frame_Counter"
+            x: "Samples"
+            y: "Count"
+            filename: "frame_counter.png"
+
+      - label: "RE 2ms Task Count (avg)"
+        shelf: xcp
+        source: { field: RE_2ms_Task_Cnt }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "count"
+          plot:
+            title: "RE_2ms_Task_Cnt"
+            x: "Samples"
+            y: "Count"
+            filename: "re_2ms_task_cnt.png"
+
+
+
+      - label: "Frame TX Failure Count (max)"
+        shelf: xcp
+        source: { field: Frame_Tx_Failure_Cnt }
+        aggregate: { type: "max" }
+        render: {type: "value", units: "-"}
+
+      - label: "Frame Failure Count (max)"
+        shelf: xcp
+        source: { field: Frame_Failure_Cnt }
+        aggregate: { type: "max" }
+        render: {type: "value", units: "-"}
+
+      - label: "Source TX Count (avg)"
+        shelf: xcp
+        source: { field: Source_Tx_Cnt }
+        aggregate: { type: "avg" }
+        render:
+          type: "value+plot"
+          units: "count"
+          plot:
+            title: "Source_Tx_Cnt"
+            x: "Samples"
+            y: "Count"
+            filename: "source_tx_cnt.png"

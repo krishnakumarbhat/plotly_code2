@@ -1,0 +1,58 @@
+# SWE-Test - Run a single python file / function pattern on a custom
+#               test folder, using a GitHub Actions artifact instead of JFrog
+#               as the build source.
+#
+# Demonstrates:
+#   * test-folder      -> point at any subfolder under testcases/GEN8_Test_Cases/
+#   * python-files     -> override pyproject.toml python_files
+#   * python-functions -> override pyproject.toml python_functions
+#   * build-source: gh-artifact + the gh-artifact-* knobs
+#   * no-reports: true  (don't upload HTML; just collect logs)
+#
+# Trigger: manual only — quick ad-hoc developer loop.
+
+name: SWE-Test - PyFilter FLR8 (artifact build)
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Build workflow run-id whose artifact to pull (empty = latest successful).'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  pyfilter-flr8:
+    name: PyFilter FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: DEV_FILTER
+      family: FLR8
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_can", "xcp":"CAN"}
+        ]
+      # Custom dev folder under testcases/GEN8_Test_Cases/.
+      test-folder: SWE6_Testing/Dev_Sandbox
+      # Only collect files matching test_xcp_*.py …
+      python-files: 'test_xcp_*.py'
+      # … and only run functions matching the two patterns below.
+      python-functions: 'test_xcp_dtc_* test_xcp_session_*'
+      no-reports: true
+      gui-html: false
+      # Pull the build from a GitHub Actions artifact instead of JFrog.
+      build-source: gh-artifact
+      gh-artifact-name: gen8-flr8-build
+      gh-artifact-workflow: build.yml
+      gh-artifact-branch: dev
+      gh-artifact-run-id: ${{ github.event.inputs.run_id }}
+      # Keep dev outputs separate from CI reports.
+      report-subdir: Reports/Dev/Filter
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-pyfilter-flr8.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

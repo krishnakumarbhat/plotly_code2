@@ -1,0 +1,1445 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: PLANT_TOOL OTA_TOOL OBD2_TOOL OBD1_TOOL EVCU_EF VCU_47 CLUSTER_17 AT_AMT_03 EMS_00 GATEWAY_25 SAS_E4 ESC_0B FR_D0 FCM_A0
+VAL_TABLE_ WheelBasedVehicleSpeed 65024 "Defect/error" ;
+VAL_TABLE_ System_Mode_Seq_sts 368 "enable charge mode" 336 "shutdown complete" 328 "enable error management shutdown" 327 "enable BMS shutdown" 326 "enable thermal control shutdown" 325 "enable DC control shutdown" 324 "enable AUXINV control shutdown" 323 "enable FCCM shutdown" 322 "enable traction inverter shutdown" 321 "enable shutdown" 305 "vehicle active" 297 "startup Complete" 294 "Enable FCCM control" 293 "Enable DC control" 292 "Enable Traction inverter control" 291 "Enable AUXINV startup" 290 "enable HV control startup" 289 "Enable startup" 265 "ignition complete" 261 "Enable FCCM ignition" 260 "Enable Traction inverter ignition" 259 "Enable AUXINV control ignition" 258 "Enable HV control ignition" 257 "enable ignition ON modules" ;
+VAL_TABLE_ Park_Brake_EV 3 "Not available" 2 "Reserved" 1 "Park brake ON" 0 "Park brake OFF" ;
+
+
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ XBRMessageCounter : 0|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ XBRMessageChecksum : 0|4@1+ (1,0) [0|15] "count" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] "" Vector__XXX
+
+BO_ 2565517591 RQST_17_SR1: 3 CLUSTER_17
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  FR_D0
+
+BO_ 2565517335 RQST_17_SR2: 3 CLUSTER_17
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  FR_D0
+
+BO_ 2566838961 SOFT_B1: 8 FR_D0
+ SG_ SoftIdentification_FR : 8|8@1+ (1,0) [0|0] ""  CLUSTER_17
+ SG_ NumberOfSWIdentifierFields_FR : 0|8@1+ (1,0) [0|255] ""  CLUSTER_17
+
+BO_ 2566838960 SOFT_B0: 8 FR_D0
+ SG_ SoftIdentification_FR : 8|8@1+ (1,0) [0|0] ""  CLUSTER_17
+ SG_ NumberOfSWIdentifierFields_FR : 0|8@1+ (1,0) [0|255] ""  CLUSTER_17
+
+BO_ 2564502517 DIAG_REQ_FNC_PLANT: 8 PLANT_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0,FCM_A0
+
+BO_ 2564502516 DIAG_REQ_FNC_OTA: 8 OTA_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0,FCM_A0
+
+BO_ 2564502513 DIAG_REQ_FNC_OBD2: 8 OBD2_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0,FCM_A0
+
+BO_ 2564502512 DIAG_REQ_FNC_OBD1: 8 OBD1_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0,FCM_A0
+
+BO_ 2564468981 SR2_DIAG_REQ_PHY_PLANT: 8 PLANT_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564468980 SR2_DIAG_REQ_PHY_OTA: 8 OTA_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564468977 SR2_DIAG_REQ_PHY_OBD2: 8 OBD2_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564468976 SR2_DIAG_REQ_PHY_OBD1: 8 OBD1_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564469237 SR1_DIAG_REQ_PHY_PLANT: 8 PLANT_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564469236 SR1_DIAG_REQ_PHY_OTA: 8 OTA_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564469233 SR1_DIAG_REQ_PHY_OBD2: 8 OBD2_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564469232 SR1_DIAG_REQ_PHY_OBD1: 8 OBD1_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564477173 FR_DIAG_REQ_PHY_PLANT: 8 PLANT_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564477172 FR_DIAG_REQ_PHY_OTA: 8 OTA_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564477169 FR_DIAG_REQ_PHY_OBD2: 8 OBD2_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564477168 FR_DIAG_REQ_PHY_OBD1: 8 OBD1_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FR_D0
+
+BO_ 2564464885 FCM_DIAG_REQ_PHY_PLANT: 8 PLANT_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FCM_A0
+
+BO_ 2564464884 FCM_DIAG_REQ_PHY_OTA: 8 OTA_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FCM_A0
+
+BO_ 2564464881 FCM_DIAG_REQ_PHY_OBD2: 8 OBD2_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FCM_A0
+
+BO_ 2564464880 FCM_DIAG_REQ_PHY_OBD1: 8 OBD1_TOOL
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  FCM_A0
+
+BO_ 2564486577 SR1_DIAG_RES_PHY_PLANT: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  PLANT_TOOL
+
+BO_ 2564486321 SR1_DIAG_RES_PHY_OTA: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OTA_TOOL
+
+BO_ 2564485553 SR1_DIAG_RES_PHY_OBD2: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD2_TOOL
+
+BO_ 2564485297 SR1_DIAG_RES_PHY_OBD1: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD1_TOOL
+
+BO_ 2564486576 SR2_DIAG_RES_PHY_PLANT: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  PLANT_TOOL
+
+BO_ 2564486320 SR2_DIAG_RES_PHY_OTA: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OTA_TOOL
+
+BO_ 2564485552 SR2_DIAG_RES_PHY_OBD2: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD2_TOOL
+
+BO_ 2564485296 SR2_DIAG_RES_PHY_OBD1: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD1_TOOL
+
+BO_ 2564486608 FR_DIAG_RES_PHY_PLANT: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  PLANT_TOOL
+
+BO_ 2564486352 FR_DIAG_RES_PHY_OTA: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OTA_TOOL
+
+BO_ 2564485584 FR_DIAG_RES_PHY_OBD2: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD2_TOOL
+
+BO_ 2564485328 FR_DIAG_RES_PHY_OBD1: 8 FR_D0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD1_TOOL
+
+BO_ 2564486560 FCM_DIAG_RES_PHY_PLANT: 8 FCM_A0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  PLANT_TOOL
+
+BO_ 2564486304 FCM_DIAG_RES_PHY_OTA: 8 FCM_A0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OTA_TOOL
+
+BO_ 2564485536 FCM_DIAG_RES_PHY_OBD2: 8 FCM_A0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD2_TOOL
+
+BO_ 2564485280 FCM_DIAG_RES_PHY_OBD1: 8 FCM_A0
+ SG_ Dummy_signal : 0|64@1+ (1,0) [0|1.84467440737096E+19] ""  OBD1_TOOL
+
+BO_ 2566845258 VP1_4A: 8 GATEWAY_25
+ SG_ rdn_Longitude : 32|32@1+ (1E-07,-210) [-210|219.4967295] "deg" Vector__XXX
+ SG_ rdn_Latitude : 0|32@1+ (1E-07,-210) [-210|219.4967295] "deg" Vector__XXX
+
+BO_ 2566842442 VDS_4A: 8 GATEWAY_25
+ SG_ rdn_Pitch : 16|16@1+ (0.0078125,-200) [-200|311.9921875] "deg" Vector__XXX
+ SG_ rdn_NavigationBasedVehicleSpeed : 0|16@1+ (0.00390625,0) [0|255.99609375] "km/h" Vector__XXX
+ SG_ rdn_Altitude : 32|16@1+ (0.125,-2500) [-2500|5691.875] "m" Vector__XXX
+
+BO_ 2566838992 SOFT_D0: 8 FR_D0
+ SG_ SoftIdentification_FR : 8|8@1+ (1,0) [0|0] ""  CLUSTER_17
+ SG_ NumberOfSWIdentifierFields_FR : 0|8@1+ (1,0) [0|255] ""  CLUSTER_17
+
+BO_ 2566838944 SOFT_A0: 8 FCM_A0
+ SG_ SoftIdentification_FC : 8|8@1+ (1,0) [0|0] ""  CLUSTER_17
+ SG_ NumberOfSWIdentifierFields_FC : 0|8@1+ (1,0) [0|255] ""  CLUSTER_17
+
+BO_ 2565525527 RQST_17_FR: 3 CLUSTER_17
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  FR_D0
+
+BO_ 2565513239 RQST_17_FC: 3 CLUSTER_17
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  FCM_A0
+
+BO_ 2565481905 RQST_B1: 3 FR_D0
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  GATEWAY_25
+
+BO_ 2565481904 RQST_B0: 3 FR_D0
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  GATEWAY_25
+
+BO_ 2566890672 prop_ADAS_BSIS_info: 8 FR_D0
+ SG_ rdn_BlindSpotCollisionWarningLev : 4|4@1+ (1,0) [0|15] ""  GATEWAY_25
+ SG_ rdn_BlindSpotDetectionState : 0|4@1+ (1,0) [0|15] ""  GATEWAY_25
+
+BO_ 2583627031 Cysec_propE: 8 CLUSTER_17
+ SG_ MsgCntr_propE : 48|4@1+ (1,0) [0|15] ""  FR_D0,FCM_A0
+ SG_ MsgCRC_propE : 56|8@1+ (1,0) [0|255] ""  FR_D0,FCM_A0
+ SG_ MAC_propE : 32|16@1+ (1,0) [0|65535] ""  FR_D0,FCM_A0
+ SG_ Prop_Odometer_EV : 0|32@1+ (0.125,0) [0|536870911.875] "km"  FR_D0,FCM_A0
+
+BO_ 2382303727 Cysec_propH_EV: 8 EVCU_EF
+ SG_ Prop_WheelBasedVehicleSpeed_EV : 0|16@1+ (0.00390625,0) [0|255.99609375] "km/h"  FR_D0,FCM_A0
+ SG_ MsgCRC_propH : 56|8@1+ (1,0) [0|255] ""  FR_D0,FCM_A0
+ SG_ MsgCntr_propH : 48|4@1+ (1,0) [0|15] ""  FR_D0,FCM_A0
+ SG_ MAC_propH : 32|16@1+ (1,0) [0|65535] ""  FR_D0,FCM_A0
+
+BO_ 2382299631 Cysec_propA_EV: 8 EVCU_EF
+ SG_ Prop_MotorSpeed_EV : 16|16@1+ (0.125,0) [0|8191.875] "rpm"  FCM_A0
+ SG_ Prop_ActualMotorPercentTorque_EV : 8|8@1+ (1,-125) [-125|130] "%"  FCM_A0
+ SG_ Prop_AccelPedalPos1_EV : 0|8@1+ (0.4,0) [0|102] "%"  FCM_A0
+ SG_ MsgCRC_propA : 56|8@1+ (1,0) [0|255] ""  FCM_A0
+ SG_ MsgCntr_propA : 48|4@1+ (1,0) [0|15] ""  FCM_A0
+ SG_ MAC_propA : 32|16@1+ (1,0) [0|65535] ""  FCM_A0
+
+BO_ 2382306976 AEB_XBR_LOGIN: 8 FCM_A0
+ SG_ RlngCntrXBRLogin : 0|8@1+ (1,0) [0|255] ""  ESC_0B
+ SG_ MAC_XBRLogin : 32|32@1+ (1,0) [0|65535] ""  ESC_0B
+
+BO_ 2382305952 AEB_TSC_LOGIN: 8 FCM_A0
+ SG_ RlngCntrTSCLogin : 0|8@1+ (1,0) [0|255] ""  EMS_00,EVCU_EF
+ SG_ MAC_TSCLogin : 32|32@1+ (1,0) [0|4294967295] ""  EMS_00,EVCU_EF
+
+BO_ 2382301443 Cysec_propG: 8 AT_AMT_03
+ SG_ MsgCRC_propG : 56|8@1+ (1,0) [0|255] ""  FCM_A0
+ SG_ MsgCntr_propG : 48|4@1+ (1,0) [0|15] ""  FCM_A0
+ SG_ MAC_propG : 32|16@1+ (1,0) [0|65535] ""  FCM_A0
+ SG_ Prop_TransmissionOutputShaftSpee : 0|16@1+ (0.125,0) [0|8191.875] "rpm"  FCM_A0
+
+BO_ 2583626507 Cysec_propD: 8 ESC_0B
+ SG_ MsgCRC_propD : 56|8@1+ (1,0) [0|255] ""  FR_D0,FCM_A0
+ SG_ MsgCntr_propD : 48|4@1+ (1,0) [0|15] ""  FR_D0,FCM_A0
+ SG_ MAC_propD : 32|16@1+ (1,0) [0|65535] ""  FR_D0,FCM_A0
+ SG_ Prop_LongitudinalAcceleration : 16|8@1+ (0.1,-12.5) [-12.5|13] "m/s*s"  FR_D0,FCM_A0
+ SG_ Prop_LateralAcceleration : 0|16@1+ (0.00048828,-15.687) [-15.687|16.3124298] "m/s*s"  FR_D0,FCM_A0
+
+BO_ 2583626251 Cysec_propC: 8 ESC_0B
+ SG_ MsgCRC_propC : 56|8@1+ (1,0) [0|255] ""  FR_D0,FCM_A0
+ SG_ MsgCntr_propC : 48|4@1+ (1,0) [0|15] ""  FR_D0,FCM_A0
+ SG_ MAC_propC : 32|16@1+ (1,0) [0|65535] ""  FR_D0,FCM_A0
+ SG_ Prop_YawRate : 16|16@1+ (0.00012207,-3.92) [-3.92|4.07985745] "rad/s"  FR_D0,FCM_A0
+ SG_ Prop_SteeringWheelAngle : 0|16@1+ (0.0009765625,-26.878) [-26.878|37.1210234375] "rad"  FR_D0,FCM_A0
+
+BO_ 2382303488 Cysec_propH: 8 EMS_00
+ SG_ MsgCRC_propH : 56|8@1+ (1,0) [0|255] ""  FR_D0,FCM_A0
+ SG_ MsgCntr_propH : 48|4@1+ (1,0) [0|15] ""  FR_D0,FCM_A0
+ SG_ MAC_propH : 32|16@1+ (1,0) [0|65535] ""  FR_D0,FCM_A0
+ SG_ Prop_WheelBasedVehicleSpeed : 0|16@1+ (0.00390625,0) [0|255.99609375] "km/h"  FR_D0,FCM_A0
+
+BO_ 2382299392 Cysec_propA: 8 EMS_00
+ SG_ MsgCRC_propA : 56|8@1+ (1,0) [0|255] ""  FCM_A0
+ SG_ MsgCntr_propA : 48|4@1+ (1,0) [0|15] ""  FCM_A0
+ SG_ MAC_propA : 32|16@1+ (1,0) [0|65535] ""  FCM_A0
+ SG_ Prop_EngSpeed : 16|16@1+ (0.125,0) [0|8191.875] "rpm"  FCM_A0
+ SG_ Prop_ActualEngPercentTorque : 8|8@1+ (1,-125) [-125|130] "%"  FCM_A0
+ SG_ Prop_AccelPedalPos1 : 0|8@1+ (0.4,0) [0|102] "%"  FCM_A0
+
+BO_ 2565865711 ERC1_EV: 8 EVCU_EF
+ SG_ ActualRetarderPercentTorque_EVRe : 8|8@1+ (1,-125) [-125|130] ""  FCM_A0
+
+BO_ 2566870039 CLS_TX_EV2: 8 CLUSTER_17
+ SG_ Odometer_EV : 0|32@1+ (0.125,0) [0|536870911.875] "km"  FR_D0,FCM_A0
+
+BO_ 2566873327 EVCU_TX_EV: 8 EVCU_EF
+ SG_ System_Mode_Seq_sts : 56|8@1+ (1,0) [0|255] "state"  FR_D0,FCM_A0
+
+BO_ 2566859553 CLS_TX_EV1: 8 CLUSTER_17
+ SG_ Park_Brake_EV : 28|2@1+ (1,0) [0|3] "state"  FR_D0,FCM_A0
+
+BO_ 2348871584 TSC1_EV: 8 FCM_A0
+ SG_ MotorRequestedTorque_TorqueLimit : 24|8@1+ (1,-125) [-125|130] "%"  EVCU_EF
+ SG_ MotorOverrideCtrlMode_EV : 0|2@1+ (1,0) [0|3] "state"  EVCU_EF
+ SG_ TSC1_MessageCRC : 48|8@1+ (1,0) [0|255] ""  EVCU_EF
+ SG_ TSC1_MessageCounter : 44|4@1+ (1,0) [0|15] ""  EVCU_EF
+ SG_ TSC1EnhancedIntegrityDataSupport : 6|2@1+ (1,0) [0|3] ""  EVCU_EF
+ SG_ OverrideCtrlModePriority_EV : 4|2@1+ (1,0) [0|3] "state"  EVCU_EF
+ SG_ MessageCounter : 56|4@1+ (1,0) [0|15] "count"  EVCU_EF
+ SG_ MessageChecksum : 60|4@1+ (1,0) [0|15] "count"  EVCU_EF
+
+BO_ 2566708463 CCVS3_EV: 8 EVCU_EF
+ SG_ AEBSReadinessState_EV : 24|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2565866991 ETC2_EV: 8 EVCU_EF
+ SG_ TransCurrentGear_EV : 24|8@1+ (1,-125) [-125|130] "gear value"  FR_D0,FCM_A0
+
+BO_ 2364540143 EEC1_EV: 8 EVCU_EF
+ SG_ MotorSpeed_EV : 24|16@1+ (0.125,0) [0|8191.875] "rpm"  FCM_A0
+ SG_ DriversDemandMotorPercentTorque_ : 8|8@1+ (1,-125) [-125|130] "%"  FCM_A0
+ SG_ ActualMotorPercentTorque_EV : 16|8@1+ (1,-125) [-125|130] "%"  FCM_A0
+
+BO_ 2566844911 CCVS1_EV: 8 EVCU_EF
+ SG_ BrakeSwitch_EV : 28|2@1+ (1,0) [0|3] ""  FR_D0,FCM_A0
+ SG_ WheelBasedVehicleSpeed_EV : 8|16@1+ (0.00390625,0) [0|255.99609375] "km/h"  FR_D0,FCM_A0
+
+BO_ 2364539887 EEC2_EV: 8 EVCU_EF
+ SG_ AccelPedalPos1_EV : 8|8@1+ (0.4,0) [0|102] "%"  FCM_A0
+
+BO_ 2566834699 DM1_0B: 22 ESC_0B
+ SG_ DTC5 : 144|32@1+ (1,0) [0|4294967295] ""  FCM_A0
+ SG_ DTC4 : 112|32@1+ (1,0) [0|4294967295] ""  FCM_A0
+ SG_ DTC3 : 80|32@1+ (1,0) [0|4294967295] ""  FCM_A0
+ SG_ DTC2 : 48|32@1+ (1,0) [0|4294967295] ""  FCM_A0
+ SG_ DTC1 : 16|32@1+ (1,0) [0|4294967295] ""  FCM_A0
+ SG_ FlashMalfuncIndicatorLamp : 14|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ FlashRedStopLamp : 12|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ FlashAmberWarningLamp : 10|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ FlashProtectLamp : 8|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ MalfunctionIndicatorLampStatus : 6|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ RedStopLampState : 4|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ AmberWarningLampStatus : 2|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ ProtectLampStatus : 0|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2565603280 TPDT_D0: 8 FR_D0
+ SG_ SequenceNumber : 0|8@1+ (1,0) [0|252] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565603249 TPDT_B1: 8 FR_D0
+ SG_ SequenceNumber : 0|8@1+ (1,0) [0|252] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565603248 TPDT_B0: 8 FR_D0
+ SG_ SequenceNumber : 0|8@1+ (1,0) [0|252] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565668785 TPCM_B1: 8 FR_D0
+ SG_ TotalNumberOfPacketsEoMA m19 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPacketsBAM m32 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPackets m16 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeEoMA m19 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeBAM m32 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ PGNumber : 40|24@1+ (1,0) [0|16777200] ""  GATEWAY_25,CLUSTER_17
+ SG_ MaximumNumberOfPackets m16 : 32|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ ConnectionAbortReason m255 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NumberOfPacketsThatCanBeSent m17 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NextPacketNumberToBeSent m17 : 16|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSize m16 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ ControlByte M : 0|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565668784 TPCM_B0: 8 FR_D0
+ SG_ TotalNumberOfPacketsEoMA m19 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPacketsBAM m32 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPackets m16 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeEoMA m19 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeBAM m32 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ PGNumber : 40|24@1+ (1,0) [0|16777200] ""  GATEWAY_25,CLUSTER_17
+ SG_ MaximumNumberOfPackets m16 : 32|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ ConnectionAbortReason m255 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NumberOfPacketsThatCanBeSent m17 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NextPacketNumberToBeSent m17 : 16|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSize m16 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ ControlByte M : 0|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565668816 TPCM_D0: 8 FR_D0
+ SG_ TotalNumberOfPacketsEoMA m19 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPacketsBAM m32 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPackets m16 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeEoMA m19 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeBAM m32 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ PGNumber : 40|24@1+ (1,0) [0|16777200] ""  GATEWAY_25,CLUSTER_17
+ SG_ MaximumNumberOfPackets m16 : 32|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ ConnectionAbortReason m255 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NumberOfPacketsThatCanBeSent m17 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NextPacketNumberToBeSent m17 : 16|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSize m16 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ ControlByte M : 0|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565603232 TPDT_A0: 8 FCM_A0
+ SG_ SequenceNumber : 0|8@1+ (1,0) [0|252] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2566890912 prop_ADAS_AEB_LDW_info: 8 FCM_A0
+ SG_ rdn_DriverAlertnessWarningSystem : 27|3@1+ (1,0) [0|7] ""  GATEWAY_25
+ SG_ rdn_DriverAlertnessWarning : 24|3@1+ (1,0) [0|7] ""  GATEWAY_25
+ SG_ rdn_CameraImagerStatus : 20|4@1+ (1,0) [0|15] ""  GATEWAY_25
+ SG_ rdn_Lane_Dep_system_state : 16|4@1+ (1,0) [0|15] ""  GATEWAY_25
+ SG_ rdn_LaneDepartureImminentLeftSid : 10|2@1+ (1,0) [0|3] ""  GATEWAY_25
+ SG_ rdn_LaneDepartureImminentRightSi : 8|2@1+ (1,0) [0|3] ""  GATEWAY_25
+ SG_ rdn_AEB_CollisionWarningLevel : 4|4@1+ (1,0) [0|15] ""  GATEWAY_25
+ SG_ rdn_AEB_system_state : 0|4@1+ (1,0) [0|15] ""  GATEWAY_25
+
+BO_ 2565481888 RQST_A0: 3 FCM_A0
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  GATEWAY_25
+
+BO_ 2565668768 TPCM_A0: 8 FCM_A0
+ SG_ PGNumber : 40|24@1+ (1,0) [0|16777200] ""  GATEWAY_25,CLUSTER_17
+ SG_ MaximumNumberOfPackets m16 : 32|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPacketsEoMA m19 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPacketsBAM m32 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalNumberOfPackets m16 : 24|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NextPacketNumberToBeSent m17 : 16|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeEoMA m19 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSizeBAM m32 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ ConnectionAbortReason m255 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ NumberOfPacketsThatCanBeSent m17 : 8|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+ SG_ TotalMessageSize m16 : 8|16@1+ (1,0) [0|64255] "counts"  GATEWAY_25,CLUSTER_17
+ SG_ ControlByte M : 0|8@1+ (1,0) [0|255] ""  GATEWAY_25,CLUSTER_17
+
+BO_ 2565481936 RQST_D0: 3 FR_D0
+ SG_ ParameterGroupNumber : 0|24@1+ (1,0) [0|16777215] ""  GATEWAY_25
+
+BO_ 2566843429 VI: 8 GATEWAY_25
+ SG_ VehicleIdentification : 0|8@1+ (1,0) [0|255] ""  FCM_A0,FR_D0
+
+BO_ 2364539395 ETC1: 8 AT_AMT_03
+ SG_ TransmissionShiftInProcess : 4|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ TransmissionDrivelineEngaged : 0|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ TransmissionOutputShaftSpeed : 8|16@1+ (0.125,0) [0|8191.875] "rpm"  FCM_A0
+
+BO_ 2566848791 CLS_Tx_16: 8 CLUSTER_17
+ SG_ Transmission_type_info : 41|3@1+ (1,0) [0|7] ""  FCM_A0,FR_D0
+ SG_ Crawler_confi_status_info : 40|1@1+ (1,0) [0|1] ""  FCM_A0,FR_D0
+
+BO_ 2566869015 CLS_Tx_4: 8 CLUSTER_17
+ SG_ Ignition : 32|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+ SG_ ReverseSwitchInfo : 28|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+
+BO_ 2566801923 ETC7: 8 AT_AMT_03
+ SG_ TransmissionMode1Indicator : 22|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2565873124 SAS: 8 SAS_E4
+ SG_ SAS_MessageCounter : 56|4@1+ (1,0) [0|15] "count"  FCM_A0,FR_D0
+ SG_ SAS_MessageChecksum : 60|4@1+ (1,0) [0|15] "count"  FCM_A0,FR_D0
+ SG_ SAS_Calibrated : 50|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+ SG_ SAS_ActiveMode : 48|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+ SG_ SAS_SteeringWheelAngleRange : 32|16@1+ (0.0009765625,-26.878) [-26.878|37.1210234375] "rad"  FCM_A0,FR_D0
+ SG_ SAS_SteeringWheelAngleRangeCount : 22|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+ SG_ SAS_SteeringWheelAngleRange_0000 : 16|6@1+ (1,-32) [-32|29] "ranges"  FCM_A0,FR_D0
+ SG_ SAS_SteeringWheelAngle : 0|16@1+ (0.0009765625,-26.878) [-26.878|37.1210234375] "rad"  FCM_A0,FR_D0
+
+BO_ 2566890704 prop_ADAS_MOIS_info: 8 FR_D0
+ SG_ rdn_MOISCollisionWarningLevel : 4|4@1+ (1,0) [0|15] ""  GATEWAY_25
+ SG_ rdn_MovingObjectDetectionState : 0|4@1+ (1,0) [0|15] ""  GATEWAY_25
+
+BO_ 2565866755 ETC2_03: 8 AT_AMT_03
+ SG_ TransCurrentGear_03 : 24|8@1+ (1,-125) [-125|130] "gear value"  FCM_A0,FR_D0
+
+BO_ 2365556759 ADAS_FN_Enable_disable_sts: 8 CLUSTER_17
+ SG_ DDAW_warning_suppression : 19|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ MOIS_Fn_Switch_sts : 0|3@1+ (1,0) [0|7] ""  FR_D0
+ SG_ MessageAliveCounter : 52|4@1+ (1,0) [0|15] "count"  FCM_A0,FR_D0
+ SG_ MessageCRC : 56|8@1+ (1,0) [0|255] "count"  FCM_A0,FR_D0
+ SG_ LDWS_Fn_Switch_sts : 16|3@1+ (1,0) [0|7] ""  FCM_A0
+ SG_ DDAW_Fn_switch_sts : 8|3@1+ (1,0) [0|7] ""  FCM_A0
+ SG_ BSIS_Fn_Switch_Sts : 3|3@1+ (1,0) [0|7] ""  FR_D0
+ SG_ AEBS_Fn_Switch_sts : 11|3@1+ (1,0) [0|7] ""  FCM_A0
+
+BO_ 2566841879 TD: 8 CLUSTER_17
+ SG_ Year : 40|8@1+ (1,0) [0|255] "year"  FCM_A0,FR_D0
+ SG_ Seconds : 0|8@1+ (0.25,0) [0|59] "s"  FCM_A0,FR_D0
+ SG_ Month : 24|8@1+ (1,0) [0|12] "month"  FCM_A0,FR_D0
+ SG_ Minutes : 8|8@1+ (1,0) [0|59] "min"  FCM_A0,FR_D0
+ SG_ LocalMinuteOffset : 56|8@1+ (1,-125) [-125|130] "h"  FCM_A0,FR_D0
+ SG_ LocalHourOffset : 48|8@1+ (1,-125) [-125|130] "min"  FCM_A0,FR_D0
+ SG_ Hours : 16|8@1+ (1,0) [0|255] "h"  FCM_A0,FR_D0
+ SG_ Day : 32|8@1+ (0.25,0) [0|31] "day"  FCM_A0,FR_D0
+
+BO_ 2566708224 CCVS3: 8 EMS_00
+ SG_ AEBSReadinessState : 24|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2566840320 VD: 8 EMS_00
+ SG_ Total_vehicle_distance : 32|32@1+ (0.125,0) [0|536870911.875] "km"  FCM_A0,FR_D0
+
+BO_ 2365428224 EOI: 8 EMS_00
+ SG_ Engine_Operating_Mode : 0|4@1+ (1,0) [0|15] "state"  FCM_A0
+
+BO_ 2566834865 DM1_B1: 22 FR_D0
+ SG_ DTC5 : 144|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC4 : 112|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC3 : 80|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC2 : 48|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC1 : 16|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ AmberWarningLampStatus : 2|2@1+ (1,0) [0|3] ""  GATEWAY_25
+
+BO_ 2566834864 DM1_B0: 22 FR_D0
+ SG_ DTC5 : 144|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC4 : 112|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC3 : 80|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC2 : 48|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC1 : 16|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ AmberWarningLampStatus : 2|2@1+ (1,0) [0|3] ""  GATEWAY_25
+
+BO_ 2566834896 DM1_D0: 22 FR_D0
+ SG_ DTC5 : 144|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC4 : 112|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC3 : 80|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC2 : 48|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC1 : 16|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ AmberWarningLampStatus : 2|2@1+ (1,0) [0|3] ""  GATEWAY_25
+
+BO_ 2566834848 DM1_A0: 22 FCM_A0
+ SG_ DTC5 : 144|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC4 : 112|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC3 : 80|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC2 : 48|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ DTC1 : 16|32@1+ (1,0) [0|4294967295] ""  GATEWAY_25,CLUSTER_17
+ SG_ AmberWarningLampStatus : 2|2@1+ (1,0) [0|3] ""  GATEWAY_25
+
+BO_ 2564882209 CM1: 8 CLUSTER_17
+ SG_ SeatBeltSwitch : 30|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2365443095 OEL: 8 CLUSTER_17
+ SG_ TurnSignalSwitch : 8|4@1+ (1,0) [0|15] ""  FCM_A0,FR_D0
+ SG_ HighLowBeamSwitch : 14|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+ SG_ HazardLightSwitch : 12|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+
+BO_ 2565867787 VDC2: 8 ESC_0B
+ SG_ YawRate : 24|16@1+ (0.00012207,-3.92) [-3.92|4.07985745] "rad/s"  FCM_A0,FR_D0
+ SG_ SteerWheelAngle : 0|16@1+ (0.00097656,-31.374) [-31.374|32.6248596] "rad"  FCM_A0,FR_D0
+ SG_ LongitudinalAcceleration : 56|8@1+ (0.1,-12.5) [-12.5|13] "m/s*s"  FCM_A0,FR_D0
+ SG_ LateralAcceleration : 40|16@1+ (0.00048828,-15.687) [-15.687|16.3124298] "m/s*s"  FCM_A0,FR_D0
+
+BO_ 2566803211 VDC1: 8 ESC_0B
+ SG_ VDCInformationSignal : 0|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ VDCFullyOperational : 2|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ VDCBrakeLightRq : 4|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2298375691 HRW: 8 ESC_0B
+ SG_ RearAxleRightWheelSpeed : 48|16@1+ (0.00390625,0) [0|255.99609375] "kmph"  FCM_A0
+ SG_ RearAxleLeftWheelSpeed : 32|16@1+ (0.00390625,0) [0|255.99609375] "kmph"  FCM_A0
+ SG_ FrontAxleRightWheelSpeed : 16|16@1+ (0.00390625,0) [0|255.99609375] "kmph"  FCM_A0
+ SG_ FrontAxleLeftWheelSpeed : 0|16@1+ (0.00390625,0) [0|255.99609375] "kmph"  FCM_A0
+
+BO_ 2566767627 EBC5: 8 ESC_0B
+ SG_ EmergencyBrakingActive : 26|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ XBRAccelerationLimit : 16|8@1+ (0.1,-12.5) [-12.5|13] "m/s²"  FCM_A0
+ SG_ XBRSystemState : 10|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ XBRActiveCtrlMode : 12|4@1+ (1,0) [0|15] ""  FCM_A0
+ SG_ FoundationBrakeUse : 8|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2566831883 EBC2: 8 ESC_0B
+ SG_ RelativeSpeedRearAxle1RightWheel : 40|8@1+ (0.0625,-7.8125) [-7.8125|8.125] "kmph"  FCM_A0
+ SG_ RelativeSpeedRearAxle1LeftWheel : 32|8@1+ (0.0625,-7.8125) [-7.8125|8.125] "kmph"  FCM_A0
+ SG_ RelativeSpeedFrontAxleRightWheel : 24|8@1+ (0.0625,-7.8125) [-7.8125|8.125] "kmph"  FCM_A0
+ SG_ RelativeSpeedFrontAxleLeftWheel : 16|8@1+ (0.0625,-7.8125) [-7.8125|8.125] "kmph"  FCM_A0
+ SG_ FrontAxleSpeed : 0|16@1+ (0.0039,0) [0|255.5865] "kmph"  FCM_A0
+
+BO_ 2565865739 EBC1: 8 ESC_0B
+ SG_ ATC_ASRInformationSignal : 46|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ ABS_EBSAmberWarningSignal : 44|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ ASROffRoadSwitch : 18|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ BrakePedalPos : 8|8@1+ (0.4,0) [0|102] "%"  FCM_A0
+ SG_ AntiLockBrakingActive : 4|2@1+ (1,0) [0|3] ""  FCM_A0
+ SG_ ABSFullyOperational : 40|2@1+ (1,0) [0|3] ""  FCM_A0
+
+BO_ 2565866752 ETC2_00: 8 EMS_00
+ SG_ TransCurrentGear_00 : 24|8@1+ (1,-125) [-125|130] "gear value"  FCM_A0,FR_D0
+
+BO_ 2364539648 EEC2: 8 EMS_00
+ SG_ AccelPedalPos1 : 8|8@1+ (0.4,0) [0|102] "%"  FCM_A0
+ SG_ AccelPedalKickdownSwitch : 2|2@1+ (1,0) [0|3] "state"  FCM_A0
+
+BO_ 2364539904 EEC1: 8 EMS_00
+ SG_ ActualEngPercentTorque : 16|8@1+ (1,-125) [-125|130] "%"  FCM_A0
+ SG_ DriversDemandEngPercentTorque : 8|8@1+ (1,-125) [-125|130] "%"  FCM_A0
+ SG_ EngSpeed : 24|16@1+ (0.125,0) [0|8191.875] "rpm"  FCM_A0
+
+BO_ 2566844672 CCVS1: 8 EMS_00
+ SG_ ParkingBrakeSwitch : 2|2@1+ (1,0) [0|3] ""  FR_D0,FCM_A0
+ SG_ WheelBasedVehicleSpeed : 8|16@1+ (0.00390625,0) [0|255.99609375] "km/h"  FCM_A0,FR_D0
+ SG_ BrakeSwitch : 28|2@1+ (1,0) [0|3] ""  FCM_A0,FR_D0
+
+BO_ 2566769991 OWW: 8 VCU_47
+ SG_ FrontOperatorWiperSwitch : 4|4@1+ (1,0) [0|15] "state"  FCM_A0
+
+BO_ 2365541072 MOIS: 8 FR_D0
+ SG_ MOISCollisionWarningLevel : 4|4@1+ (1,0) [0|15] ""  CLUSTER_17
+ SG_ MovingObjectDetectionState : 0|4@1+ (1,0) [0|15] ""  CLUSTER_17
+
+BO_ 2364671664 BSD1: 8 FR_D0
+ SG_ BlindSpotDetectionState : 0|4@1+ (1,0) [0|15] ""  CLUSTER_17
+ SG_ BlindSpotCollisionWarningLevel : 4|4@1+ (1,0) [0|15] ""  CLUSTER_17
+
+BO_ 2566806504 FLI2: 8 FCM_A0
+ SG_ ImagerStatus : 52|4@1+ (1,0) [0|15] ""  CLUSTER_17
+ SG_ DriverAlertnessWarningSysState : 16|3@1+ (1,0) [0|7] "state"  CLUSTER_17
+ SG_ DriverAlertnessLevel : 8|8@1+ (0.4,0) [0|102] "%"  CLUSTER_17
+ SG_ DepWarnSysSt : 48|4@1+ (1,0) [0|15] ""  CLUSTER_17
+
+BO_ 2431649768 FLI1: 8 FCM_A0
+ SG_ LaneDepartureImminentRightSide : 4|2@1+ (1,0) [0|3] ""  CLUSTER_17
+ SG_ LaneDepartureImminentLeftSide : 6|2@1+ (1,0) [0|3] ""  CLUSTER_17
+ SG_ DriverAlertnessWarning : 8|3@1+ (1,0) [0|7] ""  CLUSTER_17
+
+BO_ 2349075360 XBR: 8 FCM_A0
+ SG_ XBR_MessageCRC : 48|8@1+ (1,0) [0|255] ""  ESC_0B
+ SG_ XBR_messageAliveCounter : 44|4@1+ (1,0) [0|15] ""  ESC_0B
+ SG_ XBRPriority : 18|2@1+ (1,0) [0|3] "state"  ESC_0B
+ SG_ XBREBIMode : 16|2@1+ (1,0) [0|3] "state"  ESC_0B
+ SG_ XBRCtrlMode : 20|2@1+ (1,0) [0|3] "state"  ESC_0B
+ SG_ ExtlAccelerationDemand : 0|16@1+ (0.00048828125,-15.687) [-15.687|16.31251171875] "m/s²"  ESC_0B
+
+BO_ 2348810400 TSC1: 8 FCM_A0
+ SG_ TSC1_MessageCRC : 48|8@1+ (1,0) [0|255] ""  EMS_00
+ SG_ TSC1_MessageCounter : 44|4@1+ (1,0) [0|15] ""  EMS_00
+ SG_ TSC1EnhancedIntegrityDataSupport : 6|2@1+ (1,0) [0|3] ""  EMS_00
+ SG_ OverrideCtrlModePriority : 4|2@1+ (1,0) [0|3] "state"  EMS_00
+ SG_ MessageCounter : 56|4@1+ (1,0) [0|15] "count"  EMS_00
+ SG_ MessageChecksum : 60|4@1+ (1,0) [0|15] "count"  EMS_00
+ SG_ EngRequestedTorque_TorqueLimit : 24|8@1+ (1,-125) [-125|130] "%"  EMS_00
+ SG_ EngOverrideCtrlMode : 0|2@1+ (1,0) [0|3] "state"  EMS_00
+
+BO_ 2348876704 TC1: 8 FCM_A0
+ SG_ DisengageDrivelineRequest : 4|2@1+ (1,0) [0|3] ""  AT_AMT_03
+
+BO_ 2364551072 AEBS1_A0: 8 FCM_A0
+ SG_ AEBS1_MessageCRC : 32|8@1+ (1,0) [0|255] "count"  GATEWAY_25,CLUSTER_17,ESC_0B,EMS_00,EVCU_EF
+ SG_ AEBS1_messageAliveCounter : 24|4@1+ (1,0) [0|15] "count"  GATEWAY_25,CLUSTER_17,ESC_0B,EMS_00,EVCU_EF
+ SG_ TmeToCollisionWithRelevantObject : 16|8@1+ (0.05,0) [0|12.75] "second"  GATEWAY_25
+ SG_ RlvntObjctDtctdFrAdvncdEmrgncyBr : 8|3@1+ (1,0) [0|7] ""  GATEWAY_25
+ SG_ AEB_CollisionWarningLevel : 4|4@1+ (1,0) [0|15] "state"  CLUSTER_17
+ SG_ AdvncdEmrgencyBrakingSystemState : 0|4@1+ (1,0) [0|15] "state"  EVCU_EF,CLUSTER_17,EMS_00,ESC_0B
+
+
+
+CM_ BO_ 3221225472 "This is a message for not used signals, created by Vector CANdb++ DBC OLE DB Provider.";
+CM_ SG_ 2566841879 LocalMinuteOffset "Operational Range: -59 to +59";
+CM_ SG_ 2566841879 LocalHourOffset "Operational Range : -23 to +23";
+BA_DEF_ BO_  "J1939FdTpADS" INT 0 52;
+BA_DEF_ BO_  "J1939FdTpADT" INT 0 255;
+BA_DEF_ BO_  "J1939PgAppearanceOnBus" ENUM  "Default","CAN_Extended","CANFD_Extended";
+BA_DEF_ BO_  "J1939CPgSendTimeout" INT -1 3600000;
+BA_DEF_ BO_  "J1939CPgTOS" INT 0 7;
+BA_DEF_ BO_  "J1939CPgTF" INT 0 7;
+BA_DEF_ BU_  "J1939MultiPgSendTimeout" INT 0 3600000;
+BA_DEF_ BU_  "J1939MultiPgSizeThreshold" INT 0 64;
+BA_DEF_ BU_  "J1939MultiPgBroadcastType" ENUM  "FBFF","FEFF";
+BA_DEF_  "DatabaseVersion" STRING ;
+BA_DEF_ BO_  "FsJ1939UseCrcAndCounter" STRING ;
+BA_DEF_ BO_  "FsJ1939NeedsSHM" ENUM  "No","Yes";
+BA_DEF_ BO_  "FsJ1939Delay" INT 0 1000;
+BA_DEF_ BO_  "TpJ1939VarDlc" ENUM  "No","Yes";
+BA_DEF_ SG_  "SigType" ENUM  "Default","Range","RangeSigned","ASCII","Discrete","Control","ReferencePGN","DTC","StringDelimiter","StringLength","StringLengthControl","MessageCounter","MessageChecksum";
+BA_DEF_ SG_  "GenSigILSupport" ENUM  "No","Yes";
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cyclic","OnWrite","OnWriteWithRepetition","OnChange","OnChangeWithRepetition","IfActive","IfActiveWithRepetition","NoSigSendType";
+BA_DEF_ BO_  "GenMsgFastOnStart" INT 0 100000;
+BA_DEF_ SG_  "GenSigInactiveValue" INT 0 0;
+BA_DEF_ BO_  "GenMsgCycleTimeFast" INT 0 3600000;
+BA_DEF_ BO_  "GenMsgNrOfRepetition" INT 0 1000000;
+BA_DEF_ SG_  "GenSigStartValue" INT 0 2147483647;
+BA_DEF_ BO_  "GenMsgDelayTime" INT 0 1000;
+BA_DEF_ BO_  "GenMsgILSupport" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgStartDelayTime" INT 0 100000;
+BA_DEF_ BU_  "NodeLayerModules" STRING ;
+BA_DEF_ BU_  "ECU" STRING ;
+BA_DEF_ BU_  "NmJ1939SystemInstance" INT 0 15;
+BA_DEF_ BU_  "NmJ1939System" INT 0 127;
+BA_DEF_ BU_  "NmJ1939ManufacturerCode" INT 0 2047;
+BA_DEF_ BU_  "NmJ1939IndustryGroup" INT 0 7;
+BA_DEF_ BU_  "NmJ1939IdentityNumber" INT 0 2097151;
+BA_DEF_ BU_  "NmJ1939FunctionInstance" INT 0 7;
+BA_DEF_ BU_  "NmJ1939Function" INT 0 255;
+BA_DEF_ BU_  "NmJ1939ECUInstance" INT 0 7;
+BA_DEF_ BU_  "NmJ1939AAC" INT 0 1;
+BA_DEF_ BU_  "NmStationAddress" INT 0 255;
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "cyclic","On Request","As Needed","NotUsed","NotUsed","NotUsed","NotUsed","IfActive","noMsgSendType";
+BA_DEF_ BO_  "GenMsgRequestable" INT 0 1;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 3600000;
+BA_DEF_ SG_  "SPN" INT 0 524287;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_  "ProtocolType" STRING ;
+BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","J1939PG","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","StandardCAN_FD","ExtendedCAN_FD";
+BA_DEF_ SG_  "SystemSignalLongSymbol" STRING ;
+BA_DEF_DEF_  "J1939FdTpADS" 0;
+BA_DEF_DEF_  "J1939FdTpADT" 0;
+BA_DEF_DEF_  "J1939PgAppearanceOnBus" "Default";
+BA_DEF_DEF_  "J1939CPgSendTimeout" -1;
+BA_DEF_DEF_  "J1939CPgTOS" 2;
+BA_DEF_DEF_  "J1939CPgTF" 0;
+BA_DEF_DEF_  "J1939MultiPgSendTimeout" 2;
+BA_DEF_DEF_  "J1939MultiPgSizeThreshold" 56;
+BA_DEF_DEF_  "J1939MultiPgBroadcastType" "FBFF";
+BA_DEF_DEF_  "DatabaseVersion" "";
+BA_DEF_DEF_  "FsJ1939UseCrcAndCounter" "";
+BA_DEF_DEF_  "FsJ1939NeedsSHM" "No";
+BA_DEF_DEF_  "FsJ1939Delay" 0;
+BA_DEF_DEF_  "TpJ1939VarDlc" "No";
+BA_DEF_DEF_  "SigType" "Default";
+BA_DEF_DEF_  "GenSigILSupport" "Yes";
+BA_DEF_DEF_  "GenSigSendType" "NoSigSendType";
+BA_DEF_DEF_  "GenMsgFastOnStart" 0;
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenMsgCycleTimeFast" 0;
+BA_DEF_DEF_  "GenMsgNrOfRepetition" 0;
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_DEF_DEF_  "GenMsgDelayTime" 0;
+BA_DEF_DEF_  "GenMsgILSupport" "Yes";
+BA_DEF_DEF_  "GenMsgStartDelayTime" 0;
+BA_DEF_DEF_  "NodeLayerModules" "";
+BA_DEF_DEF_  "ECU" "";
+BA_DEF_DEF_  "NmJ1939SystemInstance" 0;
+BA_DEF_DEF_  "NmJ1939System" 0;
+BA_DEF_DEF_  "NmJ1939ManufacturerCode" 0;
+BA_DEF_DEF_  "NmJ1939IndustryGroup" 0;
+BA_DEF_DEF_  "NmJ1939IdentityNumber" 0;
+BA_DEF_DEF_  "NmJ1939FunctionInstance" 0;
+BA_DEF_DEF_  "NmJ1939Function" 0;
+BA_DEF_DEF_  "NmJ1939ECUInstance" 0;
+BA_DEF_DEF_  "NmJ1939AAC" 0;
+BA_DEF_DEF_  "NmStationAddress" 254;
+BA_DEF_DEF_  "GenMsgSendType" "noMsgSendType";
+BA_DEF_DEF_  "GenMsgRequestable" 1;
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "SPN" 0;
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "BusType" "CAN";
+BA_DEF_DEF_  "ProtocolType" "J1939";
+BA_DEF_DEF_  "VFrameFormat" "J1939PG";
+BA_DEF_DEF_  "SystemSignalLongSymbol" "";
+BA_ "BusType" "CAN";
+BA_ "DBName" "ADAS_DBC";
+BA_ "NmStationAddress" BU_ PLANT_TOOL 245;
+BA_ "NmStationAddress" BU_ OTA_TOOL 244;
+BA_ "NmStationAddress" BU_ OBD2_TOOL 241;
+BA_ "NmStationAddress" BU_ OBD1_TOOL 240;
+BA_ "NmStationAddress" BU_ EVCU_EF 239;
+BA_ "NmStationAddress" BU_ VCU_47 71;
+BA_ "NmStationAddress" BU_ CLUSTER_17 23;
+BA_ "NmStationAddress" BU_ AT_AMT_03 3;
+BA_ "NmStationAddress" BU_ EMS_00 0;
+BA_ "NmStationAddress" BU_ GATEWAY_25 37;
+BA_ "NmStationAddress" BU_ SAS_E4 228;
+BA_ "NmStationAddress" BU_ ESC_0B 11;
+BA_ "NmStationAddress" BU_ FR_D0 208;
+BA_ "NmStationAddress" BU_ FCM_A0 160;
+BA_ "GenMsgSendType" BO_ 2565517591 2;
+BA_ "VFrameFormat" BO_ 2565517591 3;
+BA_ "GenMsgSendType" BO_ 2565517335 2;
+BA_ "VFrameFormat" BO_ 2565517335 3;
+BA_ "GenMsgSendType" BO_ 2566838961 1;
+BA_ "VFrameFormat" BO_ 2566838961 3;
+BA_ "GenMsgSendType" BO_ 2566838960 1;
+BA_ "VFrameFormat" BO_ 2566838960 3;
+BA_ "GenMsgSendType" BO_ 2564502517 2;
+BA_ "VFrameFormat" BO_ 2564502517 3;
+BA_ "GenMsgSendType" BO_ 2564502516 2;
+BA_ "VFrameFormat" BO_ 2564502516 3;
+BA_ "GenMsgSendType" BO_ 2564502513 2;
+BA_ "VFrameFormat" BO_ 2564502513 3;
+BA_ "GenMsgSendType" BO_ 2564502512 2;
+BA_ "VFrameFormat" BO_ 2564502512 3;
+BA_ "GenMsgSendType" BO_ 2564468981 2;
+BA_ "VFrameFormat" BO_ 2564468981 3;
+BA_ "GenMsgSendType" BO_ 2564468980 2;
+BA_ "VFrameFormat" BO_ 2564468980 3;
+BA_ "GenMsgSendType" BO_ 2564468977 2;
+BA_ "VFrameFormat" BO_ 2564468977 3;
+BA_ "GenMsgSendType" BO_ 2564468976 2;
+BA_ "VFrameFormat" BO_ 2564468976 3;
+BA_ "GenMsgSendType" BO_ 2564469237 2;
+BA_ "VFrameFormat" BO_ 2564469237 3;
+BA_ "GenMsgSendType" BO_ 2564469236 2;
+BA_ "VFrameFormat" BO_ 2564469236 3;
+BA_ "GenMsgSendType" BO_ 2564469233 2;
+BA_ "VFrameFormat" BO_ 2564469233 3;
+BA_ "GenMsgSendType" BO_ 2564469232 2;
+BA_ "VFrameFormat" BO_ 2564469232 3;
+BA_ "GenMsgSendType" BO_ 2564477173 2;
+BA_ "VFrameFormat" BO_ 2564477173 3;
+BA_ "GenMsgSendType" BO_ 2564477172 2;
+BA_ "VFrameFormat" BO_ 2564477172 3;
+BA_ "GenMsgSendType" BO_ 2564477169 2;
+BA_ "VFrameFormat" BO_ 2564477169 3;
+BA_ "GenMsgSendType" BO_ 2564477168 2;
+BA_ "VFrameFormat" BO_ 2564477168 3;
+BA_ "GenMsgSendType" BO_ 2564464885 2;
+BA_ "VFrameFormat" BO_ 2564464885 3;
+BA_ "GenMsgSendType" BO_ 2564464884 2;
+BA_ "VFrameFormat" BO_ 2564464884 3;
+BA_ "GenMsgSendType" BO_ 2564464881 2;
+BA_ "VFrameFormat" BO_ 2564464881 3;
+BA_ "GenMsgSendType" BO_ 2564464880 2;
+BA_ "VFrameFormat" BO_ 2564464880 3;
+BA_ "GenMsgSendType" BO_ 2564486577 2;
+BA_ "VFrameFormat" BO_ 2564486577 3;
+BA_ "GenMsgSendType" BO_ 2564486321 2;
+BA_ "VFrameFormat" BO_ 2564486321 3;
+BA_ "GenMsgSendType" BO_ 2564485553 2;
+BA_ "VFrameFormat" BO_ 2564485553 3;
+BA_ "GenMsgSendType" BO_ 2564485297 2;
+BA_ "VFrameFormat" BO_ 2564485297 3;
+BA_ "GenMsgSendType" BO_ 2564486576 2;
+BA_ "VFrameFormat" BO_ 2564486576 3;
+BA_ "GenMsgSendType" BO_ 2564486320 2;
+BA_ "VFrameFormat" BO_ 2564486320 3;
+BA_ "GenMsgSendType" BO_ 2564485552 2;
+BA_ "VFrameFormat" BO_ 2564485552 3;
+BA_ "GenMsgSendType" BO_ 2564485296 2;
+BA_ "VFrameFormat" BO_ 2564485296 3;
+BA_ "GenMsgSendType" BO_ 2564486608 2;
+BA_ "VFrameFormat" BO_ 2564486608 3;
+BA_ "GenMsgSendType" BO_ 2564486352 2;
+BA_ "VFrameFormat" BO_ 2564486352 3;
+BA_ "GenMsgSendType" BO_ 2564485584 2;
+BA_ "VFrameFormat" BO_ 2564485584 3;
+BA_ "GenMsgSendType" BO_ 2564485328 2;
+BA_ "VFrameFormat" BO_ 2564485328 3;
+BA_ "GenMsgSendType" BO_ 2564486560 2;
+BA_ "VFrameFormat" BO_ 2564486560 3;
+BA_ "GenMsgSendType" BO_ 2564486304 2;
+BA_ "VFrameFormat" BO_ 2564486304 3;
+BA_ "GenMsgSendType" BO_ 2564485536 2;
+BA_ "VFrameFormat" BO_ 2564485536 3;
+BA_ "GenMsgSendType" BO_ 2564485280 2;
+BA_ "VFrameFormat" BO_ 2564485280 3;
+BA_ "GenMsgCycleTime" BO_ 2566845258 1000;
+BA_ "GenMsgSendType" BO_ 2566845258 0;
+BA_ "VFrameFormat" BO_ 2566845258 3;
+BA_ "GenMsgCycleTime" BO_ 2566842442 1000;
+BA_ "GenMsgSendType" BO_ 2566842442 0;
+BA_ "VFrameFormat" BO_ 2566842442 3;
+BA_ "GenMsgSendType" BO_ 2566838992 1;
+BA_ "VFrameFormat" BO_ 2566838992 3;
+BA_ "GenMsgSendType" BO_ 2566838944 1;
+BA_ "VFrameFormat" BO_ 2566838944 3;
+BA_ "GenMsgSendType" BO_ 2565525527 2;
+BA_ "VFrameFormat" BO_ 2565525527 3;
+BA_ "GenMsgSendType" BO_ 2565513239 2;
+BA_ "VFrameFormat" BO_ 2565513239 3;
+BA_ "GenMsgSendType" BO_ 2565481905 2;
+BA_ "VFrameFormat" BO_ 2565481905 3;
+BA_ "GenMsgSendType" BO_ 2565481904 2;
+BA_ "VFrameFormat" BO_ 2565481904 3;
+BA_ "GenMsgCycleTime" BO_ 2566890672 1000;
+BA_ "GenMsgSendType" BO_ 2566890672 0;
+BA_ "VFrameFormat" BO_ 2566890672 3;
+BA_ "GenMsgCycleTime" BO_ 2583627031 1000;
+BA_ "GenMsgSendType" BO_ 2583627031 0;
+BA_ "VFrameFormat" BO_ 2583627031 3;
+BA_ "GenMsgCycleTime" BO_ 2382303727 20;
+BA_ "GenMsgSendType" BO_ 2382303727 0;
+BA_ "VFrameFormat" BO_ 2382303727 3;
+BA_ "GenMsgCycleTime" BO_ 2382299631 10;
+BA_ "GenMsgSendType" BO_ 2382299631 0;
+BA_ "VFrameFormat" BO_ 2382299631 3;
+BA_ "GenMsgCycleTime" BO_ 2382306976 1000;
+BA_ "GenMsgSendType" BO_ 2382306976 0;
+BA_ "VFrameFormat" BO_ 2382306976 3;
+BA_ "GenMsgCycleTime" BO_ 2382305952 1000;
+BA_ "GenMsgSendType" BO_ 2382305952 0;
+BA_ "VFrameFormat" BO_ 2382305952 3;
+BA_ "GenMsgCycleTime" BO_ 2382301443 10;
+BA_ "GenMsgSendType" BO_ 2382301443 0;
+BA_ "VFrameFormat" BO_ 2382301443 3;
+BA_ "GenMsgCycleTime" BO_ 2583626507 10;
+BA_ "GenMsgSendType" BO_ 2583626507 0;
+BA_ "VFrameFormat" BO_ 2583626507 3;
+BA_ "GenMsgCycleTime" BO_ 2583626251 10;
+BA_ "GenMsgSendType" BO_ 2583626251 0;
+BA_ "VFrameFormat" BO_ 2583626251 3;
+BA_ "GenMsgCycleTime" BO_ 2382303488 20;
+BA_ "GenMsgSendType" BO_ 2382303488 0;
+BA_ "VFrameFormat" BO_ 2382303488 3;
+BA_ "GenMsgCycleTime" BO_ 2382299392 10;
+BA_ "GenMsgSendType" BO_ 2382299392 0;
+BA_ "VFrameFormat" BO_ 2382299392 3;
+BA_ "GenMsgCycleTime" BO_ 2565865711 100;
+BA_ "GenMsgSendType" BO_ 2565865711 0;
+BA_ "VFrameFormat" BO_ 2565865711 3;
+BA_ "GenMsgSendType" BO_ 2566870039 0;
+BA_ "GenMsgCycleTime" BO_ 2566870039 1000;
+BA_ "VFrameFormat" BO_ 2566870039 3;
+BA_ "GenMsgCycleTime" BO_ 2566873327 200;
+BA_ "GenMsgSendType" BO_ 2566873327 0;
+BA_ "VFrameFormat" BO_ 2566873327 3;
+BA_ "GenMsgCycleTime" BO_ 2566859553 100;
+BA_ "GenMsgSendType" BO_ 2566859553 0;
+BA_ "VFrameFormat" BO_ 2566859553 3;
+BA_ "GenMsgCycleTime" BO_ 2348871584 10;
+BA_ "GenMsgSendType" BO_ 2348871584 0;
+BA_ "J1939PgAppearanceOnBus" BO_ 2348871584 1;
+BA_ "VFrameFormat" BO_ 2348871584 3;
+BA_ "GenMsgCycleTime" BO_ 2566708463 1000;
+BA_ "GenMsgSendType" BO_ 2566708463 0;
+BA_ "VFrameFormat" BO_ 2566708463 3;
+BA_ "GenMsgCycleTime" BO_ 2565866991 100;
+BA_ "GenMsgSendType" BO_ 2565866991 0;
+BA_ "VFrameFormat" BO_ 2565866991 3;
+BA_ "GenMsgCycleTime" BO_ 2364540143 10;
+BA_ "GenMsgSendType" BO_ 2364540143 0;
+BA_ "VFrameFormat" BO_ 2364540143 3;
+BA_ "GenMsgCycleTime" BO_ 2566844911 20;
+BA_ "GenMsgSendType" BO_ 2566844911 0;
+BA_ "VFrameFormat" BO_ 2566844911 3;
+BA_ "GenMsgCycleTime" BO_ 2364539887 50;
+BA_ "GenMsgSendType" BO_ 2364539887 0;
+BA_ "VFrameFormat" BO_ 2364539887 3;
+BA_ "GenMsgCycleTime" BO_ 2566834699 1000;
+BA_ "GenMsgSendType" BO_ 2566834699 0;
+BA_ "VFrameFormat" BO_ 2566834699 3;
+BA_ "GenMsgSendType" BO_ 2565603280 0;
+BA_ "GenMsgCycleTime" BO_ 2565603280 1000;
+BA_ "VFrameFormat" BO_ 2565603280 3;
+BA_ "GenMsgSendType" BO_ 2565603249 0;
+BA_ "GenMsgCycleTime" BO_ 2565603249 1000;
+BA_ "VFrameFormat" BO_ 2565603249 3;
+BA_ "GenMsgSendType" BO_ 2565603248 0;
+BA_ "GenMsgCycleTime" BO_ 2565603248 1000;
+BA_ "VFrameFormat" BO_ 2565603248 3;
+BA_ "GenMsgSendType" BO_ 2565668785 0;
+BA_ "GenMsgCycleTime" BO_ 2565668785 1000;
+BA_ "VFrameFormat" BO_ 2565668785 3;
+BA_ "GenMsgSendType" BO_ 2565668784 0;
+BA_ "GenMsgCycleTime" BO_ 2565668784 1000;
+BA_ "VFrameFormat" BO_ 2565668784 3;
+BA_ "GenMsgSendType" BO_ 2565668816 0;
+BA_ "GenMsgCycleTime" BO_ 2565668816 1000;
+BA_ "VFrameFormat" BO_ 2565668816 3;
+BA_ "GenMsgSendType" BO_ 2565603232 0;
+BA_ "GenMsgCycleTime" BO_ 2565603232 1000;
+BA_ "VFrameFormat" BO_ 2565603232 3;
+BA_ "GenMsgSendType" BO_ 2566890912 0;
+BA_ "GenMsgCycleTime" BO_ 2566890912 500;
+BA_ "VFrameFormat" BO_ 2566890912 3;
+BA_ "GenMsgSendType" BO_ 2565481888 2;
+BA_ "VFrameFormat" BO_ 2565481888 3;
+BA_ "GenMsgSendType" BO_ 2565668768 0;
+BA_ "GenMsgCycleTime" BO_ 2565668768 1000;
+BA_ "VFrameFormat" BO_ 2565668768 3;
+BA_ "GenMsgSendType" BO_ 2565481936 2;
+BA_ "VFrameFormat" BO_ 2565481936 3;
+BA_ "GenMsgSendType" BO_ 2566843429 1;
+BA_ "VFrameFormat" BO_ 2566843429 3;
+BA_ "GenMsgSendType" BO_ 2364539395 0;
+BA_ "GenMsgCycleTime" BO_ 2364539395 10;
+BA_ "VFrameFormat" BO_ 2364539395 3;
+BA_ "GenMsgSendType" BO_ 2566848791 0;
+BA_ "GenMsgCycleTime" BO_ 2566848791 100;
+BA_ "VFrameFormat" BO_ 2566848791 3;
+BA_ "GenMsgSendType" BO_ 2566869015 0;
+BA_ "GenMsgCycleTime" BO_ 2566869015 100;
+BA_ "VFrameFormat" BO_ 2566869015 3;
+BA_ "GenMsgSendType" BO_ 2566801923 0;
+BA_ "GenMsgCycleTime" BO_ 2566801923 100;
+BA_ "VFrameFormat" BO_ 2566801923 3;
+BA_ "GenMsgSendType" BO_ 2565873124 0;
+BA_ "GenMsgCycleTime" BO_ 2565873124 10;
+BA_ "VFrameFormat" BO_ 2565873124 3;
+BA_ "GenMsgCycleTime" BO_ 2566890704 1000;
+BA_ "GenMsgSendType" BO_ 2566890704 0;
+BA_ "VFrameFormat" BO_ 2566890704 3;
+BA_ "GenMsgCycleTime" BO_ 2565866755 100;
+BA_ "GenMsgSendType" BO_ 2565866755 0;
+BA_ "VFrameFormat" BO_ 2565866755 3;
+BA_ "GenMsgCycleTime" BO_ 2365556759 50;
+BA_ "GenMsgSendType" BO_ 2365556759 0;
+BA_ "VFrameFormat" BO_ 2365556759 3;
+BA_ "GenMsgCycleTime" BO_ 2566841879 1000;
+BA_ "GenMsgSendType" BO_ 2566841879 0;
+BA_ "VFrameFormat" BO_ 2566841879 3;
+BA_ "GenMsgCycleTime" BO_ 2566708224 1000;
+BA_ "GenMsgSendType" BO_ 2566708224 0;
+BA_ "VFrameFormat" BO_ 2566708224 3;
+BA_ "GenMsgSendType" BO_ 2566840320 0;
+BA_ "GenMsgCycleTime" BO_ 2566840320 100;
+BA_ "VFrameFormat" BO_ 2566840320 3;
+BA_ "GenMsgSendType" BO_ 2365428224 0;
+BA_ "GenMsgCycleTime" BO_ 2365428224 250;
+BA_ "VFrameFormat" BO_ 2365428224 3;
+BA_ "GenMsgCycleTime" BO_ 2566834865 1000;
+BA_ "GenMsgSendType" BO_ 2566834865 0;
+BA_ "VFrameFormat" BO_ 2566834865 3;
+BA_ "GenMsgCycleTime" BO_ 2566834864 1000;
+BA_ "GenMsgSendType" BO_ 2566834864 0;
+BA_ "VFrameFormat" BO_ 2566834864 3;
+BA_ "GenMsgCycleTime" BO_ 2566834896 1000;
+BA_ "GenMsgSendType" BO_ 2566834896 0;
+BA_ "VFrameFormat" BO_ 2566834896 3;
+BA_ "GenMsgCycleTime" BO_ 2566834848 1000;
+BA_ "GenMsgSendType" BO_ 2566834848 0;
+BA_ "VFrameFormat" BO_ 2566834848 3;
+BA_ "GenMsgCycleTime" BO_ 2564882209 1000;
+BA_ "GenMsgSendType" BO_ 2564882209 0;
+BA_ "VFrameFormat" BO_ 2564882209 3;
+BA_ "GenMsgCycleTime" BO_ 2365443095 100;
+BA_ "GenMsgSendType" BO_ 2365443095 0;
+BA_ "VFrameFormat" BO_ 2365443095 3;
+BA_ "GenMsgCycleTime" BO_ 2565867787 10;
+BA_ "GenMsgSendType" BO_ 2565867787 0;
+BA_ "VFrameFormat" BO_ 2565867787 3;
+BA_ "GenMsgCycleTime" BO_ 2566803211 100;
+BA_ "GenMsgSendType" BO_ 2566803211 0;
+BA_ "VFrameFormat" BO_ 2566803211 3;
+BA_ "GenMsgCycleTime" BO_ 2298375691 20;
+BA_ "GenMsgSendType" BO_ 2298375691 0;
+BA_ "VFrameFormat" BO_ 2298375691 3;
+BA_ "GenMsgCycleTime" BO_ 2566767627 100;
+BA_ "GenMsgSendType" BO_ 2566767627 0;
+BA_ "VFrameFormat" BO_ 2566767627 3;
+BA_ "GenMsgCycleTime" BO_ 2566831883 100;
+BA_ "GenMsgSendType" BO_ 2566831883 0;
+BA_ "VFrameFormat" BO_ 2566831883 3;
+BA_ "GenMsgCycleTime" BO_ 2565865739 100;
+BA_ "GenMsgSendType" BO_ 2565865739 0;
+BA_ "VFrameFormat" BO_ 2565865739 3;
+BA_ "GenMsgCycleTime" BO_ 2565866752 100;
+BA_ "GenMsgSendType" BO_ 2565866752 0;
+BA_ "VFrameFormat" BO_ 2565866752 3;
+BA_ "GenMsgCycleTime" BO_ 2364539648 50;
+BA_ "GenMsgSendType" BO_ 2364539648 0;
+BA_ "VFrameFormat" BO_ 2364539648 3;
+BA_ "GenMsgCycleTime" BO_ 2364539904 10;
+BA_ "GenMsgSendType" BO_ 2364539904 0;
+BA_ "VFrameFormat" BO_ 2364539904 3;
+BA_ "GenMsgCycleTime" BO_ 2566844672 20;
+BA_ "GenMsgSendType" BO_ 2566844672 0;
+BA_ "VFrameFormat" BO_ 2566844672 3;
+BA_ "GenMsgCycleTime" BO_ 2566769991 200;
+BA_ "GenMsgSendType" BO_ 2566769991 0;
+BA_ "VFrameFormat" BO_ 2566769991 3;
+BA_ "GenMsgCycleTime" BO_ 2365541072 50;
+BA_ "GenMsgSendType" BO_ 2365541072 0;
+BA_ "VFrameFormat" BO_ 2365541072 3;
+BA_ "GenMsgCycleTime" BO_ 2364671664 50;
+BA_ "GenMsgSendType" BO_ 2364671664 0;
+BA_ "VFrameFormat" BO_ 2364671664 3;
+BA_ "GenMsgCycleTime" BO_ 2566806504 100;
+BA_ "GenMsgSendType" BO_ 2566806504 0;
+BA_ "VFrameFormat" BO_ 2566806504 3;
+BA_ "J1939PgAppearanceOnBus" BO_ 2431649768 1;
+BA_ "GenMsgCycleTime" BO_ 2431649768 50;
+BA_ "GenMsgSendType" BO_ 2431649768 0;
+BA_ "VFrameFormat" BO_ 2431649768 3;
+BA_ "GenMsgCycleTime" BO_ 2349075360 20;
+BA_ "GenMsgSendType" BO_ 2349075360 0;
+BA_ "J1939PgAppearanceOnBus" BO_ 2349075360 1;
+BA_ "VFrameFormat" BO_ 2349075360 3;
+BA_ "GenMsgCycleTime" BO_ 2348810400 10;
+BA_ "GenMsgSendType" BO_ 2348810400 0;
+BA_ "J1939PgAppearanceOnBus" BO_ 2348810400 1;
+BA_ "VFrameFormat" BO_ 2348810400 3;
+BA_ "GenMsgCycleTime" BO_ 2348876704 50;
+BA_ "GenMsgSendType" BO_ 2348876704 0;
+BA_ "J1939PgAppearanceOnBus" BO_ 2348876704 1;
+BA_ "VFrameFormat" BO_ 2348876704 3;
+BA_ "GenMsgCycleTime" BO_ 2364551072 50;
+BA_ "GenMsgSendType" BO_ 2364551072 0;
+BA_ "J1939PgAppearanceOnBus" BO_ 2364551072 1;
+BA_ "VFrameFormat" BO_ 2364551072 3;
+BA_ "SPN" SG_ 3221225472 XBRMessageCounter 3189;
+BA_ "SPN" SG_ 3221225472 XBRMessageChecksum 3188;
+BA_ "SPN" SG_ 2565517591 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2565517335 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2566838961 SoftIdentification_FR 234;
+BA_ "SigType" SG_ 2566838961 SoftIdentification_FR 3;
+BA_ "SPN" SG_ 2566838961 NumberOfSWIdentifierFields_FR 965;
+BA_ "SPN" SG_ 2566838960 SoftIdentification_FR 234;
+BA_ "SigType" SG_ 2566838960 SoftIdentification_FR 3;
+BA_ "SPN" SG_ 2566838960 NumberOfSWIdentifierFields_FR 965;
+BA_ "GenSigStartValue" SG_ 2566845258 rdn_Longitude 2100000000;
+BA_ "GenSigStartValue" SG_ 2566845258 rdn_Latitude 2100000000;
+BA_ "SPN" SG_ 2566842442 rdn_Pitch 583;
+BA_ "GenSigStartValue" SG_ 2566842442 rdn_Pitch 25600;
+BA_ "SPN" SG_ 2566842442 rdn_NavigationBasedVehicleSpeed 517;
+BA_ "SPN" SG_ 2566842442 rdn_Altitude 580;
+BA_ "GenSigStartValue" SG_ 2566842442 rdn_Altitude 20000;
+BA_ "SPN" SG_ 2566838992 SoftIdentification_FR 234;
+BA_ "SigType" SG_ 2566838992 SoftIdentification_FR 3;
+BA_ "SPN" SG_ 2566838992 NumberOfSWIdentifierFields_FR 965;
+BA_ "SPN" SG_ 2566838944 SoftIdentification_FC 234;
+BA_ "SigType" SG_ 2566838944 SoftIdentification_FC 3;
+BA_ "SPN" SG_ 2566838944 NumberOfSWIdentifierFields_FC 965;
+BA_ "SPN" SG_ 2565525527 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2565513239 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2565481905 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2565481904 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2566890672 rdn_BlindSpotCollisionWarningLev 520716;
+BA_ "SystemSignalLongSymbol" SG_ 2566890672 rdn_BlindSpotCollisionWarningLev "rdn_BlindSpotCollisionWarningLevel";
+BA_ "SPN" SG_ 2566890672 rdn_BlindSpotDetectionState 520715;
+BA_ "SPN" SG_ 2583627031 Prop_Odometer_EV 245;
+BA_ "SPN" SG_ 2382303727 Prop_WheelBasedVehicleSpeed_EV 84;
+BA_ "SPN" SG_ 2382299631 Prop_MotorSpeed_EV 190;
+BA_ "SPN" SG_ 2382299631 Prop_ActualMotorPercentTorque_EV 513;
+BA_ "SPN" SG_ 2382299631 Prop_AccelPedalPos1_EV 91;
+BA_ "SPN" SG_ 2382301443 Prop_TransmissionOutputShaftSpee 191;
+BA_ "SystemSignalLongSymbol" SG_ 2382301443 Prop_TransmissionOutputShaftSpee "Prop_TransmissionOutputShaftSpeed";
+BA_ "GenSigStartValue" SG_ 2583626507 Prop_LongitudinalAcceleration 125;
+BA_ "SPN" SG_ 2583626507 Prop_LongitudinalAcceleration 1810;
+BA_ "GenSigStartValue" SG_ 2583626507 Prop_LateralAcceleration 32127;
+BA_ "SPN" SG_ 2583626507 Prop_LateralAcceleration 1809;
+BA_ "GenSigStartValue" SG_ 2583626251 Prop_YawRate 32113;
+BA_ "SPN" SG_ 2583626251 Prop_YawRate 1808;
+BA_ "SPN" SG_ 2583626251 Prop_SteeringWheelAngle 3683;
+BA_ "SPN" SG_ 2382303488 Prop_WheelBasedVehicleSpeed 84;
+BA_ "SPN" SG_ 2382299392 Prop_EngSpeed 190;
+BA_ "SPN" SG_ 2382299392 Prop_ActualEngPercentTorque 513;
+BA_ "SPN" SG_ 2382299392 Prop_AccelPedalPos1 91;
+BA_ "SPN" SG_ 2565865711 ActualRetarderPercentTorque_EVRe 520;
+BA_ "GenSigStartValue" SG_ 2565865711 ActualRetarderPercentTorque_EVRe 125;
+BA_ "SystemSignalLongSymbol" SG_ 2565865711 ActualRetarderPercentTorque_EVRe "ActualRetarderPercentTorque_EVRegen";
+BA_ "SPN" SG_ 2566870039 Odometer_EV 245;
+BA_ "SPN" SG_ 2348871584 MotorRequestedTorque_TorqueLimit 518;
+BA_ "GenSigStartValue" SG_ 2348871584 MotorRequestedTorque_TorqueLimit 125;
+BA_ "SystemSignalLongSymbol" SG_ 2348871584 MotorRequestedTorque_TorqueLimit "MotorRequestedTorque_TorqueLimit_EV";
+BA_ "SPN" SG_ 2348871584 MotorOverrideCtrlMode_EV 695;
+BA_ "SPN" SG_ 2348871584 TSC1_MessageCRC 25337;
+BA_ "SPN" SG_ 2348871584 TSC1_MessageCounter 25336;
+BA_ "SPN" SG_ 2348871584 TSC1EnhancedIntegrityDataSupport 25335;
+BA_ "SPN" SG_ 2348871584 OverrideCtrlModePriority_EV 897;
+BA_ "SPN" SG_ 2348871584 MessageCounter 4206;
+BA_ "SPN" SG_ 2348871584 MessageChecksum 4207;
+BA_ "SPN" SG_ 2566708463 AEBSReadinessState_EV 6208;
+BA_ "SPN" SG_ 2565866991 TransCurrentGear_EV 523;
+BA_ "GenSigStartValue" SG_ 2565866991 TransCurrentGear_EV 0;
+BA_ "SPN" SG_ 2364540143 MotorSpeed_EV 190;
+BA_ "SPN" SG_ 2364540143 DriversDemandMotorPercentTorque_ 512;
+BA_ "SystemSignalLongSymbol" SG_ 2364540143 DriversDemandMotorPercentTorque_ "DriversDemandMotorPercentTorque_EV";
+BA_ "SPN" SG_ 2364540143 ActualMotorPercentTorque_EV 513;
+BA_ "SPN" SG_ 2566844911 BrakeSwitch_EV 597;
+BA_ "SPN" SG_ 2566844911 WheelBasedVehicleSpeed_EV 84;
+BA_ "SPN" SG_ 2364539887 AccelPedalPos1_EV 91;
+BA_ "SPN" SG_ 2566834699 FlashMalfuncIndicatorLamp 3038;
+BA_ "SPN" SG_ 2566834699 FlashRedStopLamp 3039;
+BA_ "SPN" SG_ 2566834699 FlashAmberWarningLamp 3040;
+BA_ "SPN" SG_ 2566834699 FlashProtectLamp 3041;
+BA_ "SPN" SG_ 2566834699 MalfunctionIndicatorLampStatus 1213;
+BA_ "SPN" SG_ 2566834699 RedStopLampState 623;
+BA_ "SPN" SG_ 2566834699 AmberWarningLampStatus 624;
+BA_ "SPN" SG_ 2566834699 ProtectLampStatus 987;
+BA_ "SPN" SG_ 2565603280 SequenceNumber 2572;
+BA_ "SPN" SG_ 2565603249 SequenceNumber 2572;
+BA_ "SPN" SG_ 2565603248 SequenceNumber 2572;
+BA_ "SPN" SG_ 2565668785 TotalNumberOfPacketsEoMA 2558;
+BA_ "SPN" SG_ 2565668785 TotalNumberOfPacketsBAM 2558;
+BA_ "SPN" SG_ 2565668785 TotalNumberOfPackets 2558;
+BA_ "SPN" SG_ 2565668785 TotalMessageSizeEoMA 2557;
+BA_ "SPN" SG_ 2565668785 TotalMessageSizeBAM 2557;
+BA_ "SPN" SG_ 2565668785 PGNumber 2560;
+BA_ "SPN" SG_ 2565668785 MaximumNumberOfPackets 2559;
+BA_ "SPN" SG_ 2565668785 ConnectionAbortReason 2570;
+BA_ "SPN" SG_ 2565668785 NumberOfPacketsThatCanBeSent 2561;
+BA_ "SPN" SG_ 2565668785 NextPacketNumberToBeSent 2562;
+BA_ "SPN" SG_ 2565668785 TotalMessageSize 2557;
+BA_ "SPN" SG_ 2565668785 ControlByte 2556;
+BA_ "SPN" SG_ 2565668784 TotalNumberOfPacketsEoMA 2558;
+BA_ "SPN" SG_ 2565668784 TotalNumberOfPacketsBAM 2558;
+BA_ "SPN" SG_ 2565668784 TotalNumberOfPackets 2558;
+BA_ "SPN" SG_ 2565668784 TotalMessageSizeEoMA 2557;
+BA_ "SPN" SG_ 2565668784 TotalMessageSizeBAM 2557;
+BA_ "SPN" SG_ 2565668784 PGNumber 2560;
+BA_ "SPN" SG_ 2565668784 MaximumNumberOfPackets 2559;
+BA_ "SPN" SG_ 2565668784 ConnectionAbortReason 2570;
+BA_ "SPN" SG_ 2565668784 NumberOfPacketsThatCanBeSent 2561;
+BA_ "SPN" SG_ 2565668784 NextPacketNumberToBeSent 2562;
+BA_ "SPN" SG_ 2565668784 TotalMessageSize 2557;
+BA_ "SPN" SG_ 2565668784 ControlByte 2556;
+BA_ "SPN" SG_ 2565668816 TotalNumberOfPacketsEoMA 2558;
+BA_ "SPN" SG_ 2565668816 TotalNumberOfPacketsBAM 2558;
+BA_ "SPN" SG_ 2565668816 TotalNumberOfPackets 2558;
+BA_ "SPN" SG_ 2565668816 TotalMessageSizeEoMA 2557;
+BA_ "SPN" SG_ 2565668816 TotalMessageSizeBAM 2557;
+BA_ "SPN" SG_ 2565668816 PGNumber 2560;
+BA_ "SPN" SG_ 2565668816 MaximumNumberOfPackets 2559;
+BA_ "SPN" SG_ 2565668816 ConnectionAbortReason 2570;
+BA_ "SPN" SG_ 2565668816 NumberOfPacketsThatCanBeSent 2561;
+BA_ "SPN" SG_ 2565668816 NextPacketNumberToBeSent 2562;
+BA_ "SPN" SG_ 2565668816 TotalMessageSize 2557;
+BA_ "SPN" SG_ 2565668816 ControlByte 2556;
+BA_ "SPN" SG_ 2565603232 SequenceNumber 2572;
+BA_ "SPN" SG_ 2566890912 rdn_DriverAlertnessWarningSystem 520718;
+BA_ "SystemSignalLongSymbol" SG_ 2566890912 rdn_DriverAlertnessWarningSystem "rdn_DriverAlertnessWarningSystemState";
+BA_ "SPN" SG_ 2566890912 rdn_DriverAlertnessWarning 520717;
+BA_ "SPN" SG_ 2566890912 rdn_CameraImagerStatus 520714;
+BA_ "SPN" SG_ 2566890912 rdn_Lane_Dep_system_state 520713;
+BA_ "SPN" SG_ 2566890912 rdn_LaneDepartureImminentLeftSid 520712;
+BA_ "SystemSignalLongSymbol" SG_ 2566890912 rdn_LaneDepartureImminentLeftSid "rdn_LaneDepartureImminentLeftSide";
+BA_ "SPN" SG_ 2566890912 rdn_LaneDepartureImminentRightSi 520711;
+BA_ "SystemSignalLongSymbol" SG_ 2566890912 rdn_LaneDepartureImminentRightSi "rdn_LaneDepartureImminentRightSide";
+BA_ "SPN" SG_ 2566890912 rdn_AEB_CollisionWarningLevel 520708;
+BA_ "SPN" SG_ 2566890912 rdn_AEB_system_state 520707;
+BA_ "SPN" SG_ 2565481888 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2565668768 PGNumber 2560;
+BA_ "SPN" SG_ 2565668768 MaximumNumberOfPackets 2559;
+BA_ "SPN" SG_ 2565668768 TotalNumberOfPacketsEoMA 2558;
+BA_ "SPN" SG_ 2565668768 TotalNumberOfPacketsBAM 2558;
+BA_ "SPN" SG_ 2565668768 TotalNumberOfPackets 2558;
+BA_ "SPN" SG_ 2565668768 NextPacketNumberToBeSent 2562;
+BA_ "SPN" SG_ 2565668768 TotalMessageSizeEoMA 2557;
+BA_ "SPN" SG_ 2565668768 TotalMessageSizeBAM 2557;
+BA_ "SPN" SG_ 2565668768 ConnectionAbortReason 2570;
+BA_ "SPN" SG_ 2565668768 NumberOfPacketsThatCanBeSent 2561;
+BA_ "SPN" SG_ 2565668768 TotalMessageSize 2557;
+BA_ "SPN" SG_ 2565668768 ControlByte 2556;
+BA_ "SPN" SG_ 2565481936 ParameterGroupNumber 2540;
+BA_ "SPN" SG_ 2566843429 VehicleIdentification 237;
+BA_ "SPN" SG_ 2364539395 TransmissionShiftInProcess 574;
+BA_ "SPN" SG_ 2364539395 TransmissionDrivelineEngaged 560;
+BA_ "SPN" SG_ 2364539395 TransmissionOutputShaftSpeed 191;
+BA_ "SPN" SG_ 2566801923 TransmissionMode1Indicator 2536;
+BA_ "SPN" SG_ 2565873124 SAS_MessageCounter 3689;
+BA_ "SPN" SG_ 2565873124 SAS_MessageChecksum 3690;
+BA_ "SPN" SG_ 2565873124 SAS_Calibrated 3688;
+BA_ "SPN" SG_ 2565873124 SAS_ActiveMode 3687;
+BA_ "SPN" SG_ 2565873124 SAS_SteeringWheelAngleRange 3686;
+BA_ "SPN" SG_ 2565873124 SAS_SteeringWheelAngleRangeCount 3684;
+BA_ "SystemSignalLongSymbol" SG_ 2565873124 SAS_SteeringWheelAngleRangeCount "SAS_SteeringWheelAngleRangeCounterType";
+BA_ "SystemSignalLongSymbol" SG_ 2565873124 SAS_SteeringWheelAngleRange_0000 "SAS_SteeringWheelAngleRangeCounter";
+BA_ "SPN" SG_ 2565873124 SAS_SteeringWheelAngle 3683;
+BA_ "SPN" SG_ 2566890704 rdn_MOISCollisionWarningLevel 520710;
+BA_ "SPN" SG_ 2566890704 rdn_MovingObjectDetectionState 520709;
+BA_ "SPN" SG_ 2565866755 TransCurrentGear_03 523;
+BA_ "GenSigStartValue" SG_ 2565866755 TransCurrentGear_03 0;
+BA_ "SPN" SG_ 2365556759 DDAW_warning_suppression 520707;
+BA_ "SPN" SG_ 2365556759 MOIS_Fn_Switch_sts 520702;
+BA_ "SPN" SG_ 2365556759 LDWS_Fn_Switch_sts 520706;
+BA_ "SPN" SG_ 2365556759 DDAW_Fn_switch_sts 520704;
+BA_ "SPN" SG_ 2365556759 BSIS_Fn_Switch_Sts 520703;
+BA_ "SPN" SG_ 2365556759 AEBS_Fn_Switch_sts 520705;
+BA_ "SPN" SG_ 2566841879 Year 964;
+BA_ "SPN" SG_ 2566841879 Seconds 959;
+BA_ "SPN" SG_ 2566841879 Month 963;
+BA_ "SPN" SG_ 2566841879 Minutes 960;
+BA_ "GenSigStartValue" SG_ 2566841879 LocalMinuteOffset 125;
+BA_ "SPN" SG_ 2566841879 LocalMinuteOffset 1602;
+BA_ "GenSigStartValue" SG_ 2566841879 LocalHourOffset 125;
+BA_ "SPN" SG_ 2566841879 LocalHourOffset 1601;
+BA_ "SPN" SG_ 2566841879 Hours 961;
+BA_ "SPN" SG_ 2566841879 Day 962;
+BA_ "SPN" SG_ 2566708224 AEBSReadinessState 6208;
+BA_ "SPN" SG_ 2566840320 Total_vehicle_distance 245;
+BA_ "SPN" SG_ 2365428224 Engine_Operating_Mode 3543;
+BA_ "SPN" SG_ 2566834865 AmberWarningLampStatus 624;
+BA_ "SPN" SG_ 2566834864 AmberWarningLampStatus 624;
+BA_ "SPN" SG_ 2566834896 AmberWarningLampStatus 624;
+BA_ "SPN" SG_ 2566834848 AmberWarningLampStatus 624;
+BA_ "SPN" SG_ 2564882209 SeatBeltSwitch 1856;
+BA_ "SPN" SG_ 2365443095 TurnSignalSwitch 2876;
+BA_ "SPN" SG_ 2365443095 HighLowBeamSwitch 2874;
+BA_ "SPN" SG_ 2365443095 HazardLightSwitch 2875;
+BA_ "GenSigStartValue" SG_ 2565867787 YawRate 32113;
+BA_ "SPN" SG_ 2565867787 YawRate 1808;
+BA_ "GenSigStartValue" SG_ 2565867787 SteerWheelAngle 32127;
+BA_ "SPN" SG_ 2565867787 SteerWheelAngle 1807;
+BA_ "GenSigStartValue" SG_ 2565867787 LongitudinalAcceleration 125;
+BA_ "SPN" SG_ 2565867787 LongitudinalAcceleration 1810;
+BA_ "GenSigStartValue" SG_ 2565867787 LateralAcceleration 32127;
+BA_ "SPN" SG_ 2565867787 LateralAcceleration 1809;
+BA_ "SPN" SG_ 2566803211 VDCInformationSignal 1813;
+BA_ "SPN" SG_ 2566803211 VDCFullyOperational 1814;
+BA_ "SPN" SG_ 2566803211 VDCBrakeLightRq 1815;
+BA_ "SPN" SG_ 2298375691 RearAxleRightWheelSpeed 1595;
+BA_ "SPN" SG_ 2298375691 RearAxleLeftWheelSpeed 1594;
+BA_ "SPN" SG_ 2298375691 FrontAxleRightWheelSpeed 1593;
+BA_ "SPN" SG_ 2298375691 FrontAxleLeftWheelSpeed 1592;
+BA_ "SPN" SG_ 2566767627 EmergencyBrakingActive 5847;
+BA_ "SPN" SG_ 2566767627 XBRAccelerationLimit 2921;
+BA_ "SPN" SG_ 2566767627 XBRSystemState 2917;
+BA_ "SPN" SG_ 2566767627 XBRActiveCtrlMode 2918;
+BA_ "SPN" SG_ 2566767627 FoundationBrakeUse 2919;
+BA_ "GenSigStartValue" SG_ 2566831883 RelativeSpeedRearAxle1RightWheel 125;
+BA_ "SPN" SG_ 2566831883 RelativeSpeedRearAxle1RightWheel 908;
+BA_ "GenSigStartValue" SG_ 2566831883 RelativeSpeedRearAxle1LeftWheel 125;
+BA_ "SPN" SG_ 2566831883 RelativeSpeedRearAxle1LeftWheel 907;
+BA_ "GenSigStartValue" SG_ 2566831883 RelativeSpeedFrontAxleRightWheel 125;
+BA_ "SPN" SG_ 2566831883 RelativeSpeedFrontAxleRightWheel 906;
+BA_ "GenSigStartValue" SG_ 2566831883 RelativeSpeedFrontAxleLeftWheel 125;
+BA_ "SPN" SG_ 2566831883 RelativeSpeedFrontAxleLeftWheel 905;
+BA_ "SPN" SG_ 2566831883 FrontAxleSpeed 904;
+BA_ "SPN" SG_ 2565865739 ATC_ASRInformationSignal 1793;
+BA_ "SPN" SG_ 2565865739 ABS_EBSAmberWarningSignal 1438;
+BA_ "SPN" SG_ 2565865739 ASROffRoadSwitch 576;
+BA_ "SPN" SG_ 2565865739 BrakePedalPos 521;
+BA_ "SPN" SG_ 2565865739 AntiLockBrakingActive 563;
+BA_ "SPN" SG_ 2565865739 ABSFullyOperational 1243;
+BA_ "GenSigStartValue" SG_ 2565866752 TransCurrentGear_00 125;
+BA_ "SPN" SG_ 2565866752 TransCurrentGear_00 523;
+BA_ "SPN" SG_ 2364539648 AccelPedalPos1 91;
+BA_ "SPN" SG_ 2364539648 AccelPedalKickdownSwitch 559;
+BA_ "SPN" SG_ 2364539904 ActualEngPercentTorque 513;
+BA_ "SPN" SG_ 2364539904 DriversDemandEngPercentTorque 512;
+BA_ "SPN" SG_ 2364539904 EngSpeed 190;
+BA_ "SPN" SG_ 2566844672 ParkingBrakeSwitch 70;
+BA_ "SPN" SG_ 2566844672 WheelBasedVehicleSpeed 84;
+BA_ "SPN" SG_ 2566844672 BrakeSwitch 597;
+BA_ "SPN" SG_ 2566769991 FrontOperatorWiperSwitch 2563;
+BA_ "SPN" SG_ 2364671664 BlindSpotDetectionState 12286;
+BA_ "SPN" SG_ 2364671664 BlindSpotCollisionWarningLevel 12287;
+BA_ "SPN" SG_ 2566806504 ImagerStatus 8142;
+BA_ "SPN" SG_ 2566806504 DriverAlertnessWarningSysState 7475;
+BA_ "SPN" SG_ 2566806504 DriverAlertnessLevel 7474;
+BA_ "SPN" SG_ 2566806504 DepWarnSysSt 8141;
+BA_ "SPN" SG_ 2431649768 LaneDepartureImminentRightSide 1701;
+BA_ "SPN" SG_ 2431649768 LaneDepartureImminentLeftSide 1700;
+BA_ "SPN" SG_ 2431649768 DriverAlertnessWarning 7473;
+BA_ "SPN" SG_ 2349075360 XBRPriority 2915;
+BA_ "SPN" SG_ 2349075360 XBREBIMode 2914;
+BA_ "SPN" SG_ 2349075360 XBRCtrlMode 2916;
+BA_ "GenSigStartValue" SG_ 2349075360 ExtlAccelerationDemand 32127;
+BA_ "SPN" SG_ 2349075360 ExtlAccelerationDemand 2920;
+BA_ "SPN" SG_ 2348810400 TSC1_MessageCRC 25337;
+BA_ "SPN" SG_ 2348810400 TSC1_MessageCounter 25336;
+BA_ "SPN" SG_ 2348810400 TSC1EnhancedIntegrityDataSupport 25335;
+BA_ "SPN" SG_ 2348810400 OverrideCtrlModePriority 897;
+BA_ "SPN" SG_ 2348810400 MessageCounter 4206;
+BA_ "SPN" SG_ 2348810400 MessageChecksum 4207;
+BA_ "GenSigStartValue" SG_ 2348810400 EngRequestedTorque_TorqueLimit 125;
+BA_ "SPN" SG_ 2348810400 EngRequestedTorque_TorqueLimit 518;
+BA_ "SPN" SG_ 2348810400 EngOverrideCtrlMode 695;
+BA_ "SPN" SG_ 2348876704 DisengageDrivelineRequest 683;
+BA_ "SPN" SG_ 2364551072 TmeToCollisionWithRelevantObject 5680;
+BA_ "SPN" SG_ 2364551072 RlvntObjctDtctdFrAdvncdEmrgncyBr 5678;
+BA_ "SPN" SG_ 2364551072 AEB_CollisionWarningLevel 5677;
+BA_ "SPN" SG_ 2364551072 AdvncdEmrgencyBrakingSystemState 5676;
+VAL_ 2566890672 rdn_BlindSpotCollisionWarningLev 15 "don’t care / take no action" 14 "reserved" 13 "reserved" 12 "reserved" 11 "reserved" 10 "reserved" 9 "reserved" 8 "reserved" 7 "warning level 7 - highest" 6 "warning level 6" 5 "warning level 5" 4 "warning level 4" 3 "warning level 3" 2 "warning level 2" 1 "warning level 1 - lowest" 0 "no warning" ;
+VAL_ 2566890672 rdn_BlindSpotDetectionState 15 "not available / not installed" 14 "error indication / temp error" 13 "reserved for future use" 12 "reserved for future use" 11 "reserved for future use" 10 "reserved for future use" 9 "reserved for future use" 8 "not used" 7 "not used" 6 "not used" 5 "collision warning active with visual/audio cues (e.g. acoustic signal)" 4 "not used" 3 "system is ready and activated (no warning and no braking active)" 2 "system is deactivated by driver" 1 "not used" 0 "system is not ready (initialization not finished)" ;
+VAL_ 2382303727 Prop_WheelBasedVehicleSpeed_EV 65024 "Defect/error" ;
+VAL_ 2382299631 Prop_MotorSpeed_EV 65024 "Invalid" ;
+VAL_ 2382299631 Prop_ActualMotorPercentTorque_EV 255 "Not available" 254 "Inhibited" ;
+VAL_ 2382299631 Prop_AccelPedalPos1_EV 255 "Not Available" 254 "Defect" ;
+VAL_ 2382303488 Prop_WheelBasedVehicleSpeed 65024 "Defect/error" ;
+VAL_ 2382299392 Prop_EngSpeed 65024 "Invalid" ;
+VAL_ 2382299392 Prop_ActualEngPercentTorque 255 "Not available" 254 "Inhibited" ;
+VAL_ 2382299392 Prop_AccelPedalPos1 255 "Not Available" 254 "Defect" ;
+VAL_ 2566873327 System_Mode_Seq_sts 368 "enable charge mode" 336 "shutdown complete" 328 "enable error management shutdown" 327 "enable BMS shutdown" 326 "enable thermal control shutdown" 325 "enable DC control shutdown" 324 "enable AUXINV control shutdown" 323 "enable FCCM shutdown" 322 "enable traction inverter shutdown" 321 "enable shutdown" 305 "vehicle active" 297 "startup Complete" 294 "Enable FCCM control" 293 "Enable DC control" 292 "Enable Traction inverter control" 291 "Enable AUXINV startup" 290 "enable HV control startup" 289 "Enable startup" 265 "ignition complete" 261 "Enable FCCM ignition" 260 "Enable Traction inverter ignition" 259 "Enable AUXINV control ignition" 258 "Enable HV control ignition" 257 "enable ignition ON modules" ;
+VAL_ 2566859553 Park_Brake_EV 3 "Not available" 2 "Reserved" 1 "Park brake ON" 0 "Park brake OFF" ;
+VAL_ 2348871584 MotorOverrideCtrlMode_EV 3 "Speed/torque limit control - Limit speed and/or torque based on the included limit values.  " 2 "Torque control - Control torque to the included desired torque value" 1 "Speed control - Govern speed to the included desired speed value." 0 "Override disabled - Disable any existing control commanded by the source of this command." ;
+VAL_ 2348871584 TSC1EnhancedIntegrityDataSupport 3 "No TSC1 Enhanced protection supported by the sender" 2 "Reserved" 1 "TSC1 Enhanced protection is provided using an external (not in this PG) integrity strategy, such as that specified in J1939-76" 0 "TSC1 Message CRC and TSC1 Message Counter are supported by the sender (Recipients can ignore SPN 4206 and SPN 4207.)" ;
+VAL_ 2348871584 OverrideCtrlModePriority_EV 3 "Low priority" 2 "Medium priority" 1 "High priority" 0 "Highest priority" ;
+VAL_ 2566708463 AEBSReadinessState_EV 3 "Not Available/Not Supported" 2 "Condition exists that prevents system from responding to AEBS commands even though it is configured" 1 "On -- engine is configured to accept commands from an AEBS" 0 "Off -- engine is not configured to accept commands from an AEBS" ;
+VAL_ 2565866991 TransCurrentGear_EV 255 "not availlable" 254 "error" 253 "reserved" 252 "reserved" 251 "Park" ;
+VAL_ 2364540143 MotorSpeed_EV 65024 "Invalid" ;
+VAL_ 2364540143 DriversDemandMotorPercentTorque_ 255 "Default" 254 "Inhibited" ;
+VAL_ 2364540143 ActualMotorPercentTorque_EV 255 "Not available" 254 "Inhibited" ;
+VAL_ 2566844911 BrakeSwitch_EV 3 "no available" 2 "error" 1 "brake pedal depressed" 0 "brake pedal released" ;
+VAL_ 2566844911 WheelBasedVehicleSpeed_EV 65024 "Defect/error" ;
+VAL_ 2364539887 AccelPedalPos1_EV 255 "Not Available" 254 "Defect" ;
+VAL_ 2566834699 FlashMalfuncIndicatorLamp 3 "Unavailable / Do Not Flash" 2 "Reserved" 1 "Fast Flash" 0 "Slow Flash" ;
+VAL_ 2566834699 FlashRedStopLamp 3 "Unavailable" 2 "Reserved" 1 "Fast Flash" 0 "Slow Flash" ;
+VAL_ 2566834699 FlashAmberWarningLamp 3 "Unavailable" 2 "Reserved" 1 "Fast Flash" 0 "Slow Flash" ;
+VAL_ 2566834699 FlashProtectLamp 3 "unavailable" 2 "Reserved" 1 "Fast Flash" 0 "Slow Flash" ;
+VAL_ 2566834699 MalfunctionIndicatorLampStatus 3 "not available" 2 "Reserved" 1 "lamp on " 0 "lamp off" ;
+VAL_ 2566834699 RedStopLampState 3 "not available" 2 "reserved" 1 "on" 0 "off" ;
+VAL_ 2566834699 AmberWarningLampStatus 3 "Not available" 2 "Reserved" 1 "Lamp on" 0 "Lamp off" ;
+VAL_ 2566834699 ProtectLampStatus 3 "Not available" 2 "Reserved" 1 "Lamp on" 0 "Lamp off" ;
+VAL_ 2565668785 ControlByte 255 "Abort" 32 "BAM" 24 "EAbort" 23 "EEoMACK" 22 "EDPO" 21 "ECTS" 20 "ERTS" 19 "EoMA" 17 "CTS" 16 "RTS" ;
+VAL_ 2565668784 ControlByte 255 "Abort" 32 "BAM" 24 "EAbort" 23 "EEoMACK" 22 "EDPO" 21 "ECTS" 20 "ERTS" 19 "EoMA" 17 "CTS" 16 "RTS" ;
+VAL_ 2565668816 ControlByte 255 "Abort" 32 "BAM" 24 "EAbort" 23 "EEoMACK" 22 "EDPO" 21 "ECTS" 20 "ERTS" 19 "EoMA" 17 "CTS" 16 "RTS" ;
+VAL_ 2566890912 rdn_DriverAlertnessWarningSystem 7 "Not Available / Not Installed" 6 "Reserved" 5 "Reserved" 4 "System monitoring driver behavior" 3 "not used" 2 "System temporarily not available / error" 1 "Initializing" 0 "System installed but disabled" ;
+VAL_ 2566890912 rdn_DriverAlertnessWarning 7 "Not Available" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "Level 3 - Driver alertness warning" 2 "Level 2 - Degradation in driving behavior detected" 1 "not used" 0 "No distracted driving condition detected" ;
+VAL_ 2566890912 rdn_CameraImagerStatus 15 "Not Available" 14 "Error" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "Reserved" 7 "Reserved" 6 "Reserved" 5 "Imager view degraded but functional" 4 "Imager misaligned" 3 "Imager fully blocked / fully blind" 2 "Imager partially blocked / partially blind" 1 "Imager warming up / initializing" 0 "Imager fully operational" ;
+VAL_ 2566890912 rdn_Lane_Dep_system_state 15 "Not available" 14 "Error/temp error" 5 "System is warning lane departure" 4 "Active warning suppressed by operator behavior" 3 "System is ready" 2 "System is deactivated by driver" 1 "not used" 0 "System is not ready" ;
+VAL_ 2566890912 rdn_LaneDepartureImminentLeftSid 3 "Not Used" 2 "Reserved" 1 "Imminent" 0 "Not imminent" ;
+VAL_ 2566890912 rdn_LaneDepartureImminentRightSi 3 "Not Used" 2 "Reserved" 1 "Imminent" 0 "Not imminent" ;
+VAL_ 2566890912 rdn_AEB_CollisionWarningLevel 15 "don't care / take no action" 14 "reserved" 13 "reserved" 12 "reserved" 11 "reserved" 10 "reserved" 9 "reserved" 8 "reserved" 7 "warning level 7 - highest" 6 "warning level 6" 5 "warning level 5" 4 "warning level 4" 3 "warning level 3" 2 "warning level 2" 1 "warning level 1 - lowest" 0 "no warning" ;
+VAL_ 2566890912 rdn_AEB_system_state 15 "not available / not installed" 14 "error indication / temp error" 13 "reserved for future use" 12 "reserved for future use" 11 "reserved for future use" 10 "reserved for future use" 9 "reserved for future use" 8 "system performance and/or sensitivity limited (no warning and no braking active)" 7 "forward collision emergency braking active" 6 "forward collision warning with braking (e.g. brake jerk or partial braking)" 5 "forward collision warning active (e.g. acoustic signal, cruise control turned off, torque limitation)" 4 "driver overrides system" 3 "system is ready and activated (no warning and no braking active)" 2 "system is deactivated by driver" 1 "Not used" 0 "system is not ready (initialization not finished)" ;
+VAL_ 2565668768 ControlByte 255 "Abort" 32 "BAM" 24 "EAbort" 23 "EEoMACK" 22 "EDPO" 21 "ECTS" 20 "ERTS" 19 "EoMA" 17 "CTS" 16 "RTS" ;
+VAL_ 2364539395 TransmissionShiftInProcess 3 "Not available" 2 "Error" 1 "Shift in process" 0 "Shift is not in process" ;
+VAL_ 2364539395 TransmissionDrivelineEngaged 3 "Not available" 2 "Error" 1 "Driveline engaged" 0 "Driveline disengaged" ;
+VAL_ 2566848791 Transmission_type_info 7 "Not defined" 6 "reserved" 5 "reserved" 4 "12S AMT varient" 3 "9S AMT variant" 2 "6S AMT variant" 1 "AT variant" 0 "MT variant" ;
+VAL_ 2566848791 Crawler_confi_status_info 1 "with Crawler (enable in dataset or applicable)" 0 "Without Crawler (disable in dataset or not applicable)" ;
+VAL_ 2566869015 Ignition 1 "On" 0 "Off" ;
+VAL_ 2566869015 ReverseSwitchInfo 1 "On" 0 "off" ;
+VAL_ 2566801923 TransmissionMode1Indicator 1 "Auto mode" 0 "Manual mode" ;
+VAL_ 2565873124 SAS_Calibrated 3 "SNA" 1 "SAS calibrated" 0 "SAS not calibrated" ;
+VAL_ 2565873124 SAS_ActiveMode 2 "Reserved" 3 "SNA" 1 "Normal Mode active" 0 "Programming Mode active" ;
+VAL_ 2566890704 rdn_MOISCollisionWarningLevel 15 "don’t care / take no action" 14 "reserved" 13 "reserved" 12 "reserved" 11 "reserved" 10 "reserved" 9 "reserved" 8 "reserved" 7 "warning level 7 - highest" 6 "warning level 6" 5 "warning level 5" 4 "warning level 4" 3 "warning level 3" 2 "warning level 2" 1 "warning level 1 - lowest" 0 "no warning" ;
+VAL_ 2566890704 rdn_MovingObjectDetectionState 15 "not available / not installed" 14 "error indication / temp error" 13 "reserved for future use" 12 "reserved for future use" 11 "reserved for future use" 10 "reserved for future use" 9 "reserved for future use" 8 "not used" 7 "not used" 6 "not used" 5 "collision warning active with visual/audio cues (e.g. acoustic signal)" 4 "not used" 3 "system is ready and activated (no warning and no braking active)" 2 "system is deactivated by driver" 1 "not used" 0 "system is not ready (initialization not finished)" ;
+VAL_ 2565866755 TransCurrentGear_03 255 "not availlable" 254 "error" 253 "reserved" 252 "reserved" 251 "Park" ;
+VAL_ 2365556759 DDAW_warning_suppression 3 "Not Availabe" 2 "Reserved" 1 "set" 0 "not set" ;
+VAL_ 2365556759 MOIS_Fn_Switch_sts 7 "Not available" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "Reserved" 2 "Reserved" 1 "MOIS enabled  (default state sent by cluster)" 0 "MOIS disabled" ;
+VAL_ 2365556759 LDWS_Fn_Switch_sts 7 "Not available" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "Reserved" 2 "Reserved" 1 "LDWS enabled  (default state sent by cluster)" 0 "LDWS disabled" ;
+VAL_ 2365556759 DDAW_Fn_switch_sts 7 "Not available" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "Reserved" 2 "Reserved" 1 "DDAW enabled  (default state sent by cluster)" 0 "DDAW disabled" ;
+VAL_ 2365556759 BSIS_Fn_Switch_Sts 7 "Not available" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "Reserved" 2 "Reserved" 1 " BSIS enabled  (default state sent by cluster)" 0 "BSIS disabled" ;
+VAL_ 2365556759 AEBS_Fn_Switch_sts 7 "Not available" 6 "Reserved" 5 "Reserved" 4 "Reserved" 3 "Reserved" 2 "Reserved" 1 "No Deactivation of system" 0 "Deactivation of system" ;
+VAL_ 2566708224 AEBSReadinessState 3 "Not Available/Not Supported" 2 "Condition exists that prevents system from responding to AEBS commands even though it is configured" 1 "On -- engine is configured to accept commands from an AEBS" 0 "Off -- engine is not configured to accept commands from an AEBS" ;
+VAL_ 2365428224 Engine_Operating_Mode 15 "not available" 14 "error" 6 "Engine Stopping" 4 "Engine running" 2 "Engine starting (cranking)" 0 "Engine Stopped" ;
+VAL_ 2566834865 AmberWarningLampStatus 3 "Not available" 2 "Reserved" 1 "Lamp on" 0 "Lamp off" ;
+VAL_ 2566834864 AmberWarningLampStatus 3 "Not available" 2 "Reserved" 1 "Lamp on" 0 "Lamp off" ;
+VAL_ 2566834896 AmberWarningLampStatus 3 "Not available" 2 "Reserved" 1 "Lamp on" 0 "Lamp off" ;
+VAL_ 2566834848 AmberWarningLampStatus 3 "Not available" 2 "Reserved" 1 "Lamp on" 0 "Lamp off" ;
+VAL_ 2564882209 SeatBeltSwitch 3 "Not Available" 2 "reserved" 1 "OK - Seat Belt is buckled" 0 "NOT Buckled" ;
+VAL_ 2365443095 TurnSignalSwitch 15 "Not available" 14 "reserved" 2 "Right turn to be Flashing" 1 "Left Turn to be Flashing" 0 "No Turn being signaled" ;
+VAL_ 2365443095 HighLowBeamSwitch 3 "Not available (do not change)" 2 "Off selected" 1 "High Beam Selected" 0 "Low Beam Selected" ;
+VAL_ 2365443095 HazardLightSwitch 3 "not available" 2 "reserved" 1 "Hazard Lamps to be Flashing" 0 "Hazard Lamps to be Off" ;
+VAL_ 2566803211 VDCInformationSignal 3 "Don't care/Take no action" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 2566803211 VDCFullyOperational 3 "Don't care/Take no action" 2 "Reserved" 1 "Fully operational" 0 "Not fully operationa" ;
+VAL_ 2566803211 VDCBrakeLightRq 3 "don't care/ take no action" 2 "reserved" 1 "Turn brake light on" 0 "Turn brake light not on" ;
+VAL_ 2566767627 EmergencyBrakingActive 3 "not available" 2 "reserved" 1 "active" 0 "inactive" ;
+VAL_ 2566767627 XBRSystemState 3 "not available" 2 " No external brake demand will be accepted " 1 "Only external brake demand of highest XBR Priority (00b) will be accepted " 0 "Any external brake demand will be accepted (brake system fully operational)" ;
+VAL_ 2566767627 XBRActiveCtrlMode 15 "Not available" 14 "Reserved for SAE assignment" 13 "Reserved for SAE assignment" 12 "Reserved for SAE assignment" 11 "Reserved for SAE assignment" 10 "Reserved for SAE assignment" 9 "Reserved for SAE assignment" 8 "Reserved for SAE assignment" 7 "Reserved for SAE assignment" 6 "Reserved for SAE assignment" 5 "Reserved for SAE assignment" 4 "XBR Brake Hold is being executed to hold the vehicle still based on XBR Brake Hold Request" 3 "Maximum mode of XBR acceleration control being executed" 2 "Addition mode of XBR acceleration control being executed" 1 "Driver's brake demand being executed, no external brake demand" 0 "No brake demand being executed (default mode)" ;
+VAL_ 2566767627 FoundationBrakeUse 3 "not available" 2 "reserved" 1 "Foundation brakes in use" 0 "Foundation brakes not in use" ;
+VAL_ 2565865739 ATC_ASRInformationSignal 3 "TakeNoAction" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 2565865739 ABS_EBSAmberWarningSignal 3 "TakeNoAction" 2 "Reserved" 1 "On" 0 "Off" ;
+VAL_ 2565865739 ASROffRoadSwitch 3 "NotAvailable" 2 "Error" 1 "ASROffroadSwitchActive" 0 "ASROffroadSwitchPassive" ;
+VAL_ 2565865739 BrakePedalPos 255 "Not available" 254 "Error" ;
+VAL_ 2565865739 AntiLockBrakingActive 3 "not available" 2 "reserved" 1 "ABS active" 0 "ABS passive but installed" ;
+VAL_ 2565865739 ABSFullyOperational 3 "not available" 2 "reserved" 1 " Fully Operational" 0 "Not Fully Operational" ;
+VAL_ 2565866752 TransCurrentGear_00 255 "not availlable" 254 "error" 253 "reserved" 252 "reserved" 251 "Park" ;
+VAL_ 2364539648 AccelPedalPos1 255 "Not Available" 254 "Defect" ;
+VAL_ 2364539648 AccelPedalKickdownSwitch 2 "Reserved" 3 "not available" 1 "kickdown active" 0 "kickdown passive" ;
+VAL_ 2364539904 ActualEngPercentTorque 255 "Not available" 254 "Inhibited" ;
+VAL_ 2364539904 DriversDemandEngPercentTorque 255 "Default" 254 "Inhibited" ;
+VAL_ 2364539904 EngSpeed 65024 "Invalid" ;
+VAL_ 2566844672 ParkingBrakeSwitch 3 "Not Available" 2 "Error" 1 "Parking brake set" 0 "Parking brake not set" ;
+VAL_ 2566844672 WheelBasedVehicleSpeed 65024 "Defect/error" ;
+VAL_ 2566844672 BrakeSwitch 3 "no available" 2 "error" 1 "brake pedal depressed" 0 "brake pedal released" ;
+VAL_ 2566769991 FrontOperatorWiperSwitch 15 "Not available" 14 "reserved" 6 "reserved" 5 "reserved" 4 "reserved" 3 "high" 2 "medium" 1 "low" 0 "Off" ;
+VAL_ 2365541072 MOISCollisionWarningLevel 15 "don't care / take no action" 14 "reserved" 13 "reserved" 12 "reserved" 11 "reserved" 10 "reserved" 9 "reserved" 8 "reserved" 7 "warning level 7 - HIGHEST" 6 "warning level 6" 5 "warning level 5" 4 "warning level 4" 3 "warning level 3" 2 "warning level 2" 1 "warning level 1 - lowest" 0 "no warning" ;
+VAL_ 2365541072 MovingObjectDetectionState 15 "not available / not installed" 14 "error indication / temp error" 13 "Reserved for future use" 12 "Reserved for future use" 11 "Reserved for future use" 10 "Reserved for future use" 9 "Reserved for future use" 8 "not used" 7 "not used" 6 "not used" 5 "collision warning active with visual/audio cues (e.g. acoustic signal) " 4 "not used" 3 "system is ready and activated (no warning and no braking active) " 2 "system is deactivated by driver " 1 "not used" 0 "system is not ready (initialization not finished)" ;
+VAL_ 2364671664 BlindSpotDetectionState 15 "not available / not installed" 14 "error/temp. error" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "not used" 7 "not used" 6 "not used" 5 "collision warning active with visual/audio cues (e.g. acoustic signal) " 4 "reserved" 3 "system is ready and activated (no warning and no braking active) " 2 "system is deactivated by driver" 1 "Not available" 0 "system is not ready (initialization not finished)" ;
+VAL_ 2364671664 BlindSpotCollisionWarningLevel 15 "don't care / take no action" 14 "reserved" 13 "reserved" 12 "reserved" 11 "reserved" 10 "reserved" 9 "reserved" 8 "reserved" 7 "warning level 7 - HIGHEST" 6 "warning level 6" 5 "warning level 5" 4 "warning level 4" 3 "warning level 3" 2 "warning level 2" 1 "warning level 1 - lowest" 0 "no warning" ;
+VAL_ 2566806504 ImagerStatus 15 "not available" 14 "error" 13 "Reserved" 12 "Reserved" 11 "Reserved" 10 "Reserved" 9 "Reserved" 8 "Reserved" 7 "Reserved" 6 "Reserved" 5 "Imager view degraded but functional" 4 "Imager misaligned" 3 "Imager fully blocked / fully blind" 2 "Imager partially blocked / partially blind" 1 "Imager warming up / initializing" 0 "Imager fully operational" ;
+VAL_ 2566806504 DriverAlertnessWarningSysState 7 "Not Available / Not Installed" 6 "Reserved" 5 "Reserved" 4 "System monitoring driver behavior" 3 "not used" 2 "System temporarily not available" 1 "Initializing" 0 "System installed but disabled" ;
+VAL_ 2566806504 DriverAlertnessLevel 255 "Not available" 254 "error" ;
+VAL_ 2566806504 DepWarnSysSt 15 "Not available" 14 "Error / temp error" 5 "System is warning lane departure" 4 "Active warning suppressed by operator behavior" 3 "System is ready" 2 "System is deactivated by driver" 1 "Not used" 0 "System is not ready" ;
+VAL_ 2431649768 LaneDepartureImminentRightSide 3 "not used" 2 "reserved" 1 "Imminent" 0 "Not imminent" ;
+VAL_ 2431649768 LaneDepartureImminentLeftSide 3 "not used" 2 "reserved" 1 "Imminent" 0 "Not imminent" ;
+VAL_ 2431649768 DriverAlertnessWarning 7 "Not Available" 6 "reserved" 5 "reserved" 4 "reserved" 3 "Level 3 - Driver alertness warning" 2 "Level 2 - Degradation in driving behavior detected" 1 "not used" 0 "No distracted driving condition detected" ;
+VAL_ 2349075360 XBRPriority 3 "Low priority - used in override disabled  XBR Control Mode" 2 "Medium priority - used for ACC-Systems." 1 "High priority - not defined" 0 "Highest priority - used for emergency situations" ;
+VAL_ 2349075360 XBREBIMode 3 "Not defined" 2 "Endurance Brake Integration allowed" 1 "Only Endurance Brakes allowed" 0 "No Endurance Brake Integration allowed
+" ;
+VAL_ 2349075360 XBRCtrlMode 3 "Not defined" 2 "Acceleration control with maximum mode Execute the XBR acceleration demand ." 1 "Acceleration control with addition mode - Add the XBR acceleration demand to the driver's acceleration demand." 0 "Override disabled – Disable any existing control commanded by the source of this command" ;
+VAL_ 2348810400 TSC1EnhancedIntegrityDataSupport 3 "No TSC1 Enhanced protection supported by the sender" 2 "Reserved" 1 "TSC1 Enhanced protection is provided using an external (not in this PG) integrity strategy, such as that specified in J1939-76" 0 "TSC1 Message CRC and TSC1 Message Counter are supported by the sender (Recipients can ignore SPN 4206 and SPN 4207.)" ;
+VAL_ 2348810400 OverrideCtrlModePriority 3 "Low priority" 2 "Medium priority" 1 "High priority" 0 "Highest priority" ;
+VAL_ 2348810400 EngOverrideCtrlMode 3 "Speed/torque limit control - Limit speed and/or torque based on the included limit values.  " 2 "Torque control - Control torque to the included desired torque value" 1 "Speed control - Govern speed to the included desired speed value." 0 "Override disabled - Disable any existing control commanded by the source of this command." ;
+VAL_ 2348876704 DisengageDrivelineRequest 3 "Take no action" 2 "reserved" 1 "Disengage driveline" 0 "Allow driveline engagement" ;
+VAL_ 2364551072 RlvntObjctDtctdFrAdvncdEmrgncyBr 7 "Signal not available / not installed" 6 "Error indication" 5 "Reserved" 4 "Reserved" 3 "Reserved" 2 "Relevant object is not being detected reliably" 1 "Relevant object is being monitored" 0 "No relevant object monitored" ;
+VAL_ 2364551072 AEB_CollisionWarningLevel 15 "don't care / take no action" 14 "reserved" 13 "reserved" 12 "reserved" 11 "reserved" 10 "reserved" 9 "reserved" 8 "reserved" 7 "warning level 7 - HIGHEST" 6 "warning level 6" 5 "warning level 5" 4 "warning level 4" 3 "warning level 3" 2 "warning level 2" 1 "warning level 1 - lowest" 0 "no warning" ;
+VAL_ 2364551072 AdvncdEmrgencyBrakingSystemState 15 "not available / not installed" 14 "error/Temp error" 13 "reserved for future use" 12 "reserved for future use" 11 "reserved for future use" 10 "reserved for future use" 9 "reserved for future use" 8 "system performance and/or sensitivity limited (no warning and no braking active)" 7 "forward collision emergency braking active" 6 "forward collision warning with braking (e.g. brake jerk or partial braking)" 5 "forward collision warning active (e.g. acoustic signal, cruise control turned off, torque limitation" 4 "driver overrides system" 3 " system is ready and activated (no warning and no braking active)" 2 "system is deactivated by driver" 1 "Not used" 0 "system is not ready (initialization not finished" ;
+

@@ -1,0 +1,6 @@
+# Total max number of warnings (optional)
+max: 0
+
+# Global justification string (optional)
+justification: >
+  All warnings should be fixed, so allow no warnings.
