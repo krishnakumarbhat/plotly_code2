@@ -1,0 +1,32 @@
+
+ SW CHANGE HISTORY FOR DELPHI-ONLY DOS COMMAND LINE TOOL: CAN_XMT.exe
+
+  -----------------------------------------------------------------
+   REV       AUTHOR      DATE          DESCRIPTION
+  -----------------------------------------------------------------
+   21.0       MKD        05-6-13     - Revamp tool and add support for 3-8 channels
+                                     - New (-nbuses) option to set number of HW can channels.
+                                       (nbuses is set to 2 by default).
+                                     - New (-bus_125k) option to set particular bus to XCAN 125k speed.
+                                     - Add arguments to (-swap) option to allow user to designate 
+                                       individual channels to swap. Option may also now be called multiple
+                                       times (e.g. -swap 1:5 -swap 2:3) 
+                                     - remove all obsolete PIP and CWM options.
+
+   17.0       MKD        08-31-12    - Update to support ESR 2.5
+                                     - Update to support latest DVLog canmsgX_t format.
+                                     - Update to support Extended CAN output
+                                     - Update to support up to 6 CAN channels.
+                                     - Update to use latest MultiCanCardLib
+                                     - Disable all CWM/CADS/PIP options
+                                       
+   15.1       TLH        07-20-08    - Added new '-ncwmp' command line option
+                                       to transmit all CAN messages except those
+                                       which are FSM3 CWMP (host processor) output
+                                       CAN messages.
+   15.0       MKD        07-18-08    - Updated can_xmt to support ESR DV3 radar. 
+                                     - Reorganized can_xmt help splash screen.
+   
+   14.0       MKD        01-28-08    - Revamped software completely. Removed obsolete 
+                                       functions, changed all existing functions. 
+                                     - Added support for DV2 ESR radar.

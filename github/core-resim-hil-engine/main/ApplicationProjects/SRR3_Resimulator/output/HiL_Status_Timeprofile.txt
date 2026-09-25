@@ -1,0 +1,10 @@
+{
+    "SRR_HiL": {
+        "HiL_Status": [
+            {
+                "Scan Index": "2977",
+                "Sensor Position": "RL sensor"
+            }
+        ]
+    }
+}

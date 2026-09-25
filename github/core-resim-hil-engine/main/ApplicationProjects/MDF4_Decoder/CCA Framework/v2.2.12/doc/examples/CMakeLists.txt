@@ -1,0 +1,51 @@
+
+cmake_minimum_required(VERSION 3.0)
+project(cca-framework-examples)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/")
+find_package(CCAFrameworkMDF REQUIRED)
+
+macro(cpp_example name)
+    add_executable(${name} ${name}/${name}.cpp)
+    target_link_libraries(${name} CCAFrameworkMDF)
+endmacro()
+
+cpp_example(cca-convert)
+cpp_example(cca-device)
+cpp_example(cca-download)
+cpp_example(cca-readfile)
+cpp_example(cca-session)
+cpp_example(cca-state)
+cpp_example(cca-stream)
+cpp_example(cca-xcpmessage)
+cpp_example(cca-can_message)
+cpp_example(cca-mipi)
+cpp_example(cca-property)
+cpp_example(cca-datasync)
+cpp_example(cca-getsyslog)
+cpp_example(cca-getconfiguration)
+cpp_example(cca-setconfiguration)
+cpp_example(cca-events)
+cpp_example(cca-sorter)
+cpp_example(cca-ipcamInfo)
+cpp_example(cca-jumpToTimestamp)
+cpp_example(cca-IndexingOldFile)
+cpp_example(cca-indexedFileWriter)
+cpp_example(cca-camera_frame_indexing)
+
+add_executable(cca-device-c cca-device-c/cca-device.c)
+target_link_libraries(cca-device-c CCAFrameworkMDF)
+
+
+
+macro(csharp_example name)
+    if(MSVC)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${name}/Properties/AssemblyInfo.cs.in ${CMAKE_CURRENT_SOURCE_DIR}/${name}/Properties/AssemblyInfo.cs)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${name}/CcaLib.cs.in ${CMAKE_CURRENT_SOURCE_DIR}/${name}/CcaLib.cs)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.csproj.in ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.csproj)
+        INCLUDE_EXTERNAL_MSPROJECT(${name} ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.csproj TYPE FAE04EC0-301F-11D3-BF4B-00C04F79EFBC)
+    ENDIF(MSVC)
+endmacro()
+
+csharp_example(cca-interop-file)
+csharp_example(cca-interop-devicestate)

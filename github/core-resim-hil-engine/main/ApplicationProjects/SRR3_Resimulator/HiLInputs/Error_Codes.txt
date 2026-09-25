@@ -1,0 +1,113 @@
+HIL Resimulatioin Failed with Error Code - 001  --->  HIL_SRR_Configuration_XML_Version mismatch.
+HIL Resimulatioin Failed with Error Code - 002  --->  Reading Master configuration file fails
+HIL Resimulatioin Failed with Error Code - 003  --->  Error in Loading SRR_HIL_Exec.dll 
+HIL Resimulatioin Failed with Error Code - 004  --->  Error in Loading srr_decoder_dph.dll
+HIL Resimulatioin Failed with Error Code - 005  --->  Error in Loading SRR_MUDP_Log.dll
+HIL Resimulatioin Failed with Error Code - 006  --->  Error in Loading SRR_Comm.dll
+HIL Resimulatioin Failed with Error Code - 007  --->  UDP Connection Failed for  XCP communication port - 4410
+HIL Resimulatioin Failed with Error Code - 008  --->  UDP Connection Failed for Port - 6001
+HIL Resimulatioin Failed with Error Code - 009  --->  sensor is Disconnected, HiL will be disabled for this sensor
+HIL Resimulatioin Failed with Error Code - 010  --->  ReInitSensor -> UDP Connection Failed for  XCP communication port - 4410
+HIL Resimulatioin Failed with Error Code - 011  --->  ReInitXCP 	-> UDP Connection Failed for  XCP communication port - 4410	
+HIL Resimulatioin Failed with Error Code - 012  --->  Error setting INIT XCP command for the sensor (RL,RR,FR,FL)
+HIL Resimulatioin Failed with Error Code - 013  --->  Error setting XCP command for the sensor-> XCP_SEED_REQ_CAL_1_TX
+HIL Resimulatioin Failed with Error Code - 014  --->  Failure Responce for Calib SEED Req_1 for Sensor
+HIL Resimulatioin Failed with Error Code - 015  --->  SeedKey -> Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 016  --->  Failure Responce for Calib SEED Req_1 for Sensor
+HIL Resimulatioin Failed with Error Code - 017  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 018  --->  Failure Responce for SEED Resp_1 for Sensor
+HIL Resimulatioin Failed with Error Code - 019  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 020  --->  Failure Responce for DAQ SEED Req_1 for Sensor
+HIL Resimulatioin Failed with Error Code - 021  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 022  --->  Failure Responce for SEED Resp_1 for Sensor
+HIL Resimulatioin Failed with Error Code - 023  --->  Failure Responce for Calib SEED Req_1
+HIL Resimulatioin Failed with Error Code - 024  --->  Error setting XCP command
+HIL Resimulatioin Failed with Error Code - 025  --->  Failure Responce for Calib SEED Req_2
+HIL Resimulatioin Failed with Error Code - 026  --->  Error setting XCP command
+HIL Resimulatioin Failed with Error Code - 027  --->  Failure Responce for SEED Resp_1
+HIL Resimulatioin Failed with Error Code - 028  --->  Error setting XCP command
+HIL Resimulatioin Failed with Error Code - 029  --->  Failure Responce for SEED Resp_2 
+HIL Resimulatioin Failed with Error Code - 030  --->  Error setting XCP command
+HIL Resimulatioin Failed with Error Code - 031  --->  Failure Responce for DAQ SEED Req_1
+HIL Resimulatioin Failed with Error Code - 032  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 033  --->  Failure Responce for SEED Req_2
+HIL Resimulatioin Failed with Error Code - 034  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 035  --->  Failure Responce for SEED Resp_1
+HIL Resimulatioin Failed with Error Code - 036  --->  Error setting XCP command 
+HIL Resimulatioin Failed with Error Code - 037  --->  Failure Responce for SEED Resp_2
+HIL Resimulatioin Failed with Error Code - 038  --->  Error setting XCP For Z7A LOGGING VERSION for the sensor
+HIL Resimulatioin Failed with Error Code - 039  --->  Error setting XCP For Z7B LOGGING VERSION for the sensor
+HIL Resimulatioin Failed with Error Code - 040  --->  Error setting XCP For Z4 LOGGING VERSION
+HIL Resimulatioin Failed with Error Code - 041  --->  Error setting XCP For Z7B_CUST LOGGING VERSION for the sensor
+HIL Resimulatioin Failed with Error Code - 042  --->  Error Getting XCP For SW LOGGING VERSION 
+HIL Resimulatioin Failed with Error Code - 043  --->  Error setting HIL Mode for the sensor 
+HIL Resimulatioin Failed with Error Code - 044  --->  Error setting XCP command
+HIL Resimulatioin Failed with Error Code - 045  --->  Failure Responce for XCP_SET_MTA_BMW_MAX_REL_SPEED_PRECRASH
+HIL Resimulatioin Failed with Error Code - 046  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 047  --->  Failure Responce for XCP_SET_MTA_BMW_MAX_REL_SPEED_PRECRASH
+HIL Resimulatioin Failed with Error Code - 048  --->  Error setting XCP command for the sensor
+HIL Resimulatioin Failed with Error Code - 049  --->  Failure Responce for XCP_SET_MTA_BMW_MAX_REL_SPEED_PRECRASH
+HIL Resimulatioin Failed with Error Code - 050  --->  DSPACE Stream creation is Failed
+HIL Resimulatioin Failed with Error Code - 051  --->  Z7b Stream creation  is Failed
+HIL Resimulatioin Failed with Error Code - 052  --->  Z7b_custm Stream creation Failed
+HIL Resimulatioin Failed with Error Code - 053  --->  Z4 Stream creation is Failed
+HIL Resimulatioin Failed with Error Code - 054  --->  Z4_custm Stream creation is Failed
+HIL Resimulatioin Failed with Error Code - 055  --->  DSPACE Stream creation is Failed
+HIL Resimulatioin Failed with Error Code - 056  --->  Input File Data is Incomplete
+HIL Resimulatioin Failed with Error Code - 057  --->  Stream Creation Error!! Version Incompatible
+HIL Resimulatioin Failed with Error Code - 058  --->  Unknown Input Stream Error
+HIL Resimulatioin Failed with Error Code - 059  --->  Target Stream Creation Error, Please check the SW version flashed in sensor
+HIL Resimulatioin Failed with Error Code - 060  --->  HiL Execution Failed
+HIL Resimulatioin Failed with Error Code - 061  --->  Error :: HiL Resimulation Failed
+HIL Resimulatioin Failed with Error Code - 062  --->  Error :: HiL Resimulation Failed
+HIL Resimulatioin Failed with Error Code - 063  --->  Error :: Another HiL Instance Already Running
+
+
+
+
+
+
+
+Linux Execution on terminal: sudo bash SRR_HiL_Resim.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

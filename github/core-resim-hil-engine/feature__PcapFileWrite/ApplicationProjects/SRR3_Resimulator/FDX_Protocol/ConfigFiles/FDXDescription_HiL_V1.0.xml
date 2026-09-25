@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<canoefdxdescription version="1.0">
+  <datagroup groupID="1" size="8">
+    <identifier>RR_sensor_signal</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>sysVarScanIndexRR</identifier>
+      <sysvar name="Scan_index_RR" namespace="FDX" /> 
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>sysVarTimestampRR</identifier>
+      <sysvar name="Timestamp_RR" namespace="FDX" />
+    </item>
+    <!--<item offset="8" size="8" type="double">
+      <identifier>sysVarVectorTimeStampRR</identifier>
+      <sysvar name="Vector_timestamp_RR" namespace="FDX" />
+    </item> -->
+  </datagroup>
+  <datagroup groupID="2" size="8">
+    <identifier>RL_sensor_signal</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>sysVarScanIndexRL</identifier>
+      <sysvar name="Scan_index_RL" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>sysVarTimestampRL</identifier>
+      <sysvar name="Timestamp_RL" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="3" size="8">
+    <identifier>FL_sensor_signal</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>sysVarScanIndexFL</identifier>
+      <sysvar name="Scan_index_FL" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>sysVarTimestampFL</identifier>
+      <sysvar name="Timestamp_FL" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="4" size="8">
+    <identifier>FR_sensor_signal</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>sysVarScanIndexFR</identifier>
+      <sysvar name="Scan_index_FR" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>sysVarTimestampFR</identifier>
+      <sysvar name="Timestamp_FR" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="5" size="8">
+    <identifier>RR_sensor_FrameAccess</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>Sig_RR_ScanIndex</identifier>
+      <sysvar name="Scan_index_RR_var" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>Sig_RR_TimeStamp</identifier>
+      <sysvar name="RR_TimeStamp_var" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="6" size="8">
+    <identifier>RL_sensor_FrameAccess</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>Sig_RL_ScanIndex</identifier>
+      <sysvar name="Scan_index_RL_var" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>Sig_RL_TimeStamp</identifier>
+      <sysvar name="RL_TimeStamp_var" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="7" size="8">
+    <identifier>FL_sensor_FrameAccess</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>Sig_FL_ScanIndex</identifier>
+      <sysvar name="Scan_index_FL_var" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>Sig_FL_TimeStamp</identifier>
+      <sysvar name="FL_TimeStamp_var" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="8" size="8">
+    <identifier>FR_sensor_FrameAccess</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>Sig_FR_ScanIndex</identifier>
+      <sysvar name="Scan_index_FR_var" namespace="FDX" />
+    </item>
+    <item offset="4" size="4" type="uint32">
+      <identifier>Sig_FR_TimeStamp</identifier>
+      <sysvar name="FR_TimeStamp_var" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="9" size="4">
+    <identifier>CAN_UTC_Time</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>UTC_Time</identifier>
+      <sysvar name="UTC_Time" namespace="FDX" />
+    </item>
+  </datagroup>
+  <datagroup groupID="10" size="4">
+    <identifier>CAN_UTC_Time_FrameAccess</identifier>
+    <item offset="0" size="4" type="uint32">
+      <identifier>sysVar_UTC_Time</identifier>
+      <sysvar name="sysVar_UTC_Time" namespace="FDX" />
+    </item>
+  </datagroup>
+</canoefdxdescription>
