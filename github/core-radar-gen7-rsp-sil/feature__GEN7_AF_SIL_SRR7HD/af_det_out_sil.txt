@@ -1,0 +1,23 @@
+num_af_det  : 0
+ran  : 
+vel  : 
+pow  : 
+snr  : 
+theta  : 
+phi  : 
+rcs  : 
+amp  : 
+sin_theta3  : 
+sin_phi3  : 
+az_conf  : 
+el_conf  : 
+f_single_target  : 
+f_superres_target  : 
+f_1az2el  : 
+f_bistatic  : 
+f_peak_det  : 
+af_type  : 
+az_af_type  : 
+el_af_type  : 
+rdd_idx  : 
+spec_res  : 

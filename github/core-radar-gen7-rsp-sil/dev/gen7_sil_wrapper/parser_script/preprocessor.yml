@@ -1,0 +1,34 @@
+preprocessing:
+  batch-logic: Pivot
+  pivot-indices: [0, 1]
+  normalization: normalized
+  egomotion-method: Interpolated
+  sensor-map:
+    - identifier: AtCityBMW_EthernetSync_FrontLeftRadar_20200929_Uncalibrated
+      rtype: mrr360
+      range-box:
+        forward: 80.0
+        backward: 60.0
+        left: 40.0
+        right: 40.0
+    - identifier: AtCityBMW_EthernetSync_RearRightRadar_20200929_Uncalibrated
+      rtype: mrr360
+      range-box:
+        forward: 80.0
+        backward: 60.0
+        left: 40.0
+        right: 40.0
+    - identifier: AtCityBMW_EthernetSync_FrontRightRadar_20200929_Uncalibrated
+      rtype: mrr360
+      range-box:
+        forward: 80.0
+        backward: 60.0
+        left: 40.0
+        right: 40.0
+    - identifier: AtCityBMW_RL_Radar
+      rtype: mrr360
+      range-box:
+        forward: 80.0
+        backward: 60.0
+        left: 40.0
+        right: 40.0

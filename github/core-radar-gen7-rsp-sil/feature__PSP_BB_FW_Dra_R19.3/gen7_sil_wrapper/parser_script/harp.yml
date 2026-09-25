@@ -1,0 +1,12 @@
+
+harp:
+  enable: true
+  ml-confidence-thresholds:
+    k_conf_nms_th: 0.1
+    k_score_th: 0.1
+    k_conf_stat_veh_th: 0.15
+    k_conf_mov_veh_th: 0.22
+    k_conf_large_stat_veh_th: 0.2
+    k_conf_large_mov_veh_th: 0.16
+    k_conf_bike_th: 0.26
+    k_conf_ped_th: 0.32

@@ -1,0 +1,30 @@
+name: advradar-gen7-rsp-sil-verification-trigger
+when:
+  eventSource: gerrit
+  eventTypes:
+    - patchset-created
+    - ref-updated
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+run:
+  pipeline: core-radar-bb-verification
+  params:
+    build-job-name: NA
+    build-parent-bb-bazel-name: NA
+    build-parent-project: NA
+    build-parent-target: NA
+    gerrit-change-id: $(body.change.number)
+    gerrit-commit-id: $(body.patchSet.revision)
+    gerrit-project: ADVRADAR_GEN7_RSP_SIL
+    unit-test-target-pipeline: NA
+    unit-test-yaml-path: NA
+    upload-path: NA
+  tasks:
+    - name: build
+      enabled: false
+    - name: unit-tests
+      enabled: false
+url: https://389177498442.awsaptiv.com/webhook/triggers/advradar-gen7-rsp-sil-verification-trigger

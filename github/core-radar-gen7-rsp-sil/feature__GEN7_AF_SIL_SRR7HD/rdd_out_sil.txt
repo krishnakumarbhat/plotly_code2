@@ -1,0 +1,11 @@
+rdd1_num_detect 0
+rindx 
+dindx 
+rdop_amp 
+rbinest 
+dbinest 
+rdd2_num_detect 0
+rdd2_range 
+rdd2_range_rate 
+rdd2_snr 
+rdd2_sp_fail_flag 

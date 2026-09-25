@@ -1,0 +1,32 @@
+---
+sync: false
+log:
+  vehicle: abcdefghijklmnopqrstuvwx
+  structure:
+    pcap: log.pcap
+
+logging:
+  ethernet:
+    interfaces:
+      - interface: enp2s0
+        udp:
+          - 2368
+  chunk-options:
+    duration: 60
+    out-directory: mylogging
+
+sensors:
+  ethernet:
+    AtCityBMW_EthernetSync_PandoraLidarCalibrated:
+      port: 2368
+      remote: 192.168.2.51:10000
+      type: pandora
+      calibration: config/atcity/lidarCalib.csv
+      extrinsics:
+        position: {x: 0.9, y: 0.05, z: -1.7}
+        rotation: {w: 0.0, x: -1.0, y: 0.0, z: 0.0}
+  can: {}
+
+xviz:
+  port: 7001
+  message-format: BINARY

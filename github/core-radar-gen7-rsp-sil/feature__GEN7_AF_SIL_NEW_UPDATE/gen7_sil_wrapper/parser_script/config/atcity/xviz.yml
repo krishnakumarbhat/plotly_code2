@@ -1,0 +1,3 @@
+xviz:
+  port: 9001
+  message-format: BINARY

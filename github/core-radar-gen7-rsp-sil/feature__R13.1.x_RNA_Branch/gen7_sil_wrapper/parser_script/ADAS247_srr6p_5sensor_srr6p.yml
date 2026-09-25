@@ -1,0 +1,219 @@
+sync: true
+log:
+  #realtime: true
+  structure:
+    pcap: 5sensor_srr6p.pcap
+
+sensors:
+  ethernet:
+    FrontLeftRadar:
+      port: 5555
+      remote: 192.168.1.71:49153
+      type: radar-sensor
+      radar-type: SRR6P
+      extrinsics:
+         position:
+           x: 20
+           y: 0
+           z: -0.406
+         rotation:
+           w: 0
+           x: 0.989
+           y: 0
+           z: 0
+
+    # RearRightRadar:
+    #   port: 5555
+    #   remote: 192.168.1.75:49153
+    #   type: radar-sensor
+    #   radar-type: SRR6P
+    #   extrinsics:
+    #      position:
+    #        x: 3.7034
+    #        y: 0
+    #        z: -0.406
+    #      rotation:
+    #        w: 0
+    #        x: 0.989
+    #        y: 0
+    #        z: 0
+    # RearCentreLeftRadar:
+    #   port: 5555
+    #   remote: 192.168.1.75:49153
+    #   type: radar-sensor
+    #   radar-type: SRR6P
+    #   extrinsics:
+    #      position:
+    #        x: 3.7034
+    #        y: 0
+    #        z: -0.406
+    #      rotation:
+    #        w: 0
+    #        x: 0.989
+    #        y: 0
+    #        z: 0
+    # RearCentreRightRadar:
+    #   port: 5555
+    #   remote: 192.168.1.75:49153
+    #   type: radar-sensor
+    #   radar-type: SRR6P
+    #   extrinsics:
+    #      position:
+    #        x: 3.7034
+    #        y: 0
+    #        z: -0.406
+    #      rotation:
+    #        w: 0
+    #        x: 0.989
+    #        y: 0
+    #        z: 0
+    # FrontCentreRadar:
+    #   port: 5555
+    #   remote: 192.168.1.75:49153
+    #   type: radar-sensor
+    #   radar-type: SRR6P
+    #   extrinsics:
+    #      position:
+    #        x: 3.7034
+    #        y: 0
+    #        z: -0.406
+    #      rotation:
+    #        w: 0
+    #        x: 0.989
+    #        y: 0
+    #        z: 0
+logging:
+  ethernet:
+    interfaces:
+      #put your netwrok device here
+      - interface: enp0s3
+        udp:
+          - 2368
+          - 5555
+          - 10110
+        tcp:
+          - ip: 192.168.1.51
+            port: 9870
+            timeout: 10
+          - ip: 192.168.1.51
+            port: 9347
+            timeout: 10
+  can:
+    interfaces:
+      - name: can4
+        channel: 4
+        is-fd: false
+      - name: can5
+        channel: 5
+        is-fd: false
+  chunk-options:
+    duration: 60
+    out-directory: mylogging
+
+xviz:
+  port: 9000
+  message-format: BINARY
+
+# rsp:
+#   sensor_name: %sensors.ethernet.FrontLeftRadar
+  # FrontRightRadar
+  # SideLeftRadar
+  # SideRightRadar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# sync: false
+# log:
+#   #realtime: true
+#   structure:
+#     pcap: 5s_log.pcap
+
+# sensors:
+#   ethernet:
+#     FrontLeftCornerRadar:
+#       port: 5555
+#       remote: 192.168.1.74:49155
+#       type: radar-sensor
+#       radar-type: SRR6P
+#       extrinsics:
+#          position:
+#            x: 3.7034
+#            y: 0
+#            z: -0.406
+#          rotation:
+#            w: 0
+#            x: 0.989
+#            y: 0
+#            z: 0
+# logging:
+#   ethernet:
+#     interfaces:
+#       #put your netwrok device here
+#       - interface: enp0s3
+#         udp:
+#           - 2368
+#           - 5555
+#           - 10110
+#         tcp:
+#           - ip: 192.168.1.51
+#             port: 9870
+#             timeout: 10
+#           - ip: 192.168.1.51
+#             port: 9347
+#             timeout: 10
+#   can:
+#     interfaces:
+#       - name: can4
+#         channel: 4
+#         is-fd: false
+#       - name: can5
+#         channel: 5
+#         is-fd: false
+#   chunk-options:
+#     duration: 60
+#     out-directory: mylogging
+
+# xviz:
+#   port: 9000
+#   message-format: BINARY

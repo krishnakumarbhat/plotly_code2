@@ -1,0 +1,25 @@
+
+network-kind: at-city-bmw-mrr360
+network:
+  preprocessing:
+    batch-logic: Round
+    pivot-indices: [0, 1]
+    normalization: normalized
+    egomotion-method: Interpolated
+    sensor-map:
+      - identifier: AtCityBMW_EthernetSync_FrontLeftRadar_20200929_Uncalibrated
+        rtype: mrr360
+        range-box:
+          forward: 80.0
+          backward: 60.0
+          left: 40.0
+          right: 40.0
+  postprocessing:
+    score-threshold: 0.2
+    nms-threshold: 0.1
+    nms-method: overlap-classwise
+    classwise:
+      0:
+        name: Bike
+        score-threshold: 0.2
+        height: 1.5

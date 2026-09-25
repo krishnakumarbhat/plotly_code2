@@ -1,0 +1,59 @@
+
+network-kind: at-city-bmw-mrr360
+network:
+  preprocessing: ../test_files/preprocessor.yml
+
+  python-tensorflow:
+    path: ./runtime_data/network.py
+    class: Network
+    model: config/atcity/detection/network.pb
+    interface: config/atcity/detection/interface.json
+  postprocessing:
+    score-threshold: 0.2
+    nms-threshold: 0.1
+    nms-method: overlap-classwise
+    classwise:
+      0:
+        name: Bike
+        score-threshold: 0.2
+        height: 1.5
+      1:
+        name: Large_Moving
+        score-threshold: 0.2
+        height: 2.5
+      2:
+        name: Large_Stationary
+        score-threshold: 0.2
+        height: 2.5
+      3:
+        name: Other
+        score-threshold: 2.0
+        height: 5.0
+      4:
+        name: Pedestrian
+        score-threshold: 0.2
+        height: 1.8
+      5:
+        name: Vehicle_Moving
+        score-threshold: 0.2
+        height: 1.5
+      6:
+        name: Vehicle_Stationary
+        score-threshold: 0.2
+        height: 1.5
+
+tracker: config/atcity/detection/tracker_params.json
+
+vehicle-properties:
+  dist-from-rear-axle-to-vcs: 3.837 # [m] distance between center of rear axis to VCS origin
+  rear-corner-compliance: 0.0053 # [rad*m/s*s] The rear cornering compliance.
+  steer-gear-ratio: 15.0 # Ratio of steering wheel angle to wheel angle
+  wheelbase: 2.975 # [m] wheelbase in meters
+  understeer-coefficient: 0.0053 # Understeer coefficient
+  vehicle-width: 1.868 # [m] Width of the vehicle
+  vehicle-length: 4.936 # [m] Length of the vehicle
+  cog-x: 0.0 # [m] Center of gravity
+  cog-y: 0.0 # [m] Center of gravity
+  front-wheel-radius: 0.332 # [m] Wheel radius when vehicle is loaded to GVW
+  front-track-width: 1.61 # [m] Front Track Width
+  speed-correction-factor: 1.0 # speed = raw-speed * speed-correction-factor
