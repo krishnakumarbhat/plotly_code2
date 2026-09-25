@@ -1,0 +1,3 @@
+Car, Truck and Motorcycle is from Armin Talai's simulation
+Pedestrian - RCS_Pedestrian_Source.pdf, page 69, top left figure
+Bicycle - RCS_Bicycle_Source.pdf, page 24, Figure 19 (a), blue curve

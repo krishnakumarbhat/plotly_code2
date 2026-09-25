@@ -1,0 +1,17 @@
+kStatObjBuilding
+kMovgObjVehOther
+kMovgObjOther
+kMovgObjUnknown
+kStatObjPylon
+kStatObjPole
+kStatObjBridge
+kStatObjOther
+kStatObjUnknown
+kMovgObjVehLuxuryCar
+kMovgObjVehUnknown
+kMovgObjVehBus
+kMovgObjVehDeliveryVan
+kMovgObjVehSmallCar
+kMovgObjVehCompactCar
+kMovgObjVehHeavyTruck
+kMovgObjVehMediumCar

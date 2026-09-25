@@ -1,0 +1,92 @@
+**********************************************************************
+The latest SMCs can be found here -
+https://confluence.asux.aptiv.com/display/RS/SMC+version+history 
+and Plastic repo 10032740_RadarCore_Calibrations
+**********************************************************************
+BMW_FLR7		- smc_cal_27_73_1_52.json and usc_cal_3_73_0_10.json
+BMW_SRR5Plus	- PDD-10030425-BMW_SRR5p_Mid_DolphinES2_ES3_V83p2v0_Front_125_Bins_Unified_A470ATS6.xlsm
+BMW_SRR7Plus	- smc_cal_27_72_1_44.json and usc_cal_2_72_0_3.json
+HKMC_SRR5		- HKMC_SRR5_Gen2_DolphinES2_ES3_V74p2v3_Front_116_Bins_Unified_Original.xlsm
+HONDA_SRR6Plus	- smc_cal_35_22_1_5.json
+MTNL_FLR4Plus	- smc_cal_23_23_1_8.json
+NISSAN_SRR6		- smc_cal_41_20_1_102.json - Antenna gain pattern are taken from SRR6_V1_Az_avg2way_C1B.csv and SRR6_V1_El_avg2way_C1B.csv file(archive folder)
+STLA_FLR4		- smc_cal_37_21_0_0.json(Platform)
+STLA_FLR4Plus	- smc_cal_43_23_2_0.json
+STLA_SRR6Plus   - smc_cal_37_22_2_0.json
+TML_SRR5		- HKMC_SRR5_Gen2_DolphinES2_ES3_V74p2v3_Front_116_Bins_Unified_Original.xlsm
+**********************************************************************
+Variables and their source in json files:
+
+- angle_range is taken from   
+	  if BMW_SRR7Plus or BMW_FLR7
+		-90 to 90 hardcoded
+	  else
+		Hardware.Antenna.angle 
+- antenna_gain_dB is taken from 
+	  if BMW_SRR7Plus or BMW_FLR7
+		Hardware.Antenna.k_Gain_Rolloff_Az_Reciprocal from usc_cal_2_72_0_3.json and convert to dB using -20log10(x)
+		Hardware.Antenna.k_Gain_Rolloff_Az_Reciprocal from usc_cal_3_73_0_10.json and convert to dB using -20log10(x)
+	  else
+		Hardware.Antenna.azimuth but make sure to normalize(at boresight, 0degree) to 0dB before using in sensor model SMC
+- Elevation Range is taken from 
+	  if BMW_SRR7Plus or BMW_FLR7
+		-90 to 90 hardcoded
+	  else
+		Hardware.Antenna.angle 
+- elevation_gain_dB is taken from 
+	  if BMW_SRR7Plus or BMW_FLR7
+		Hardware.Antenna.k_Gain_Rolloff_EL_Reciprocal from usc_cal_2_72_0_3.json and convert to dB using -20log10(x)
+		Hardware.Antenna.k_Gain_Rolloff_EL_Reciprocal from usc_cal_3_73_0_10.json and convert to dB using -20log10(x)
+	  else
+		Hardware.Antenna.elevation but make sure to normalize(at boresight, 0degree) to 0dB before using in sensor model SMC
+- cc_range is taken from Processing.CFAR.correlation_coefficient
+- cfar_offset_db is taken from 20*log10(Processing.CFAR.cfar_lut)
+- k_temp_sens_dB is taken from 20*log10(Processing.Temperature.k_temp_sens)
+- sens_thold_db is taken from Processing.RCS_Profile.rcs_profile_db
+- sens_thold_range is taken from Processing.RCS_Profile.range_extended
+- range_m, rcs_m_db, snr_m_db, snr_m_peak_db and temperature_m are parameters of manufacturing target as we need a reference SNR for Sensor Model
+- doppler_sll is taken from -20*log10(SMC.Secondpass_Threshold.k_rwin_sll)
+- k_end_rbin_CI is taken from 
+	if BMW_SRR7Plus or BMW_FLR7
+		Processing.CI.ci_stop_rbin
+	else
+		Processing.CI.end_rbin_CI
+- k_start_rbin_CI is taken from 
+	  if BMW_SRR7Plus or BMW_FLR7
+		Processing.CI.ci_start_rbin
+	  else
+		Processing.CI.start_rbin_CI
+- ci_gain_db is taken from 
+	if BMW_SRR7Plus or BMW_FLR7
+		Processing.CI.ci_cfar_offset
+	else
+		Processing.CI.CFAR_offset_CI_look_A. It is same for all looks
+- K_Std_Range, K_Std_RR, K_Std_AZ_LUT, K_Std_El_LUT, K_Std_Max_SNR, K_Min_AZ_Zone_1, K_Max_AZ_Zone_1, Delta_AZ_Zone1, Delta_AZ_Zone2 and Delta_El are used for standard deviation calculation. This is still not implemented for Gen6.Note that K_Min_AZ_Zone_1, K_Max_AZ_Zone_1, Delta_AZ_Zone1, Delta_AZ_Zone2 and Delta_El are used in sensor model SMC in degrees
+- Az_quality_LUT and Exist_Prob_Det_LUT are used for existence probability calculation. This is still not implemented for Gen6
+- max_num_of_rbins is taken from Waveform.Look_X_Chirp.range_bins_used
+- max_num_of_dbins is taken from Waveform.Look_X_Frame.Doppler_FFT_size
+- radar_frequency is taken from Waveform.Look_X_Chirp.fc
+- Look parameters are taken from Waveform.Look_X_Chirp.range_coverage, 
+SMC.BW_Dependant_Thresholds.k_RBIN_RES_Look_X, 
+SMC.Secondpass_Threshold.k_rdotmin,
+SMC.Secondpass_Threshold.k_VUA_Look_X + SMC.Secondpass_Threshold.k_rdotmin, 
+SMC.Secondpass_Threshold.k_DBIN_RES_Look_X, 
+if SFW_V1
+	SMC.BW_Dependant_Thresholds.k_rbin_bias_correction_factor_Look_X, 
+	SMC.Secondpass_Threshold.k_primary_range_bin_freq_res_Look_X, 
+	SMC.Secondpass_Threshold.k_secondary_freq_bin_res_Look_X, 
+	SMC.Secondpass_Threshold.k_secondary_range_bin_res_Look_X, 
+	SMC.Secondpass_Threshold.k_secondary_range_coverage_Look_X, 
+	SMC.Secondpass_Threshold.k_primary_ranging_freq_Look_X, 
+	SMC.Secondpass_Threshold.k_secondary_ranging_freq_Look_X, 
+	SMC.Secondpass_Threshold.k_secondary_Doppler_freq_Look_X
+if SfW_V2
+	SMC.BW_Dependant_Thresholds.k_sfw_coeff_v_reciprocal_Look_X, 
+	SMC.Secondpass_Threshold.k_sfw_coeff_r1_Look_X, 
+	SMC.Secondpass_Threshold.k_sfw_coeff_r1_r2_reciprocal_Look_X, 
+	SMC.Secondpass_Threshold.k_sfw_f_primary_Look_X, 
+	SMC.Secondpass_Threshold.k_sfw_f_secondary_Look_X, 
+
+
+
+

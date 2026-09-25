@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+  fmiVersion="2.0"
+  modelName="@FMU_Model_Name@"
+  guid="@FMUGUID@"
+  description=""
+  author="@fmuAuthor@"
+  version="1.0"
+  generationTool="BMW LiME Framework"
+  generationDateAndTime="@FMUTIMESTAMP@"
+  variableNamingConvention="structured">
+  <CoSimulation
+    modelIdentifier="@FMU_Model_Name@"
+    canHandleVariableCommunicationStepSize="true"
+    canNotUseMemoryManagementFunctions="true">
+    <SourceFiles>
+      <File name="SensorModel2.cpp"/>
+    </SourceFiles>
+  </CoSimulation>
+  <LogCategories>
+    <Category name="FMI" description="Enable logging of all FMI calls"/>
+    <Category name="TEMP" description="Enable TEMP-related logging"/>
+    <Category name="OSI" description="Enable OSI-related logging"/>
+  </LogCategories>
+  <ModelVariables>
+	  <!-- Integer Variables  -->
+      <ScalarVariable name="SensorViewIn.base.lo"          valueReference="0"  causality="input"      variability="discrete">				 <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SensorViewIn.base.hi"          valueReference="1"  causality="input"      variability="discrete">				 <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SensorViewIn.size"             valueReference="2"  causality="input"      variability="discrete">				 <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SensorDataOut.base.lo"         valueReference="3"  causality="output"     variability="discrete" initial="exact"><Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SensorDataOut.base.hi"         valueReference="4"  causality="output"     variability="discrete" initial="exact"><Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SensorDataOut.size"            valueReference="5"  causality="output"     variability="discrete" initial="exact"><Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VerboseMode_enum"      valueReference="6"  causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Customer_enum"         valueReference="7"  causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SensorType_enum"       valueReference="8"  causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.InitLookId_enum"       valueReference="9"  causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.BumperNumToUse_enum"   valueReference="10" causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.BumperLoss_enum"       valueReference="11" causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.MaxNumberOfDetections" valueReference="12" causality="parameter"  variability="fixed">                   <Integer start="0"/></ScalarVariable>
+      <!-- Real Variables  -->
+      <ScalarVariable name="SRR.SM2.SensorMountingPosition.Position.X_m"          valueReference="0"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SensorMountingPosition.Position.Y_m"          valueReference="1"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SensorMountingPosition.Position.Z_m"          valueReference="2"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SensorMountingPosition.Orientation.Roll_rad"  valueReference="3"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad" valueReference="4"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad"   valueReference="5"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.FoV.MaxAzimuth_rad"                     valueReference="6"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.FoV.MinAzimuth_rad"                     valueReference="7"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.FoV.MaxElevation_rad"                   valueReference="8"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.FoV.MinElevation_rad"                   valueReference="9"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.AzimuthResolution_rad"                  valueReference="10" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Traffic.BbCenterToRearXFactor"          valueReference="11" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Traffic.BbCenterToFrontXFactor"         valueReference="12" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Traffic.GroundClearance_m"              valueReference="13" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Traffic.WheelRadius_m"                  valueReference="14" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.Length_m"                          valueReference="15" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.Width_m"                           valueReference="16" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.Height_m"                          valueReference="17" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.BbCenterToRear.X_m"                valueReference="18" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.BbCenterToRear.Y_m"                valueReference="19" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.BbCenterToRear.Z_m"                valueReference="20" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.BbCenterToFront.X_m"               valueReference="21" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.BbCenterToFront.Y_m"               valueReference="22" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Host.BbCenterToFront.Z_m"               valueReference="23" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.AzimuthMisalignment_rad"                valueReference="24" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ElevationMisalignment_rad"              valueReference="25" causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VirtualMountingPosition.Position.X_m"          valueReference="26"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VirtualMountingPosition.Position.Y_m"          valueReference="27"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VirtualMountingPosition.Position.Z_m"          valueReference="28"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VirtualMountingPosition.Orientation.Roll_rad"  valueReference="29"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VirtualMountingPosition.Orientation.Pitch_rad" valueReference="30"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.VirtualMountingPosition.Orientation.Yaw_rad"   valueReference="31"  causality="parameter" variability="fixed"><Real start="0"/></ScalarVariable>
+
+      <!-- Boolean Variables  -->
+      <ScalarVariable name="SRR.SM2.SimValid_bool"                         valueReference="0"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.SimCopySvToSd_bool"                    valueReference="1"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ProcessMovingObject_bool"              valueReference="2"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ProcessStationaryObject_bool"          valueReference="3"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ProcessLaneBoundary_bool"              valueReference="4"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ProcessTrafficSign_bool"               valueReference="5"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ApplyDetectionProbability_bool"        valueReference="6"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ReadTrafficVehAttribFromOSI_bool"      valueReference="7"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ApplyRoadProfileOcclusion_bool"        valueReference="8"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ReadHostVehAttribFromOSI_bool"         valueReference="9"  causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.IncludeWheelsInTrafficVeh_bool"        valueReference="10" causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ApplyWheelSpinEffect_bool"             valueReference="11" causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.EnableMultipathProcessing_bool"        valueReference="12" causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ReadSensorMountingFromConfigFile_bool" valueReference="13" causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.EnablePedestrianMicrodoppler_bool"     valueReference="14" causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.ReadVirtualMountingFromConfigFile_bool" valueReference="15" causality="parameter" variability="fixed"><Boolean start="false"/></ScalarVariable>
+
+      <!-- String Variables  -->
+      <ScalarVariable name="SRR.SM2.SensorName"                    valueReference="0" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+      <ScalarVariable name="SRR.SM2.Custom"                        valueReference="1" causality="parameter" variability="fixed"><String start="disable"/></ScalarVariable>		
+      <ScalarVariable name="SRR.SM2.FoV.BlockageMaskAzimuth"       valueReference="2" causality="parameter" variability="fixed"><String start=""/></ScalarVariable>
+  </ModelVariables>
+  <ModelStructure>
+    <Outputs>
+      <Unknown index="4"/>
+      <Unknown index="5"/>
+      <Unknown index="6"/>
+      <Unknown index="7"/>
+      <Unknown index="8"/>
+    </Outputs>
+  </ModelStructure>
+</fmiModelDescription>

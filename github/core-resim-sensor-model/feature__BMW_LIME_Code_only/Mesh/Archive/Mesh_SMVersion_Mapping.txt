@@ -1,0 +1,38 @@
+SM2 V4.0.0 - OSI_library_V11f1
+SM2 V4.1.0 - OSI_library_V12
+SM2 V4.2.0 - No change
+SM2 V4.3.0 - No change
+SM2 V4.4.0 - OSI_library_V13
+SM2 V5.0.0 - No change
+SM2 V5.1.0 - No change
+SM2 V5.2.0 - OSI_library_V14
+SM2 V5.3.0 - No change
+SM2 V5.4.0 - No change
+SM2 V6.0.0 - No change
+SM2 V6.1.0 - OSI_library_V14a
+SM2 V6.2.0 - OSI_library_V15
+SM2 V6.3.0 - OSI_library_V16
+SM2 V7.0.0 - No change
+SM2 V8.0.0 - No change
+SM2 V9.0.0 - OSI_library_V17
+SM2 V9.1.0 - No change
+SM2 V9.2.0 - No change
+SM2 V9.3.0 - No change
+SM2 V9.4.0 - No change
+SM2 V9.5.0 - No change
+SM2 V9.6.0 - No change
+SM2 V9.7.0 - No change
+SM2 V9.8.0 - No change
+SM2 V9.9.0 - No change
+SM2 V9.10.0 - OSI_library_V18
+SM2 V10.0.0 - OSI_library_V19
+SM2 V10.1.0 - No change
+SM2 V11.0.0 - No change
+SM2 V11.1.0 - No change
+SM2 V12.0.0 - No change
+SM2 V13.0.0 - OSI_library_V20
+SM2 V13.1.0 - OSI_library_V21
+SM2 V13.2.0 - No change
+SM2 V13.3.0 - No change
+SM2 V13.4.0 - No change
+SM2 V13.5.0 - OSI_library_V22

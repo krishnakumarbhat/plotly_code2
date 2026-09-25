@@ -1,0 +1,3486 @@
+{
+	"usc_cal": {
+		"USC": {
+			"Workbook": {
+				"File_Name": {
+					"VALUE": "usc_cal",
+					"LINK": "'usc_cal'",
+					"DICT": ""
+				},
+				"Radar": {
+					"VALUE": "SRR7P",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Comment": {
+					"VALUE": "2314601689",
+					"LINK": "",
+					"DICT": "USC.Unit"
+				},
+				"Hardware_Version": {
+					"VALUE": "A1",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Workbook_Version": {
+					"VALUE": 1,
+					"LINK": "",
+					"DICT": ""
+				},
+				"PTP_Address": {
+					"VALUE": "A0000",
+					"LINK": "",
+					"DICT": ""
+				},
+				"PTP_Size": {
+					"VALUE": "FFFF",
+					"LINK": "",
+					"DICT": ""
+				},
+				"C_Endian": {
+					"VALUE": "Little_Endian",
+					"LINK": "",
+					"DICT": ""
+				},
+				"D_GENERATOR_CONFIG_": {
+					"VALUE": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"generator_version": {
+					"VALUE": 3,
+					"LINK": "3",
+					"DICT": ""
+				},
+				"generate_binary": {
+					"VALUE": 0,
+					"LINK": "0",
+					"DICT": ""
+				},
+				"c_template": {
+					"VALUE": "usc_cal_gen7.c",
+					"LINK": "'usc_cal_gen7.c'",
+					"DICT": ""
+				},
+				"h_template": {
+					"VALUE": "usc_cal_gen7.h",
+					"LINK": "'usc_cal_gen7.h'",
+					"DICT": ""
+				},
+				"flashtool_template": {
+					"VALUE": "usc_flr4p.xml",
+					"LINK": "'usc_flr4p.xml'",
+					"DICT": ""
+				},
+				"c_type_suffix": {
+					"VALUE": "_Cal_T",
+					"LINK": "'_Cal_T'",
+					"DICT": ""
+				},
+				"c_struct_suffix": {
+					"VALUE": "_Cal",
+					"LINK": "'_Cal'",
+					"DICT": ""
+				},
+				"c_variable_suffix": {
+					"VALUE": "_str",
+					"LINK": "'_str'",
+					"DICT": ""
+				},
+				"SHA_address": {
+					"VALUE": "usc_cal.USC.MFG_Calibrations.SHA.VALUE",
+					"LINK": "",
+					"DICT": ""
+				}
+			},
+			"Header2_Info": {
+				"Customer": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"ptp_cal_type": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"platform": {
+					"VALUE": 72,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"no_of_sections": {
+					"VALUE": 7,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "help.get_no_of_sections(usc_cal.USC)"
+				},
+				"Section_Compatibility": {
+					"VALUE": 2,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"k_Radar_Position": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"version": {
+					"VALUE": 3,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"Section_Size": {
+					"VALUE": 47040,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": ""
+				},
+				"Unused3": {
+					"VALUE": 0,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				},
+				"Unused4": {
+					"VALUE": 0,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "",
+					"LINK": ""
+				}
+			},
+			"Customer_Calibrations": {
+				"Cal_Type": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": ""
+				},
+				"version": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": ""
+				},
+				"Section_Size": {
+					"VALUE": 268,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically"
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_1": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_2": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_3": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_4": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_5": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_6": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_7": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_8": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_9": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_10": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_11": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_12": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_13": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_14": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_15": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_16": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_17": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_18": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_19": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_20": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_21": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_22": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_23": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_24": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_25": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_26": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_27": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_28": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_29": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_30": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_31": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_32": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_33": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_34": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_35": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_36": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_37": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_38": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_39": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_40": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_41": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_42": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_43": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_44": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_45": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_46": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_47": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_48": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_49": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_50": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_51": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_52": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_53": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_54": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_55": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_56": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_57": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_58": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_59": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_60": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_61": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_62": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_63": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_64": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_65": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_66": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_67": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_68": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_69": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_70": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_71": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_72": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_73": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_74": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_75": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_76": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_77": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_78": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_79": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_80": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_81": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_82": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_83": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_84": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_85": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_86": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_87": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_88": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_89": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_90": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_91": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_92": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_93": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_94": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_95": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_96": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_97": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_98": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_99": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_100": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_101": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_102": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_103": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_104": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_105": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_106": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_107": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_108": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_109": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_110": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_111": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_112": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_113": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_114": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_115": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_116": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_117": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_118": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_119": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_120": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_121": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_122": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_123": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_124": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_125": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_126": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_127": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_128": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_129": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_130": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_131": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_132": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_133": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_134": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_135": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_136": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_137": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_138": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_139": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_140": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_141": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_142": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_143": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_144": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_145": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_146": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_147": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_148": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_149": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_150": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_151": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_152": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_153": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_154": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_155": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_156": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_157": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_158": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_159": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_160": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_161": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_162": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_163": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_164": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_165": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_166": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_167": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_168": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_169": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_170": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_171": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_172": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_173": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_174": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_175": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_176": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_177": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_178": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_179": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_180": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_181": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_182": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_183": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_184": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_185": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_186": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_187": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_188": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_189": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_190": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_191": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_192": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_193": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_194": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_195": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_196": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_197": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_198": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_199": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_200": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_201": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_202": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_203": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_204": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_205": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_206": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_207": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_208": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_209": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_210": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_211": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_212": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_213": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_214": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_215": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_216": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_217": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_218": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_219": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_220": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_221": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_222": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_223": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_224": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_225": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_226": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_227": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_228": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_229": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_230": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_231": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_232": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_233": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_234": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_235": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_236": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_237": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_238": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_239": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_240": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_241": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_242": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_243": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_244": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_245": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_246": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_247": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_248": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_249": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_250": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_251": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_252": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_253": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_254": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_255": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				},
+				"cust_calibrations_256": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": ""
+				}
+			},
+			"MFG_Calibrations": {
+				"Cal_Type": {
+					"VALUE": 2,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"version": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Size": {
+					"VALUE": 160,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Mfg_Site": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "MFG site in ASCII",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Hardware_Config_Parameter": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Base_Model": {
+					"VALUE": 4294967295,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "Base Model in BCD (HW ID)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Julian_Production_Date": {
+					"VALUE": 365,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "BCD. 1 to 365",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Julian_Year": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "Current Year – 1900",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Mfg_Tester_ID": {
+					"VALUE": 255,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "can be used msb for Sequence Number",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Mfg_Sequence_Number": {
+					"VALUE": 1689,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "BCD. sequence number 0000 to 9999",
+					"LINK": "",
+					"DICT": "str2num(USC.Unit(end-3:end))"
+				},
+				"k_Mfg_reserved1": {
+					"VALUE": [255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "Reserved for MFG (24 bytes)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Mfg_reserved2": {
+					"VALUE": [255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "Reserved for MFG (24 bytes)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_ADP_Serial_Number": {
+					"VALUE": 2314601689,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "YYWW#### (YY: Year; WW: Calendar Week; ####: 4-Digit SN)",
+					"LINK": "",
+					"DICT": "str2num(USC.Unit)"
+				},
+				"k_Enable_ChipID_Mismatch_Diag": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "0 for ADP; 1 for PDP",
+					"LINK": "",
+					"DICT": "USC.Die_ID_enable"
+				},
+				"k_ChipID_Leader": {
+					"VALUE": [171,218,77,0,18,0,0,0,10,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "28 bytes (TI Die ID uses 16 bytes)",
+					"LINK": "",
+					"DICT": "USC.Die_ID"
+				},
+				"flag_ChipID_Leader_Valid": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "can be used to confirm ID is written",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_ChipID_Follower": {
+					"VALUE": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"flag_ChipID_Follower_Valid": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"SHA": {
+					"VALUE": [121,235,18,163,245,7,23,255,175,29,99,86,204,171,37,202,38,29,151,164],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "Secure Hashing Algorithm",
+					"LINK": "",
+					"DICT": ""
+				}
+			},
+			"Signal_Calibrations": {
+				"Cal_Type": {
+					"VALUE": 3,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"version": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Size": {
+					"VALUE": 40,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Mfg_Cal_Target_Range": {
+					"VALUE": 7.4,
+					"DATA_TYPE": "u6p10_T",
+					"COMMENTS": "Calibration Target Range (m)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Mfg_Cal_Target_RCS": {
+					"VALUE": 22.7,
+					"DATA_TYPE": "u6p10_T",
+					"COMMENTS": "Calibration Target RCS (dBsm)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Boresight_SNR": {
+					"VALUE": 72.9450638234046,
+					"DATA_TYPE": "u7p9_T",
+					"COMMENTS": "SNR at Radar Boresight (dB)",
+					"LINK": "",
+					"DICT": "USC.k_Boresight_SNR"
+				},
+				"k_Peak_SNR": {
+					"VALUE": 79.8847437288635,
+					"DATA_TYPE": "u7p9_T",
+					"COMMENTS": "Peak SNR (dB)",
+					"LINK": "",
+					"DICT": "USC.k_Peak_SNR"
+				},
+				"k_Peak_SNR_Az": {
+					"VALUE": 45,
+					"DATA_TYPE": "s6p9_T",
+					"COMMENTS": "Peak SNR Azimuth (°)",
+					"LINK": "",
+					"DICT": "USC.k_Peak_SNR_Az"
+				},
+				"k_Peak_SNR_El": {
+					"VALUE": 0,
+					"DATA_TYPE": "s6p9_T",
+					"COMMENTS": "Peak SNR Elevation (°)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_NF_Estimate": {
+					"VALUE": 24.0274222242226,
+					"DATA_TYPE": "s8p7_T",
+					"COMMENTS": "Noise Floor Estimate Value used for SNR (dB)",
+					"LINK": "",
+					"DICT": "USC.k_NF_est"
+				},
+				"k_sensitivity_SF_USC": {
+					"VALUE": 2.726912390359,
+					"DATA_TYPE": "u6p10_T",
+					"COMMENTS": "Set base on a Target of Known RCS",
+					"LINK": "",
+					"DICT": "USC.SenSF"
+				},
+				"MB_Delta": {
+					"VALUE": [0,0,0,0],
+					"DATA_TYPE": "s8p7_T",
+					"COMMENTS": "Mixer Bias",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_sig": {
+					"VALUE": 1.5,
+					"DATA_TYPE": "u6p10_T",
+					"COMMENTS": "Legacy",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_noise": {
+					"VALUE": 1.5,
+					"DATA_TYPE": "u6p10_T",
+					"COMMENTS": "Legacy",
+					"LINK": "",
+					"DICT": ""
+				}
+			},
+			"Antenna": {
+				"Cal_Type": {
+					"VALUE": 4,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"version": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Size": {
+					"VALUE": 1464,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Squint_Az": {
+					"VALUE": 0,
+					"DATA_TYPE": "s3p4_T",
+					"COMMENTS": "(°)",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_Squint_El": {
+					"VALUE": -0.0899999999999999,
+					"DATA_TYPE": "s3p4_T",
+					"COMMENTS": "(°)",
+					"LINK": "",
+					"DICT": "USC.k_Squint_El"
+				},
+				"k_Gain_Rolloff_Az_Reciprocal": {
+					"VALUE": [1,1,1,1,1,1,1,1,1,1,5.40337251189032,4.2371275624151,3.31878366487025,2.65494600337331,2.15354749479972,1.78880102039207,1.50679279349784,1.2940117757925,1.12899265132084,1.03071574424796,0.931278888691842,0.901268658205096,0.877527025089647,0.855112862275392,0.835075383507481,0.81173511422604,0.810030067096786,0.81291432421764,0.812365589319843,0.813026552249769,0.802978291705313,0.777272864233317,0.741022683615089,0.71648294156071,0.684802987161632,0.660855002817423,0.631384487906313,0.600298946462839,0.566041729923091,0.52858356751429,0.48840304084853,0.466665135877567,0.463494352988093,0.452328107297826,0.433321159535249,0.421054754653083,0.416701546534189,0.418995887666972,0.432457772704284,0.443839478355935,0.461600686775167,0.478361908904251,0.46470896113528,0.441196213243278,0.441391343081962,0.448094031226086,0.459461752494315,0.487436883164918,0.524098833154081,0.552969047545548,0.551947785795076,0.56484597872308,0.604468344366817,0.654330510663432,0.697843082568266,0.750139951225996,0.811646967615929,0.858215425412198,0.895551974162918,0.90636921295836,0.926792803772455,0.97395218402436,0.983682805470152,0.995057298501208,1.01034805740028,1.0464584089613,1.06739414402914,1.06797625929868,1.05945086920221,1.05157894542008,1.03787855317448,1.02714311852817,1.01298154826972,1.02176807662954,1.00689800219117,0.972525898182504,0.92183506669703,0.923150963510659,0.945994368130941,0.978582072042406,1,1.00816574694841,0.996953515169895,0.993811357728576,1.02719899378431,1.04726014104484,1.00476733338017,0.938412419306993,0.918668534231077,0.901267272984925,0.873688365833526,0.85704564516778,0.873522613003383,0.839757621438444,0.793742253620014,0.773568317479784,0.798615161424502,0.825485282646768,0.840492988839242,0.857983617937389,0.857133154760069,0.816187332412459,0.779319112200961,0.765641326053138,0.770716612928044,0.769183347227525,0.738097675687818,0.717378427024979,0.71525648949417,0.713754486671773,0.69909178052982,0.682443485696744,0.669664885815915,0.654959019022285,0.617491384168271,0.590450176107492,0.585049322762468,0.594028451557978,0.587962836858489,0.57052693915643,0.561136900547461,0.560942972499489,0.565384561516598,0.566735410018009,0.572451251620477,0.594545290267754,0.625539127491973,0.672047559498247,0.70581014729663,0.730806674995969,0.763005687811177,0.80339898475037,0.856219658851165,0.941807270825944,1.00911117596049,1.05071109114328,1.09055922177137,1.12562959897912,1.17065912757215,1.23017011514284,1.26756422853258,1.29025732734218,1.26337486851454,1.21343198452359,1.17526698858002,1.15805042423287,1.17413326263695,1.20747991077687,1.26523649865162,1.33589175473942,1.4220317488326,1.55520630985735,1.72319038996457,1.94073677415977,2.29763192349645,2.7840627201774,3.430641905645,4.3562361927185,5.52782761596533,7.0495292883724,9.02439459835131,1,1,1,1,1,1,1,1,1,1],
+					"DATA_TYPE": "float",
+					"COMMENTS": "Antenna Pattern Rolloff (Azimuth)",
+					"LINK": "",
+					"DICT": "USC.k_target_gain_reduction_factor_az_inverse"
+				},
+				"k_Gain_Rolloff_EL_Reciprocal": {
+					"VALUE": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,385.791475300774,442.878508592463,369.88005698095,283.309161987878,252.685136050632,363.556010400286,408.735601517042,398.397439011548,283.750536294798,201.698662748428,233.799115401821,286.725018151462,255.455263539287,377.246229902144,409.459466039832,307.075782775884,386.135926234524,620.221442707901,472.681434214411,210.721753139309,100.14675135893,58.232499924174,33.9961912957851,20.3181183670997,12.5132639532316,8.16776326574856,5.64552114180195,3.986653288301,2.86868588246382,2.14666097592533,1.68953348197172,1.39002072145624,1.22591320783896,1.10850731077039,1.02545719729873,1,1.02779980409947,1.08802613900388,1.22853919230495,1.4665035567119,1.82795063232051,2.36362539851447,3.25330483886517,4.68838338587496,7.0082061183502,10.7596936375762,16.9433344238864,27.378550904026,47.6910309500393,89.8526631354678,230.304844477218,812.683323721097,414.144584808558,231.417584267719,157.106718086574,135.101621956844,124.178665922972,134.448252597496,152.535038799397,202.354295800874,299.934502204709,477.384680973279,761.908571716488,1036.37431394369,819.019230033775,936.820855643076,864.183385862683,1368.3279650168,1288.88854809081,930.104564472905,740.588434000535,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+					"DATA_TYPE": "float",
+					"COMMENTS": "Antenna Pattern Rolloff (Elevation)",
+					"LINK": "",
+					"DICT": "USC.k_target_gain_reduction_factor_el_inverse"
+				}
+			},
+			"USC_AF": {
+				"Cal_Type": {
+					"VALUE": 5,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"version": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Size": {
+					"VALUE": 43788,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"flag_Default_Calmat": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "1: Default Calibration Matrices",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat1_ang_min_az": {
+					"VALUE": -75,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.ang_min_az"
+				},
+				"k_calmat1_ang_max_az": {
+					"VALUE": 75,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.ang_max_az"
+				},
+				"k_calmat1_ang_min_el": {
+					"VALUE": -15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.ang_min_el"
+				},
+				"k_calmat1_ang_max_el": {
+					"VALUE": 15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.ang_max_el"
+				},
+				"k_calmat1_ctx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.785659114693479,-0.00947408828851502,-0.0293641825704586,0.00265752432131869,-0.0666166051386984,-0.140727268326255,-0.0305049514494322,0.00603054246506939,0.00656075802808734,0.002539764272148,-0.772326487351849,0.00517160996743263,-0.000206931783421178,0.00537173118597977,0.0916507865754095,0.90983738807412],
+							[0,-0.022975228838481,-0.0209941539039246,0.0171368226891116,-0.0248095142411505,0.973310383178452,0.00454730124455757,0.00940451682075433,-0.0189048554403116,-0.0558663596565076,0.626027023665619,0.0373287261407176,0.0128007337754033,-0.00101515137159859,-0.0389326035723692,-0.414964971127037]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "4Tx",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.Ctx"
+				},
+				"k_calmat1_crx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.878058409495926,-0.0201148915339556,-0.0280548558620883,0.00998254685554593,-0.00740426965742042,-0.187374461991231,0.0121583561696021,-0.0412393413595587,0.0158387140353626,0.012031884204747,-0.883091767730159,0.0320592533394766,0.0058240919179163,0.0465142767930717,0.135581733984054,-0.0253495681327797],
+							[0,-0.0407308608054711,0.0233003748648128,-0.0156483633539265,-0.0115232347327246,0.884368568795496,0.00875215727067739,-0.0186916179085041,-0.0050333286533604,0.022090965910138,-0.0998848828966673,-0.0727123938655253,-0.00599790570040866,-0.0284757212003092,0.00206225533994537,-0.999678648064207]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "4Rx",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.Crx"
+				},
+				"k_calmat1_c1": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [16,16],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.684399274828912,-0.0299594673927796,-0.0262605998453862,0.0137059108509379,0.00514551578463777,-0.00532065183965342,-0.00181941632531317,-0.0167338001530736,-0.0349485774686337,-0.00472496098910805,0.000751334138485011,-0.00228093339082892,0.000431118902588025,0.00993398067935519,-0.000662196610808826,0.00131194614035212,0.0159170202483707,-0.134567063583699,0.00476276968202652,-0.0282510958846213,0.0157091674714351,0.00597629993861968,-0.0035316751612237,0.00957049011754449,0.00917582685827339,0.0142997032493909,-0.00073512849106428,0.00134705537375889,0.0060383971575367,-0.00915888283842446,7.49417745019826e-05,0.00504657100210018,0.0206184310132191,0.0287047824969599,-0.707695102941368,0.0159029336204188,0.0047647809289881,0.00960437252774447,-0.00409242379805906,0.0230723388121047,0.00253705536403853,-0.00816102085963678,0.0267501755830651,-0.00341914891422612,0.00508596556206161,-0.0212039941083126,0.00752926311302217,0.00242441966757171,0.00545643950059065,0.0443837378730132,0.0644408007357152,-0.0551693228493005,-0.00536254596952678,-0.001938000710811,-0.00346037280501039,0.0112226502876539,0.00558006807244654,0.0168648534410713,-0.00181779226190753,-0.0113025828641657,0.0157435268071508,-0.01316617943295,-0.00245878801898189,0.00637583276187227,-0.0439844584586712,0.025665625204734,-0.00212337708676032,-0.00594731000272464,-0.0997945753721615,0.0309997255350687,-0.0205579517899381,0.0222826095378973,-0.0267740906755207,0.00546926413359423,-0.00272538490786174,-0.00250221698468553,0.00756736507979686,-0.00458906087261419,0.000228184485181946,0.000403976149594901,0.0201163379179095,0.0119722041695688,-0.0178541726581667,0.00813087543004,0.0100363180442653,-0.858477143516341,-0.010347074330508,0.0157365413762523,0.0147043802404186,-0.0136678973037826,-0.00754380732105006,0.0135020307542681,-0.00632912676490064,0.00108286676019383,0.00165077815271768,0.00333777184499445,0.00251707190101964,-0.010803367533795,0.0430162510142697,-0.00281098086389798,0.0120051023816878,-0.00320382403703587,0.147088034164851,0.0480167750312867,0.00436555775677113,-0.0292507092317542,0.0335267743098297,0.0173834980434981,0.0244530101164091,0.0100471890038773,-0.00683423272155207,-0.00365666741561026,0.00434344075060764,-0.00264796178476175,0.000413240530776123,0.0272891985749686,0.01641997813825,0.0155348022036002,-0.0208915271877179,0.999772473333097,0.011077761378257,0.0193531208180369,-0.00240927624819408,0.0228853832912566,0.0129657780131321,0.0324383314763872,-0.00333319620151193,0.00387078606856633,0.00627509133169678,-0.00895808511950195,-0.0144736135255236,-0.00218619429128463,-0.0762550641130512,-0.034243708667219,-0.0136017034956249,-0.0151984189611614,-0.677987950829276,0.0378711631294499,0.00355048243377597,-0.00670939501618113,-0.00145702378354675,0.0174303873614998,0.00302432371335835,-0.00147712987227551,-0.00449139144037226,-0.00284215661152098,-0.018978078404973,-0.00363629510270021,-0.00987408097459914,0.0108278710728614,0.0100231848589319,-0.0174493028480704,0.0106580973796735,-0.498443249355365,-0.0263037101524022,0.0459014671747066,-0.00174775949190805,-0.0172914563486968,-0.00475064737523452,-0.0145819658570489,0.00139939819281774,-0.00195404237995223,-0.00806285079142159,-0.0261108346427679,0.0039283880909146,0.00532491908912403,0.0392718083274649,-0.0678505155844673,0.00150058242579468,-0.0309523764901323,0.695329243183617,0.0210698810635052,0.00774648049369302,0.0158437304619197,-0.00270768923190138,-0.00214507259726645,0.00369911622102476,0.00403623897292239,-0.0109687991989815,-0.00288829866757584,0.00617743544185351,0.00630818614420637,-0.045721338381595,-0.017308548533498,0.00722311006182527,-0.00889154407829344,-0.115411738677095,0.700699955982596,0.00186325318656615,-0.00347836685957171,-0.00338288187341062,0.0158159484510901,-0.00294570439714178,-0.00289327174685914,0.00937118277973124,0.00734893609087572,-0.0102078709188743,0.0154949692494867,0.00877787344991048,-0.00749934447809219,0.0126838888594244,-0.0279255014075208,-0.00118966535758216,0.00911838912858456,0.824821016499068,-0.0173153826797221,-0.0121093080683786,0.0134616789274521,0.00775511873966399,-0.0110946366526753,0.0172988076586517,0.0188890478182312,-0.000161861403172298,0.0175148588475049,0.0224688038348101,-0.0249824555474695,-0.00127428004504489,0.0239828045552172,-0.000754880861405801,-0.0124977719637361,-0.00257591637155058,0.289307878875459,0.0168837231213336,-0.042805020612766,-0.00073052553651148,-0.0031624861639599,-0.00639224015287453,-0.00144466440907159,0.000834045778754386,0.00631996455648645,0.0094732530403692,0.00257593444976288,0.0031991898301003,0.0164447568033754,-0.031477933697429,-0.0311585444813748,0.00405336537314649,0.028587841543778,-0.778544297117688,-0.0277613816018446,0.000785680938444364,0.00187134597330694,-0.00691320920651479,0.0118743489293059,0.0082605374587566,-0.00231486396602177,-0.00538225535349404,-0.000126904847460756,0.0100318068486852,0.00664353096914368,-0.0216092782210461,-0.0528238426601901,-0.013223177234213,0.029147664343475,0.12141374707919,-0.516492865424961],
+							[0,-0.0263836724154439,0.0191816807538524,-0.0152287603871979,-0.0149130492656663,-0.0180091565494641,0.0039328469596119,-0.0126560148809625,-0.0223877587934594,-0.0052732100813889,0.000643256472697486,0.000765807438853869,0.00946011790345282,0.00496545969734213,-0.00255923230267028,0.000556042045047598,0.018465166221618,0.685075900572945,0.0122300321402478,-0.0247358048562236,-0.0324614430902441,-0.000601998572409502,0.00717684399041141,-0.017064987224849,-0.00906381956452719,-0.0297271876149616,-0.000550684728121206,0.0002573691228116,0.00548878091868385,0.0068889565486838,-0.00221551559169518,-0.00252526371977316,-0.00501674683255831,0.034845755627092,-0.0515155407653058,-0.0481661334658778,0.0134484976892926,-0.0151400640022854,0.00205577021819601,0.0219800151987122,0.00263313887422253,-0.0248938062159136,0.0136169648061299,0.00225958310027384,-0.00211258597360733,-0.00540985000111796,-0.00393424918276751,-0.00295969296387051,-0.0121332276712044,-0.0154193916741715,0.00376717923016881,-0.817810779082585,-0.0010024767059587,0.0105582973116723,0.000584005728627637,0.000536288947988795,0.00568745322970386,-0.00160401298340724,-0.00153722522080513,0.0299255148971092,0.0106755891578535,0.00729981326708543,-0.00220105545446519,0.00204452577219909,0.0387583127079471,0.0312122930677998,0.00669923143727299,-0.00987021530610635,0.877945675235663,-0.0265787424656353,-0.014279964320122,0.00781774755754916,0.0105043068000623,-0.0138080265192845,-0.0028453268425449,-0.00475179009364597,0.0115601356639738,0.0141475030668407,-0.000372941575133843,-0.00302740707402833,0.0248682930713058,-0.0335927298038608,-0.0107468941085282,0.00608329362100488,0.00116264261972085,-0.261106381843459,0.0160431710727858,-0.0443112700269568,-0.0192730745511545,-0.0223163201050179,0.00815968139968733,-0.00619613397736128,-0.00985467865306541,0.00319469945724115,0.00149878515555661,0.000653838528553872,0.00328990214148747,0.000159773675024811,-0.0151956442278646,0.0383570140764182,0.0141492793443752,0.00140207435324234,-0.878480178802058,0.0251336872138068,-0.0183697780821238,-0.00835315690200634,-0.00595596582051163,0.0248190371506646,-0.0146461005751876,0.0163780992297336,0.000326115009209138,-0.0031726794902821,-0.00361255778024188,0.00346905179731221,0.0260606517050906,0.0474930061568559,0.00304165189525675,0.0621442574419283,0.129771000704268,0.0213307657017059,0.00195963128797283,-0.0110055244464281,-0.00395637112106732,0.0399067889153472,0.0182412082227931,0.00929649788098227,0.00607432111067789,-0.000362512047388482,-0.00923660141146642,-0.00894866338553476,0.01246484459045,-0.0079393735337713,-0.0327460642152679,7.19066677055198e-05,-0.00943781494341636,-0.00992728195087708,0.586426764433317,0.00014008103705653,-0.034251822710809,0.0206068502260263,0.0217027909175828,-0.00301399388843877,-0.000795248694889622,0.00737109134171618,0.00697098194437879,0.00082835579103359,-0.00595736578098933,0.00213711454066368,-0.00716609197569528,-0.02548540027316,-0.0156465523943036,0.0182988918065557,-0.00356298303964574,-0.7820642657656,0.0129936127177761,-0.0162287139454662,0.0085544838050217,-0.00937895001670974,-0.00429670255552747,0.0021009918365371,-0.00218016698444727,0.000681769581273184,0.00716260397147662,-0.00136516412460195,0.00394270141245279,-0.00744443049280631,0.0267872294308955,-0.0163035523890862,0.00880975658725239,-0.0112064754437669,-0.552298979884881,0.042905041016657,0.00698596279801649,0.00914338093449817,-0.0243455276166116,-0.0352497201150041,-0.00492959592799012,-0.00108640590264492,-0.000193169035218441,-0.002970635884603,0.00122176215319261,-0.00973420652062556,-0.00268230467137631,0.0388093921543756,0.00713317529313609,0.0544702493802892,0.0730755657280721,0.665796045100779,0.0123176301127745,0.00801419514429804,0.00895882361548414,-0.0140771222085883,0.0158424588719851,0.00419480564173605,-0.023623983230583,0.00548888501528991,-0.00406850014461852,-0.00878260552756289,-0.000993980925390257,-0.0136113508597411,-0.075766817831235,-0.00380429132610138,-0.0133311398327087,-0.00343257632123614,-0.429567032796821,-0.00254405180860599,0.0295526108371127,-0.0231815460409025,0.00143503128222103,-0.00493350055930817,-0.0164392521380113,-0.0020518167238852,0.00599642912156581,-0.0163368295768844,-0.0303372362411073,-0.0143620378873776,-0.00253297562825149,0.0321984938733157,0.0163958378696568,0.00621770483504437,0.0032204540873611,0.873909581296229,0.00269325714825755,0.0015666916569525,-9.05640076650309e-05,0.00162336164120426,-0.0165635672258677,-0.00109626386316679,0.00250029677272674,-0.00228085881004974,-7.87851728866296e-05,-0.0383789234556858,-0.000733922015507903,0.00154558226209491,0.0429962204587072,-0.0613740782817234,-0.0140463361692964,0.0132101112542442,0.344719671412012,-0.0584903291131827,0.00264436924051435,0.00388345882492293,0.00101779868584315,-0.000530070648029606,0.00543121933050628,0.00684315458102504,-0.0122261359949378,0.00898352689652331,0.00352358698679918,0.00214329698793822,-0.031803690690718,-0.0304542030506727,-0.0083920969188631,-0.0531662581710101,-0.0332159375432955,-0.800890778629394]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "16 Virtual Channels",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.C1"
+				},
+				"k_calmat1_c2": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat1_c3": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat1_c4": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat1_lut_az": {
+					"VALUE": [
+						[-94],
+						[-93],
+						[-92],
+						[-91],
+						[-90],
+						[-89],
+						[-88],
+						[-87],
+						[-86],
+						[-85],
+						[-84],
+						[-83],
+						[-82],
+						[-81],
+						[-80],
+						[-79],
+						[-78],
+						[-77],
+						[-76],
+						[-75],
+						[-74],
+						[-73],
+						[-72],
+						[-71],
+						[-70],
+						[-69],
+						[-68],
+						[-67],
+						[-66],
+						[-65],
+						[-64],
+						[-63],
+						[-62],
+						[-61],
+						[-60],
+						[-59],
+						[-58],
+						[-57],
+						[-56],
+						[-55],
+						[-54],
+						[-53],
+						[-52],
+						[-51],
+						[-50],
+						[-49],
+						[-48],
+						[-47],
+						[-46],
+						[-45],
+						[-44],
+						[-43],
+						[-42],
+						[-41],
+						[-40],
+						[-39],
+						[-38],
+						[-37],
+						[-36],
+						[-35],
+						[-34],
+						[-33],
+						[-32],
+						[-31],
+						[-30],
+						[-29],
+						[-28],
+						[-27],
+						[-26],
+						[-25],
+						[-24],
+						[-23],
+						[-22],
+						[-21],
+						[-20],
+						[-19],
+						[-18],
+						[-17],
+						[-16],
+						[-15],
+						[-14],
+						[-13],
+						[-12],
+						[-11],
+						[-10],
+						[-9],
+						[-8],
+						[-7],
+						[-6],
+						[-5],
+						[-4],
+						[-3],
+						[-2],
+						[-1],
+						[0],
+						[1],
+						[2],
+						[3],
+						[4],
+						[5],
+						[6],
+						[7],
+						[8],
+						[9],
+						[10],
+						[11],
+						[12],
+						[13],
+						[14],
+						[15],
+						[16],
+						[17],
+						[18],
+						[19],
+						[20],
+						[21],
+						[22],
+						[23],
+						[24],
+						[25],
+						[26],
+						[27],
+						[28],
+						[29],
+						[30],
+						[31],
+						[32],
+						[33],
+						[34],
+						[35],
+						[36],
+						[37],
+						[38],
+						[39],
+						[40],
+						[41],
+						[42],
+						[43],
+						[44],
+						[45],
+						[46],
+						[47],
+						[48],
+						[49],
+						[50],
+						[51],
+						[52],
+						[53],
+						[54],
+						[55],
+						[56],
+						[57],
+						[58],
+						[59],
+						[60],
+						[61],
+						[62],
+						[63],
+						[64],
+						[65],
+						[66],
+						[67],
+						[68],
+						[69],
+						[70],
+						[71],
+						[72],
+						[73],
+						[74],
+						[75],
+						[76],
+						[77],
+						[78],
+						[79],
+						[80],
+						[81],
+						[82],
+						[83],
+						[84],
+						[85],
+						[86],
+						[87],
+						[88],
+						[89],
+						[90],
+						[91],
+						[92],
+						[93],
+						[94]
+					],
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.AZ_LUT"
+				},
+				"k_calmat1_lut_el": {
+					"VALUE": [
+						[-15],
+						[-12],
+						[-9],
+						[-6],
+						[-3],
+						[0],
+						[3],
+						[6],
+						[9],
+						[12],
+						[15]
+					],
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.EL_LUT"
+				},
+				"k_calmat1_az_sin_lut": {
+					"VALUE": [
+						[-1.02255821228027],
+						[-1.02011680603027],
+						[-1.01767444610596],
+						[-1.01523208618164],
+						[-1.01279067993164],
+						[-1.01034927368164],
+						[-1.00790691375732],
+						[-1.00546503067017],
+						[-1.00302314758301],
+						[-1.00058126449585],
+						[-0.998139381408691],
+						[-0.995697498321533],
+						[-0.993255615234375],
+						[-0.990813732147217],
+						[-0.988371849060059],
+						[-0.9859299659729],
+						[-0.982599973678589],
+						[-0.978998422622681],
+						[-0.9746253490448],
+						[-0.9704909324646],
+						[-0.966754913330078],
+						[-0.962363958358765],
+						[-0.957400321960449],
+						[-0.952441692352295],
+						[-0.946874618530273],
+						[-0.940202474594116],
+						[-0.932931184768677],
+						[-0.92527174949646],
+						[-0.917877435684204],
+						[-0.910053491592407],
+						[-0.903725624084473],
+						[-0.895623445510864],
+						[-0.88812518119812],
+						[-0.879081249237061],
+						[-0.87012791633606],
+						[-0.860526561737061],
+						[-0.851568222045898],
+						[-0.842151403427124],
+						[-0.832229614257812],
+						[-0.82296347618103],
+						[-0.812476873397827],
+						[-0.80137825012207],
+						[-0.790341377258301],
+						[-0.77902364730835],
+						[-0.768216609954834],
+						[-0.757541179656982],
+						[-0.745823621749878],
+						[-0.732234954833984],
+						[-0.719383001327515],
+						[-0.70587420463562],
+						[-0.693292856216431],
+						[-0.680706262588501],
+						[-0.667860984802246],
+						[-0.654738903045654],
+						[-0.641538619995117],
+						[-0.628257513046265],
+						[-0.614871263504028],
+						[-0.600626230239868],
+						[-0.587080240249634],
+						[-0.573292255401611],
+						[-0.559661865234375],
+						[-0.545245885848999],
+						[-0.530357837677002],
+						[-0.515710353851318],
+						[-0.500814437866211],
+						[-0.485177993774414],
+						[-0.468180656433105],
+						[-0.450709581375122],
+						[-0.433919191360474],
+						[-0.418148279190063],
+						[-0.402552127838135],
+						[-0.386244773864746],
+						[-0.3706374168396],
+						[-0.355782508850098],
+						[-0.340060949325562],
+						[-0.322616815567017],
+						[-0.304959297180176],
+						[-0.288837432861328],
+						[-0.27428412437439],
+						[-0.258785724639893],
+						[-0.242210865020752],
+						[-0.224476099014282],
+						[-0.206065893173218],
+						[-0.187939405441284],
+						[-0.170531272888184],
+						[-0.152607679367065],
+						[-0.135828256607056],
+						[-0.118553161621094],
+						[-0.100650548934937],
+						[-0.0835447311401367],
+						[-0.0673704147338867],
+						[-0.049780011177063],
+						[-0.0316749811172485],
+						[-0.0147003531455994],
+						[0.00237107276916504],
+						[0.0213172435760498],
+						[0.0404714345932007],
+						[0.0579257011413574],
+						[0.0742393732070923],
+						[0.0909954309463501],
+						[0.108202934265137],
+						[0.125073313713074],
+						[0.141718983650208],
+						[0.158851742744446],
+						[0.176098942756653],
+						[0.192105889320374],
+						[0.208743691444397],
+						[0.225669622421265],
+						[0.242555022239685],
+						[0.259989500045776],
+						[0.279118537902832],
+						[0.297783613204956],
+						[0.314903616905212],
+						[0.330518007278442],
+						[0.347461819648743],
+						[0.36387038230896],
+						[0.37960958480835],
+						[0.395548939704895],
+						[0.411352038383484],
+						[0.426977634429932],
+						[0.441616773605347],
+						[0.456421256065369],
+						[0.47088348865509],
+						[0.485625982284546],
+						[0.500226616859436],
+						[0.515895485877991],
+						[0.532174110412598],
+						[0.548741459846497],
+						[0.563682913780212],
+						[0.577350974082947],
+						[0.590372204780579],
+						[0.603770136833191],
+						[0.618058681488037],
+						[0.630837202072144],
+						[0.643821597099304],
+						[0.656955718994141],
+						[0.67013955116272],
+						[0.683221220970154],
+						[0.695425510406494],
+						[0.707398414611816],
+						[0.719276070594788],
+						[0.731152653694153],
+						[0.742774724960327],
+						[0.753975033760071],
+						[0.765965342521667],
+						[0.777696490287781],
+						[0.788578510284424],
+						[0.800636649131775],
+						[0.812448620796204],
+						[0.823769688606262],
+						[0.833281755447388],
+						[0.842645168304443],
+						[0.850977420806885],
+						[0.859875082969666],
+						[0.869434714317322],
+						[0.878251075744629],
+						[0.887040138244629],
+						[0.894621968269348],
+						[0.902381420135498],
+						[0.908756375312805],
+						[0.915694713592529],
+						[0.922257781028748],
+						[0.92847728729248],
+						[0.934557557106018],
+						[0.94004762172699],
+						[0.945634841918945],
+						[0.950996160507202],
+						[0.954787611961365],
+						[0.958559393882751],
+						[0.962149143218994],
+						[0.965276122093201],
+						[0.967986345291138],
+						[0.969562649726868],
+						[0.971988439559937],
+						[0.974058628082275],
+						[0.976128816604614],
+						[0.978199005126953],
+						[0.980269193649292],
+						[0.982339382171631],
+						[0.984409332275391],
+						[0.986479759216309],
+						[0.988550186157227],
+						[0.990619659423828],
+						[0.992690086364746],
+						[0.994760513305664],
+						[0.996830940246582],
+						[0.998900413513184],
+						[1.0009708404541],
+						[1.00304222106934]
+					],
+					"DATA_TYPE": "float",
+					"COMMENTS": "189x1",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.AZ_sin_LUT"
+				},
+				"k_calmat1_el_sin_lut": {
+					"VALUE": [
+						[-0.541749238967896,-0.473630845546722,-0.405512481927872,-0.337394118309021,-0.26927575469017,-0.20115739107132,-0.172697573900223,-0.144237756729126,-0.115777939558029,-0.0873181223869324,-0.0588583052158356],
+						[-0.523837685585022,-0.457104355096817,-0.390371024608612,-0.323637723922729,-0.256904423236847,-0.190171092748642,-0.158724173903465,-0.127277255058289,-0.0958303362131119,-0.0643834173679352,-0.0329365134239197],
+						[-0.505926668643951,-0.440578311681747,-0.375229954719543,-0.309881567955017,-0.244533196091652,-0.179184824228287,-0.144750848412514,-0.110316872596741,-0.0758828967809677,-0.0414489209651947,-0.0070149302482605],
+						[-0.488015413284302,-0.424052029848099,-0.360088646411896,-0.296125292778015,-0.232161924242973,-0.168198555707932,-0.130777522921562,-0.0933564901351929,-0.0559354573488235,-0.0185144245624542,0.0189065933227539],
+						[-0.470103949308395,-0.407525599002838,-0.344947248697281,-0.282368898391724,-0.219790548086166,-0.157212197780609,-0.116804033517838,-0.0763958692550659,-0.0359877049922943,0.00442045927047729,0.0448286235332489],
+						[-0.452192664146423,-0.390999317169189,-0.329805970191956,-0.268612623214722,-0.207419276237488,-0.146225929260254,-0.102830708026886,-0.0594354867935181,-0.0160402655601501,0.0273549556732178,0.0707501769065857],
+						[-0.434281378984451,-0.374473035335541,-0.31466469168663,-0.25485634803772,-0.195048004388809,-0.135239660739899,-0.0888573825359344,-0.0424751043319702,0.00390717387199402,0.0502894520759583,0.0966717302799225],
+						[-0.41636997461319,-0.357946634292603,-0.299523323774338,-0.241100013256073,-0.182676702737808,-0.124253392219543,-0.0748840570449829,-0.0255147218704224,0.0238546133041382,0.0732239484786987,0.122593283653259],
+						[-0.398458540439606,-0.341420233249664,-0.284381955862045,-0.227343678474426,-0.170305401086807,-0.113267108798027,-0.0609106943011284,-0.00855427980422974,0.0438021346926689,0.0961585491895676,0.148514956235886],
+						[-0.380547285079956,-0.324893981218338,-0.26924067735672,-0.213587403297424,-0.157934114336967,-0.102280825376511,-0.0469373315572739,0.00840616226196289,0.0637496560811996,0.119093149900436,0.174436643719673],
+						[-0.362636029720306,-0.308367729187012,-0.254099428653717,-0.199831128120422,-0.145562827587128,-0.091294527053833,-0.0329639613628387,0.0253666043281555,0.0836971700191498,0.142027735710144,0.200358301401138],
+						[-0.344724595546722,-0.291841328144073,-0.238958060741425,-0.186074793338776,-0.133191525936127,-0.0803082510828972,-0.0189906172454357,0.0423270165920258,0.103644654154778,0.164962291717529,0.22627991437912],
+						[-0.326813250780106,-0.27531498670578,-0.223816752433777,-0.172318488359451,-0.120820231735706,-0.0693219751119614,-0.00501727312803268,0.059287428855896,0.123592130839825,0.187896832823753,0.252201527357101],
+						[-0.308901935815811,-0.258788675069809,-0.208675429224968,-0.158562183380127,-0.108448937535286,-0.0583356842398643,0.00895609334111214,0.0762478709220886,0.143539652228355,0.210831433534622,0.278123199939728],
+						[-0.290990591049194,-0.242262363433838,-0.19353412091732,-0.144805878400803,-0.096077635884285,-0.0473494008183479,0.0229294486343861,0.0932082980871201,0.163487136363983,0.233765989542007,0.304044842720032],
+						[-0.273079246282578,-0.225736021995544,-0.178392797708511,-0.131049573421478,-0.0837063491344452,-0.0363631173968315,0.03690280392766,0.110168725252151,0.183434650301933,0.256700575351715,0.329966485500336],
+						[-0.259267568588257,-0.21355614066124,-0.167844712734222,-0.122133299708366,-0.0764218717813492,-0.0307104513049126,0.0393099151551723,0.109330281615257,0.179350644350052,0.249371021986008,0.319391399621964],
+						[-0.264001190662384,-0.216307044029236,-0.168612882494926,-0.120918735861778,-0.0732245892286301,-0.0255304351449013,0.0403174422681332,0.106165319681168,0.172013193368912,0.237861067056656,0.3037089407444],
+						[-0.25133028626442,-0.205910578370094,-0.16049088537693,-0.115071184933186,-0.0696514844894409,-0.0242317896336317,0.042152788490057,0.108537368476391,0.174921944737434,0.241306528449059,0.307691097259521],
+						[-0.254583567380905,-0.207850351929665,-0.161117136478424,-0.114383913576603,-0.0676506981253624,-0.0209174789488316,0.0454349219799042,0.11178732663393,0.178139731287956,0.244492128491402,0.310844540596008],
+						[-0.258504986763,-0.20951721072197,-0.160529434680939,-0.111541643738747,-0.0625538527965546,-0.0135660693049431,0.0497616194188595,0.113089308142662,0.176416993141174,0.239744693040848,0.303072392940521],
+						[-0.252223670482635,-0.202610224485397,-0.15299679338932,-0.103383362293243,-0.0537699311971664,-0.00415649777278304,0.0575676150619984,0.119291730225086,0.181015849113464,0.242739960551262,0.304464071989059],
+						[-0.250993192195892,-0.199351474642754,-0.147709786891937,-0.0960680842399597,-0.0444263853132725,0.00721531175076962,0.0664881467819214,0.125760987401009,0.185033828020096,0.244306668639183,0.303579479455948],
+						[-0.247770369052887,-0.195552974939346,-0.143335565924644,-0.0911181643605232,-0.0389007590711117,0.0133166443556547,0.0704819858074188,0.127647325396538,0.184812664985657,0.241978004574776,0.299143344163895],
+						[-0.250101745128632,-0.196820363402367,-0.14353896677494,-0.0902575626969337,-0.0369761660695076,0.0163052324205637,0.0715072751045227,0.126709312200546,0.18191134929657,0.237113386392593,0.292315453290939],
+						[-0.260381639003754,-0.205809488892555,-0.151237338781357,-0.0966651886701584,-0.04209303855896,0.0124791115522385,0.0699108317494392,0.12734255194664,0.184774279594421,0.242205992341042,0.299637734889984],
+						[-0.287433445453644,-0.228224352002144,-0.169015258550644,-0.109806172549725,-0.0505970828235149,0.00861200969666243,0.0613653510808945,0.114118695259094,0.166872039437294,0.219625383615494,0.272378712892532],
+						[-0.297456204891205,-0.23773592710495,-0.178015634417534,-0.118295341730118,-0.0585750490427017,0.00114524690434337,0.0509394481778145,0.100733652710915,0.150527864694595,0.200322061777115,0.250116258859634],
+						[-0.291117817163467,-0.233225867152214,-0.175333946943283,-0.117442019283772,-0.0595500916242599,-0.00165816629305482,0.0439580865204334,0.0895743370056152,0.135190591216087,0.180806845426559,0.22642308473587],
+						[-0.272012561559677,-0.220018103718758,-0.168023675680161,-0.116029232740402,-0.0640347972512245,-0.0120403571054339,0.0344718657433987,0.0809840857982635,0.127496302127838,0.174008533358574,0.220520749688148],
+						[-0.26188537478447,-0.212504908442497,-0.163124442100525,-0.113744005560875,-0.0643635541200638,-0.0149831064045429,0.0312864184379578,0.0775559395551682,0.123825460672379,0.170094981789589,0.216364517807961],
+						[-0.259459882974625,-0.213020652532578,-0.166581436991692,-0.120142221450806,-0.0737030059099197,-0.0272637866437435,0.0206738207489252,0.0686114281415939,0.116549037396908,0.164486646652222,0.212424248456955],
+						[-0.285369962453842,-0.234783157706261,-0.184196352958679,-0.133609533309937,-0.0830227211117744,-0.0324359089136124,0.0168188624083996,0.0660736337304115,0.115328408777714,0.164583176374435,0.213837951421738],
+						[-0.290771901607513,-0.240923047065735,-0.191074207425117,-0.141225352883339,-0.0913764983415604,-0.0415276512503624,0.00771118327975273,0.0569500178098679,0.106188848614693,0.155427694320679,0.204666525125504],
+						[-0.28382071852684,-0.235295861959457,-0.186771005392075,-0.138246163725853,-0.0897213146090508,-0.0411964617669582,0.00606358982622623,0.0533236414194107,0.10058369487524,0.14784374833107,0.195103794336319],
+						[-0.262173593044281,-0.21734431385994,-0.172515049576759,-0.127685785293579,-0.0828565210103989,-0.0380272530019283,0.00810445100069046,0.0542361550033092,0.100367859005928,0.146499559283257,0.192631274461746],
+						[-0.270359337329865,-0.222521916031837,-0.174684479832649,-0.126847043633461,-0.0790096074342728,-0.0311721730977297,0.0126604335382581,0.0564930401742458,0.100325644016266,0.144158259034157,0.187990859150887],
+						[-0.271901160478592,-0.223492711782455,-0.175084263086319,-0.126675829291344,-0.0782673954963684,-0.0298589542508125,0.0182026028633118,0.0662641599774361,0.11432571709156,0.162387281656265,0.210448831319809],
+						[-0.268652260303497,-0.219157800078392,-0.169663369655609,-0.120168931782246,-0.0706744939088821,-0.0211800616234541,0.0246091671288013,0.0703983977437019,0.116187632083893,0.161976858973503,0.207766085863113],
+						[-0.256071388721466,-0.206671953201294,-0.157272517681122,-0.107873074710369,-0.0584736354649067,-0.00907419621944427,0.0386687479913235,0.0864116922020912,0.13415464758873,0.181897580623627,0.229640513658524],
+						[-0.246125742793083,-0.195755794644356,-0.14538586139679,-0.0950159281492233,-0.0446459949016571,0.00572393974289298,0.056745070964098,0.107766203582287,0.158787325024605,0.209808468818665,0.260829597711563],
+						[-0.250294864177704,-0.197328791022301,-0.144362717866898,-0.091396652162075,-0.0384305790066719,0.0145354913547635,0.0682407319545746,0.121945977210999,0.175651222467422,0.229356467723846,0.28306171298027],
+						[-0.250991612672806,-0.197519585490227,-0.144047543406487,-0.0905755087733269,-0.0371034741401672,0.0163685623556376,0.0716165974736214,0.12686462700367,0.182112663984299,0.237360686063766,0.292608708143234],
+						[-0.233395904302597,-0.183519214391708,-0.13364252448082,-0.0837658122181892,-0.0338891111314297,0.0159875899553299,0.0686163157224655,0.121245048940182,0.173873782157898,0.226502507925034,0.279131233692169],
+						[-0.212649405002594,-0.167960479855537,-0.12327153980732,-0.0785825997591019,-0.0338936597108841,0.0107952803373337,0.0618062429130077,0.112817205488682,0.163828164339066,0.21483913064003,0.265850096940994],
+						[-0.217785209417343,-0.172440186142921,-0.1270951628685,-0.0817501470446587,-0.036405123770237,0.008939896710217,0.0580690689384937,0.107198238372803,0.156327411532402,0.205456584692001,0.254585742950439],
+						[-0.218482345342636,-0.174297079443932,-0.130111828446388,-0.0859265774488449,-0.0417413227260113,0.00244393153116107,0.0518749952316284,0.101306058466434,0.150737121701241,0.200168192386627,0.249599248170853],
+						[-0.23046013712883,-0.185570240020752,-0.140680328011513,-0.0957904309034348,-0.0509005300700665,-0.00601062877103686,0.0478281825780869,0.101666994392872,0.155505806207657,0.209344610571861,0.263183444738388],
+						[-0.238180845975876,-0.192656025290489,-0.147131204605103,-0.101606413722038,-0.0560816079378128,-0.0105568021535873,0.0443397797644138,0.099236361682415,0.154132932424545,0.209029525518417,0.263926118612289],
+						[-0.254026114940643,-0.205233439803123,-0.156440764665604,-0.107648096978664,-0.0588554255664349,-0.0100627513602376,0.0425538346171379,0.0951704233884811,0.147787004709244,0.200403600931168,0.253020197153091],
+						[-0.262766391038895,-0.212802797555923,-0.162839218974113,-0.112875618040562,-0.0629120245575905,-0.0129484310746193,0.0387462340295315,0.0904408991336823,0.142135560512543,0.193830221891403,0.245524898171425],
+						[-0.264737516641617,-0.214775070548058,-0.164812609553337,-0.114850156009197,-0.0648876950144768,-0.0149252396076918,0.0361835435032845,0.0872923284769058,0.138401120901108,0.189509898424149,0.240618675947189],
+						[-0.263145536184311,-0.213351652026176,-0.163557752966881,-0.113763846457005,-0.0639699473977089,-0.0141760436818004,0.0378800146281719,0.0899360701441765,0.141992121934891,0.194048181176186,0.24610424041748],
+						[-0.246115863323212,-0.199715703725815,-0.15331557393074,-0.106915444135666,-0.0605153106153011,-0.0141151789575815,0.0420193374156952,0.0981538519263268,0.154288366436958,0.21042288839817,0.266557395458221],
+						[-0.24975474178791,-0.202593952417374,-0.155433163046837,-0.1082723736763,-0.0611115843057632,-0.0139507986605167,0.0437926799058914,0.10153616219759,0.159279644489288,0.217023119330406,0.274766623973846],
+						[-0.261655062437057,-0.210481598973274,-0.159308150410652,-0.108134709298611,-0.0569612607359886,-0.00578781263902783,0.0498956069350243,0.105579026043415,0.161262452602386,0.216945871710777,0.272629290819168],
+						[-0.263493120670319,-0.209760949015617,-0.156028762459755,-0.102296568453312,-0.0485643781721592,0.00516781071200967,0.057917132973671,0.110666453838348,0.163415774703026,0.216165095567703,0.268914431333542],
+						[-0.260803043842316,-0.208710461854935,-0.156617909669876,-0.104525335133076,-0.0524327717721462,-0.000340205413522199,0.0536720156669617,0.10768423974514,0.161696448922157,0.215708687901497,0.269720911979675],
+						[-0.273891270160675,-0.218591019511223,-0.163290768861771,-0.107990518212318,-0.0526902675628662,0.00260998099111021,0.0525144524872303,0.102418921887875,0.152323395013809,0.202227860689163,0.252132326364517],
+						[-0.245699748396873,-0.196851596236229,-0.148003429174423,-0.0991552919149399,-0.0503071397542953,-0.00145899038761854,0.0465137548744678,0.0944864973425865,0.142459243535995,0.190431982278824,0.238404735922813],
+						[-0.230616629123688,-0.185506641864777,-0.140396654605865,-0.0952866673469543,-0.0501766800880432,-0.00506669655442238,0.0401289686560631,0.0853246301412582,0.130520284175873,0.175715953111649,0.220911622047424],
+						[-0.205600053071976,-0.163562446832657,-0.121524833142757,-0.079487219452858,-0.0374496094882488,0.00458800373598933,0.0501442216336727,0.0957004427909851,0.141256660223007,0.186812877655029,0.232369095087051],
+						[-0.181580856442451,-0.144172742962837,-0.106764636933804,-0.0693565309047699,-0.0319484211504459,0.00545968720689416,0.052583247423172,0.099706806242466,0.14683036506176,0.193953931331635,0.241077482700348],
+						[-0.194898515939713,-0.152389466762543,-0.109880425035954,-0.0673713758587837,-0.0248623285442591,0.0176467187702656,0.0621500685811043,0.106653414666653,0.15115675330162,0.19566011428833,0.240163460373878],
+						[-0.204876631498337,-0.157799363136292,-0.110722094774246,-0.0636448264122009,-0.0165675580501556,0.0305097103118896,0.0758012235164642,0.121092736721039,0.166384249925613,0.211675763130188,0.256967276334763],
+						[-0.21485909819603,-0.166375651955605,-0.117892198264599,-0.0694087445735931,-0.0209252946078777,0.0275581572204828,0.0744097605347633,0.121261365711689,0.168112978339195,0.21496456861496,0.261816203594208],
+						[-0.218079209327698,-0.17045995593071,-0.122840709984303,-0.0752214640378952,-0.0276022218167782,0.020017022266984,0.0676706433296204,0.115324266254902,0.162977889180183,0.210631504654884,0.258285135030746],
+						[-0.215016692876816,-0.168895080685616,-0.122773468494415,-0.076651856303215,-0.0305302478373051,0.01559136249125,0.0629597082734108,0.110328055918217,0.157696411013603,0.205064743757248,0.252433091402054],
+						[-0.216942891478539,-0.170320481061935,-0.123698055744171,-0.0770756378769875,-0.0304532200098038,0.0161691978573799,0.062487818300724,0.108806438744068,0.155125066637993,0.201443672180176,0.247762307524681],
+						[-0.208046406507492,-0.162490338087082,-0.116934262216091,-0.071378193795681,-0.0258221216499805,0.0197339486330748,0.0666759386658669,0.113617926836014,0.160559922456741,0.207501903176308,0.254443883895874],
+						[-0.224284052848816,-0.176175773143768,-0.12806747853756,-0.0799591913819313,-0.0318509042263031,0.0162573829293251,0.0644949823617935,0.112732581794262,0.16097018122673,0.209207773208618,0.257445365190506],
+						[-0.222860053181648,-0.177331283688545,-0.131802529096603,-0.0862737819552422,-0.0407450273633003,0.00478372676298022,0.0562513992190361,0.107719071209431,0.159186750650406,0.2106544226408,0.262122094631195],
+						[-0.234392046928406,-0.188687309622765,-0.142982557415962,-0.097277820110321,-0.0515730753540993,-0.00586833292618394,0.0461008287966251,0.0980699881911278,0.150039151310921,0.202008306980133,0.253977477550507],
+						[-0.251410216093063,-0.204446986317635,-0.157483756542206,-0.110520496964455,-0.0635572522878647,-0.0165940057486296,0.0382933914661407,0.0931807905435562,0.148068189620972,0.202955588698387,0.257842987775803],
+						[-0.281171023845673,-0.22838830947876,-0.175605595111847,-0.122822880744934,-0.0700401663780212,-0.0172574445605278,0.030915878713131,0.0790892019867897,0.127262532711029,0.175435841083527,0.223609164357185],
+						[-0.292930126190186,-0.237410083413124,-0.181890070438385,-0.126370027661324,-0.0708499997854233,-0.0153299663215876,0.0339002907276154,0.0831305459141731,0.132360801100731,0.181591063737869,0.230821311473846],
+						[-0.284279227256775,-0.227141886949539,-0.170004531741142,-0.112867198884487,-0.0557298548519611,0.00140748824924231,0.0481122434139252,0.0948169976472855,0.141521766781807,0.188226506114006,0.234931260347366],
+						[-0.268252730369568,-0.209608793258667,-0.150964856147766,-0.0923209264874458,-0.0336769968271255,0.024966936558485,0.0747562795877457,0.124545626342297,0.174334973096848,0.224124312400818,0.273913651704788],
+						[-0.245123714208603,-0.188135266304016,-0.131146833300591,-0.0741583853960037,-0.0171699430793524,0.039818499237299,0.0880291610956192,0.13623982667923,0.18445049226284,0.232661157846451,0.2808718085289],
+						[-0.220729306340218,-0.167530715465546,-0.114332117140293,-0.0611335188150406,-0.00793492048978806,0.0452636778354645,0.0895343795418739,0.133805081248283,0.178075775504112,0.222346484661102,0.266617178916931],
+						[-0.22557321190834,-0.173714011907578,-0.121854811906815,-0.0699956119060516,-0.0181364137679338,0.0337227843701839,0.0740627124905586,0.114402644336224,0.154742568731308,0.195082500576973,0.235422432422638],
+						[-0.242335930466652,-0.191565856337547,-0.140795767307281,-0.0900256782770157,-0.0392555892467499,0.0115144988521934,0.0535864122211933,0.0956583246588707,0.137730240821838,0.179802149534225,0.221874073147774],
+						[-0.25054082274437,-0.201569199562073,-0.152597576379776,-0.103625953197479,-0.0546543300151825,-0.00568270357325673,0.0373822413384914,0.0804471895098686,0.123512133955956,0.166577085852623,0.20964203774929],
+						[-0.261208891868591,-0.211809769272804,-0.162410661578178,-0.113011538982391,-0.0636124238371849,-0.0142133058980107,0.0303395632654428,0.0748924314975739,0.11944530159235,0.163998171687126,0.208551034331322],
+						[-0.249914810061455,-0.201588481664658,-0.15326215326786,-0.104935832321644,-0.0566095076501369,-0.00828318484127522,0.0339036695659161,0.0760905221104622,0.118277378380299,0.160464227199554,0.202651083469391],
+						[-0.260454326868057,-0.209389314055443,-0.15832431614399,-0.107259310781956,-0.0561943091452122,-0.00512930657714605,0.0354663953185081,0.0760620981454849,0.116657800972462,0.157253503799438,0.197849199175835],
+						[-0.243928208947182,-0.195209085941315,-0.146489948034286,-0.0977708101272583,-0.0490516759455204,-0.0003325404250063,0.0406672023236752,0.0816669464111328,0.1226666867733,0.163666427135468,0.204666182398796],
+						[-0.233838379383087,-0.184765040874481,-0.135691702365875,-0.0866183638572693,-0.0375450253486633,0.0115283112972975,0.0543181151151657,0.0971079170703888,0.139897719025612,0.182687520980835,0.225477322936058],
+						[-0.226293966174126,-0.175700142979622,-0.125106319785118,-0.0745124891400337,-0.0239186622202396,0.0266751665621996,0.0714781507849693,0.116281136870384,0.161084115505219,0.205887109041214,0.250690102577209],
+						[-0.211988091468811,-0.164488852024078,-0.116989605128765,-0.0694903656840324,-0.0219911262392998,0.025508115068078,0.071532279253006,0.117556445300579,0.163580611348152,0.209604769945145,0.255628943443298],
+						[-0.218248888850212,-0.171546369791031,-0.12484385073185,-0.0781413316726685,-0.0314388126134872,0.0152637036517262,0.062191940844059,0.109120175242424,0.156048402190208,0.202976644039154,0.2499048858881],
+						[-0.23921762406826,-0.189628705382347,-0.140039786696434,-0.0904508605599403,-0.040861938148737,0.00872698426246643,0.0595867149531841,0.110446445643902,0.161306172609329,0.212165907025337,0.263025641441345],
+						[-0.255551099777222,-0.203227311372757,-0.150903522968292,-0.0985797345638275,-0.0462559461593628,0.00606783991679549,0.058777280151844,0.111486718058586,0.164196148514748,0.21690559387207,0.269615054130554],
+						[-0.262622058391571,-0.208775967359543,-0.154929861426353,-0.101083755493164,-0.047237653285265,0.00660844938829541,0.0571420006453991,0.107675552368164,0.158209100365639,0.208742648363113,0.259276211261749],
+						[-0.269700407981873,-0.214359790086746,-0.159019142389297,-0.103678502142429,-0.0483378618955612,0.0070027788169682,0.0567155294120312,0.106428280472755,0.156141042709351,0.205853775143623,0.255566537380219],
+						[-0.265390336513519,-0.210617184638977,-0.155844032764435,-0.101070888340473,-0.0462977401912212,0.00847540609538555,0.059435673058033,0.110395938158035,0.161356210708618,0.21231646835804,0.263276726007462],
+						[-0.263954162597656,-0.20895391702652,-0.153953686356544,-0.0989534556865692,-0.0439532212913036,0.0110470103099942,0.0593332201242447,0.107619427144527,0.15590563416481,0.204191848635674,0.252478063106537],
+						[-0.25621622800827,-0.20296511054039,-0.149713978171349,-0.0964628681540489,-0.0432117506861687,0.0100393677130342,0.0621756799519062,0.114311993122101,0.166448310017586,0.218584612011909,0.270720928907394],
+						[-0.241206631064415,-0.18964284658432,-0.138079062104225,-0.0865152627229691,-0.0349514707922935,0.0166123248636723,0.0646008551120758,0.112589381635189,0.160577908158302,0.208566442131996,0.256554961204529],
+						[-0.230404853820801,-0.18099682033062,-0.131588786840439,-0.0821807533502579,-0.0327727161347866,0.0166353192180395,0.0610333494842052,0.105431377887726,0.149829402565956,0.194227442145348,0.238625466823578],
+						[-0.225313872098923,-0.178633123636246,-0.131952375173569,-0.0852716416120529,-0.0385909005999565,0.00808984134346247,0.0507909096777439,0.0934919789433479,0.136193051934242,0.178894117474556,0.22159518301487],
+						[-0.2390096783638,-0.191261529922485,-0.143513396382332,-0.0957652777433395,-0.0480171479284763,-0.000269019656116143,0.0434852465987206,0.0872395113110542,0.130993783473969,0.174748048186302,0.218502297997475],
+						[-0.241045489907265,-0.192637890577316,-0.144230276346207,-0.0958226844668388,-0.0474150851368904,0.000992516288533807,0.0445627458393574,0.0881329774856567,0.131703212857246,0.175273433327675,0.218843668699265],
+						[-0.229100465774536,-0.18216148018837,-0.135222494602203,-0.0882835239171982,-0.0413445457816124,0.0055944318883121,0.04901272803545,0.0924310237169266,0.135849326848984,0.17926761507988,0.222685903310776],
+						[-0.234509214758873,-0.187404409050941,-0.140299618244171,-0.0931948125362396,-0.0460900105535984,0.0010147902648896,0.0452609807252884,0.089507170021534,0.13375335931778,0.177999556064606,0.222245737910271],
+						[-0.224361971020699,-0.179043278098106,-0.133724570274353,-0.0884058624505997,-0.0430871546268463,0.00223155063576996,0.0428496785461903,0.0834678038954735,0.124085925519466,0.16470405459404,0.205322191119194],
+						[-0.221546456217766,-0.175531610846519,-0.129516750574112,-0.083501897752285,-0.0374870449304581,0.00852780882269144,0.0529559850692749,0.0973841622471809,0.141812339425087,0.186240509152412,0.230668693780899],
+						[-0.203990191221237,-0.16000859439373,-0.116026997566223,-0.0720453932881355,-0.0280637927353382,0.0159178078174591,0.0643821954727173,0.112846575677395,0.161310955882072,0.209775343537331,0.25823974609375],
+						[-0.204537153244019,-0.161383807659149,-0.11823046952486,-0.075077123939991,-0.0319237783551216,0.0112295662984252,0.0579477362334728,0.104665905237198,0.151384070515633,0.198102250695229,0.244820401072502],
+						[-0.230232000350952,-0.184343904256821,-0.13845582306385,-0.0925677195191383,-0.0466796234250069,-0.000791529077105224,0.0458888299763203,0.0925691872835159,0.139249548316002,0.185929909348488,0.232610255479813],
+						[-0.245003238320351,-0.198008850216866,-0.15101446211338,-0.104020088911057,-0.0570257119834423,-0.0100313331931829,0.0398606359958649,0.0897526070475578,0.139644578099251,0.189536541700363,0.239428520202637],
+						[-0.270393997430801,-0.215884327888489,-0.161374673247337,-0.106865018606186,-0.0523553639650345,0.00215429347008467,0.0502352155745029,0.0983161404728889,0.146397069096565,0.194477990269661,0.242558911442757],
+						[-0.26633894443512,-0.212938576936722,-0.159538209438324,-0.106137827038765,-0.0527374520897865,0.000662921753246337,0.0522610731422901,0.103859223425388,0.155457377433777,0.207055523991585,0.258653670549393],
+						[-0.27628767490387,-0.219773694872856,-0.163259699940681,-0.106745712459087,-0.050231721252203,0.0062822699546814,0.0504146814346313,0.0945470929145813,0.138679504394531,0.182811915874481,0.226944327354431],
+						[-0.261803478002548,-0.208638831973076,-0.155474185943604,-0.102309547364712,-0.04914490878582,0.00401973212137818,0.0544786043465137,0.104937478899956,0.155396342277527,0.205855220556259,0.256314098834991],
+						[-0.254607051610947,-0.201145321130753,-0.147683590650558,-0.0942218452692032,-0.0407601110637188,0.0127016240730882,0.0658028870820999,0.118904151022434,0.172005414962769,0.225106671452522,0.278207927942276],
+						[-0.262311816215515,-0.204636335372925,-0.146960824728012,-0.08928532153368,-0.0316098183393478,0.0260656848549843,0.0745701342821121,0.123074591159821,0.171579048037529,0.220083504915237,0.268587946891785],
+						[-0.253274947404861,-0.197000592947006,-0.140726238489151,-0.084451898932457,-0.0281775519251823,0.0280967950820923,0.0763280391693115,0.124559283256531,0.17279052734375,0.221021771430969,0.269253015518188],
+						[-0.228681772947311,-0.17615906894207,-0.123636350035667,-0.0711136385798454,-0.0185909252613783,0.0339317880570889,0.0825443714857101,0.131156951189041,0.179769530892372,0.228382110595703,0.276994675397873],
+						[-0.219967067241669,-0.169792994856834,-0.11961891502142,-0.0694448351860046,-0.0192707590758801,0.0309033188968897,0.0787013471126556,0.126499369740486,0.174297407269478,0.222095414996147,0.269893437623978],
+						[-0.212603658437729,-0.164655268192291,-0.116706885397434,-0.0687585100531578,-0.0208101272583008,0.0271382536739111,0.0724911838769913,0.117844112217426,0.163197040557861,0.208549976348877,0.253902912139893],
+						[-0.205722913146019,-0.159621432423592,-0.113519951701164,-0.0674184709787369,-0.0213169883936644,0.0247844941914082,0.0706811621785164,0.116577826440334,0.162474483251572,0.208371162414551,0.254267811775208],
+						[-0.205256432294846,-0.158638343214989,-0.112020254135132,-0.0654021576046944,-0.0187840685248375,0.0278340224176645,0.0750498697161674,0.122265711426735,0.169481560587883,0.21669739484787,0.263913244009018],
+						[-0.201899975538254,-0.155154407024384,-0.108408868312836,-0.0616633147001266,-0.0149177648127079,0.0318277850747108,0.0760682076215744,0.120308630168438,0.164549052715302,0.208789467811584,0.253029882907867],
+						[-0.192143067717552,-0.148691982030869,-0.105240903794765,-0.0617898218333721,-0.0183387398719788,0.0251123439520597,0.0679534897208214,0.110794633626938,0.153635784983635,0.196476921439171,0.239318087697029],
+						[-0.185157418251038,-0.144500687718391,-0.103843942284584,-0.0631872043013573,-0.0225304663181305,0.0181262735277414,0.0609740205109119,0.103821769356728,0.146669521927834,0.189517259597778,0.232365012168884],
+						[-0.179891303181648,-0.14153653383255,-0.103181757032871,-0.0648269802331924,-0.0264722052961588,0.0118825705721974,0.0549799241125584,0.0980772748589516,0.141174629330635,0.184271976351738,0.227369323372841],
+						[-0.193465158343315,-0.153521835803986,-0.113578513264656,-0.0736351907253265,-0.033691868185997,0.00625145807862282,0.0541827604174614,0.10211406648159,0.150045365095139,0.197976678609848,0.245907992124557],
+						[-0.214040070772171,-0.172032728791237,-0.130025401711464,-0.0880180597305298,-0.0460107252001762,-0.00400338741019368,0.0457169711589813,0.0954373329877853,0.145157679915428,0.194878056645393,0.244598418474197],
+						[-0.225191190838814,-0.181843921542168,-0.13849663734436,-0.0951493829488754,-0.0518021173775196,-0.00845484994351864,0.0355182103812695,0.0794912725687027,0.123464331030846,0.167437389492989,0.211410447955132],
+						[-0.24088816344738,-0.195765808224678,-0.150643467903137,-0.105521097779274,-0.060398742556572,-0.0152763864025474,0.0315069183707237,0.0782902240753174,0.12507352232933,0.171856835484505,0.218640133738518],
+						[-0.248837828636169,-0.201544612646103,-0.154251381754875,-0.106958173215389,-0.0596649535000324,-0.0123717347159982,0.0367522723972797,0.0858762785792351,0.135000288486481,0.184124290943146,0.233248308300972],
+						[-0.236726611852646,-0.190724223852158,-0.144721835851669,-0.098719447851181,-0.0527170598506927,-0.00671466952189803,0.0423949174582958,0.0915045067667961,0.140614092350006,0.189723685383797,0.238833278417587],
+						[-0.243217334151268,-0.194038540124893,-0.144859731197357,-0.0956809222698212,-0.0465021170675755,0.00267668906599283,0.0481140650808811,0.093551442027092,0.138988807797432,0.184426188468933,0.229863584041595],
+						[-0.261967241764069,-0.209426790475845,-0.156886324286461,-0.104345850646496,-0.0518053770065308,0.000735094072297215,0.0485609136521816,0.096386730670929,0.144212543964386,0.192038372159004,0.239864185452461],
+						[-0.259615808725357,-0.208515346050262,-0.157414898276329,-0.106314465403557,-0.055214025080204,-0.00411358149722219,0.0455758906900883,0.0952653661370277,0.144954845309258,0.194644317030907,0.244333788752556],
+						[-0.255043208599091,-0.204463839530945,-0.153884455561638,-0.103305086493492,-0.0527257099747658,-0.00214633508585393,0.0476575829088688,0.097461499273777,0.147265419363976,0.197069332003593,0.246873244643211],
+						[-0.237026453018188,-0.188889175653458,-0.140751898288727,-0.092614620923996,-0.0444773435592651,0.00365993287414312,0.0565761402249336,0.109492346644402,0.162408545613289,0.215324759483337,0.268240988254547],
+						[-0.240225493907928,-0.189469143748283,-0.138712793588638,-0.0879564359784126,-0.0372000820934772,0.013556269928813,0.0665812268853188,0.119606181979179,0.172631129622459,0.225656092166901,0.278681069612503],
+						[-0.245005413889885,-0.192229896783829,-0.139454394578934,-0.0866788849234581,-0.0339033752679825,0.0188721306622028,0.0723295882344246,0.125787049531937,0.179244503378868,0.232701972126961,0.286159425973892],
+						[-0.256575584411621,-0.20078007876873,-0.144984558224678,-0.0891890525817871,-0.0333935394883156,0.0224019717425108,0.0723973587155342,0.122392751276493,0.172388151288033,0.22238352894783,0.272378921508789],
+						[-0.260419487953186,-0.204374432563782,-0.148329377174377,-0.0922843441367149,-0.0362393036484718,0.0198057405650616,0.0714830234646797,0.123160310089588,0.174837604165077,0.226514875888824,0.278192162513733],
+						[-0.246778592467308,-0.194318413734436,-0.141858235001564,-0.089398056268692,-0.03693787753582,0.0155223021283746,0.0699753761291504,0.124428451061249,0.178881525993347,0.233334600925446,0.287787675857544],
+						[-0.24396625161171,-0.191031441092491,-0.138096630573273,-0.0851618275046349,-0.032227024435997,0.0207077823579311,0.0722742676734924,0.123840749263763,0.175407230854034,0.226973712444305,0.278540194034576],
+						[-0.230035215616226,-0.179541975259781,-0.129048749804497,-0.0785555094480515,-0.0280622728168964,0.0224309619516134,0.0722893700003624,0.122147776186466,0.172006189823151,0.221864596009254,0.271723002195358],
+						[-0.225416347384453,-0.175265982747078,-0.125115618109703,-0.0749652609229088,-0.0248149000108242,0.0253354627639055,0.0748424157500267,0.124349370598793,0.17385633289814,0.223363280296326,0.27287021279335],
+						[-0.230963438749313,-0.178164705634117,-0.125365987420082,-0.0725672543048859,-0.0197685267776251,0.0330302007496357,0.0769999995827675,0.120969794690609,0.16493958234787,0.208909392356873,0.252879202365875],
+						[-0.237475112080574,-0.182918816804886,-0.128362536430359,-0.0738062486052513,-0.0192499626427889,0.0353063233196735,0.0801859945058823,0.125065669417381,0.169945329427719,0.214825019240379,0.25970470905304],
+						[-0.24144634604454,-0.187557905912399,-0.133669450879097,-0.0797810032963753,-0.0258925519883633,0.0279958974570036,0.081176832318306,0.134357765316963,0.187538713216782,0.240719631314278,0.293900549411774],
+						[-0.245876461267471,-0.193197503685951,-0.140518546104431,-0.0878395587205887,-0.0351605862379074,0.0175183862447739,0.0722969025373459,0.127075418829918,0.181853920221329,0.236632451415062,0.291410982608795],
+						[-0.251974165439606,-0.1995749771595,-0.147175788879395,-0.0947766080498695,-0.0423774234950542,0.010021761059761,0.0567520931363106,0.10348242521286,0.15021276473999,0.196943089365959,0.243673413991928],
+						[-0.237886279821396,-0.190264359116554,-0.142642423510551,-0.095020517706871,-0.0473985970020294,0.000223323149839416,0.0454623214900494,0.0907013192772865,0.135940328240395,0.181179314851761,0.226418316364288],
+						[-0.217221915721893,-0.173678234219551,-0.130134537816048,-0.0865908488631248,-0.043047159910202,0.000496530730742961,0.0442288629710674,0.0879611968994141,0.13169352710247,0.175425857305527,0.219158202409744],
+						[-0.195073962211609,-0.15473173558712,-0.114389508962631,-0.0740472823381424,-0.0337050557136536,0.00663717417046428,0.0497563071548939,0.0928754433989525,0.13599456846714,0.17911371588707,0.222232848405838],
+						[-0.182989448308945,-0.143711075186729,-0.104432702064514,-0.0651543363928795,-0.0258759669959545,0.0134024014696479,0.0593121983110905,0.10522199422121,0.151131793856621,0.197041586041451,0.242951393127441],
+						[-0.180886715650558,-0.142336383461952,-0.103786036372185,-0.0652356892824173,-0.026685344055295,0.0118650011718273,0.0653616935014725,0.118858389556408,0.172355085611343,0.225851774215698,0.279348462820053],
+						[-0.176147639751434,-0.141494601964951,-0.106841556727886,-0.0721885189414024,-0.0375354811549187,-0.00288243964314461,0.0535951033234596,0.110072642564774,0.166550189256668,0.223027721047401,0.279505252838135],
+						[-0.190795004367828,-0.155492097139359,-0.120189197361469,-0.0848863050341606,-0.0495834052562714,-0.0142805073410273,0.0379532128572464,0.0901869311928749,0.142420649528503,0.194654375314713,0.24688808619976],
+						[-0.207147598266602,-0.170896902680397,-0.134646207094193,-0.0983955040574074,-0.0621448047459126,-0.0258941054344177,0.0275589525699615,0.0810120105743408,0.13446506857872,0.187918126583099,0.241371184587479],
+						[-0.221125602722168,-0.184359520673752,-0.147593438625336,-0.1108273640275,-0.0740612894296646,-0.0372952073812485,0.0155681781470776,0.0684315636754036,0.12129495292902,0.174158334732056,0.227021723985672],
+						[-0.213356554508209,-0.179731830954552,-0.146107107400894,-0.112482391297817,-0.0788576751947403,-0.0452329516410828,0.00513673387467861,0.05550641939044,0.105876103043556,0.156245797872543,0.206615477800369],
+						[-0.215501382946968,-0.181155234575272,-0.146809101104736,-0.11246296018362,-0.0781168192625046,-0.043770682066679,0.00216932035982609,0.0481093227863312,0.0940493270754814,0.139989331364632,0.185929328203201],
+						[-0.216004908084869,-0.179384410381317,-0.142763897776604,-0.106143370270729,-0.069522850215435,-0.0329023338854313,0.00904754921793938,0.05099743232131,0.0929473116993904,0.134897202253342,0.176847070455551],
+						[-0.232849627733231,-0.190665900707245,-0.14848218858242,-0.106298491358757,-0.0641147866845131,-0.0219310782849789,0.0230784248560667,0.0680879279971123,0.113097429275513,0.158106938004494,0.203116446733475],
+						[-0.241674214601517,-0.195319846272469,-0.14896547794342,-0.102611102163792,-0.0562567301094532,-0.00990235712379217,0.033713560551405,0.0773294791579247,0.120945394039154,0.164561316370964,0.208177238702774],
+						[-0.240070179104805,-0.192554980516434,-0.145039781928062,-0.0975245833396912,-0.0500093810260296,-0.00249418150633574,0.0414204448461533,0.0853350684046745,0.129249691963196,0.173164322972298,0.2170789539814],
+						[-0.237068697810173,-0.189623758196831,-0.14217883348465,-0.0947339162230492,-0.0472889915108681,0.000155931949848309,0.0446479357779026,0.0891399383544922,0.133631944656372,0.178123950958252,0.222615942358971],
+						[-0.257710516452789,-0.204424485564232,-0.151138454675674,-0.0978524312376976,-0.0445664040744305,0.00871962308883667,0.0531437769532204,0.0975679308176041,0.141992092132568,0.186416238546371,0.230840384960175],
+						[-0.275224387645721,-0.218330293893814,-0.161436170339584,-0.104542069137096,-0.0476479567587376,0.0092461546882987,0.0555848106741905,0.10192346572876,0.14826212823391,0.194600775837898,0.240939438343048],
+						[-0.291770905256271,-0.231147974729538,-0.170525044202805,-0.10990209877491,-0.0492791570723057,0.0113437818363309,0.0563240684568882,0.101304352283478,0.146284639835358,0.191264927387238,0.236245214939117],
+						[-0.303796380758286,-0.242054879665375,-0.180313378572464,-0.118571884930134,-0.0568303875625134,0.00491110980510712,0.0449949093163013,0.0850787088274956,0.12516251206398,0.165246307849884,0.205330103635788],
+						[-0.297585517168045,-0.240215718746185,-0.182845935225487,-0.125476136803627,-0.0681063458323479,-0.0107365502044559,0.0214526895433664,0.0536419302225113,0.0858311727643013,0.118020407855511,0.15020963549614],
+						[-0.289802700281143,-0.237631052732468,-0.185459405183792,-0.133287757635117,-0.081116110086441,-0.028944468125701,-0.00561527442187071,0.0177139192819595,0.0410431139171124,0.0643723085522652,0.0877014994621277],
+						[-0.290048867464066,-0.239866480231285,-0.189684092998505,-0.139501705765724,-0.0893193185329437,-0.0391369313001633,-0.0224088113754988,-0.00568069284781814,0.0110474266111851,0.0277755446732044,0.0445036664605141],
+						[-0.297812581062317,-0.247585356235504,-0.19735811650753,-0.147130876779556,-0.0969036370515823,-0.0466763973236084,-0.0289300493896008,-0.011183699592948,0.00656265020370483,0.0243089981377125,0.0420553460717201],
+						[-0.305576324462891,-0.255304217338562,-0.205032140016556,-0.154760047793388,-0.104487955570221,-0.0542158633470535,-0.0354512855410576,-0.0166867058724165,0.00207787379622459,0.0208424516022205,0.0396070294082165],
+						[-0.313340067863464,-0.263023108243942,-0.212706163525581,-0.16238921880722,-0.11207227408886,-0.0617553293704987,-0.0419725179672241,-0.0221897102892399,-0.00240690261125565,0.0173759087920189,0.0371587201952934],
+						[-0.321103751659393,-0.270741939544678,-0.220380157232285,-0.170018374919891,-0.119656585156918,-0.0692947953939438,-0.0484937578439713,-0.0276927202939987,-0.00689168274402618,0.0139093548059464,0.0347103923559189],
+						[-0.328867435455322,-0.278460800647736,-0.228054165840149,-0.177647531032562,-0.127240896224976,-0.0768342614173889,-0.0550149939954281,-0.0331957265734673,-0.0113764591515064,0.0104428082704544,0.0322620719671249],
+						[-0.336631268262863,-0.286179780960083,-0.23572826385498,-0.185276746749878,-0.134825229644775,-0.084373727440834,-0.0615362301468849,-0.0386987291276455,-0.0158612281084061,0.00697626918554306,0.0298137739300728],
+						[-0.344394981861115,-0.293898612260818,-0.243402257561684,-0.192905902862549,-0.142409548163414,-0.0919131934642792,-0.0680574625730515,-0.0442017391324043,-0.0203460156917572,0.00350971519947052,0.0273654460906982],
+						[-0.352158635854721,-0.301617443561554,-0.251076251268387,-0.20053505897522,-0.149993866682053,-0.0994526743888855,-0.0745787099003792,-0.0497047454118729,-0.0248307809233665,4.31835651397705e-05,0.0249171480536461],
+						[-0.359922349452972,-0.309336304664612,-0.258750259876251,-0.208164215087891,-0.15757817029953,-0.106992125511169,-0.0810999423265457,-0.0552077554166317,-0.0293155685067177,-0.00342338532209396,0.0224688053131104],
+						[-0.367686063051224,-0.31705516576767,-0.266424268484116,-0.215793371200562,-0.165162473917007,-0.114531576633453,-0.0876211673021317,-0.0607107654213905,-0.0338003635406494,-0.0068899542093277,0.020020455121994],
+						[-0.375450015068054,-0.324774235486984,-0.274098455905914,-0.223422646522522,-0.172746852040291,-0.12207105755806,-0.0941424071788788,-0.0662137642502785,-0.0382851213216782,-0.0103564709424973,0.0175721794366837],
+						[-0.383213698863983,-0.33249306678772,-0.281772434711456,-0.231051802635193,-0.180331170558929,-0.129610538482666,-0.100663654506207,-0.071716770529747,-0.0427698865532875,-0.013823002576828,0.0151238739490509],
+						[-0.390977114439011,-0.340211689472198,-0.289446264505386,-0.238680839538574,-0.187915414571762,-0.13714998960495,-0.107184886932373,-0.0772197842597961,-0.0472546815872192,-0.0172895789146423,0.0126755237579346],
+						[-0.398741126060486,-0.347930788993835,-0.297120451927185,-0.246310114860535,-0.195499777793884,-0.144689440727234,-0.113706111907959,-0.0827227830886841,-0.0517394542694092,-0.0207561254501343,0.0102272033691406],
+						[-0.406504452228546,-0.355649352073669,-0.304794251918793,-0.253939151763916,-0.203084051609039,-0.152228951454163,-0.120227374136448,-0.0882257968187332,-0.0562242269515991,-0.0242226421833038,0.00777894258499146]
+					],
+					"DATA_TYPE": "float",
+					"COMMENTS": "189x11",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.EL_sin_LUT"
+				},
+				"k_calmat1_az_search_range": {
+					"VALUE": [90,91,92,93,94,95,96,97,98,99],
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.AZ_search_range"
+				},
+				"k_calmat1_el_search_offset": {
+					"VALUE": 95,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 1}.EL_search_offset"
+				},
+				"k_calmat2_ang_min_az": {
+					"VALUE": -75,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.ang_min_az"
+				},
+				"k_calmat2_ang_max_az": {
+					"VALUE": -25,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.ang_max_az"
+				},
+				"k_calmat2_ang_min_el": {
+					"VALUE": -15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.ang_min_el"
+				},
+				"k_calmat2_ang_max_el": {
+					"VALUE": 15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.ang_max_el"
+				},
+				"k_calmat2_ctx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.767181097092075,-0.0303345003793656,-0.0272448523475061,-0.00628608154779066,-0.072760717832517,-0.212743067797436,-0.0517145205533021,-0.00193649894507316,0.00811931095596961,0.0643815077028209,-0.83989971959589,0.0186685947802939,-0.000663882642638651,0.0101409229430422,0.1371931107489,0.967973834082484],
+							[0,-0.0273596855846101,-0.0350250615352532,0.0149932570111421,-0.0875853889956894,0.940352596498899,-0.010843623639592,0.0316288270321429,-0.0242314110135815,-0.0582867370472621,0.515503890985078,0.0610404113602014,0.0158860051973208,0.00565598483882634,0.0147263202277849,-0.251051103426483]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.Ctx"
+				},
+				"k_calmat2_crx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.878691919879051,-0.00731723963772745,-0.0302183236227252,0.00767345404775706,-0.0295330201887117,-0.2552278941862,-0.00695486877359153,-0.0401807965469133,0.0114677787733265,-0.003941668003152,-0.892916124063228,0.0800345503684182,0.00592792785860959,0.057304763951384,0.178586810668544,0.135652386792684],
+							[0,-0.0531499938133815,0.0303236260355824,-0.0251041026960611,-0.0432808325708305,0.882396556238902,0.0226288046525957,-0.0472938712485907,0.000111866910306819,0.00986357142122565,-0.249066041563757,-0.0610496965058612,-0.0134873705621516,-0.0262185071601462,-0.0173764480916773,-0.990756493775059]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.Crx"
+				},
+				"k_calmat2_c1": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [16,16],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.676902192088209,-0.049609892907861,0.000854916759801485,-0.00208342361531623,-0.0437911112509744,-0.0292316139429939,0.014669278822076,0.0807380713780532,-0.108347966511468,0.0542801930806351,-0.00677509756045381,0.0138230062483477,-0.0285690861612953,0.0350702305633761,0.0089939304891819,-0.00391945885550469,-0.02612191916818,-0.155731459132411,0.0127801321669711,-0.0269572975466825,0.0662984639074716,0.00497921549063247,0.0041634181735964,0.0278430238502671,0.00544911611508809,0.0727935339946183,-0.0122630724468886,0.00508879669848742,-0.00224392627688897,0.0151862493333309,0.00247555001149489,0.00494152913083655,0.0192817921992641,0.0113204688316136,-0.649267503574237,-0.0112624923234104,-0.00900762033297735,-0.0290409102232003,0.0419931211878303,-0.00498896664843285,-0.0164723943604113,-0.0635862679019233,0.0203018852655807,0.00130614948540867,0.011683228656288,0.0318078280234682,0.0126077029566844,0.00351837365793273,0.00950512752378813,0.0251758912851997,0.0954521145409263,0.0734871004531276,-0.0174687687870908,0.00815717568464429,0.0162002014525412,0.0187700289939552,-0.0447849838531394,-0.0324285514627278,-0.0113884926322032,-0.0287858306528465,0.0219175477563139,0.0361488943962475,-0.00780080367047885,0.000854373464704353,-0.0481863805505961,0.00484052172994612,-5.02609007569301e-05,-0.0327895079591717,-0.17182693708759,-0.00908562441815712,-0.0494119298108937,0.111345440928276,-0.0844139698109681,0.0408712492671282,0.000148877428883536,0.00292279199759719,0.00856151122279394,-0.0668408958698944,-0.000322193827148966,-0.00345240354238927,0.0231395756861536,0.0863181248413785,-0.0053982493423614,-0.0325328054074886,0.0898542654830342,-0.826761237577618,-0.0440350908025088,0.0695685001826257,0.0239331280510381,-0.0344534913357682,-0.000298004521081832,0.00676536908345163,0.00864983137750097,-0.0582534644006419,-0.00118378461762678,-0.00331436372300355,0.00466057225031506,-0.0298611420261418,0.0399530899784521,-0.0754850601231133,-0.00587152999575139,0.0319768047908166,0.297276110560959,-0.0126508657174976,0.0284221338243444,-0.0986900096058211,0.0588411946316315,0.0207042943714281,0.0305331013117853,0.0307391779044097,-0.00310888339521192,0.00172352246779077,0.00686369346735883,-0.00623215348204351,-0.0148103243255604,-0.0451763266133339,0.0146657553285,-0.00108378574689021,0.00298410993906069,0.903040159491686,0.0172257326566124,0.0267344018355115,-0.00412413378509169,2.67654947247317e-05,0.0212589430754595,0.144700471565898,0.0111681411263531,0.0199054652390557,0.00605390432352672,0.0070236871163573,-0.026228649639358,0.0561724419351929,-0.0345759082642888,-0.0477456663174418,-0.0183178077901442,0.025164735936945,-0.733551942877464,0.101463857867051,0.00878387751571696,-0.0125404205065667,0.0357934585478885,-0.00683486914268086,0.00247390200998492,0.00525455491706759,-0.00214133914996144,-0.0112277261079721,-0.075597563448015,0.0809492177624855,-0.00857479033361798,0.0275174583181849,0.00219842285391528,-0.0146870122789086,0.0879862085672678,-0.288631238849701,-0.0235007583639872,0.0447847668639775,0.0242998639831137,-0.0514480644511526,-0.0018153544108691,-0.0013400283967303,-0.000791526471049047,0.00803572398171974,0.0337681789309201,-0.0607663877378363,-0.00198495669757966,0.0111480987975559,-0.0146589357254403,-0.241486687560651,-0.00492155554318151,-0.0647033009585363,0.77192595466231,0.0073401510678912,0.0289182069310419,0.168915922382208,-0.0216662302748292,-0.0191462368929951,0.00410849119050373,0.0150877598448866,0.0232922583601127,0.0330153511390043,0.0129953496721096,0.0313526850267848,-0.0182345061808565,0.0531319866649433,0.00458009364021709,0.0385844563726797,-0.22465197227316,0.535431689993992,0.014700990720674,0.0845455947480009,-0.0257479793527961,0.0232251299750691,-0.005520275889439,0.00799858089834914,-0.0168401664733685,0.0140780536911231,-0.00622850234759909,0.0245253579932135,-0.00101383462459358,0.029067952032085,0.0547925548069496,0.0371000603226039,0.0161728966033533,0.0239741778963054,0.857033402362804,-0.0355563357600305,-0.0116437565889533,0.01735721719169,0.0131031276810422,-0.000426432253321816,0.0216756143453245,0.0461459145646392,-0.00455000396124114,0.0340166990650811,-0.0325220265020784,-0.0158683939581606,0.013397051637722,-0.0144468770193876,0.0124476478577874,-0.0263707061493924,-0.0243216508467427,0.0606926811503644,0.00302355160977694,-0.0468876408631434,-0.00237228749503899,0.0033631377076335,0.00515923135160597,0.0628429225794049,0.00360759473812897,0.0263936175300325,0.0447537355525974,0.166109986025652,-0.00105723227475988,0.110772127350671,-0.0799415948081236,-0.0901594262731375,0.00191067451287217,0.0349150107256105,-0.85940536758115,-0.0237539146529519,0.00166639989007745,0.00787343562921664,-0.0293175470137256,0.0465244715352208,0.00864234804004201,-0.00612983945136755,-0.0101424138737748,0.194397110762304,0.00156240841196073,0.0943324470064692,0.0205584937129227,0.0526993796573013,-0.042241103658103,-0.0736279860484758,0.214105968462071,-0.291572213324885],
+							[0,-0.00628669672902204,0.0743946884512165,-0.041838996696459,-0.041071952614684,-0.0175096037545158,0.0425441314701219,-0.113102475510045,-0.0433253095321729,-0.0686726517096141,-0.0227873495282069,-0.00497670749371198,0.0196010360473197,0.140809751950287,0.000886743879572671,0.00770561818982123,0.00589071704082502,0.645026696171411,0.0323921450408195,-0.0958866878137005,-0.00272092711913964,-0.0421422284777651,0.00326591686269546,-0.0513254154877765,-0.00839788644449071,-0.106947219630225,-0.0122043727758129,0.0022248248509278,-0.00412137732872135,0.0279401674850068,-0.00265701172280585,0.000653995935138578,-0.00168338814152258,0.0279308863323692,-0.138512034119704,-0.0246652496089332,0.0105062351643617,0.0403549528094631,0.0127580293345335,-0.04847770702084,0.0946810591601225,-0.0737389567587756,0.0205595068612296,0.00169247522819661,0.010493327737564,0.0261511972326568,-0.00277656601539897,-0.00345335766916191,-0.010855998057333,-0.00805005547440706,-0.00368078351923801,-0.717113538885047,-0.0148924974297255,0.0213491942333887,0.0489967304776526,-0.0472764260355322,0.0159207811292972,0.0840405690406432,0.00208052542782538,0.0342655628223965,0.0276320758933887,0.0749848090540348,-0.00584431249019286,0.00368427813311378,0.0110622396955105,0.0332725401244213,0.0394899348034674,-0.0616349376560508,0.849123930675873,-0.0676770412808945,0.00308255859315784,0.00922176010027075,-0.0591901274902818,-0.0776593410450323,-0.0207850930639265,0.00316078960638954,0.0176718689043809,0.0850241399751405,0.0047770079001295,-0.00476945224816476,0.0406172063423214,-0.0566847422913411,-0.0128012012678717,0.00241857379650197,0.00117224295872867,-0.367293601333732,0.0116969675967465,-0.0315386688969672,-0.00756756804967283,-0.0708709853668388,0.00219234529947727,-0.00142492034542715,-0.0155413293246265,0.0295597923287941,-0.00013885739012102,-0.00527525941745206,0.00295989602173576,-0.000282218883838177,0.0392975652895381,0.0417945874253483,-0.00144550969648854,-0.0266471064402559,-0.851316490562488,0.0605674045964836,-0.0510616162723938,-0.0908655298190857,0.0224496225758235,-0.0198832927859647,-0.0400101072123477,-0.0392565162216507,-0.0137939450696713,-0.00220669824592613,-0.00766322682762878,-0.00177736536011165,0.0314703198628785,0.0260216420334943,-0.00568210489301662,0.0428726613410346,0.18961313698204,0.110355984088766,-0.00427652448668534,-0.0476545673502736,0.00075995060253742,0.0323245334669852,0.0266349963805068,0.00854356872029672,-0.00185113789720573,-0.00385902638329564,-0.00840295887027232,-0.00453953012494441,0.0233428016555174,-0.0268244217536861,-0.0333282602169792,-0.0812172942895348,-0.0150484959610089,-0.0122642416774459,0.453585861321724,-0.0201129339703056,-0.0363225054157175,0.0211587712299297,0.0707244273895871,0.00825413264444966,-0.000197945115621001,0.00215308926134116,0.00807414478848225,-0.0047765762807273,0.031205684285241,-0.0240742401644843,-0.0280058080465725,0.0232996907158535,-0.00468597129865389,0.00834443386826899,-0.016375231240812,-0.810310735025896,-0.00156082104844949,-0.0114200236704516,-0.0019285060519185,-0.00432669542620532,-0.00442218510690767,-0.00151433395362132,-0.00195578720590563,-0.000532875055429638,-0.0156213450070119,-0.0956064558674123,0.0150125373973282,-0.0305338751736682,-0.0119828204282576,-0.19329977977899,0.00181204740674247,-0.152410374352937,-0.387481913687964,0.0751036931148693,0.0292513396361386,0.0356993534962103,-0.0530863092051745,0.00246314788797096,-0.00796414848091032,-0.00418865994432122,0.00701547544578999,-0.0793908644800078,0.00552762859146257,-0.0182987929881373,-0.012630678298418,-0.219436644487848,0.00535610880096205,-0.0625424355769969,0.102972954060253,0.829551759584877,0.0395973333882281,0.128602857273858,0.0182861616724904,0.00193729918538929,0.0156563902069973,0.011058956082024,-0.0126183330303215,-0.0116800364732838,0.00749454241968524,-0.008937038802254,-0.0202362555327161,0.000681596171915467,-0.0584187974613479,-0.0439444083748845,-0.00937826115836564,-0.00661714848560621,-0.285323109747699,-0.00561227374900957,0.0282446505575627,-0.0214620690453762,0.00328720031276002,0.00266926256563174,-0.0210367002891986,-0.0100325669519307,0.0261128109918125,-0.0228218567793578,-0.110349214354688,0.0579814840878287,-0.0145919306905203,0.0683365089075493,0.0333847162273365,-0.010026912824743,-0.00691953382463176,0.848147481043888,0.0169985522975538,-0.000940817471959727,-0.00225525805317499,0.00069168006958625,0.0126237281482153,-0.0177281543496147,0.00763451514920203,0.00829409783803272,0.029457035563024,-0.127432534060052,0.000126620186165099,-0.00715484518738845,-0.0815985204268167,-0.149610494685988,0.00116925499483978,0.166493403419175,0.127722541549876,-0.111958345979877,-0.00157810894664321,0.00943535954180198,0.045002984197094,0.0145290920846325,0.0104286232484398,0.0210980233729995,0.0260873800066506,0.0488533659774118,0.000536603224273121,0.0415516263959657,-0.0799954663758848,-0.0983424499529541,-0.00800941927032627,0.0845879765455696,-0.0488328546982697,-0.956548819672487]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 2}.C1"
+				},
+				"k_calmat2_c2": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat2_c3": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat2_c4": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat3_ang_min_az": {
+					"VALUE": -30,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.ang_min_az"
+				},
+				"k_calmat3_ang_max_az": {
+					"VALUE": 30,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.ang_max_az"
+				},
+				"k_calmat3_ang_min_el": {
+					"VALUE": -15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.ang_min_el"
+				},
+				"k_calmat3_ang_max_el": {
+					"VALUE": 15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.ang_max_el"
+				},
+				"k_calmat3_ctx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.801698718281017,0.00192625490527122,-0.0305208523793744,-0.000298350465298251,-0.0522620125943085,-0.0174635894234048,-0.0332545419713714,0.00679597511777631,2.77893717070318e-05,-0.108281128862248,-0.638568618750197,0.0111709502383481,0.000608091134555552,-0.0210549305835279,-0.0229620562964629,0.769551931155827],
+							[0,0.00915393031395341,-0.00498711402085924,0.0140537929047108,0.0801628194097877,0.999847499894084,0.0253285831713367,-0.00304593612700554,0.00088597142110564,-0.0299193814189451,0.759726244246306,0.0217176078297981,0.0152589738611541,-0.0109375955867325,-0.107065758547985,-0.620330447551393]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.Ctx"
+				},
+				"k_calmat3_crx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.910809068969088,-0.0110746804458584,-0.0238391878661145,0.0153843510468496,0.0110730195589398,-0.0803880390424968,0.0226341540008764,-0.0439935936391592,0.0147715445461268,0.0421503752189425,-0.87732017533108,0.0176585333611784,0.00110422337430392,0.0558800885892081,0.0991897095613953,-0.25703856291552],
+							[0,0.00622594834759236,0.0155686800040009,-0.0112434556860944,0.00707347794351464,0.922398921736432,0.011855612793506,-0.0127376158632468,-0.0149337398038974,0.0276282841938264,0.0916843323914355,-0.074566086099822,-0.0167759492779347,-0.038813514911443,0.00127298419710272,-0.966401147130075]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.Crx"
+				},
+				"k_calmat3_c1": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [16,16],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.711712440895064,-0.017874790669748,-0.0288892336309303,0.00651605498714875,-0.00565718993373254,-0.00710714625432786,0.00333416043370805,-0.0162918507480106,-0.0262986452265233,-0.00247098113975083,0.00378522252484144,-0.00362850641871751,0.000206873632706496,0.0235116598240457,0.000789738214301281,0.00174719231168455,0.0137780408739063,-0.064998815505677,0.00468770946783631,-0.0435087755309605,-0.00215768059556378,0.0131400708648721,0.00515183093694817,0.0203940175124087,0.00112233009837362,0.0133667034186033,0.00245661634831146,0.000649423424324379,0.0147379422247549,-0.0143227199896981,-0.00172409138620053,-0.00112960931648401,0.0213592725857924,0.0487026311254347,-0.713729285655833,0.00616302513302683,0.0172468448617286,-0.00464008025254307,-0.00430817809260798,0.0225381504184211,0.00158908130574562,0.01461894860481,0.0233366488112639,0.005410035648455,0.00542522373672095,-0.0230012922391983,0.00504932738256397,0.00154004157402465,0.00366477483652501,0.0464691779859766,0.0610280439517061,-0.196462344112645,-0.00215532410287492,0.00365443332429844,-0.00890623706936583,0.00542164084343644,-0.00878408859637523,-0.020669254210382,-0.00573586423609401,-0.00476605334775437,0.000132205555773558,-0.00323320953374626,-0.00624212890871833,0.0137209899619204,-0.0430451835040865,0.0194233497303472,0.00163887840239986,0.00316018253646166,-0.018800425584308,-0.00462763024904579,-0.0137357029127751,0.0211251410699754,-0.0284958977866694,0.00688392748682712,0.00376576332147534,0.00183056835011354,-0.0069161670077612,0.00218726276008085,-0.0032297879012831,-0.0024952297181581,0.0237248915442801,-0.0715008431211349,-0.0145430646942798,0.0120131933598235,0.00972339337453194,-0.912380658240757,-0.00430455336052718,0.0106779889677732,-0.0193682614501842,-0.0174706012781793,-0.000590068984275105,0.0121112689981768,-0.0026704757183195,0.00592088070116783,0.00246692186385678,-0.00141154045111546,0.000367384455423749,-0.00722104505886324,0.0477601069753868,0.0191215049924965,0.0112511569835514,-0.0288648768570916,-0.068135063927079,0.0613434115673321,0.0296083740690926,-0.049202210617564,0.0141443289628053,0.00617130076483496,0.00618746975065444,-0.0207140770821365,-0.00723071278102108,0.012317418526407,0.00162822991109394,0.000229386477914474,0.0081094038734576,0.152045410322452,0.0202479230097072,0.0466463506297313,-0.0247753106592603,0.975374039700954,-0.0179323941821022,-0.0207809432182971,-0.0186486161970867,0.0258344396889297,-0.0600050864904426,0.0079922276280954,0.000663455812125821,-0.00137037877829887,0.00315580608175504,-0.00552739330974442,-0.000313159464138272,0.00157697511728588,-0.0966199919381991,0.00479849081406129,-0.000606592492097094,-0.0135533804786601,-0.586185518193967,0.00518064675312856,0.00296289030582562,-0.00920096617656721,-0.00479607846393338,0.0218821797750957,-0.00524152523602103,-0.00290445176586455,-0.00779019591636677,-0.00505710173078998,0.0160965124686351,-0.0192566985081509,0.0235910129797206,0.0316939978990363,0.0055498618694453,-0.00154217273701733,0.00888380893960941,-0.647592340153268,-0.0376435656951488,0.0384513049609257,-0.00667315962332676,-0.0257723573255398,0.00113082097996401,-0.0170192268752584,0.000685825927522586,-0.0107151178422996,0.00256851651973428,-0.019197289743478,0.00149773023608195,0.00246522930466595,0.106079820249069,-0.0163314869981868,0.012899214940097,-0.0498175575999654,0.505241731830861,0.0365995823498656,0.0062625143696398,0.0367085365653924,-0.000888306993889621,0.00539250699787025,0.000602078574054871,-0.0077837398004887,0.00260426878109617,0.0153771379742524,0.000757021101531369,-0.00759727619166538,-0.0279726606537571,-0.0146534979416022,0.0160503106231528,-0.00851916349426117,-0.0771618023895044,0.858246038055977,-0.00425523507297884,0.0156440356410304,0.00506764741932925,0.0228190641566728,-0.00277050403783141,0.00316523753287181,-0.0116597908148206,0.0192593846402796,-0.0297089462671411,-0.00861124932545313,0.00462696383750362,-0.0160910113627206,-0.0364515377964519,-0.0176745537045048,-0.00323934935375604,0.00465142987304734,0.724234186479826,-0.00770599369381706,-0.00872498867364046,0.0107383590444327,0.00734682417832898,-0.0115468804185901,-0.00628283279811336,0.0366508903202898,0.00308602766534043,0.0290776941368802,-0.00952345637448183,-0.0156247216921298,-0.0034971279577878,0.100623233668553,-0.00534065919016663,-0.0106999538464277,-0.0413387054275901,0.497179607205479,0.0159826173544782,-0.0488202628075489,-0.0014003049450868,-0.00117960013479503,-0.0066573130687368,-0.00746669303065785,-0.00228998788091049,0.00199560936796227,0.0246325260720763,-0.0126328321997778,0.00995941271968123,0.00717934907560982,0.047027982981873,-0.0197672451038346,0.0041347753533453,0.0485083141190824,-0.604373414635645,-0.0292395913369021,-0.000314950829008288,-0.00176095421436744,0.00189062721101235,0.0213828327848172,0.00432981951370004,-0.00192473414887714,0.00384408253121762,-0.0259415352093719,-0.00236716475225988,-0.00981754113234498,-0.0179597632077073,-0.111443294595985,-0.0108037508852037,0.00763061089167978,0.0812314651255749,-0.765075792898954],
+							[0,0.0118959537119842,0.0101302012179088,-0.013110511049779,-0.0111113603296208,-0.0101898037566315,-0.00352967814925837,-0.000535464901992773,-0.0106318372955603,-0.00108166276394637,0.00240435071915756,-0.000128275462003251,0.0226439909800954,0.00469906710422747,-3.59824548592076e-05,-0.000710739242637027,0.0381660290311856,0.720937337733702,0.00315517129795367,-0.0182341616709351,0.0105318382169061,0.00789436115852047,-0.000238739182527771,-0.0155781089381222,0.00346294949434248,-0.0287552268620667,-0.00958225775976152,0.0033047541451775,0.0113023609665953,-0.0100656583100517,-0.00138287391409757,-0.00491251270594551,-0.00834925853861348,0.0170789989784216,0.0578835896611631,-0.0524940796295477,0.00918289535313633,-0.0238465263003192,-0.000537441195776393,0.00951478378167181,-0.00395041408168999,-0.00792717976374462,0.00509488999891863,0.00959734221873408,-0.00319718471921386,0.0134201438681884,-0.0112017511411534,-0.00438155470873186,-0.0138411603967729,-0.0255085833633894,-0.0177254218949283,-0.803255562061355,0.00214976945747996,-0.0164041955484733,-0.0107374850521351,0.00707414473744822,-0.00991025038296441,0.00533614485643899,0.00786276756989339,0.0283183759828392,-0.0189557702178591,0.0286048708343833,0.00263430523635386,0.00150702041139544,0.0709706727496541,-0.0127391053880243,-0.00525881391894318,-0.0157227708399255,0.890366496689839,-0.0177333161946148,-0.015240251221128,0.0117354362385706,0.00911040453843675,-0.00174007065187858,0.00172001422418531,-0.00144603164565232,0.0123913862280759,0.00166222833484873,0.000959142847357943,-0.00187434929350941,0.0112546214426937,-0.0527810853197347,-0.00911429817597537,-0.00357196001628075,-0.0131081996921712,-0.0925780339963892,0.00933055403524257,-0.0444675312338888,0.00515323190410432,-0.0239210949564877,0.0106493289257359,-0.00803835586984237,-0.000258408816450406,0.00754378446597375,-0.00517501912693847,0.00510649637088548,0.00521153650298446,0.00311154448191728,-0.0783808733685395,0.0217790672854069,0.0179230008033443,0.00832288750252968,-0.907766431225146,0.0110200299403856,-0.00780594807172669,0.0406075022094888,-0.0158071260622076,0.0367021480789521,-0.0069297936284801,0.0095139609178655,-0.00314524690308431,-0.00496603590709898,-0.00053808166061302,0.00476287704474474,0.00353214277439181,0.00391654563900603,0.00629179383489972,0.068601159456613,0.101728245751578,-0.220557209534036,0.00907334433454558,0.0116754362693939,-0.00842881496708181,0.0412247649974231,-0.0195832465181365,0.0105165915679095,-0.00716173896791368,-0.00293289121534539,0.00315849165537873,0.00889658194193342,0.003552536335924,-0.00772255724582735,-0.0220730808062645,0.0173022762059293,0.00136601889917053,0.0129708824326197,0.681095865112054,-0.0197349160819707,-0.0252637922099765,0.0187990142743752,0.0402584914641632,-0.0201872098663765,-0.00275003977103132,0.00428841738076825,-0.00669742178260885,-0.0109194981691083,-0.000822256385188331,-0.0320854114082619,0.00703100600459411,-0.0975943151271878,-0.0201757113552212,0.00409674229826175,0.00448247061016683,-0.638936204782885,-0.00105495999832981,-0.0130465673674488,0.0166031909968256,0.0109501199564206,-0.00344338534811059,-0.00156099062258062,0.000771325503408761,-0.00103989215311639,0.000925787335409338,0.0168483363740203,-0.00146674789005227,-0.00944540592462917,0.0181736433064709,0.00606346110087872,0.0249460657581961,0.00194346911056589,-0.725811762380043,0.0574454590739316,-0.011085654251949,-0.0350054602578802,-0.0263502116690791,-0.0401991105720777,-0.000573576881549962,0.00238005542268665,0.000718491865944053,0.0131338145747173,-0.00414562619041835,-0.004688538506504,-0.00784197161035755,0.137745166640132,0.00488450128603896,0.0634867610662571,0.0652640531697418,0.420317194546027,-0.0227149021029733,0.0268919735384388,0.0178980491062773,-0.0340606702473582,0.0169099815281572,0.000858142575171729,-0.0219740533886816,-0.0122025676759669,-0.00876491299243892,-0.00247322436689368,-0.00785855353490134,-0.00828663269733199,-0.101345405091883,0.0296641710796772,0.001573315941705,0.00383985212421505,-0.601095121438903,-0.00473642190724901,0.0251835983236254,-0.0199090336379134,0.00843820267687211,-0.00121476445967715,-0.0269511559779929,-0.0368543996831478,3.47378891817858e-05,-0.0147766057132049,0.0115901400958564,-0.0155036369121697,0.0166037761819053,0.0119576427931167,0.00196875992696295,0.0188479406698169,-0.0173857456597152,0.800376949344899,-0.00623973452791962,0.0138323290466386,-0.00106480399466174,0.00542380530537074,-0.0104418748370866,0.0153732281791461,0.00317435259589957,-0.0171159928689287,0.0158269046704802,-0.0144228404148345,-0.00805404928731248,-0.0256291409655279,0.107335578498755,-0.0285515254388299,-0.0191890401361061,0.0033941317957768,0.57697993082222,-0.0813870157472373,0.000814947130647224,0.001196175411525,0.00506401182585902,0.00789125069348798,-0.00227022069330329,-0.00752631728303532,0.00391799267351655,0.0221049667697733,-0.00456173861173728,-0.0114540373700104,-0.00940427974178752,0.0698961624163648,-0.0220101189659081,-0.0500307188111599,-0.0530543359581389,-0.577598340947155]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 3}.C1"
+				},
+				"k_calmat3_c2": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat3_c3": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat3_c4": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat4_ang_min_az": {
+					"VALUE": 25,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.ang_min_az"
+				},
+				"k_calmat4_ang_max_az": {
+					"VALUE": 75,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.ang_max_az"
+				},
+				"k_calmat4_ang_min_el": {
+					"VALUE": -15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.ang_min_el"
+				},
+				"k_calmat4_ang_max_el": {
+					"VALUE": 15,
+					"DATA_TYPE": "float",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.ang_max_el"
+				},
+				"k_calmat4_ctx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.817376837759366,0.0469857201787796,-0.0192877243251157,0.0127009743038273,-0.037277013381175,-0.092670380720502,0.00100138288140053,-0.000996387267978712,-0.00301888198588463,-0.0421262272494922,-0.70883282588488,-0.0217893665865481,-0.015093748796553,-0.00711933800061416,0.0202651666951418,0.845450355792861],
+							[0,0.0416797406346442,0.00734269993605486,0.0133464170533155,0.0256864530692237,0.995696841682807,0.0614809810904875,-0.0283504376320011,-0.00697720838185421,0.00301211144211312,0.695453358611889,-0.0277434362581936,0.00466025391585513,-0.00767712065228961,-0.03275851244116,-0.52418615379139]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.Ctx"
+				},
+				"k_calmat4_crx": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [4,4],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.918029815274843,0.0212875943176442,-0.0317074618970279,0.0147540927365646,-0.00591857739603129,-0.136165779894849,0.036045570349896,-0.0422813347176246,0.0244468752460357,0.0106233874814033,-0.900180888023372,-0.0204638912269171,0.0130182045095531,0.0338884582960594,0.0545219967698514,-0.120200141622445],
+							[0,-0.00202751100815571,0.0202469310194139,-0.0129961311659348,0.0278735859091741,0.894690371439292,-0.0395139594062739,0.0115255750353466,0.0105667835659457,0.0317426907130759,-0.0123483622584286,-0.0439747793556823,0.0209737921807041,-0.0285916943395274,0.0270765261092203,-0.99274967940259]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.Crx"
+				},
+				"k_calmat4_c1": {
+					"VALUE": {
+						"_ArrayType_": "double",
+						"_ArraySize_": [16,16],
+						"_ArrayIsComplex_": true,
+						"_ArrayData_": [
+							[0.759180605250305,0.0170352659113791,-0.0421551047053615,0.0346934586140951,0.0367551268765977,-0.0208799335568388,0.0178260402307154,-0.0369526304011953,0.00131966152372619,0.0159873897585431,-0.00448754939780596,0.00511911064330855,0.0243380184796993,0.0124867661008519,-0.00260423262988486,-0.00167036310061106,0.0101240917320371,-0.147498251396922,0.0350101334969772,0.00044134417299844,-0.0496214326897577,-0.0410282397021195,0.000735569772489234,-0.00583014694332627,0.00150734805186937,0.0310608374495224,0.00535497393357173,0.0125602741956426,0.00354137754492193,-0.0223066441663632,-0.00619652485869073,0.00602096106126441,0.0227961118793153,0.0154807917273898,-0.735644493322422,0.00532051917157528,0.0163322099446708,-0.0109312705106877,-0.0657508288818779,0.0512061396140689,-0.0052115171091343,-0.023681834975294,0.0154333010654821,-3.147980722377e-05,0.0108235875582308,-0.0222846650937027,0.0018432256029031,-0.000784221637030619,0.00312409528340302,0.0465769682000247,0.0402863546968532,-0.10263022159532,0.0106518454372981,0.00275584346214145,-0.0105602137639336,0.0398443918784006,0.0223512077986752,0.0416556061250992,-0.0121939613904489,-0.00577041545348975,-0.0177477552042243,-0.00233493510744328,0.0143934083857589,-0.00178544610953858,-0.0435945285198061,-0.000130551519711923,-0.00661842168982486,0.00860555527767525,-0.0837996404247702,0.00363813047269455,-0.00981927547018387,0.0141924060019296,0.0399996176765503,-0.0214736706415659,0.00164209677604509,-0.00572061710714419,-0.00811068471773209,-0.0185035571424447,0.00204514491296728,-0.00298042100539317,-0.00454996776501517,-0.0453789675089677,-0.046304150893227,0.0120030687812142,-0.0666390778464455,-0.913712221944302,0.00479069954385096,0.00284110299569588,-0.012575620810265,-0.0657842667141599,-0.0369044445276338,0.0380908824623594,-0.00709956953465726,0.00580940805060323,-0.00949653829228478,0.00823802472721244,-0.00634291128286136,-0.00379284704891927,0.0287806386332095,0.0123068054179116,0.0101562842082861,-0.0155501945884713,0.0946437407237247,0.00492440348248669,0.00280284366440395,-0.045771974859572,-0.0214328537024629,0.0480884190727592,0.0122635846803519,0.0165075141802454,0.0052099790272672,-0.0221529916345769,0.000724078296747835,-0.0101243660588231,-0.00668169667710661,0.00408694220697763,0.0156575468461898,0.0349841476567603,-0.0200673728682678,0.999190014012025,-0.0152591907825201,0.00802997251143197,-0.0307546818669928,0.047159558267929,-0.0229806033628911,-0.0316111955608253,0.0130607883768026,-0.0147955828474972,0.00566686296280149,-0.00167812590382418,-0.000982561275246932,0.00421614175784062,-0.0660999315281308,0.0178051761860562,-0.00813812146522496,-0.00904321092988992,-0.693720909540377,-0.00741767532157691,0.00521386349412628,-0.0112266503126818,-0.0489660384672216,0.0114252202276286,0.00749110301237301,-0.00798379900901532,-0.00128572133278183,-0.00515398633744269,-0.0324071398253193,-0.0627042223078251,0.00774284879762259,0.0126930632954948,0.0306808012131202,0.0371383328337879,-0.0391541668424015,-0.530333143700233,0.00471503003951035,0.0319264371917937,-0.031995827837259,0.049036390975085,-0.00730920391669853,-0.0319435203360926,-0.00219790691193447,-0.00143996248495259,0.00937496746975558,-0.0485611791159464,0.00177834070348916,0.00642362400884822,0.0336862318771737,-0.0146926894834009,-0.0266266299337754,-0.0398556740091044,0.662381267945567,-0.0105324017000789,-0.00801528182583024,0.0158792344542534,0.0486865515618382,-0.0171731392918256,0.000653613407056666,0.00182964339255839,-0.00967017095042601,0.0113421711458187,-0.00553365598459732,-0.00330367878987673,-0.0515146822117234,0.0181692304830443,9.94861734788395e-05,0.0384368630430914,-0.0758765361176168,0.772930726556548,0.00373908678425692,0.00880770992772234,0.0373832332153639,-0.0178905360354877,-0.00133046575378796,-0.00641730240874287,0.0096972230371841,-0.0108739917860859,-0.0186632095161139,-0.00421480714878,0.0158412558296279,-0.00205597514390456,0.00611700703494438,0.00141581964149189,-0.000458752726236177,0.018071879571634,0.797510315954083,-0.0189880028365408,-0.00861230990270767,0.0151858506609245,0.00370100484335307,-0.0128719346787988,0.0385575615297274,0.00757976516807483,0.00230674664587304,0.0117443927204662,0.0409632695292928,-0.0966098424760183,-0.00656392138552525,0.0177153610951705,0.000328448674261191,-0.0150585866490262,0.0148395536136291,0.330730607165197,0.0157480556799497,-0.0159325446041145,0.0021281667663991,-0.000212845302472764,-0.00137702342225476,0.0173128438446648,0.00711696210200762,-0.0102717289198487,0.0230197204832585,0.0150771365507735,0.0119957383695062,0.0319162051923886,-0.00458045880464763,-0.0325513642460415,0.0187046584431463,0.0586643940372996,-0.734209256130113,-0.0494057268169219,-0.000683812674406106,-0.000908053286145606,0.00595545516785471,0.0173914784006184,0.00558217674356968,-0.0114226545744562,-0.00357174425224149,-0.0290527474121844,0.0084405699310137,0.0041238034039926,-0.0291944197058421,-0.0410948647265871,0.0087554311082294,0.0143034234555018,0.0928899876142613,-0.608838012468075],
+							[0,-0.0203948415986878,0.0222318715526642,-0.0238195713453926,-0.0132287689840554,-0.00882109340570301,0.00944429217910391,-0.0330435862753821,-0.0113734788268983,-0.0383742068177836,-0.00803653846124203,0.00222002538219311,-0.00109812170232301,-0.0163346546803203,0.0032318161877315,-0.00210004187073334,0.0226849429538639,0.735359563542324,-0.00232514227700626,0.00231816513018705,0.0515671903667374,0.0425225192628864,0.0274571781922319,-0.0134598527628774,0.0409137892173367,-0.0376276631390415,0.00600481412310301,-0.00492485215740706,0.00800084777982888,0.0246706945435693,0.0033563218585563,-0.00663370472732808,-0.00479068729566783,0.047004333028131,-0.0257917328035831,-0.0410173933401805,0.0122976778084609,0.000261228393196584,-0.00074583007015423,0.0179187440749226,0.0133021440582377,-0.00854132329670403,0.0238231511211312,-0.0198364896546534,0.00588430164703239,-0.00314133287301911,0.00223930419905145,0.0110964512689063,-0.00905715388410251,-0.012888252193323,0.000407736069634923,-0.797905897712047,0.00367556481831476,0.00832586099735991,0.0135488126661512,-0.00713205144106748,-0.0174308040679316,0.0156938294882901,-0.00367180835417514,0.00743555969933168,0.0230473339518718,0.0237210999209144,0.00158438132319912,0.00219373317439346,0.0367635388090995,0.0067058067988734,-0.00497207475163258,-0.0222568109754621,0.931926532102343,0.0443424763505218,-0.00623649456635276,0.0282432191270396,0.0246771635720868,-0.0346243656842939,0.0101223255947312,-0.0201470411822929,-0.0153027472311549,0.0243505923200039,0.00475046253169596,-0.00552492625523158,-0.00531112086960559,-0.0508894811141776,-0.0334433166039641,-0.0182244435129583,0.043820106970387,-0.209886677899668,0.0425967468219043,0.00372553259265994,-0.0260530662004165,0.0241111630900109,0.0272254933466605,-0.0180744232439215,-0.0195393071368748,0.0112955739650679,0.00808110030951707,0.00181682583362803,0.00421961320446787,0.00179404190715712,-0.0147972848348709,-0.00727796819034535,0.0140981127060668,0.0317763510840193,-0.913502927593805,0.0303020194325387,-0.0350960926214991,-0.0114528989423443,-0.042523815757005,0.0511896628940355,-0.0199437495426413,0.0406820379832091,-0.00177621086142871,-0.00759442635187161,0.00609702883110779,0.00613043190979542,0.0203090675919704,0.0426764693305866,0.0144015917176728,0.0580335901078108,0.102153906376868,-0.0402407243802715,-0.0137624789347994,0.0523256395491836,0.0259221504267281,0.0197620163632702,0.0114473393000474,0.0197116576649013,0.018753887026453,0.0274316349036284,0.000895119466115242,-0.00296339466855523,0.0287072067815202,-0.00275899205876607,-0.0183739128664604,-0.0113175892426366,-0.00339786519972487,0.0042612590704955,0.62983243613899,0.0040155444592051,-0.0399451863537669,0.020599002402888,-0.0228787132158308,0.0245206949266306,-0.00344893610198145,0.0155462605562311,0.00135495181508444,0.00557374191105307,-0.0256857488451275,0.0720810464773245,-0.0191095048817073,-0.0543385780159495,-0.0609712697773696,0.037476345801064,-0.00445974411561159,-0.657092834804615,0.0362867454916616,-0.0142536206427054,0.016195688349077,-0.0299787721678909,-0.00668064653786331,0.0144514390522152,-0.00564829712005977,-0.00158349771637116,-0.00422854684372136,0.00828009436112445,-0.00515259982039979,-0.0203166373111892,-0.0122296726394735,0.0274175022586728,0.025030350516622,0.0244258854767978,-0.628027454885512,-0.0302679769650224,0.00492891884538457,0.0171627328147304,0.0351166309160199,-0.0573082560130316,-0.000470674357298207,-0.000981184291463677,0.000404329850993916,0.0397484545112131,0.00122170349550022,-0.0120696269982482,0.00999700913833675,0.0238396298004199,0.0216770705145198,0.0686206752991826,0.0730838628724667,0.586044829860089,0.0152036878304256,-0.00883147912892503,-0.0104865059723548,0.00748631695637289,0.0143320548346883,0.00220348336523936,-0.00847078106292836,0.0111246641084684,-0.00391475258056656,-0.00563689310237831,-0.00160887790494871,-0.0167936057213893,-0.0491575509677885,0.0116587593396467,-0.0267713958067401,0.0034110783306344,-0.500516291161904,0.00154875396211784,0.0321427862104868,-0.022816543751505,0.00305684680195752,-0.00129077614141661,-0.00778792351936693,-0.00139647531522317,0.000306400036112038,-0.035372779932512,-0.060892775139242,-0.0839223319288062,0.00783018580974035,-0.0241319124684292,0.000730295226743511,0.00214655346779551,-0.00724406909856897,0.750327235271488,-0.015543672779858,0.00212032487427006,-0.000921746373646994,0.00866210760479261,-0.0116897405090448,0.0196363971457446,-0.00661920495862859,0.0144809034518086,0.0346664904971433,-0.0401954348228668,-0.000396088254836524,-0.0223941519532717,0.0259028731582378,-0.0178614357998113,-0.0241451154241972,0.00856931644218393,0.440341232795031,0.00626236274692881,0.0020219751431593,0.00297364217080054,-0.0100876550008812,0.0095633158965763,0.00157929083809033,0.00267368471734943,0.0133119863736332,0.0540901696173779,0.000562486898504758,-0.0256070356066985,-0.0182472548893506,-0.0156270947269352,-0.0249152699036759,-0.028953513955875,-0.0522310058642488,-0.706320345365427]
+						]
+					},
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.calmat{1, 4}.C1"
+				},
+				"k_calmat4_c2": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat4_c3": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"k_calmat4_c4": {
+					"VALUE": [
+						[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+					],
+					"DATA_TYPE": "cfloat",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				}
+			},
+			"MMIC_Monitoring": {
+				"Cal_Type": {
+					"VALUE": 6,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"version": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Size": {
+					"VALUE": 72,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"flag_MMIC_Monitoring_Complete": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.enable"
+				},
+				"loopbackPowerRF1": {
+					"VALUE": 18,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.loopbackPowerRF1"
+				},
+				"loopbackPowerRF2": {
+					"VALUE": 18,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.loopbackPowerRF2"
+				},
+				"loopbackPowerRF3": {
+					"VALUE": 19,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.loopbackPowerRF3"
+				},
+				"rxGainVal": {
+					"VALUE": [476,476,474,465,478,478,477,466,482,482,480,468],
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.rxGainVal"
+				},
+				"rxPhaseVal": {
+					"VALUE": [52570,52630,52424,50530,51828,51826,51496,49826,51222,51160,50726,49304],
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.rxPhaseVal"
+				},
+				"rxNoisePower1": {
+					"VALUE": 1039104990,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.rxNoisePower1"
+				},
+				"rxNoisePower2": {
+					"VALUE": 1038022622,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Monitoring.rxNoisePower2"
+				}
+			},
+			"MMIC_Calibrations": {
+				"Cal_Type": {
+					"VALUE": 7,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"unused2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Compatibility": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"version": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Section_Size": {
+					"VALUE": 1228,
+					"DATA_TYPE": "u32p0_T",
+					"COMMENTS": "update automatically",
+					"LINK": "",
+					"DICT": ""
+				},
+				"Header": {
+					"VALUE": "",
+					"DATA_TYPE": "H3_Hdr_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": ""
+				},
+				"flag_MMIC_Calibration_Complete": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.enable"
+				},
+				"numOfChunk_1": {
+					"VALUE": 3,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.numOfChunk_1"
+				},
+				"chunkId_1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.chunkId_1"
+				},
+				"calData_1": {
+					"VALUE": [224,4,0,128,224,4,0,128,15,0,0,0,252,15,0,0,30,0,30,0,65,2,0,0,253,3,0,0,31,23,30,27,0,0,67,255,0,0,234,255,0,0,79,0,0,0,251,255,30,7,89,0,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,30,0,168,1,132,1,109,1,95,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,30,0,7,15,17,39,41,72,7,15,17,39],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calData_1"
+				},
+				"numOfChunk_2": {
+					"VALUE": 3,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.numOfChunk_2"
+				},
+				"chunkId_2": {
+					"VALUE": 1,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.chunkId_2"
+				},
+				"calData_2": {
+					"VALUE": [41,72,7,15,17,39,41,72,7,15,17,39,41,72,7,15,17,39,41,72,7,15,17,39,41,72,7,15,17,39,41,72,7,15,17,39,41,72,93,255,226,255,244,255,79,0,88,0,138,0,128,255,229,255,249,255,78,0,86,0,137,0,114,255,228,255,245,255,80,0,84,0,139,0,129,255,226,255,243,255,75,0,82,0,138,0,86,255,225,255,247,255,79,0,87,0,142,0,127,255,233,255,254,255,85,0,94,0,140,0,138,255,227,255,237,255,79,0,87,0,139,0,94,255,231,255,251,255,81,0,88,0,139,0,1,0,0,0,64,1,251,255,64,1,25,0,64,1,230,255,64,1,11,0,64,1,249,255,64,1,255,255,64,1,248,255,64,1,250,255,4,1,19,0,66,1,255,255,64,1,0,0,0,0,0,0,0,0,255,255,2,1,10,0,2,1,249,255,8,1,0,0,0,0,0,0,0,0,237,255,2,1,239,255,68,1,228,255,4,1,0,0,0,0],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calData_2"
+				},
+				"numOfChunk_3": {
+					"VALUE": 3,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.numOfChunk_3"
+				},
+				"chunkId_3": {
+					"VALUE": 2,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.chunkId_3"
+				},
+				"calData_3": {
+					"VALUE": [0,0,0,0,242,255,64,1,20,0,4,1,0,0,64,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,64,1,6,0,2,1,7,0,64,1,22,0,64,1,18,0,64,1,254,255,64,1,19,0,66,1,238,255,2,1,0,0,0,0,0,0,4,1,8,0,64,1,252,255,2,1,30,0,122,6,0,0,0,0,0,0,0,0,216,6,0,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,0,0,19,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,50,7,218,6,37,7,17,7,198,6,212,6,34,7,212,6,0,0,0,0,0,0,158,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calData_3"
+				},
+				"txIndex_1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.txIndex_1"
+				},
+				"calibApply_1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calibApply_1"
+				},
+				"observedPhShiftData_1": {
+					"VALUE": [0,0,27,0,48,0,66,0,82,0,96,0,109,0,122,0,133,0,145,0,156,0,169,0,183,0,198,0,215,0,235,0,5,1,30,1,49,1,65,1,79,1,91,1,102,1,113,1,123,1,133,1,143,1,155,1,167,1,181,1,197,1,216,1,242,1,13,2,33,2,51,2,66,2,81,2,93,2,105,2,117,2,128,2,140,2,152,2,165,2,181,2,198,2,218,2,244,2,13,3,33,3,51,3,67,3,81,3,95,3,107,3,119,3,132,3,144,3,157,3,172,3,188,3,206,3,228,3],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.observedPhShiftData_1"
+				},
+				"reserved_1": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.reserved_1"
+				},
+				"txIndex_2": {
+					"VALUE": 1,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.txIndex_2"
+				},
+				"calibApply_2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calibApply_2"
+				},
+				"observedPhShiftData_2": {
+					"VALUE": [0,0,27,0,48,0,66,0,82,0,96,0,109,0,122,0,133,0,145,0,156,0,169,0,183,0,198,0,215,0,235,0,5,1,30,1,49,1,65,1,79,1,91,1,102,1,113,1,123,1,133,1,143,1,155,1,167,1,181,1,197,1,216,1,242,1,13,2,33,2,51,2,66,2,81,2,93,2,105,2,117,2,128,2,140,2,152,2,165,2,181,2,198,2,218,2,244,2,13,3,33,3,51,3,67,3,81,3,95,3,107,3,119,3,132,3,144,3,157,3,172,3,188,3,206,3,228,3],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.observedPhShiftData_2"
+				},
+				"reserved_2": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.reserved_2"
+				},
+				"txIndex_3": {
+					"VALUE": 2,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.txIndex_3"
+				},
+				"calibApply_3": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calibApply_3"
+				},
+				"observedPhShiftData_3": {
+					"VALUE": [0,0,27,0,48,0,66,0,82,0,96,0,109,0,122,0,133,0,145,0,156,0,169,0,183,0,198,0,215,0,235,0,5,1,30,1,49,1,65,1,79,1,91,1,102,1,113,1,123,1,133,1,143,1,155,1,167,1,181,1,197,1,216,1,242,1,13,2,33,2,51,2,66,2,81,2,93,2,105,2,117,2,128,2,140,2,152,2,165,2,181,2,198,2,218,2,244,2,13,3,33,3,51,3,67,3,81,3,95,3,107,3,119,3,132,3,144,3,157,3,172,3,188,3,206,3,228,3],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.observedPhShiftData_3"
+				},
+				"reserved_3": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.reserved_3"
+				},
+				"txIndex_4": {
+					"VALUE": 3,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.txIndex_4"
+				},
+				"calibApply_4": {
+					"VALUE": 0,
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.calibApply_4"
+				},
+				"observedPhShiftData_4": {
+					"VALUE": [0,0,27,0,48,0,66,0,82,0,96,0,109,0,122,0,133,0,145,0,156,0,169,0,183,0,198,0,215,0,235,0,5,1,30,1,49,1,65,1,79,1,91,1,102,1,113,1,123,1,133,1,143,1,155,1,167,1,181,1,197,1,216,1,242,1,13,2,33,2,51,2,66,2,81,2,93,2,105,2,117,2,128,2,140,2,152,2,165,2,181,2,198,2,218,2,244,2,13,3,33,3,51,3,67,3,81,3,95,3,107,3,119,3,132,3,144,3,157,3,172,3,188,3,206,3,228,3],
+					"DATA_TYPE": "u8p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.observedPhShiftData_4"
+				},
+				"reserved_4": {
+					"VALUE": 0,
+					"DATA_TYPE": "u16p0_T",
+					"COMMENTS": "",
+					"LINK": "",
+					"DICT": "USC.MMIC_Calibrations.reserved_4"
+				}
+			}
+		},
+		"History": {
+			"Current": {
+				"log1": {
+					"VALUE": " "
+				}
+			},
+			"V1_72_0_0": {
+				"V1_72_0_0_log1": {
+					"VALUE": " "
+				}
+			},
+			"V1_72_0_4": {
+				"V1_72_0_4_log1": {
+					"VALUE": " "
+				}
+			},
+			"V1_72_0_5": {
+				"V1_72_0_5_log1": {
+					"VALUE": " "
+				}
+			},
+			"V2_72_0_1": {
+				"V2_72_0_1_log1": {
+					"VALUE": " "
+				}
+			},
+			"V2_72_0_2": {
+				"V2_72_0_2_log1": {
+					"VALUE": " "
+				}
+			},
+			"V2_72_0_3": {
+				"V2_72_0_3_log1": {
+					"VALUE": " "
+				}
+			}
+		}
+	}
+}
