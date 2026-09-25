@@ -1,0 +1,14 @@
+---------------------------------------------------
+	BORDNET TOOL   Release Notes 
+---------------------------------------------------
+This document provides a summary of BORDNET TOOL.
+--------------------------------------------------------------------------------------------------------------
+Release Version	: 1.0.0.0
+Release Date	: 29-07-2025
+
+Features:
+- Supports the decoding of below protocols in Windows & linux
+- CEER PCAN  - V1, V2
+Known issues:
+- Tool cleanup is pending
+--------------------------------------------------------------------------------------------------------------
