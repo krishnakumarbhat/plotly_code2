@@ -1168,3 +1168,5665 @@ Top-level: `Application/{F360Tracker/{F360TrackerLib,olp,OLP_Core,rspp,VSE_Core,
 ---
 
 *Appendix C generated 2026-09-24 from `git show`/`ls-tree` against pinned refs. Refresh: re-run the same commands after `git fetch`.*
+
+---
+
+## Appendix G — GHE migration code atlas, latest-only shallow pulls (2026-09-25)
+
+Source: root `github/` (14 repos, 132 branch snapshots, `GIT_LFS_SKIP_SMUDGE=1`, `--depth 1`).
+Nested `.git` dirs stripped for push; full histories remain on GHE (primary).
+56 secret-bearing files quarantined from pushes (coverity/JFrog/atlassian tokens) — present locally only.
+Per-branch SHAs: `github/<repo>/_BRANCH_CATALOG.txt`. Empty-main repos (sensor-model) must be entered via named lines.
+
+## G.5 Core_Radar_Gen8_iND13400 — Gen8 radar FW + SiL (10 of 573, latest-only)
+**What it does:** Gen8 (iND13400/R52 + BBE32) radar firmware, AUTOSAR integration, SiL wrappers
+(RSP-SIL), stream definitions, and tooling. The 573-branch upstream collapses to: `dev` integration,
+release train v5.1→v7.0 (keep latest v7.0.x + v6.1.x for drift studies), EmbLib v7, RSP-SIL 3.1.119,
+RESI support, HLR-1436 fusion experiment, CUW-5824 fast-resim AF integration.
+**Key areas:** `software/{r52,bbe32}/` FW + `autosar/` (GenData, SWCs, SIP), `sil/emb_lib/` +
+`sil/rsp_sil/` (AF/RDU SIL interfaces, `fast_resim/` on CUW line), `GEN8/GPO/*` stream headers
+(DETECTION/RDD/TOI/ALIGNMENT matrices), `tools/{python,CI/WRSD,lauterbach,coverity}/`,
+`tools/ITF/` specs, per-OEM DBC inputs.
+**Research hooks:** release-train pairs give version-drift corpora; RSP-SIL + fast-resim lines are the
+SiL-vs-target fidelity experiment; stream headers are the schema source for UDP-decoder work.
+
+<details><summary>Core_Radar_Gen8_iND13400 — exhaustive file inventory (representative branch)</summary>
+
+# Core_Radar_Gen8_iND13400 — exhaustive code map (representative branch: `dev`)
+
+Branches pulled: `dev`, `feature__CUW-5824-Fast-Resim_AF-Integration`, `feature__EmbLibv7.0.x`, `feature__RESI_Support`, `feature__RSP_SIL_3.1.119`, `release__v5.1.x`, `release__v6.0.x`, `release__v6.1.x`, `release__v7.0.x`, `story__HLR-1436-fusion-exp`
+Total files in `dev`: ~3125
+
+## README
+# Gen8 iND13400 Repository
+
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
+This repository stores the Gen8 code for the indie **iND13400** microcontroller.
+
+**Repository:** <https://aptv.ghe.com/GPO/Core_Radar_Gen8_iND13400>
+
+---
+
+## Table of Contents
+
+| Section | Contents |
+| --- | --- |
+| [Repository Setup](#repository-setup) | `repo_init.py`, Python requirements, `.netrc` credentials |
+| [Git Submodules](#git-submodules) | Submodule list, init helper script, updating, troubleshooting |
+| [Hardware Compatibility Matrix](#hardware-compatibility-matrix) | Bootloader / hardware / branch compatibility |
+| [Committing Changes and CI Checks](#committing-changes-and-ci-checks) | GitHub Actions pipeline, Verified, Build, Coverity, Unit Test, Smoke Test, Dev vs. Release macros |
+| [Building the Gen8 Code](#building-the-gen8-code) | Bazel/Bazelisk, variants, build commands |
+| [Conditional Build Flags](#conditional-build-flags) | All optional build flags and their defaults |
+| [Build Troubleshooting](#build-troubleshooting) | Long paths, corrupt cache, remote cache |
+| [Unit Tests and Coverage](#unit-tests-and-coverage) | GoogleTest, coverage reports |
+| [Coverity](#coverity) | Build, analysis, desktop analysis |
+| [compile_commands.json for TiCS](#compile_commandsjson-for-tics) | Generating the compilation database |
+| [Defining Macros in .bazelrc](#defining-macros-in-bazelrc) | Preprocessor macro syntax |
+
+---
+
+## Repository Setup
+
+### Overview
+
+A script called `repo_init.py` is stored at the base of this repository.
+**It should be called each time this repository is cloned.**
+
+### What it does
+
+1. Verifies a compliant version of Python is used and downloads the required Python packages.
+2. Installs the required pre-commit hooks for this repository. These are verified via CI.
+3. Creates/updates a `.netrc` with the credentials required for building the project (see [.netrc Credentials](#netrc-credentials)).
+
+### Requirements
+
+| Item | Value |
+| --- | --- |
+| Minimum Python version | 3.7 |
+| Recommended Python version | 3.10 (the version the scripts are tested with) |
+
+### How to Run
+
+Open a command prompt and run the following from the root of the repository:
+
+```bash
+python repo_init.py
+```
+
+### .netrc Credentials
+
+Credentials to various tools are required as part of the build and setup processes. The `.netrc` file is used to provide those credentials to those processes.
+
+`repo_init.py` *may* ask you to provide your username and API key / password to populate the `.netrc` file. This file is stored locally in your machine's Home folder.
+
+> [!TIP]
+> Use an **API key** instead of your password — otherwise your raw password is stored in the `.netrc` file on this machine.
+> API keys can be generated from the web GUIs of each individual tool. See the [Adv Active Safety SW/SYS Git Gerrit Wiki](https://tinyurl.com/advSysSwGitGerritWikiApi) for instructions.
+
+> [!IMPORTANT]
+> You must re-run this script whenever your password updates (once per user, per machine) — unless you use API keys.
+
+**Private registry errors:** private GitHub Enterprise registries return `404 Not Found` when credentials are missing or lack read permission. Bazel reports this as:
+
+```text
+module <name>@<version> not found in registries
+```
+
+…even when the module exists. If a module is available only from `raw.aptv.ghe.com`, run `python repo_init.py` and verify that the supplied credentials have access to the GPO Bazel registry.
+
+---
+
+## Git Submodules
+
+This repo contains several Git submodules. Functionally, these are nested Git repositories where this (parent) repo keeps track of which commit to check out in the sub (child) repositories. Git does **not** check out or update these child repositories automatically — it must be triggered by the user.
+
+Check the `.gitmodules` file for the full list of currently configured repositories.
+All submodules are hosted on Apt
+
+## Directory tree (depth 3)
+- `.github/`
+  - `actions/`
+    - `configure-bazel-cache/`
+    - `configure-netrc/`
+    - `pr-status-comment/`
+    - `publish-build-metrics/`
+    - `publish-coverity-metrics/`
+    - `publish-jsonl-to-postgres/`
+    - `publish-smoke-metrics/`
+    - `publish-ut-metrics/`
+    - `run-quickflash/`
+    - `setup-bazelisk/`
+    - `setup-coverity-auth/`
+    - `update-failure-label/`
+  - `agents/`
+  - `docs/`
+  - `instructions/`
+  - `prompts/`
+  - `skills/`
+    - `bazel-build/`
+    - `codex-catalog-info/`
+    - `coverage/`
+    - `debug-wrsd-failure/`
+    - `gerrit-api/`
+    - `ipc-streams/`
+    - `swe5/`
+  - `workflows/`
+    - `UnUsed-Workflows-As-of-Today/`
+- `.mcp/`
+- `coverage/`
+- `docs/`
+- `grafana_config/`
+- `sil/`
+  - `emb_lib/`
+    - `boost_pfr/`
+    - `build_bin/`
+    - `can/`
+      - `customer/`
+    - `docs/`
+    - `ff_emb_lib/`
+      - `customer/`
+      - `olp/`
+      - `sfl/`
+    - `hdf5/`
+      - `linux/`
+      - `mingw/`
+    - `kpi/`
+    - `mdf_lib/`
+      - `mdf_includes/`
+    - `plp_sync/`
+      - `docs/`
+    - `profile_timing/`
+    - `rsp_emb_lib/`
+    - `sil_source/`
+      - `customer/`
+      - `inc/`
+      - `sil_engine_headers/`
+      - `src/`
+      - `test/`
+    - `someip/`
+      - `customer/`
+    - `streams/`
+    - `timer/`
+    - `toolchains/`
+      - `gcc/`
+      - `mingw/`
+    - `tracker_emb_lib/`
+    - `udp/`
+    - `vse/`
+  - `rsp_sil/`
+    - `data_bin/`
+      - `flr8/`
+      - `psp_data/`
+      - `srr8p/`
+    - `main/`
+      - `building_block/`
+      - `rsp_wrapper_interface/`
+      - `sil_wrapper_interface/`
+    - `parser_script/`
+      - `PSP_parser_script/`
+- `software/`
+  - `bbe32/`
+    - `Cust/`
+      - `OLP/`
+      - `OLP_Wrapper/`
+      - `SFL/`
+      - `SFL_Wrapper/`
+    - `Ra_fault_injection/`
+      - `test/`
+    - `TOI_char_quality_determination/`
+      - `TOI_char_quality_determination/`
+      - `test/`
+    - `adc_logging/`
+      - `mocks/`
+    - `bb_cfg/`
+    - `bbe32_static_register_validation/`
+      - `test/`
+    - `bbe_self_test/`
+      - `test/`
+    - `capability/`
+      - `test/`
+    - `dss_ecc_parity/`
+      - `test/`
+    - `dyn_alignment/`
+      - `test/`
+    - `emb_tracker/`
+      - `test/`
+    - `inc/`
+    - `integration_test/`
+    - `interference_detection/`
+      - `test/`
+    - `mpu/`
+      - `test/`
+    - `rdd_proc/`
+      - `api/`
+      - `imp/`
+      - `test/`
+    - `rdu/`
+      - `inc/`
+      - `src/`
+      - `test/`
+    - `src/`
+      - `test/`
+    - `static_alignment/`
+      - `doc/`
+      - `test/`
+    - `test/`
+      - `mocks/`
+      - `test_data/`
+  - `building_block/`
+    - `common/`
+    - `hil_process/`
+    - `sh_cfg/`
+  - `common/`
+    - `board_revision/`
+      - `test/`
+    - `calib_cfg/`
+    - `calibrations/`
+      - `psc/`
+      - `smc/`
+      - `usc/`
+    - `crc32/`
+      - `inc/`
+      - `src/`
+      - `test/`
+    - `crc_calc/`
+      - `test/`
+    - `ipc/`
+      - `test/`
+    - `linker/`
+      - `bbe32/`
+    - `mmic/`
+    - `satellite_can_standalone_common/`
+    - `satellite_eth_high_det/`
+    - `versions/`
+      - `linkstamp/`
+      - `test/`
+  - `r52/`
+    - `autosar/`
+      - `config/`
+      - `input/`
+      - `sip/`
+      - `swc/`
+    - `bb_radar_ctl/`
+      - `bb_radar_ctl_api/`
+      - `bb_radar_ctl_imp/`
+    - `drivers/`
+      - `Utils/`
+      - `mcal/`
+    - `dsp_setup/`
+      - `inc/`
+      - `src/`
+      - `test/`
+    - `integration_test/`
+    - `ipc/`
+      - `inc/`
+      - `src/`
+      - `test/`
+    - `mmic/`
+      - `RESI/`
+      - `drivers/`
+      - `test/`
+    - `program_flow_monitor/`
+      - `test/`
+    - `r52_stack/`
+      - `test/`
+    - `startup/`
+- `tools/`
+  - `CI/`
+    - `SWE6_FLR8/`
+    - `SWE6_SRR8p/`
+    - `WRSD/`
+    - `nightlyJob/`
+    - `verifiedJob/`
+  - `ITF/`
+    - `ExecutableSpecs/`
+      - `ADVRADAR_Gen7_Exec_Spec/`
+    - `Integrated_Testing/`
+      - `ResimAutoFrameWork/`
+      - `Trace32_Online_injection/`
+    - `Mex_Executable_Specs/`
+      - `Core_Radar_Gen8_iND13400_Matlab/`
+  - `bazel/`
+    - `config/`
+      - `cpu/`
+    - `fff/`
+    - `scripts/`
+    - `toolchains/`
+      - `bbe32/`
+      - `gcc/`
+      - `mingw/`
+      - `windriver_r52/`
+  - `coverity/`
+    - `coding-standards/`
+      - `misrac2012/`
+    - `xsl/`
+  - `lauterbach/`
+    - `BBE32_AF/`
+    - `ind13400/`
+  - `preCommit/`
+  - `python/`
+    - `copy_mcal_package/`
+    - `coverageChecker/`
+    - `create_flash_image/`
+    - `dependency_inventory/`
+    - `flash_memory_stats/`
+    - `installPreCommit/`
+    - `mcal_test/`
+    - `memoryStats/`
+    - `netrcCredentialsManager/`
+    - `platformHealthMetrices/`
+    - `python_verification/`
+    - `spc_gen/`
+    - `stackAnalysis/`
+    - `streamBandwidth/`
+    - `streamGenerator/`
+    - `testing_framework/`
+      - `Core_Radar_Python_Framework/`
+    - `toolsInit/`
+    - `unitTestTrueCount/`
+  - `quickflash/`
+  - `runner_health/`
+
+## File inventory by directory
+### `.`
+- `.pre-commit-config.yaml`
+- `Design_Doc_RDD_SIL.md`
+- `MODULE.bazel`
+- `README.md`
+- `awa.sh`
+- `bb.MODULE.bazel`
+- `catalog-info.yaml`
+- `extensions.bzl`
+- `miss_hit.cfg`
+- `mkdocs.yml`
+- `repo_init.py`
+### `.github`
+- `README.md`
+- `copilot-instructions.md`
+### `.github\actions\configure-bazel-cache`
+- `action.yml`
+### `.github\actions\configure-netrc`
+- `action.yml`
+### `.github\actions\pr-status-comment`
+- `action.yml`
+### `.github\actions\publish-build-metrics`
+- `action.yml`
+### `.github\actions\publish-coverity-metrics`
+- `action.yml`
+### `.github\actions\publish-jsonl-to-postgres`
+- `action.yml`
+### `.github\actions\publish-smoke-metrics`
+- `action.yml`
+### `.github\actions\publish-ut-metrics`
+- `action.yml`
+### `.github\actions\run-quickflash`
+- `action.yml`
+### `.github\actions\setup-bazelisk`
+- `action.yml`
+### `.github\actions\setup-coverity-auth`
+- `action.yml`
+### `.github\actions\update-failure-label`
+- `action.yml`
+### `.github\agents`
+- `bazel-build.agent.md`
+- `ci-debug.agent.md`
+- `coverage.agent.md`
+- `master.agent.md`
+- `swe5.agent.md`
+### `.github\docs`
+- `codeowners-migration.md`
+### `.github\instructions`
+- `bazel-conventions.instructions.md`
+- `swe5-build.instructions.md`
+- `swe5-core.instructions.md`
+- `swe5-memory.instructions.md`
+### `.github\prompts`
+- `add-build-target.prompt.md`
+- `add-interface.prompt.md`
+- `debug-build.prompt.md`
+- `debug-coverity.prompt.md`
+- `fix-memory.prompt.md`
+- `run-tests.prompt.md`
+### `.github\skills\bazel-build`
+- `SKILL.md`
+### `.github\skills\codex-catalog-info`
+- `SKILL.md`
+### `.github\skills\coverage`
+- `SKILL.md`
+### `.github\skills\debug-wrsd-failure`
+- `SKILL.md`
+- `studio_command_line_interface_v2505.md`
+- `studio_pipeline_manager_yaml_language_reference_2505.md`
+### `.github\skills\gerrit-api`
+- `SKILL.md`
+### `.github\skills\ipc-streams`
+- `SKILL.md`
+### `.github\skills\swe5`
+- `SKILL.md`
+### `.github\workflows`
+- `README.md`
+- `branch-activity-metrics.yml`
+- `build-all.yml`
+- `build.yml`
+- `codex-validation.yml`
+- `coverity.yml`
+- `create-annotated-tag.yml`
+- `loc-tracker-metrics.yml`
+- `quality-checks.yml`
+- `radar-test-reusable.yml`
+- `runner-health-monitor.yml`
+- `smoke-test.yml`
+- `sqt-flr8.yml`
+- `strict-codeowners.yml`
+- `sw-quality-metrics.yml`
+- `swe-test-runner.yml`
+- `swe6-flr8.yml`
+- `swe6-srr8p.yml`
+- `sync-github-to-release-branches.yml`
+- `sync-grafana-config.yml`
+- `unit-tests.yml`
+- `workflow-metrics.yml`
+### `.github\workflows\UnUsed-Workflows-As-of-Today`
+- `swe-alignment-flr8.yml`
+- `swe-test-pyfilter-flr8.yml`
+- `swe-test-regression-flr8.yml`
+- `swe-test-stress-flr8.yml`
+- `swe-test-wi-smoke-srr8p.yml`
+- `swe5-flr8.yml`
+- `swe5-sit-macro-flr8.yml`
+- `swe6-sqt-macro-flr8.yml`
+### `.mcp`
+- `config.json`
+- `server.py` — Gen8 MCP Server - Minimal repo scanner.  Rules/logic live in .github/ (instructions, skills, prompts). This server ONLY scans files and returns data. No rules. No validation logic. stdlib only.
+- `test_server.py` — Quick test for all MCP server tools.
+### `docs`
+- `index.md`
+### `grafana_config`
+- `branch_activity_dashboard.json`
+- `loc_config.json`
+- `perception_radar_flr8_grafana_config.yaml`
+### `sil\emb_lib`
+- `Emb_Lib_Config.xml`
+- `README.md`
+- `emblib.MODULE.bazel`
+- `example.launch.json`
+### `sil\emb_lib\build_bin`
+- `build.py` — Build script for SIL embedded library.
+- `copy_position_so_AL.sh`
+- `copy_position_so_flr.sh`
+- `copy_position_so_srr.sh`
+### `sil\emb_lib\plp_sync\docs`
+- `README.md`
+### `sil\rsp_sil\main\rsp_wrapper_interface\af_sil_interface\test`
+- `README.md`
+### `sil\rsp_sil\main\rsp_wrapper_interface\rdu_sil_interface`
+- `rdu_sil_design.md`
+### `sil\rsp_sil\parser_script\PSP_parser_script`
+- `Readme.txt`
+### `software`
+- `module_filename_map.json`
+### `software\bbe32\dyn_alignment`
+- `DA.md`
+### `software\bbe32\emb_tracker`
+- `emb_tracker_build_flags.bzl`
+- `emb_tracker_project_profile.bzl`
+### `software\bbe32\static_alignment\doc`
+- `SA.md`
+### `software\common\ipc`
+- `IPC_Architecture.md`
+### `software\common\versions\linkstamp`
+- `gen_gitinfo_hdr.sh`
+- `gen_workspace_status.sh`
+### `software\r52\autosar`
+- `README.md`
+### `software\r52\autosar\config`
+- `README.md`
+- `generate_autosar.py` — Automated AUTOSAR Code Generation Script.  This script automates the generation of AUTOSAR BSW/MCAL configuration files using DaVinci Configurator Command Line (DVCfgCmd.exe) without manual GUI intervention.  Usage: python generate_autosar.py                          # Generate all modules python ge
+### `software\r52\autosar\config\Appl\GenData`
+- `BswM_XMI21.xml`
+- `ComM_XMI21.xml`
+- `EcuM_XMI21.xml`
+- `J1939Tp_XMI21.xml`
+- `Rtm_Canoe.xml`
+- `Sd_XMI21.xml`
+- `SoAd_XMI21.xml`
+### `software\r52\autosar\config\Appl\Source\test`
+- `WRAPPER_FILES_RATIONALE.md`
+### `software\r52\autosar\config\Config\Developer`
+- `AdminDataTemplates.xml`
+- `ProfileSettings.xml`
+### `software\r52\autosar\config\Config\System`
+- `SystemDescriptionMergeConfig.xml`
+### `software\r52\autosar\config\Log`
+- `Com_XMI21.xml`
+- `TcpIp_XMI21.xml`
+- `UpdateWorkflow.log.xml`
+### `software\r52\autosar\config\Post_Gen_Scripts`
+- `Post_Gen_BSW_RTE_Mods.py` — This script is to be run after each successful generation of BSW Stack.  This file depends on the presence of file: Post_Gen_Config.json.  The following modifications are carried out on the indicated generated files to: Separate source code files between CAN and SOMEIP to be used in different builds
+- `Post_Gen_Config.json`
+- `discard_gendata_date_only_changes.py` — Post-generation script: Discard date-only changes in DaVinci GenData files.  For each modified file in the GenData folder, checks if the only changes are to date/timestamp lines. If so, reverts the file to its committed state. If there are any other changes, ALL changes for that file are kept as-is.
+### `software\r52\autosar\input`
+- `PLATFORM_PCAN_RDR01_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR02_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR03_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR04_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR05_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR06_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR07_NU_v4_02.dbc`
+- `PLATFORM_PCAN_RDR08_NU_v4_02.dbc`
+- `README.md`
+- `VCAN_RDR01.dbc`
+- `VCAN_RDR02.dbc`
+- `VCAN_RDR03.dbc`
+- `VCAN_RDR04.dbc`
+- `VCAN_RDR05.dbc`
+- `VCAN_RDR06.dbc`
+- `VCAN_RDR07.dbc`
+- `VCAN_RDR08.dbc`
+### `software\r52\autosar\input\visualization_dbc`
+- `AL_ADAS_PCAN DBC v2.3.dbc`
+- `Aptiv_ADAS_DBC_v3.8_10-07-2026.dbc`
+### `software\r52\autosar\swc\PLT_SWC`
+- `README.md`
+- `fetch_from_workspace.py` — Fetch and extract repositories from a workspace.  This script reads a bb.MODULE.bazel file for dependencies and downloads the specified repositories, extracting them into a designated output directory.  Supported requested_repos.txt formats (one per line): 1) <repo_name> 2) <repo_name>=<override_url
+- `requested_repos.txt`
+### `software\r52\autosar\swc\PLT_SWC\SWC_PLT_CDD_ECUSync\test`
+- `README.md`
+### `software\r52\autosar\swc\PLT_SWC\SWC_PLT_CDD_XCP\bb\doc`
+- `XCP_Appl_User_Guide.md`
+### `software\r52\mmic\RESI`
+- `single_frame.py` — Python script to do injection using the RESI board.  This script takes a directory of mat files if provided or the default location defined in this script Then converts this mat files into bin files that are eventually loaded one frame at a time into RESI board for resimulation.
+### `software\r52\r52_stack\test`
+- `IMPLEMENTATION_SUMMARY.md`
+- `README.md`
+- `SUCCESS_REPORT.md`
+### `tools\CI`
+- `send_ci_email.py` — send_ci_email.py -- SMTP dispatcher for the Gen8 CI notification email.  Mirrors the dispatch mechanism proven by tools/runner_health/send_email.py: plain smtplib against Aptiv's internal relay, upgrading to STARTTLS only when the server advertises it. System.Net.Mail.SmtpClient (the previous PowerS
+### `tools\CI\WRSD`
+- `core-radar-gen8-ind13400-build.yaml`
+- `core-radar-gen8-ind13400-coverity.yaml`
+- `core-radar-gen8-ind13400-hw-test.yaml`
+- `core-radar-gen8-ind13400-precommit-check.yaml`
+- `core-radar-gen8-ind13400-trigger-nightly.yaml`
+- `core-radar-gen8-ind13400-trigger-post-merge.yaml`
+- `core-radar-gen8-ind13400-trigger-verification.yaml`
+- `core-radar-gen8-ind13400-trigger-weekly.yaml`
+- `core-radar-gen8-ind13400-unit-test.yaml`
+- `ind13400-trigger-post-merge.yaml`
+- `ind13400-trigger-verification.yaml`
+- `smoke_test_spec_gen8.yaml`
+### `tools\ITF\Integrated_Testing\ResimAutoFrameWork`
+- `CHANGELOG.md`
+- `Readme.md`
+- `power_supply_control.py` — This module contains classes to control programmable power supplies from the KORAD and TENMA brands.
+- `testcases.ini`
+### `tools\bazel\config`
+- `MODULE.bazel`
+- `compiler_warnings_allowlist.yml`
+- `coverity.bzl`
+### `tools\bazel\scripts`
+- `copy_to_dir.bzl`
+- `formatter.bzl`
+- `generate_stream_def.bzl`
+- `ld_flash_addresses.bzl`
+- `ld_preprocess.bzl`
+- `save_build_config.bzl`
+- `unsupported_combo_guard.bzl`
+### `tools\bazel\toolchains`
+- `compilers.MODULE.bazel`
+### `tools\coverity`
+- `README.md`
+- `cov-cli.toml`
+### `tools\lauterbach`
+- `__start_powerview_r52.sh`
+- `__start_powerview_r52_bbe32.sh`
+- `flash_session_PHY_100Mb.ini`
+- `flash_session_PHY_1Gb.ini`
+- `flash_session_with_platform_AL_CAN_Bootloader.ini`
+### `tools\preCommit`
+- `f8_bazel.ini`
+- `f8_python.ini`
+- `pyproject.toml`
+### `tools\python`
+- `convert_owners_to_codeowners.py` — Convert Gerrit OWNERS files to GitHub CODEOWNERS format.  Walks the repository, reads all OWNERS files, and produces a single .github/CODEOWNERS file. Requires a mapping of Gerrit owner references to GitHub teams/usernames.  Usage: python convert_owners_to_codeowners.py --repo-root . --output .githu
+- `owners_mapping.json`
+- `python.MODULE.bazel`
+- `requirements.txt`
+### `tools\python\copy_mcal_package`
+- `repo_copy.py` — Utility script for copying MCAL packages between repositories.
+### `tools\python\coverageChecker`
+- `ut_coverage_check.py` —  This script queries Bazel to see which files are built, which files are tested, and calculates the difference between them. 
+### `tools\python\create_flash_image`
+- `create_flash_image.bzl`
+- `create_flash_image.py` — This script takes in s19 files, merges them, and creates a flattened image with a copy table.
+### `tools\python\dependency_inventory`
+- `generate_dependency_inventory.py` — Generate a CSV inventory of Bazel dependency declarations.  This script parses Bazel module files and extracts dependency entries from `bazel_dep`, `http_archive`, and `git_repository` declarations.  Output: Writes a CSV file (for example `dependency_inventory.csv`) via `--out` with columns: - inclu
+### `tools\python\flash_memory_stats`
+- `flash_memory_stats.bzl`
+- `flash_memory_stats.py` — This script takes in s19 files and reports flash memory usage statistics.
+### `tools\python\installPreCommit`
+- `__init__.py`
+- `installPreCommit.py` — Simple module used to install pre-commit on a cloned git repository.  This module simply automates running python -m pre-commit install in an OS agnostic fashion. A .pre-commit-config.yaml file is required at the root of the repository.  See https://pre-commit.com/ for more details on pre-commit
+### `tools\python\mcal_test`
+- `MCAL_TEST_AUTOMATION_README.md`
+- `mcal_test_automation.py` — MCAL Test Automation Script.  Simple script that connects to Trace32, sets breakpoints at Mcal_Test start/end, and waits for already-running software to hit them.  Workflow: 1. User manually launches Trace32 and flashes software (software is running) 2. Script connects to Trace32 3. Script loads sym
+- `mcal_test_config.ini`
+- `uart_loopback.py` — UART Loopback Test Script.  Receives data on COM5 and echoes it back automatically for UART testing.
+### `tools\python\memoryStats`
+- `README.md`
+- `__init__.py`
+- `memoryStats.py` — Parse a map file and generate a summary file.  This Python module performs the following: - Parses the given map files for a specific table - Prints this information to a memoryStats file (This script will likely change as new labels get created) Usage: The user will need to create a list of memoryS
+- `memory_stats_wrapper.bzl`
+### `tools\python\netrcCredentialsManager`
+- `__init__.py`
+- `netrcCredentialsManager.py` — Package used to create a .netrc file as well as check if the credentials are valid for a given URL.  A JSON file is required to specify the credential requirements. This can either be stored alongside this script, which is used by default, or a path can be provided to another location.  The JSON sho
+- `requiredCredentials.json`
+### `tools\python\platformHealthMetrices`
+- `__init__.py`
+- `generate_ci_piecharts.py` —  Parse a given text based detailed report for CI test results and SRS results, and generate pie charts for overall test and SRS results. 
+- `platformHealthMetrics.py` — Send metrics to Platform Health for visualization.  This class wraps common methods into an easier to use, standard way of tagging data and information for Platform Health. 
+- `sendHtmlComparisionToPH.py` —  Parse a directory having HTML based Test reports, find latest and previous day reports and compare for the new failures.  Result extracted from these reports is sent to the Platform-Health to populate dashboards. 
+- `sendJfrogReportsToPH.py` —  Aim of this script is to fetch the latest 10 HTML reports from JFrog and send them to Platform Health. 
+- `sendJobResultsToPH.py` —  Parse an HTML based Test report, extract its result and send it to the metric reporting tool.  These HTML based report consists of Tests/Modules and SRS based results. Result extracted from these reports is sent to the Platform-Health to populate dashboards. 
+- `sendNewFailuresToPH.py` —  Parse a given text based detailed comparison report for CI test results and SRS results, and send the new failures to platformHealth. 
+- `sendSwe6GuiResultsToPH.py` —  Parse an HTML based Test execution report and extract the overall/modulewise results for Test-Cases and SRS.  Data extracted from Test report is sent to platformHealth to populate dashboards. 
+### `tools\python\python_verification`
+- `__init__.py`
+- `requirements.txt`
+- `verify.py` — Verify Python 3.8 64-bit or greater is used and install pip packages.  This is a simple script to check the version of Python to ensure that it is both 64 bit and at least version 3.8. It also is used to update any python packages via Pip.
+### `tools\python\spc_gen`
+- `spc_config_example.json`
+- `spc_gen.bzl`
+- `spc_gen.py` — This script generates a sensor position calibration (SPC) based on the configuration specified.
+### `tools\python\stackAnalysis`
+- `README.md`
+- `__init__.py`
+- `loghelper.py` — This module defines a helper class for logging to stderr and stdout.
+- `stackAnalysis.py` — This tool assists with determining the maximum stack usage via static analysis.  One of the major problems with this type of analysis is that the compiler is often not able to determine what functions might be called when function pointers or longjmps are used. To support these use cases, this tool 
+- `stack_analysis_bbe32_config.ini`
+- `stack_analysis_wrapper.bzl`
+- `stack_parser.py` — This module defines a parent class to handle basic stack parsing use-cases.
+- `xt_stack_usage.py` — This module defines a subclass of Stack_Parser that can parse xtensa BBE32 elf files using xt-stack-usage.
+### `tools\python\streamBandwidth`
+- `__init__.py`
+- `stream_bandwidth.py` — Stream Bandwidth Calculation Script.  The script takes the first line from streamdef files (no_of_bytes) as the input and calculates the Bandwidth in Mbps  The python script generates a output filw with .csv extention  output file has the information like Stream_File_Name,Stream_Size(Bytes),Bandwidt
+- `stream_bandwidth_rule.bzl`
+### `tools\python\streamGenerator`
+- `StreamGenerator.py` — This is a script to regenerate the Logging streams file with .xml, .c, .h, etc formate files while bazel build running.  It shall utilize the stream generation tool and for inclusion of herader files(ex: radar_sw_config.h), it consider input (location of header file)as config file which is generated
+- `__init__.py`
+- `stream_generator.bzl`
+### `tools\python\testing_framework`
+- `Python_Framework_README.md`
+- `STEP2_BUILD_OUTPUT_FILES.sh`
+- `radar_xcp_udp_tool.py` — Radar XCP-over-UDP diagnostic tool for Gen8 iND13400.
+- `run_precommit.py` — Run pre-commit on files changed vs the remote tracking branch (or HEAD fallback).
+### `tools\python\toolsInit`
+- `__init__.py`
+- `toolsInit.py` — Download and initialize some common tools used by this repository.  This repository has some large tools that should not be stored in the repo due to size concerns. This module can be used to download them from a static URL (such as Artifactory or SharePoint) and initialize them in tool specific way
+### `tools\python\unitTestTrueCount`
+- `__init__.py`
+- `getUTTrueCount.py` — Collect a True count of all of the UT functions.  Collect all of the *unit_test.cc files and parse each function looking for ASSERT or EXPECT and calculate a percentage for each UT file.
+### `tools\quickflash`
+- `sensor_config.json`
+### `tools\runner_health`
+- `requirements.txt`
+- `runner_monitor.py` — Runner Health Monitor.  Production-ready replacement for gitHubRunner.py.  Outputs (to OUTPUT_DIR, default="."): report.html      — Interactive Plotly dashboard (for GitHub Pages) summary.md       — GitHub Step Summary markdown email_body.html  — Email-safe HTML summary for stakeholders metrics.json
+- `send_email.py` — send_email.py — Lightweight email dispatcher for Runner Health Reports.  Uses Python's built-in smtplib (zero extra dependencies). Designed for Aptiv's internal unauthenticated SMTP relay (bulkmail.aptiv.com:25).  Configuration via environment variables: SMTP_SERVER      SMTP host.                De
+
+</details>
+
+## G.11 core-radar-gen7-rsp-sil — Gen7 RSP-SiL wrapper (10 of 25, latest-only)
+**What it does:** Gen7 radar-signal-processing SiL wrapper: AF-SiL interface, PSP/BB FW pins
+(`Dra_R19.3`), SIL releases (13.1.x latest), RNA branch, R-release line (R10.0.x), SRR7HD variants,
+xviz/parser-script configs, AF-SiL testing scripts.
+**Research hooks:** AF-SiL version matrix vs Gen7 FW releases = compatibility study; parser-script
+yamls are reusable scenario definitions.
+
+<details><summary>core-radar-gen7-rsp-sil — exhaustive file inventory (representative branch)</summary>
+
+# core-radar-gen7-rsp-sil — exhaustive code map (representative branch: `dev`)
+
+Branches pulled: `dev`, `feature__13.1.x_SIL_Release`, `feature__GEN7_AF_SIL_LATEST`, `feature__GEN7_AF_SIL_LATEST_SRR7HD`, `feature__GEN7_AF_SIL_NEW_UPDATE`, `feature__GEN7_AF_SIL_SRR7HD`, `feature__PSP_BB_FW_Dra_R19.3`, `feature__R13.1.x_RNA_Branch`, `release__AF_SRR7P_v3p4`, `release__R10.0.x`
+Total files in `dev`: ~242
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `gen7_sil_wrapper/`
+  - `building_block/`
+    - `angle_finding_process/`
+    - `cdc_tdc_process/`
+    - `cfar_process/`
+    - `common/`
+      - `calibration/`
+    - `doppler_process/`
+    - `helpers/`
+    - `interference_detection/`
+    - `radar_capability/`
+    - `range_process/`
+    - `rdd_first_pass/`
+    - `rdd_second_pass/`
+    - `sweep_bw_process/`
+  - `cals_bin/`
+    - `flr7/`
+    - `srr7hd/`
+    - `srr7p/`
+  - `data_bin/`
+    - `flr7/`
+      - `adc_data/`
+      - `af_data/`
+      - `psp_data/`
+      - `rfft_data/`
+    - `srr7hd/`
+      - `adc_data/`
+      - `af_data/`
+      - `rfft_data/`
+    - `srr7p/`
+      - `adc_data/`
+      - `af_data/`
+      - `cdc_data/`
+      - `psp_data/`
+      - `rfft_data/`
+  - `main/`
+    - `common/`
+    - `rsp_wrapper_interface/`
+      - `E0_sil_interface/`
+      - `af_sil_interface/`
+      - `cdc_interface/`
+      - `comp_adc_interface/`
+      - `da_sil_interface/`
+      - `fsc_sil_interface/`
+      - `id_sil_interface/`
+      - `psp_sil_interface/`
+      - `rc_sil_interface/`
+      - `rdd_sil_interface/`
+      - `rsp_common/`
+      - `sa_sil_interface/`
+    - `sil_wrapper_interface/`
+  - `parser_script/`
+    - `cdc_bin_file_generation_and_print_rdd_out/`
+    - `config/`
+      - `atcity/`
+      - `mach_e/`
+- `pictures/`
+  - `rdd_stream_v25/`
+  - `rdd_stream_v27/`
+  - `rdd_stream_v30/`
+- `toolchains/`
+  - `gcovr/`
+  - `mingw/`
+- `tools/`
+  - `AF_Sil_testing_script/`
+  - `CI/`
+    - `WRSD/`
+  - `Jenkins/`
+    - `buildJob/`
+    - `formatterJob/`
+    - `verifiedJob/`
+  - `preCommit/`
+  - `python/`
+    - `installPreCommit/`
+    - `netrcCredentialsManager/`
+    - `python_verification/`
+    - `toolsInit/`
+
+## File inventory by directory
+### `.`
+- `.pre-commit-config.yaml`
+- `ADMIN_AUDIT_LOG.md`
+- `RULESETS.md`
+- `SIL_CDC_Stream_Log.md`
+- `SIL_Design_Doc.md`
+- `SIL_PSP_BB_Testing_stratgey.md`
+- `SIL_Stream_Changelog.md`
+- `repo_init.py`
+### `.github\workflows`
+- `bb-ci.yml`
+### `gen7_sil_wrapper\main\rsp_wrapper_interface\af_sil_interface`
+- `read_me.md`
+### `gen7_sil_wrapper\parser_script`
+- `ADAS247_srr6p.yml`
+- `ADAS247_srr6p_5sensor_srr6p.yml`
+- `default.yml`
+- `default_network.yml`
+- `harp.yml`
+- `preprocessor.yml`
+- `single_sensor_network.yml`
+- `xviz.yml`
+- `xviz9000.yml`
+### `gen7_sil_wrapper\parser_script\config\atcity`
+- `default.yml`
+- `xviz.yml`
+### `gen7_sil_wrapper\parser_script\config\mach_e`
+- `detection.yml`
+### `tools\AF_Sil_testing_script`
+- `Readme.txt`
+### `tools\CI`
+- `create_package.sh`
+### `tools\CI\WRSD`
+- `post-merge-trigger.yaml`
+- `verification-trigger.yaml`
+### `tools\preCommit`
+- `check-version-yaml.py` — Pre-commit hook to validate version.yaml.  This script checks that version.yaml (in the root of the repo) contains: - MajorVersion, MinorVersion, PatchVersion - must all be integers, non-negative, and no leading zeros - ShortName - Name used in the integration repos, must be a non-empty string (e.g.
+- `f8_bazel.ini`
+- `f8_python.ini`
+- `pyproject.toml`
+### `tools\python\installPreCommit`
+- `__init__.py`
+- `installPreCommit.py` — Simple module used to install pre-commit on a cloned git repository.  This module simply automates running python -m pre-commit install in an OS agnostic fashion. A .pre-commit-config.yaml file is required at the root of the repository.  See https://pre-commit.com/ for more details on pre-commit
+### `tools\python\netrcCredentialsManager`
+- `__init__.py`
+- `netrcCredentialsManager.py` — Package used to create a .netrc file as well as check if the credentials are valid for a given URL.  A JSON file is required to specify the credential requirements. This can either be stored alongside this script, which is used by default, or a path can be provided to another location.  The JSON sho
+- `requiredCredentials.json`
+### `tools\python\python_verification`
+- `__init__.py`
+- `requirements.txt`
+- `verify.py` — Verify Python 3.8 64-bit or greater is used and install pip packages.  This is a simple script to check the version of Python to ensure that it is both 64 bit and at least version 3.8. It also is used to update any python packages via Pip.
+### `tools\python\toolsInit`
+- `__init__.py`
+- `toolsInit.py` — Download and initialize some common tools used by this repository.  This repository has some large tools that should not be stored in the repo due to size concerns. This module can be used to download them from a static URL (such as Artifactory or SharePoint) and initialize them in tool specific way
+
+</details>
+
+## G.14 core-radar-gen8-ind13400-signal-processing — iND13400 SP releases (10 of 21)
+**What it does:** iND13400 signal-processing release train (v5.07→v8.12, keep latest v8.12 + v7.15 for
+drift), SPBB bringups (`qddma_spbb`, `stidm_spbb`, `c0_bringup`, `b0plus_bringup`), `dev`.
+**Research hooks:** release-train drift corpus; SPBB↔RSP-SIL tag pins for SiL fidelity checks.
+
+<details><summary>core-radar-gen8-ind13400-signal-processing — exhaustive file inventory (representative branch)</summary>
+
+# core-radar-gen8-ind13400-signal-processing — exhaustive code map (representative branch: `dev`)
+
+Branches pulled: `dev`, `feature__b0plus_bringup`, `feature__c0_bringup`, `feature__qddma_spbb`, `feature__stidm_spbb`, `release__5.07.xxx`, `release__6.14.xxx`, `release__7.13.xxx`, `release__7.15.xxx`, `release__v8.12.xxx`
+Total files in `dev`: ~530
+
+## README
+# Core Radar - Gen8 Chandra Signal Processing Repository
+This repository contains the signal processing building block source code for Gen8 Chandra (Indie Chandra+BBE based).
+
+These building blocks are targeted for Gen8 and PCRESIM. The blocks here
+should be reconfigurable for the embedded usage and generic C code.
+
+## First Steps (repo_init.py)
+A script called repo_init.py is stored at the base of this repository.
+It should be called each time this repository is run to download/install repo specific tools as well as ensure that some setup steps are completed.
+
+Python v3.7 or greater should be supported.  v3.10 is recommended since this is what the scripts are tested with.
+
+This script *may* ask you to provide your username and API Key / password to populate a .netrc file. This file is stored locally in your machine's Home folder.
+
+It is recommended to use an API key instead of your password otherwise your raw password will be stored in the .netrc file on this machine.
+API keys can be generated from the Web GUIs of each individual tool.
+See the Adv Active Safety SW/SYS Git Gerrit Wiki (https://tinyurl.com/advSysSwGitGerritWikiApi) for instructions on generating API keys for the various tools.
+
+**You will also need to run this script whenever your password updates (Once per user per machine) unless you use API keys**
+
+To run the script, open a command prompt and run:
+
+    python repo_init.py
+
+## Bazel
+Bazel is used to build the code. Bazelisk is a wrapper around Bazel that ensures we all use the same Bazel version.
+Bazel is a very powerful build tool and has many functionalities that may benefit the software development process (including dependency maps, build trees, etc.). More information can be found at https://bazel.build.
+
+A detailed live demonstration was recorded on Bazel. You can find the link to the video at https://web.microsoftstream.com/embed/channel/04ec5a53-afff-4221-ba76-0a7d0dd50ed6?app=microsoftteams&sort=undefined&l=en-us#
+
+If you do not have access to this link, request access to the Adv Active Safety SW/SYS Team in Microsoft Teams.
+
+Bazel is a very good incremental build tool, therefore cleaning should not be necessary.
+However, if you wish to clean out the build cache, you can do so by running:
+
+   ```
+   bazelisk clean
+   ```
+# Building the Code
+The integration of the building blocks into an application is TBD.
+
+However, all the building blocks can be built for unit testing.
+Some of the building blocks will also implement testing on the hardware utilizing the Unity framework. This testing is for development purposes only, and will not be used to validate coverage of tests!
+
+## Build options
+In the SPBB repository, the default build enables additional options through the .bazelrc file:
+
+1. ENABLE_HELPERS_SFR_DEBUG - Enables the use of the SFR pointers in Trace32 to allow for easier debugging. These can also be viewed through the PER use.
+1. MIPI_HELPERS_DEBUG_ENABLE - Enables the debug mode APIs for the MIPI helper interface. This allows configuring the test pattern generator or the debug port mode of the MIPI ping/pong buffers.
+
+There are switches that can be used to test different configurations:
+
+1. --@build_config//:asic_fpga (or alias--bbe_asic_fpga) can be used to set the option for FPGA or ASIC configurations. The default selection is for the ASIC configuration.
+
+```
+--@build_config//:asic_fpga=fpga
+--@build_config//:asic_fpga=asic
+--bbe_asic_fpga=fpga
+--bbe_asic_fpga=asic
+```
+
+1. --//tools/bazel/toolchains/bbe32:bbe_optimization (or alias --bbe_opt) can be used to select the optimization level for the BBE.
+
+```
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O0
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O1
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O2
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O3
+--bbe_opt=O0
+--bbe_opt=O1
+--bbe_opt=O2
+--bbe_opt=O3
+```
+
+1. --//modules/helpers/imp:profile_timing=ns (or alias --bbe_profile_timing) can be used to select microseconds or nanosecond
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `appl_cfg/`
+  - `bb_cfg/`
+  - `bb_include/`
+- `common/`
+  - `cstub_helpers/`
+    - `mocks/`
+  - `unit_test/`
+    - `test_data/`
+- `coverage/`
+- `internal/`
+  - `bbe32/`
+    - `include/`
+    - `linker/`
+      - `bbe32_luna-min-rt-local-b0/`
+      - `bbe32_luna-min-rt-local-b0asic/`
+      - `sim-stacklocal-b0/`
+    - `src/`
+      - `embedded/`
+      - `simulator/`
+- `modules/`
+  - `cdc/`
+    - `api/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `include/`
+      - `mocks/`
+      - `src/`
+      - `testdata/`
+      - `unit_test/`
+  - `cfar/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `include/`
+      - `src/`
+      - `testdata/`
+      - `unit_test/`
+  - `doppler_process/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `inc/`
+      - `mocks/`
+      - `scripts/`
+      - `src/`
+      - `testdata/`
+      - `unit_test/`
+  - `helpers/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `embedded/`
+      - `unit_test/`
+  - `range_process/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `inc/`
+      - `mocks/`
+      - `script/`
+      - `src/`
+      - `testdata/`
+      - `unit_test/`
+  - `rdd_first_pass_process/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `include/`
+      - `mocks/`
+      - `sim/`
+      - `src/`
+      - `testdata/`
+      - `unit_test/`
+  - `second_pass/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `mocks/`
+      - `sim/`
+      - `test_data/`
+      - `unit_test/`
+  - `sweep_bw/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `sim/`
+      - `unit_test/`
+- `tools/`
+  - `CI/`
+    - `WRSD/`
+    - `buildJob/`
+    - `formatterJob/`
+  - `bazel/`
+    - `config/`
+      - `cpu/`
+    - `scripts/`
+    - `toolchains/`
+      - `bbe32/`
+      - `gcc/`
+      - `gcovr/`
+      - `mingw/`
+      - `windriver_r52/`
+  - `bbe_simulator/`
+  - `lauterbach/`
+    - `example_elf/`
+    - `scripts/`
+    - `scripts_b0/`
+  - `preCommit/`
+  - `python/`
+    - `installPreCommit/`
+    - `netrcCredentialsManager/`
+    - `python_verification/`
+    - `toolsInit/`
+
+## File inventory by directory
+### `.`
+- `.pre-commit-config.yaml`
+- `MODULE.bazel`
+- `README.md`
+- `RULESETS.md`
+- `bb.MODULE.bazel`
+- `changelog.md`
+- `miss_hit.cfg`
+- `repo_init.py`
+- `version.yaml`
+### `.github\workflows`
+- `bb-ci.yml`
+### `modules\helpers\test\embedded\mipi\src`
+- `README.md`
+### `tools\CI`
+- `create_package.sh`
+### `tools\CI\WRSD`
+- `core-radar-gen8-spbb-build.yaml`
+- `post-merge-trigger.yaml`
+- `verification-trigger.yaml`
+### `tools\bazel\scripts`
+- `copy_to_dir.bzl`
+- `save_build_config.bzl`
+- `transition_bbe32.bzl`
+### `tools\bazel\toolchains`
+- `compilers.MODULE.bazel`
+### `tools\bazel\toolchains\bbe32`
+- `action_config.bzl`
+- `cc_binary_bbe32.bzl`
+- `cc_toolchain_config.bzl`
+- `constants.bzl`
+- `run_sim.bzl`
+### `tools\lauterbach\scripts`
+- `README.md`
+- `default_flash_session.ini`
+### `tools\lauterbach\scripts_b0`
+- `README.md`
+- `default_flash_session.ini`
+### `tools\preCommit`
+- `f8_bazel.ini`
+- `f8_python.ini`
+- `pyproject.toml`
+### `tools\python`
+- `python.MODULE.bazel`
+- `requirements.txt`
+### `tools\python\installPreCommit`
+- `__init__.py`
+- `installPreCommit.py` — Simple module used to install pre-commit on a cloned git repository.  This module simply automates running python -m pre-commit install in an OS agnostic fashion. A .pre-commit-config.yaml file is required at the root of the repository.  See https://pre-commit.com/ for more details on pre-commit
+### `tools\python\netrcCredentialsManager`
+- `__init__.py`
+- `netrcCredentialsManager.py` — Package used to create a .netrc file as well as check if the credentials are valid for a given URL.  A JSON file is required to specify the credential requirements. This can either be stored alongside this script, which is used by default, or a path can be provided to another location.  The JSON sho
+- `requiredCredentials.json`
+### `tools\python\python_verification`
+- `__init__.py`
+- `requirements.txt`
+- `verify.py` — Verify Python 3.8 64-bit or greater is used and install pip packages.  This is a simple script to check the version of Python to ensure that it is both 64 bit and at least version 3.8. It also is used to update any python packages via Pip.
+### `tools\python\toolsInit`
+- `__init__.py`
+- `toolsInit.py` — Download and initialize some common tools used by this repository.  This repository has some large tools that should not be stored in the repo due to size concerns. This module can be used to download them from a static URL (such as Artifactory or SharePoint) and initialize them in tool specific way
+
+</details>
+
+## G.13 core-radar-gen8-s32r47-signal-processing — S32R47 SP bringup (10 branches, all)
+**What it does:** NXP S32R47 signal-processing bringup: HW profiling, range testing, kq8 core
+bringup, timing helpers, GHW-3275/3369/3478 work items, dev/sidm lines.
+**Research hooks:** bringup logs = HW-variation corpus; timing-helper deltas feed profiling KPIs.
+
+<details><summary>core-radar-gen8-s32r47-signal-processing — exhaustive file inventory (representative branch)</summary>
+
+# core-radar-gen8-s32r47-signal-processing — exhaustive code map (representative branch: `dev`)
+
+Branches pulled: `dev`, `feature__HW_Profiling`, `feature__Range_Testing`, `feature__Sai-Dheeraj-patch-2`, `feature__ghw-3275`, `feature__kq8_core_bringup`, `feature__sidm_dev`, `feature__timing_helpers_update`, `story__GHW-3369_add_core_dbg_print_capability_to_evb_diag_tool`, `story__GHW-3478-two-chirp-handling-range_spt`
+Total files in `dev`: ~687
+
+## README
+# Advanced Engineering - Gen 8 FLR8HD Signal Processing Repository
+This repository contains the signal processing building block source code for Gen 8 FLR8HD (NXP based).
+
+These building blocks are targeted for Gen 8 FLR8HD and PCRESIM. The blocks here
+should be reconfigurable for the embedded usage and generic C code.
+
+## First Steps (repo_init.py)
+A script called repo_init.py is stored at the base of this repository.
+It should be called each time this repository is run to download/install repo specific tools as well as ensure that some setup steps are completed.
+
+Python v3.7 or greater should be supported.  v3.10 is recommended since this is what the scripts are tested with.
+
+This script *may* ask you to provide your username and API Key / password to populate a .netrc file. This file is stored locally in your machine's Home folder.
+
+It is recommended to use an API key instead of your password otherwise your raw password will be stored in the .netrc file on this machine.
+API keys can be generated from the Web GUIs of each individual tool.
+See the Adv Active Safety SW/SYS Git Gerrit Wiki (https://tinyurl.com/advSysSwGitGerritWikiApi) for instructions on generating API keys for the various tools.
+
+**You will also need to run this script whenever your password updates (Once per user per machine) unless you use API keys**
+
+To run the script, open a command prompt and run:
+
+   python repo_init.py
+
+## Bazel
+Bazel is used to build the code. Bazelisk is a wrapper around Bazel that ensures we all use the same Bazel version.
+Bazel is a very powerful build tool and has many functionalities that may benefit the software development process (including dependency maps, build trees, etc.). More information can be found at https://bazel.build.
+
+A detailed live demonstration was recorded on Bazel. You can find the link to the video at https://web.microsoftstream.com/embed/channel/04ec5a53-afff-4221-ba76-0a7d0dd50ed6?app=microsoftteams&sort=undefined&l=en-us#
+
+If you do not have access to this link, request access to the Adv Active Safety SW/SYS Team in Microsoft Teams.
+
+Bazel is a very good incremental build tool, therefore cleaning should not be necessary.
+However, if you wish to clean out the build cache, you can do so by running:
+
+   ```
+   bazelisk clean
+   ```
+# Building the Code
+*TBD - NEEDS UPDATED*
+The integration of the building blocks into an application is TBD.
+
+However, all the building blocks can be built for unit testing.
+Some of the building blocks will also implement testing on the hardware utilizing the Unity framework. This testing is for development purposes only, and will not be used to validate coverage of tests!
+
+## Build options
+There are switches that can be used to test different configurations:
+
+1. --//tools/bazel/toolchains/bbe32:bbe_optimization (or alias --bbe_opt) can be used to select the optimization level for the BBE.
+
+```
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O0
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O1
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O2
+--//tools/bazel/toolchains/bbe32:bbe_optimization=O3
+--bbe_opt=O0
+--bbe_opt=O1
+--bbe_opt=O2
+--bbe_opt=O3
+```
+
+## Conditional Build Arguments
+*TBD - NOT YET IMPLEMENTED*
+
+# Example Simulation Application
+As a means to provide a common entry point, an example test simulation app is provided. This allows simulation of underlying BB code using the Xtensa provided ISS (Instruction Set Simulator). The simulation can also be used to enable output of profile information. See the examples in the internal/bbe32 BUILD file for the use of the "run_profiler" tag to enable the output of the profile information.
+
+To run the example application in the simulator, use one of the following build examples.
+
+   Example:
+   bazelisk build //internal/bbe32:example_test_app_sim_show_summary
+   bazelisk build //internal/bbe32:example_test_app_sim
+
+# Example Embedded Application using the Diagnostic Tool framework on the EVB
+As a means to provide a common entr
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `appl_cfg/`
+  - `bb_cfg/`
+  - `bb_include/`
+- `common/`
+  - `S32R47_Headers/`
+- `internal/`
+  - `bbe32/`
+    - `include/`
+    - `linker/`
+      - `min-rt-local/`
+      - `sim-stacklocal/`
+    - `src/`
+      - `simulator/`
+  - `bbe_dbg/`
+    - `api/`
+    - `imp/`
+    - `test/`
+      - `sim/`
+      - `unit_test/`
+  - `evb_diag_tool/`
+    - `base/`
+      - `include/`
+      - `platform_setup/`
+      - `scripts/`
+      - `src/`
+    - `examples/`
+      - `base/`
+      - `testtype_profile/`
+      - `testtype_profile_spt/`
+    - `tests/`
+      - `profile_spt_pdma/`
+    - `testtypes/`
+      - `profile/`
+      - `profile_spt/`
+  - `kq8/`
+    - `include/`
+    - `linker/`
+      - `min-rt-local/`
+      - `sim-stacklocal/`
+    - `src/`
+      - `simulator/`
+  - `spt/`
+- `modules/`
+  - `angle_finding/`
+    - `api/`
+    - `common/`
+      - `inc/`
+      - `src/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `evb_diag_tool/`
+  - `cfar/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `data/`
+      - `evb_diag_tool/`
+      - `sim/`
+      - `unit_test/`
+  - `dd_spt/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `evb_diag_tool/`
+      - `mocks/`
+      - `sim/`
+      - `unit_tests/`
+  - `doppler/`
+    - `api/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `evb_diag_tool_bbe/`
+      - `evb_diag_tool_profile_spt/`
+      - `sim/`
+      - `unit_tests/`
+  - `first_pass/`
+    - `api/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `evb_diag_tool/`
+      - `sim/`
+      - `unit_tests/`
+  - `helpers/`
+    - `api/`
+    - `imp/`
+      - `src/`
+  - `range/`
+    - `api/`
+      - `mocks/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `Offline_Testing/`
+      - `evb_diag_tool_profile_spt/`
+      - `sim/`
+      - `test_data/`
+  - `second_pass/`
+    - `api/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `data/`
+      - `evb_diag_tool/`
+      - `sim/`
+      - `unit_test/`
+  - `sweep_bw/`
+    - `api/`
+    - `imp/`
+      - `inc/`
+      - `src/`
+    - `test/`
+      - `cfg/`
+      - `evb_diag_tool/`
+      - `sim/`
+      - `unit_tests/`
+- `tools/`
+  - `CI/`
+    - `WRSD/`
+    - `buildJob/`
+    - `formatterJob/`
+    - `unitTestJob/`
+    - `verifiedJob/`
+  - `bazel/`
+    - `config/`
+      - `cpu/`
+    - `kq8_config/`
+      - `cpu/`
+    - `scripts/`
+    - `toolchains/`
+      - `bbe32/`
+      - `design_studio_gcc_m7/`
+      - `gcc/`
+      - `kq8/`
+      - `mingw/`
+      - `windriver_m7/`
+  - `bbe_simulator/`
+  - `diag_tool/`
+  - `kq8_simulator/`
+  - `lauterbach/`
+  - `preCommit/`
+  - `python/`
+    - `installPreCommit/`
+    - `netrcCredentialsManager/`
+    - `python_verification/`
+    - `toolsInit/`
+
+## File inventory by directory
+### `.`
+- `.pre-commit-config.yaml`
+- `ADMIN_AUDIT_LOG.md`
+- `MODULE.bazel`
+- `README.md`
+- `RULESETS.md`
+- `bb.MODULE.bazel`
+- `changelog.md`
+- `repo_init.py`
+- `version.yaml`
+### `.github\workflows`
+- `bb-ci.yml`
+### `common\S32R47_Headers`
+- `README.md`
+### `internal\evb_diag_tool\base`
+- `evb_diag_tool_test.bzl`
+### `internal\evb_diag_tool\base\platform_setup`
+- `README.md`
+### `internal\evb_diag_tool\base\scripts`
+- `README.md`
+- `dsp_hex_file_gen.sh`
+- `dsp_hex_file_gen_kq8.sh`
+### `internal\evb_diag_tool\examples\base\scripts`
+- `README.md`
+### `internal\evb_diag_tool\examples\testtype_profile\scripts`
+- `README.md`
+### `internal\evb_diag_tool\examples\testtype_profile_spt\scripts`
+- `README.md`
+### `internal\evb_diag_tool\tests\profile_spt_pdma\scripts`
+- `README.md`
+### `internal\evb_diag_tool\testtypes\profile`
+- `evb_diag_tool_testtype_profile.bzl`
+### `internal\evb_diag_tool\testtypes\profile_spt`
+- `evb_diag_tool_testtype_profile_spt.bzl`
+### `modules\angle_finding\test\evb_diag_tool\scripts`
+- `README.md`
+### `modules\cfar\test\evb_diag_tool\scripts`
+- `README.md`
+### `modules\doppler\test\evb_diag_tool_bbe\scripts`
+- `README.md`
+### `modules\doppler\test\evb_diag_tool_profile_spt\matlab`
+- `README.md`
+### `modules\doppler\test\evb_diag_tool_profile_spt\scripts`
+- `README.md`
+### `modules\first_pass\test\evb_diag_tool\scripts`
+- `README.md`
+### `modules\range\test\Offline_Testing`
+- `README.md`
+- `trace32_path.txt`
+### `modules\range\test\evb_diag_tool_profile_spt\scripts`
+- `README.md`
+### `modules\range\test\test_data`
+- `Data_PureHex_chirp_scaling_allchirps_spr.txt`
+- `Data_PureHex_rfftout_allchirps_spr.txt`
+### `modules\second_pass\test\evb_diag_tool\scripts`
+- `README.md`
+### `modules\sweep_bw\test\evb_diag_tool\scripts`
+- `README.md`
+### `tools\CI\WRSD`
+- `post-merge-trigger.yaml`
+- `verification-trigger.yaml`
+### `tools\CI\unitTestJob`
+- `excludes.yaml`
+### `tools\bazel\scripts`
+- `copy_to_dir.bzl`
+- `save_build_config.bzl`
+- `transition_bbe32.bzl`
+- `transition_design_studio_gcc_m7.bzl`
+- `transition_kq8.bzl`
+- `transition_m7.bzl`
+### `tools\bazel\toolchains`
+- `compilers.MODULE.bazel`
+### `tools\bazel\toolchains\bbe32`
+- `action_config.bzl`
+- `cc_binary_bbe32.bzl`
+- `constants.bzl`
+- `run_sim.bzl`
+### `tools\bazel\toolchains\design_studio_gcc_m7`
+- `action_config.bzl`
+- `cc_toolchain_config.bzl`
+### `tools\bazel\toolchains\kq8`
+- `action_config.bzl`
+- `cc_binary_kq8.bzl`
+- `constants.bzl`
+- `run_sim.bzl`
+### `tools\lauterbach`
+- `default_flash_session.ini`
+### `tools\preCommit`
+- `f8_bazel.ini`
+- `f8_python.ini`
+- `pyproject.toml`
+### `tools\python`
+- `python.MODULE.bazel`
+- `requirements.txt`
+### `tools\python\installPreCommit`
+- `__init__.py`
+- `installPreCommit.py` — Simple module used to install pre-commit on a cloned git repository.  This module simply automates running python -m pre-commit install in an OS agnostic fashion. A .pre-commit-config.yaml file is required at the root of the repository.  See https://pre-commit.com/ for more details on pre-commit
+### `tools\python\netrcCredentialsManager`
+- `__init__.py`
+- `netrcCredentialsManager.py` — Package used to create a .netrc file as well as check if the credentials are valid for a given URL.  A JSON file is required to specify the credential requirements. This can either be stored alongside this script, which is used by default, or a path can be provided to another location.  The JSON sho
+- `requiredCredentials.json`
+### `tools\python\python_verification`
+- `__init__.py`
+- `requirements.txt`
+- `verify.py` — Verify Python 3.8 64-bit or greater is used and install pip packages.  This is a simple script to check the version of Python to ensure that it is both 64 bit and at least version 3.8. It also is used to update any python packages via Pip.
+### `tools\python\toolsInit`
+- `__init__.py`
+- `toolsInit.py` — Download and initialize some common tools used by this repository.  This repository has some large tools that should not be stored in the repo due to size concerns. This module can be used to download them from a static URL (such as Artifactory or SharePoint) and initialize them in tool specific way
+
+</details>
+
+## G.9 core-radar-object-tracker — ROT object tracker family (13 branches, all)
+**What it does:** radar object-tracker (ROT) variants: Gen7v1/RNA support lines, Gen8 stream
+experiments + updated integration, ROT10 LUT/scale variants (`Gen7v2_ROT10.30_w_LUT`,
+`rna_rot10.41`, `rna_r13_rot10.24`), host-dets rejection, tracker vectorization
+(`tracker_vectorization`, `vectorize_rot`, `eom-2148_track_initilaze_vectorize`).
+**Research hooks:** ROT variants × tracker-KPI = the core tracking-accuracy experiment matrix;
+vectorization lines give timing/accuracy trade-off data.
+
+<details><summary>core-radar-object-tracker — exhaustive file inventory (representative branch)</summary>
+
+# core-radar-object-tracker — exhaustive code map (representative branch: `dev`)
+
+Branches pulled: `dev`, `feature__Gen7v1_and_RNA_branch`, `feature__Gen7v1_and_RNA_support`, `feature__Gen7v2_ROT10.30_w_LUT`, `feature__Gen8_SG_Experiments`, `feature__Gen8_Stream_Experiment`, `feature__Gen8_Updated_Integration`, `feature__al_host_dets_rejected`, `feature__rna_r13_rot10.24`, `feature__rna_rot10.41`, `feature__tracker_vectorization`, `feature__vectorize_rot`, `story__eom-2148_track_initilaze_vectorize`
+Total files in `dev`: ~1134
+
+## README
+
+
+
+
+# Core Radar Object Tracker (rotbb)
+
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
+This repository stores ROT algorithm code as used by core radar projects for the embedded tracker.
+
+[TOC]
+
+## First Steps (repo_init.py)
+
+### Overview
+
+A script called repo_init.py is stored at the base of this repository.
+It should be called each time this repository is cloned.
+
+### What it does
+
+ 1. Verifies a compliant version of Python is used & downloads required python packages
+ 2. Installs required pre-commit hooks for this repository. These are verified via CI
+ 3. .netrc - creates/updates a .netrc with required credentials for building the project (See [netrc Credentials](#netrc-credentials))
+ 4. Tresos - Downloads and initializes Tresos. These files are stored in Artifactory, but are ignored in this repository to reduce its overall size.
+
+### Requirements
+
+Python v3.7 or greater should be supported.  v3.10 is recommended since this is what the scripts are tested with.
+
+### netrc Credentials
+
+This script *may* ask you to provide your username and API Key / password to populate a .netrc file. This file is stored locally in your machine's Home folder.
+
+It is recommended to use an API key instead of your password otherwise your raw password will be stored in the .netrc file on this machine.
+API keys can be generated from the Web GUIs of each individual tool.
+See the [Adv Active Safety SW/SYS Git Gerrit Wiki](https://tinyurl.com/advSysSwGitGerritWikiApi) for instructions on generating API keys for the various tools.
+**You will also need to run this script whenever your password updates (Once per user per machine) unless you use API keys**
+
+### How to Run
+
+To run the script, open a command prompt and run:
+
+    python repo_init.py
+
+#### Committing changes to the Gerrit Repository
+
+Our Gerrit repository is guarded against changes that may break the build.
+You will not be able to submit your changes if any build is broken by them.
+
+It is also guarded against changes that do not match the formatting standards identified by a team of your peers, guided by Aptiv's coding standards.
+When commiting your changes, a set of scripts will run (installed by running repo_init.py above) which should automatically format your code, and flag some potential problems.
+These checks will then be run again as part of the "Verified" Jenkins job to ensure that you have the pre-commit checks in place.
+This is to remove the unnecessary burden on developers to format their code in a standard way, and to make sure all our code is fomratted in the same method.
+
+If your change fails the "Verified" check, there are 3 potential issues:
+
+1. Your code did not build
+2. Your code did not pass all the pre-commit checks
+3. An unknown error occured and the CICD team needs to check what happened
+
+If it is one of the first 2 options, it is your job to fix the issues.
+If you have code that you think should *not* be required to follow the autoformatting standards, please reach out to the CICD team.
+They can determine if it is a valid request and assist in excluding the files.
+
+*Note: C Code formatters are disabled in this repository, since all code is 3rd-Party code.*
+
+#### Testing changes locally
+
+An integration repository may be used in conjunction with this repository.
+Local development can be done using the --override_repository flag in the integration repository.
+
+    --override_repository={rotbb_name_in_integration_repo}={my local path}
+
+can be included on the command line when building or a user.bazelrc file to compile this package
+
+### Releasing New rotbb for Integration
+
+Releasing new rotbb versions is completely automated. Simply update version.yaml and complete a code review on Gerrit.
+CICD scripts on dev branch must be updated for this process to work for other branches.
+
+Below listed workspaces need to be created in integration repo where ROT building block is int
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `emb_tracker/`
+  - `FastMath/`
+  - `OCG/`
+    - `src/`
+      - `core/`
+      - `iface/`
+  - `ROT/`
+    - `Fusion360/`
+      - `autocode_reuse/`
+      - `cluster_grouping/`
+      - `clustering/`
+      - `common/`
+      - `cv_trailer_estimator/`
+      - `detection_to_track_association/`
+      - `e2e_protection/`
+      - `include/`
+      - `inputs_preprocessing/`
+      - `internal_preprocessing/`
+      - `logging/`
+      - `measurement_update_tracks/`
+      - `multipath_detector/`
+      - `object_track_initialization/`
+      - `occlusion/`
+      - `passenger_trailer_estimator/`
+      - `post_update_track_adjustments/`
+      - `pre_association_track_management/`
+      - `sensor_postprocessing/`
+      - `static_environment/`
+      - `time_update_tracks/`
+      - `track_classification/`
+      - `track_downselection/`
+      - `track_grouping/`
+      - `track_validity/`
+      - `trailer_manager/`
+      - `update_relative_timestamps/`
+    - `SharedTrackerAPI/`
+      - `Logging/`
+      - `Types/`
+      - `core/`
+    - `StateManager/`
+      - `source/`
+  - `SG/`
+    - `src/`
+      - `core/`
+      - `iface/`
+  - `Timing/`
+  - `VSE/`
+    - `include/`
+    - `source/`
+- `tools/`
+  - `CI/`
+    - `WRSD/`
+  - `bazel/`
+    - `bazel/`
+    - `toolchains/`
+      - `gcovr/`
+      - `mingw/`
+      - `windriver_a53/`
+      - `windriver_m7/`
+  - `preCommit/`
+  - `python/`
+    - `installPreCommit/`
+    - `netrcCredentialsManager/`
+    - `python_verification/`
+
+## File inventory by directory
+### `.`
+- `.pre-commit-config.yaml`
+- `ADMIN_AUDIT_LOG.md`
+- `README.md`
+- `RULESETS.md`
+- `repo_init.py`
+- `version.yaml`
+### `.github\workflows`
+- `bb-ci.yml`
+### `emb_tracker`
+- `emb_tracker_project_contract.bzl`
+### `emb_tracker\ROT\SharedTrackerAPI\Types\ocg`
+- `occupancy_grid_version.txt`
+### `emb_tracker\ROT\SharedTrackerAPI\core\variants`
+- `index.txt`
+### `tools\CI\WRSD`
+- `post-merge-trigger.yaml`
+- `verification-trigger.yaml`
+### `tools\bazel\bazel`
+- `app_variant_transitions.bzl`
+- `copy_to_dir.bzl`
+### `tools\preCommit`
+- `check-version-yaml.py` — Pre-commit hook to validate version.yaml.  This script checks that version.yaml (in the root of the repo) contains: - MajorVersion, MinorVersion, PatchVersion - must all be integers, non-negative, and no leading zeros - ShortName - Name used in the integration repos, must be a non-empty string (e.g.
+- `f8_bazel.ini`
+- `f8_python.ini`
+- `pyproject.toml`
+### `tools\python\installPreCommit`
+- `__init__.py`
+- `installPreCommit.py` — Simple module used to install pre-commit on a cloned git repository.  This module simply automates running python -m pre-commit install in an OS agnostic fashion. A .pre-commit-config.yaml file is required at the root of the repository.  See https://pre-commit.com/ for more details on pre-commit
+### `tools\python\netrcCredentialsManager`
+- `__init__.py`
+- `netrcCredentialsManager.py` — Package used to create a .netrc file as well as check if the credentials are valid for a given URL.  A JSON file is required to specify the credential requirements. This can either be stored alongside this script, which is used by default, or a path can be provided to another location.  The JSON sho
+- `requiredCredentials.json`
+### `tools\python\python_verification`
+- `__init__.py`
+- `requirements.txt`
+- `verify.py` — Verify Python 3.8 64-bit or greater is used and install pip packages.  This is a simple script to check the version of Python to ensure that it is both 64 bit and at least version 3.8. It also is used to update any python packages via Pip.
+
+</details>
+
+## G.8 core-resim-bordnet-tool — Bordnet/decoder toolkit (9 branches, all)
+**What it does:** CAN/Bordnet extraction + decoding toolkit: per-protocol extractors/decoders
+(AL/VCAN/PCAN/CEER/SOMEIP/MCIP), MDF logging, BordNet decoder core, shared BOOST, inputs
+(`Gen7_BORDNET_fList.json`, `bordnet_config.xml`).
+**Branches:** `main` + features `IYI-120/177/246`, `STLA_SMALL_Bordnet_files`, `cyw-6313`,
+`gen7v2-canv4`, `mcip-canv4`, `test`.
+**Research hooks:** decoder release notes = protocol-change log for KPI parser maintenance; CANv4
+lines track bus-evolution edge cases.
+
+<details><summary>core-resim-bordnet-tool — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-bordnet-tool — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feature__IYI-120`, `feature__IYI_177`, `feature__IYI_246`, `feature__STLA_SMALL_Bordnet_files`, `feature__cyw-6313`, `feature__gen7v2-canv4`, `feature__mcip-canv4`, `feature__test`, `main`
+Total files in `main`: ~14966
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `AL_PCAN_Extractor/`
+  - `AL_PCAN_FL/`
+    - `Include/`
+    - `Source/`
+  - `AL_PCAN_FLR/`
+    - `Include/`
+    - `Source/`
+  - `AL_PCAN_RL/`
+    - `Include/`
+    - `Source/`
+  - `CMake/`
+  - `Include/`
+  - `Source/`
+- `AL_PCAN_FLR_Decoder/`
+  - `CMake/`
+- `AL_PCAN_FL_Decoder/`
+  - `CMake/`
+- `AL_PCAN_RL_Decoder/`
+  - `CMake/`
+- `AL_VCAN_Extractor/`
+  - `AL_VCAN_FLR/`
+    - `Include/`
+    - `Source/`
+  - `CMake/`
+  - `Include/`
+  - `Source/`
+- `AL_VCAN_FLR_Decoder/`
+  - `CMake/`
+- `Auto_Gen_Files/`
+  - `CMake/`
+  - `Include/`
+    - `AL_V1_1/`
+    - `AL_VCAN_V1_1/`
+    - `CEER_V1/`
+    - `CEER_V2/`
+    - `CEER_V3/`
+    - `CEER_V4/`
+    - `CEER_V4_0_2/`
+    - `CEER_V4_0_3/`
+    - `MCIP_V2/`
+    - `MCIP_V4/`
+  - `Source/`
+    - `AL_V1_1/`
+    - `AL_VCAN_V1_1/`
+    - `CEER_V1/`
+    - `CEER_V2/`
+    - `CEER_V3/`
+    - `CEER_V4/`
+    - `CEER_V4_0_2/`
+    - `CEER_V4_0_3/`
+    - `MCIP_V2/`
+    - `MCIP_V4/`
+- `BOOST/`
+  - `Include/`
+    - `boost/`
+      - `accumulators/`
+      - `algorithm/`
+      - `align/`
+      - `archive/`
+      - `asio/`
+      - `assign/`
+      - `atomic/`
+      - `beast/`
+      - `bimap/`
+      - `bind/`
+      - `callable_traits/`
+      - `chrono/`
+      - `circular_buffer/`
+      - `compatibility/`
+      - `compute/`
+      - `concept/`
+      - `concept_check/`
+      - `config/`
+      - `container/`
+      - `container_hash/`
+      - `context/`
+      - `contract/`
+      - `convert/`
+      - `core/`
+      - `coroutine/`
+      - `coroutine2/`
+      - `date_time/`
+      - `detail/`
+      - `dll/`
+      - `dynamic_bitset/`
+      - `endian/`
+      - `exception/`
+      - `fiber/`
+      - `filesystem/`
+      - `flyweight/`
+      - `format/`
+      - `function/`
+      - `function_types/`
+      - `functional/`
+      - `fusion/`
+      - `geometry/`
+      - `gil/`
+      - `graph/`
+      - `hana/`
+      - `heap/`
+      - `hof/`
+      - `icl/`
+      - `integer/`
+      - `interprocess/`
+      - `intrusive/`
+      - `io/`
+      - `iostreams/`
+      - `iterator/`
+      - `lambda/`
+      - `lexical_cast/`
+      - `local_function/`
+      - `locale/`
+      - `lockfree/`
+      - `log/`
+      - `logic/`
+      - `math/`
+      - `metaparse/`
+      - `move/`
+      - `mp11/`
+      - `mpi/`
+      - `mpl/`
+      - `msm/`
+      - `multi_array/`
+      - `multi_index/`
+      - `multiprecision/`
+      - `numeric/`
+      - `optional/`
+      - `parameter/`
+      - `pending/`
+      - `phoenix/`
+      - `poly_collection/`
+      - `polygon/`
+      - `pool/`
+      - `predef/`
+      - `preprocessor/`
+      - `process/`
+      - `program_options/`
+      - `property_map/`
+      - `property_tree/`
+      - `proto/`
+      - `ptr_container/`
+      - `python/`
+      - `qvm/`
+      - `random/`
+      - `range/`
+      - `ratio/`
+      - `regex/`
+      - `safe_numerics/`
+      - `serialization/`
+      - `signals2/`
+      - `smart_ptr/`
+      - `sort/`
+      - `spirit/`
+      - `stacktrace/`
+      - `statechart/`
+      - `system/`
+      - `test/`
+      - `thread/`
+      - `timer/`
+      - `tti/`
+      - `tuple/`
+      - `type_erasure/`
+      - `type_index/`
+      - `type_traits/`
+      - `typeof/`
+      - `units/`
+      - `unordered/`
+      - `utility/`
+      - `uuid/`
+      - `variant/`
+      - `vmd/`
+      - `wave/`
+      - `winapi/`
+      - `xpressive/`
+      - `yap/`
+  - `lib/`
+    - `linux/`
+      - `x64/`
+    - `windows/`
+      - `x64/`
+      - `x86/`
+- `BordNetDecoder/`
+  - `CMake/`
+- `CEER_FLR7_SOMEIP_Decoder/`
+  - `CMake/`
+- `CEER_PCAN_Extractor/`
+  - `CEER_PCAN_FL/`
+    - `Include/`
+    - `Source/`
+  - `CEER_PCAN_FLR/`
+    - `Include/`
+    - `Source/`
+  - `CEER_PCAN_FR/`
+    - `Include/`
+    - `Source/`
+  - `CEER_PCAN_RL/`
+    - `Include/`
+    - `Source/`
+  - `CEER_PCAN_RR/`
+    - `Include/`
+    - `Source/`
+  - `CMake/`
+  - `Include/`
+  - `Source/`
+- `CEER_PCAN_FLR_Decoder/`
+  - `CMake/`
+- `CEER_PCAN_FL_Decoder/`
+  - `CMake/`
+- `CEER_PCAN_FR_Decoder/`
+  - `CMake/`
+- `CEER_PCAN_RL_Decoder/`
+  - `CMake/`
+- `CEER_PCAN_RR_Decoder/`
+  - `CMake/`
+- `CEER_SOMEIP_Decoder_Wrapper/`
+  - `CMake/`
+  - `Include/`
+  - `Source/`
+- `CEER_SOMEIP_Extractor/`
+  - `CMake/`
+  - `Include/`
+  - `Source/`
+- `CEER_SOMEIP_FLR_Decoder/`
+  - `CMake/`
+- `CEER_SOMEIP_FL_Decoder/`
+  - `CMake/`
+- `CEER_SOMEIP_FR_Decoder/`
+  - `CMake/`
+- `CEER_SOMEIP_RL_Decoder/`
+  - `CMake/`
+- `CEER_SOMEIP_RR_Decoder/`
+  - `CMake/`
+- `CEER_SRR7P_SOMEIP_Decoder/`
+  - `CEER_SRR7P_SOMEIP_Decoder/`
+    - `CMake/`
+  - `CMake/`
+- `CMake/`
+- `Common_Headers/`
+  - `HDF/`
+    - `include/`
+    - `lib/`
+      - `DEBUG/`
+      - `DLL/`
+      - `RELEASE/`
+    - `linux/`
+      - `include/`
+      - `lib/`
+    - `windows/`
+      - `lib/`
+  - `MDF_Include/`
+    - `Interface/`
+  - `PUGI_VS15/`
+    - `x64/`
+      - `Debug/`
+      - `Release/`
+    - `x86/`
+      - `Debug/`
+      - `Release/`
+  - `PUGI_VS19/`
+    - `x64/`
+      - `Debug/`
+      - `Release/`
+  - `pugixml/`
+    - `binaries/`
+      - `x64/`
+      - `x86/`
+  - `udp_headers/`
+- `Common_Structures/`
+  - `CMake/`
+- `Cross_Platform/`
+  - `CMake/`
+- `Document/`
+- `Inputs/`
+- `MCIP_PCAN_Extractor/`
+  - `CMake/`
+  - `Include/`
+  - `MCIP_PCAN_FL/`
+    - `Include/`
+    - `Source/`
+  - `MCIP_PCAN_FLR/`
+    - `Include/`
+    - `Source/`
+  - `MCIP_PCAN_FR/`
+    - `Include/`
+    - `Source/`
+  - `MCIP_PCAN_RL/`
+    - `Include/`
+    - `Source/`
+  - `MCIP_PCAN_RR/`
+    - `Include/`
+    - `Source/`
+  - `Source/`
+- `MCIP_PCAN_FLR_Decoder/`
+  - `CMake/`
+- `MCIP_PCAN_FL_Decoder/`
+  - `CMake/`
+- `MCIP_PCAN_FR_Decoder/`
+  - `CMake/`
+- `MCIP_PCAN_RL_Decoder/`
+  - `CMake/`
+- `MCIP_PCAN_RR_Decoder/`
+  - `CMake/`
+- `Utility/`
+  - `CMake/`
+- `mdf_log/`
+  - `CMake/`
+  - `inc/`
+  - `src/`
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `Build.sh`
+- `RULESETS.md`
+### `.github\workflows`
+- `bordnet-tool-main.yml`
+- `validate.yml`
+### `AL_PCAN_Extractor\CMake`
+- `CMakeLists - Copy.txt`
+- `CMakeLists.txt`
+### `AL_PCAN_FLR_Decoder`
+- `ReleaseNotes_AL_PCAN_FLR.txt`
+### `AL_PCAN_FLR_Decoder\CMake`
+- `CMakeLists.txt`
+### `AL_PCAN_FL_Decoder`
+- `ReleaseNotes_AL_PCAN_FL.txt`
+### `AL_PCAN_FL_Decoder\CMake`
+- `CMakeLists.txt`
+### `AL_PCAN_RL_Decoder`
+- `ReleaseNotes_AL_PCAN_RL.txt`
+### `AL_PCAN_RL_Decoder\CMake`
+- `CMakeLists.txt`
+### `AL_VCAN_Extractor\CMake`
+- `CMakeLists - Copy.txt`
+- `CMakeLists.txt`
+### `AL_VCAN_FLR_Decoder`
+- `ReleaseNotes_AL_VCAN_FLR.txt`
+### `AL_VCAN_FLR_Decoder\CMake`
+- `CMakeLists.txt`
+### `Auto_Gen_Files\CMake`
+- `CMakeLists.txt`
+### `BOOST\Include\boost\geometry\util`
+- `readme.txt`
+### `BOOST\Include\boost\pool\detail`
+- `pool_construct.sh`
+- `pool_construct_simple.sh`
+### `BOOST\Include\boost\safe_numerics`
+- `CMakeLists.txt`
+### `BOOST\Include\boost\safe_numerics\concept`
+- `CMakeLists.txt`
+### `BOOST\Include\boost\spirit\home\support\char_encoding\unicode`
+- `DerivedCoreProperties.txt`
+- `PropList.txt`
+- `Scripts.txt`
+- `UnicodeData.txt`
+### `BordNetDecoder`
+- `ReleaseNotes_BordnetTool.txt`
+### `BordNetDecoder\CMake`
+- `CMakeLists.txt`
+### `CEER_FLR7_SOMEIP_Decoder`
+- `ReleaseNotes_CEER_FLR7_SOMEIP.txt`
+### `CEER_FLR7_SOMEIP_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_PCAN_Extractor\CMake`
+- `CMakeLists - Copy.txt`
+- `CMakeLists.txt`
+### `CEER_PCAN_FLR_Decoder`
+- `ReleaseNotes_CEER_PCAN_FLR.txt`
+### `CEER_PCAN_FLR_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_PCAN_FL_Decoder`
+- `ReleaseNotes_CEER_PCAN_FL.txt`
+### `CEER_PCAN_FL_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_PCAN_FR_Decoder`
+- `ReleaseNotes_CEER_PCAN_FR.txt`
+### `CEER_PCAN_FR_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_PCAN_RL_Decoder`
+- `ReleaseNotes_CEER_PCAN_RL.txt`
+### `CEER_PCAN_RL_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_PCAN_RR_Decoder`
+- `ReleaseNotes_CEER_PCAN_RR.txt`
+### `CEER_PCAN_RR_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_Decoder_Wrapper\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_Extractor\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_FLR_Decoder`
+- `ReleaseNotes_CEER_SOMEIP.txt`
+### `CEER_SOMEIP_FLR_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_FL_Decoder`
+- `ReleaseNotes_CEER_SOMEIP.txt`
+### `CEER_SOMEIP_FL_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_FR_Decoder`
+- `ReleaseNotes_CEER_SOMEIP.txt`
+### `CEER_SOMEIP_FR_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_RL_Decoder`
+- `ReleaseNotes_CEER_SOMEIP.txt`
+### `CEER_SOMEIP_RL_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SOMEIP_RR_Decoder`
+- `ReleaseNotes_CEER_SOMEIP.txt`
+### `CEER_SOMEIP_RR_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SRR7P_SOMEIP_Decoder`
+- `ReleaseNotes_CEER_SRR7P_SOMEIP.txt`
+### `CEER_SRR7P_SOMEIP_Decoder\CEER_SRR7P_SOMEIP_Decoder`
+- `ReleaseNotes_CEER_SRR7P_SOMEIP.txt`
+### `CEER_SRR7P_SOMEIP_Decoder\CEER_SRR7P_SOMEIP_Decoder\CMake`
+- `CMakeLists.txt`
+### `CEER_SRR7P_SOMEIP_Decoder\CMake`
+- `CMakeLists.txt`
+### `CMake`
+- `CMakeLists.txt`
+### `Common_Structures\CMake`
+- `CMakeLists.txt`
+### `Cross_Platform\CMake`
+- `CMakeLists.txt`
+### `Inputs`
+- `Gen7_BORDNET_fList.json`
+- `bordnet_config.xml`
+### `MCIP_PCAN_Extractor\CMake`
+- `CMakeLists.txt`
+### `MCIP_PCAN_FLR_Decoder`
+- `ReleaseNotes_MCIP_PCAN_FLR.txt`
+### `MCIP_PCAN_FLR_Decoder\CMake`
+- `CMakeLists.txt`
+### `MCIP_PCAN_FL_Decoder`
+- `ReleaseNotes_MCIP_PCAN_FL.txt`
+### `MCIP_PCAN_FL_Decoder\CMake`
+- `CMakeLists.txt`
+### `MCIP_PCAN_FR_Decoder`
+- `ReleaseNotes_MCIP_PCAN_FR.txt`
+### `MCIP_PCAN_FR_Decoder\CMake`
+- `CMakeLists.txt`
+### `MCIP_PCAN_RL_Decoder`
+- `ReleaseNotes_MCIP_PCAN_RL.txt`
+### `MCIP_PCAN_RL_Decoder\CMake`
+- `CMakeLists.txt`
+### `MCIP_PCAN_RR_Decoder`
+- `ReleaseNotes_MCIP_PCAN_RR.txt`
+### `MCIP_PCAN_RR_Decoder\CMake`
+- `CMakeLists.txt`
+### `Utility\CMake`
+- `CMakeLists.txt`
+### `mdf_log`
+- `ReadMe.txt`
+### `mdf_log\CMake`
+- `CMakeLists.txt`
+
+</details>
+
+## G.6 core-resim-dc-emb-library — DC embedded feature library (4 branches, all)
+**What it does:** driving-context (DC) embedded library: feature building kit (FBK), LCDA/LTB/PT/RECW/SCW/TA
+functions with per-OEM calibrations (BMW/Honda/Nissan/Rivian/STLA/Generic), DC-SIL packaging, math library.
+**Branches:** `main`, `feature/DC_FF_Testing`, `feature/DGPS` (DGPS ground-truth path: `sil_dgps/`,
+`dgps_config/`), `feature/keg_writing`.
+**Research hooks:** calibration-stream schemas feed KPI config work; DGPS line = ground-truth source for
+tracker scoring; per-OEM calibration deltas are a variability study.
+
+<details><summary>core-resim-dc-emb-library — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-dc-emb-library — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feature__DC_FF_Testing`, `feature__DGPS`, `feature__keg_writing`, `main`
+Total files in `main`: ~7775
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `.vscode/`
+- `Application/`
+  - `F360Tracker/`
+    - `F360TrackerLib/`
+      - `Fusion360/`
+      - `SharedTrackerAPI/`
+      - `StateManager/`
+      - `Timing/`
+      - `integration_testing/`
+      - `safety_handler/`
+    - `OLP_Core/`
+      - `includes/`
+      - `source/`
+    - `VSE_Core/`
+      - `include/`
+      - `source/`
+    - `ocg/`
+      - `src/`
+    - `rspp/`
+      - `include/`
+      - `source/`
+      - `unittest/`
+    - `sg_stationary_geometry/`
+      - `src/`
+      - `tools/`
+  - `FeatureFunctions/`
+    - `CED/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Mock_Files/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `CTA/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Mock_Files/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `Calibration_Tool/`
+      - `Makefiles/`
+      - `_lnk/`
+      - `c_src/`
+      - `dist/`
+      - `docs/`
+      - `jenkins/`
+      - `python_src/`
+      - `testing/`
+    - `ESA/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Mock_Files/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `Feature_Building_Kit/`
+      - `CMake/`
+      - `Calibration/`
+      - `Calibration_Tool/`
+      - `Doc/`
+      - `Interface/`
+      - `Makefiles/`
+      - `Platform_Abstraction_Layer/`
+      - `Shared_Feature_Functions/`
+      - `Testing/`
+      - `_lnk/`
+    - `LCDA/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Mock_Files/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `LTB/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `Math_Library/`
+      - `.vscode/`
+      - `ci/`
+      - `coverity/`
+      - `development/`
+      - `ml_core/`
+      - `scripts/`
+    - `Mock_Files/`
+      - `SIL_Library/`
+      - `SRR_CORE_LIB/`
+      - `tracker_interfaces/`
+    - `PT/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `RECW/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `SCW/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+    - `TA/`
+      - `Calibration/`
+      - `Customer_Adapter/`
+      - `Doc/`
+      - `Makefiles/`
+      - `Source/`
+      - `Testing/`
+      - `_lnk/`
+  - `utilities/`
+    - `cmake/`
+- `DC_SIL/`
+  - `sil_component_streams/`
+    - `A5/`
+    - `Tools/`
+      - `STREAM_GENERATOR_5_6_1 2 1 6/`
+  - `sil_config_read/`
+  - `sil_debug_file/`
+  - `sil_dgps/`
+  - `sil_engine_headers/`
+  - `sil_executables/`
+    - `dc_config/`
+      - `Gen7/`
+      - `Gen8/`
+    - `dgps_config/`
+    - `fw_dlls/`
+    - `fw_dlls_gen8/`
+    - `radar_dlls/`
+  - `sil_ext_libs/`
+    - `AS_BIN_WRITER/`
+      - `CMake/`
+      - `Matlab/`
+      - `Python/`
+      - `doc/`
+      - `lib/`
+      - `ports/`
+    - `DGPS/`
+      - `Include/`
+      - `lib/`
+    - `HDF/`
+      - `HDF_Linux/`
+      - `HDF_Windows/`
+    - `pugixml-1.10/`
+      - `docs/`
+      - `scripts/`
+      - `src/`
+  - `sil_input/`
+  - `sil_output/`
+  - `sil_smc/`
+    - `sil_autogen/`
+  - `sil_udp_streams/`
+    - `RECU/`
+  - `sil_wrappers/`
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `RULESETS.md`
+### `.github\workflows`
+- `dc-emb-lib.yml`
+- `validate.yml`
+### `.vscode`
+- `c_cpp_properties.json`
+- `launch.json`
+- `settings.json`
+### `Application\F360Tracker\F360TrackerLib`
+- `CMakeLists.txt`
+- `coverage_config.cmake`
+- `f360-docs.cmake`
+- `ocg_config.cmake`
+- `rspp_config.cmake`
+- `sg_config.cmake`
+- `ut_config.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\autocode_reuse`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\cluster_grouping`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\clustering`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\common`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\cv_trailer_estimator`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\detection_to_track_association`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\e2e_protection`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\include`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\inputs_preprocessing`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\internal_preprocessing`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\internal_preprocessing\qualification_testing\qualtest\cfg`
+- `CppuTests.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\logging`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\measurement_update_tracks`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\multipath_detector`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\object_track_initialization`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\occlusion`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\passenger_trailer_estimator`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\post_update_track_adjustments`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\pre_association_track_management`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\sensor_postprocessing`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\static_environment`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\time_update_tracks`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\track_classification`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\track_downselection`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\track_grouping`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\track_validity`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\trailer_manager`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\Fusion360\update_relative_timestamps`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\SharedTrackerAPI`
+- `sources.cmake`
+### `Application\F360Tracker\F360TrackerLib\SharedTrackerAPI\Types\ocg`
+- `occupancy_grid_version.txt`
+### `Application\F360Tracker\F360TrackerLib\SharedTrackerAPI\Types\unittest\cfg`
+- `CppuTests.cmake`
+### `Application\F360Tracker\F360TrackerLib\SharedTrackerAPI\core\variants`
+- `index.txt`
+### `Application\F360Tracker\F360TrackerLib\StateManager\unittest\cfg`
+- `CppuTests.cmake`
+### `Application\F360Tracker\F360TrackerLib\safety_handler`
+- `CMakeLists.txt`
+- `coverage_config.cmake`
+- `safety_handler_docs.cmake`
+- `ut_config.cmake`
+### `Application\F360Tracker\OLP_Core`
+- `CMakeLists.txt`
+### `Application\F360Tracker\VSE_Core`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\cmake`
+- `check_reuse.cmake`
+### `Application\F360Tracker\ocg\src\core`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\core\common`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\core\underdrivability`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\iface`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\iface\ocg_variants`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\unit_tests`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\unit_tests\tests`
+- `CMakeLists.txt`
+### `Application\F360Tracker\ocg\src\unit_tests\tests\underdrivability`
+- `CMakeLists.txt`
+### `Application\F360Tracker\rspp`
+- `CMakeLists.txt`
+- `coverage_config.cmake`
+- `rspp_docs.cmake`
+- `ut_config.cmake`
+- `variant_config.cmake`
+### `Application\F360Tracker\rspp\include`
+- `CMakeLists.txt`
+### `Application\F360Tracker\rspp\include\variants`
+- `index.txt`
+### `Application\F360Tracker\sg_stationary_geometry`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\cmake`
+- `CreateCompilerCommonConfigurationTarget.cmake`
+- `SetupGcovCoverage.cmake`
+### `Application\F360Tracker\sg_stationary_geometry\src\core`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\calibrations`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\common`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\contour_downselection`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\contour_initialization`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\dc_dummy_generator`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\detection_clustering`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\detection_processing`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\drivability_classification`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\dummy_generator`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\host`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\math`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\measurement_association`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\measurement_update`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\postprocessing`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\safety`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\core\modules\time_update`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\src\iface`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\tools`
+- `CMakeLists.txt`
+### `Application\F360Tracker\sg_stationary_geometry\tools\cmake`
+- `CMakeGraphVizOptions.cmake`
+- `GetAllTargets.cmake`
+- `SetupDependencyGraph.cmake`
+- `SetupDevInstallation.cmake`
+- `SetupUnitTestsReportTarget.cmake`
+- `install-rules.cmake`
+- `release_CMakeLists.txt`
+- `vs_support_tools.cmake`
+### `Application\F360Tracker\sg_stationary_geometry\tools\cmake\presets`
+- `GenericPresets.json`
+- `ReleaseBMWPresets.json`
+- `ReleaseGCCPresets.json`
+- `ToolsPresets.json`
+### `Application\F360Tracker\sg_stationary_geometry\tools\cmake\toolchains`
+- `bmw_qnx_toolchain.cmake`
+- `default_qnx_toolchain.cmake`
+- `default_tricore_toolchain.cmake`
+- `default_windriver_diab_toolchain.cmake`
+### `Application\FeatureFunctions`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\CED`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\CED\Calibration`
+- `CED_Calibration.cmake`
+### `Application\FeatureFunctions\CED\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\CED_Core`
+- `Calibration_Tool_for_CED.sh`
+- `ced_cal.xml`
+### `Application\FeatureFunctions\CED\Calibration\Ford_DAT2_1`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\Honda_SRR6`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\Nissan_SRR6`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\RNA_SWEET400`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Calibration\STLA_Thunder`
+- `Customer_Specific_Cal.xml`
+- `ced_core_calibration_data_stream.xml`
+- `ced_customer_calibration_data_stream.xml`
+- `ced_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CED\Customer_Adapter`
+- `CED_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\Ford_DAT2_1`
+- `Ford_DAT2_1.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\Honda_SRR6`
+- `Honda_SRR6.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\Nissan_SRR6`
+- `Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\RNA_SWEET400`
+- `RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\Rivian_SRR6`
+- `Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\CED\Customer_Adapter\STLA_Thunder`
+- `STLA_Thunder.cmake`
+### `Application\FeatureFunctions\CED\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\CED\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\CED\Mock_Files`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\CED\Source`
+- `CED_Source.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Mock_Files`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Ford_DAT2_1`
+- `UT_Ford_DAT2_1.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Honda_SRR6`
+- `UT_Honda_SRR6.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Nissan_SRR6`
+- `UT_Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\RNA_SWEET400`
+- `UT_RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Rivian_SRR6`
+- `UT_Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE4_Unit_Tests\Unit_Test_Customer\STLA_Thunder`
+- `UT_STLA_Thunder.cmake`
+### `Application\FeatureFunctions\CED\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\CED\Testing\SWE6_Component_Tests\Honda_SRR6\Real_World_Logs\true_positive\EW_Holding_Logic`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CED\Testing\SWE6_Component_Tests\Honda_SRR6\Real_World_Logs\true_positive\EW_Over_Take_Rear_Entry`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CED\Testing\SWE6_Component_Tests\Honda_SRR6\Real_World_Logs\true_positive\EW_Sliding_Through`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CED\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\CTA`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\CTA\Calibration`
+- `CTA_Calibration.cmake`
+### `Application\FeatureFunctions\CTA\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Calibration\CTA_Core`
+- `Calibration_Tool_for_CTA.sh`
+- `cta_cal.xml`
+### `Application\FeatureFunctions\CTA\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Calibration\Honda_SRR6`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Calibration\Nissan_SRR6`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Calibration\RNA_SWEET400`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Calibration\STLA_Thunder`
+- `Customer_Specific_Cal.xml`
+- `cta_core_calibration_data_stream.xml`
+- `cta_customer_calibration_data_stream.xml`
+- `cta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\CTA\Customer_Adapter`
+- `CTA_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\Honda_SRR6`
+- `Honda_SRR6.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\Nissan_SRR6`
+- `Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\RNA_SWEET400`
+- `RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\Rivian_SRR6`
+- `Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\CTA\Customer_Adapter\STLA_Thunder`
+- `STLA_Thunder.cmake`
+### `Application\FeatureFunctions\CTA\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\CTA\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\CTA\Mock_Files`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\CTA\Source`
+- `CTA_Source.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Mock_Files`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Source`
+- `Source.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Test_Classes`
+- `Test_Classes.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Honda_SRR6`
+- `UT_Honda_SRR6.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Nissan_SRR6`
+- `UT_Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\RNA_SWEET400`
+- `UT_RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Rivian_SRR6`
+- `UT_Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\STLA_Thunder`
+- `UT_STLA_Thunder.cmake`
+### `Application\FeatureFunctions\CTA\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\CTA\Testing\SWE6_Component_Tests\Honda_SRR6\Real_World_Logs\alert_left`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CTA\Testing\SWE6_Component_Tests\Honda_SRR6\Real_World_Logs\true_negative`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CTA\Testing\SWE6_Component_Tests\Honda_SRR6\Real_World_Logs\true_positive`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CTA\Testing\SWE6_Component_Tests\STLA_Thunder\true_negative`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\CTA\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\Calibration_Tool`
+- `README.md`
+- `ct_main.py`
+- `mypy.ini`
+- `requirements.txt`
+- `setup.cfg`
+### `Application\FeatureFunctions\Calibration_Tool\c_src`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Calibration_Tool\docs`
+- `requirements.txt`
+### `Application\FeatureFunctions\Calibration_Tool\docs\source`
+- `conf.py`
+- `readme.md`
+### `Application\FeatureFunctions\Calibration_Tool\jenkins\jobs\python`
+- `create_iwyu_report.py`
+### `Application\FeatureFunctions\Calibration_Tool\jenkins\jobs\shell`
+- `all_configurations.sh`
+- `c_build.sh`
+- `c_coverity_build.sh`
+- `check_executable.sh`
+- `iwyu_checks.sh`
+### `Application\FeatureFunctions\Calibration_Tool\python_src`
+- `__init__.py`
+- `ct_export_cal_check_files.py` — This file contains functions for creation of the core cal check files. Here the string for the boundary checks is replaced.
+- `ct_export_cal_header.py` — This file contains functions for creation of the shared calibration header file. Several string replacements are applied here e.g. generation of macros and specific orders of calibration dictionaries.""" import os import logging from typing import Dict  from python_src.file_skeletons.ct_core_header_
+- `ct_export_cal_printing.py` — This file contains functions for creation of the printing .c-file.
+- `ct_export_customer_cals.py` — This file contains functions for creation of customer specific calibration files. Several string replacements are applied here e.g. replacement of calibration update routine.""" import os import re import logging from typing import Dict  import python_src.ct_shared_resources as ct_sr from python_src
+- `ct_export_customer_data_stream.py` — This file contains the functions for creation of customer specific data stream xml files.  Those are showing the byte stream of the calibration struct in big and little endian.
+- `ct_export_update_calibration.py` — This file contains functions for creation of the core cal check files. Here the string for the boundary checks is replaced.
+- `ct_header_type.py` — This file contains the header type of the calibration tool. This type provides basic information of internals of the calibration tool.
+- `ct_parser.py` — This file contains the parsing of xml data as well as adding of padding bytes and basic manipulation and validation of parsed content.""" import os import re import xml.etree.ElementTree as Et from typing import Tuple, Dict, List import logging from copy import deepcopy  import python_src.ct_shared_
+- `ct_shared_resources.py` — This file provides shared functions for the calibration tool as well as class definitions for parsed data.
+### `Application\FeatureFunctions\Calibration_Tool\python_src\file_skeletons`
+- `__init__.py`
+- `ct_core_cal_check_skeleton.py` — This file defines the file skeleton for calibration boundary checks. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's why the string replacement in
+- `ct_core_cal_print_skeleton.py` — This file defines the file skeleton for calibration printing. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's why the string replacement indicator
+- `ct_core_header_skeleton.py` — This file defines the file skeleton for the core header file. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's why the string replacement indicator
+- `ct_core_type_header_skeleton.py` — This file defines the file skeleton for the core header file. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's why the string replacement indicator
+- `ct_customer_data_stream_skeleton.py` — This file defines the file skeleton for customer specific data stream xml files for integration. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's w
+- `ct_customer_specific_cal_skeleton.py` — This file defines the file skeleton for customer specific calibration c-files. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's why the string repl
+- `ct_update_calibration_skeleton.py` — This file defines the file skeleton for calibration update. Those f-strings are formatted in a way, that formatting via clang-format is not necessarily required. Additional formatting is done in the functions for generation of the strings to be replaced. That's why the string replacement indicators 
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest`
+- `BUILD.bazel`
+- `CMakeLists.txt`
+- `CONTRIBUTING.md`
+- `README.md`
+- `library.json`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\.github\ISSUE_TEMPLATE`
+- `00-bug_report.md`
+- `10-feature_request.md`
+- `config.yml`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\ci`
+- `linux-presubmit.sh`
+- `macos-presubmit.sh`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\docs`
+- `_config.yml`
+- `advanced.md`
+- `community_created_documentation.md`
+- `faq.md`
+- `gmock_cheat_sheet.md`
+- `gmock_cook_book.md`
+- `gmock_faq.md`
+- `gmock_for_dummies.md`
+- `index.md`
+- `pkgconfig.md`
+- `platforms.md`
+- `primer.md`
+- `quickstart-bazel.md`
+- `quickstart-cmake.md`
+- `samples.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\docs\_data`
+- `navigation.yml`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\docs\reference`
+- `actions.md`
+- `assertions.md`
+- `matchers.md`
+- `mocking.md`
+- `testing.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock`
+- `CMakeLists.txt`
+- `README.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock\docs`
+- `README.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock\include\gmock\internal\custom`
+- `README.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock\scripts`
+- `README.md`
+- `fuse_gmock_files.py`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock\scripts\generator`
+- `gmock_gen.py`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock\scripts\generator\cpp`
+- `__init__.py`
+- `ast.py`
+- `gmock_class.py`
+- `gmock_class_test.py`
+- `keywords.py`
+- `tokenize.py`
+- `utils.py`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googlemock\test`
+- `BUILD.bazel`
+- `gmock_leak_test.py`
+- `gmock_output_test.py`
+- `gmock_output_test_golden.txt`
+- `gmock_test_utils.py`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googletest`
+- `CMakeLists.txt`
+- `README.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googletest\cmake`
+- `internal_utils.cmake`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googletest\docs`
+- `README.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googletest\include\gtest\internal\custom`
+- `README.md`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googletest\scripts`
+- `README.md`
+- `common.py`
+- `fuse_gtest_files.py`
+- `gen_gtest_pred_impl.py`
+- `release_docs.py`
+- `run_with_path.py` — Runs program specified in the command line with the substituted PATH.  This script is needed for to support building under Pulse which is unable to override the existing PATH variable.
+- `upload.py`
+- `upload_gtest.py`
+### `Application\FeatureFunctions\Calibration_Tool\testing\c_testing\googletest\googletest\test`
+- `BUILD.bazel`
+- `googletest-break-on-failure-unittest.py`
+- `googletest-catch-exceptions-test.py`
+- `googletest-color-test.py`
+- `googletest-env-var-test.py`
+- `googletest-failfast-unittest.py`
+- `googletest-filter-unittest.py`
+- `googletest-global-environment-unittest.py`
+- `googletest-json-outfiles-test.py`
+- `googletest-json-output-unittest.py`
+- `googletest-list-tests-unittest.py`
+- `googletest-output-test-golden-lin.txt`
+- `googletest-output-test.py`
+- `googletest-param-test-invalid-name1-test.py`
+- `googletest-param-test-invalid-name2-test.py`
+- `googletest-setuptestsuite-test.py`
+- `googletest-shuffle-test.py`
+- `googletest-throw-on-failure-test.py`
+- `googletest-uninitialized-test.py`
+- `gtest_help_test.py`
+- `gtest_json_test_utils.py`
+- `gtest_list_output_unittest.py`
+- `gtest_skip_check_output_test.py`
+- `gtest_skip_environment_check_output_test.py`
+- `gtest_test_utils.py`
+- `gtest_testbridge_test.py`
+- `gtest_xml_outfiles_test.py`
+- `gtest_xml_output_unittest.py`
+- `gtest_xml_test_utils.py`
+### `Application\FeatureFunctions\Calibration_Tool\testing\example_files\Core`
+- `cool_feature_cal.xml`
+### `Application\FeatureFunctions\Calibration_Tool\testing\example_files\Customer_A`
+- `Customer_Specific_Cal.xml`
+### `Application\FeatureFunctions\Calibration_Tool\testing\example_files\Customer_B`
+- `Customer_Specific_Cal.xml`
+### `Application\FeatureFunctions\Calibration_Tool\testing\python_testing`
+- `__init__.py`
+- `conftest.py` — This file shares test fixtures for the testing folder and possible subfolders. Subfolders could have their own conftest.py which provides testfixtures for this exact subfolder. The directories become their own sort of scope where fixtures that are defined in a conftest.py file in that directory beco
+- `requirements.txt`
+- `test_ct_export_cal_check_files.py` — This file contains test implementations for the source file ct_export_cal_check_files.
+- `test_ct_export_cal_header.py` — This file contains test implementations for the source file ct_export_cal_header.
+- `test_ct_export_cal_printing.py` — This file contains test implementations for the source file ct_export_cal_printing.
+- `test_ct_export_customer_cals.py` — This file contains test implementations for the source file ct_export_customer_cals.
+- `test_ct_export_customer_data_stream.py` — This file contains test implementations for the source file ct_export_customer_data_stream.
+- `test_ct_export_update_calibration.py` — This file contains test implementations for the source file ct_export_customer_cals.
+- `test_ct_file_skeletons.py` — This file contains test implementations for the source file ct_file_skeletons.
+- `test_ct_parser.py` — This file contains test implementations for the source file ct_parser.
+- `test_ct_shared_resources.py` — This file contains test implementations for the source file ct_shared_resources.
+### `Application\FeatureFunctions\ESA`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\ESA\Calibration`
+- `ESA_Calibration.cmake`
+### `Application\FeatureFunctions\ESA\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `esa_core_calibration_data_stream.xml`
+- `esa_customer_calibration_data_stream.xml`
+- `esa_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\ESA\Calibration\ESA_Core`
+- `Calibration_Tool_for_ESA.sh`
+- `esa_cal.xml`
+### `Application\FeatureFunctions\ESA\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `esa_core_calibration_data_stream.xml`
+- `esa_customer_calibration_data_stream.xml`
+- `esa_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\ESA\Customer_Adapter`
+- `ESA_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\ESA\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\ESA\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\ESA\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\ESA\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\ESA\Mock_Files`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\ESA\Source`
+- `ESA_Source.cmake`
+### `Application\FeatureFunctions\ESA\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\ESA\Testing\SWE4_Unit_Tests\Mock_Files`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\ESA\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\ESA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\ESA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\ESA\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\Feature_Building_Kit`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Feature_Building_Kit\CMake`
+- `Srf_Feature_Setup.cmake`
+- `Srf_Generate_Lcf_Files.cmake`
+- `Srf_Generate_Mak_Files.cmake`
+- `Srf_Set_Compile_Settings.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration`
+- `Feature_Building_Kit_Calibration.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\Feature_Building_Kit_Core`
+- `Calibration_Tool_for_Feature_Building_Kit.sh`
+- `feature_building_kit_cal.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\Ford_DAT2_1`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\Honda_SRR6`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\Nissan_SRR6`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\RNA_SWEET400`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Calibration\STLA_Thunder`
+- `Customer_Specific_Cal.xml`
+- `fbk_core_calibration_data_stream.xml`
+- `fbk_customer_calibration_data_stream.xml`
+- `fbk_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\Feature_Building_Kit\Doc\doxygen\pages`
+- `mainpage.md`
+### `Application\FeatureFunctions\Feature_Building_Kit\Interface`
+- `interface.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer`
+- `All_Valid_PA_Options.cmake`
+- `platforms.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer\f360`
+- `f360.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer\gdsr`
+- `gdsr.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer\gdsr\context`
+- `pa_gdsr_context.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer\gdsr\data_ports`
+- `pa_gdsr_data_ports.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Platform_Abstraction_Layer\u360`
+- `u360.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Shared_Feature_Functions`
+- `shared_feature_functions.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Feature_Building_Kit\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\Feature_Building_Kit\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\LCDA`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\LCDA\Calibration`
+- `LCDA_Calibration.cmake`
+### `Application\FeatureFunctions\LCDA\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\Honda_SRR6`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\LCDA_Core`
+- `Calibration_Tool_for_LCDA.sh`
+- `lcda_cal.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\Nissan_SRR6`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\RNA_SWEET400`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Calibration\STLA_Thunder`
+- `Customer_Specific_Cal.xml`
+- `lcda_core_calibration_data_stream.xml`
+- `lcda_customer_calibration_data_stream.xml`
+- `lcda_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter`
+- `LCDA_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\Honda_SRR6`
+- `Honda_SRR6.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\Nissan_SRR6`
+- `Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\RNA_SWEET400`
+- `RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\Rivian_SRR6`
+- `Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\LCDA\Customer_Adapter\STLA_Thunder`
+- `STLA_Thunder.cmake`
+### `Application\FeatureFunctions\LCDA\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\LCDA\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\LCDA\Mock_Files\RNA_SWEET400`
+- `Mock_Files.cmake`
+### `Application\FeatureFunctions\LCDA\Source`
+- `LCDA_Source.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Honda_SRR6`
+- `UT_Honda_SRR6.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Nissan_SRR6`
+- `UT_Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\RNA_SWEET400`
+- `UT_RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Rivian_SRR6`
+- `UT_Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\STLA_Thunder`
+- `UT_STLA_Thunder.cmake`
+### `Application\FeatureFunctions\LCDA\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\LCDA\Testing\SWE6_Component_Tests\Honda_SRR6\alert_state_lvl_1_right\Real_World_Logs`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\LCDA\Testing\SWE6_Component_Tests\Honda_SRR6\alert_state_lvl_2_right\Real_World_Logs`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\LCDA\Testing\SWE6_Component_Tests\Honda_SRR6\bsw_alert_right\Real_World_Logs`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\LCDA\Testing\SWE6_Component_Tests\Honda_SRR6\cvw_dynamic_ttc\Real_World_Logs`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\LCDA\Testing\SWE6_Component_Tests\STLA_Thunder\no_bsw_alert\Real_World_Logs`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\LCDA\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\LTB`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\LTB\Calibration`
+- `LTB_Calibration.cmake`
+### `Application\FeatureFunctions\LTB\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `ltb_core_calibration_data_stream.xml`
+- `ltb_customer_calibration_data_stream.xml`
+- `ltb_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LTB\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `ltb_core_calibration_data_stream.xml`
+- `ltb_customer_calibration_data_stream.xml`
+- `ltb_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\LTB\Calibration\LTB_Core`
+- `Calibration_Tool_for_ltb.sh`
+- `ltb_cal.xml`
+### `Application\FeatureFunctions\LTB\Customer_Adapter`
+- `LTB_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\LTB\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\LTB\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\LTB\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\LTB\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\LTB\Source`
+- `LTB_Source.cmake`
+### `Application\FeatureFunctions\LTB\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\LTB\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\LTB\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\LTB\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\LTB\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\LTB\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\Math_Library`
+- `CMakeLists.txt`
+- `README.md`
+- `cspell.json`
+### `Application\FeatureFunctions\Math_Library\.vscode`
+- `extensions.json`
+- `settings.json`
+### `Application\FeatureFunctions\Math_Library\development`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Math_Library\development\cmake_modules`
+- `math_library_generate_mak.cmake`
+### `Application\FeatureFunctions\Math_Library\development\static_analysis`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Math_Library\development\static_analysis\qac`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Math_Library\development\unit_test`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Math_Library\ml_core`
+- `CMakeLists.txt`
+- `fast_math.md`
+- `readme.md`
+### `Application\FeatureFunctions\Math_Library\ml_core\Development_tools`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Math_Library\ml_core\Development_tools\Timing`
+- `timing.cmake`
+### `Application\FeatureFunctions\Math_Library\scripts`
+- `modernize.md`
+- `modernize.py`
+### `Application\FeatureFunctions\Mock_Files\SIL_Library`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\SRR_CORE_LIB`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\f360`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\f360\types`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr`
+- `Gdsr_Set_Compile_Definitions.cmake`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\constants`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\detections`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\guardrail`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\object`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\object_legacy`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\radar_parameter`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\status`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Tracker_Out_Iface\Tracker_output_interface\vehicle`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Z2_SRR`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\gdsr\Z2_SRR\raw_detections`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\u360`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\Mock_Files\tracker_interfaces\u360\types`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\PT`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\PT\Calibration`
+- `PT_Calibration.cmake`
+### `Application\FeatureFunctions\PT\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\Ford_DAT2_1`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\Honda_SRR6`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\Nissan_SRR6`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\PT_Core`
+- `Calibration_Tool_for_PT.sh`
+- `pt_cal.xml`
+### `Application\FeatureFunctions\PT\Calibration\RNA_SWEET400`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Calibration\STLA_Thunder`
+- `Customer_Specific_Cal.xml`
+- `pt_core_calibration_data_stream.xml`
+- `pt_customer_calibration_data_stream.xml`
+- `pt_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\PT\Customer_Adapter`
+- `PT_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\Ford_DAT2_1`
+- `Ford_DAT2_1.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\Honda_SRR6`
+- `Honda_SRR6.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\Nissan_SRR6`
+- `Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\RNA_SWEET400`
+- `RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\Rivian_SRR6`
+- `Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\PT\Customer_Adapter\STLA_Thunder`
+- `STLA_Thunder.cmake`
+### `Application\FeatureFunctions\PT\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\PT\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\PT\Source`
+- `PT_Source.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Ford_DAT2_1`
+- `UT_Ford_DAT2_1.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Honda_SRR6`
+- `UT_Honda_SRR6.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Nissan_SRR6`
+- `UT_Nissan_SRR6.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\RNA_SWEET400`
+- `UT_RNA_SWEET400.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Rivian_SRR6`
+- `UT_Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE4_Unit_Tests\Unit_Test_Customer\STLA_Thunder`
+- `UT_STLA_Thunder.cmake`
+### `Application\FeatureFunctions\PT\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\PT\Testing\SWE6_Component_Tests\Nissan_SRR6\Real_World_Logs`
+- `keg_sources.txt`
+### `Application\FeatureFunctions\PT\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\RECW`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\RECW\Calibration`
+- `RECW_Calibration.cmake`
+### `Application\FeatureFunctions\RECW\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `recw_core_calibration_data_stream.xml`
+- `recw_customer_calibration_data_stream.xml`
+- `recw_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\RECW\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `recw_cal_data_stream.xml`
+- `recw_core_calibration_data_stream.xml`
+- `recw_customer_calibration_data_stream.xml`
+- `recw_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\RECW\Calibration\RECW_Core`
+- `Calibration_Tool_for_RECW.sh`
+- `recw_cal.xml`
+### `Application\FeatureFunctions\RECW\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `recw_core_calibration_data_stream.xml`
+- `recw_customer_calibration_data_stream.xml`
+- `recw_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\RECW\Customer_Adapter`
+- `RECW_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\RECW\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\RECW\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\RECW\Customer_Adapter\Rivian_SRR6`
+- `Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\RECW\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\RECW\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\RECW\Source`
+- `RECW_Source.cmake`
+### `Application\FeatureFunctions\RECW\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\RECW\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\RECW\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\RECW\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\RECW\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Rivian_SRR6`
+- `UT_Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\RECW\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\RECW\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\SCW`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\SCW\Calibration`
+- `SCW_Calibration.cmake`
+### `Application\FeatureFunctions\SCW\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `scw_core_calibration_data_stream.xml`
+- `scw_customer_calibration_data_stream.xml`
+- `scw_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\SCW\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `scw_core_calibration_data_stream.xml`
+- `scw_customer_calibration_data_stream.xml`
+- `scw_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\SCW\Calibration\SCW_Core`
+- `Calibration_Tool_for_SCW.sh`
+- `scw_cal.xml`
+### `Application\FeatureFunctions\SCW\Customer_Adapter`
+- `SCW_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\SCW\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+### `Application\FeatureFunctions\SCW\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\SCW\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\SCW\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\SCW\Source`
+- `SCW_Source.cmake`
+### `Application\FeatureFunctions\SCW\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\SCW\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\SCW\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\SCW\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\SCW\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\SCW\_lnk`
+- `readme_linker_files.txt`
+### `Application\FeatureFunctions\TA`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\TA\Calibration`
+- `TA_Calibration.cmake`
+### `Application\FeatureFunctions\TA\Calibration\BMW_SP25`
+- `Customer_Specific_Cal.xml`
+- `ta_core_calibration_data_stream.xml`
+- `ta_customer_calibration_data_stream.xml`
+- `ta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\TA\Calibration\Generic`
+- `Customer_Specific_Cal.xml`
+- `ta_core_calibration_data_stream.xml`
+- `ta_customer_calibration_data_stream.xml`
+- `ta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\TA\Calibration\Rivian_SRR6`
+- `Customer_Specific_Cal.xml`
+- `ta_core_calibration_data_stream.xml`
+- `ta_customer_calibration_data_stream.xml`
+- `ta_public_calibration_data_stream.xml`
+### `Application\FeatureFunctions\TA\Calibration\TA_Core`
+- `Calibration_Tool_for_TA.sh`
+- `ta_cal.xml`
+### `Application\FeatureFunctions\TA\Customer_Adapter`
+- `TA_Customer_Adapter.cmake`
+### `Application\FeatureFunctions\TA\Customer_Adapter\BMW_SP25`
+- `BMW_SP25.cmake`
+- `ta_input.xml`
+- `ta_output.xml`
+### `Application\FeatureFunctions\TA\Customer_Adapter\Generic`
+- `Generic.cmake`
+### `Application\FeatureFunctions\TA\Customer_Adapter\Rivian_SRR6`
+- `Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\TA\Doc\doxygen`
+- `readme.txt`
+### `Application\FeatureFunctions\TA\Doc\doxygen\pages`
+- `abbreviations.md`
+### `Application\FeatureFunctions\TA\Source`
+- `TA_Source.cmake`
+### `Application\FeatureFunctions\TA\Testing\SWE4_Unit_Tests`
+- `CMakeLists.txt`
+### `Application\FeatureFunctions\TA\Testing\SWE4_Unit_Tests\Unit_Test_Customer`
+- `Unit_Test_Customer.cmake`
+### `Application\FeatureFunctions\TA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\BMW_SP25`
+- `UT_BMW_SP25.cmake`
+### `Application\FeatureFunctions\TA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Generic`
+- `UT_Generic.cmake`
+### `Application\FeatureFunctions\TA\Testing\SWE4_Unit_Tests\Unit_Test_Customer\Rivian_SRR6`
+- `UT_Rivian_SRR6.cmake`
+### `Application\FeatureFunctions\TA\Testing\SWE6_Component_Tests`
+- `readme.txt`
+### `Application\FeatureFunctions\TA\_lnk`
+- `readme_linker_files.txt`
+### `Application\utilities\cmake`
+- `ConfigureAddressSanitizer.cmake`
+- `EnableAddressSanitizer.cmake`
+### `DC_SIL`
+- `Build.sh`
+- `BuildAll.sh`
+- `CMakeLists.txt`
+- `Create_Image.sh`
+- `Generate_Veh_Singularity.sh`
+- `fetch_jfrog_binaries.sh`
+- `input_path.xml`
+- `update.py`
+- `update_veh_sing_xml.py`
+- `version.py`
+### `DC_SIL\sil_component_streams\Tools`
+- `MUDP_FRAME.py`
+- `ORCASFileHeaderDump.py`
+### `DC_SIL\sil_executables\dc_config\Gen7`
+- `Emb_Lib_Config.xml`
+- `Input.json`
+- `MRR_DC_Lib_Control.xml`
+- `SIL_Engine_Config.xml`
+- `SIL_Input.txt`
+- `SRR_DC_Lib_Control.xml`
+### `DC_SIL\sil_executables\dc_config\Gen8`
+- `Input.json`
+- `MRR_DC_Lib_Control.xml`
+- `SIL_Engine_Config.xml`
+- `SIL_Input.txt`
+- `SRR_DC_Lib_Control.xml`
+### `DC_SIL\sil_executables\fw_dlls_gen8`
+- `Input_json.json`
+### `DC_SIL\sil_ext_libs\AS_BIN_WRITER\CMake`
+- `CMakeLists.txt`
+### `DC_SIL\sil_ext_libs\AS_BIN_WRITER\Python`
+- `README.md`
+- `setup.py`
+### `DC_SIL\sil_ext_libs\AS_BIN_WRITER\Python\.vscode`
+- `extensions.json`
+- `launch.json`
+- `settings.json`
+### `DC_SIL\sil_ext_libs\AS_BIN_WRITER\Python\pybin`
+- `crop.py`
+- `read.py`
+### `DC_SIL\sil_ext_libs\AS_BIN_WRITER\Python\tests`
+- `pybin_test_files.py`
+- `test_crop.py`
+- `test_read.py`
+### `DC_SIL\sil_ext_libs\pugixml-1.10`
+- `CMakeLists.txt`
+- `readme.txt`
+### `DC_SIL\sil_ext_libs\pugixml-1.10\docs\samples`
+- `character.xml`
+- `transitions.xml`
+- `tree.xml`
+- `weekly-shift_jis.xml`
+- `weekly-utf-16.xml`
+- `weekly-utf-8.xml`
+- `xgconsole.xml`
+### `DC_SIL\sil_ext_libs\pugixml-1.10\scripts`
+- `cocoapods_push.sh`
+### `DC_SIL\sil_ext_libs\pugixml-1.10\scripts\nuget\build\native`
+- `pugixml-propertiesui.xml`
+### `DC_SIL\sil_smc\sil_autogen`
+- `CMakeLists.txt`
+### `DC_SIL\sil_udp_streams`
+- `CMakeLists.txt`
+
+</details>
+
+## G.4 core-resim-engine — resim analysis engine framework (10 of 68, latest-only)
+**What it does:** the offline analysis framework: log ingestion (MUDP/HDF/MDF), stream decoding,
+KPI computation scaffolding, HTML reporting, and CI/design docs. `ADCAM_RESIM` is the flagship
+resim entry; GEN7/GEN8 cont-dev branches hold per-platform analysis evolution.
+**Representative `main` + curated lines:** `ADCAM_RESIM`, `feature/CYW-6885` (latest CYW),
+`CS_25089` (latest CS), `GEN7_Main_Release`, `GEN8_Cont_Dev`, `STLA_SMALL`, `MUDP_HDF`,
+`feature/gen7SilLive_HLR-1072` (SiL-live timing), `Traton_rain_logs` (rain edge-case logs).
+Notable content: `ResimulationTool/` app projects, `MDF4_Decoder` (incl. CCA framework),
+`external_tools/atlassian_cli`, HTML/MUDP rebasing branches merged in.
+**Research hooks:** analysis-framework entry points for new-KPI plugins; Traton rain logs = weather
+edge cases; SiL-live timing work connects to VV live-mode OSI.
+
+<details><summary>core-resim-engine — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-engine — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `ADCAM_RESIM`, `CS_25089`, `GEN7_Main_Release`, `GEN8_Cont_Dev`, `MUDP_HDF`, `STLA_SMALL`, `Traton_rain_logs`, `feature__CYW-6885`, `feature__gen7SilLive_HLR-1072`, `main`
+Total files in `main`: ~85
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+    - `docs/`
+- `10027594_99_AS_PROCESS_TOOLS_RELEASE/`
+  - `external_tools/`
+    - `atlassian_cli/`
+      - `examples/`
+      - `lib/`
+      - `license/`
+
+## File inventory by directory
+### `.github\workflows\docs`
+- `ReSIM_manual_process.md`
+- `ReSim_main-dataflow.md`
+### `10027594_99_AS_PROCESS_TOOLS_RELEASE\external_tools\atlassian_cli`
+- `README.txt`
+- `README_VERSIONS.txt`
+- `all.sh`
+- `atlassian.sh`
+- `bamboo.sh`
+- `bitbucket.sh`
+- `confluence.sh`
+- `crucible.sh`
+- `csv.sh`
+- `fisheye.sh`
+- `hipchat.sh`
+- `jira.sh`
+- `servicedesk.sh`
+- `upm.sh`
+### `10027594_99_AS_PROCESS_TOOLS_RELEASE\external_tools\atlassian_cli\examples`
+- `input.txt`
+- `replace.txt`
+- `runExample.txt`
+- `source.txt`
+### `10027594_99_AS_PROCESS_TOOLS_RELEASE\external_tools\atlassian_cli\license`
+- `LICENSE-APACHE.txt`
+- `LICENSE-CLI.txt`
+- `LICENSE-DOLBY.txt`
+- `LICENSE-JSAP.txt`
+- `LICENSE-JSON-SIMPLE.txt`
+- `LICENSE-POSTGRESQL.txt`
+- `LICENSE.txt`
+- `NOTICES.txt`
+
+</details>
+
+## G.1 core-resim-hil-engine — HIL resimulation runtime (6 branches, latest-only)
+**What it does:** host-side HIL rig software that replays recorded vehicle/MDF4 traffic into
+radar ECUs and captures the ECU responses. It is the execution backbone behind every resim KPI:
+CAN/MDF4 loggers record, the SRR3 resimulator re-transmits (CAN, Ethernet/FDX, MUDP/UDP), and the
+MDF4 decoder converts captures back to analysis frames.
+**Architecture (representative `main`, ~15.9k files):**
+- `ApplicationProjects/SRR3_Resimulator/` — the resimulator itself: `SRR3_Comm` (ECU link),
+  `SRR3_HIL_UDP` + `UDP_Logging_Data` (packet capture path), `FDX_Protocol` (Vector FDX Ethernet),
+  `EthernetGrabber` + `mudp_grabber` (sniffers), `HiLInputs` (stimulus injection), `IniConfig`
+  (run configuration), `VehicleTransmitter` (CAN card TX incl. `CanCardLib`, `dvlFile/Message`),
+  `tinyLogger` (lightweight CAN/Ethernet logger), `Dessector` (dissector), `SRR3_HiL_Exec/hil_pack`
+  (packaged execution), `SRR_Google_Test` (unit tests), `TestMudpLog` (MUDP fixtures).
+- `ApplicationProjects/MDF4_Decoder/` — `MDF4_Data/MDF4_UDP_Decoder` (MDF4→UDP frame decode),
+  `CCA Framework/v2.2.12 + v3.0.6` (Vector CCA stack), `output/` trace dumps
+  (`SRR3_HiL_Trace_*DET/RDD/TIME_SYNC*.txt` — DET/RDD 1X/4X matrices used as KPI inputs).
+- `ApplicationProjects/CAN_MF4_Logger/CANData_MF4/` — in-vehicle CAN→MF4 recording.
+- `ApplicationProjects/DPH_RR_ADAS_{Config,HIL,LOGGER}/` — DPH rear-radar ADAS HIL apps
+  (AUDI/BMW custom configs, `HiL_IFace_Controller`, `srr3_comm_gcc`).
+- `Build_Project.sh` + per-module `CMakeLists.txt` — build entry; `Run_Config.sh` — run entry.
+**Branch deltas:** `feature/GEN8_HIL` vs `feature/Gen7_Hil` = per-platform HIL paths;
+`feature/HIL_Engine_V2_Dev` = next-gen engine work; `feature/PcapFileWrite` = pcap capture output;
+`feature/Auto_logging_Changes` = logger automation.
+**Research hooks:** MUDP capture path feeds KPI parsers; trace TXT matrices are the raw material for
+detection/RDD KPIs; `mf4_data/` edge-case logs replay through this rig.
+
+<details><summary>core-resim-hil-engine — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-hil-engine — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feature__Auto_logging_Changes`, `feature__GEN8_HIL`, `feature__Gen7_Hil`, `feature__HIL_Engine_V2_Dev`, `feature__PcapFileWrite`, `main`
+Total files in `main`: ~15873
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `.vscode/`
+- `ApplicationProjects/`
+  - `BOOST/`
+    - `Include/`
+      - `boost/`
+    - `lib/`
+      - `linux/`
+      - `windows/`
+  - `BOOST_VS15/`
+    - `lib/`
+      - `windows/`
+  - `BOOST_VS19/`
+    - `lib/`
+      - `windows/`
+  - `CAN_MF4_Logger/`
+    - `CANData_MF4/`
+      - `Include/`
+  - `DPH_RR_ADAS_Config/`
+    - `CMake/`
+    - `CustomConfig/`
+      - `AUDI/`
+      - `BMW/`
+    - `lib/`
+      - `PUGI_VS15/`
+      - `PUGI_VS19/`
+      - `linux/`
+      - `windows/`
+  - `DPH_RR_ADAS_HIL/`
+    - `DPH_RR_ADAS_HIL_ILib/`
+      - `inc/`
+    - `DPH_RR_ADAS_HiL_Resim/`
+    - `HiL_IFace_Controller/`
+    - `srr3_comm_gcc/`
+  - `DPH_RR_ADAS_LOGGER/`
+    - `CMake/`
+    - `Dph_logger/`
+      - `CMakeFiles/`
+      - `DPH_RR_ADAS_LOGGER.dir/`
+  - `MDF4_Decoder/`
+    - `CCA Framework/`
+      - `v2.2.12/`
+      - `v3.0.6/`
+    - `CMake/`
+    - `MDF4_Data/`
+      - `CMake/`
+      - `MDF4_UDP_Decoder/`
+    - `output/`
+      - `Release/`
+  - `SRR3_Resimulator/`
+    - `CMake/`
+      - `build/`
+    - `Dessector/`
+    - `EthernetGrabber/`
+      - `CMake/`
+    - `FDX_Protocol/`
+      - `CMake/`
+      - `ConfigFiles/`
+    - `HiLInputs/`
+      - `pugixml/`
+    - `Include/`
+      - `pcap/`
+    - `IniConfig/`
+      - `CMake/`
+    - `SRR3_Comm/`
+      - `CMake/`
+      - `Shared/`
+    - `SRR3_HIL_UDP/`
+      - `SRR3_HIL_UDP/`
+      - `UDP_Logging_Data/`
+    - `SRR3_HiL_Exec/`
+      - `CMake/`
+      - `hil_pack/`
+    - `SRR3_HiL_Resim/`
+      - `CMake/`
+    - `SRR_Google_Test/`
+      - `CMake/`
+    - `SRR_HIL_Coverage/`
+      - `Modules/`
+      - `third-party/`
+    - `TestMudpLog/`
+    - `Tiny_Logger_Synch/`
+      - `Tiny_Logger_Synch/`
+    - `VehicleTransmitter/`
+      - `CanCardLib/`
+      - `VEH_XMIT/`
+      - `can/`
+      - `dvlFile/`
+      - `dvlMessage/`
+      - `lib/`
+      - `main/`
+      - `vs2008Fix/`
+    - `cmake_goole/`
+    - `lib/`
+      - `x64/`
+    - `mudp_grabber/`
+    - `output/`
+    - `tinyLogger/`
+      - `CanCardLib/`
+      - `EthernetGrabber/`
+      - `Include/`
+      - `can/`
+      - `dvlFile/`
+      - `dvlMessage/`
+      - `lib/`
+      - `plugin/`
+      - `tinyLogger/`
+      - `vs2008Fix/`
+  - `output/`
+    - `x64/`
+      - `DEBUG/`
+      - `RELEASE/`
+- `Common/`
+- `CommonFiles/`
+  - `CommonHeaders/`
+  - `MDF_Include/`
+    - `Interface/`
+  - `Raw_headers/`
+  - `Stream_headers/`
+    - `Z4_Z7B_LOGGING/`
+      - `Vp8/`
+    - `Z7A_Z7B_LOGGING/`
+      - `Vp10/`
+      - `Vp12/`
+    - `Z7B_AUDI_LOGGING/`
+      - `Vp1/`
+    - `Z7B_LOGGING/`
+      - `Vp11/`
+  - `Utility/`
+  - `cca_vigem_inc/`
+  - `helper/`
+  - `inc/`
+    - `AUDI/`
+    - `BMW/`
+      - `sFunctionheader/`
+    - `GEELY/`
+    - `GWM/`
+    - `HKMC2/`
+    - `JLR/`
+    - `PCR/`
+    - `SCANIA/`
+  - `libfort/`
+  - `plugin/`
+  - `sym/`
+    - `AUDI/`
+    - `BMW/`
+    - `BMW_LOW/`
+    - `CHANGAN/`
+    - `GEELY/`
+    - `GWM/`
+    - `HKMC2/`
+    - `JLR/`
+    - `RNA/`
+    - `SCANIA/`
+    - `TRATON/`
+  - `thread/`
+  - `udp_headers/`
+- `CoreLibraryProjects/`
+  - `CCA_ViGEM/`
+    - `CCA Framework MDF/`
+      - `v2.1.3/`
+      - `v2.1.6/`
+    - `CMake/`
+    - `bin/`
+      - `lib/`
+    - `inc/`
+    - `src/`
+  - `CCA_Vpcap/`
+    - `CMake/`
+    - `inc/`
+    - `src/`
+  - `CrossPlatform/`
+    - `CMake/`
+    - `CrossPlatform/`
+      - `CMakeFiles/`
+      - `CrossPlatform.dir/`
+  - `MUDP_Serializer/`
+  - `SRR3_Internal_Data_Logger/`
+  - `UDP_Transmitter/`
+    - `CMake/`
+    - `inc/`
+    - `src/`
+  - `XCP_SeedKey/`
+    - `XCP_SeedKey/`
+    - `ipch/`
+      - `xcp_seedkey-eadac132/`
+  - `XCP_SeedKey_Lib/`
+    - `XCP_SeedKey/`
+    - `ipch/`
+      - `xcp_seedkey-df0d9688/`
+      - `xcp_seedkey-eadac132/`
+  - `dvlFile/`
+    - `CMake/`
+    - `inc/`
+    - `src/`
+  - `dvlMessage/`
+    - `inc/`
+  - `excel_utils/`
+  - `mdf_log/`
+    - `CMake/`
+    - `inc/`
+    - `src/`
+  - `mdf_log_convertor/`
+    - `CMake/`
+    - `inc/`
+    - `src/`
+  - `mudp_decoder/`
+    - `CDC/`
+    - `CMake/`
+    - `Z7B/`
+      - `Vp10/`
+      - `Vp11/`
+      - `Vp12/`
+      - `Vp13/`
+      - `Vp7/`
+      - `Vp8/`
+      - `Vp9/`
+      - `calib/`
+  - `mudp_decoder_calib/`
+    - `CMake/`
+  - `mudp_log/`
+    - `CMake/`
+    - `DvsuRecord/`
+    - `MudpRecord/`
+      - `VersionwithIndexing/`
+  - `mudp_receiver/`
+    - `CMake/`
+  - `ptp_to_xml_generator/`
+  - `radar_stream_decoder/`
+    - `CMake/`
+    - `Calibration/`
+      - `Vp1/`
+      - `Vp2/`
+      - `usc/`
+    - `Common/`
+    - `CustomStreams/`
+      - `Z4_CUSTOM/`
+      - `Z7B_CUSTOM/`
+    - `DSPACE/`
+      - `BMW_HIGH/`
+      - `BMW_LOW/`
+      - `BMW_MID/`
+      - `GEELY/`
+      - `SCANIA/`
+    - `RadarEcuStreams/`
+      - `BMW/`
+    - `SRR5_CORE/`
+      - `CDC/`
+      - `Z4/`
+      - `Z7A/`
+      - `Z7B/`
+      - `Z7B_TRACKER_OUTPUT/`
+    - `Utils/`
+- `logs/`
+  - `ipch/`
+    - `AutoPCH/`
+      - `210151c8831753dd/`
+      - `493331d3975f0f30/`
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `Build_Project.sh`
+- `RULESETS.md`
+### `.github\workflows`
+- `hil-engine-main.yml`
+- `validate.yml`
+### `.vscode`
+- `c_cpp_properties.json`
+- `launch.json`
+- `settings.json`
+- `tasks.json`
+### `ApplicationProjects\BOOST\Include\boost\geometry\util`
+- `readme.txt`
+### `ApplicationProjects\BOOST\Include\boost\pool\detail`
+- `pool_construct.sh`
+- `pool_construct_simple.sh`
+### `ApplicationProjects\BOOST\Include\boost\spirit\home\support\char_encoding\unicode`
+- `DerivedCoreProperties.txt`
+- `PropList.txt`
+- `Scripts.txt`
+- `UnicodeData.txt`
+### `ApplicationProjects\DPH_RR_ADAS_Config\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\DPH_RR_ADAS_HIL\DPH_RR_ADAS_HIL_ILib`
+- `ReadMe.txt`
+### `ApplicationProjects\DPH_RR_ADAS_HIL\DPH_RR_ADAS_HiL_Resim`
+- `ReadMe.txt`
+### `ApplicationProjects\DPH_RR_ADAS_HIL\HiL_IFace_Controller`
+- `ReadMe.txt`
+### `ApplicationProjects\DPH_RR_ADAS_HIL\srr3_comm_gcc`
+- `ReadMe.txt`
+### `ApplicationProjects\DPH_RR_ADAS_LOGGER\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\DPH_RR_ADAS_LOGGER\Dph_logger`
+- `cmake_install.cmake`
+### `ApplicationProjects\DPH_RR_ADAS_LOGGER\Dph_logger\CMakeFiles`
+- `CMakeDirectoryInformation.cmake`
+### `ApplicationProjects\DPH_RR_ADAS_LOGGER\Dph_logger\CMakeFiles\DPH_RR_ADAS_LOGGER.dir`
+- `DependInfo.cmake`
+- `cmake_clean.cmake`
+- `link.txt`
+### `ApplicationProjects\DPH_RR_ADAS_LOGGER\Dph_logger\DPH_RR_ADAS_LOGGER.dir\DEBUG`
+- `DPH_RR_ADAS_LOGGER.vcxproj.FileListAbsolute.txt`
+### `ApplicationProjects\DPH_RR_ADAS_LOGGER\Dph_logger\DPH_RR_ADAS_LOGGER.dir\RELEASE`
+- `DPH_RR_ADAS_LOGGER.vcxproj.FileListAbsolute.txt`
+### `ApplicationProjects\MDF4_Decoder`
+- `Convertor_tool_Release notes.xml`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v2.2.12\doc`
+- `License.txt`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v2.2.12\doc\examples`
+- `CMakeLists.txt`
+- `FindCCAFrameworkMDF.cmake`
+- `Readme.txt`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v2.2.12\doc\examples\cca-device-py`
+- `CcaLib.py`
+- `cca-device.py`
+- `cca-download.py`
+- `cca-load-config.py`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\bin`
+- `PyCcalib_mdf.py`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc`
+- `PyCcalib_HOWTO.txt`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples`
+- `FindCCAFrameworkMDF.cmake`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\C-CPP`
+- `CMakeLists.txt`
+- `Readme.txt`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\CSharp-C-marshalling`
+- `CMakeLists.txt`
+- `Readme.txt`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\Python`
+- `Readme.txt`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\Python-C-marshalling`
+- `CcaLib.py`
+- `Readme.txt`
+- `cca-device.py`
+- `cca-download.py`
+- `cca-load-config.py`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\Python\cca-device`
+- `cca-device.py`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\Python\cca-download`
+- `cca-download.py`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\Python\cca-readfile`
+- `cca-readfile.py`
+### `ApplicationProjects\MDF4_Decoder\CCA Framework\v3.0.6\doc\examples\Python\cca-sorter`
+- `cca-sorter.py`
+### `ApplicationProjects\MDF4_Decoder\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\MDF4_Decoder\MDF4_Data\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\MDF4_Decoder\MDF4_Data\MDF4_UDP_Decoder`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator`
+- `Build_Project.sh`
+### `ApplicationProjects\SRR3_Resimulator\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\CMake\build\.cmake\api\v1\query\client-vscode`
+- `query.json`
+### `ApplicationProjects\SRR3_Resimulator\CMake\build\.cmake\api\v1\reply`
+- `cache-v2-3c81e0c16eec2a3cca24.json`
+- `cmakeFiles-v1-053cbf4d3804f8fe0f49.json`
+- `codemodel-v2-848408d44c96824e9d15.json`
+- `directory-.-DEBUG-f5ebdc15457944623624.json`
+- `directory-DEBUG-d4e2506fddd56ea705b4.json`
+- `directory-DEBUG-ffde5670f72e33ac2370.json`
+- `directory-EthernetGrabber-DEBUG-16325b53e98fb611a965.json`
+- `directory-IniConfig-DEBUG-d73162996549d4c5c9e2.json`
+- `directory-MDFLog-DEBUG-eb99638527b2b3a8be4c.json`
+- `directory-Mudp_decoder-DEBUG-90bdee661068912ae7d0.json`
+- `directory-Mudp_log-DEBUG-394ab93678c47d6bfae0.json`
+- `directory-SRR3_Comm-DEBUG-be16a99fe4b6d73989c9.json`
+- `directory-SRR3_Hil_Exe-DEBUG-f479de5f05d9b80446eb.json`
+- `directory-SRR3_Resim-DEBUG-650c01ee677d5dfbaff1.json`
+- `directory-libfort-DEBUG-9dabf66313ef24772ea6.json`
+- `index-2026-08-04T12-07-21-0779.json`
+- `target-CrossPlatform-DEBUG-9cc918546b8948bd9d95.json`
+- `target-DPH_RR_ADAS_LOGGER-DEBUG-879dda7abfddf3fbc876.json`
+- `target-EthernetGrabber-DEBUG-692f113804b5d4ec6719.json`
+- `target-IniConfig-DEBUG-44c9a5ad043507793ead.json`
+- `target-Mdf_Log-DEBUG-1ea38bcbd3043d6d5fe1.json`
+- `target-SRR_HiL_Exec-DEBUG-79009cc400598b738524.json`
+- `target-SRR_HiL_Resim-DEBUG-9fe828076de9041c6ffe.json`
+- `target-SRR_MUDP_Log-DEBUG-2546642a65ebea4d6428.json`
+- `target-fort_tabular-DEBUG-0885a77bf73792216ce2.json`
+- `target-srr_comm-DEBUG-bda047f13eb26c81d02f.json`
+- `target-srr_decoder_dph-DEBUG-b71df234c0edf30a8263.json`
+- `toolchains-v1-b760d9625af45fbb3999.json`
+### `ApplicationProjects\SRR3_Resimulator\Dessector`
+- `File_list.txt`
+### `ApplicationProjects\SRR3_Resimulator\EthernetGrabber`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\EthernetGrabber\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\FDX_Protocol\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\FDX_Protocol\ConfigFiles`
+- `FDXDescription_HiL_V1.0.xml`
+### `ApplicationProjects\SRR3_Resimulator\HiLInputs`
+- `Channel.txt`
+- `Error_Codes.txt`
+- `HiLApp.ini`
+- `Hil_Configuration.xml`
+- `Mdf4Lib_x64.cfg`
+- `SRR_HiL_Resim.sh`
+- `launch.json`
+- `log_path.txt`
+### `ApplicationProjects\SRR3_Resimulator\IniConfig\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR3_Comm`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR3_Comm\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR3_HiL_Exec`
+- `HiLApp.ini`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR3_HiL_Exec\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR3_HiL_Resim`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR3_HiL_Resim\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR_Google_Test\CMake`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\SRR_HIL_Coverage\third-party\RGraph`
+- `license.txt`
+### `ApplicationProjects\SRR3_Resimulator\TestMudpLog`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\Tiny_Logger_Synch\Tiny_Logger_Synch`
+- `ReadMe.txt`
+- `trace.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter`
+- `UpgradeLog.XML`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\VEH_XMIT`
+- `Channel.txt`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\VEH_XMIT\docs`
+- `Help_can_xmt2.txt`
+- `ReleaseNotes_can_xmt2.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\can\L2_v405`
+- `readme.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\can\Vector_File_Formats\sample_BLF_Logging`
+- `bl.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\can\canlib`
+- `readme.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\can\xllib`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\can\xllib\bin`
+- `vxlapi_NET20.xml`
+### `ApplicationProjects\SRR3_Resimulator\VehicleTransmitter\main\main`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\cmake_goole`
+- `CMakeLists.txt`
+### `ApplicationProjects\SRR3_Resimulator\mudp_grabber`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\output`
+- `Alert.txt`
+- `HiL_Debugging.txt`
+- `HiL_Status_Timeprofile.txt`
+- `Hil_Configuration.xml`
+- `SRR3_HiL_Trace.txt`
+- `SRR3_HiL_Trace_4Sensors_100Percent.txt`
+- `SRR3_HiL_Trace_4Sensors_Injection.txt`
+- `SRR3_HiL_Trace_DET_1X.txt`
+- `SRR3_HiL_Trace_DET_4X.txt`
+- `SRR3_HiL_Trace_DET_4X_TIME_SYNC.txt`
+- `SRR3_HiL_Trace_RDD_1X.txt`
+- `SRR3_HiL_Trace_RDD_4X.txt`
+- `SRR3_HiL_Trace_RDD_4X_TIMESYNCH.txt`
+- `SRR3_HiL_Trace_RL_DET_TIMESYNC.txt`
+- `SRR3_HiL_Trace_RL_RDD_TIMESYNC.txt`
+- `SRR3_HiL_Trace_RL_RR_Injection.txt`
+- `SRR3_HiL_Trace_RL_Single_Sensor.txt`
+- `checksum_info.txt`
+- `log_path.txt`
+- `log_path_log_mode.txt`
+- `request_response_info.txt`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\EthernetGrabber`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\can\L2_v405`
+- `readme.txt`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\can\Vector_File_Formats\sample_BLF_Logging`
+- `bl.txt`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\can\canlib`
+- `readme.txt`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\can\xllib`
+- `ReadMe.txt`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\can\xllib\bin`
+- `vxlapi_NET20.xml`
+### `ApplicationProjects\SRR3_Resimulator\tinyLogger\tinyLogger`
+- `Channel.txt`
+- `ReadMe.txt`
+- `trace.txt`
+### `ApplicationProjects\output\x64\DEBUG`
+- `Alert.txt`
+- `HiL_Debugging.txt`
+- `Hil_Configuration.xml`
+- `SRR3_HiL_Trace.txt`
+- `SRR3_HiL_Trace_RUN1.txt`
+- `SRR3_HiL_Trace_duplicate.txt`
+- `log_path.txt`
+### `ApplicationProjects\output\x64\RELEASE`
+- `Alert.txt`
+- `HiL_Debugging.txt`
+- `Hil_Configuration.xml`
+- `SRR3_HiL_Trace.txt`
+- `SRR3_HiL_Trace_DS_HEADER_VSE_STATUS_DA_TOI_4Sensors.txt`
+- `SRR3_HiL_Trace_RDD_VSE_STATUS.txt`
+- `log_path.txt`
+### `CommonFiles\libfort`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\CCA_ViGEM\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\CCA_Vpcap\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\CrossPlatform\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\CrossPlatform\CrossPlatform`
+- `cmake_install.cmake`
+### `CoreLibraryProjects\CrossPlatform\CrossPlatform\CMakeFiles`
+- `CMakeDirectoryInformation.cmake`
+### `CoreLibraryProjects\CrossPlatform\CrossPlatform\CMakeFiles\CrossPlatform.dir`
+- `DependInfo.cmake`
+- `cmake_clean.cmake`
+- `cmake_clean_target.cmake`
+- `link.txt`
+### `CoreLibraryProjects\CrossPlatform\CrossPlatform\CrossPlatform.dir\DEBUG`
+- `CrossPlatform.vcxproj.FileListAbsolute.txt`
+### `CoreLibraryProjects\CrossPlatform\CrossPlatform\CrossPlatform.dir\RELEASE`
+- `CrossPlatform.vcxproj.FileListAbsolute.txt`
+### `CoreLibraryProjects\SRR3_Internal_Data_Logger`
+- `ReadMe.txt`
+### `CoreLibraryProjects\UDP_Transmitter\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\XCP_SeedKey\XCP_SeedKey`
+- `ReadMe.txt`
+### `CoreLibraryProjects\XCP_SeedKey_Lib\XCP_SeedKey`
+- `ReadMe.txt`
+### `CoreLibraryProjects\dvlFile\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\excel_utils`
+- `ReadMe.txt`
+### `CoreLibraryProjects\mdf_log`
+- `ReadMe.txt`
+### `CoreLibraryProjects\mdf_log\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\mdf_log_convertor`
+- `ReadMe.txt`
+### `CoreLibraryProjects\mdf_log_convertor\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\mudp_decoder`
+- `ReadMe.txt`
+### `CoreLibraryProjects\mudp_decoder\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\mudp_decoder_calib\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\mudp_log`
+- `ReadMe.txt`
+### `CoreLibraryProjects\mudp_log\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\mudp_receiver\CMake`
+- `CMakeLists.txt`
+### `CoreLibraryProjects\ptp_to_xml_generator`
+- `ReadMe.txt`
+### `CoreLibraryProjects\radar_stream_decoder`
+- `Decoder_DLL_Release_Notes.xml`
+- `Old_Decoder_Release_Notes.txt`
+- `ReadMe.txt`
+### `CoreLibraryProjects\radar_stream_decoder\CMake`
+- `CMakeLists.txt`
+
+</details>
+
+## G.10 core-resim-hpcc — HPCC burst runtime (10 branches, all — was empty placeholder)
+**What it does:** HPC-cluster packaging for resim/KPI bursts: Apptainer/Singularity images,
+Slurm job scripts, site configs (CN_Development, SouthField/SF_Development, Cyfranet lines),
+dual simg+zmq runners, bundle templates per KPI.
+**Research hooks:** burst harness for XP-1…XP-4 at 2.5k head-hours scale (see Roadmap tail);
+site branches pin the live HPCC config (retires risk R-5).
+
+<details><summary>core-resim-hpcc — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-hpcc — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feat__gh_flows`, `feature__CN_Development`, `feature__Cyfranet`, `feature__Cyfranet_pranjal`, `feature__SF_Development`, `feature__SouthField`, `feature__cyfenet-prjanal1`, `feature__initial`, `feature__pranjal_2`, `main`
+Total files in `main`: ~2
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `RULESETS.md`
+
+</details>
+
+## G.7 core-resim-logic-model — LM2 logic-model / FMU (10 branches, all)
+**What it does:** LM2 packs customer logs into Resim interfaces (FMU). `feature/USS_Aggregator`
+implements the USS aggregation the empty USS placeholder never got; `Interface_Output_Control.xml`
+RUN_MODE matrix; JBC-191 heap-overflow/ASan hardening; JBC-186 OSMP MUDP TX; JBC-138 Windows FMU.
+**Layout:** `Code/` (convertors per customer, UDP logging headers Core+Cust matrix),
+`LM2_Packaging/` (FMU build/deliverables), `Tools/` (XML comparator, test interface), `RULESETS.md`,
+`ADMIN_AUDIT_LOG.md`.
+**Research hooks:** customer/version shear studies (F12/F15); golden-log FMU conformance harness;
+USS evaluation with `Customer_Name=USS` (see Roadmap tail).
+
+<details><summary>core-resim-logic-model — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-logic-model — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feat__gh_flows`, `feature__JBC-138__Enable_Windows_FMU_build`, `feature__JBC-186__Transmit_mudp_frames_test`, `feature__JBC-191__Heap_overflow_fix`, `feature__JBC-93__Update_Dspace_Structure_And_Chunk`, `feature__STLA_Small_LM2`, `feature__USS_Aggregator`, `feature__adcam_main_dev`, `feature__adcam_releases`, `main`
+Total files in `main`: ~3785
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.vscode/`
+- `Code/`
+  - `Common_Headers/`
+    - `MDF_Include/`
+      - `Interface/`
+    - `helper/`
+    - `udp_headers/`
+  - `Customer/`
+  - `Generic/`
+  - `UDP_logging_headers/`
+    - `Core/`
+      - `CDC_12_IQ/`
+      - `CDC_8_IQ/`
+      - `CDC_8_IQ_OLD/`
+      - `DEBUG_STRUCTURE/`
+      - `DSPACE/`
+      - `OSI_LIME/`
+      - `Z4_Z7A_CORE/`
+      - `Z4_Z7B_64_FD_CORE/`
+      - `Z4_Z7B_CORE/`
+      - `Z4_Z7B_LOGGING_STRUCTURE/`
+      - `Z4_Z7B_MRR_SAT_CORE/`
+      - `Z4_Z7B_SRR5_SAT_CORE/`
+      - `Z7A_LOGGING_STRUCTURE/`
+      - `Z7A_MRR360_116RB_150D_CORE/`
+      - `Z7A_MRR360_116RB_200D_CORE/`
+      - `Z7A_MRR360_116RB_64D_CORE/`
+      - `Z7A_MRR360_210RB_CORE/`
+      - `Z7A_SRR5P_116RB_150D_CORE/`
+      - `Z7A_SRR5P_116RB_200D_CORE/`
+      - `Z7A_SRR5P_116RB_64D_CORE/`
+      - `Z7A_SRR5_116RB_CORE/`
+      - `Z7A_SRR5_165RB_CORE/`
+      - `Z7A_SRR5_170RB_CORE/`
+      - `Z7A_SRR5_210RB_CORE/`
+      - `Z7A_Z7B_IPC_MRR_CORE/`
+      - `Z7A_Z7B_IPC_SRR5_SAT_CORE/`
+      - `Z7B_64_SD_FD_OBJ_STD_CORE/`
+      - `Z7B_64_SD_FD_TRK_STD_CORE/`
+      - `Z7B_64_SD_TRK_STD_CORE/`
+      - `Z7B_BPIL_150D_64T_CORE/`
+      - `Z7B_FRNT_128D_SAT_CORE/`
+      - `Z7B_FRNT_64SD_64FD_SAT_CORE/`
+      - `Z7B_HIL_TRACKER_STREAMS/`
+      - `Z7B_LOGGING_STRUCTURE/`
+      - `Z7B_MRR_SAT_CORE/`
+      - `Z7B_SIDE_200D_SAT_CORE/`
+      - `Z7B_SIDE_64D_SAT_CORE/`
+      - `Z7B_SRR5_SAT_CORE/`
+    - `Cust/`
+      - `AUDI_SRR3/`
+      - `BMW_BPIL/`
+      - `BMW_LOW/`
+      - `BMW_MID/`
+      - `BMW_SRR3/`
+      - `CHANGAN_SRR3/`
+      - `CHANGAN_SRR5/`
+      - `GEELY_SRR3/`
+      - `GEELY_SRR5/`
+      - `GWM_MCIP/`
+      - `GWM_SRR3/`
+      - `GWM_SRR5/`
+      - `HKMC_Gen2/`
+      - `HKMC_SRR5/`
+      - `JLR_SRR3/`
+      - `MAXUS_SRR3/`
+      - `PSA_MRR3/`
+      - `PSA_SRR5/`
+      - `RNA_SRR5/`
+      - `SCANIA_SRR3/`
+      - `TML_SRR5/`
+  - `libs/`
+    - `MDF_Writer_Library/`
+      - `Debug/`
+      - `Release/`
+      - `inc/`
+      - `source/`
+    - `eigen3/`
+      - `Eigen/`
+      - `unsupported/`
+    - `open-simulation-interface-3.1.2_w_Proto_3.6.1/`
+      - `Linux/`
+      - `Windows/`
+    - `open-simulation-interface-3.2.0_w_Proto_3.6.1/`
+      - `Linux/`
+      - `Windows/`
+    - `open-simulation-interface-3.5.0_w_Proto_3.6.1/`
+      - `Linux/`
+      - `Windows/`
+    - `protobuf-3.6.1/`
+      - `Linux/`
+      - `Windows/`
+    - `pugixml-1.10/`
+      - `Debug/`
+      - `Release/`
+      - `inc/`
+    - `zeromq/`
+      - `Linux/`
+      - `bin/`
+      - `include/`
+- `Documentation/`
+  - `Doxygen/`
+    - `Master_LM2/`
+      - `html/`
+      - `latex/`
+- `LM2_Packaging/`
+  - `Deliverables/`
+  - `LM2_FMU/`
+    - `Code/`
+      - `FMI2/`
+    - `Data/`
+      - `Aptiv_Libraries/`
+  - `LM2_Interface/`
+- `Tools/`
+  - `Simpler_Code_For_MUDP_TX/`
+  - `TestInterface/`
+    - `build/`
+      - `.vs/`
+      - `ASDSPACE.dir/`
+      - `CMakeFiles/`
+      - `Debug/`
+      - `InterfaceMain/`
+      - `x64/`
+    - `inc/`
+    - `src/`
+  - `XML_Comparator/`
+    - `inc/`
+    - `libs/`
+      - `Debug/`
+      - `Release/`
+    - `src/`
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `RULESETS.md`
+### `.vscode`
+- `launch.json`
+- `settings.json`
+### `Code`
+- `Interface_Output_Control.xml`
+### `Code\UDP_logging_headers\Core\DEBUG_STRUCTURE`
+- `debug_structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE`
+- `customer_config_v9p4.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\BMW_BPIL`
+- `DSPACE_Input_Structure_BMW_BP.xml`
+- `Dspace_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\BMW_LOW`
+- `DSPACE_Input_Structure_BMW_LOW.xml`
+- `Dspace_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\BMW_MID`
+- `DSPACE_Input_Structure_BMW_MID.xml`
+- `Dspace_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\BMW_SP25_L2`
+- `DSPACE_Input_Structure_BMW_SP25_L2.xml`
+- `Dspace_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\BMW_SP25_L3`
+- `DSPACE_Input_Structure_BMW_SP25_L3.xml`
+- `Dspace_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\DSPACE_Common`
+- `DSPACE_Common_Input_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\MAN_SRR3`
+- `DSPACE_Man_Input_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\MAN_SRR3_SIL`
+- `DSPACE_Man_SIL_Input_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\Motional_SRR3`
+- `DSPACE_Input_Structure_MOS_SENSOR.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\NISSAN_SRR6`
+- `DSPACE_Nissan_SIL_Input_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\SCANIA_SRR3`
+- `Dspace_Structure.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\Stellantis_MY24`
+- `DSPACE_Input_Structure_Stellantis.xml`
+### `Code\UDP_logging_headers\Core\DSPACE\TML_SRR5`
+- `DSPACE_Input_Structure_TML_SRR5.xml`
+### `Code\UDP_logging_headers\Core\OSI_LIME`
+- `OSI_Input_structure.xml`
+### `Code\UDP_logging_headers\Core\Z4_Z7A_CORE`
+- `Z4_Z7A_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z4_Z7B_64_FD_CORE`
+- `Z4_Z7B_64_FD_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z4_Z7B_CORE`
+- `Z4_Z7B_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z4_Z7B_LOGGING_STRUCTURE`
+- `Z4_Z7B_LOGGING_STRUCTURE.xml`
+### `Code\UDP_logging_headers\Core\Z4_Z7B_MRR_SAT_CORE`
+- `Z4_Z7B_MRR_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z4_Z7B_SRR5_SAT_CORE`
+- `Z4_Z7B_SRR5_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_LOGGING_STRUCTURE`
+- `Z7A_Z7B_logging_structure.xml`
+### `Code\UDP_logging_headers\Core\Z7A_MRR360_116RB_150D_CORE`
+- `Z7A_Z7B_IPC_MRR360_116RBIN_150D_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_MRR360_116RB_200D_CORE`
+- `Z7A_Z7B_IPC_MRR360_116RBIN_200D_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_MRR360_116RB_64D_CORE`
+- `Z7A_Z7B_IPC_MRR360_116RBIN_64D_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_MRR360_210RB_CORE`
+- `Z7A_Z7B_IPC_MRR360_210RBIN_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5P_116RB_150D_CORE`
+- `Z7A_Z7B_SRR5P_116RBIN_150D_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5P_116RB_200D_CORE`
+- `Z7A_Z7B_SRR5P_116RBIN_200D_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5P_116RB_64D_CORE`
+- `Z7A_Z7B_SRR5P_116RBIN_64D_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5_116RB_CORE`
+- `Z7A_Z7B_IPC_SRR5_116RBIN_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5_165RB_CORE`
+- `Z7A_Z7B_IPC_SRR5_165RBIN_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5_170RB_CORE`
+- `Z7A_Z7B_IPC_SRR5_170RBIN_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_SRR5_210RB_CORE`
+- `Z7A_Z7B_IPC_SRR5_210RBIN_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_Z7B_IPC_MRR_CORE`
+- `Z7A_Z7B_IPC_MRR_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7A_Z7B_IPC_SRR5_SAT_CORE`
+- `Z7A_Z7B_IPC_SRR5_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_64_SD_FD_OBJ_STD_CORE`
+- `Z7B_64SD_64FD_64OBJ_STAND_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_64_SD_FD_TRK_STD_CORE`
+- `Z7B_64SD_64FD_64TRK_STAND_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_64_SD_TRK_STD_CORE`
+- `Z7B_64SD_64T_STAND_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_BPIL_150D_64T_CORE`
+- `Z7B_BPIL_150D_64T_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_FRNT_128D_SAT_CORE`
+- `Z7B_FRNT_128D_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_FRNT_64SD_64FD_SAT_CORE`
+- `Z7B_FRNT_64SD_64FD_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_LOGGING_STRUCTURE`
+- `Z7B_logging_structure.xml`
+### `Code\UDP_logging_headers\Core\Z7B_MRR_SAT_CORE`
+- `Z7B_MRR_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_SIDE_200D_SAT_CORE`
+- `Z7B_SIDE_200D_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_SIDE_64D_SAT_CORE`
+- `Z7B_SIDE_64D_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Core\Z7B_SRR5_SAT_CORE`
+- `Z7B_SRR5_SAT_CORE.xml`
+### `Code\UDP_logging_headers\Cust\AUDI_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\AUDI_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\AUDI_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_BPIL\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_BPIL\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_BPIL\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_LOW\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_LOW\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_LOW\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_MID\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_MID\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_MID\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\BMW_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\CHANGAN_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\CHANGAN_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\CHANGAN_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\CHANGAN_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\CHANGAN_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\CHANGAN_SRR5\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GEELY_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GEELY_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\GEELY_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GEELY_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GEELY_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\GEELY_SRR5\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_MCIP\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_MCIP\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_MCIP\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\GWM_SRR5\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\HKMC_Gen2\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\HKMC_Gen2\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\HKMC_Gen2\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\HKMC_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\HKMC_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\HKMC_SRR5\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\JLR_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\JLR_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\JLR_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\MAXUS_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\MAXUS_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\MAXUS_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\PSA_MRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\PSA_MRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `z4_z7b_cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\PSA_MRR3\INC\Z7B_CUST_LOGGING`
+- `z7b_cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\PSA_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\PSA_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `z4_z7b_cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\PSA_SRR5\INC\Z7B_CUST_LOGGING`
+- `z7b_cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\RNA_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\RNA_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\RNA_SRR5\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\SCANIA_SRR3\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\SCANIA_SRR3\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\SCANIA_SRR3\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\TML_SRR5\INC\MUX_LOGGING`
+- `mux_logging_structure.xml`
+### `Code\UDP_logging_headers\Cust\TML_SRR5\INC\Z4_Z7B_CUST_LOGGING`
+- `Z4_Z7B_Cust_Logging_Structure.xml`
+### `Code\UDP_logging_headers\Cust\TML_SRR5\INC\Z7B_CUST_LOGGING`
+- `Z7B_Cust_logging_structure.xml`
+### `Code\libs\eigen3\unsupported\Eigen`
+- `CMakeLists.txt`
+### `Code\libs\eigen3\unsupported\Eigen\CXX11`
+- `CMakeLists.txt`
+### `Code\libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Linux\Debug\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Linux\Release\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Windows\Debug\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Windows\Release\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Linux\Debug\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Linux\Release\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Windows\Debug\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Windows\Release\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Code\libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Linux\Debug\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-debug.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Code\libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Linux\Release\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-release.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Code\libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Windows\Debug\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-debug.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Code\libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Windows\Release\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-release.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Code\libs\protobuf-3.6.1\Linux\Debug\lib\cmake\protobuf`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-debug.cmake`
+- `protobuf-targets.cmake`
+### `Code\libs\protobuf-3.6.1\Linux\Release\lib\cmake\protobuf`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-release.cmake`
+- `protobuf-targets.cmake`
+### `Code\libs\protobuf-3.6.1\Windows\Debug\cmake`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-debug.cmake`
+- `protobuf-targets.cmake`
+### `Code\libs\protobuf-3.6.1\Windows\Release\cmake`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-release.cmake`
+- `protobuf-targets.cmake`
+### `LM2_Packaging`
+- `Build.sh`
+- `Build_All.sh`
+### `LM2_Packaging\LM2_FMU`
+- `Build.py`
+- `BuildForAllCustomer.py`
+- `BuildForAllCustomer.sh`
+- `CMakeLists.txt`
+- `UpdateModelDescription.py`
+- `index.txt`
+- `modelDescription.in.xml`
+- `modelDescription.xml`
+- `prepare_fmu.py`
+- `pyinput.xml`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries`
+- `update_xlink.sh`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries\DEFAULT_CONFIG_XMLS\AL`
+- `Emb_Lib_Config.xml`
+- `Interface_Output_Control.xml`
+- `MRR_DC_Lib_Control.xml`
+- `SRR5_customer_config_v1p0_hybrid.xml`
+- `SRR5_customer_config_v1p0_satellite.xml`
+- `SRR5_customer_config_v1p0_standalone.xml`
+- `SRR_DC_Lib_Control.xml`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries\DEFAULT_CONFIG_XMLS\CEER`
+- `Emb_Lib_Config.xml`
+- `Interface_Output_Control.xml`
+- `MRR_DC_Lib_Control.xml`
+- `SRR5_customer_config_v1p0_hybrid.xml`
+- `SRR5_customer_config_v1p0_satellite.xml`
+- `SRR5_customer_config_v1p0_standalone.xml`
+- `SRR_DC_Lib_Control.xml`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries\DEFAULT_CONFIG_XMLS\GPO`
+- `Emb_Lib_Config.xml`
+- `Interface_Output_Control.xml`
+- `MRR_DC_Lib_Control.xml`
+- `SRR5_customer_config_v1p0_hybrid.xml`
+- `SRR5_customer_config_v1p0_satellite.xml`
+- `SRR5_customer_config_v1p0_standalone.xml`
+- `SRR_DC_Lib_Control.xml`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries\FW_LIME\AL`
+- `LIME_SIL_Engine_Release notes.xml`
+- `SIL_Engine_Config.xml`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries\FW_LIME\CEER`
+- `Emb_Lib_Config.xml`
+- `LIME_SIL_Engine_Release notes.xml`
+- `SRR5_customer_config_v1p0.xml`
+### `LM2_Packaging\LM2_FMU\Data\Aptiv_Libraries\FW_LIME\GPO`
+- `LIME_SIL_Engine_Release notes.xml`
+- `SIL_Engine_Config.xml`
+### `LM2_Packaging\LM2_Interface`
+- `Build.sh`
+- `CMakeLists.txt`
+### `Tools\TestInterface`
+- `CMakeLists.txt`
+### `Tools\TestInterface\build`
+- `CMakeCache.txt`
+- `cmake_install.cmake`
+### `Tools\TestInterface\build\ASDSPACE.dir\Debug`
+- `ASDSPACE.vcxproj.FileListAbsolute.txt`
+### `Tools\TestInterface\build\CMakeFiles`
+- `TargetDirectories.txt`
+### `Tools\TestInterface\build\CMakeFiles\3.25.2`
+- `CMakeCCompiler.cmake`
+- `CMakeCXXCompiler.cmake`
+- `CMakeRCCompiler.cmake`
+- `CMakeSystem.cmake`
+- `VCTargetsPath.txt`
+### `Tools\TestInterface\build\InterfaceMain`
+- `cmake_install.cmake`
+### `Tools\TestInterface\build\InterfaceMain\Interface_Main.dir\Debug`
+- `Interface_Main.vcxproj.FileListAbsolute.txt`
+### `Tools\TestInterface\build\x64\Debug\ZERO_CHECK`
+- `ZERO_CHECK.vcxproj.FileListAbsolute.txt`
+### `Tools\XML_Comparator`
+- `CMakeLists.txt`
+- `build.sh`
+
+</details>
+
+## G.3 core-resim-sensor-model — sensor-model source lines (10 branches, `main` EMPTY)
+**What it does:** houses per-program sensor-model (SM) implementations. Critical finding: `main`
+(and `master`) are EMPTY placeholders — all real code lives in the feature/release lines, so any
+research checkout must target a named line, never `main`.
+**Branch map (each = self-contained SM variant):**
+- `feature/BMW_LIME_Code_only` + `feature/STLA_LIME_Code_Branch` — LiME-code SM variants per OEM.
+- `feature/EDO_SM_Release` — EDO program SM release.
+- `feature/EVIDENTS_program` — EVIDENTS program line.
+- `feature/HFSensormodel` — HF sensor model.
+- `feature/DUJ-1160__SM2_update_for_1000_detections` — SM2 1000-detection update; `main-DUJ-1390`
+  — latest DUJ main line; `feature/SM2_fmu_release_for_EVENTS` — SM2 FMU release for EVENTS.
+**Research hooks:** SM variants are the independent variable for sensor-model comparison studies;
+pair each with its VV-engine `modelconfig_*_sil.yaml` and LM2 line for controlled experiments.
+
+<details><summary>core-resim-sensor-model — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-sensor-model — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feature__BMW_LIME_Code_only`, `feature__DUJ-1160__SM2_update_for_1000_detections`, `feature__EDO_SM_Release`, `feature__EVIDENTS_program`, `feature__HFSensormodel`, `feature__SM2_fmu_release_for_EVENTS`, `feature__STLA_LIME_Code_Branch`, `main`, `main-DUJ-1390`, `master`
+Total files in `main`: ~0
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+
+## File inventory by directory
+
+</details>
+
+## G.12 core-resim-udp-decoder-library — UDP stream decoder matrix (10 of 15)
+**What it does:** versioned UDP stream decoders: GEN7/GEN8 HIL lines, STLA_SMALL (+MASTER), MCIP
+(`STLA_MCIP_V2`, `STLA_MCIP_2`, `MCIP_on_V2`), HDF fixes (`hdf_reset_fix`, `HDF_Changes`),
+per-platform detection/RDD/TOI/ALIGNMENT schema dirs + design xlsx.
+**Research hooks:** decoder matrix is the schema authority for KPI parsers; HIL-pair lines validate
+live-vs-logged parity; HDF fixes gate the mf4_data edge-case corpus.
+
+<details><summary>core-resim-udp-decoder-library — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-udp-decoder-library — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feature__GEN7_HIL`, `feature__GEN8_HIL`, `feature__HDF_Changes`, `feature__MCIP_on_V2`, `feature__STLA_MCIP_2`, `feature__STLA_MCIP_V2`, `feature__STLA_SMALL`, `feature__STLA_SMALL_MASTER`, `feature__hdf_reset_fix`, `main`
+Total files in `main`: ~4308
+
+## README
+========================================================================
+    STATIC LIBRARY : radar_stream_lib Project Overview
+========================================================================
+
+AppWizard has created this radar_stream_lib library project for you.
+
+No source files were created as part of your project.
+
+
+radar_stream_lib.vcxproj
+    This is the main project file for VC++ projects generated using an Application Wizard.
+    It contains information about the version of Visual C++ that generated the file, and
+    information about the platforms, configurations, and project features selected with the
+    Application Wizard.
+
+radar_stream_lib.vcxproj.filters
+    This is the filters file for VC++ projects generated using an Application Wizard. 
+    It contains information about the association between the files in your project 
+    and the filters. This association is used in the IDE to show grouping of files with
+    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
+    "Source Files" filter).
+
+/////////////////////////////////////////////////////////////////////////////
+Other notes:
+
+AppWizard uses "TODO:" comments to indicate parts of the source code you
+should add to or customize.
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `BMW_SP25/`
+  - `Dspace/`
+    - `L2/`
+      - `V2/`
+    - `L3/`
+      - `V2/`
+- `CMake/`
+- `CMakeFiles/`
+  - `4.0.3/`
+    - `CompilerIdC/`
+      - `Debug/`
+    - `x64/`
+      - `Debug/`
+- `Common/`
+- `CommonFiles/`
+  - `CommonHeaders/`
+  - `MDF_Include/`
+    - `Interface/`
+  - `Raw_headers/`
+  - `Stream_headers/`
+    - `Z4_Z7B_LOGGING/`
+      - `Vp8/`
+    - `Z7A_Z7B_LOGGING/`
+      - `Vp10/`
+      - `Vp12/`
+    - `Z7B_AUDI_LOGGING/`
+      - `Vp1/`
+    - `Z7B_LOGGING/`
+      - `Vp11/`
+  - `Utility/`
+  - `cca_vigem_inc/`
+  - `helper/`
+  - `inc/`
+    - `AUDI/`
+    - `BMW/`
+      - `sFunctionheader/`
+    - `GEELY/`
+    - `GWM/`
+    - `HKMC2/`
+    - `JLR/`
+    - `PCR/`
+    - `SCANIA/`
+  - `plugin/`
+  - `sym/`
+    - `AUDI/`
+    - `BMW/`
+    - `BMW_LOW/`
+    - `CHANGAN/`
+    - `GEELY/`
+    - `GWM/`
+    - `HKMC2/`
+    - `JLR/`
+    - `RNA/`
+    - `SCANIA/`
+  - `thread/`
+  - `udp_headers/`
+- `GEN6P_DSPACE/`
+  - `V2/`
+  - `V3/`
+- `GEN7/`
+  - `GPO_V1/`
+    - `FLR7/`
+      - `ALIGNMENT/`
+      - `DEBUG/`
+      - `DETECTION/`
+      - `DOWN_SELECTION/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `HEADER/`
+      - `ID/`
+      - `MMIC/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `ROT_ISO_OBJECT/`
+      - `ROT_OBJECT_STREAM/`
+      - `ROT_PROCESSED_DETECTION/`
+      - `ROT_SAFETY_FAULTS/`
+      - `ROT_TRACKER_INFO/`
+      - `ROT_VEHICLE_INFO/`
+      - `STATUS/`
+      - `TOI/`
+      - `TOI_DS/`
+      - `VSE/`
+    - `SRR7/`
+      - `ALIGNMENT/`
+      - `BLOCKAGE/`
+      - `CALIB/`
+      - `CDC/`
+      - `DEBUG/`
+      - `DETECTION/`
+      - `DOWN_SELECTION/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `HEADER/`
+      - `ID/`
+      - `MMIC/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `ROT_INTERNALS_STREAM/`
+      - `ROT_ISO_OBJECT/`
+      - `ROT_OBJECT_STREAM/`
+      - `ROT_PROCESSED_DETECTION/`
+      - `ROT_SAFETY_FAULTS/`
+      - `ROT_TRACKER_INFO/`
+      - `ROT_VEHICLE_INFO/`
+      - `STATUS/`
+      - `TOI/`
+      - `TOI_DS/`
+      - `VSE/`
+  - `GPO_V2/`
+    - `FLR7/`
+      - `ALIGNMENT/`
+      - `ALIGNMENT_INTERNALS/`
+      - `DEBUG/`
+      - `DETECTION/`
+      - `DETECTION_DEBUG/`
+      - `DOWN_SELECTION/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `HEADER/`
+      - `ID/`
+      - `MMIC/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `RDD_DEBUG/`
+      - `ROT_ISO_OBJECT/`
+      - `ROT_PROCESSED_DETECTION/`
+      - `ROT_SAE_OBJECT_STREAM/`
+      - `ROT_SAFETY_FAULTS/`
+      - `ROT_TRACKER_INFO/`
+      - `ROT_VEHICLE_INFO/`
+      - `STATUS/`
+      - `TOI/`
+      - `VSE/`
+    - `SRR7/`
+      - `ALIGNMENT/`
+      - `ALIGNMENT_INTERNALS/`
+      - `CDC/`
+      - `DEBUG/`
+      - `DETECTION/`
+      - `DETECTION_DEBUG/`
+      - `DOWN_SELECTION/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `HEADER/`
+      - `ID/`
+      - `MMIC/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `RDD_DEBUG/`
+      - `ROT_ISO_OBJECT/`
+      - `ROT_PROCESSED_DETECTION/`
+      - `ROT_SAE_OBJECT_STREAM/`
+      - `ROT_SAFETY_FAULTS/`
+      - `ROT_TRACKER_INFO/`
+      - `ROT_VEHICLE_INFO/`
+      - `STATUS/`
+      - `TOI/`
+      - `VSE/`
+  - `RNA_GEN7/`
+    - `SRR7/`
+      - `ADC/`
+      - `ALIGNMENT/`
+      - `BLOCKAGE/`
+      - `CALIB/`
+      - `CDC/`
+      - `CED_CUST/`
+      - `CTA_CUST/`
+      - `CUST_ALGO/`
+      - `DEBUG/`
+      - `DETECTION/`
+      - `DOWN_SELECTION/`
+      - `DRA_INTERNALS/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `HEADER/`
+      - `ID/`
+      - `LCDA_CUST_OUTPUT/`
+      - `MMIC/`
+      - `OLP_OBJECT/`
+      - `PMO_OBJECT/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `RFFT/`
+      - `ROT_INTERNALS/`
+      - `ROT_ISO_OBJECT/`
+      - `ROT_OBJECT/`
+      - `ROT_PROCESSED_DETECTION/`
+      - `ROT_SAFETY_FAULTS/`
+      - `ROT_TRACKER_INFO/`
+      - `ROT_VEHICLE_INFO/`
+      - `STATUS/`
+      - `TOI/`
+      - `TOI_DS/`
+      - `VID/`
+      - `VSE/`
+- `GEN8/`
+  - `GPO/`
+    - `FLR8/`
+      - `ALIGNMENT/`
+      - `DETECTION/`
+      - `DOWN_SELECTION/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `HEADER/`
+      - `MMIC/`
+      - `PARTNER_SENSOR/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `ROT_ISO_OBJECT/`
+      - `ROT_PROCESSED_DETECTION/`
+      - `ROT_SAFETY_FAULTS/`
+      - `ROT_TRACKER_INFO/`
+      - `ROT_VEHICLE_INFO/`
+      - `STATUS/`
+      - `TOI/`
+      - `TOI_DS/`
+      - `VID/`
+      - `VSE/`
+    - `SRR8/`
+      - `ALIGNMENT/`
+      - `BSIS/`
+      - `CV_TRAILER/`
+      - `DETECTION/`
+      - `DOWN_SELECTION/`
+      - `DYNAMIC_ALIGNMENT/`
+      - `F360_DETECTION_LOG/`
+      - `F360_FUNCTIONAL_SAFETY_FAULTS/`
+      - `F360_HOST_PROPS_LOG/`
+      - `F360_INTERNAL_CLUSTER/`
+      - `F360_INTERNAL_CWD/`
+      - `F360_INTERNAL_DETECTION_HISTORY/`
+      - `F360_INTERNAL_OBJECT/`
+      - `F360_INTERNAL_REFLECTION_BUFFER/`
+      - `F360_OBJECTS_LOG/`
+      - `F360_SENSOR_CALIB_LOG/`
+      - `HEADER/`
+      - `HOST_CALIBS_LOG/`
+      - `ID/`
+      - `MMIC/`
+      - `MOIS/`
+      - `OLP/`
+      - `PARTNER_SENSOR/`
+      - `RADAR_CAPABILITY/`
+      - `RDD/`
+      - `STATIC_ENV_POLYS_LOG/`
+      - `STATUS/`
+      - `SYNC_INFO_LOG/`
+      - `TIMING_INFO_LOG/`
+      - `TOI/`
+      - `TOI_DS/`
+      - `TRACKER_INFO_LOG/`
+      - `TRAILER_DETECTOR_INTERNAL_LOG/`
+      - `TRAILER_DETECTOR_LOG/`
+      - `VEHICLE_INFO_LOG/`
+      - `VID/`
+      - `VSE/`
+- `HDF/`
+  - `bin/`
+  - `highfive/`
+    - `bits/`
+    - `experimental/`
+    - `h5easy_bits/`
+  - `include/`
+  - `lib/`
+    - `pkgconfig/`
+    - `plugin/`
+- `Utils/`
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `Decoder_DLL_Release_Notes.xml`
+- `RULESETS.md`
+- `ReadMe.txt`
+### `.github\workflows`
+- `udp-decoder-main.yml`
+- `validate.yml`
+### `CMake`
+- `CMakeLists.txt`
+### `CMakeFiles`
+- `CMakeConfigureLog.yaml`
+### `CMakeFiles\4.0.3`
+- `CMakeSystem.cmake`
+- `VCTargetsPath.txt`
+### `GEN7\GPO_V2\FLR7\DYNAMIC_ALIGNMENT`
+- `Read_me.txt`
+### `GEN7\GPO_V2\SRR7\DYNAMIC_ALIGNMENT`
+- `Read_me.txt`
+
+</details>
+
+## G.2 core-resim-vv-engine — Virtual Validation / sensor-model SiL engine (10 branches)
+**What it does:** runs sensor-model + logic-model FMUs in a virtual (SiL) loop driven by OSI
+(Open Simulation Interface) ground-truth, producing the same UDP/MDF streams as the HIL rig so
+validation can run without hardware. The `hlr-578-multi-sm-multi-lm` line proves multi-sensor-model
+× multi-logic-model co-simulation.
+**Architecture (representative `main`, ~5.8k files):**
+- `SensorFmu/` + `FmuInterface/` + `FmiUnzip/` — FMU hosting (unzip, FMI interface, sensor FMU glue).
+- `OsiFileRead/` + `OsiFileWrite/` — OSI trace IO (live-mode generation = `osi_file_generation_live_mode`).
+- `ModelDescriptionXmlParser/` + `SensorModelsilEngineConfigParser/` + `SrrSm2{Lm2}YamlParser/XmlParser`
+  — model-description and SM2↔LM2 mapping parsers; top configs `Config/SensorModelSilEngineConfig.xml`,
+  `VVEngineConfig.yaml`.
+- `Config/<CUSTOMER>/modelconfig_*_sil.yaml` — per-program sensor configs (BMW_SP25/SP21, HONDA_SRR6p,
+  NISSAN_SRR6, RNA_SWEET/V1, STLA_MY24 scale1/3/4, TML_SRR5 Harrier/Safari/HIL, TRATON, CEER, IFV600
+  5radar+camera mix, PLATFORM_GPO_GEN7).
+- `MdfLog/` (MDF logging), `SMSilEngineUnitTest/` (engine unit tests + `xml_file/yaml_path` fixtures),
+  `Sample_Traces/` (scenario TXT: CTA/LCW/RECW/SCW/tracker UC), `SED_SW/`, `Source/`.
+- `Libs/` — vendored OSI 3.1.2/3.2.0/3.5.0 + protobuf 3.6.1 + eigen3 + zeromq + pugixml + Boost
+  (Linux+Windows, Debug+Release).
+- Roots: `Build_Project.sh` (build), `Run_Config.sh` (run), `01_functions/write_env.py`,
+  `Documents/SM_SIL_ENGINE_Release_Notes.xml`.
+**Branch deltas:** `Virtual_Validation_Release(_ADCAM)` = release snapshots; `hlr-748`, `vv_Improvement`,
+`senderListUpdate`, `SenderTest_USS` = sender/list handling + USS senders; `ifv600LM2` = IFV600 LM2 mix.
+**Research hooks:** OSI traces are perfect ground truth for tracker-KPI scoring; multi-SM-multi-LM line
+enables sensor-fusion experimental design; live-mode OSI generation feeds streaming KPI prototypes.
+
+<details><summary>core-resim-vv-engine — exhaustive file inventory (representative branch)</summary>
+
+# core-resim-vv-engine — exhaustive code map (representative branch: `main`)
+
+Branches pulled: `feature__SenderTest_USS`, `feature__Virtual_Validation_Release`, `feature__Virtual_Validation_Release_ADCAM`, `feature__hlr-578-multi-sm-multi-lm`, `feature__hlr-748`, `feature__ifv600LM2`, `feature__osi_file_generation_live_mode`, `feature__senderListUpdate`, `feature__vv_Improvement`, `main`
+Total files in `main`: ~5774
+
+## README
+_No top-level README._
+
+## Directory tree (depth 3)
+- `.github/`
+  - `workflows/`
+- `.vscode/`
+- `01_functions/`
+- `CMake/`
+- `CommonIncludeFiles/`
+  - `CMake/`
+  - `helper/`
+  - `include/`
+- `Config/`
+  - `BMW_SP25/`
+  - `BMW_SRR5/`
+  - `CEER/`
+  - `HONDA_SRR6p/`
+  - `IFV600/`
+  - `Linux/`
+    - `BMW_SP25/`
+    - `HONDA_SRR6p/`
+    - `NISSAN_SRR6/`
+    - `RNA_SWEET/`
+    - `STLA_MY24/`
+  - `NISSAN_SRR6/`
+  - `PLATFORM_GPO_GEN7/`
+  - `RNA_SWEET/`
+  - `RNA_V1/`
+  - `STLA_MY24/`
+  - `TML_SRR5/`
+  - `TRATON/`
+- `Documents/`
+- `FmiUnzip/`
+  - `CMake/`
+- `FmuInterface/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `Libs/`
+  - `eigen3/`
+    - `Eigen/`
+      - `src/`
+    - `unsupported/`
+      - `Eigen/`
+  - `eigen3.3/`
+    - `Eigen/`
+      - `src/`
+    - `unsupported/`
+      - `Eigen/`
+  - `open-simulation-interface-3.1.2_w_Proto_3.6.1/`
+    - `Linux/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+    - `Windows/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+  - `open-simulation-interface-3.2.0_w_Proto_3.6.1/`
+    - `Linux/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+    - `Windows/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+  - `open-simulation-interface-3.5.0_w_Proto_3.6.1/`
+    - `Linux/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+    - `Windows/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+  - `protobuf-3.6.1/`
+    - `Linux/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+    - `Windows/`
+      - `Debug/`
+      - `Release/`
+      - `include/`
+  - `zeromq/`
+    - `Linux/`
+    - `bin/`
+    - `include/`
+- `MdfLog/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `ModelDescriptionXmlParser/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `OsiFileRead/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `OsiFileWrite/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `Pugixml/`
+  - `binaries/`
+    - `linux/`
+      - `Debug/`
+      - `Release/`
+    - `windows/`
+      - `Debug/`
+      - `PUGI_VS15/`
+      - `PUGI_VS19/`
+      - `Release/`
+    - `x86/`
+- `SED_SW/`
+- `SMSilEngineUnitTest/`
+  - `CMake/`
+  - `inc/`
+  - `src/`
+  - `xml_file/`
+  - `yaml_path/`
+- `Sample_Traces/`
+- `SensorFmu/`
+  - `CMake/`
+  - `include/`
+    - `fmuInterface/`
+  - `source/`
+- `SensorModelsilEngineConfigParser/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `Source/`
+- `SrrSm2Lm2YamlParser/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `SrrSm2XmlParser/`
+  - `CMake/`
+  - `include/`
+  - `source/`
+- `ThirdParty/`
+  - `Boost/`
+    - `Include/`
+      - `boost/`
+
+## File inventory by directory
+### `.`
+- `ADMIN_AUDIT_LOG.md`
+- `Blist_file.txt`
+- `Build_Project.sh`
+- `RULESETS.md`
+- `Run_Config.sh`
+### `.github\workflows`
+- `validate.yml`
+- `vv-engine-main.yml`
+### `.vscode`
+- `launch.json`
+### `01_functions`
+- `write_env.py`
+### `CMake`
+- `CMakeLists.txt`
+### `CommonIncludeFiles\CMake`
+- `CMakeLists.txt`
+### `Config`
+- `SensorModelSilEngineConfig.xml`
+- `VVEngineConfig.yaml`
+### `Config\BMW_SP25`
+- `modelconfig_mrr_L2_sp25_sil.yaml`
+- `modelconfig_mrr_L3_sp25_sil.yaml`
+- `modelconfig_srr_L2_sp25_sil.yaml`
+- `modelconfig_srr_L3_sp25_sil.yaml`
+### `Config\BMW_SRR5`
+- `SRR_SM2_LM2_MODEL_CONFIG.xml`
+- `modelconfig_high_sp21_sil.yaml`
+- `modelconfig_low_sp21_sil.yaml`
+- `modelconfig_mid_sp21_sil.yaml`
+### `Config\CEER`
+- `modelconfig_sil_CEER_With_FC_Satellite.yaml`
+### `Config\HONDA_SRR6p`
+- `modelconfig_sil.yaml`
+### `Config\IFV600`
+- `modelconfig_5radarSM2_1camSM2_1camLM2_1IFVLM2.yaml`
+### `Config\Linux`
+- `SRR_SM2_LM2_MODEL_CONFIG.xml`
+- `SRR_SM2_LM2_MODEL_CONFIG.yaml`
+- `SRR_SM2_LM2_MODEL_CONFIG_HIGH.yaml`
+- `SRR_SM2_LM2_MODEL_CONFIG_MID.yaml`
+- `SensorModelSilEngineConfig.xml`
+### `Config\Linux\BMW_SP25`
+- `modelconfig_mrr_L2_sp25_sil.yaml`
+- `modelconfig_mrr_L3_sp25_sil.yaml`
+- `modelconfig_srr_L2_sp25_sil.yaml`
+- `modelconfig_srr_L3_sp25_sil.yaml`
+### `Config\Linux\HONDA_SRR6p`
+- `modelconfig_sil.yaml`
+### `Config\Linux\NISSAN_SRR6`
+- `modelconfig_sil.yaml`
+### `Config\Linux\RNA_SWEET`
+- `modelconfig_sil.yaml`
+### `Config\Linux\STLA_MY24`
+- `modelconfig_mrr_scale1_sil.yaml`
+- `modelconfig_mrr_scale3_sil.yaml`
+- `modelconfig_mrr_scale4_sil.yaml`
+- `modelconfig_srr_scale1_sil.yaml`
+- `modelconfig_srr_scale3_sil.yaml`
+- `modelconfig_srr_scale4_sil.yaml`
+### `Config\NISSAN_SRR6`
+- `modelconfig_sil.yaml`
+### `Config\PLATFORM_GPO_GEN7`
+- `modelconfig_sil_GPO_GEN7.yaml`
+### `Config\RNA_SWEET`
+- `modelconfig_sil.yaml`
+### `Config\RNA_V1`
+- `modelconfig_sil_RNA_V1.yaml`
+### `Config\STLA_MY24`
+- `modelconfig_mrr_scale1_sil.yaml`
+- `modelconfig_mrr_scale3_sil.yaml`
+- `modelconfig_mrr_scale4_sil.yaml`
+- `modelconfig_srr_scale1_sil.yaml`
+- `modelconfig_srr_scale3_sil.yaml`
+- `modelconfig_srr_scale4_sil.yaml`
+### `Config\TML_SRR5`
+- `modelconfig_harrier_sil.yaml`
+- `modelconfig_hil.yaml`
+- `modelconfig_safari_sil.yaml`
+- `modelconfig_sil.yaml`
+### `Config\TRATON`
+- `modelconfig_sil_Traton.yaml`
+### `Documents`
+- `SM_SIL_ENGINE_Release_Notes.xml`
+### `FmiUnzip\CMake`
+- `CMakeLists.txt`
+### `FmuInterface\CMake`
+- `CMakeLists.txt`
+### `Libs\eigen3\unsupported\Eigen`
+- `CMakeLists.txt`
+### `Libs\eigen3\unsupported\Eigen\CXX11`
+- `CMakeLists.txt`
+### `Libs\eigen3\unsupported\Eigen\CXX11\src\Tensor`
+- `README.md`
+### `Libs\eigen3\unsupported\Eigen\src\EulerAngles`
+- `CMakeLists.txt`
+### `Libs\eigen3\unsupported\Eigen\src\LevenbergMarquardt`
+- `CopyrightMINPACK.txt`
+### `Libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Linux\Debug\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Linux\Release\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Windows\Debug\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.1.2_w_Proto_3.6.1\Windows\Release\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Linux\Debug\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Linux\Release\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Windows\Debug\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-debug.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.2.0_w_Proto_3.6.1\Windows\Release\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface_targets-release.cmake`
+- `open_simulation_interface_targets.cmake`
+### `Libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Linux\Debug\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-debug.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Linux\Release\lib\cmake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-release.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Windows\Debug\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-debug.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Libs\open-simulation-interface-3.5.0_w_Proto_3.6.1\Windows\Release\CMake\open_simulation_interface-3`
+- `open_simulation_interface-config-version.cmake`
+- `open_simulation_interface-config.cmake`
+- `open_simulation_interface-targets-release.cmake`
+- `open_simulation_interface-targets.cmake`
+### `Libs\protobuf-3.6.1\Linux\Debug\lib\cmake\protobuf`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-debug.cmake`
+- `protobuf-targets.cmake`
+### `Libs\protobuf-3.6.1\Linux\Release\lib\cmake\protobuf`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-release.cmake`
+- `protobuf-targets.cmake`
+### `Libs\protobuf-3.6.1\Windows\Debug\cmake`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-debug.cmake`
+- `protobuf-targets.cmake`
+### `Libs\protobuf-3.6.1\Windows\Release\cmake`
+- `protobuf-config-version.cmake`
+- `protobuf-config.cmake`
+- `protobuf-module.cmake`
+- `protobuf-options.cmake`
+- `protobuf-targets-release.cmake`
+- `protobuf-targets.cmake`
+### `MdfLog\CMake`
+- `CMakeLists.txt`
+### `ModelDescriptionXmlParser\CMake`
+- `CMakeLists.txt`
+### `OsiFileRead\CMake`
+- `CMakeLists.txt`
+### `OsiFileWrite\CMake`
+- `CMakeLists.txt`
+### `SMSilEngineUnitTest\CMake`
+- `CMakeLists.txt`
+### `SMSilEngineUnitTest\xml_file`
+- `SRR_SM2_LM2_MODEL_CONFIG.xml`
+- `VVEngineConfig.yaml`
+- `modelDescription.xml`
+- `modelconfig_sil.yaml`
+### `SMSilEngineUnitTest\yaml_path`
+- `modelDescription.xml`
+### `Sample_Traces`
+- `ASM_presentation.txt`
+- `CTA_FCTA_S_S7_30_225.txt`
+- `CTA_RCTB_S_S4_50_45.txt`
+- `LCW_01_02_OL.txt`
+- `LCW_01_04_OR.txt`
+- `RECW_None_T1_Target_Moving_Ego_Moving.txt`
+- `SCW_02_01.txt`
+- `SFE_CED_09_40kmh_Rear 1.txt`
+- `Tracker_UC_1_2_E50_T80_RS.txt`
+### `SensorFmu\CMake`
+- `CMakeLists.txt`
+### `SensorModelsilEngineConfigParser\CMake`
+- `CMakeLists.txt`
+### `SrrSm2Lm2YamlParser\CMake`
+- `CMakeLists.txt`
+### `SrrSm2XmlParser\CMake`
+- `CMakeLists.txt`
+### `ThirdParty\Boost\Include\boost\geometry\util`
+- `readme.txt`
+
+</details>

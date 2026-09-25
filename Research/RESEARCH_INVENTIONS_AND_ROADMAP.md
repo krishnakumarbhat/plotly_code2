@@ -312,3 +312,34 @@ same harness with `Customer_Name=USS` once that convertor path is wired (0.5 FTE
 ---
 
 *Appendix C generated 2026-09-24. Protocols reference pinned snapshot folders; re-validate SHAs after any `git fetch` (risk R-6).*
+
+---
+
+## Appendix H — GHE code research surface per repo (2026-09-25)
+
+Maps each migrated repo to concrete research actions. Protocols mount `github/` read-only.
+
+### H.1 Experiment matrix
+| Repo | Independent variable | Metric / KPI | Needs |
+|---|---|---|---|
+| core-resim-hil-engine | replay path (HIL vs SiL) | detection/RDD parity | mf4_data/ edge logs |
+| core-resim-vv-engine | SM×LM combo, live vs file OSI | tracker score, timing | multi-SM branch |
+| core-resim-sensor-model | SM variant (BMW/EDO/HF/DUJ…) | same-scenario KPI delta | VV configs |
+| core-resim-engine | analysis version / rain logs | KPI drift | Traton_rain_logs |
+| Core_Radar_Gen8_iND13400 | FW release (v6.1 vs v7.0) | stream/KPI drift | RSP-SIL pins |
+| core-resim-dc-emb-library | calibration set / DGPS on-off | tracker error vs GT | dgps branch |
+| core-resim-logic-model | customer convertor, RUN_MODE | conformance pass/fail | golden logs |
+| core-resim-bordnet-tool | decoder version, CANv4 | parse yield | release notes |
+| core-radar-object-tracker | ROT variant, vectorize on-off | MOTA/MOTP, runtime | tracker-KPI |
+| core-resim-hpcc | burst scale, site | head-hours, cost | Slurm access |
+| core-radar-gen7-rsp-sil | AF-SIL version | SiL-vs-target delta | FW pins |
+| core-resim-udp-decoder-library | decoder schema version | decode yield | mf4 corpus |
+| core-radar-gen8-s32r47-signal-processing | bringup stage | timing/profile | HW logs |
+| core-radar-gen8-ind13400-signal-processing | SP release | SP KPI drift | SPBB tags |
+
+### H.2 First research runs (post-push checklist)
+1. Tracker-KPI × ROT variants (G.9) on VV OSI ground truth (G.2).
+2. Release-drift: Gen8 v6.1.x vs v7.0.x + iND-SP v7.15 vs v8.12 on shared scenarios.
+3. SiL fidelity: RSP-SIL 3.1.119 vs target FW; fast-resim (CUW-5824) vs full pipeline.
+4. Edge cases: `mf4_data/` rain + Traton logs through HIL rig + HDF-fix decoder lines.
+5. USS: LM2 `feature__USS_Aggregator` FMUs with `Customer_Name=USS` (Roadmap §B.5).
