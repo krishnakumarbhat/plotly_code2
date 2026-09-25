@@ -1,0 +1,351 @@
+<?xml version="1.0"?>
+<SensorSimulator>
+    <SimulationDescription>
+        Configuration file for LiME - Template FMU with ZMQ Sender/Receiver for OSI
+    </SimulationDescription>
+
+    <Configuration>
+        <!--<RunMode>auto/manual</RunMode>-->
+        <RunMode>auto</RunMode>
+        <DefaultLogLevel>InfoAndWarnings</DefaultLogLevel>
+    </Configuration>
+
+    <ReceiverList>
+        <!-- OSI input of the LiME-receiver FMU described by id, IP & portnumber communicating with the counterpart defined in osi-visualizer/LiME-Juicer -->
+        <Receiver Id="0" CommunicationType="zmq" DataType="SensorView">
+            <Ip>127.0.0.1</Ip>
+            <Port>5564</Port>
+            <Pattern>Push-Pull</Pattern><!--Pattern>Push-Pull</Pattern-->
+            <ConnectTo Element="Model" Id="0" InputPort="0"/>
+	    <ConnectTo Element="Model" Id="1" InputPort="0"/>
+            <ConnectTo Element="Model" Id="2" InputPort="0"/>
+	    <ConnectTo Element="Model" Id="3" InputPort="0"/>
+	    <ConnectTo Element="Model" Id="4" InputPort="0"/>
+	    <ConnectTo Element="Model" Id="5" InputPort="0"/>
+        </Receiver>
+    </ReceiverList>
+
+    <SenderList>
+        <!-- OSI output of the LiME-sender FMU described by id, IP & portnumber communicating with the counterpart defined in osi-visualizer/LiME-Juicer -->
+        <Sender Id="0" CommunicationType="zmq" DataType="SensorData">
+            <Ip>127.0.0.1</Ip>
+            <Port>5563</Port>
+            <Pattern>Push-Pull</Pattern><!--Pattern>Pub-Sub</Pattern-->
+        </Sender>
+        <Sender Id="1" CommunicationType="zmq" DataType="SensorData" >
+            <Ip>127.0.0.1</Ip>
+            <Port>5562</Port>
+            <Pattern>Pub-Sub</Pattern><!--Pattern>Pub-Sub</Pattern-->
+    
+        </Sender>
+        <Sender Id="2" CommunicationType="zmq" DataType="SensorData" >
+            <Ip>127.0.0.1</Ip>
+            <Port>5561</Port>
+            <Pattern>Pub-Sub</Pattern><!--Pattern>Pub-Sub</Pattern-->
+ 
+        </Sender>
+        <Sender Id="3" CommunicationType="zmq" DataType="SensorData" >
+            <Ip>127.0.0.1</Ip>
+            <Port>5560</Port>
+            <Pattern>Pub-Sub</Pattern><!--Pattern>Pub-Sub</Pattern-->
+   
+        </Sender>
+	 <Sender Id="4" CommunicationType="zmq" DataType="SensorData" >
+            <Ip>127.0.0.1</Ip>
+            <Port>5559</Port>
+            <Pattern>Pub-Sub</Pattern><!--Pattern>Pub-Sub</Pattern-->
+   
+        </Sender>
+	 <Sender Id="5" CommunicationType="zmq" DataType="SensorData" >
+            <Ip>127.0.0.1</Ip>
+            <Port>5558</Port>
+            <Pattern>Pub-Sub</Pattern><!--Pattern>Pub-Sub</Pattern-->
+   
+        </Sender>
+
+    </SenderList>
+
+    <ModelList>
+        <Model Id="0" ModelType="Sensor">
+            <!--Pathes to FMU are relative from the lime_console working directory 
+                bazel-out/k8-opt/bin/adp/bmw/tools/simulation/lime/lime_console/lime_console.runfiles/ddad/ -->
+            <FmuArchive Origin="config">C:\Plastic\10028634_01_SM_SIL_Engine\fmuZIP\SRR_Master_SensorModel2.fmu</FmuArchive>
+            <FmuLogLevel>Release</FmuLogLevel>
+
+            <DataflowProcessing>
+                <StartupDelay Unit="ms">0</StartupDelay>
+                <Scheduler Enabled="true" Unit="ms">20</Scheduler>
+            </DataflowProcessing>
+
+            <InputPortList>
+                <Port Id="0" DataType="SensorView" InputVariableName="SensorViewIn"/>
+            </InputPortList>
+
+            <OutputPortList>
+                <Port Id="0" DataType="SensorData" OutputVariableName="SensorDataOut">
+                    <ConnectTo Element="Sender" Id="0" InputPort="0"/>
+                </Port>
+            </OutputPortList>
+            
+			<ModelVariables>
+				<!-- Sensor Parameters -->
+				<Integer Name="SensorVariant" Start="2"/>           <!-- 0 - LOW, 1 - BPILLAR, 2 - MID -->
+				<Integer Name="SensorPolarity" Start="1"/>         <!-- 1 or -1 -->
+				<Real Name="MountingPositionX" Start="-0.345"/>     <!-- m   -->
+				<Real Name="MountingPositionY" Start="0.86"/>       <!-- m   -->
+				<Real Name="MountingPositionZ" Start="-0.25"/>        <!-- m   -->
+				<Real Name="MountingOrientationYaw" Start="0.60"/>   <!-- deg --> <!--this was given as radian in the initial configuration-->
+				<Real Name="MountingOrientationPitch" Start="0.0"/> <!-- rad -->
+				<Real Name="MountingOrientationRoll" Start="0.0"/>  <!-- rad -->
+				<Real Name="FoVMaxAzimuth" Start="75.0"/>           <!-- deg -->
+				<Real Name="FoVMinAzimuth" Start="-75.0"/>          <!-- deg -->
+				<Real Name="FoVMaxElevation" Start="5.0"/>          <!-- deg -->
+				<Real Name="FoVMinElevation" Start="-5.0"/>         <!-- deg -->
+				<Real Name="AzimuthResolution" Start="8.0"/>        <!-- deg -->
+				<Real Name="TrafficBbCenterToRearXFactor" Start="0.8"/>     <!-- 0 to 1 -->
+				<Real Name="TrafficBbCenterToFrontXFactor" Start="0.7"/>    <!-- 0 to 1 -->
+				<Real Name="TrafficGroundClearance" Start="0.2"/>          <!-- m   -->
+				<Real Name="HostLength" Start="5.0"/>          <!-- m   -->
+				<Real Name="HostWidth" Start="2.0"/>          <!-- m   -->
+				<Real Name="HostHeight" Start="1.5"/>          <!-- m   -->
+				<!-- Simulation Configs -->
+				<Boolean Name="SimCopySvToSd"         Start="true"/> <!-- Copy SV to SD to enable logic model -->    
+				<Boolean Name="SimValid"              Start="true"/>  <!-- Valid flag -->
+				<!-- Processing Configs -->
+				<Boolean Name="ProcessMovingObject" Start="true"/>  <!-- Process moving object flag -->
+				<Boolean Name="ProcessStationaryObject" Start="true"/>  <!-- Process stationary object flag -->
+				<Boolean Name="ProcessLaneBoundary" Start="true"/>  <!-- Process lane boundary flag -->         
+				<Boolean Name="ProcessTrafficSign" Start="true"/>  <!-- Process traffic sign flag -->
+				<Boolean Name="AddDetectionNoise" Start="false"/>  <!-- Add detection noise flag -->
+				<Boolean Name="ApplyWorstPaint" Start="false"/>  <!-- Apply worst paint flag -->
+				<Boolean Name="ApplyRangeThresholding" Start="true"/>  <!-- Apply range thresholding flag -->
+				<Boolean Name="ReadTrafficVehAttribFromOSI" Start="false"/>  <!-- Read traffic vehicle attribute from OSI flag -->
+				<Boolean Name="ReadHostVehAttribFromOSI" Start="false"/>  <!-- Read host vehicle attribute from OSI flag -->
+				<Boolean Name="ApplyRoadProfileOcclusion" Start="false"/>  <!-- Apply occlusion due to road profile -->
+				<Boolean Name="IncludeWheelsInTrafficVeh" Start="false"/>  <!-- Include wheels in traffic vehicle flag -->
+				<Boolean Name="ApplyWheelSpinEffect" Start="false"/>  <!-- Apply wheel spin effect flag -->
+						<!-- Custom Configs -->
+				<String Name="Custom" Start="disable"/>           
+            </ModelVariables>
+        </Model>
+		
+		<Model Id="1" ModelType="Sensor">
+            <!--Pathes to FMU are relative from the lime_console working directory 
+                bazel-out/k8-opt/bin/adp/bmw/tools/simulation/lime/lime_console/lime_console.runfiles/ddad/ -->
+           <FmuArchive Origin="config">C:\Plastic\10028634_01_SM_SIL_Engine\fmuZIP\SRR_Master_SensorModel2.fmu</FmuArchive>
+            <FmuLogLevel>Release</FmuLogLevel>
+            
+            <DataflowProcessing>
+                <StartupDelay Unit="ms">0</StartupDelay>
+                <Scheduler Enabled="true" Unit="ms">20</Scheduler>
+            </DataflowProcessing>
+            
+	    <InputPortList>
+                <Port Id="0" DataType="SensorView" InputVariableName="SensorViewIn"/>
+            </InputPortList>
+            
+	    <OutputPortList>
+                <Port Id="0" DataType="SensorData" OutputVariableName="SensorDataOut">
+                    <ConnectTo Element="Sender" Id="1" InputPort="0"/>
+                </Port>
+            </OutputPortList>
+            
+		<ModelVariables>
+				<!-- Sensor Parameters -->
+		<Integer Name="SensorVariant" Start="2"/>           <!-- 0 - LOW, 1 - BPILLAR, 2 - MID -->
+		<Integer Name="SensorPolarity" Start="-1"/>         <!-- 1 or -1 -->
+		<Real Name="MountingPositionX" Start="-0.345"/>     <!-- m   -->
+                <Real Name="MountingPositionY" Start="-0.86"/>      <!-- m   -->
+                <Real Name="MountingPositionZ" Start="-0.25"/>        <!-- m   -->
+                <Real Name="MountingOrientationYaw" Start="-60"/>   <!-- deg --><!--this was given as radian in the initial configuration-->
+                <Real Name="MountingOrientationPitch" Start="0.0"/> <!-- rad -->
+                <Real Name="MountingOrientationRoll" Start="0.0"/>  <!-- rad -->
+                <Real Name="FoVMaxAzimuth" Start="75.0"/>           <!-- deg -->
+                <Real Name="FoVMinAzimuth" Start="-75.0"/>          <!-- deg -->
+                <Real Name="FoVMaxElevation" Start="5.0"/>          <!-- deg -->
+                <Real Name="FoVMinElevation" Start="-5.0"/>         <!-- deg -->
+		<Real Name="AzimuthResolution" Start="8.0"/>        <!-- deg -->
+		<Real Name="TrafficBbCenterToRearXFactor" Start="0.8"/>     <!-- 0 to 1 -->
+                <Real Name="TrafficBbCenterToFrontXFactor" Start="0.7"/>    <!-- 0 to 1 -->
+                <Real Name="TrafficGroundClearance" Start="0.2"/>          <!-- m   -->
+                <Real Name="HostLength" Start="5.0"/>          <!-- m   -->
+                <Real Name="HostWidth" Start="2.0"/>          <!-- m   -->
+                <Real Name="HostHeight" Start="1.5"/>          <!-- m   -->
+				<!-- Simulation Configs -->
+                <Boolean Name="SimCopySvToSd"         Start="true"/> <!-- Copy SV to SD to enable logic model -->    
+                <Boolean Name="SimValid"              Start="true"/>  <!-- Valid flag -->
+				<!-- Processing Configs -->
+                <Boolean Name="ProcessMovingObject" Start="true"/>  <!-- Process moving object flag -->
+                <Boolean Name="ProcessStationaryObject" Start="true"/>  <!-- Process stationary object flag -->
+                <Boolean Name="ProcessLaneBoundary" Start="true"/>  <!-- Process lane boundary flag -->      
+                <Boolean Name="ProcessTrafficSign" Start="true"/>  <!-- Process traffic sign flag -->
+		<Boolean Name="AddDetectionNoise" Start="false"/>  <!-- Add detection noise flag -->
+		<Boolean Name="ApplyWorstPaint" Start="false"/>  <!-- Apply worst paint flag -->
+		<Boolean Name="ApplyRangeThresholding" Start="true"/>  <!-- Apply range thresholding flag -->
+		<Boolean Name="ReadTrafficVehAttribFromOSI" Start="false"/>  <!-- Read traffic vehicle attribute from OSI flag -->
+		<Boolean Name="ReadHostVehAttribFromOSI" Start="false"/>  <!-- Read host vehicle attribute from OSI flag -->
+		<Boolean Name="ApplyRoadProfileOcclusion" Start="false"/>  <!-- Apply occlusion due to road profile -->
+		<Boolean Name="IncludeWheelsInTrafficVeh" Start="false"/>  <!-- Include wheels in traffic vehicle flag -->
+		<Boolean Name="ApplyWheelSpinEffect" Start="false"/>  <!-- Apply wheel spin effect flag -->
+                <!-- Custom Configs -->
+                <String Name="Custom" Start="disable"/>             
+            </ModelVariables>
+
+        </Model>
+		
+		 <Model Id="2" ModelType="Sensor">
+            <!--Pathes to FMU are relative from the lime_console working directory 
+                bazel-out/k8-opt/bin/adp/bmw/tools/simulation/lime/lime_console/lime_console.runfiles/ddad/ -->
+            <FmuArchive Origin="config">C:\Plastic\10028634_01_SM_SIL_Engine\fmuZIP\SRR_Master_SensorModel2.fmu</FmuArchive>
+            <FmuLogLevel>Release</FmuLogLevel>
+            
+	    <DataflowProcessing>
+                <StartupDelay Unit="ms">0</StartupDelay>
+                <Scheduler Enabled="true" Unit="ms">20</Scheduler>
+            </DataflowProcessing>
+            
+	    <InputPortList>
+                <Port Id="0" DataType="SensorView" InputVariableName="SensorViewIn"/>
+            </InputPortList>
+            
+	    <OutputPortList>
+                <Port Id="0" DataType="SensorData" OutputVariableName="SensorDataOut">
+                    <ConnectTo Element="Sender" Id="2" InputPort="0"/>
+                </Port>
+            </OutputPortList>
+            
+	    <ModelVariables>
+				<!-- Sensor Parameters -->
+		<Integer Name="SensorVariant" Start="2"/>           <!-- 0 - LOW, 1 - BPILLAR, 2 - MID -->
+		<Integer Name="SensorPolarity" Start="1"/>         <!-- 1 or -1 -->
+                <Real Name="MountingPositionX" Start="-4.732"/>     <!-- m   -->
+                <Real Name="MountingPositionY" Start="0.86"/>       <!-- m   -->
+                <Real Name="MountingPositionZ" Start="-0.25"/>        <!-- m   -->
+                <Real Name="MountingOrientationYaw" Start="120"/>   <!-- deg --><!--this was given as radian in the initial configuration-->
+                <Real Name="MountingOrientationPitch" Start="0.0"/> <!-- rad -->
+                <Real Name="MountingOrientationRoll" Start="0.0"/>  <!-- rad -->
+                <Real Name="FoVMaxAzimuth" Start="75.0"/>           <!-- deg -->
+                <Real Name="FoVMinAzimuth" Start="-75.0"/>          <!-- deg -->
+                <Real Name="FoVMaxElevation" Start="5.0"/>          <!-- deg -->
+                <Real Name="FoVMinElevation" Start="-5.0"/>         <!-- deg -->
+		<Real Name="AzimuthResolution" Start="8.0"/>        <!-- deg -->
+		<Real Name="TrafficBbCenterToRearXFactor" Start="0.8"/>     <!-- 0 to 1 -->
+                <Real Name="TrafficBbCenterToFrontXFactor" Start="0.7"/>    <!-- 0 to 1 -->
+                <Real Name="TrafficGroundClearance" Start="0.2"/>          <!-- m   -->
+                <Real Name="HostLength" Start="5.0"/>          <!-- m   -->
+                <Real Name="HostWidth" Start="2.0"/>          <!-- m   -->
+                <Real Name="HostHeight" Start="1.5"/>          <!-- m   -->
+				<!-- Simulation Configs -->
+                <Boolean Name="SimCopySvToSd"         Start="true"/> <!-- Copy SV to SD to enable logic model -->    
+                <Boolean Name="SimValid"              Start="true"/>  <!-- Valid flag -->
+				<!-- Processing Configs -->
+                <Boolean Name="ProcessMovingObject" Start="true"/>  <!-- Process moving object flag -->
+                <Boolean Name="ProcessStationaryObject" Start="true"/>  <!-- Process stationary object flag -->
+                <Boolean Name="ProcessLaneBoundary" Start="true"/>  <!-- Process lane boundary flag -->       
+                <Boolean Name="ProcessTrafficSign" Start="true"/>  <!-- Process traffic sign flag -->   
+		<Boolean Name="AddDetectionNoise" Start="false"/>  <!-- Add detection noise flag -->
+		<Boolean Name="ApplyWorstPaint" Start="false"/>  <!-- Apply worst paint flag -->
+		<Boolean Name="ApplyRangeThresholding" Start="true"/>  <!-- Apply range thresholding flag -->
+		<Boolean Name="ReadTrafficVehAttribFromOSI" Start="false"/>  <!-- Read traffic vehicle attribute from OSI flag -->
+		<Boolean Name="ReadHostVehAttribFromOSI" Start="false"/>  <!-- Read host vehicle attribute from OSI flag -->
+		<Boolean Name="ApplyRoadProfileOcclusion" Start="false"/>  <!-- Apply occlusion due to road profile -->
+		<Boolean Name="IncludeWheelsInTrafficVeh" Start="false"/>  <!-- Include wheels in traffic vehicle flag -->
+		<Boolean Name="ApplyWheelSpinEffect" Start="false"/>  <!-- Apply wheel spin effect flag -->
+                <!-- Custom Configs -->
+                <String Name="Custom" Start="disable"/>          
+            </ModelVariables>
+        </Model>
+
+        <Model Id="3" ModelType="Sensor">
+            <!--Pathes to FMU are relative from the lime_console working directory 
+                bazel-out/k8-opt/bin/adp/bmw/tools/simulation/lime/lime_console/lime_console.runfiles/ddad/ -->
+            <FmuArchive Origin="config">C:\Plastic\10028634_01_SM_SIL_Engine\fmuZIP\SRR_Master_SensorModel2.fmu</FmuArchive>
+            <FmuLogLevel>Release</FmuLogLevel>
+            
+	    <DataflowProcessing>
+                <StartupDelay Unit="ms">0</StartupDelay>
+                <Scheduler Enabled="true" Unit="ms">20</Scheduler>
+            </DataflowProcessing>
+            
+	    <InputPortList>
+                <Port Id="0" DataType="SensorView" InputVariableName="SensorViewIn"/>
+            </InputPortList>
+            
+	    <OutputPortList>
+                <Port Id="0" DataType="SensorData" OutputVariableName="SensorDataOut">
+                    <ConnectTo Element="Sender" Id="3" InputPort="0"/>
+                </Port>
+            </OutputPortList>
+            
+	    <ModelVariables>
+				<!-- Sensor Parameters -->
+		<Integer Name="SensorVariant" Start="2"/>           <!-- 0 - LOW, 1 - BPILLAR, 2 - MID -->
+		<Integer Name="SensorPolarity" Start="-1"/>         <!-- 1 or -1 -->
+                <Real Name="MountingPositionX" Start="-4.732"/>     <!-- m   -->
+                <Real Name="MountingPositionY" Start="-0.86"/>      <!-- m   -->
+                <Real Name="MountingPositionZ" Start="-0.25"/>        <!-- m   -->
+                <Real Name="MountingOrientationYaw" Start="-120"/>  <!-- deg --><!--this was given as radian in the initial configuration-->
+                <Real Name="MountingOrientationPitch" Start="0.0"/> <!-- rad -->
+                <Real Name="MountingOrientationRoll" Start="0.0"/>  <!-- rad -->
+                <Real Name="FoVMaxAzimuth" Start="75.0"/>           <!-- deg -->
+                <Real Name="FoVMinAzimuth" Start="-75.0"/>          <!-- deg -->
+                <Real Name="FoVMaxElevation" Start="5.0"/>          <!-- deg -->
+                <Real Name="FoVMinElevation" Start="-5.0"/>         <!-- deg -->
+	    	<Real Name="AzimuthResolution" Start="8.0"/>        <!-- deg -->
+		<Real Name="TrafficBbCenterToRearXFactor" Start="0.8"/>     <!-- 0 to 1 -->
+                <Real Name="TrafficBbCenterToFrontXFactor" Start="0.7"/>    <!-- 0 to 1 -->
+                <Real Name="TrafficGroundClearance" Start="0.2"/>          <!-- m   -->
+                <Real Name="HostLength" Start="5.0"/>          <!-- m   -->
+                <Real Name="HostWidth" Start="2.0"/>          <!-- m   -->
+                <Real Name="HostHeight" Start="1.5"/>          <!-- m   -->
+				<!-- Simulation Configs -->
+                <Boolean Name="SimCopySvToSd"         Start="true"/> <!-- Copy SV to SD to enable logic model -->    
+                <Boolean Name="SimValid"              Start="true"/>  <!-- Valid flag -->  
+				<!-- Processing Configs -->
+                <Boolean Name="ProcessMovingObject" Start="true"/>  <!-- Process moving object flag -->
+                <Boolean Name="ProcessStationaryObject" Start="true"/>  <!-- Process stationary object flag -->
+                <Boolean Name="ProcessLaneBoundary" Start="true"/>  <!-- Process lane boundary flag -->           
+                <Boolean Name="ProcessTrafficSign" Start="true"/>  <!-- Process traffic sign flag --> 
+		<Boolean Name="AddDetectionNoise" Start="false"/>  <!-- Add detection noise flag -->
+		<Boolean Name="ApplyWorstPaint" Start="false"/>  <!-- Apply worst paint flag -->
+		<Boolean Name="ApplyRangeThresholding" Start="true"/>  <!-- Apply range thresholding flag -->
+		<Boolean Name="ReadTrafficVehAttribFromOSI" Start="false"/>  <!-- Read traffic vehicle attribute from OSI flag -->
+		<Boolean Name="ReadHostVehAttribFromOSI" Start="false"/>  <!-- Read host vehicle attribute from OSI flag -->
+		<Boolean Name="ApplyRoadProfileOcclusion" Start="false"/>  <!-- Apply occlusion due to road profile -->
+		<Boolean Name="IncludeWheelsInTrafficVeh" Start="false"/>  <!-- Include wheels in traffic vehicle flag -->
+		<Boolean Name="ApplyWheelSpinEffect" Start="false"/>  <!-- Apply wheel spin effect flag -->
+                <!-- Custom Configs -->
+                <String Name="Custom" Start="disable"/>     
+            </ModelVariables>
+        </Model>
+		
+		 <Model Id="0" ModelType="Logical">
+            <!--Pathes to FMU are relative from the lime_console working directory 
+                bazel-out/k8-opt/bin/adp/bmw/tools/simulation/lime/lime_console/lime_console.runfiles/ddad/ -->
+	    <FmuArchive Origin="config">C:\Plastic\10028634_01_SM_SIL_Engine\fmuZIP\SRR_low_LogicModel2_low_sil.fmu</FmuArchive>
+            <FmuLogLevel>Release</FmuLogLevel>
+
+            <DataflowProcessing>
+                <StartupDelay Unit="ms">0</StartupDelay>
+                <Scheduler Enabled="true" Unit="ms">20</Scheduler>
+            </DataflowProcessing>
+
+            <InputPortList>
+                <Port Id="0" DataType="SensorView" InputVariableName="SensorViewIn"/>
+            </InputPortList>
+
+            <OutputPortList>
+                <Port Id="0" DataType="SensorData" OutputVariableName="SensorDataOut">
+                    <ConnectTo Element="Sender" Id="0" InputPort="0"/>
+                </Port>
+            </OutputPortList>
+            
+	    <ModelVariables>
+						<!-- Sensor Parameters -->
+		<Integer Name="SensorVariant" Start="0"/>           <!-- 0 - LOW, 1 - BPILLAR, 2 - MID -->
+		<Integer Name="SensorPolarity" Start="1"/>         <!-- 1 or -1 -->          
+            </ModelVariables>
+        </Model>
+
+    </ModelList>
+</SensorSimulator>

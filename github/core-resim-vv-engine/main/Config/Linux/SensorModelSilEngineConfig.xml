@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration>
+
+	<!-- SensorModelSilEngineConfig XML version -->
+	<!-- Version X.Y where:
+		X - major change where some new parameters were added
+		Y - minor change with no influence on parsing (comment or value change) -->
+	<Version>1.0</Version>
+	
+	<!-- SRR_SM2_LM2_MODEL_CONFIG.xml file path -->
+	<SrrSm2Lm2ConfigPath>Config\SRR_SM2_LM2_MODEL_CONFIG_MID.yaml</SrrSm2Lm2ConfigPath>
+	
+	<!-- RunSm2WithLm2 
+		 TRUE 	- Load LM2, Run SM2+LM2
+		 FALSE 	- Disable LM2,Run only SM2 --> 
+	<!--LM2WaitTime - configure wait time for LM2 in miliseconds -->
+	<RunSm2WithLm2  STATUS = "TRUE">
+		<LM2WaitTime>0</LM2WaitTime>
+	</RunSm2WithLm2>
+  
+	<!-- Transmit & receive the OSI Buffer Via ZeroMq Protocol -->
+	<!-- When using two PCs. -->
+	<!-- Set DestinationIp 	:- 127.0.0.1
+	     OutputPortNumber 	:- 5555  -->
+	<!-- In case of loop back mode (Using only one PC)-->
+	<!-- Set DestinationIp  :- 127.0.0.1
+	     OutputPortNumber 	:- 5555 
+	     InputPortNumber 	:- 5556 -->
+	<!--Pattern>Pub-Sub</Pattern-->
+	<!--Pattern>Push-Pull</Pattern-->
+	<OsiTransmission>
+		<DestinationIp>127.0.0.1</DestinationIp>	
+		<InputPortNumber>5564</InputPortNumber>
+		<OutputPortNumber>5565</OutputPortNumber>
+		<Pattern>Pub-Sub</Pattern>
+	</OsiTransmission>
+  
+	<GenerateFiles>
+			<!-- 1 - Generates the csv file for performance analysis
+				 0 - suppress the csv file for performance analysis -->  		   
+			<TimingProfile>0</TimingProfile>
+	</GenerateFiles>
+  
+</Configuration>

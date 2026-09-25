@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<RELEASE_DESCRIPTION_SPRINT_25_PI1_DRP_VV_Release>
+    <Virtual_Validation_Version>2.19</Virtual_Validation_Version>
+    <Release_Date>21-Mar-2025</Release_Date>
+    <VV_Release_CS>790</VV_Release_CS>
+    <APTIVE_MODULE_Info>
+        <SIL_ENGINE_Details SW_Version="107.43.09.2025" Date="28-Feb-2025" CS="24263" Repo="10030156_03_Analysis_Framework_Suite"/>
+        <LM2_Details SW_Version="0.2.0.11.25" Date="20-Mar-2025" CS="950" Repo="10028634_01_Radar_Logic_Model"/>
+        <SM2_Details SW_Version="0.1.13.5.0" Date="28-Oct-2024" CS="3577" Repo="10028634_01_Radar_Sensor_Model"/>
+        <VV_ENGINE_Details SW_Version="08.00.00.00" Date="17-Feb-2025" CS="651" Repo="10028634_01_SM_SIL_Engine"/>
+    </APTIVE_MODULE_Info>
+    <Sensor_Library_Info>
+        <BMW_SP21_LOW SW_Version="001.014.001" Date="26-Sept-2023" CS="13406" Linux="Yes" Windows="Yes" Repo="10030425_BMW_SRR5_Radar"/>
+        <BMW_SP21_MID SW_Version="001.014.001" Date="26-Sept-2023" CS="13406" Linux="Yes" Windows="Yes" Repo="10030425_BMW_SRR5_Radar"/>
+        <BMW_SP21_HIGH SW_Version="001.014.001" Date="26-Sept-2023" CS="13406" Linux="Yes" Windows="Yes" Repo="10030425_BMW_SRR5_Radar"/>
+        <BMW_SP25_L2 SW_Version="NA" Date="NA" CS="NA" Linux="NA" Windows="NA" Repo="NA"/>
+        <BMW_SP25_L3 SW_Version="NA" Date="NA" CS="NA" Linux="NA" Windows="NA" Repo="NA"/>
+        <STLA_SCALE1 SW_Version="NA" Date="NA" CS="NA" Linux="NA" Windows="NA" Repo="NA"/>
+        <STLA_SCALE3 SW_Version="NA" Date="NA" CS="NA" Linux="NA" Windows="NA" Repo="NA"/>
+        <STLA_SCALE4 SW_Version="NA" Date="NA" CS="NA" Linux="NA" Windows="NA" Repo="NA"/>
+        <HONDA_SRR6P SW_Version="010.000.000" Date="20-Mar-2024" CS="3638" Linux="YES" Windows="YES" Repo="10034766_SW_Honda_SRR6P"/>
+        <TRATON SW_Version="001.003.207" Date="15-Jan-2024" CommitID="ddb462c282b4521e08bec0f58e87cfe25a07a180" Linux="YES" Windows="YES" Repo="10055591_TratonSP25_SRR6PlusT"/>
+        <GPO_GEN7_V1 SW_Version="NA" Date="NA" CommitID="NA" Linux="NA" Windows="NA" Repo="NA"/>
+        <RNA_GEN7_V1 SW_Version="003.000.006 (12)" Date="18-Mar-2025" CommitID="I4768a964b1a023af2c6eede2b43b52fe29e917ce" Linux="YES" Windows="YES" Repo="10055543_MY26_RNA_SDV_SRR7P"/>
+        <NISSAN_SRR6 SW_Version="005.000.001" Date="26-May-2023" CS="3892" Linux="No" Windows="YES" Repo="10033985_CUSTOMER_NISSAN_SWEET400_SRR6_SW"/>
+        <PLATFORM_GPO_SRR6P SW_Version="020.000.000" Date="22-Jan-2024" CS="12180" Linux="Yes" Windows="Yes" Repo="PDPRADAR_GEN5_RRU"/>
+        <PLATFORM_GPO_FLR4 SW_Version="020.000.000" Date="22-Jan-2024" CS="12180" Linux="Yes" Windows="Yes" Repo="PDPRADAR_GEN5_RRU"/>
+        <PLATFORM_GPO_FLR4P SW_Version="020.000.000" Date="14-Mar-2024" CS="7543" Linux="Yes" Windows="Yes" Repo="PDPRADAR_GEN5_RRM16"/>
+    </Sensor_Library_Info>
+    <Domain_Controller_Lib_Info>
+        <BMW_SP21_RECU SW_Version="005.093.000(1)" Date="13-Sept-2023" CS="18530" Linux="Yes" Windows="Yes" Repo="10032114_01_MY2021_BMW_SRR5_ECU"/>
+        <BMW_SP25_IPNext_SRR SW_Version="010.014.000" Date="20-Dec-2024" CS="926" Linux="Yes" Windows="Yes" Repo="10034601_BMW_SP2025_IpNext_Simulation"/>
+        <BMW_SP25_IPNext_MRR SW_Version="010.014.000" Date="20-Dec-2024" CS="926" Linux="Yes" Windows="Yes" Repo="10034601_BMW_SP2025_IpNext_Simulation"/>
+        <STLA_MY24_IFV600_SRR SW_Version="010.014.001" Date="10-Jan-2025" CS="263" Linux="Yes" Windows="Yes" Repo="10034601_STLA_MY2024_IFV600_Simulation"/>
+        <STLA_MY24_IFV600_MRR SW_Version="010.014.001" Date="10-Jan-2025" CS="263" Linux="Yes" Windows="Yes" Repo="10034601_STLA_MY2024_IFV600_Simulation"/>
+    </Domain_Controller_Lib_Info>
+    <Test_Summary>
+        <BMW_LOW Linux="TESTED" Windows="TESTED"/>
+        <BMW_MID Linux="TESTED" Windows="TESTED"/>
+        <BMW_HIGH Linux="TESTED" Windows="TESTED"/>
+        <STLA_IFV600DC Linux="TESTED" Windows="TESTED"/>
+        <STLA_SCALE1 Linux="NOT_TESTED" Windows="NOT_TESTED"/>
+        <STLA_SCALE3 Linux="NOT_TESTED" Windows="NOT_TESTED"/>
+        <STLA_SCALE4 Linux="NOT_TESTED" Windows="NOT_TESTED"/>
+        <HONDA Linux="TESTED" Windows="TESTED"/>
+        <TRATON Linux="TESTED" Windows="TESTED"/>
+        <GPO_GEN7_V1 Linux="NA" Windows="NA"/>
+        <RNA_GEN7_V1 Linux="TESTED" Windows="TESTED"/>
+        <NISSAN Linux="NOT_TESTED" Windows="TESTED"/>
+        <BMW_SP25_L2 Linux="TESTED" Windows="TESTED"/>
+        <BMW_SP25_L3 Linux="TESTED" Windows="TESTED"/>
+        <PLATFORM_GPO_SRR6P Linux="TESTED" Windows="TESTED"/>
+        <PLATFORM_GPO_FLR4 Linux="TESTED" Windows="TESTED"/>
+        <PLATFORM_GPO_FLR4P Linux="TESTED" Windows="TESTED"/>
+    </Test_Summary>
+    <ChangeLog_Details>-Support for STLA DC_10.14.0_IFV600 is added - VV Enigne support added for SM2 Model 13.5.0 in linux</ChangeLog_Details>
+    <JIRA_Tickets>-DUF-2812 To Verify and deliver Linux and Windows FMU with latest SW</JIRA_Tickets>
+    <Known_Issues/>
+</RELEASE_DESCRIPTION_SPRINT_25_PI1_DRP_VV_Release>

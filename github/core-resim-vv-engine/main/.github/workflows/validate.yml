@@ -1,0 +1,22 @@
+name: Workflow Validation Auto Trigger
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/*.y*ml"
+
+jobs:
+  validate:
+    uses: Aptiv/workflows-library/.github/workflows/validate-remote.yml@v4
+    with:
+      caller_repo: ${{ github.repository }}
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      ref: ${{ github.ref }}
+      run_integration_tests: false
+      runner: ubuntu-latest
+    secrets:
+      APP_ID: ${{ secrets.DSO_BOT_APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
