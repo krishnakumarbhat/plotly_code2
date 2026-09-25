@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Releases>
+	<Repo>10028634_01_SM_SIL_Engine</Repo>
+	<SM_SIL_ENGINE>
+			<V_6.5>
+			<Sprint>23PI3_SP6_Aug-Sept23</Sprint>
+			<Version>6.5</Version>
+			<Date format="dd-mm-YYYY">08-09-2023</Date>
+			<Changeset>463</Changeset>
+			<ChangeLog>
+			- R7 Release for BMW SP25
+			- SM2 v13.1.0 FMU is used by default for all customer.
+			</ChangeLog> 		
+			<JIRATickets>
+			-GPC-381 : [VV SIL ENGINE][VV Release] Update latest SM2 model and verify all customer
+ 			-GPC-291 : [BMW_SP25] VV Engine with FF for SRR and MRR FMU verification and upload to VV release
+			-GPC-378 : [BMW_SP25] Integrate R7 DC lib for FF in VV repo
+			</JIRATickets>
+			<KnownIssues>
+			- Added 60MS delay before calling dph_sil_joinSynchronizingThread() in AS_DSPACE code because FW is taking time to exit. CYW-3520 is created for Performance issue in FW.
+			- Delay of 100 ms needs to be provided in VV Config file for Linux. CYW-3520 is created for Performance issue in FW.
+			- Set ConsoleTimer : mSec in VVEngineConfig.yaml.
+			- DET-1591 -> Created ticket for DC team to generate Bin file 
+			- DET-1592 -> Only tracks and vehicle info is present, feature functios need to be added by DC
+			</KnownIssues>     
+		</V_6.5>
+		<V_6.5>
+			<Sprint>23PI3_SP1_Jun-Jul23</Sprint>
+			<Version>6.5</Version>
+			<Date format="dd-mm-YYYY">04-07-2023</Date>
+			<Changeset>441</Changeset>
+			<ChangeLog>
+			</ChangeLog> 		
+			<JIRATickets>
+			DUF-1702 [BMW_LiME] Update VV SIL ENGINE and VV release repo to support L2 and L3 variant - Linux
+			</JIRATickets>
+			<KnownIssues>
+			- Added 60MS delay before calling dph_sil_joinSynchronizingThread() in AS_DSPACE code because FW is taking time to exit. CYW-3520 is created for Performance issue in FW.
+			- Output file is not getting generated on Windows for SP25.  CYW-3519 is created for FW to debug.
+			- Delay of 100 ms needs to be provided in VV Config file for Linux. CYW-3520 is created for Performance issue in FW.
+			- For SP25 L3 output file is getting generated on Linux. For SP25 L2 support is still not yet been added from FW. CYW-3521 is created for FW for adding L2 support.
+			</KnownIssues>     
+		</V_6.5>
+		<V_6.3>
+			<Sprint>23PI2_SP5_Jun23</Sprint>
+			<Version>6.3</Version>
+			<Date format="dd-mm-YYYY">06-06-2023</Date>
+			<Changeset>425</Changeset>
+			<ChangeLog>
+			</ChangeLog> 		
+			<JIRATickets>
+			DUF-1745 [VV_Engine] Add Config option to select SiL/HiL lime config
+			</JIRATickets>
+			<KnownIssues>
+			- Sleep to be added for 100 miliseconds as a new thread spawn in LM2 causes crash if it is less than 100 miliseconds(Linux)
+			</KnownIssues>     
+		</V_6.3>
+		<V_6.2>
+			<Sprint>23PI2_SP2_Apr23</Sprint>
+			<Version>6.2</Version>
+			<Date format="dd-mm-YYYY">24-04-2023</Date>
+			<Changeset>402</Changeset>
+			<ChangeLog>
+			Changes for taking option to print timestamp on console 
+			</ChangeLog> 		
+			<JIRATickets>
+			DUF-1600 [VV_Engine] Fix and option for command window timer
+			</JIRATickets>
+			<KnownIssues>
+			- Sleep to be added for 100 miliseconds as a new thread spawn in LM2 causes crash if it is less than 100 miliseconds(Linux)
+			</KnownIssues>     
+		</V_6.2>
+		<V_6.1>
+			<Sprint>23PI2_SP2_Apr23</Sprint>
+			<Version>6.1</Version>
+			<Date format="dd-mm-YYYY">20-04-2023</Date>
+			<Changeset>399</Changeset>
+			<ChangeLog>
+			Honda FMU added with SW7.0 release 
+			</ChangeLog> 		
+			<JIRATickets>
+			DUF-1684 [HONDA SRR6+] Update VV SIL ENGINE and VV release Repo for Release 7.0
+			</JIRATickets>
+			<KnownIssues>
+			</KnownIssues>      
+			<Sprint>23PI2_SP1_Apr23</Sprint>
+			<Version>6.1</Version>
+			<Date format="dd-mm-YYYY">10-04-2023</Date>
+			<Changeset>395</Changeset>
+			<ChangeLog>
+			Live mode exit handling when quit is entered on console.	
+			</ChangeLog> 		
+			<JIRATickets>
+			DUF-1503 [VV_Engine] Implement shutdown option- Phase 2
+			</JIRATickets>
+			<KnownIssues>
+			- Sleep to be added for 100 miliseconds as a new thread spawn in LM2 causes crash if it is less than 100 miliseconds(Linux)
+			</KnownIssues>       
+		</V_6.1>
+		<V_2.2.0.0>
+			<Sprint>CYB_21PI3_SP1_Jun23_Jul06 </Sprint>
+			<Version>2.2.0.0</Version>
+			<Date format="dd-mm-YYYY">29-06-2021</Date>
+			<Changeset>1507</Changeset>
+			<ChangeLog>
+			- XML support is deprecated as replaced by YAML
+			- Added OSI Library version 3.2.0 for Windows as SM2/LM2 has moved to OSI 3.2.0
+			- HIGH support is added for SM2+LM2 
+			- SRR_SM2_LM2_MODEL_CONFIG_HIGH.yaml to be provided as input in SensorModelSilEngineConfig.xml in case of high variant
+			- Supports SM2 version as V6.2.0+ on Windows/Linux.		
+			</ChangeLog> 		
+			<JIRATickets>
+			-CYB-1709:[Virtual_Validation_ENGINE]: Add OSI 3.2.0 version Support in Windows
+			-CYB-1644:[Virtual_Validation_ENGINE]: [BMW_HIGH] Verification with scalexio
+			-CYB-1646:[Virtual_Validation_ENGINE]: [BMW_HIGH] Verification with LIME Juicer
+			</JIRATickets>
+			<KnownIssues>
+			- Sleep to be added for 100 miliseconds as a new thread spawn in LM2 causes crash if it is less than 100 miliseconds(Windows)
+			- In Linux the sleep is not required as LM2 FMU with disabled SOMEIP/CAN tx works fine for LOW/MID variant
+			- LM2 support for High is available in Linux, but sleep of 100 miliseconds to added.
+			- SM2 Windows support only available, LM2 Windows support with SM2 in next release.
+			- Version supports OSI 3.2.0, to be tested on Linux with same OSI version from LM2 FMU of LOW/MID.
+			</KnownIssues>       
+		</V_2.2.0.0>
+		<V_2.1.0.0>
+			<Sprint>CYB_21PI2_SP5_May26_Jun8</Sprint>
+			<Version>2.1.0.0</Version>
+			<Date format="dd-mm-YYYY">28-05-2021</Date>
+			<Changeset>1438</Changeset>
+			<ChangeLog>
+			- YAML parser implementation
+			- YAML Library checkin done in SM_SIL_ENGINE - Windows/Linux
+			- Added OSI Library version 3.2.0 for Linux support as SM2/LM2 has moved to OSI 3.2.0
+			- SRR_SM2_LM2_MODEL_CONFIG.yaml to be provided as input in SensorModelSilEngineConfig.xml
+			- Osi trace file path to provided as third argument to SM SIL ENGINE in case of file read mode
+			- Supports SM2 version as V6.2.0+ on Windows.		
+			</ChangeLog> 		
+			<JIRATickets>
+			-CYB-1590:[SM_SIL_ENGINE]:Support latest Yaml config format
+			-CYB-1687:[SM SIL ENGINE]: yaml Verification
+			-CYB-1694:[SM_SIL_ENGINE]Crash seen in Linux with the YAML parser implementation
+			</JIRATickets>
+			<KnownIssues>
+			- Sleep to be added for 100 miliseconds as a new thread spawn in LM2 causes crash if it is less than 100 miliseconds(Windows)
+			- In Linux the sleep is not required as LM2 FMU with disabled SOMEIP/CAN tx works fine
+			- LM2 support for High is not available, as LM2 high binary is not available
+			- SM2 Windows support only available, LM2 Windows support with SM2 in next release.
+			- Version supports OSI 3.2.0, to be tested on Linux with same OSI version from LM2 FMU.
+			</KnownIssues>       
+		</V_2.1.0.0>
+		<V_2.0.0.0>
+			<Sprint>CYB_21PI1_DRP_Mar17_Mar30</Sprint>
+			<Version>2.0.0.0</Version>
+			<Date format="dd-mm-YYYY">19-03-2021</Date>
+			<Changeset>1295</Changeset>
+			<ChangeLog>
+			- ZeroMq implementation
+			- Development for LM2 – LOW/MID (Windows/Linux)
+			- Added Configuration to work for both SM2(only) and SM2+LM2
+			- MultiThread implementation LM2 also is added
+			- SRR_SM2_LM2_MODEL_CONFIG.xml and osi trace file path should be provided in SensorModelSilEngineConfig.xml
+			</ChangeLog> 		
+			<JIRATickets>
+			-CYB-1363:Integration of Lm2 fmu - Low
+			-CYB-1364:Integration of Lm2 fmu - Mid
+			-CYB-1461:[SM_SIL_ENGINE]Creation of parallel thread for LM2 along with SM2 threads
+			-CYB-1380:SM_SIL_Engine ZeroMQ Implementation and Testing With Lime Juicer
+			</JIRATickets>
+			<KnownIssues>
+			- Sleep to be added for 100 miliseconds as a new thread spawn in LM2 causes crash if it is less than 100 miliseconds(Windows)
+			- In Linux the sleep is not required as LM2 FMU with disabled SOMEIP/CAN tx works fine
+			- LM2 support for High is not available, as LM2 high binary is not available
+			</KnownIssues>       
+		</V_2.0.0.0>
+		<V_1.1.0.0>
+			<Sprint>20PI3_SP5_Aug12_Aug25</Sprint>
+			<Version>1.1.0.0</Version>
+			<Date format="dd-mm-YYYY">25-08-2020</Date>
+			<Changeset>854</Changeset>
+			<ChangeLog>
+			- Added new input configuration xml (SensorModelSilEngineConfig.xml)
+			- SM_SIL_ENGINE.exe and SensorModelSilEngineConfig.xml should be provided as command arguments to run the application
+			- srr_sm2_config_release.xml and osi trace file path should be provided in SensorModelSilEngineConfig.xml
+			- TimingProfile and OsiTransmission tags should be enabled/disabled based on the requirement
+			- Dspace mf4 buffer clear issue is resolved , and added code for populating vehicle dynamics information
+			</ChangeLog> 		
+			<JIRATickets>
+			-CYB-1272:Dspace MF4 Buffer clearing
+			-CYB-1273:Check for vehicle dynamics code
+			-CYB-1275:SM SIL ENGINE Validation with different OSI Trace files		
+			-CYB-1276:Create new config xml for enabling/disabling the functionalities
+			</JIRATickets>
+			<KnownIssues>
+			- Crash observed in SRR_Master_SensorModel2.fmu
+			</KnownIssues>       
+		</V_1.1.0.0>
+		<V_1.0.0.0>
+			<Sprint>20PI3_S4_Aug12_Aug25</Sprint>
+			<Version>1.0.0.0</Version>
+			<Date format="dd-mm-YYYY">20-08-2020</Date>
+			<Changeset>840</Changeset>
+			<ChangeLog>
+			- Works with Sensor Model FMU
+			- Un zip and Load sensor model library from FMU provided
+			- Parse model description and update for respective sensor based on input configuration XML
+			- Read OSI trace and get Sensor View
+			- Convert Sensor View to Sensor Data
+			- Write Sensor Data to DSPACE MF4 file
+			- MultiThred enabled for doStep call to each fmu
+			</ChangeLog> 		
+			<JIRATickets>
+			-CYB-1200:Integration of OSI Layer required for SIL Engine
+			-CYB-1209:Integration of SRR SIL Engine xml parser with Model description parser
+			-CYB-1210:Integration of FMI and other libraries in SM SIL Engine		
+			-CYB-1230:Convert Sensor Data to Dspace structure for LOW,MID,HIGH
+			-CYB-1240:Addition of Multi threading for SIL Engine
+			-CYB-1254:Integrate Timing Profile in SM SIL ENGINE
+			</JIRATickets>
+			<KnownIssues>
+			- Crash observed in SRR_Master_SensorModel2.fmu
+			</KnownIssues>       
+		</V_1.0.0.0>
+	</SM_SIL_ENGINE>
+</Releases>

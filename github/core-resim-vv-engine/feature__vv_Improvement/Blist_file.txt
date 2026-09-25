@@ -1,0 +1,1 @@
+/home/kirankr/gitWSL/coreResim/Core_RESIM_VV_Engine/Sample_Traces/LCW_01_02_OL.txt

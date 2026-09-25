@@ -1,0 +1,38 @@
+VVEngine:
+    Version: 1.4
+    General:                        # Please provide the path in below format for relative path (Eg: Config/SRR_SM2_LM2_MODEL_CONFIG_MID.yaml)
+        OSIGTSource: File           # File(use File specified in FileList.txt)/ Live(Use Live stream defined in the LiveData Section)    ####new
+        SpecialConfigPath: /home/kirankr/gitWSL/coreResim/Core_RESIM_VV_Engine/Config/CEER/modelconfig_sil_CEER_With_FC_Satellite.yaml    # if false, below options are used, else place path to config.yaml here
+        ModelConfigRoot: "Config"
+        Customer: CEER          # BMW_SRR5, HONDA_SRR6p, NISSAN_SRR6, TML_SRR5, BMW_SP25
+        Sensor: false           # false, mrr, srr
+        Variant: false          # false, low, mid, high for BMW sp21, L2, L3 for BMW sp25
+        Program: false          # false, sp21, sp25 for BMW
+        Vehicle: false          # false xtrail, i20, g60, g70, NA5, NA6 #NISSAN : nissan, qashqai #HONDA : honda, civic #TML : harrier, safari
+        FMUMode : sil           # sil, hil
+        CloudMode: false         # make true for cloud run, else false.
+
+    LogicModel:
+        LMRootFolder: "../03_LOGIC_MODEL"
+        EnableLM: true
+        LM2WaitTime: 0              # Temp fix, time in ms, Linux SP25 and STLA -> 05, Honda -> 70
+
+    SensorModel:
+        Bumper: B0
+
+    LiveData:                       # If OSIGTSource is "Live", OSI Stream is expected via below Live stream          ## adapted section
+        Protocol: zmq               # supported: zmq
+        IP: 127.0.0.1               # IP used by the Live Data Source (e.g Scalexio) for streaming the OSI GT Data
+        Port: 5001                  # Output Port used by the Live Data Source (e.g Scalexio) for streaming the OSI GT Data
+        ZmqPattern: Pub-Sub         # Pub-Sub, Push-Pull
+    
+    FileReplay:                     # read OSI GT File and stream OSI Data
+        EnableFileReplay: false
+        Protocol: zmq               # supported: zmq
+        IP: 127.0.0.1               # IP where the VV_Engine shall stream the OSI GT Data
+        Port: 5001                  # Port used by the VV_Engine to stream the OSI GT Data
+        ZmqPattern: Pub-Sub         # Pub-Sub, Push-Pull
+
+    Debug:                                                                                                              ## adapted
+        CreateTimingProfile: false
+        ConsoleTimer : mSec         #None, Seconds, mSec

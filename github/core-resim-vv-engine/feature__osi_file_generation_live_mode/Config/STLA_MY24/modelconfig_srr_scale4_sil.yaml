@@ -1,0 +1,598 @@
+SensorSimulator:
+  SimulationDescription: "\n        Configuration file for LiME - Template FMU with\
+    \ ZMQ Sender/Receiver for OSI\n    "
+  Configuration:
+    UseCase: SIL
+    RunMode: auto
+    Defaults:
+      LogLevel: InfoAndWarnings
+      PerfLogVersion: v1
+    PerformanceLogging:
+    - Report: FullPipeline
+      Start:
+        Element: Receiver
+        Id: 0
+        LogPoint: Entry
+      End:
+        Element: Sender
+        Id: 0
+        LogPoint: Exit
+    - Report: SM2CalculationTime
+      Start:
+        Element: Model
+        Id: 0
+        LogPoint: Entry
+      End:
+        Element: Model
+        Id: 0
+        LogPoint: Exit
+    - Report: LM2CalculationTime
+      Start:
+        Element: Model
+        Id: 2
+        LogPoint: Entry
+      End:
+        Element: Model
+        Id: 2
+        LogPoint: Exit
+    Remote:
+      Control:
+        Enabled: false
+        Ip: 127.0.0.1
+        Port: 6363
+  ReceiverList:
+    - Receiver: 0
+      DataType: SensorView
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5564
+        Pattern: Push-Pull      
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+      ConnectTo:
+        - Element: Model
+          Id: 0
+          InputPort: 0
+        - Element: Model
+          Id: 1
+          InputPort: 0
+        - Element: Model
+          Id: 2
+          InputPort: 0
+        - Element: Model
+          Id: 3
+          InputPort: 0
+        - Element: Model
+          Id: 4
+          InputPort: 0
+        - Element: Model
+          Id: 5
+          InputPort: 0
+        - Element: Model
+          Id: 6
+          InputPort: 0
+  SenderList:
+    - Sender: 0
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5563
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+    - Sender: 1
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5562
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+    - Sender: 2
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5561
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+    - Sender: 3
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5560
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+    - Sender: 4
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5559
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+    - Sender: 5
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5558
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+    - Sender: 6
+      DataType: SensorData
+      CommunicationType: zmq
+      CommunicationOptions:
+        Ip: 127.0.0.1
+        Port: 5557
+        Pattern: Pub-Sub
+        Protocol: TCP
+        EpgmLocalIpOrInterface: 127.0.0.1
+        EpgmRate: 1000000
+  ModelList:
+    - Model: 0
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 0
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 5}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: 2.5}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: 1.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 3.141593}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: 1.047198}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: FRONT_LEFT}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111111111}
+    - Model: 1
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 1
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 5}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: 2.5}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: -1.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: -1.047198}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: FRONT_RIGHT}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111111111}
+    - Model: 2
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 2
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 5}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: -2.5}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: 1.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 3.141593}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: 2.094395}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: REAR_LEFT}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111111111}
+    - Model: 3
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 3
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 5}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: -2.5}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: -1.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: -2.094395}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: REAR_RIGHT}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111111111}
+    - Model: 4
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 4
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 7}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: 2.5}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 3.141593}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: FRONT_CENTER}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111}
+    - Model: 5
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 5
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 5}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: 1.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 3.141593}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: 1.570796}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: CENTER_LEFT}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111111111}
+    - Model: 6
+      ModelType: Sensor
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: ms
+          Value: 50
+      FmuArchive:
+        Path: fmuZIP\SRR_Master_SensorModel2.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorView
+          InputVariableName: SensorViewIn
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Model
+              Id: 6
+              InputPort: 6
+          OutputVariableName: SensorDataOut
+      ModelVariables:
+        - {Name: SRR.SM2.Customer_enum, Type: Integer, Start: 9}
+        - {Name: SRR.SM2.SensorType_enum, Type: Integer, Start: 5}
+        - {Name: SRR.SM2.MaxNumberOfDetections, Type: Integer, Start: 500}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.X_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Y_m, Type: Real, Start: -1.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Position.Z_m, Type: Real, Start: -0.25}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Roll_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Pitch_rad, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.SensorMountingPosition.Orientation.Yaw_rad, Type: Real, Start: -1.570796}
+        - {Name: SRR.SM2.Traffic.BbCenterToRearXFactor, Type: Real, Start: 0.8}
+        - {Name: SRR.SM2.Traffic.BbCenterToFrontXFactor, Type: Real, Start: 0.7}
+        - {Name: SRR.SM2.Traffic.GroundClearance_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Traffic.WheelRadius_m, Type: Real, Start: 0.2}
+        - {Name: SRR.SM2.Host.Length_m, Type: Real, Start: 5.0}
+        - {Name: SRR.SM2.Host.Width_m, Type: Real, Start: 2.0}
+        - {Name: SRR.SM2.Host.Height_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.X_m, Type: Real, Start: -1.5}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToRear.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.X_m, Type: Real, Start: 1.5}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Y_m, Type: Real, Start: 0.0}
+        - {Name: SRR.SM2.Host.BbCenterToFront.Z_m, Type: Real, Start: -0.5}
+        - {Name: SRR.SM2.SensorName, Type: String, Start: CENTER_RIGHT}
+        - {Name: SRR.SM2.Custom, Type: String, Start: Disable}
+        - {Name: SRR.SM2.FoV.BlockageMaskAzimuth, Type: String, Start: 111111111111111111111111111111}
+    - Model: 7
+      ModelType: Logic
+      Scheduler:
+        Enabled: true
+        StartupDelay:
+          Unit: sec
+          Value: 0
+        Interval:
+          Unit: sec
+          Value: 0
+      FmuArchive:
+        Path: fmuZIP\SRR_STLA_SCALE4_LogicModel2__sil.fmu
+        Origin: config
+      FmuLogLevel: Warn
+      InputPortList:
+        - Port: 0
+          DataType: SensorData
+          InputVariableName: SensorDataIn
+        - Port: 1
+          DataType: SensorData
+          InputVariableName: SensorDataIn1
+        - Port: 2
+          DataType: SensorData
+          InputVariableName: SensorDataIn2
+        - Port: 3
+          DataType: SensorData
+          InputVariableName: SensorDataIn3
+        - Port: 4
+          DataType: SensorData
+          InputVariableName: SensorDataIn4
+        - Port: 5
+          DataType: SensorData
+          InputVariableName: SensorDataIn5
+        - Port: 6
+          DataType: SensorData
+          InputVariableName: SensorDataIn6
+      OutputPortList:
+        - Port: 0
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 0
+              InputPort: 0
+          OutputVariableName: SensorDataOut
+        - Port: 1
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 1
+              InputPort: 0
+          OutputVariableName: SensorDataOut1
+        - Port: 2
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 2
+              InputPort: 0
+          OutputVariableName: SensorDataOut2
+        - Port: 3
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 3
+              InputPort: 0
+          OutputVariableName: SensorDataOut3
+        - Port: 4
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 4
+              InputPort: 0
+          OutputVariableName: SensorDataOut4
+        - Port: 5
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 5
+              InputPort: 0
+          OutputVariableName: SensorDataOut5
+        - Port: 6
+          DataType: SensorData
+          ConnectTo:
+            - Element: Sender
+              Id: 6
+              InputPort: 0
+          OutputVariableName: SensorDataOut6
+      ModelVariables: []
