@@ -1,0 +1,40 @@
+# SWE-Test - Regression filtered by marker, with custom flags.
+#
+# Demonstrates:
+#   * markers       -> -m TestType=Regression
+#   * flags         -> --flag power_check --flag log_verbose
+#   * extra-args    -> --flag escape hatch for anything else
+#   * Default report-subdir (Reports/REGRESSION)  and default GUI glob.
+#
+# Trigger: manual only (workflow_dispatch). Copy + adjust for cron / chaining.
+
+name: SWE-Test - Regression FLR8 (markers)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression-flr8:
+    name: Regression FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: REGRESSION
+      family: FLR8
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_can", "xcp":"CAN"}
+        ]
+      # Pick everything tagged TestType=Regression in the default SWE6 folder.
+      test-folder: SWE6_Testing
+      markers: 'TestType=Regression'
+      # Two repeated --flag tokens, plus an arbitrary extra-arg.
+      flags: 'power_check log_verbose'
+      extra-args: '--gui_html'
+      # Reports/REGRESSION is auto-derived from job-type; override only if needed.
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-regression-flr8.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

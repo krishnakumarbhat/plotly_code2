@@ -1,0 +1,20 @@
+name: Configure NETRC
+description: Configure .netrc file for authentication with Gerrit/JFrog/Coverity
+
+inputs:
+  netrc-content:
+    description: 'NETRC_CONTENT secret payload'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Configure netrc
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.netrc-content }}" ]; then
+          echo "Missing NETRC_CONTENT secret. Provide a .netrc payload for Gerrit/JFrog/Coverity." >&2
+          exit 1
+        fi
+        printf "%s" "${{ inputs.netrc-content }}" > ~/.netrc
+        chmod 600 ~/.netrc

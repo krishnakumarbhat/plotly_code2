@@ -1,0 +1,12 @@
+name: ind13400-trigger-post-merge
+when:
+  eventSource: gerrit
+  eventTypes:
+    - change-merged
+run:
+  pipeline: core-radar-gen8-ind13400-trigger-post-merge
+  params:
+    branch: $(body.change.branch)
+    change-id: $(body.change.number)
+    commit-id: $(body.patchSet.revision)
+url: https://389177498442.awsaptiv.com/webhook/triggers/ind13400-trigger-post-merge

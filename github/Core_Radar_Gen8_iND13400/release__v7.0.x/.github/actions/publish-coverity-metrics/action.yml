@@ -1,0 +1,173 @@
+name: Publish Coverity Metrics
+description: Generate placeholder Coverity metrics payload and optionally publish to PostgreSQL.
+
+inputs:
+  variant:
+    description: Coverity variant tag, e.g. flr8 or srr8p
+    required: true
+  core:
+    description: Coverity core tag, e.g. r52 or bbe32
+    required: true
+  coverity-stream:
+    description: Coverity stream name
+    required: false
+    default: ''
+  high-count:
+    description: Parsed count of high defects
+    required: false
+    default: '0'
+  medium-count:
+    description: Parsed count of medium defects
+    required: false
+    default: '0'
+  low-count:
+    description: Parsed count of low defects
+    required: false
+    default: '0'
+  output-file:
+    description: Output JSONL file path for generated metrics
+    required: false
+    default: coverity-metrics.jsonl
+  db-publish-enabled:
+    description: When true, attempt PostgreSQL publish from generated JSONL
+    required: false
+    default: 'false'
+  metrics-db-user:
+    description: PostgreSQL username
+    required: false
+    default: ''
+  metrics-db-password:
+    description: PostgreSQL password
+    required: false
+    default: ''
+  metrics-db-host:
+    description: PostgreSQL host
+    required: false
+    default: ''
+  metrics-db-port:
+    description: PostgreSQL port
+    required: false
+    default: ''
+  metrics-db-name:
+    description: PostgreSQL database name
+    required: false
+    default: ''
+  commit-id:
+    description: Commit SHA or identifier for CommitId column
+    required: false
+    default: ''
+  branch:
+    description: Branch name for branch column
+    required: false
+    default: ''
+  project-name:
+    description: Project name for project column
+    required: false
+    default: ''
+  tag:
+    description: Tag column value
+    required: false
+    default: ''
+  pipeline-name:
+    description: Pipeline/workflow name used in perception_metrics_wrsd
+    required: false
+    default: ''
+  build-no:
+    description: Pipeline run number used in perception_metrics_wrsd
+    required: false
+    default: ''
+  build-url:
+    description: URL for this workflow run
+    required: false
+    default: ''
+
+outputs:
+  metric-count:
+    description: Number of generated metric rows
+    value: ${{ steps.generate.outputs.metric-count }}
+  output-file:
+    description: Absolute path to generated metrics file
+    value: ${{ steps.generate.outputs.output-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate coverity metrics payload (placeholder)
+      id: generate
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        python3 - <<'PY'
+        import json
+        import os
+        import sys
+        from pathlib import Path
+
+        variant = os.environ["VARIANT"]
+        core = os.environ["CORE"]
+        coverity_stream = os.environ.get("COVERITY_STREAM", "")
+        high_count = os.environ.get("HIGH_COUNT", "0")
+        medium_count = os.environ.get("MEDIUM_COUNT", "0")
+        low_count = os.environ.get("LOW_COUNT", "0")
+        output_file = Path(os.environ["OUTPUT_FILE"])
+
+        rows = []
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        with output_file.open("w", encoding="utf-8") as out:
+          for row in rows:
+            out.write(json.dumps(row, sort_keys=True) + "\\n")
+
+        print("[dry-run] Coverity metrics payload is not implemented yet.")
+        print(f"[dry-run] variant={variant}")
+        print(f"[dry-run] core={core}")
+        print(f"[dry-run] stream={coverity_stream}")
+        print(f"[dry-run] high={high_count} medium={medium_count} low={low_count}")
+        print(f"Generated {len(rows)} metric row(s) at {output_file.resolve()}")
+
+        github_output = os.environ.get("GITHUB_OUTPUT")
+        if not github_output:
+          sys.exit(1)
+
+        with open(github_output, "a", encoding="utf-8") as fh:
+          fh.write(f"metric-count={len(rows)}\\n")
+          fh.write(f"output-file={output_file.resolve()}\\n")
+        PY
+      env:
+        VARIANT: ${{ inputs.variant }}
+        CORE: ${{ inputs.core }}
+        COVERITY_STREAM: ${{ inputs.coverity-stream }}
+        HIGH_COUNT: ${{ inputs.high-count }}
+        MEDIUM_COUNT: ${{ inputs.medium-count }}
+        LOW_COUNT: ${{ inputs.low-count }}
+        OUTPUT_FILE: ${{ inputs.output-file }}
+
+    - name: Publish metrics to PostgreSQL
+      if: ${{ inputs.db-publish-enabled == 'true' && steps.generate.outputs.metric-count != '0' && inputs.metrics-db-user != '' && inputs.metrics-db-password != '' && inputs.metrics-db-host != '' && inputs.metrics-db-port != '' && inputs.metrics-db-name != '' }}
+      uses: ./.github/actions/publish-jsonl-to-postgres
+      with:
+        metrics-file: ${{ steps.generate.outputs.output-file }}
+        metrics-db-user: ${{ inputs.metrics-db-user }}
+        metrics-db-password: ${{ inputs.metrics-db-password }}
+        metrics-db-host: ${{ inputs.metrics-db-host }}
+        metrics-db-port: ${{ inputs.metrics-db-port }}
+        metrics-db-name: ${{ inputs.metrics-db-name }}
+        commit-id: ${{ inputs.commit-id }}
+        branch: ${{ inputs.branch }}
+        project-name: ${{ inputs.project-name }}
+        tag: ${{ inputs.tag }}
+        pipeline-name: ${{ inputs.pipeline-name }}
+        build-no: ${{ inputs.build-no }}
+        build-url: ${{ inputs.build-url }}
+
+    - name: Note skipped DB publish
+      if: ${{ inputs.db-publish-enabled == 'true' && (inputs.metrics-db-user == '' || inputs.metrics-db-password == '' || inputs.metrics-db-host == '' || inputs.metrics-db-port == '' || inputs.metrics-db-name == '') }}
+      shell: bash
+      run: |
+        echo "::notice::METRICS_DB_USER/METRICS_DB_PASSWORD/METRICS_DB_HOST/METRICS_DB_PORT/METRICS_DB_NAME are not configured; skipping PostgreSQL metrics publish."
+
+    - name: Note deferred DB publish implementation
+      if: ${{ inputs.db-publish-enabled == 'true' && steps.generate.outputs.metric-count == '0' && inputs.metrics-db-user != '' && inputs.metrics-db-password != '' && inputs.metrics-db-host != '' && inputs.metrics-db-port != '' && inputs.metrics-db-name != '' }}
+      shell: bash
+      run: |
+        echo "[dry-run] Coverity PostgreSQL publish is deferred until real coverity metrics payload generation is implemented."

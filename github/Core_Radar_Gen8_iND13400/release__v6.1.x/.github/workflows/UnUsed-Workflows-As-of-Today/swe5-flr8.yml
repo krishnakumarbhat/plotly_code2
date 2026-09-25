@@ -1,0 +1,44 @@
+# SWE5 nightly trigger for the FLR8 family.
+# Thin wrapper around the generic reusable workflow (radar-test-reusable.yml).
+#
+# SKELETON — adjust the variant/xcp matrix, runner-labels (if a different
+# bench is preferred), email-recipients, and any markers/extra-args.
+#
+# Triggers:
+#   - workflow_dispatch: manual trigger via the Actions UI (ONLY trigger today).
+#
+#   TODO: when ready to chain after SWE6 FLR8 Nightly, uncomment the
+#   `workflow_run` block below. The runner will queue this job until the
+#   bench is free.
+
+name: SWE5 FLR8 Nightly
+
+on:
+  # workflow_run:
+  #   workflows: ["SWE6 FLR8 Nightly"]
+  #   types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  swe5-flr8:
+    name: SWE5 FLR8
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: SWE5
+      family: FLR8
+      test-folder: SWE5_Testing
+      # Single-variant run by default; switch to `daily` and expand the matrix
+      # if you want rotation.
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"flr8_standalone", "xcp":"Eth_Direct"}
+        ]
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe5-flr8.yml
+      # Optional: if SWE5 lives on a different bench, override the runner labels here.
+      # runner-labels: '["self-hosted","windows","ADVRADAR-GEN8-BENCH2"]'
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

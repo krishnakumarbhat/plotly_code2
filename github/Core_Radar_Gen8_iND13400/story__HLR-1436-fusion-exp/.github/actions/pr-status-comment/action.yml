@@ -1,0 +1,600 @@
+name: PR Status Comment
+description: >-
+  Post or update a sticky three-column PR comment showing CI results for
+  Pull Request, Merge Queue, and Push (dev) runs side by side.
+
+inputs:
+  github-token:
+    description: 'GitHub token with pull-requests: write permission'
+    required: true
+  event-type:
+    description: 'Override event type: pull_request | merge_group | push. Auto-detected from context if omitted.'
+    required: false
+    default: ''
+  job-precommit:
+    description: 'Result of the Pre-commit job'
+    required: false
+    default: 'skipped'
+  job-dependency-scan:
+    description: 'Result of the Dependency Scan job'
+    required: false
+    default: 'skipped'
+  job-build-stage-1:
+    description: 'Result of the Build (Stage 1) job'
+    required: false
+    default: 'skipped'
+  job-build-stage-2:
+    description: 'Result of the Build (Stage 2) job'
+    required: false
+    default: 'skipped'
+  job-unit-test:
+    description: 'Result of the Unit Test job'
+    required: false
+    default: 'skipped'
+  job-coverity:
+    description: 'Result of the Coverity job'
+    required: false
+    default: 'skipped'
+  coverity-high:
+    description: 'Coverity high severity defect count'
+    required: false
+    default: '0'
+  coverity-medium:
+    description: 'Coverity medium severity defect count'
+    required: false
+    default: '0'
+  coverity-low:
+    description: 'Coverity low severity defect count'
+    required: false
+    default: '0'
+  job-hw-test:
+    description: 'Result of the HW Smoke Test job'
+    required: false
+    default: 'skipped'
+  job-hw-queue-guard:
+    description: 'Result of the HW Queue Guard job'
+    required: false
+    default: 'skipped'
+  job-pr-validation:
+    description: 'Result of the PR Validation (JIRA ticket check) job'
+    required: false
+    default: 'skipped'
+  pr-number:
+    description: 'PR number (auto-detected for pull_request; required for merge_group/push if not in context)'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Upsert PR status comment
+      uses: actions/github-script@v8
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        INPUT_EVENT_TYPE: ${{ inputs.event-type }}
+        JOB_PRECOMMIT: ${{ inputs.job-precommit }}
+        JOB_DEP_SCAN: ${{ inputs.job-dependency-scan }}
+        JOB_BUILD_STAGE_1: ${{ inputs.job-build-stage-1 }}
+        JOB_BUILD_STAGE_2: ${{ inputs.job-build-stage-2 }}
+        JOB_UNIT_TEST: ${{ inputs.job-unit-test }}
+        JOB_COVERITY: ${{ inputs.job-coverity }}
+        COVERITY_HIGH: ${{ inputs.coverity-high }}
+        COVERITY_MEDIUM: ${{ inputs.coverity-medium }}
+        COVERITY_LOW: ${{ inputs.coverity-low }}
+        JOB_HW_TEST: ${{ inputs.job-hw-test }}
+        JOB_HW_GUARD: ${{ inputs.job-hw-queue-guard }}
+        JOB_PR_VALIDATION: ${{ inputs.job-pr-validation }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          // ── Helpers ────────────────────────────────────────────────────────
+          const normalize = (r) => {
+            if (!r) return 'unknown';
+            const s = String(r).toLowerCase().trim();
+            if (s === 'success')   return 'success';
+            if (s === 'failure')   return 'failure';
+            if (s === 'cancelled') return 'cancelled';
+            if (s === 'skipped')   return 'skipped';
+            if (s.includes('progress') || s.includes('running') || s.includes('queued')) return 'in_progress';
+            return s;
+          };
+          const statusCell = (r) => {
+            const n = normalize(r);
+            if (n === 'success')     return '✅ pass';
+            if (n === 'failure')     return '❌ fail';
+            if (n === 'cancelled')   return '⚪ cancelled';
+            if (n === 'skipped')     return '⏭️ skipped';
+            if (n === 'in_progress') return '🟡 running…';
+            if (!r || r === 'null' || r === 'undefined') return '—';
+            return `🔘 ${r}`;
+          };
+
+          // ── Determine column ───────────────────────────────────────────────
+          const rawEvent = process.env.INPUT_EVENT_TYPE || context.eventName;
+          const colKey   = rawEvent === 'push'        ? 'push'
+                         : rawEvent === 'merge_group' ? 'merge_group'
+                         :                              'pull_request';
+          const COL_HEADERS = {
+            pull_request: '🔀 Pull Request',
+            merge_group:  '🔃 Merge Queue',
+            push:         '📥 Push (dev)',
+          };
+          const COL_KEYS = ['pull_request', 'merge_group', 'push'];
+
+          // ── Find PR data ───────────────────────────────────────────────────
+          let prData = context.payload.pull_request || null;
+
+          if (!prData && process.env.PR_NUMBER) {
+            const n = parseInt(process.env.PR_NUMBER, 10);
+            if (n) {
+              try {
+                const { data } = await github.rest.pulls.get({
+                  owner: context.repo.owner, repo: context.repo.repo, pull_number: n,
+                });
+                prData = data;
+              } catch (e) { core.warning(`Failed to fetch PR #${n}: ${e?.message ?? e}`); }
+            }
+          }
+
+          if (!prData && colKey === 'push') {
+            try {
+              const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner, repo: context.repo.repo, commit_sha: context.sha,
+              });
+              const merged = prs.find(p => p.merged_at && (p.base.ref === 'dev' || p.base.ref.startsWith('release/')));
+              if (merged) prData = merged;
+              else if (prs.length > 0) prData = prs[0];
+            } catch (e) { core.warning(`listPullRequestsAssociatedWithCommit failed: ${e?.message ?? e}`); }
+          }
+
+          if (!prData) {
+            core.info('No pull-request context found — skipping comment.');
+            return;
+          }
+
+          const issue_number = prData.number;
+          const prUrl    = prData.html_url || `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/pull/${issue_number}`;
+          const prTitle  = (prData.title || '').replace(/\|/g, '\\|');
+          const prAuthor = prData.user?.login ? `@${prData.user.login}` : context.actor;
+          const branch     = prData?.head?.ref || context.ref || '';
+          const commitSha  = (colKey === 'pull_request' && prData?.head?.sha) ? prData.head.sha : (context.sha || '');
+          const shortSha   = commitSha.substring(0, 7);
+          const fullSha    = commitSha;
+          const runUrl     = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+          // ── Timestamps ─────────────────────────────────────────────────────
+          const _now = new Date();
+          const getOffsetHours = (d, tz) => {
+            const utc   = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
+            const local = new Date(d.toLocaleString('en-US', { timeZone: tz }));
+            return Math.round((local - utc) / 3600000);
+          };
+          const fmt12 = (d, tz, abbr, full) => {
+            const p = Object.fromEntries(
+              new Intl.DateTimeFormat('en-US', {
+                timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
+              }).formatToParts(d).map(x => [x.type, x.value])
+            );
+            return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second} ${p.dayPeriod} ${abbr} (${full})`;
+          };
+          const berlinOff  = getOffsetHours(_now, 'Europe/Berlin');
+          const berlinAbbr = berlinOff === 2 ? 'CEST' : 'CET';
+          const berlinFull = berlinOff === 2 ? 'Central European Summer Time' : 'Central European Time';
+          const nyOff  = getOffsetHours(_now, 'America/New_York');
+          const nyAbbr = nyOff === -4 ? 'EDT' : 'EST';
+          const nyFull = nyOff === -4 ? 'Eastern Daylight Time' : 'Eastern Standard Time';
+          const nowStr = [
+            fmt12(_now, 'UTC',              'UTC',      'Coordinated Universal Time'),
+            fmt12(_now, 'Asia/Kolkata',     'IST',      'Indian Standard Time'),
+            fmt12(_now, 'Europe/Berlin',    berlinAbbr, berlinFull),
+            fmt12(_now, 'America/New_York', nyAbbr,     nyFull),
+          ].join('<br/>');
+
+          // ── Read persisted state ────────────────────────────────────────────
+          const MARKER     = '<!-- pr-checks-status-comment -->';
+          const DATA_START = '<!-- pr-checks-data:';
+          const DATA_END   = ' -->';
+
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner, repo: context.repo.repo,
+            issue_number, per_page: 100,
+          });
+          const existing = comments.find(c => c.body?.includes(MARKER));
+
+          let state = { pull_request: null, merge_group: null, push: null };
+          if (existing?.body) {
+            const si = existing.body.indexOf(DATA_START);
+            if (si !== -1) {
+              const ei = existing.body.indexOf(DATA_END, si + DATA_START.length);
+              if (ei !== -1) {
+                try {
+                  const parsed = JSON.parse(existing.body.slice(si + DATA_START.length, ei));
+                  state = { ...state, ...parsed };
+                } catch (e) { core.warning(`Failed to parse persisted state: ${e?.message}`); }
+              }
+            }
+          }
+
+          // ── Current run jobs ───────────────────────────────────────────────
+          let runJobs = [];
+          try {
+            runJobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              run_id: context.runId, per_page: 100,
+            });
+          } catch (e) { core.warning(`listJobsForWorkflowRun failed: ${e?.message}`); }
+
+          // ── Update current column ──────────────────────────────────────────
+          state[colKey] = {
+            runId:     context.runId,
+            runNumber: context.runNumber,
+            runUrl,
+            sha:       shortSha,
+            fullSha:   fullSha,
+            actor:     context.actor || '',
+            updatedAt: _now.toISOString(),
+            jobs: {
+              pr_validation: process.env.JOB_PR_VALIDATION || 'skipped',
+              precommit:     process.env.JOB_PRECOMMIT     || 'skipped',
+              dep_scan:      process.env.JOB_DEP_SCAN      || 'skipped',
+              build_stage_1: process.env.JOB_BUILD_STAGE_1 || 'skipped',
+              build_stage_2: process.env.JOB_BUILD_STAGE_2 || 'skipped',
+              unit_test:     process.env.JOB_UNIT_TEST     || 'skipped',
+              coverity:      process.env.JOB_COVERITY      || 'skipped',
+              hw_test:       process.env.JOB_HW_TEST       || 'skipped',
+            },
+            coverity: {
+              high:   process.env.COVERITY_HIGH   || '0',
+              medium: process.env.COVERITY_MEDIUM || '0',
+              low:    process.env.COVERITY_LOW    || '0',
+            },
+          };
+
+          // ── Log helpers (current column failures only) ────────────────────
+          const cleanLine = (l) =>
+            l.replace(/\x1b\[[0-9;]*m/g, '')
+             .replace(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s*/, '')
+             .replace(/^##\[.*?\]/, '')
+             .trim();
+          const isError = (l) => {
+            if (l.length < 6) return false;
+            const t = l.trimStart();
+            if (/^(echo|if |elif |while |for |do$|done$|fi$|sleep |set [-+]|exit |read |break$|continue$|printf |#|\[)/.test(t)) return false;
+            return /^ERROR:/.test(t) || /^FAILED:/.test(t) ||
+                   /Build did NOT complete successfully/i.test(t) ||
+                   /\bFAILED\b.*\/\//.test(t) || /\[\s*FAILED\s*\]/.test(t) ||
+                   /\| ERR \|/.test(t) || /Coverage requirements failed/.test(t) ||
+                   /error: Memory area/.test(t) || /Cannot allocate/.test(t) ||
+                   /undefined reference/.test(t);
+          };
+          const isCoverageLine = (l) => /\| ERR \||\|  act  \|  req  \||Coverage results/.test(l);
+
+          // Parse "| ERR | 92.5 | 90.0 | 85.4 | 90.0 | 96.3 | 90.0 | 79.6 | 85.0 |" into readable text
+          const parseCoverageErr = (lines) => {
+            const headerLine = lines.find(l => /act\s*\|\s*req/.test(l));
+            const errLine = lines.find(l => /\| ERR \|/.test(l));
+            if (!errLine) return null;
+            const metrics = ['Line', 'Decision', 'Function', 'Branch'];
+            const nums = errLine.match(/[\d.]+/g);
+            if (!nums || nums.length < 8) return null;
+            const violations = [];
+            for (let i = 0; i < 4; i++) {
+              const act = parseFloat(nums[i * 2]);
+              const req = parseFloat(nums[i * 2 + 1]);
+              if (req > 0 && act < req) {
+                violations.push(`${metrics[i]} ${act}% < ${req}% required`);
+              }
+            }
+            return violations.length > 0 ? `Coverage threshold breach: ${violations.join(', ')}` : null;
+          };
+
+          const getLogInfo = async (jobId) => {
+            try {
+              const { data: text } = await github.request(
+                'GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs',
+                { owner: context.repo.owner, repo: context.repo.repo, job_id: jobId }
+              );
+              if (typeof text !== 'string' || !text) return null;
+              const lines = text.split('\n').map(cleanLine).filter(Boolean);
+
+              // Coverage threshold failure: extract the table with ERR rows + verdict
+              const errRowIdx = lines.findIndex(l => /\| ERR \|/.test(l));
+              if (errRowIdx !== -1) {
+                // Find the table header (walk back to find "Coverage results" or column headers)
+                let tableStart = errRowIdx;
+                for (let i = errRowIdx - 1; i >= Math.max(0, errRowIdx - 5); i--) {
+                  if (/Coverage results|act\s*\|\s*req/.test(lines[i])) { tableStart = i; break; }
+                }
+                // Collect: header + ERR row + any subreport ERR rows
+                const covLines = [];
+                for (let i = tableStart; i < Math.min(lines.length, errRowIdx + 3); i++) {
+                  covLines.push(lines[i]);
+                }
+                // Scan subreports for individual ERR rows (modules that failed)
+                const subStart = lines.findIndex((l, i) => i > errRowIdx && /Subreports/.test(l));
+                if (subStart !== -1) {
+                  const subHeader = lines.slice(subStart, Math.min(lines.length, subStart + 3));
+                  const subErrs = [];
+                  for (let i = subStart + 2; i < Math.min(lines.length, subStart + 80); i++) {
+                    if (/\| ERR \|/.test(lines[i])) subErrs.push(lines[i]);
+                    if (lines[i].trim() === '' && i > subStart + 5) break;
+                  }
+                  if (subErrs.length > 0) {
+                    covLines.push('');
+                    covLines.push('Failing subreports:');
+                    covLines.push(...subHeader.slice(1, 2));
+                    covLines.push(...subErrs.slice(0, 10));
+                  }
+                }
+                // Find "Coverage requirements failed" verdict
+                for (let i = errRowIdx + 1; i < Math.min(lines.length, errRowIdx + 150); i++) {
+                  if (/Coverage requirements failed|failed to build|Target .* failed/.test(lines[i])) {
+                    covLines.push('----');
+                    covLines.push(lines[i]);
+                    break;
+                  }
+                }
+                // Human-readable firstError
+                const readable = parseCoverageErr(covLines);
+                return {
+                  firstError: readable || lines[errRowIdx].slice(0, 150),
+                  snippet: covLines.join('\n'),
+                };
+              }
+
+              // Standard error: first error line + surrounding context
+              const idx = lines.findIndex(isError);
+              if (idx === -1) return null;
+              return {
+                firstError: lines[idx].slice(0, 150),
+                snippet: lines.slice(Math.max(0, idx - 4), Math.min(lines.length, idx + 16)).join('\n'),
+              };
+            } catch (e) { return null; }
+          };
+
+          // ── Job definitions ────────────────────────────────────────────────
+          const JOB_DEFS = [
+            { key: 'pr_validation', label: 'PR Validation',   matchers: [/^Validate PR/i, /^PR Validation/i] },
+            { key: 'precommit',     label: 'Pre-commit',      matchers: [/^Pre-commit$/i] },
+            { key: 'dep_scan',      label: 'Dependency Scan', matchers: [/^Dependency Scan$/i, /^BlackDuck/i] },
+            { key: 'build_stage_1', label: 'Build (Stage 1)', matchers: [/^Build \(Stage 1\)/i] },
+            { key: 'build_stage_2', label: 'Build (Stage 2)', matchers: [/^Build \(Stage 2\)/i] },
+            { key: 'unit_test',     label: 'Unit Test',       matchers: [/^Unit Test/i] },
+            { key: 'coverity',      label: 'Coverity',        matchers: [/^Coverity/i] },
+            { key: 'hw_test',       label: 'HW Smoke Test',   matchers: [/^HW Smoke Test/i, /^Smoke Test \(/i] },
+          ];
+
+          // Linked job cell for the current column
+          const jobUrlForId = (id) =>
+            `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/job/${id}`;
+          const curColCell = (key, label, matchers) => {
+            const base    = statusCell(state[colKey]?.jobs?.[key]);
+            const matches = runJobs.filter(j => matchers.some(re => re.test(j?.name || '')));
+            if (matches.length === 0) return base;
+            if (matches.length === 1) {
+              const j = matches[0];
+              return j.conclusion === 'skipped' ? base : `[${base}](${jobUrlForId(j.id)})`;
+            }
+            const links = matches
+              .filter(j => j.conclusion !== 'skipped')
+              .map(j => {
+                const dn = (j.name || '').replace(new RegExp(`^${label}\\s*/\\s*`, 'i'), '');
+                return `[${dn}](${jobUrlForId(j.id)})`;
+              })
+              .join('<br/>');
+            return links ? `${base}<br/>${links}` : base;
+          };
+
+          // ── Collect failures and fetch log snippets ────────────────────────
+          const failedJobs = [];
+          for (const { key, matchers } of JOB_DEFS) {
+            if (normalize(state[colKey]?.jobs?.[key]) === 'failure') {
+              for (const j of runJobs) {
+                if (matchers.some(re => re.test(j?.name || '')) && j.conclusion === 'failure') {
+                  failedJobs.push(j);
+                }
+              }
+            }
+          }
+          const logMap = {};
+          await Promise.all(failedJobs.map(async (j) => { logMap[j.id] = await getLogInfo(j.id); }));
+
+          // ── Artifacts for all three columns ────────────────────────────────
+          const fetchArts = async (runId) => {
+            try {
+              const arts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                run_id: runId, per_page: 100,
+              });
+              return arts.sort((a, b) => a.name.localeCompare(b.name));
+            } catch (e) { return []; }
+          };
+          const artsByCol = {};
+          await Promise.all(COL_KEYS.map(async (k) => {
+            artsByCol[k] = state[k]?.runId ? await fetchArts(state[k].runId) : [];
+          }));
+
+          // Strip trailing -<runNumber>(-<attempt>)? so names match across runs
+          const artBase = (name, k) => {
+            const rn = state[k]?.runNumber;
+            return rn ? name.replace(new RegExp(`-${rn}(-\\d+)?$`), '') : name;
+          };
+          const allBaseNames = [...new Set(
+            COL_KEYS.flatMap(k => (artsByCol[k] || []).map(a => artBase(a.name, k)))
+          )].sort();
+
+          // ── Contributors ───────────────────────────────────────────────────
+          let contributorStr = prAuthor;
+          try {
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              pull_number: issue_number, per_page: 100,
+            });
+            const seen = new Set();
+            const contributors = [];
+            for (const c of commits) {
+              const login = c.author?.login;
+              const name  = c.commit?.author?.name;
+              const key   = login || name;
+              if (key && !seen.has(key)) {
+                seen.add(key);
+                contributors.push(login ? `@${login}` : name);
+              }
+            }
+            if (contributors.length > 0) contributorStr = contributors.join(', ');
+          } catch (e) { core.warning(`listCommits failed: ${e?.message}`); }
+
+          // ── Overall status ─────────────────────────────────────────────────
+          const allResults = COL_KEYS.flatMap(k => Object.values(state[k]?.jobs || {})).filter(Boolean);
+          const anyFailed  = allResults.some(r => normalize(r) === 'failure');
+          const anyRunning = allResults.some(r => normalize(r) === 'in_progress');
+          const overallIcon = anyFailed ? '❌' : anyRunning ? '🟡' : '✅';
+          const overallText = anyFailed ? 'failed' : anyRunning ? 'running' : 'passed';
+
+          // ── Labels ─────────────────────────────────────────────────────────
+          const FAIL_PFXS = ['build failed - ', 'unit tests failed - ', 'coverity failed - ', 'smoke test failed - ', 'ci-failed-'];
+          let labelSection = '<details><summary>🏷️ Labels</summary>\n\n- Unable to inspect labels.\n\n</details>';
+          try {
+            const { data: lbls } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number, per_page: 100,
+            });
+            const failLbls = lbls.map(l => l.name || '').filter(n => FAIL_PFXS.some(p => n.toLowerCase().startsWith(p))).sort();
+            const lf = failLbls.length;
+            const flag = lf > 0 ? ` (⚠️ ${lf} failure label${lf !== 1 ? 's' : ''})` : '';
+            labelSection = [
+              '<details>',
+              `<summary>🏷️ Labels${flag}</summary>`,
+              '',
+              lf > 0 ? `Failure labels: ${failLbls.map(l => `\`${l}\``).join(', ')}` : '✅ No failure labels.',
+              '',
+              '</details>',
+            ].join('\n');
+          } catch (e) { core.warning(`listLabelsOnIssue failed: ${e?.message}`); }
+
+          // ── Coverity callout ───────────────────────────────────────────────
+          let coverityExtra = '';
+          const covCol = COL_KEYS.find(k => {
+            const r = normalize(state[k]?.jobs?.coverity);
+            return r === 'success' || r === 'failure';
+          });
+          if (covCol) {
+            const { high = '0', medium = '0', low = '0' } = state[covCol].coverity || {};
+            const hiIcon  = (parseInt(high,   10) || 0) > 0 ? '🔴' : '✅';
+            const medIcon = (parseInt(medium, 10) || 0) > 0 ? '🟡' : '✅';
+            coverityExtra = `**Coverity** — ${hiIcon} High: **${high}** · ${medIcon} Medium: **${medium}** · Low: **${low}**`;
+          }
+
+          // ── Failure details (current column) ──────────────────────────────
+          const failureDetails = [];
+          for (const { key, label, matchers } of JOB_DEFS) {
+            if (normalize(state[colKey]?.jobs?.[key]) !== 'failure') continue;
+            const failMatches = runJobs.filter(j => matchers.some(re => re.test(j?.name || '')) && j.conclusion === 'failure');
+            for (const j of failMatches) {
+              const info = logMap[j.id];
+              if (info?.snippet) {
+                failureDetails.push(
+                  `<details><summary>❌ <b>${j.name || label}</b> [${COL_HEADERS[colKey]}] — log excerpt</summary>\n\n\`\`\`\n${info.snippet}\n\`\`\`\n\n</details>`
+                );
+              }
+            }
+          }
+
+          // ── Render helpers ─────────────────────────────────────────────────
+          const h  = (k) => COL_HEADERS[k];
+          const s3 = ':---:';
+          const runCell     = (k) => state[k] ? `[#${state[k].runNumber}](${state[k].runUrl})` : '—';
+          const shaCell     = (k) => state[k] ? `\`${state[k].sha}\`` : '—';
+          const fullShaCell = (k) => {
+            if (!state[k]) return '—';
+            const sha = state[k].fullSha || state[k].sha || '';
+            if (!sha) return '—';
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/commit/${sha}`;
+            return `[\`${sha}\`](${url})`;
+          };
+          const actorCell   = (k) => state[k] ? `@${state[k].actor}` : '—';
+          const jobCell   = (k, key, label, matchers) => {
+            if (!state[k]) return '—';
+            return k === colKey ? curColCell(key, label, matchers) : statusCell(state[k]?.jobs?.[key]);
+          };
+
+          // ── Build comment body ─────────────────────────────────────────────
+          const stateJson = JSON.stringify(state);
+          const body = [
+            MARKER,
+            `${DATA_START}${stateJson}${DATA_END}`,
+            '',
+            `## ${overallIcon} PR Checks — ${overallText}`,
+            '',
+            '| | |',
+            '|---|---|',
+            `| **PR** | [#${issue_number} — ${prTitle}](${prUrl}) |`,
+            `| **Branch** | \`${branch}\` @ \`${shortSha}\` |`,
+            `| **Author** | ${prAuthor} |`,
+            `| **Contributors** | ${contributorStr} |`,
+            `| **Updated** | ${nowStr} |`,
+            '',
+            '### CI Runs',
+            '',
+            `| | ${h('pull_request')} | ${h('merge_group')} | ${h('push')} |`,
+            `|---|${s3}|${s3}|${s3}|`,
+            `| **Run** | ${runCell('pull_request')} | ${runCell('merge_group')} | ${runCell('push')} |`,
+            `| **SHA** *(short, 7-char)* | ${shaCell('pull_request')} | ${shaCell('merge_group')} | ${shaCell('push')} |`,
+            `| **Full SHA** *(complete commit hash)* | ${fullShaCell('pull_request')} | ${fullShaCell('merge_group')} | ${fullShaCell('push')} |`,
+            `| **Triggered by** | ${actorCell('pull_request')} | ${actorCell('merge_group')} | ${actorCell('push')} |`,
+            '',
+            '<details><summary>ℹ️ What does each SHA represent?</summary>',
+            '',
+            '| Column | SHA represents |',
+            '|---|---|',
+            '| 🔀 Pull Request | Last commit pushed to the PR branch (branch HEAD before merge) |',
+            '| 🔃 Merge Queue | Temporary commit created by the merge queue to validate the batch |',
+            '| 📥 Push (dev) | Final merge commit that landed on `dev` after the PR was merged |',
+            '',
+            '</details>',
+            '',
+            '### Job Results',
+            '',
+            `| Job | ${h('pull_request')} | ${h('merge_group')} | ${h('push')} |`,
+            `|-----|${s3}|${s3}|${s3}|`,
+            ...JOB_DEFS.map(({ key, label, matchers }) =>
+              `| ${label} | ${jobCell('pull_request', key, label, matchers)} | ${jobCell('merge_group', key, label, matchers)} | ${jobCell('push', key, label, matchers)} |`
+            ),
+            '',
+            ...(coverityExtra ? [coverityExtra, ''] : []),
+            ...(failureDetails.length ? ['### Failure Details', '', ...failureDetails, ''] : []),
+            labelSection,
+            '',
+            ...(allBaseNames.length ? [
+              '---',
+              '### Artifacts',
+              '',
+              `| ${h('pull_request')} | ${h('merge_group')} | ${h('push')} |`,
+              `|${s3}|${s3}|${s3}|`,
+              ...allBaseNames.map(baseName => {
+                const cells = COL_KEYS.map(k => {
+                  const art = (artsByCol[k] || []).find(a => artBase(a.name, k) === baseName);
+                  if (!art || !state[k]) return '—';
+                  const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${state[k].runId}/artifacts/${art.id}`;
+                  return `[${art.name}](${url})`;
+                });
+                return `| ${cells.join(' | ')} |`;
+              }),
+            ] : []),
+          ].join('\n');
+
+          // ── Upsert ─────────────────────────────────────────────────────────
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              comment_id: existing.id, body,
+            });
+            core.info(`Updated sticky PR comment (id=${existing.id})`);
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number, body,
+            });
+            core.info('Created sticky PR comment');
+          }

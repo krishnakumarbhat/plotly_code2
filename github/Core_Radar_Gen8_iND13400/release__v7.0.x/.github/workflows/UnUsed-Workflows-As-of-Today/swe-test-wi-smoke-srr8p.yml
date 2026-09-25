@@ -1,0 +1,41 @@
+# SWE-Test - Focused Work-Item smoke run on SRR8P.
+#
+# Demonstrates:
+#   * markers        -> bracket notation with multiple WIs (OR within group)
+#   * project-name / team-name overrides in the report metadata
+#   * no-reports: false + gui-html: true (defaults, shown explicitly)
+#   * Custom report-subdir so smoke reports don't collide with nightly reports.
+#
+# Trigger: manual only.
+
+name: SWE-Test - WI Smoke SRR8P
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wi-smoke-srr8p:
+    name: WI Smoke SRR8P
+    uses: ./.github/workflows/radar-test-reusable.yml
+    with:
+      job-type: WI_SMOKE
+      family: SRR8P
+      rotation-strategy: fixed
+      test-matrix-json: |
+        [
+          {"variant":"srr8p_can", "xcp":"CAN"}
+        ]
+      test-folder: SWE6_Testing
+      markers: 'WI=[WI-266881, WI-266882] TestType=XCP-Regression'
+      project-name: 'Radar_Gen8'
+      team-name:    'iND13400_Smoke'
+      no-reports: false
+      gui-html: true
+      # Keep smoke artifacts isolated from the main nightly tree on JFrog.
+      report-subdir: Reports/Smoke/WI
+      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/swe-test-wi-smoke-srr8p.yml
+      email-recipients: 'Jonnalagadda.Sai.Dheeraj@aptiv.com'
+    secrets: inherit

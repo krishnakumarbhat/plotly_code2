@@ -1,0 +1,286 @@
+name: Publish Smoke Metrics
+description: Parse smoke platformHealth JSON and emit normalized metrics payload for nightly publishing.
+
+inputs:
+  quickflash-variant:
+    description: Smoke quickflash variant used to resolve <variant>_platformHealth.json
+    required: true
+  report-path:
+    description: Resolved smoke HTML report path (used to locate sibling platformHealth JSON)
+    required: false
+    default: ''
+  log-path:
+    description: Path to smoke test log for fallback discovery
+    required: false
+    default: ${{ github.workspace }}/smoke_test.log
+  output-file:
+    description: Output JSONL file path for generated metrics
+    required: false
+    default: smoke-metrics.jsonl
+  preview-limit:
+    description: Maximum number of metric rows to print as dry-run preview
+    required: false
+    default: '25'
+  db-publish-enabled:
+    description: When true, attempt PostgreSQL publish from generated JSONL
+    required: false
+    default: 'false'
+  metrics-db-user:
+    description: PostgreSQL username
+    required: false
+    default: ''
+  metrics-db-password:
+    description: PostgreSQL password
+    required: false
+    default: ''
+  metrics-db-host:
+    description: PostgreSQL host
+    required: false
+    default: ''
+  metrics-db-port:
+    description: PostgreSQL port
+    required: false
+    default: ''
+  metrics-db-name:
+    description: PostgreSQL database name
+    required: false
+    default: ''
+  commit-id:
+    description: Commit SHA or identifier for CommitId column
+    required: false
+    default: ''
+  branch:
+    description: Branch name for branch column
+    required: false
+    default: ''
+  project-name:
+    description: Project name for project column
+    required: false
+    default: ''
+  tag:
+    description: Tag column value
+    required: false
+    default: ''
+  pipeline-name:
+    description: Pipeline/workflow name used in perception_metrics_wrsd
+    required: false
+    default: ''
+  build-no:
+    description: Pipeline run number used in perception_metrics_wrsd
+    required: false
+    default: ''
+  build-url:
+    description: URL for this workflow run
+    required: false
+    default: ''
+
+outputs:
+  metric-count:
+    description: Number of generated metric rows
+    value: ${{ steps.generate.outputs.metric-count }}
+  output-file:
+    description: Absolute path to generated metrics file
+    value: ${{ steps.generate.outputs.output-file }}
+  source-json:
+    description: Absolute path to the discovered platformHealth json file
+    value: ${{ steps.generate.outputs.source-json }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate smoke metrics payload
+      id: generate
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        python3 - <<'PY'
+        import json
+        import os
+        import re
+        import sys
+        from pathlib import Path
+
+        quickflash_variant = os.environ["QUICKFLASH_VARIANT"]
+        report_path = os.environ.get("REPORT_PATH", "").strip()
+        log_path = Path(os.environ.get("LOG_PATH", ""))
+        output_file = Path(os.environ["OUTPUT_FILE"])
+        preview_limit = int(os.environ.get("PREVIEW_LIMIT", "25"))
+
+        def is_number(value):
+          return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+        def try_add_candidate(candidates, value):
+          if not value:
+            return
+          p = Path(value)
+          if p not in candidates:
+            candidates.append(p)
+
+        def discover_json_path():
+          candidates = []
+
+          if report_path:
+            rp = Path(report_path)
+            report_dir = rp.parent
+            try_add_candidate(candidates, report_dir / f"{quickflash_variant}_platformHealth.json")
+
+            rp_name = rp.name
+            replaced = rp_name.replace("_Smoke_Test.html", "_platformHealth.json")
+            if replaced != rp_name:
+              try_add_candidate(candidates, report_dir / replaced)
+
+            if rp_name.endswith(".html"):
+              try_add_candidate(candidates, report_dir / (rp_name[:-5] + "_platformHealth.json"))
+
+          if log_path.is_file():
+            with log_path.open("r", encoding="utf-8", errors="ignore") as f:
+              txt = f.read()
+            matches = re.findall(r"([\w./-]+_platformHealth\.json)", txt)
+            for m in matches:
+              try_add_candidate(candidates, m)
+
+          fallback = Path.home() / "git/ADVRADAR_CICD/RPI/smoke_test"
+          try_add_candidate(candidates, fallback / f"{quickflash_variant}_platformHealth.json")
+
+          for p in candidates:
+            if p.is_file():
+              return p.resolve()
+          return None
+
+        def flatten_numeric(data, prefix=""):
+          rows = []
+          if isinstance(data, dict):
+            for key, value in data.items():
+              child_prefix = f"{prefix}.{key}" if prefix else str(key)
+              rows.extend(flatten_numeric(value, child_prefix))
+          elif isinstance(data, list):
+            for idx, value in enumerate(data):
+              child_prefix = f"{prefix}[{idx}]" if prefix else f"[{idx}]"
+              rows.extend(flatten_numeric(value, child_prefix))
+          else:
+            if is_number(data):
+              rows.append((prefix or "value", float(data)))
+            elif isinstance(data, bool):
+              rows.append((prefix or "value", 1.0 if data else 0.0))
+          return rows
+
+        def rows_from_platform_health(data):
+          rows = []
+          if isinstance(data, list) and all(isinstance(x, dict) for x in data):
+            wrsd_like = all("metricName" in x and "metricValue" in x for x in data)
+            if wrsd_like:
+              for item in data:
+                metric_name = item.get("metricName", "core_radar.gen8.smoketest.platformhealth")
+                metric_tags = item.get("metricTags", {})
+                if not isinstance(metric_tags, dict):
+                  metric_tags = {}
+                metric_tags = dict(metric_tags)
+                metric_tags.setdefault("variant", quickflash_variant)
+
+                try:
+                  metric_value = float(item.get("metricValue"))
+                except Exception:
+                  continue
+
+                rows.append(
+                  {
+                    "metric_name": metric_name,
+                    "metric_value": metric_value,
+                    "metric_tags": metric_tags,
+                  }
+                )
+              return rows
+
+          for key, value in flatten_numeric(data):
+            rows.append(
+              {
+                "metric_name": "core_radar.gen8.smoketest.platformhealth",
+                "metric_value": value,
+                "metric_tags": {
+                  "variant": quickflash_variant,
+                  "field": key,
+                },
+              }
+            )
+          return rows
+
+        source_json = discover_json_path()
+        rows = []
+
+        if source_json is None:
+          print(f"Could not find platformHealth JSON for variant '{quickflash_variant}'")
+          source_json_str = ""
+        else:
+          source_json_str = str(source_json)
+          print(f"Using platformHealth JSON: {source_json_str}")
+          with source_json.open("r", encoding="utf-8", errors="ignore") as f:
+            data = json.load(f)
+          rows = rows_from_platform_health(data)
+
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        with output_file.open("w", encoding="utf-8") as out:
+          for row in rows:
+            out.write(json.dumps(row, sort_keys=True) + "\n")
+
+        print(f"Generated {len(rows)} metric row(s) at {output_file.resolve()}")
+
+        if rows:
+          metric_name_counts = {}
+          for row in rows:
+            metric_name = row.get("metric_name", "unknown")
+            metric_name_counts[metric_name] = metric_name_counts.get(metric_name, 0) + 1
+
+          print("[dry-run] Metric row counts by metric_name:")
+          for name in sorted(metric_name_counts.keys()):
+            print(f"[dry-run]   {name}: {metric_name_counts[name]}")
+
+          if preview_limit > 0:
+            print(f"[dry-run] Showing first {min(preview_limit, len(rows))} row(s):")
+            for idx, row in enumerate(rows[:preview_limit], start=1):
+              print(f"[dry-run] {idx:03d}: {json.dumps(row, sort_keys=True)}")
+
+            if len(rows) > preview_limit:
+              print(f"[dry-run] ... {len(rows) - preview_limit} additional row(s) not shown")
+        else:
+          print("[dry-run] No metric rows generated")
+
+        github_output = os.environ.get("GITHUB_OUTPUT")
+        if not github_output:
+          sys.exit(1)
+
+        with open(github_output, "a", encoding="utf-8") as fh:
+          fh.write(f"metric-count={len(rows)}\n")
+          fh.write(f"output-file={output_file.resolve()}\n")
+          fh.write(f"source-json={source_json_str}\n")
+        PY
+      env:
+        QUICKFLASH_VARIANT: ${{ inputs.quickflash-variant }}
+        REPORT_PATH: ${{ inputs.report-path }}
+        LOG_PATH: ${{ inputs.log-path }}
+        OUTPUT_FILE: ${{ inputs.output-file }}
+        PREVIEW_LIMIT: ${{ inputs.preview-limit }}
+
+    - name: Publish metrics to PostgreSQL
+      if: ${{ inputs.db-publish-enabled == 'true' && steps.generate.outputs.metric-count != '0' && inputs.metrics-db-user != '' && inputs.metrics-db-password != '' && inputs.metrics-db-host != '' && inputs.metrics-db-port != '' && inputs.metrics-db-name != '' }}
+      uses: ./.github/actions/publish-jsonl-to-postgres
+      with:
+        metrics-file: ${{ steps.generate.outputs.output-file }}
+        metrics-db-user: ${{ inputs.metrics-db-user }}
+        metrics-db-password: ${{ inputs.metrics-db-password }}
+        metrics-db-host: ${{ inputs.metrics-db-host }}
+        metrics-db-port: ${{ inputs.metrics-db-port }}
+        metrics-db-name: ${{ inputs.metrics-db-name }}
+        commit-id: ${{ inputs.commit-id }}
+        branch: ${{ inputs.branch }}
+        project-name: ${{ inputs.project-name }}
+        tag: ${{ inputs.tag }}
+        pipeline-name: ${{ inputs.pipeline-name }}
+        build-no: ${{ inputs.build-no }}
+        build-url: ${{ inputs.build-url }}
+
+    - name: Note skipped DB publish
+      if: ${{ inputs.db-publish-enabled == 'true' && (inputs.metrics-db-user == '' || inputs.metrics-db-password == '' || inputs.metrics-db-host == '' || inputs.metrics-db-port == '' || inputs.metrics-db-name == '') }}
+      shell: bash
+      run: |
+        echo "::notice::METRICS_DB_USER/METRICS_DB_PASSWORD/METRICS_DB_HOST/METRICS_DB_PORT/METRICS_DB_NAME are not configured; skipping PostgreSQL metrics publish."

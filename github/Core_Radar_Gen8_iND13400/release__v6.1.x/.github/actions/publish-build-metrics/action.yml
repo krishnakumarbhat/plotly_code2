@@ -1,0 +1,368 @@
+name: Publish Build Metrics
+description: Parse build memory files and emit normalized metrics payload for nightly publishing.
+
+inputs:
+  variant:
+    description: Build config variant, e.g. flr8 or srr8p
+    required: true
+  build-name:
+    description: Build name (typically matrix name), used to derive publish variant tag
+    required: false
+    default: ''
+  source-root:
+    description: Root folder to search for memoryStats.txt and flash_memory_stats.txt
+    required: false
+    default: bazel-bin/outputs
+  output-file:
+    description: Output JSONL file path for generated metrics
+    required: false
+    default: build-metrics.jsonl
+  preview-limit:
+    description: Maximum number of metric rows to print as dry-run preview
+    required: false
+    default: '25'
+  db-publish-enabled:
+    description: When true, attempt PostgreSQL publish from generated JSONL
+    required: false
+    default: 'false'
+  metrics-db-user:
+    description: PostgreSQL username
+    required: false
+    default: ''
+  metrics-db-password:
+    description: PostgreSQL password
+    required: false
+    default: ''
+  metrics-db-host:
+    description: PostgreSQL host
+    required: false
+    default: ''
+  metrics-db-port:
+    description: PostgreSQL port
+    required: false
+    default: ''
+  metrics-db-name:
+    description: PostgreSQL database name
+    required: false
+    default: ''
+  commit-id:
+    description: Commit SHA or identifier for CommitId column
+    required: false
+    default: ''
+  branch:
+    description: Branch name for branch column
+    required: false
+    default: ''
+  project-name:
+    description: Project name for project column
+    required: false
+    default: ''
+  tag:
+    description: Tag column value
+    required: false
+    default: ''
+  pipeline-name:
+    description: Pipeline/workflow name used in perception_metrics_wrsd
+    required: false
+    default: ''
+  build-no:
+    description: Pipeline run number used in perception_metrics_wrsd
+    required: false
+    default: ''
+  build-url:
+    description: URL for this workflow run
+    required: false
+    default: ''
+
+outputs:
+  metric-count:
+    description: Number of generated metric rows
+    value: ${{ steps.generate.outputs.metric-count }}
+  output-file:
+    description: Absolute path to generated metrics file
+    value: ${{ steps.generate.outputs.output-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate metrics payload
+      id: generate
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        SOURCE_ROOT="${{ inputs.source-root }}"
+        VARIANT="${{ inputs.variant }}"
+        OUTPUT_FILE="${{ inputs.output-file }}"
+
+        python3 - <<'PY'
+        import json
+        import os
+        import re
+        import sys
+        from pathlib import Path
+
+        source_root = Path(os.environ["SOURCE_ROOT"])
+        variant = os.environ["VARIANT"]
+        build_name = os.environ.get("BUILD_NAME", "")
+        output_file = Path(os.environ["OUTPUT_FILE"])
+        preview_limit = int(os.environ.get("PREVIEW_LIMIT", "25"))
+
+        def derive_publish_variant(name: str, var: str):
+          name = (name or "").strip()
+          var = (var or "").strip()
+
+          if name:
+            return name.replace("-", "_")
+
+          if var:
+            return var
+
+          return "unknown"
+
+        metric_variant = derive_publish_variant(build_name, variant)
+
+        def find_first(root: Path, name: str):
+          for p in root.rglob(name):
+            if p.is_file():
+              return p
+          return None
+
+        def parse_memory_stats(file_path: Path):
+          memory_sections = []
+          module_breakdown = []
+          section = "memory_sections"
+
+          section_re = re.compile(
+            r"^\s*(\S.*?):\s+([\d.]+)%\s+\(\s*([\d.]+)\s+KB\s+out\s+of\s+([\d.]+)\s+KB\)\s*(\([\w.]+\))?\s*(\*)?$"
+          )
+          module_re = re.compile(
+            r"^\s*([\w\s-]+)\s+([\d.-]+|-)\s+([\d.-]+|-)\s+([\d.-]+|-)\s+([\d.-]+|-)\s+([\d.-]+|-)\s+([\d.]+)%"
+          )
+
+          with file_path.open("r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+              if line.strip().startswith("Module"):
+                section = "module_breakdown"
+                continue
+
+              if section == "memory_sections":
+                m = section_re.match(line)
+                if m:
+                  name, _percent, used_kb, total_kb, _map_file, _overlap = m.groups()
+                  memory_sections.append(
+                    {
+                      "section_name": name.strip(),
+                      "used_kb": float(used_kb),
+                      "total_kb": float(total_kb),
+                    }
+                  )
+
+              elif section == "module_breakdown":
+                m = module_re.match(line)
+                if m:
+                  module, code_kb, data_kb, bss_kb, other_kb, total_kb, _percentage = m.groups()
+
+                  def num(value: str):
+                    return 0.0 if value == "-" else float(value)
+
+                  module_breakdown.append(
+                    {
+                      "module_name": module.strip(),
+                      "code_kb": num(code_kb),
+                      "data_kb": num(data_kb),
+                      "bss_kb": num(bss_kb),
+                      "other_kb": num(other_kb),
+                      "total_kb": num(total_kb),
+                    }
+                  )
+
+          return memory_sections, module_breakdown
+
+        def parse_flash_stats(file_path: Path):
+          flash_memory = []
+          util_re = re.compile(r"^\s*(\S.*?):\s+([\d.]+)%\s+-\s+([\d.]+)\s+MB\s+of\s+([\d.]+)\s+MB")
+          kb_span_re = re.compile(
+            r"^\s*(\S.*?):\s+([\d.]+)\s+KB\s+over\s+([\d.]+)\s+KB\s+span\s*\(\s*([\d.]+)%\s*\)(?:\s+-\s+0x[\da-fA-F]+\s+to\s+0x[\da-fA-F]+)?"
+          )
+
+          with file_path.open("r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+              m = util_re.match(line)
+              if m:
+                name, _pct, used_mb, total_mb = m.groups()
+                flash_memory.append(
+                  {
+                    "name": name.strip(),
+                    "used_mb": float(used_mb),
+                    "total_mb": float(total_mb),
+                  }
+                )
+                continue
+
+              m = kb_span_re.match(line)
+              if m:
+                name, used_kb, span_kb, _pct = m.groups()
+                flash_memory.append(
+                  {
+                    "name": name.strip(),
+                    "used_kb": float(used_kb),
+                    "span_kb": float(span_kb),
+                  }
+                )
+
+          return flash_memory
+
+        def build_metric_rows(memory_sections, module_breakdown, flash_memory):
+          rows = []
+          base_tags = {"variant": metric_variant}
+
+          for section in memory_sections:
+            tags = {**base_tags, "section": section["section_name"]}
+            rows.append(
+              {
+                "metric_name": "core_radar.gen8.memoryStats.sections",
+                "metric_value": section["total_kb"],
+                "metric_tags": {**tags, "type": "total_kb"},
+              }
+            )
+            rows.append(
+              {
+                "metric_name": "core_radar.gen8.memoryStats.sections",
+                "metric_value": section["used_kb"],
+                "metric_tags": {**tags, "type": "used_kb"},
+              }
+            )
+
+          for module in module_breakdown:
+            tags = {**base_tags, "module": module["module_name"]}
+            for metric_type in ("code_kb", "data_kb", "bss_kb", "other_kb", "total_kb"):
+              rows.append(
+                {
+                  "metric_name": "core_radar.gen8.memoryStats.modules",
+                  "metric_value": module[metric_type],
+                  "metric_tags": {**tags, "type": metric_type},
+                }
+              )
+
+          for flash in flash_memory:
+            tags = {**base_tags, "name": flash["name"]}
+            if "used_mb" in flash:
+              rows.append(
+                {
+                  "metric_name": "core_radar.gen8.memoryStats.flash",
+                  "metric_value": flash["total_mb"],
+                  "metric_tags": {**tags, "type": "total_mb"},
+                }
+              )
+              rows.append(
+                {
+                  "metric_name": "core_radar.gen8.memoryStats.flash",
+                  "metric_value": flash["used_mb"],
+                  "metric_tags": {**tags, "type": "used_mb"},
+                }
+              )
+            elif "used_kb" in flash:
+              rows.append(
+                {
+                  "metric_name": "core_radar.gen8.memoryStats.flash",
+                  "metric_value": flash["span_kb"],
+                  "metric_tags": {**tags, "type": "span_kb"},
+                }
+              )
+              rows.append(
+                {
+                  "metric_name": "core_radar.gen8.memoryStats.flash",
+                  "metric_value": flash["used_kb"],
+                  "metric_tags": {**tags, "type": "used_kb"},
+                }
+              )
+
+          return rows
+
+        if not source_root.exists():
+          print(f"Source root not found: {source_root}")
+          rows = []
+        else:
+          memory_path = find_first(source_root, "memoryStats.txt")
+          flash_path = find_first(source_root, "flash_memory_stats.txt")
+
+          if not memory_path or not flash_path:
+            missing = []
+            if not memory_path:
+              missing.append("memoryStats.txt")
+            if not flash_path:
+              missing.append("flash_memory_stats.txt")
+            print(f"Missing metrics source file(s): {', '.join(missing)}")
+            rows = []
+          else:
+            memory_sections, module_breakdown = parse_memory_stats(memory_path)
+            flash_memory = parse_flash_stats(flash_path)
+            rows = build_metric_rows(memory_sections, module_breakdown, flash_memory)
+
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        with output_file.open("w", encoding="utf-8") as out:
+          for row in rows:
+            out.write(json.dumps(row, sort_keys=True) + "\n")
+
+        print(f"Generated {len(rows)} metric row(s) at {output_file.resolve()}")
+        print(f"[dry-run] variant tag used for publish rows: {metric_variant}")
+
+        if rows:
+          metric_name_counts = {}
+          for row in rows:
+            metric_name = row.get("metric_name", "unknown")
+            metric_name_counts[metric_name] = metric_name_counts.get(metric_name, 0) + 1
+
+          print("[dry-run] Metric row counts by metric_name:")
+          for name in sorted(metric_name_counts.keys()):
+            print(f"[dry-run]   {name}: {metric_name_counts[name]}")
+
+          if preview_limit > 0:
+            print(f"[dry-run] Showing first {min(preview_limit, len(rows))} row(s):")
+            for idx, row in enumerate(rows[:preview_limit], start=1):
+              print(f"[dry-run] {idx:03d}: {json.dumps(row, sort_keys=True)}")
+
+            if len(rows) > preview_limit:
+              print(f"[dry-run] ... {len(rows) - preview_limit} additional row(s) not shown")
+        else:
+          print("[dry-run] No metric rows generated")
+
+        github_output = os.environ.get("GITHUB_OUTPUT")
+        if not github_output:
+          sys.exit(1)
+
+        with open(github_output, "a", encoding="utf-8") as fh:
+          fh.write(f"metric-count={len(rows)}\n")
+          fh.write(f"output-file={output_file.resolve()}\n")
+        PY
+      env:
+        SOURCE_ROOT: ${{ inputs.source-root }}
+        VARIANT: ${{ inputs.variant }}
+        BUILD_NAME: ${{ inputs.build-name }}
+        OUTPUT_FILE: ${{ inputs.output-file }}
+        PREVIEW_LIMIT: ${{ inputs.preview-limit }}
+
+    - name: Publish metrics to PostgreSQL
+      if: ${{ inputs.db-publish-enabled == 'true' && steps.generate.outputs.metric-count != '0' && inputs.metrics-db-user != '' && inputs.metrics-db-password != '' && inputs.metrics-db-host != '' && inputs.metrics-db-port != '' && inputs.metrics-db-name != '' }}
+      uses: ./.github/actions/publish-jsonl-to-postgres
+      with:
+        metrics-file: ${{ steps.generate.outputs.output-file }}
+        metrics-db-user: ${{ inputs.metrics-db-user }}
+        metrics-db-password: ${{ inputs.metrics-db-password }}
+        metrics-db-host: ${{ inputs.metrics-db-host }}
+        metrics-db-port: ${{ inputs.metrics-db-port }}
+        metrics-db-name: ${{ inputs.metrics-db-name }}
+        commit-id: ${{ inputs.commit-id }}
+        branch: ${{ inputs.branch }}
+        project-name: ${{ inputs.project-name }}
+        tag: ${{ inputs.tag }}
+        pipeline-name: ${{ inputs.pipeline-name }}
+        build-no: ${{ inputs.build-no }}
+        build-url: ${{ inputs.build-url }}
+
+    - name: Note skipped DB publish
+      if: ${{ inputs.db-publish-enabled == 'true' && (inputs.metrics-db-user == '' || inputs.metrics-db-password == '' || inputs.metrics-db-host == '' || inputs.metrics-db-port == '' || inputs.metrics-db-name == '') }}
+      shell: bash
+      run: |
+        echo "::notice::METRICS_DB_USER/METRICS_DB_PASSWORD/METRICS_DB_HOST/METRICS_DB_PORT/METRICS_DB_NAME are not configured; skipping PostgreSQL metrics publish."

@@ -1,0 +1,611 @@
+name: Reusable Smoke Test Workflow
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: 'Name of the build artifact to download (overridden per-variant by matrix-json)'
+        required: false
+        type: string
+        default: ''
+      artifact-path:
+        description: 'Path where artifact should be extracted'
+        required: false
+        type: string
+        default: 'bazel-bin/outputs'
+      quickflash-script-path:
+        description: 'Path to RunQuickFlash.sh within the artifact'
+        required: false
+        type: string
+        default: 'quickflash/RunQuickFlash.sh'
+      quickflash-variant:
+        description: 'QuickFlash variant string (e.g., flr8_satellite_can) (overridden per-variant by matrix-json)'
+        required: false
+        type: string
+        default: ''
+      smoke-test-report-path:
+        description: 'Comma-separated smoke report paths. Absolute paths are used as-is; relative paths are resolved against the runner user home/workspace.'
+        required: false
+        type: string
+        default: ''
+      runner-labels:
+        description: 'Self-hosted runner labels as JSON array (e.g., ["self-hosted","linux","SmokeTest","Gen8"])'
+        required: false
+        type: string
+        default: '["self-hosted","linux","SmokeTest"]'
+      timeout-minutes:
+        description: 'Maximum smoke-test runtime in minutes (starts after runner is assigned)'
+        required: false
+        type: number
+        default: 30
+      matrix-json:
+        description: 'Optional JSON array for internal matrix (e.g., [{"variant":"flr8","artifact_name":"build-flr8.zip","quickflash_variant":"flr8_satellite_can","smoke_test_report_path":"wrsd_smoke_test_reports/flr8_Smoke_Test.html, wrsd_smoke_test_reports/flr8_dashboard.json"}])'
+        required: false
+        type: string
+        default: ''
+      pr-number:
+        description: 'Pull request number for failure label management'
+        required: false
+        type: string
+        default: ''
+      nightly:
+        description: 'When true, generate and print smoke metrics payloads for publish flow'
+        required: false
+        type: boolean
+        default: false
+      commit-sha:
+        description: 'Commit SHA for this run (provided by caller)'
+        required: false
+        type: string
+        default: ${{ github.sha }}
+      artifact-run-id:
+        description: 'Workflow run ID to resolve build artifacts from (defaults to current run)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      PERCEPTION_DB_USER:
+        required: false
+      PERCEPTION_DB_PASSWORD:
+        required: false
+      PERCEPTION_DB_HOST:
+        required: false
+      PERCEPTION_DB_PORT:
+        required: false
+      PERCEPTION_DB_NAME:
+        required: false
+      SID_GITHUB_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  smoke-test:
+    name: Smoke Test (${{ matrix.variant || matrix.quickflash_variant || inputs.quickflash-variant }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.matrix-json) }}
+    permissions:
+      contents: read
+      actions: write
+      issues: write
+      pull-requests: write
+    runs-on: ${{ fromJson(inputs.runner-labels) }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - name: Checkout Core_Radar_Gen8_iND13400
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.commit-sha }}
+
+      - name: Checkout Core_Radar_CICD
+        uses: actions/checkout@v5
+        with:
+          repository: GPO/Core_Radar_CICD
+          ref: v0.3.0
+          path: Core_Radar_CICD
+          token: ${{ secrets.SID_GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Select best available artifact
+        id: artifact_source
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          REQUESTED_NAME="${{ matrix.artifact_name || inputs.artifact-name }}"
+          REQUESTED_NO_ZIP="${REQUESTED_NAME%.zip}"
+          REQUESTED_ZIP="${REQUESTED_NO_ZIP}.zip"
+          BASE_NAME="${REQUESTED_NO_ZIP}"
+          HAS_ATTEMPT_SUFFIX="false"
+          CURRENT_ATTEMPT="${GITHUB_RUN_ATTEMPT:-1}"
+          TARGET_RUN_ID="${{ inputs.artifact-run-id }}"
+
+          if [ -z "${TARGET_RUN_ID}" ]; then
+            TARGET_RUN_ID="${GITHUB_RUN_ID}"
+          fi
+
+          if [[ "${REQUESTED_NO_ZIP}" =~ ^(.+)-[0-9]+$ ]]; then
+            BASE_NAME="${BASH_REMATCH[1]}"
+            HAS_ATTEMPT_SUFFIX="true"
+          fi
+
+          ARTIFACT_NAMES=""
+          PAGE=1
+          while true; do
+            API_URL="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/runs/${TARGET_RUN_ID}/artifacts?per_page=100&page=${PAGE}"
+            RESPONSE=$(curl -fsSL \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "${API_URL}")
+
+            PAGE_NAMES=$(printf '%s' "${RESPONSE}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("\n".join(a["name"] for a in d.get("artifacts", []) if not a.get("expired", False)))')
+            PAGE_COUNT=$(printf '%s' "${RESPONSE}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("artifacts", [])))')
+
+            if [ -n "${PAGE_NAMES}" ]; then
+              if [ -n "${ARTIFACT_NAMES}" ]; then
+                ARTIFACT_NAMES+=$'\n'
+              fi
+              ARTIFACT_NAMES+="${PAGE_NAMES}"
+            fi
+
+            if [ "${PAGE_COUNT}" -lt 100 ]; then
+              break
+            fi
+            PAGE=$((PAGE + 1))
+          done
+
+          ARTIFACT_NAMES=$(printf '%s\n' "${ARTIFACT_NAMES}" | sed '/^$/d' | sort -u)
+          TOTAL_FOUND=$(printf '%s\n' "${ARTIFACT_NAMES}" | sed '/^$/d' | wc -l | tr -d ' ')
+          echo "Discovered ${TOTAL_FOUND} non-expired artifacts in run ${TARGET_RUN_ID}."
+          if [ "${TOTAL_FOUND}" -gt 0 ]; then
+            echo "Artifact names (first 30):"
+            printf '%s\n' "${ARTIFACT_NAMES}" | head -n 30
+          fi
+
+          SELECTED_NAME=""
+          if printf '%s\n' "${ARTIFACT_NAMES}" | grep -Fxq "${REQUESTED_NAME}"; then
+            SELECTED_NAME="${REQUESTED_NAME}"
+          elif printf '%s\n' "${ARTIFACT_NAMES}" | grep -Fxq "${REQUESTED_ZIP}"; then
+            SELECTED_NAME="${REQUESTED_ZIP}"
+          else
+            ESCAPED_BASE=$(printf '%s' "${BASE_NAME}" | sed -E 's/[][(){}.^$*+?|\\]/\\\\&/g')
+            BEST_ATTEMPT=-1
+
+            while IFS= read -r NAME; do
+              [ -z "${NAME}" ] && continue
+              if [[ "${NAME}" =~ ^${ESCAPED_BASE}-([0-9]+)(\.zip)?$ ]]; then
+                ATTEMPT="${BASH_REMATCH[1]}"
+                if (( ATTEMPT <= CURRENT_ATTEMPT && ATTEMPT > BEST_ATTEMPT )); then
+                  BEST_ATTEMPT="${ATTEMPT}"
+                  SELECTED_NAME="${NAME}"
+                fi
+              fi
+            done <<< "${ARTIFACT_NAMES}"
+          fi
+
+          if [ -n "${SELECTED_NAME}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "artifact_name=${SELECTED_NAME}" >> "$GITHUB_OUTPUT"
+            echo "source_run_id=${TARGET_RUN_ID}" >> "$GITHUB_OUTPUT"
+            echo "Selected artifact '${SELECTED_NAME}' (requested '${REQUESTED_NAME}', run attempt ${CURRENT_ATTEMPT}, has_attempt_suffix=${HAS_ATTEMPT_SUFFIX})."
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "artifact_name=${REQUESTED_NAME}" >> "$GITHUB_OUTPUT"
+            echo "source_run_id=${TARGET_RUN_ID}" >> "$GITHUB_OUTPUT"
+            echo "No artifact found for requested '${REQUESTED_NAME}' (base '${BASE_NAME}', run attempt ${CURRENT_ATTEMPT}, has_attempt_suffix=${HAS_ATTEMPT_SUFFIX})."
+          fi
+
+      - name: Download selected build artifact
+        if: steps.artifact_source.outputs.present == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.artifact_source.outputs.source_run_id }}
+          name: ${{ steps.artifact_source.outputs.artifact_name }}
+          path: ${{ inputs.artifact-path }}
+
+      - name: Check build artifact availability
+        id: artifact_check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ARTIFACT_NAME="${{ steps.artifact_source.outputs.artifact_name }}"
+
+          if [ "${{ steps.artifact_source.outputs.present }}" = "true" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "Build artifact '${ARTIFACT_NAME}' is available; continuing smoke test."
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping smoke test for '${ARTIFACT_NAME}' because the build artifact is missing."
+          fi
+
+      - name: GPIO Cleanup
+        if: steps.artifact_check.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          GPIO_DEV="/dev/gpiochip4"
+
+          echo "[CLEANUP] Verifying access to GPIO device..."
+
+          if [ ! -e "$GPIO_DEV" ]; then
+            echo "[ERROR] GPIO device $GPIO_DEV does not exist"
+            exit 1
+          fi
+
+          if [ ! -r "$GPIO_DEV" ] && [ ! -w "$GPIO_DEV" ]; then
+            echo "[ERROR] No read/write access to $GPIO_DEV"
+            echo "[FIX] Add the runner user to the gpio group:"
+            echo "  sudo usermod -a -G gpio $(whoami)"
+            echo "  Then log out and log back in for changes to take effect"
+            exit 1
+          fi
+
+          echo "[CLEANUP] Checking for processes holding GPIO..."
+
+          PIDS=$(lsof -t "$GPIO_DEV" 2>/dev/null || true)
+
+          if [ -n "$PIDS" ]; then
+            for pid in $PIDS; do
+              echo "[CLEANUP] Killing PID $pid holding GPIO"
+              kill -9 "$pid" || true
+            done
+          else
+            echo "[CLEANUP] No processes holding GPIO"
+          fi
+
+          # Extra safety
+          pkill -9 -f power_on.py || true
+          pkill -9 -f lgpio || true
+
+          sleep 1
+
+          if lsof "$GPIO_DEV" 2>/dev/null | grep -q .; then
+            echo "[ERROR] GPIO still busy after cleanup!"
+            exit 1
+          fi
+
+          echo "[CLEANUP] GPIO is free ✅"
+
+      - name: Run QuickFlash
+        id: quickflash1
+        if: always() && !cancelled() && (steps.artifact_check.outputs.present == 'true')
+        uses: ./.github/actions/run-quickflash
+        with:
+          artifact-path: ${{ inputs.artifact-path }}
+          quickflash-script-path: ${{ inputs.quickflash-script-path }}
+          quickflash-variant: ${{ matrix.quickflash_variant || inputs.quickflash-variant }}
+
+      - name: Run QuickFlash Again
+        id: quickflash2
+        if: always() && !cancelled() && (steps.artifact_check.outputs.present == 'true' && steps.quickflash1.outcome == 'success')
+        uses: ./.github/actions/run-quickflash
+        with:
+          artifact-path: ${{ inputs.artifact-path }}
+          quickflash-script-path: ${{ inputs.quickflash-script-path }}
+          quickflash-variant: ${{ matrix.quickflash_variant || inputs.quickflash-variant }}
+
+      - name: Run smoke tests
+        id: smoke_tests
+        if: steps.artifact_check.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          QUICKFLASH_VARIANT="${{ matrix.quickflash_variant || inputs.quickflash-variant }}"
+          BUILD_VARIANT="${QUICKFLASH_VARIANT}"
+          ARTIFACT_ROOT="${GITHUB_WORKSPACE}/${{ inputs.artifact-path }}"
+          TEST_DURATION="60"
+          RUN_COMMENT="${GITHUB_REF_NAME}_${{ inputs.commit-sha }}"
+          SPEC_FILE="${ARTIFACT_ROOT}/tools/CI/WRSD/smoke_test_spec_gen8.yaml"
+          LOG_PATH="${GITHUB_WORKSPACE}/smoke_test.log"
+
+          cd ${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/
+
+          echo "[INFO] Setting up smoke test environment"
+          ./setup/setup.sh
+          chmod +x run_smoke_test.sh
+
+          echo "[INFO] Running smoke test"
+
+          stdbuf -oL -eL ./run_smoke_test.sh -- \
+            --spec "${SPEC_FILE}" \
+            -o "Gen8_${QUICKFLASH_VARIANT}_Smoke_Test" \
+            -v "${QUICKFLASH_VARIANT}" \
+            -t "${TEST_DURATION}" \
+            -c "${RUN_COMMENT}" \
+            -e "eth0" \
+            -L "${ARTIFACT_ROOT}/bazel-bin/outputs/${BUILD_VARIANT}/streamdefs/wiresharkDissector.lua" \
+            -E "${ARTIFACT_ROOT}/bazel-bin/outputs/${BUILD_VARIANT}/r52App.elf" \
+            2>&1 | tee "${LOG_PATH}"
+
+      - name: Resolve smoke test report path
+        id: report_path
+        if: always() && steps.artifact_check.outputs.present == 'true' && steps.quickflash2.outcome == 'success' && steps.smoke_tests.outcome != 'skipped'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          LOG_PATH="${GITHUB_WORKSPACE}/smoke_test.log"
+          CANDIDATE_PATH="${{ matrix.smoke_test_report_path || inputs.smoke-test-report-path }}"
+          RESOLVED_PATH=""
+          RESOLVED_PATHS=()
+
+          # Resolve each configured candidate directly, then against portable runner prefixes.
+          if [ -n "${CANDIDATE_PATH}" ]; then
+            IFS=',' read -r -a CANDIDATE_PATHS <<< "${CANDIDATE_PATH}"
+            for candidate in "${CANDIDATE_PATHS[@]}"; do
+              candidate=$(printf '%s' "${candidate}" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+              [ -z "${candidate}" ] && continue
+
+              resolved=""
+              if [ -f "${candidate}" ]; then
+                resolved="${candidate}"
+              else
+                for prefix in "${HOME}" "${GITHUB_WORKSPACE}" "$(pwd)"; do
+                  [ -z "${prefix}" ] && continue
+                  if [ -f "${prefix}/${candidate}" ]; then
+                    resolved="${prefix}/${candidate}"
+                    break
+                  fi
+                done
+              fi
+
+              if [ -n "${resolved}" ]; then
+                RESOLVED_PATHS+=("${resolved}")
+              else
+                echo "::notice::Configured smoke test report not found: ${candidate}"
+              fi
+            done
+          fi
+
+          if [ -f "${LOG_PATH}" ]; then
+            RESOLVED_PATH=$(sed -nE 's/.*HTML Report written at[[:space:]]+(.+)$/\1/p' "${LOG_PATH}" | tail -n1 || true)
+            RESOLVED_PATH=$(printf '%s' "${RESOLVED_PATH}" | sed -E 's/[[:space:]]+$//' || true)
+            if [ -n "${RESOLVED_PATH}" ] && [ -f "${RESOLVED_PATH}" ]; then
+              REPORT_ALREADY_RESOLVED="false"
+              for resolved in "${RESOLVED_PATHS[@]}"; do
+                if [ "${resolved}" = "${RESOLVED_PATH}" ]; then
+                  REPORT_ALREADY_RESOLVED="true"
+                  break
+                fi
+              done
+              if [ "${REPORT_ALREADY_RESOLVED}" = "false" ]; then
+                RESOLVED_PATHS+=("${RESOLVED_PATH}")
+              fi
+            fi
+          fi
+
+          # The smoke runner may generate an HTML name that differs from the caller's
+          # expected name. Include all reports generated after this run started.
+          REPORT_DIRECTORY="${HOME}/wrsd_smoke_test_reports"
+          if [ -f "${LOG_PATH}" ] && [ -d "${REPORT_DIRECTORY}" ]; then
+            while IFS= read -r generated_report; do
+              REPORT_ALREADY_RESOLVED="false"
+              for resolved in "${RESOLVED_PATHS[@]}"; do
+                if [ "${resolved}" = "${generated_report}" ]; then
+                  REPORT_ALREADY_RESOLVED="true"
+                  break
+                fi
+              done
+              if [ "${REPORT_ALREADY_RESOLVED}" = "false" ]; then
+                RESOLVED_PATHS+=("${generated_report}")
+              fi
+            done < <(find "${REPORT_DIRECTORY}" -maxdepth 1 -type f -name '*.html' -newer "${LOG_PATH}" -print)
+          fi
+
+          if [ "${#RESOLVED_PATHS[@]}" -gt 0 ]; then
+            echo "path=${RESOLVED_PATHS[0]}" >> "$GITHUB_OUTPUT"
+            {
+              echo "paths<<EOF"
+              printf '%s\n' "${RESOLVED_PATHS[@]}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+          # Surface the platformHealth/dashboard JSON separately so downstream steps
+          # don't have to guess its filename from the HTML report path.
+          for resolved in "${RESOLVED_PATHS[@]}"; do
+            if [[ "${resolved}" == *.json ]]; then
+              echo "json_path=${resolved}" >> "$GITHUB_OUTPUT"
+              break
+            fi
+          done
+
+      - name: Note missing smoke test report
+        if: always() && steps.artifact_check.outputs.present == 'true' && steps.quickflash2.outcome == 'success' && steps.report_path.outputs.path == ''
+        shell: bash
+        run: |
+          echo "::notice::Smoke test HTML report not found. Skipping report upload."
+
+      - name: Upload smoke test reports
+        uses: actions/upload-artifact@v6
+        if: always() && steps.artifact_check.outputs.present == 'true' && steps.quickflash2.outcome == 'success' && steps.report_path.outputs.path != ''
+        with:
+          name: smoke-test-report-${{ matrix.quickflash_variant || inputs.quickflash-variant }}.zip
+          path: ${{ steps.report_path.outputs.paths }}
+          retention-days: 30
+
+      - name: Publish Metrics
+        id: publish_metrics
+        if: always() && inputs.nightly && steps.artifact_check.outputs.present == 'true' && steps.quickflash2.outcome == 'success'
+        uses: ./.github/actions/publish-smoke-metrics
+        env:
+          DB_DEBUG_MODE: "false"  # must be job-level so it propagates into composite actions
+        with:
+          quickflash-variant: ${{ matrix.quickflash_variant || inputs.quickflash-variant }}
+          report-path: ${{ steps.report_path.outputs.path }}
+          platform-health-json-path: ${{ steps.report_path.outputs.json_path }}
+          log-path: ${{ github.workspace }}/smoke_test.log
+          output-file: smoke-metrics/${{ matrix.quickflash_variant || inputs.quickflash-variant }}.jsonl
+          db-publish-enabled: ${{ inputs.nightly }}
+          metrics-db-user: ${{ secrets.PERCEPTION_DB_USER }}
+          metrics-db-password: ${{ secrets.PERCEPTION_DB_PASSWORD }}
+          metrics-db-host: ${{ secrets.PERCEPTION_DB_HOST }}
+          metrics-db-port: ${{ secrets.PERCEPTION_DB_PORT }}
+          metrics-db-name: ${{ secrets.PERCEPTION_DB_NAME }}
+          commit-id: ${{ inputs.commit-sha }}
+          branch: ${{ github.ref_name }}
+          project-name: ${{ github.event.repository.name }}
+          tag: ''
+          pipeline-name: ${{ github.workflow }}
+          build-no: ${{ github.run_number }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Report smoke test results
+        id: report_results
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VARIANT="${{ matrix.quickflash_variant || inputs.quickflash-variant }}"
+          ARTIFACT_PRESENT="${{ steps.artifact_check.outputs.present }}"
+          QF1_OUTCOME="${{ steps.quickflash1.outcome }}"
+          QF2_OUTCOME="${{ steps.quickflash2.outcome }}"
+          ST_OUTCOME="${{ steps.smoke_tests.outcome }}"
+          SCRIPT_RESULT="UNKNOWN"
+          PASSING_COUNT="N/A"
+          FAILING_COUNT="N/A"
+          COUNTS_LINE=""
+          FAILED_TESTS_BLOCK=""
+          TEST_SUMMARY_BLOCK=""
+          POWER_UP_FAILURE_BLOCK=""
+          LOG_PATH="${GITHUB_WORKSPACE}/smoke_test.log"
+          RESOLVED_PATH="${{ steps.report_path.outputs.path }}"
+
+          # Make sure the radar is turned off, there are still some corner cases where the radar is left on after a failed smoke test run.
+          python3 ${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/libs/power_off.py
+
+          if [ "${QF2_OUTCOME}" != "success" ]; then
+            SCRIPT_RESULT="SKIPPED"
+          fi
+
+          # Parse smoke test summary counts only from the current run's log.
+          if [ "${QF2_OUTCOME}" = "success" ] && [ "${ST_OUTCOME}" != "skipped" ] && [ -f "${LOG_PATH}" ]; then
+            RESULT_LINE=$(grep -E '^Result:[[:space:]]*(PASS|FAIL)' "${LOG_PATH}" | tail -n1 || true)
+            if [ -n "${RESULT_LINE}" ]; then
+              SCRIPT_RESULT=$(printf '%s' "${RESULT_LINE}" | sed -E 's/^Result:[[:space:]]*(PASS|FAIL).*/\1/')
+            fi
+
+            COUNTS_LINE=$(grep -E 'Passing:[[:space:]]*[0-9]+[[:space:]]+Failing:[[:space:]]*[0-9]+' "${LOG_PATH}" | tail -n1 || true)
+            if [ -n "$COUNTS_LINE" ]; then
+              PASSING_COUNT=$(printf '%s' "$COUNTS_LINE" | sed -E 's/.*Passing:[[:space:]]*([0-9]+).*/\1/')
+              FAILING_COUNT=$(printf '%s' "$COUNTS_LINE" | sed -E 's/.*Failing:[[:space:]]*([0-9]+).*/\1/')
+            fi
+
+            FAILED_TESTS_BLOCK=$(awk '
+              BEGIN{capture=0}
+              /^-- Failed Tests --$/ {capture=1}
+              capture {print}
+              capture && (/^======================$/ || /^\*{10,}$/) {exit}
+            ' "${LOG_PATH}" || true)
+
+            TEST_SUMMARY_BLOCK=$(awk '
+              BEGIN{capture=0}
+              /^===== TEST SUMMARY =====$/ {capture=1}
+              capture {print}
+              capture && /^=+$/ && !/^===== TEST SUMMARY =====$/ {exit}
+            ' "${LOG_PATH}" || true)
+
+            POWER_UP_FAILURE_BLOCK=$(awk '
+              /Current draw did not reach expected level of/ {capture=1}
+              /ERROR: Radar did not come up after attempts\. Test will record power-up failures!/ {capture=1}
+              capture {print}
+              /Failed power-up\/comm checks!/ {exit}
+            ' "${LOG_PATH}" || true)
+
+            if [ "$SCRIPT_RESULT" = "UNKNOWN" ] && [ -n "${POWER_UP_FAILURE_BLOCK}" ]; then
+              SCRIPT_RESULT="FAIL"
+              PASSING_COUNT="0"
+              FAILING_COUNT="1"
+              if [ -z "${FAILED_TESTS_BLOCK}" ]; then
+                FAILED_TESTS_BLOCK=$(printf '%s\n' "-- Failed Tests --" "Smoke test power-up/communication failure" "${POWER_UP_FAILURE_BLOCK}" "************************")
+              fi
+            fi
+          fi
+
+            # Also print failing tests to the console for easier debugging
+            if [ -n "${FAILED_TESTS_BLOCK}" ]; then
+              echo "--------------------------------------------------"
+              echo "Smoke Test - Failed Tests Summary (${FAILING_COUNT}):"
+              echo "--------------------------------------------------"
+              printf '%s\n' "${FAILED_TESTS_BLOCK}" | sed -E '/^[[:space:]]*([-=*]{3,})[[:space:]]*$/d; /^-- Failed Tests --$/d' | sed -n '1,250p'
+              echo "--------------------------------------------------"
+            fi
+
+            # Print the TEST SUMMARY block for context (falls back to log tail if not found)
+            if [ -n "${TEST_SUMMARY_BLOCK}" ]; then
+              echo "Smoke Test - Test Summary:"
+              printf '%s\n' "${TEST_SUMMARY_BLOCK}"
+            elif [ -f "${LOG_PATH}" ]; then
+              echo "TEST SUMMARY block not found; showing last 200 lines of ${LOG_PATH}:"
+              tail -n 200 "${LOG_PATH}" || true
+            fi
+          {
+            if [ "${ARTIFACT_PRESENT}" = "false" ]; then
+              echo "⏭️ **Skipped (Build Artifact Missing)**"
+            elif [ "$QF1_OUTCOME" = "success" ] && [ "$QF2_OUTCOME" = "success" ] && [ "$ST_OUTCOME" = "success" ] && [ "$SCRIPT_RESULT" = "PASS" ]; then
+              echo "✅ **All Tests Passed**"
+            else
+              echo "❌ **Tests Failed**"
+            fi
+            echo ""
+            echo "| Stage | Status |"
+            echo "|-------|--------|"
+            echo "| QuickFlash 1 | $QF1_OUTCOME |"
+            echo "| QuickFlash 2 | $QF2_OUTCOME |"
+            echo "| Smoke Tests | $ST_OUTCOME |"
+            echo "| Script Result | $SCRIPT_RESULT |"
+            echo "| Passing Tests | $PASSING_COUNT |"
+            echo "| Failing Tests | $FAILING_COUNT |"
+
+            if [ -n "${TEST_SUMMARY_BLOCK}" ]; then
+              echo ""
+              echo "<details><summary>Test Summary</summary>"
+              echo ""
+              echo '```'
+              printf '%s\n' "${TEST_SUMMARY_BLOCK}"
+              echo '```'
+              echo "</details>"
+            fi
+
+            if [ -n "${FAILED_TESTS_BLOCK}" ]; then
+              echo ""
+              echo "<details><summary>Failed Smoke Tests (${FAILING_COUNT})</summary>"
+              echo ""
+              echo '```'
+              # Remove decorative separator lines (====, ****, --- etc.) and the
+              # literal header line "-- Failed Tests --" to keep only failing rows.
+              printf '%s\n' "${FAILED_TESTS_BLOCK}" | sed -E '/^[[:space:]]*([-=*]{3,})[[:space:]]*$/d; /^-- Failed Tests --$/d' | sed -n '1,250p'
+              echo '```'
+              echo "</details>"
+            fi
+
+          } >> $GITHUB_STEP_SUMMARY
+
+          if [ "${ARTIFACT_PRESENT}" != "false" ] && [ "$QF1_OUTCOME" = "success" ] && [ "$QF2_OUTCOME" = "success" ] && { [ "$ST_OUTCOME" != "success" ] || [ "$SCRIPT_RESULT" = "FAIL" ]; }; then
+            exit 1
+          fi
+
+      - name: Update smoke test failure label
+        if: always() && inputs.pr-number != '' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: ./.github/actions/update-failure-label
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ inputs.pr-number }}
+          failed-flag: ${{ steps.quickflash1.outcome != 'success' || steps.quickflash2.outcome != 'success' || steps.smoke_tests.outcome != 'success' || steps.report_results.outcome != 'success' }}
+          label-name: smoke test failed - ${{ matrix.quickflash_variant || inputs.quickflash-variant }}
+          label-description: Indicates this smoke test variant failed on the latest PR run

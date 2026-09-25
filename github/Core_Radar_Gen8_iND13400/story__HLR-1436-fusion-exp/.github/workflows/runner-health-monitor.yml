@@ -1,0 +1,192 @@
+# ============================================================
+# Runner Health Monitor
+# ============================================================
+# Schedule : Daily 06:00 UTC (01:00 AM EST)
+# Manual   : workflow_dispatch with configurable inputs
+#
+# Jobs:
+#   1. monitor-and-report  — runs runner_monitor.py, writes step summary,
+#                            uploads artifacts + pages artifact
+#   2. deploy-pages        — publishes report.html to GitHub Pages
+#   3. send-notifications  — dispatches HTML email via Aptiv SMTP relay
+#
+# Required repo setup:
+#   • Settings → Pages → Source: "GitHub Actions"
+#   • GITHUB_TOKEN auto-provided; no extra secrets needed for SMTP
+#     (bulkmail.aptiv.com:25 is an unauthenticated internal relay)
+# ============================================================
+
+name: Runner Health Monitor
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # 06:00 UTC = 01:00 AM EST every day
+  workflow_dispatch:
+    inputs:
+      days_back:
+        description: "Look-back window (days)"
+        type: string
+        default: "2"
+      runner_group:
+        description: "Runner group name"
+        type: string
+        default: "sh-advancedradar-lab"
+      send_email:
+        description: "Send email notification"
+        type: boolean
+        default: true
+      email_recipients:
+        description: "Email recipients (comma-separated)"
+        type: string
+        default: "hrithik.singh@aptiv.com"
+      publish_pages:
+        description: "Deploy report to GitHub Pages"
+        type: boolean
+        default: true
+
+# Prevent concurrent deployments from clobbering each other.
+concurrency:
+  group: runner-health-monitor
+  cancel-in-progress: false
+
+permissions:
+  actions: read       # read workflow runs + jobs
+  contents: read      # checkout
+  pages: write        # deploy GitHub Pages
+  id-token: write     # OIDC token for pages deploy
+
+jobs:
+  # ──────────────────────────────────────────────────────────
+  # Job 1: Run the monitoring engine & generate all outputs
+  # ──────────────────────────────────────────────────────────
+  monitor-and-report:
+    name: Monitor Runners & Generate Report
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: runner-health-report-${{ github.run_number }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: tools/runner_health/requirements.txt
+
+      - name: Install dependencies
+        run: pip install --quiet -r tools/runner_health/requirements.txt
+
+      - name: Create output directory
+        run: mkdir -p runner-health-report
+
+      - name: Run Runner Health Monitor
+        env:
+          # Token with actions:read — the built-in GITHUB_TOKEN is sufficient.
+          GITHUB_TOKEN:      ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_API_URL:    ${{ github.api_url }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RUNNER_GROUP:      ${{ inputs.runner_group || 'sh-advancedradar-lab' }}
+          DAYS_BACK:         ${{ inputs.days_back || '2' }}
+          FAIL_THRESHOLD:    "0.25"
+          MAX_WORKERS:       "20"
+          OUTPUT_DIR:        runner-health-report
+          # PAGES_URL is not known yet; injected by send-notifications after deploy.
+        run: python tools/runner_health/runner_monitor.py
+
+      - name: Write Step Summary
+        if: always()
+        run: |
+          if [ -f runner-health-report/summary.md ]; then
+            cat runner-health-report/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Prepare GitHub Pages artifact (index.html)
+        run: cp runner-health-report/report.html runner-health-report/index.html
+
+      - name: Upload Pages artifact
+        id: upload-pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: runner-health-report
+
+      - name: Archive report artifacts (30-day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-health-report-${{ github.run_number }}
+          path: runner-health-report/
+          retention-days: 30
+
+  # ──────────────────────────────────────────────────────────
+  # Job 2: Deploy to GitHub Pages
+  # ──────────────────────────────────────────────────────────
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: monitor-and-report
+    # Run on schedule (inputs.publish_pages is '') OR when explicitly true.
+    if: inputs.publish_pages != 'false'
+    runs-on: ubuntu-latest
+    # Exposes the live URL as a deployment environment link.
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+  # ──────────────────────────────────────────────────────────
+  # Job 3: Send email notification via Aptiv SMTP relay
+  # ──────────────────────────────────────────────────────────
+  send-notifications:
+    name: Send Email Notification
+    needs: [monitor-and-report, deploy-pages]
+    # bulkmail.aptiv.com is only reachable from Aptiv-networked self-hosted runners.
+    if: >
+      always() &&
+      needs.monitor-and-report.result == 'success' &&
+      inputs.send_email != 'false'
+    runs-on: gh-injected-gpo-linux-medium
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: runner-health-report-${{ github.run_number }}
+          path: runner-health-report
+
+      - name: Send email
+        env:
+          # ── Aptiv internal SMTP relay (no authentication required) ──
+          SMTP_SERVER:    bulkmail.aptiv.com
+          SMTP_PORT:      "25"
+          EMAIL_FROM:     "DevSecOps <no_reply@aptiv.com>"
+          # Scheduled runs use the default; manual runs use the workflow input.
+          # hrithik.singh@aptiv.com is always included as a baseline recipient.
+          EMAIL_TO: >-
+            ${{
+              (inputs.email_recipients != '' && inputs.email_recipients != null)
+              && inputs.email_recipients
+              || 'hrithik.singh@aptiv.com'
+            }}
+          EMAIL_BODY_FILE:    runner-health-report/email_body.html
+          GITHUB_REPOSITORY:  ${{ github.repository }}
+          DAYS_BACK:          ${{ inputs.days_back || '2' }}
+          TIMEZONE:           America/Indiana/Indianapolis
+          # Inject the live Pages URL if deployment succeeded; else leave empty.
+          PAGES_URL: ${{ needs.deploy-pages.outputs.page_url || '' }}
+        run: python tools/runner_health/send_email.py

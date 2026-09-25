@@ -1,0 +1,150 @@
+repos:
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: v13.0.1
+  hooks:
+  - id: clang-format
+    name: format C code
+    types_or: [c++, c]
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    exclude: |
+      (?x)^(
+        software/r52/autosar/temp/.*                           | # Indie supplied temporary AUTOSAR files
+        software/r52/drivers/mcal/modules/.*                   | # Indie supplied MCAL drivers
+        software/r52/drivers/cmsis/.*                          | # Indie supplied cmsis drivers
+        software/r52/startup/.*                                | # Indie supplied Startup code
+        software/r52/autosar/config/Appl/GenData/.*            | # VECTOR Autosar folder
+        software/r52/autosar/input/.*                          | # VECTOR Autosar folder
+        software/r52/autosar/config/Config/.*                  | # VECTOR Autosar folder
+        software/r52/autosar/config/Log/.*                     | # VECTOR Autosar folder
+        software/r52/mmic/drivers/mars_api/.*                  | # Indie supplied Mars MMIC API driver
+        software/common/crc32/.*                               | # Indie supplied CRC files
+      )$
+- repo: https://github.com/Warchant/pre-commit-buildifier
+  rev: 0.0.2
+  hooks:
+  - id: buildifier
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+  - id: check-added-large-files
+    name: "Prevent Binary Files"
+    alias: forbid-binary
+    types: ['binary']
+    exclude_types: ['image']
+    args: ['--maxkb=0']
+    exclude: |
+      (?x)^(
+        bazelisk.exe                                           | # Windows Bazelisk
+        bazelisk                                               | # Linux Bazelisk
+        software/r52/autosar/config/Appl/GenData/.*            | # VECTOR Autosar folder
+        software/r52/autosar/input/.*                          | # VECTOR Autosar folder
+        software/r52/autosar/config/Config/.*                  | # VECTOR Autosar folder
+        software/r52/autosar/config/Log/.*                     | # VECTOR Autosar folder
+        tools/lauterbach/ind13400/spi64_chandra.bin            | # Indie supplied Chandra flash binary
+      )$
+  - id: check-merge-conflict
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+  - id: end-of-file-fixer
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+        .*html                                                 | # HTML files
+        .*url                                                  | # URL files
+        software/r52/autosar/config/Appl/GenData/.*            | # VECTOR Autosar folder
+        software/r52/autosar/input/.*                          | # VECTOR Autosar folder
+        software/r52/autosar/config/Config/.*                  | # VECTOR Autosar folder
+        software/r52/autosar/config/Log/.*                     | # VECTOR Autosar folder
+        software/r52/mmic/drivers/mars_api/.*                  | # Indie supplied Mars MMIC API driver
+        software/common.*                                      | # Indie supplied files
+        software/common/crc32/.*                               | # Indie supplied CRC files
+      )$
+  - id: trailing-whitespace
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+        .*html                                                 | # HTML files
+        .*url                                                  | # URL files
+        software/r52/autosar/config/Appl/GenData/.*            | # VECTOR Autosar folder
+        software/r52/autosar/input/.*                          | # VECTOR Autosar folder
+        software/r52/autosar/config/Config/.*                  | # VECTOR Autosar folder
+        software/r52/autosar/config/Log/.*                     | # VECTOR Autosar folder
+        software/r52/mmic/drivers/mars_api/.*                  | # Indie supplied Mars MMIC API driver
+        software/common.*                                      | # Indie supplied files
+        software/common/crc32/.*                               | # Indie supplied CRC files
+      )$
+  - id: check-shebang-scripts-are-executable
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+        software/r52/autosar/config/Appl/GenData/.*            | # VECTOR Autosar folder
+        software/r52/autosar/input/.*                          | # VECTOR Autosar folder
+        software/r52/autosar/config/Config/.*                  | # VECTOR Autosar folder
+        software/r52/autosar/config/Log/.*                     | # VECTOR Autosar folder
+      )$
+  - id: check-executables-have-shebangs
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+        software/r52/autosar/config/Appl/GenData/.*            | # VECTOR Autosar folder
+        software/r52/autosar/input/.*                          | # VECTOR Autosar folder
+        software/r52/autosar/config/Config/.*                  | # VECTOR Autosar folder
+        software/r52/autosar/config/Log/.*                     | # VECTOR Autosar folder
+      )$
+- repo: https://github.com/psf/black
+  rev: 22.8.0
+  hooks:
+  - id: black
+    name: "black: format python"
+    args: [--config, tools/preCommit/pyproject.toml, -t, py310]
+    exclude: |
+      (?x)^(
+      )$
+- repo: https://github.com/pycqa/flake8
+  rev: 7.1.1
+  hooks:
+  - id: flake8
+    name: "flake8: lint python"
+    args: [--config, tools/preCommit/f8_python.ini]
+    types: [python]
+    additional_dependencies: [flake8-docstrings, flake8-bugbear, flake8-builtins, flake8-comprehensions]
+    exclude: |
+      (?x)^(
+        .*__init__.py                                   | # Ignore __init__.py files
+      )$
+  - id: flake8
+    name: "flake8: lint bazel"
+    args: [--config, tools/preCommit/f8_bazel.ini]
+    types: [bazel]
+    additional_dependencies: [flake8-docstrings]
+- repo: local
+  hooks:
+  - id: mh_style
+    name: Format Matlab Code
+    entry: mh_style
+    args: [--process-slx, --fix]
+    files: ^(.*\.(m|slx))$
+    exclude: |
+      (?x)^(
+        # add any exclusions here
+        # example:
+        # support/external/.*   |
+      )$
+    language: python
+    additional_dependencies: [miss-hit-core==0.9.44]
+    verbose: false
+- repo: https://github.com/scop/pre-commit-shfmt
+  rev: v3.10.0-1
+  hooks:
+  - id: shfmt # prebuilt upstream executable
+    name: Format .sh Shell Scripts
+    args: ["-w", "-i", "2", "-bn", "-ci"] # roughly google styleguide
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.28.0
+  hooks:
+  - id: check-github-workflows
+    name: Validate GitHub Workflows
+    files: ^\.github/workflows/.*\.ya?ml$

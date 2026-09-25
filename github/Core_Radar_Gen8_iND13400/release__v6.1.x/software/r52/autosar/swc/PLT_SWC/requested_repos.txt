@@ -1,0 +1,10 @@
+SWC_PLT_Appl_ModeManager
+SWC_PLT_CDD_WdgHandler
+
+# IoHwAb: http_archive name in bb.MODULE.bazel is "IoHwAb_ADC_Appl"
+IoHwAb_ADC_Appl|SWC_PLT_Appl_IoHwAb
+
+# bazel_dep entries — no http_archive URL in bb.MODULE.bazel
+SWC_PLT_Appl_FaultMgr
+SWC_PLT_Appl_Diag
+SWC_PLT_Appl_TimeSync

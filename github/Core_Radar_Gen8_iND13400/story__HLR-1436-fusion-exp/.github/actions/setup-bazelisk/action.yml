@@ -1,0 +1,22 @@
+name: Setup Bazelisk
+description: Setup and validate bazelisk binary for build
+
+outputs:
+  bazelisk-path:
+    description: 'Path to bazelisk binary'
+    value: ${{ steps.setup.outputs.bazelisk_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup bazelisk
+      id: setup
+      shell: bash
+      run: |
+        if [ -f ./bazelisk ]; then
+          chmod +x ./bazelisk
+          echo "bazelisk_path=./bazelisk" >> $GITHUB_OUTPUT
+        else
+          echo "Bazelisk is no longer installed on the image, please use bazelisk from the local repo" >&2
+          exit 1
+        fi

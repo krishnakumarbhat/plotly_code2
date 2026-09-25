@@ -1,0 +1,91 @@
+name: Run QuickFlash
+description: Power cycle the device, flash the selected artifact variant, and power cycle again.
+
+inputs:
+  artifact-path:
+    description: Path where the build artifact was extracted, relative to the workspace.
+    required: true
+  quickflash-script-path:
+    description: Path to the QuickFlash script within the extracted artifact.
+    required: true
+  quickflash-variant:
+    description: QuickFlash variant to flash.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run QuickFlash
+      shell: bash
+      env:
+        ARTIFACT_PATH: ${{ inputs.artifact-path }}
+        QUICKFLASH_SCRIPT_PATH: ${{ inputs.quickflash-script-path }}
+        QUICKFLASH_VARIANT: ${{ inputs.quickflash-variant }}
+      run: |
+        set -euo pipefail
+
+        echo "Working directory: ${GITHUB_WORKSPACE}"
+        echo "Listing contents of working directory:"
+        ls -alh "${GITHUB_WORKSPACE}"
+
+        ARTIFACT_ROOT="${GITHUB_WORKSPACE}/${ARTIFACT_PATH}"
+        QUICKFLASH_LOG="${GITHUB_WORKSPACE}/quickflash.log"
+
+        echo "ARTIFACT_ROOT: ${ARTIFACT_ROOT}"
+        echo "Listing contents of ARTIFACT_ROOT:"
+        ls -alh "${ARTIFACT_ROOT}"
+
+        cd "${ARTIFACT_ROOT}"
+
+        QUICKFLASH_DIR=$(dirname "${QUICKFLASH_SCRIPT_PATH}")
+        QUICKFLASH_SCRIPT=$(basename "${QUICKFLASH_SCRIPT_PATH}")
+
+        echo "QUICKFLASH_DIR: ${QUICKFLASH_DIR}"
+        echo "Listing contents of QUICKFLASH_DIR:"
+        ls -alh "${QUICKFLASH_DIR}"
+
+        cd "${QUICKFLASH_DIR}"
+        chmod +x "${QUICKFLASH_SCRIPT}"
+
+        echo "[INFO] Cycling power on the device..."
+
+        python3 "${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/libs/power_off.py"
+        sleep 2
+        python3 "${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/libs/power_on.py"
+
+        echo "[INFO] Waiting for 1 second before running QuickFlash..."
+        sleep 1
+
+        echo "[INFO] Running QuickFlash"
+        set +e
+        ./"${QUICKFLASH_SCRIPT}" -c ./sensor_config.json -v "${QUICKFLASH_VARIANT}" 2>&1 | tee "${QUICKFLASH_LOG}"
+        QUICKFLASH_STATUS=${PIPESTATUS[0]}
+        set -e
+
+        QF_FAILED=0
+        if [ "${QUICKFLASH_STATUS}" -ne 0 ]; then
+          echo "[ERROR] QuickFlash exited with non-zero exit code: ${QUICKFLASH_STATUS}"
+          QF_FAILED=1
+        fi
+
+        if grep -Eiq 'Failed to flash (variant|profile)|No Response from ECU|Response not received' "${QUICKFLASH_LOG}"; then
+          echo "[ERROR] QuickFlash reported a failure in its output"
+          QF_FAILED=1
+        fi
+
+        if [ "${QF_FAILED}" -ne 0 ]; then
+          echo "[INFO] Waiting 5 seconds after failed QuickFlash attempt"
+          sleep 5
+          echo "[INFO] Turning off radio after failed QuickFlash attempt"
+          python3 "${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/libs/power_off.py"
+          exit "${QUICKFLASH_STATUS}"
+        fi
+
+        echo "[INFO] Power Cycling on the ECU After Flashing..."
+
+        python3 "${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/libs/power_off.py"
+        sleep 2
+        python3 "${GITHUB_WORKSPACE}/Core_Radar_CICD/RPI/smoke_test/libs/power_on.py"
+
+        echo "[INFO] Waiting for 5 second After QuickFlash..."
+        sleep 5

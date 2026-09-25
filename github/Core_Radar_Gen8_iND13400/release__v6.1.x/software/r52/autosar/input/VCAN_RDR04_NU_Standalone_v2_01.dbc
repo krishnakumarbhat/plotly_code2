@@ -1,0 +1,600 @@
+VERSION "created by canmatrix"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: External_Tool ADAS RDR04
+VAL_TABLE_ vtSig_CAN_PLATFORM_VARIANT 0 "VARIANT_INVALID" 1 "VARIANT_MRR3" 2 "VARIANT_SRR5" 3 "VARIANT_RACAM" 4 "VARIANT_MRR360" 5 "VARIANT_MRR3LLP_A01" 6 "VARIANT_MRR3LLP" ;
+VAL_TABLE_ vtSig_HED_TIME_SYNC_SRC_MASTER 1 "GLOBAL" 0 "LOCAL" ;
+VAL_TABLE_ vtSig_OBJ_TRACKERFILT_TYPE 2 "CTCA" 1 "CCA" 0 "INVALID" ;
+
+
+BO_ 155 RDR_STATUS_001: 64 RDR04
+ SG_ STS_PCAN_PROTOCOL_VER_MINOR : 127|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_PCAN_PROTOCOL_VER_MAJOR : 119|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_PLATFORM_VARIANT : 135|8@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_HARDWARE_VERSION : 111|4@0+ (1,0) [0|0] ""  ADAS
+ SG_ STS_SERIAL_NUMBER_SEQUENCE : 147|12@0+ (1,0) [0|0] ""  ADAS
+ SG_ STS_SERIAL_NUM_JULIAN_YEAR : 143|3@0+ (1,2020) [2020|2027] "years"  ADAS
+ SG_ STS_SERIAL_NUM_JULIAN_DAY : 140|9@0+ (1,0) [0|0] ""  ADAS
+ SG_ STS_SW_VERSION_FIELD1 : 167|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_SW_VERSION_FIELD2 : 175|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_SW_VERSION_FIELD3 : 183|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_SW_VERSION_FIELD4 : 191|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_PBL_VERSION_FIELD1 : 199|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_PBL_VERSION_FIELD2 : 207|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_PBL_VERSION_FIELD3 : 215|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_PBL_VERSION_FIELD4 : 223|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_USC_CAL_VER_MAJOR : 7|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_USC_CAL_VER_MINOR : 23|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_USC_SECTION_COMPTBLITY : 39|16@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_SMC_CAL_VER_MAJOR : 55|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_SMC_CAL_VER_MINOR : 71|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_SMC_SECTION_COMPTBLITY : 87|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_SMC_PLATFROM_VERSION : 103|8@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_SENSOR_MOUNT_POS_X : 279|16@0- (0.0001,0) [-3.2768|3.2767] "m"  ADAS,External_Tool
+ SG_ STS_SENSOR_MOUNT_POS_Y : 295|16@0- (0.0001,0) [-3.2768|3.2767] "m"  ADAS,External_Tool
+ SG_ STS_SENSOR_MOUNT_POS_Z : 311|16@0- (0.0001,0) [-3.2768|3.2767] "m"  ADAS,External_Tool
+ SG_ STS_SENSOR_MOUNT_ORNT_YAW : 231|13@0+ (0.0004,-1.5708) [-1.5708|1.7056] "rad"  ADAS,External_Tool
+ SG_ STS_SENSOR_MOUNT_ORNT_PITCH : 244|13@0+ (0.0004,-1.5708) [-1.5708|1.7056] "rad"  ADAS,External_Tool
+ SG_ STS_SENSOR_MOUNT_ORNT_ROLL : 260|13@0+ (0.0004,-1.5708) [-1.5708|1.7056] "rad"  ADAS,External_Tool
+ SG_ STS_SENSOR_MOUNT_LOCATION : 327|4@0+ (1,0) [0|15] ""  ADAS,External_Tool
+ SG_ STS_SENSOR_HEIGHT : 335|32@0+ (0.01,0) [0|42949672.95] "m"  ADAS,External_Tool
+ SG_ STS_DET_DBC_BASE_VER_MINOR : 375|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_DET_DBC_BASE_VER_MAJOR : 367|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ STS_TIME_SINCE_POWER_ON : 383|32@0+ (1,0) [0|4294967295] "s"  ADAS
+ SG_ STS_SENSOR_POSITION : 107|4@0+ (1,0) [0|15] ""  ADAS
+ SG_ STS_MH_001_CRC16 : 423|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ STS_MH_001_CYCLE_COUNTER : 415|8@0+ (1,0) [0|255] ""  ADAS
+
+BO_ 152 RDR_HEADER_001: 64 RDR04
+ SG_ HED_SLOPE_CORR_EXECUTIONFLAG : 172|2@0+ (1,0) [0|3] ""  ADAS
+ SG_ HED_PROCESSED_RANGE : 167|9@0+ (1,0) [0|500] ""  ADAS
+ SG_ HED_LOOK_INDEX : 199|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ HED_OPERATION_MODE : 412|3@0+ (1,0) [0|5] "" Vector__XXX
+ SG_ HED_MAX_NUM_OF_DETECTIONS : 408|9@0+ (1,0) [0|400] "" Vector__XXX
+ SG_ HED_NUM_OF_RESTBINS_USED : 31|9@0+ (1,0) [0|511] ""  ADAS
+ SG_ HED_NUM_OF_VALID_DETECTIONS : 38|9@0+ (1,0) [0|500] ""  ADAS
+ SG_ HED_INTRFC_VERSION_ID_MAJOR : 7|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ HED_INTRFC_VERSION_ID_MINOR : 15|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ HED_INTRFC_VERSION_ID_PATCH : 23|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ HED_LOOK_ID : 45|3@0+ (1,0) [0|7] ""  ADAS
+ SG_ HED_SCAN_INDEX : 55|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ HED_MH_CYCLE_COUNTER : 431|8@0+ (1,0) [0|255] ""  ADAS
+ SG_ HED_DATA_QUALIFIER : 42|3@0+ (1,0) [0|7] ""  ADAS
+ SG_ HED_DET_RANGE_MAX : 71|16@0+ (0.01,0) [0|500] "m"  ADAS
+ SG_ HED_DET_SPEED_RANGE_MAX : 103|16@0+ (0.00390625,-128) [-128|127.99609375] "m/s"  ADAS
+ SG_ HED_FOV_HOR_MAX : 143|8@0+ (0.0174533,0) [0|3.14159] "rad"  ADAS
+ SG_ HED_FOV_VER_MAX : 159|8@0+ (0.0174533,0) [0|3.14159] "rad"  ADAS
+ SG_ HED_DET_RANGE_MIN : 87|16@0+ (0.01,0) [0|500] "m"  ADAS
+ SG_ HED_DET_SPEED_RANGE_MIN : 119|16@0+ (0.00390625,-128) [-128|127.99609375] "m/s"  ADAS
+ SG_ HED_FOV_HOR_MIN : 135|8@0- (0.0174533,0) [-2.2340224|2.2165691] "rad"  ADAS
+ SG_ HED_FOV_VER_MIN : 151|8@0- (0.0174533,0) [-2.2340224|2.2165691] "rad"  ADAS
+ SG_ HED_ALIGN_VER_REF : 209|10@0+ (0.0005,-0.1745) [-0.1745|0.337] "rad"  ADAS,External_Tool
+ SG_ HED_ALIGN_VER_QF : 170|2@0+ (1,0) [0|3] ""  ADAS,External_Tool
+ SG_ HED_ALIGN_HOR_REF : 183|13@0+ (0.0005,-0.1745) [-0.1745|3.921] "rad"  ADAS,External_Tool
+ SG_ HED_ALIGN_HOR_QF : 186|2@0+ (1,0) [0|3] ""  ADAS,External_Tool
+ SG_ HED_SP_CORE_TIME_PEAK : 335|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_SP_CORE_TIME_INST : 351|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_RDD_CORE_TIME_PEAK : 343|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_RDD_CORE_TIME_INST : 359|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_AF_TIME_PEAK : 319|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_AF_TIME_INST : 327|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_MAIN_CORE_TIME_PEAK : 303|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_MAIN_CORE_TIME_INST : 311|8@0+ (0.5,0) [0|127.5] "ms"  ADAS
+ SG_ HED_SENSOR_TIME_STAMP_NS : 231|32@0+ (1,0) [0|4294967295] "ns"  ADAS
+ SG_ HED_SENSOR_TIME_STAMP_SEC : 263|32@0+ (1,0) [0|4294967295] "s"  ADAS
+ SG_ HED_TIME_SYNC_SRC_MASTER : 174|1@0+ (1,0) [0|1] ""  ADAS
+ SG_ HED_TIME_SYNC_VALIDITY_FLAG : 173|1@0+ (1,0) [0|1] ""  ADAS
+ SG_ HED_MH_CRC16 : 439|16@0+ (1,0) [0|65535] ""  ADAS
+ SG_ HED_DET_NUM_OF_1PASS : 367|10@0+ (1,0) [0|1023] ""  ADAS
+ SG_ HED_DET_NUM_OF_2PASS : 373|9@0+ (1,0) [0|511] ""  ADAS
+ SG_ HED_TRIGGER_TIME : 380|32@0+ (1,0) [0|4294967295] "ns"  ADAS
+ SG_ HED_DET_BI_STATIC_COUNT : 295|8@0+ (1,0) [0|255] ""  ADAS
+
+BO_ 40 RDR_XCP_CTO_REQ: 64 External_Tool
+ SG_ STS_XCP_REQ_CTO_Byte1 : 15|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte2 : 23|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte3 : 31|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte4 : 39|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte5 : 47|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte6 : 55|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte7 : 63|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte8 : 71|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte9 : 79|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte10 : 87|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte11 : 95|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte12 : 103|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte13 : 111|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte14 : 119|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte15 : 127|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte16 : 135|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte17 : 143|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte18 : 151|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte19 : 159|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte20 : 167|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte21 : 175|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte22 : 183|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte23 : 191|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte24 : 199|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte25 : 207|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte26 : 215|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte27 : 223|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte28 : 231|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte29 : 239|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte30 : 247|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte31 : 255|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte32 : 263|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte33 : 271|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte34 : 279|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte35 : 287|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte36 : 295|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte37 : 303|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte38 : 311|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte39 : 319|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte40 : 327|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte41 : 335|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte42 : 343|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte43 : 351|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte44 : 359|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte45 : 367|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte46 : 375|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte47 : 383|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte48 : 391|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte49 : 399|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte50 : 407|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte51 : 415|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte52 : 423|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte53 : 431|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte54 : 439|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte55 : 447|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte56 : 455|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte57 : 463|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte58 : 471|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte59 : 479|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte60 : 487|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte61 : 495|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte62 : 503|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_XCP_REQ_CTO_Byte63 : 511|8@0+ (1,0) [0|0] ""  RDR04
+ SG_ STS_PID : 7|8@0+ (1,0) [0|0] ""  RDR04
+
+BO_ 41 RDR_XCP_CTO_RESP: 64 RDR04
+ SG_ STS_XCP_RES_CTO_Byte0 : 7|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte1 : 15|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte2 : 23|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte3 : 31|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte4 : 39|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte5 : 47|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte6 : 55|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte7 : 63|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte8 : 71|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte9 : 79|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte10 : 87|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte11 : 95|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte12 : 103|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte13 : 111|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte14 : 119|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte15 : 127|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte16 : 135|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte17 : 143|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte18 : 151|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte19 : 159|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte20 : 167|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte21 : 175|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte22 : 183|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte23 : 191|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte24 : 199|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte25 : 207|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte26 : 215|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte27 : 223|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte28 : 231|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte29 : 239|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte30 : 247|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte31 : 255|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte32 : 263|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte33 : 271|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte34 : 279|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte35 : 287|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte36 : 295|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte37 : 303|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte38 : 311|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte39 : 319|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte40 : 327|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte41 : 335|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte42 : 343|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte43 : 351|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte44 : 359|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte45 : 367|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte46 : 375|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte47 : 383|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte48 : 391|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte49 : 399|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte50 : 407|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte51 : 415|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte52 : 423|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte53 : 431|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte54 : 439|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte55 : 447|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte56 : 455|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte57 : 463|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte58 : 471|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte59 : 479|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte60 : 487|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte61 : 495|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte62 : 503|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_CTO_Byte63 : 511|8@0+ (1,0) [0|0] ""  External_Tool
+
+BO_ 42 RDR_XCP_DAQ_RESP: 64 RDR04
+ SG_ STS_XCP_RES_DAQ_Byte0 : 7|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte1 : 15|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte2 : 23|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte3 : 31|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte4 : 39|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte5 : 47|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte6 : 55|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte7 : 63|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte8 : 71|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte9 : 79|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte10 : 87|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte11 : 95|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte12 : 103|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte13 : 111|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte14 : 119|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte15 : 127|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte16 : 135|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte17 : 143|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte18 : 151|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte19 : 159|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte20 : 167|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte21 : 175|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte22 : 183|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte23 : 191|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte24 : 199|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte25 : 207|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte26 : 215|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte27 : 223|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte28 : 231|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte29 : 239|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte30 : 247|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte31 : 255|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte32 : 263|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte33 : 271|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte34 : 279|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte35 : 287|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte36 : 295|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte37 : 303|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte38 : 311|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte39 : 319|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte40 : 327|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte41 : 335|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte42 : 343|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte43 : 351|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte44 : 359|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte45 : 367|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte46 : 375|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte47 : 383|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte48 : 391|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte49 : 399|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte50 : 407|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte51 : 415|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte52 : 423|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte53 : 431|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte54 : 439|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte55 : 447|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte56 : 455|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte57 : 463|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte58 : 471|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte59 : 479|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte60 : 487|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte61 : 495|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte62 : 503|8@0+ (1,0) [0|0] ""  External_Tool
+ SG_ STS_XCP_RES_DAQ_Byte63 : 511|8@0+ (1,0) [0|0] ""  External_Tool
+
+
+
+CM_ SG_ 155 STS_SW_VERSION_FIELD1 "Release_Number is incremented for major every release";
+CM_ SG_ 155 STS_SW_VERSION_FIELD2 "Promote_Revision, increment with every promote or minor release";
+CM_ SG_ 155 STS_SW_VERSION_FIELD3 "Field_Revision  or Variant number";
+CM_ SG_ 155 STS_SW_VERSION_FIELD4 "Increment with SW patch release";
+CM_ SG_ 155 STS_PBL_VERSION_FIELD1 "Release_Number is incremented for major every release";
+CM_ SG_ 155 STS_PBL_VERSION_FIELD2 "Promote_Revision, increment with every promote or minor release";
+CM_ SG_ 155 STS_PBL_VERSION_FIELD3 "Field_Revision  or Variant number";
+CM_ SG_ 155 STS_PBL_VERSION_FIELD4 "Increment with patch release";
+CM_ SG_ 155 STS_SMC_SECTION_COMPTBLITY "Section compatiblity bits as specified in EXEC spec";
+CM_ SG_ 155 STS_SMC_PLATFROM_VERSION "Variant ID";
+CM_ SG_ 155 STS_SENSOR_MOUNT_POS_X "Correction of the mounting position w.r.t. the optimal position. Correction is determined by calibration";
+CM_ SG_ 155 STS_SENSOR_MOUNT_ORNT_PITCH "Correction of the mounting position orientation w.r.t. the optimal orientation";
+CM_ SG_ 155 STS_SENSOR_HEIGHT "Radar height from ground to center of radar elevation field-of-view";
+CM_ SG_ 155 STS_DET_DBC_BASE_VER_MINOR "Detection base dbc Minor version";
+CM_ SG_ 155 STS_DET_DBC_BASE_VER_MAJOR "Detection base dbc Major version";
+CM_ SG_ 152 HED_NUM_OF_VALID_DETECTIONS "The current number of valid detections in the detections list";
+CM_ SG_ 152 HED_INTRFC_VERSION_ID_MAJOR "Version number for major";
+CM_ SG_ 152 HED_INTRFC_VERSION_ID_MINOR "Version number for minor";
+CM_ SG_ 152 HED_INTRFC_VERSION_ID_PATCH "Version number for patch";
+CM_ SG_ 152 HED_LOOK_ID "Indicates the look type values 1 to 4 base on medium/long look and near/far look. Each radar scan is a look.";
+CM_ SG_ 152 HED_SCAN_INDEX "Scan index";
+CM_ SG_ 152 HED_MH_CYCLE_COUNTER "ALIVE counter";
+CM_ SG_ 152 HED_DATA_QUALIFIER "Data qualifier communicates the overall availability of the interface or expresses to what extent the content of this event can be relied on ";
+CM_ SG_ 152 HED_DET_RANGE_MAX "Detection range max is the farthest possible detection with respect to the sensor origin.";
+CM_ SG_ 152 HED_DET_SPEED_RANGE_MAX "Describes the relative radial speed range in the sensor coordinate system. Range is defined by
+two range values: negative values indicate lower speed than the ego-vehicle, positive values
+indicate higher velocity than ego-vehicle";
+CM_ SG_ 152 HED_FOV_HOR_MAX "Field of view defined by opening angles in sensor XY-plane.";
+CM_ SG_ 152 HED_FOV_VER_MAX "Field of view defined by opening angles in sensor XZ-plane.";
+CM_ SG_ 152 HED_DET_RANGE_MIN "Detection range max is the Closest possible detection with respect to the sensor origin.";
+CM_ SG_ 152 HED_DET_SPEED_RANGE_MIN "Describes the relative radial speed range in the sensor coordinate system. Range is defined by
+two range values: negative values indicate lower speed than the ego-vehicle, positive values
+indicate higher velocity than ego-vehicle";
+CM_ SG_ 152 HED_FOV_HOR_MIN "Field of view defined by opening angles in sensor XY-plane.";
+CM_ SG_ 152 HED_FOV_VER_MIN "Field of view defined by opening angles in sensor XZ-plane.";
+CM_ SG_ 152 HED_ALIGN_HOR_REF "Alignment horizontal reference";
+CM_ SG_ 152 HED_ALIGN_HOR_QF "Alignment horizontal calibration status";
+CM_ SG_ 152 HED_AF_TIME_PEAK "Angle Finding Latency peak";
+CM_ SG_ 152 HED_AF_TIME_INST "Angle Finding Latency instantaneous";
+CM_ SG_ 152 HED_SENSOR_TIME_STAMP_NS "sensor absolute time when the radar measurement was taken";
+CM_ SG_ 152 HED_TIME_SYNC_SRC_MASTER "Indicate if sensor is synch to global master or local master";
+CM_ SG_ 152 HED_TIME_SYNC_VALIDITY_FLAG "indicates the validity of Time Sync message data";
+CM_ SG_ 152 HED_TRIGGER_TIME "Data Acquisition start time";
+BA_DEF_ BO_  "CanTpBs" INT 0 255;
+BA_DEF_ BO_  "ConfiguredTransmitter" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagConnection" INT 0 65535;
+BA_DEF_ BO_  "DiagRequest" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagResponse" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagState" ENUM  "No","Yes";
+BA_DEF_ BO_  "DiagUUDTResponse" ENUM  "No","Yes";
+BA_DEF_ BO_  "E2EP01DataId" HEX 0 0;
+BA_DEF_ BO_  "E2EP01DataLength" INT 0 0;
+BA_DEF_ BO_  "E2EP05DataId" HEX 0 0;
+BA_DEF_ BO_  "E2EP05DataLength" INT 0 0;
+BA_DEF_ BO_  "EventRateOfChange" INT 10 10000;
+BA_DEF_ BO_  "FrameGatewayNetwork" STRING ;
+BA_DEF_ BO_  "GenMsgCmt" STRING ;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 100000;
+BA_DEF_ BO_  "GenMsgCycleTimeFast" INT 0 100000;
+BA_DEF_ BO_  "GenMsgDelayTime" INT 0 1000;
+BA_DEF_ BO_  "GenMsgHandlingTypeCode" STRING ;
+BA_DEF_ BO_  "GenMsgHandlingTypeDoc" STRING ;
+BA_DEF_ BO_  "GenMsgILSupport" ENUM  "No","Yes";
+BA_DEF_ BO_  "GenMsgMarked" STRING ;
+BA_DEF_ BO_  "GenMsgNrOfRepetition" INT 0 100;
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "FixedPeriodic","Event","EnabledPeriodic","NotUsed","NotUsed","EventPeriodic","NotUsed","NotUsed","NoMsgSendType";
+BA_DEF_ BO_  "GenMsgStartDelayTime" INT 0 10000;
+BA_DEF_ BO_  "MessageGateway" ENUM  "No","Yes";
+BA_DEF_ BO_  "Mulitplexer" ENUM  "No","Yes";
+BA_DEF_ BO_  "NetworkInitialization" ENUM  "No","Yes";
+BA_DEF_ BO_  "NetworkInitializationCommand" ENUM  "No","Yes";
+BA_DEF_ BO_  "NmAsrMessage" ENUM  "No","Yes";
+BA_DEF_ BO_  "NmMessage" ENUM  "No","Yes";
+BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","StandardCAN_FD","ExtendedCAN_FD";
+BA_DEF_ SG_  "GenSigCmt" STRING ;
+BA_DEF_ SG_  "GenSigCycleTime" INT 0 0;
+BA_DEF_ SG_  "GenSigInactiveValue" INT 0 100000;
+BA_DEF_ SG_  "GenSigMarked" STRING ;
+BA_DEF_ SG_  "GenSigMissingSourceValue" INT 0 1000000000;
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cyclic","OnWrite","vector_leerstring","OnChange","vector_leerstring","IfActive","vector_leerstring","NoSigSendType";
+BA_DEF_ SG_  "GenSigStartValue" INT 0 1000000000;
+BA_DEF_ SG_  "GenSigTimeoutTime" INT 0 0;
+BA_DEF_ SG_  "GenSigVtEn" STRING ;
+BA_DEF_ SG_  "GenSigVtIndex" STRING ;
+BA_DEF_ SG_  "GenSigVtName" STRING ;
+BA_DEF_ SG_  "InvalidValue" STRING ;
+BA_DEF_ SG_  "WakeupSignal" ENUM  "No","Yes";
+BA_DEF_ BU_  "GatewayECU" ENUM  "No","Yes";
+BA_DEF_ BU_  "NetworkInitializationUsed" ENUM  "No","Yes";
+BA_DEF_ BU_  "NmAsrNode" ENUM  "No","Yes";
+BA_DEF_ BU_  "NmAsrNodeIdentifier" HEX 128 255;
+BA_DEF_ BU_  "NmNode" ENUM  "No","Yes";
+BA_DEF_ BU_  "NmStationAddress" HEX 0 0;
+BA_DEF_ BU_  "NodeLayerModules" STRING ;
+BA_DEF_ BU_  "NodeStartUpTime" INT 0 10000;
+BA_DEF_ BU_  "NodeWakeUpTime" INT 0 10000;
+BA_DEF_ BU_  "PowerType" ENUM  "Switched","Latched","Sleep","vector_leerstring","vector_leerstring";
+BA_DEF_ BU_  "TpOwnSystemEcuNumber" HEX 0 255;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "GenAuthor" STRING ;
+BA_DEF_  "GenCompany" STRING ;
+BA_DEF_  "GenDescription" STRING ;
+BA_DEF_  "GenNetworkBaudrate" STRING ;
+BA_DEF_  "GenNetworkMuxEn" STRING ;
+BA_DEF_  "GenNetworkName" STRING ;
+BA_DEF_  "GenRevision" STRING ;
+BA_DEF_  "GenRevisionDate" STRING ;
+BA_DEF_  "Manufacturer" STRING ;
+BA_DEF_  "NetworkSpeed" ENUM  "500kBits/s","125kBit/s","2MBits/s";
+BA_DEF_  "NmAsrBaseAddress" HEX 1408 1408;
+BA_DEF_  "NmAsrMessageCount" INT 64 128;
+BA_DEF_  "NmBaseAddress" HEX 1280 1280;
+BA_DEF_  "NmMessageCount" INT 0 128;
+BA_DEF_  "NmType" STRING ;
+BA_DEF_  "VersionDay" INT 1 31;
+BA_DEF_  "VersionMonth" INT 1 12;
+BA_DEF_  "VersionYear" INT 2000 3000;
+BA_DEF_DEF_  "CanTpBs" 255;
+BA_DEF_DEF_  "ConfiguredTransmitter" "No";
+BA_DEF_DEF_  "DiagConnection" 0;
+BA_DEF_DEF_  "DiagRequest" "No";
+BA_DEF_DEF_  "DiagResponse" "No";
+BA_DEF_DEF_  "DiagState" "No";
+BA_DEF_DEF_  "DiagUUDTResponse" "No";
+BA_DEF_DEF_  "E2EP01DataId" 0;
+BA_DEF_DEF_  "E2EP01DataLength" 0;
+BA_DEF_DEF_  "E2EP05DataId" 0;
+BA_DEF_DEF_  "E2EP05DataLength" 0;
+BA_DEF_DEF_  "EventRateOfChange" 10000;
+BA_DEF_DEF_  "FrameGatewayNetwork" "NONE";
+BA_DEF_DEF_  "GenMsgCmt" "";
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenMsgCycleTimeFast" 0;
+BA_DEF_DEF_  "GenMsgDelayTime" 0;
+BA_DEF_DEF_  "GenMsgHandlingTypeCode" "";
+BA_DEF_DEF_  "GenMsgHandlingTypeDoc" "";
+BA_DEF_DEF_  "GenMsgILSupport" "Yes";
+BA_DEF_DEF_  "GenMsgMarked" "";
+BA_DEF_DEF_  "GenMsgNrOfRepetition" 0;
+BA_DEF_DEF_  "GenMsgSendType" "NoMsgSendType";
+BA_DEF_DEF_  "GenMsgStartDelayTime" 0;
+BA_DEF_DEF_  "MessageGateway" "No";
+BA_DEF_DEF_  "Mulitplexer" "No";
+BA_DEF_DEF_  "NetworkInitialization" "Yes";
+BA_DEF_DEF_  "NetworkInitializationCommand" "No";
+BA_DEF_DEF_  "NmAsrMessage" "No";
+BA_DEF_DEF_  "NmMessage" "No";
+BA_DEF_DEF_  "VFrameFormat" "StandardCAN_FD";
+BA_DEF_DEF_  "GenSigCmt" "";
+BA_DEF_DEF_  "GenSigCycleTime" 0;
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenSigMarked" "";
+BA_DEF_DEF_  "GenSigMissingSourceValue" 0;
+BA_DEF_DEF_  "GenSigSendType" "NoSigSendType";
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_DEF_DEF_  "GenSigTimeoutTime" 0;
+BA_DEF_DEF_  "GenSigVtEn" "";
+BA_DEF_DEF_  "GenSigVtIndex" "";
+BA_DEF_DEF_  "GenSigVtName" "";
+BA_DEF_DEF_  "InvalidValue" "";
+BA_DEF_DEF_  "WakeupSignal" "No";
+BA_DEF_DEF_  "GatewayECU" "No";
+BA_DEF_DEF_  "NetworkInitializationUsed" "No";
+BA_DEF_DEF_  "NmAsrNode" "No";
+BA_DEF_DEF_  "NmAsrNodeIdentifier" 128;
+BA_DEF_DEF_  "NmNode" "No";
+BA_DEF_DEF_  "NmStationAddress" 0;
+BA_DEF_DEF_  "NodeLayerModules" "CANoeILNLFord.dll";
+BA_DEF_DEF_  "NodeStartUpTime" 250;
+BA_DEF_DEF_  "NodeWakeUpTime" 10;
+BA_DEF_DEF_  "PowerType" "Switched";
+BA_DEF_DEF_  "TpOwnSystemEcuNumber" 0;
+BA_DEF_DEF_  "BusType" "CAN";
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "GenAuthor" "xx";
+BA_DEF_DEF_  "GenCompany" "Delphi";
+BA_DEF_DEF_  "GenDescription" "CAN bus that communicates the radars";
+BA_DEF_DEF_  "GenNetworkBaudrate" "500 kbps";
+BA_DEF_DEF_  "GenNetworkMuxEn" "FALSE";
+BA_DEF_DEF_  "GenNetworkName" "PCAN";
+BA_DEF_DEF_  "GenRevision" "v1.00";
+BA_DEF_DEF_  "GenRevisionDate" "Jan 25, 2018";
+BA_DEF_DEF_  "Manufacturer" "Ford";
+BA_DEF_DEF_  "NetworkSpeed" "2MBits/s";
+BA_DEF_DEF_  "NmAsrBaseAddress" 1408;
+BA_DEF_DEF_  "NmAsrMessageCount" 64;
+BA_DEF_DEF_  "NmBaseAddress" 1280;
+BA_DEF_DEF_  "NmMessageCount" 128;
+BA_DEF_DEF_  "NmType" "NmAsr";
+BA_DEF_DEF_  "VersionDay" 25;
+BA_DEF_DEF_  "VersionMonth" 1;
+BA_DEF_DEF_  "VersionYear" 2018;
+BA_ "BusType" "CAN FD";
+BA_ "GenCompany" "Aptiv";
+BA_ "GenNetworkBaudrate" "500000";
+BA_ "GenNetworkMuxEn" "FALSE";
+BA_ "GenNetworkName" "PCAN";
+BA_ "GenRevision" "V01.04";
+BA_ "NmType" "NmAsr";
+BA_ "VersionDay" 10;
+BA_ "VersionMonth" 12;
+BA_ "VersionYear" 2020;
+BA_ "DBName" "VCAN_RADAR";
+BA_ "NmStationAddress" BU_ External_Tool 0;
+BA_ "NodeLayerModules" BU_ External_Tool "CANoeILNLFord.dll";
+BA_ "NmStationAddress" BU_ ADAS 0;
+BA_ "NodeLayerModules" BU_ ADAS "CANoeILNLFord.dll";
+BA_ "TpOwnSystemEcuNumber" BU_ ADAS 0;
+BA_ "GenMsgCycleTime" BO_ 155 1000;
+BA_ "GenMsgILSupport" BO_ 155 1;
+BA_ "GenMsgNrOfRepetition" BO_ 155 0;
+BA_ "GenMsgSendType" BO_ 155 0;
+BA_ "VFrameFormat" BO_ 155 14;
+BA_ "GenMsgSendType" BO_ 152 1;
+BA_ "VFrameFormat" BO_ 152 14;
+BA_ "GenMsgSendType" BO_ 40 1;
+BA_ "VFrameFormat" BO_ 40 14;
+BA_ "GenMsgSendType" BO_ 41 1;
+BA_ "VFrameFormat" BO_ 41 14;
+BA_ "GenMsgSendType" BO_ 42 1;
+BA_ "VFrameFormat" BO_ 42 14;
+BA_ "GenSigCycleTime" SG_ 155 STS_PCAN_PROTOCOL_VER_MINOR 50;
+BA_ "GenSigSendType" SG_ 155 STS_PCAN_PROTOCOL_VER_MINOR 0;
+BA_ "GenSigTimeoutTime" SG_ 155 STS_PCAN_PROTOCOL_VER_MINOR 150;
+BA_ "GenSigCycleTime" SG_ 155 STS_PCAN_PROTOCOL_VER_MAJOR 50;
+BA_ "GenSigSendType" SG_ 155 STS_PCAN_PROTOCOL_VER_MAJOR 0;
+BA_ "GenSigTimeoutTime" SG_ 155 STS_PCAN_PROTOCOL_VER_MAJOR 150;
+BA_ "GenSigCycleTime" SG_ 155 STS_SERIAL_NUMBER_SEQUENCE 50;
+BA_ "GenSigSendType" SG_ 155 STS_SERIAL_NUMBER_SEQUENCE 0;
+BA_ "GenSigTimeoutTime" SG_ 155 STS_SERIAL_NUMBER_SEQUENCE 150;
+BA_ "GenSigCycleTime" SG_ 155 STS_SERIAL_NUM_JULIAN_YEAR 50;
+BA_ "GenSigSendType" SG_ 155 STS_SERIAL_NUM_JULIAN_YEAR 0;
+BA_ "GenSigTimeoutTime" SG_ 155 STS_SERIAL_NUM_JULIAN_YEAR 150;
+BA_ "GenSigCycleTime" SG_ 155 STS_SERIAL_NUM_JULIAN_DAY 50;
+BA_ "GenSigSendType" SG_ 155 STS_SERIAL_NUM_JULIAN_DAY 0;
+BA_ "GenSigTimeoutTime" SG_ 155 STS_SERIAL_NUM_JULIAN_DAY 150;
+BA_ "GenSigStartValue" SG_ 155 STS_SENSOR_MOUNT_POS_X 0;
+BA_ "GenSigStartValue" SG_ 155 STS_SENSOR_MOUNT_POS_Y 0;
+BA_ "GenSigStartValue" SG_ 155 STS_SENSOR_MOUNT_ORNT_YAW 3927;
+BA_ "GenSigStartValue" SG_ 155 STS_SENSOR_MOUNT_ORNT_PITCH 3927;
+BA_ "GenSigStartValue" SG_ 155 STS_SENSOR_MOUNT_ORNT_ROLL 3927;
+BA_ "GenSigCmt" SG_ 152 HED_NUM_OF_VALID_DETECTIONS "Number of detections sent";
+BA_ "GenSigSendType" SG_ 152 HED_NUM_OF_VALID_DETECTIONS 7;
+BA_ "GenSigCmt" SG_ 152 HED_LOOK_ID "Indicates the look type values 1 to 4 base on medium/long look and near/far look";
+BA_ "GenSigSendType" SG_ 152 HED_LOOK_ID 7;
+BA_ "GenSigCmt" SG_ 152 HED_SCAN_INDEX "Scan index for SODFL";
+BA_ "GenSigSendType" SG_ 152 HED_SCAN_INDEX 7;
+BA_ "GenSigCmt" SG_ 152 HED_DET_RANGE_MAX "CAN range coverage";
+BA_ "GenSigSendType" SG_ 152 HED_DET_RANGE_MAX 7;
+BA_ "GenSigCmt" SG_ 152 HED_DET_SPEED_RANGE_MAX "CAN range coverage";
+BA_ "GenSigSendType" SG_ 152 HED_DET_SPEED_RANGE_MAX 7;
+BA_ "GenSigStartValue" SG_ 152 HED_DET_SPEED_RANGE_MAX 32768;
+BA_ "GenSigCmt" SG_ 152 HED_FOV_HOR_MAX "CAN range coverage";
+BA_ "GenSigSendType" SG_ 152 HED_FOV_HOR_MAX 7;
+BA_ "GenSigCmt" SG_ 152 HED_FOV_VER_MAX "CAN range coverage";
+BA_ "GenSigSendType" SG_ 152 HED_FOV_VER_MAX 7;
+BA_ "GenSigStartValue" SG_ 152 HED_DET_SPEED_RANGE_MIN 32768;
+BA_ "GenSigStartValue" SG_ 152 HED_ALIGN_VER_REF 0;
+BA_ "GenSigStartValue" SG_ 152 HED_ALIGN_HOR_REF 0;
+VAL_ 155 STS_PLATFORM_VARIANT 0 "VARIANT_INVALID" 1 "VARIANT_MRR3" 2 "VARIANT_SRR5" 3 "VARIANT_RACAM" 4 "VARIANT_MRR360" 5 "VARIANT_MRR3LLP" 6 "VARIANT_MRR3LLP_STD" 7 "VARIANT_MRR3LLP_AMOD" 8 "VARIANT_SRRAD" 9 "VARIANT_FLR4" 10 "VARIANT_FLR4PLUS" 11 "VARIANT_SRR6" 12 "VARIANT_SRR6PLUS" ;
+VAL_ 155 STS_HARDWARE_VERSION 0 "UNKNOWN" 1 "RCM" 2 "RCM_RDI3_LOG" 3 "RCM_RDI3_HIL" 4 "RESERVED1" 5 "RESERVED2" ;
+VAL_ 155 STS_SMC_PLATFROM_VERSION 0 "INVALID" 1 "MRR3" 2 "SRR5" 3 "RACAM" 4 "MRR360" 5 "MRR3LLP" 6 "MRRLLP_STD" 7 "MRRLLP_AMOD" 8 "SRRAD" 9 "FLR4" 10 "FLR4PLUS" 11 "SRR6" 12 "SRR6PLUS" ;
+VAL_ 152 HED_SLOPE_CORR_EXECUTIONFLAG 0 "AzimuthElevationNotCompensated" 1 "AzimuthCompensated" 2 "ElevationCompensated" 3 "AzimuthElevationCompensated" ;
+VAL_ 152 HED_OPERATION_MODE 0 "Init_MCU" 1 "Radar_Not_Configured" 2 "Operational" 3 "Faulty" 4 "Shutdown_Initiated" 5 "Power_Off" ;
+VAL_ 152 HED_LOOK_ID 0 "LOOK_A" 1 "LOOK_B" 2 "LOOK_C" 3 "LOOK_D" ;
+VAL_ 152 HED_DATA_QUALIFIER 0 "Invalid" 1 "Not_Available" 2 "Reduced_In_Performance" 3 "Test_Mode" 4 "Normal" 5 "Reduced_In_Coverage" 6 "Reduced_In_Perf_And_Cov" 7 "Unknown" ;
+VAL_ 152 HED_ALIGN_VER_QF 0 "Undefined" 1 "Temporarily undefined (Faulty)" 2 "Innacurate" 3 "Accurate" ;
+VAL_ 152 HED_ALIGN_HOR_QF 0 "Undefined" 1 "Temporarily undefined (Faulty)" 2 "Innacurate" 3 "Accurate" ;
+VAL_ 152 HED_TIME_SYNC_SRC_MASTER 0 "LOCAL" 1 "GLOBAL" ;
+SIG_GROUP_ 155 RadarStatus1_2ndCAN 1 : STS_SENSOR_POSITION STS_SENSOR_HEIGHT STS_SENSOR_MOUNT_LOCATION STS_SENSOR_MOUNT_ORNT_ROLL STS_SENSOR_MOUNT_ORNT_PITCH STS_SENSOR_MOUNT_ORNT_YAW STS_SENSOR_MOUNT_POS_Z STS_SENSOR_MOUNT_POS_Y STS_SENSOR_MOUNT_POS_X STS_DET_DBC_BASE_VER_MAJOR STS_DET_DBC_BASE_VER_MINOR STS_SERIAL_NUM_JULIAN_DAY STS_SERIAL_NUM_JULIAN_YEAR STS_SERIAL_NUMBER_SEQUENCE STS_HARDWARE_VERSION STS_PLATFORM_VARIANT STS_PCAN_PROTOCOL_VER_MAJOR STS_PCAN_PROTOCOL_VER_MINOR STS_TIME_SINCE_POWER_ON STS_MH_001_CYCLE_COUNTER STS_MH_001_CRC16 STS_SMC_PLATFROM_VERSION STS_SMC_SECTION_COMPTBLITY STS_SMC_CAL_VER_MAJOR STS_SMC_CAL_VER_MINOR STS_USC_SECTION_COMPTBLITY STS_USC_CAL_VER_MINOR STS_USC_CAL_VER_MAJOR STS_PBL_VERSION_FIELD4 STS_PBL_VERSION_FIELD3 STS_PBL_VERSION_FIELD2 STS_PBL_VERSION_FIELD1 STS_SW_VERSION_FIELD4 STS_SW_VERSION_FIELD3 STS_SW_VERSION_FIELD2 STS_SW_VERSION_FIELD1;
+SIG_GROUP_ 152 RadarHeader_2ndCAN 1 : HED_MH_CRC16 HED_MH_CYCLE_COUNTER HED_INTRFC_VERSION_ID_PATCH HED_INTRFC_VERSION_ID_MINOR HED_INTRFC_VERSION_ID_MAJOR HED_TRIGGER_TIME HED_TIME_SYNC_VALIDITY_FLAG HED_TIME_SYNC_SRC_MASTER HED_SENSOR_TIME_STAMP_SEC HED_SENSOR_TIME_STAMP_NS HED_FOV_VER_MIN HED_FOV_HOR_MIN HED_DET_SPEED_RANGE_MIN HED_DET_RANGE_MIN HED_FOV_VER_MAX HED_FOV_HOR_MAX HED_DET_SPEED_RANGE_MAX HED_DET_RANGE_MAX HED_DATA_QUALIFIER HED_SCAN_INDEX HED_LOOK_ID HED_NUM_OF_VALID_DETECTIONS HED_ALIGN_HOR_QF HED_LOOK_INDEX HED_ALIGN_HOR_REF HED_ALIGN_VER_QF HED_ALIGN_VER_REF HED_MAIN_CORE_TIME_INST HED_MAIN_CORE_TIME_PEAK HED_AF_TIME_INST HED_AF_TIME_PEAK HED_RDD_CORE_TIME_INST HED_RDD_CORE_TIME_PEAK HED_SP_CORE_TIME_INST HED_SP_CORE_TIME_PEAK HED_SLOPE_CORR_EXECUTIONFLAG HED_PROCESSED_RANGE HED_MAX_NUM_OF_DETECTIONS HED_OPERATION_MODE HED_DET_BI_STATIC_COUNT HED_DET_NUM_OF_2PASS HED_DET_NUM_OF_1PASS HED_NUM_OF_RESTBINS_USED;
+SIG_GROUP_ 40 XcpCTOReq 1 : STS_XCP_REQ_CTO_Byte63 STS_XCP_REQ_CTO_Byte62 STS_XCP_REQ_CTO_Byte61 STS_XCP_REQ_CTO_Byte60 STS_XCP_REQ_CTO_Byte59 STS_XCP_REQ_CTO_Byte58 STS_XCP_REQ_CTO_Byte57 STS_XCP_REQ_CTO_Byte56 STS_XCP_REQ_CTO_Byte55 STS_XCP_REQ_CTO_Byte54 STS_XCP_REQ_CTO_Byte53 STS_XCP_REQ_CTO_Byte52 STS_XCP_REQ_CTO_Byte51 STS_XCP_REQ_CTO_Byte50 STS_XCP_REQ_CTO_Byte49 STS_XCP_REQ_CTO_Byte48 STS_XCP_REQ_CTO_Byte47 STS_XCP_REQ_CTO_Byte46 STS_XCP_REQ_CTO_Byte45 STS_XCP_REQ_CTO_Byte44 STS_XCP_REQ_CTO_Byte43 STS_XCP_REQ_CTO_Byte42 STS_XCP_REQ_CTO_Byte41 STS_XCP_REQ_CTO_Byte40 STS_XCP_REQ_CTO_Byte39 STS_XCP_REQ_CTO_Byte38 STS_XCP_REQ_CTO_Byte37 STS_XCP_REQ_CTO_Byte36 STS_XCP_REQ_CTO_Byte35 STS_XCP_REQ_CTO_Byte34 STS_XCP_REQ_CTO_Byte33 STS_XCP_REQ_CTO_Byte32 STS_PID STS_XCP_REQ_CTO_Byte1 STS_XCP_REQ_CTO_Byte2 STS_XCP_REQ_CTO_Byte3 STS_XCP_REQ_CTO_Byte4 STS_XCP_REQ_CTO_Byte5 STS_XCP_REQ_CTO_Byte6 STS_XCP_REQ_CTO_Byte7 STS_XCP_REQ_CTO_Byte8 STS_XCP_REQ_CTO_Byte9 STS_XCP_REQ_CTO_Byte10 STS_XCP_REQ_CTO_Byte11 STS_XCP_REQ_CTO_Byte12 STS_XCP_REQ_CTO_Byte13 STS_XCP_REQ_CTO_Byte14 STS_XCP_REQ_CTO_Byte15 STS_XCP_REQ_CTO_Byte16 STS_XCP_REQ_CTO_Byte17 STS_XCP_REQ_CTO_Byte18 STS_XCP_REQ_CTO_Byte19 STS_XCP_REQ_CTO_Byte20 STS_XCP_REQ_CTO_Byte21 STS_XCP_REQ_CTO_Byte22 STS_XCP_REQ_CTO_Byte23 STS_XCP_REQ_CTO_Byte24 STS_XCP_REQ_CTO_Byte25 STS_XCP_REQ_CTO_Byte26 STS_XCP_REQ_CTO_Byte27 STS_XCP_REQ_CTO_Byte28 STS_XCP_REQ_CTO_Byte29 STS_XCP_REQ_CTO_Byte30 STS_XCP_REQ_CTO_Byte31;
+SIG_GROUP_ 41 XcpCTOResp 1 : STS_XCP_RES_CTO_Byte63 STS_XCP_RES_CTO_Byte62 STS_XCP_RES_CTO_Byte61 STS_XCP_RES_CTO_Byte60 STS_XCP_RES_CTO_Byte59 STS_XCP_RES_CTO_Byte58 STS_XCP_RES_CTO_Byte57 STS_XCP_RES_CTO_Byte56 STS_XCP_RES_CTO_Byte55 STS_XCP_RES_CTO_Byte54 STS_XCP_RES_CTO_Byte53 STS_XCP_RES_CTO_Byte52 STS_XCP_RES_CTO_Byte51 STS_XCP_RES_CTO_Byte50 STS_XCP_RES_CTO_Byte49 STS_XCP_RES_CTO_Byte48 STS_XCP_RES_CTO_Byte47 STS_XCP_RES_CTO_Byte46 STS_XCP_RES_CTO_Byte45 STS_XCP_RES_CTO_Byte44 STS_XCP_RES_CTO_Byte43 STS_XCP_RES_CTO_Byte42 STS_XCP_RES_CTO_Byte41 STS_XCP_RES_CTO_Byte40 STS_XCP_RES_CTO_Byte39 STS_XCP_RES_CTO_Byte38 STS_XCP_RES_CTO_Byte37 STS_XCP_RES_CTO_Byte36 STS_XCP_RES_CTO_Byte35 STS_XCP_RES_CTO_Byte34 STS_XCP_RES_CTO_Byte33 STS_XCP_RES_CTO_Byte32 STS_XCP_RES_CTO_Byte0 STS_XCP_RES_CTO_Byte1 STS_XCP_RES_CTO_Byte2 STS_XCP_RES_CTO_Byte3 STS_XCP_RES_CTO_Byte4 STS_XCP_RES_CTO_Byte5 STS_XCP_RES_CTO_Byte6 STS_XCP_RES_CTO_Byte7 STS_XCP_RES_CTO_Byte8 STS_XCP_RES_CTO_Byte9 STS_XCP_RES_CTO_Byte10 STS_XCP_RES_CTO_Byte11 STS_XCP_RES_CTO_Byte12 STS_XCP_RES_CTO_Byte13 STS_XCP_RES_CTO_Byte14 STS_XCP_RES_CTO_Byte15 STS_XCP_RES_CTO_Byte16 STS_XCP_RES_CTO_Byte17 STS_XCP_RES_CTO_Byte18 STS_XCP_RES_CTO_Byte19 STS_XCP_RES_CTO_Byte20 STS_XCP_RES_CTO_Byte21 STS_XCP_RES_CTO_Byte22 STS_XCP_RES_CTO_Byte23 STS_XCP_RES_CTO_Byte24 STS_XCP_RES_CTO_Byte25 STS_XCP_RES_CTO_Byte26 STS_XCP_RES_CTO_Byte27 STS_XCP_RES_CTO_Byte28 STS_XCP_RES_CTO_Byte29 STS_XCP_RES_CTO_Byte30 STS_XCP_RES_CTO_Byte31;
+SIG_GROUP_ 42 XcpDAQResp 1 : STS_XCP_RES_DAQ_Byte63 STS_XCP_RES_DAQ_Byte62 STS_XCP_RES_DAQ_Byte61 STS_XCP_RES_DAQ_Byte60 STS_XCP_RES_DAQ_Byte59 STS_XCP_RES_DAQ_Byte58 STS_XCP_RES_DAQ_Byte57 STS_XCP_RES_DAQ_Byte56 STS_XCP_RES_DAQ_Byte55 STS_XCP_RES_DAQ_Byte54 STS_XCP_RES_DAQ_Byte53 STS_XCP_RES_DAQ_Byte52 STS_XCP_RES_DAQ_Byte51 STS_XCP_RES_DAQ_Byte50 STS_XCP_RES_DAQ_Byte49 STS_XCP_RES_DAQ_Byte48 STS_XCP_RES_DAQ_Byte47 STS_XCP_RES_DAQ_Byte46 STS_XCP_RES_DAQ_Byte45 STS_XCP_RES_DAQ_Byte44 STS_XCP_RES_DAQ_Byte43 STS_XCP_RES_DAQ_Byte42 STS_XCP_RES_DAQ_Byte41 STS_XCP_RES_DAQ_Byte40 STS_XCP_RES_DAQ_Byte39 STS_XCP_RES_DAQ_Byte38 STS_XCP_RES_DAQ_Byte37 STS_XCP_RES_DAQ_Byte36 STS_XCP_RES_DAQ_Byte35 STS_XCP_RES_DAQ_Byte34 STS_XCP_RES_DAQ_Byte33 STS_XCP_RES_DAQ_Byte32 STS_XCP_RES_DAQ_Byte31 STS_XCP_RES_DAQ_Byte30 STS_XCP_RES_DAQ_Byte29 STS_XCP_RES_DAQ_Byte28 STS_XCP_RES_DAQ_Byte27 STS_XCP_RES_DAQ_Byte26 STS_XCP_RES_DAQ_Byte25 STS_XCP_RES_DAQ_Byte24 STS_XCP_RES_DAQ_Byte23 STS_XCP_RES_DAQ_Byte22 STS_XCP_RES_DAQ_Byte21 STS_XCP_RES_DAQ_Byte20 STS_XCP_RES_DAQ_Byte19 STS_XCP_RES_DAQ_Byte18 STS_XCP_RES_DAQ_Byte17 STS_XCP_RES_DAQ_Byte16 STS_XCP_RES_DAQ_Byte15 STS_XCP_RES_DAQ_Byte14 STS_XCP_RES_DAQ_Byte13 STS_XCP_RES_DAQ_Byte12 STS_XCP_RES_DAQ_Byte11 STS_XCP_RES_DAQ_Byte10 STS_XCP_RES_DAQ_Byte9 STS_XCP_RES_DAQ_Byte8 STS_XCP_RES_DAQ_Byte7 STS_XCP_RES_DAQ_Byte6 STS_XCP_RES_DAQ_Byte5 STS_XCP_RES_DAQ_Byte4 STS_XCP_RES_DAQ_Byte3 STS_XCP_RES_DAQ_Byte2 STS_XCP_RES_DAQ_Byte1 STS_XCP_RES_DAQ_Byte0;
+

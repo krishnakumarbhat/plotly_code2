@@ -1,0 +1,166 @@
+name: LOC Tracker
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode: 'full' (cloc entire repo) or 'delta' (GitHub API diff only)"
+        required: false
+        default: ""
+        type: choice
+        options:
+          - ""
+          - full
+          - delta
+      window_hours:
+        description: "Look-back window in hours"
+        required: false
+        default: "24"
+      include_ext:
+        description: "Whitelist of file extensions to count, comma-separated (e.g. '.c,.cpp,.h'). Overrides config.json filters.include_extensions."
+        required: false
+        default: ""
+      exclude_ext:
+        description: "Extensions to exclude, comma-separated (e.g. '.yml,.lock'). Overrides config.json filters.exclude_extensions."
+        required: false
+        default: ""
+      include_path:
+        description: "Regex path patterns to include, comma-separated. Overrides config.json filters.include_path_patterns."
+        required: false
+        default: ""
+      exclude_path:
+        description: "Regex path patterns to exclude, comma-separated. Overrides config.json filters.exclude_path_patterns."
+        required: false
+        default: ""
+
+#### ── Default values for both scheduled and manual runs ──────────────────
+### Edit these to change what gets tracked. Manual (workflow_dispatch) runs
+### can override any of these via the input fields.
+env:
+  DEFAULT_MODE: "delta"
+  DEFAULT_WINDOW_HOURS: "24"
+  DEFAULT_INCLUDE_EXT: ".c,.cpp,.h"
+  DEFAULT_EXCLUDE_EXT: ""
+  DEFAULT_INCLUDE_PATH: ""
+  DEFAULT_EXCLUDE_PATH: "external/.*com_google_googletest~?.*/.*,external/.*mingw64_10_0_0_rev0~?.*/.*,external/.*gcc-glibc~?.*/.*,external/.*bbe_(linux|windows).*/.*"
+
+jobs:
+  loc-tracker:
+    name: LOC Tracker
+    runs-on: gh-injected-gpo-linux-medium
+    permissions:
+      contents: read
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y cloc
+          pip3 install requests psycopg2-binary
+
+      - name: Multi-org authentication
+        uses: Aptiv/action-multi-org-authentication@v1
+        with:
+          app-id: ${{ secrets.DSO_BOT_APP_ID }}
+          app-private-key: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+          organization: '${{ github.repository_owner }},Aptiv,EXTERNAL'
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          path: repo
+
+      - name: Checkout action-publish-metrics
+        uses: actions/checkout@v4
+        with:
+          repository: Aptiv/action-publish-metrics
+          ref: main
+          token: ${{ github.token }}
+          path: action-publish-metrics
+
+      ##### ─── Full mode: cloc scans the checked-out repo ─────────────────────
+      - name: Calculate LOC — Full mode
+        if: ${{ (inputs.mode || env.DEFAULT_MODE) == 'full' }}
+        working-directory: action-publish-metrics/lines-of-code
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          FILTER_ARGS=""
+          _INCLUDE_EXT="${{ inputs.include_ext || env.DEFAULT_INCLUDE_EXT }}"
+          _EXCLUDE_EXT="${{ inputs.exclude_ext || env.DEFAULT_EXCLUDE_EXT }}"
+          _INCLUDE_PATH="${{ inputs.include_path || env.DEFAULT_INCLUDE_PATH }}"
+          _EXCLUDE_PATH="${{ inputs.exclude_path || env.DEFAULT_EXCLUDE_PATH }}"
+          [ -n "$_INCLUDE_EXT" ]  && FILTER_ARGS="$FILTER_ARGS --include-ext $_INCLUDE_EXT"
+          [ -n "$_EXCLUDE_EXT" ]  && FILTER_ARGS="$FILTER_ARGS --exclude-ext $_EXCLUDE_EXT"
+          [ -n "$_INCLUDE_PATH" ] && FILTER_ARGS="$FILTER_ARGS --include-path $_INCLUDE_PATH"
+          [ -n "$_EXCLUDE_PATH" ] && FILTER_ARGS="$FILTER_ARGS --exclude-path $_EXCLUDE_PATH"
+          python3 loc_tracker.py \
+            --mode full \
+            --cloc \
+            --config $GITHUB_WORKSPACE/repo/grafana_config/loc_config.json \
+            --window-hours ${{ inputs.window_hours || env.DEFAULT_WINDOW_HOURS }} \
+            --workspace-dir $GITHUB_WORKSPACE/repo \
+            --output loc_report_full.json \
+            --cloc-output loc_report_cloc.json \
+            $FILTER_ARGS
+
+      ### ── Delta mode: GitHub API diff only, no cloc scan ───────────────────────
+      - name: Calculate LOC — Delta mode
+        if: ${{ (inputs.mode || env.DEFAULT_MODE) == 'delta' }}
+        working-directory: action-publish-metrics/lines-of-code
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          FILTER_ARGS=""
+          _INCLUDE_EXT="${{ inputs.include_ext || env.DEFAULT_INCLUDE_EXT }}"
+          _EXCLUDE_EXT="${{ inputs.exclude_ext || env.DEFAULT_EXCLUDE_EXT }}"
+          _INCLUDE_PATH="${{ inputs.include_path || env.DEFAULT_INCLUDE_PATH }}"
+          _EXCLUDE_PATH="${{ inputs.exclude_path || env.DEFAULT_EXCLUDE_PATH }}"
+          [ -n "$_INCLUDE_EXT" ]  && FILTER_ARGS="$FILTER_ARGS --include-ext $_INCLUDE_EXT"
+          [ -n "$_EXCLUDE_EXT" ]  && FILTER_ARGS="$FILTER_ARGS --exclude-ext $_EXCLUDE_EXT"
+          [ -n "$_INCLUDE_PATH" ] && FILTER_ARGS="$FILTER_ARGS --include-path $_INCLUDE_PATH"
+          [ -n "$_EXCLUDE_PATH" ] && FILTER_ARGS="$FILTER_ARGS --exclude-path $_EXCLUDE_PATH"
+          python3 loc_tracker.py \
+            --mode delta \
+            --config $GITHUB_WORKSPACE/repo/grafana_config/loc_config.json \
+            --window-hours ${{ inputs.window_hours || env.DEFAULT_WINDOW_HOURS }} \
+            --output loc_report_delta.json \
+            $FILTER_ARGS
+
+      - name: Upload LOC reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loc-reports-${{ github.run_number }}
+          path: |
+            action-publish-metrics/lines-of-code/loc_report_full.json
+            action-publish-metrics/lines-of-code/loc_report_cloc.json
+            action-publish-metrics/lines-of-code/loc_report_delta.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Push LOC data to DB
+        if: always()
+        working-directory: action-publish-metrics/lines-of-code
+        env:
+          LOC_DB_HOST:     ${{ secrets.METRICS_DB_HOST }}
+          LOC_DB_PORT:     ${{ secrets.METRICS_DB_PORT }}
+          LOC_DB_DATABASE: ${{ secrets.METRICS_DB_NAME }}
+          LOC_DB_SCHEMA:   'sw_quality'
+          LOC_DB_USER:     ${{ secrets.METRICS_DB_USER }}
+          LOC_DB_PASSWORD: ${{ secrets.METRICS_DB_PASSWORD }}
+          LOC_GPK:         '${{ vars.GRAFANA_PROJECT_KEY }}'
+        run: |
+          REPORT=""
+          if [ -f loc_report_full.json ]; then
+            REPORT="loc_report_full.json"
+          elif [ -f loc_report_delta.json ]; then
+            REPORT="loc_report_delta.json"
+          fi
+          if [ -n "$REPORT" ]; then
+            echo "Pushing $REPORT to DB..."
+            python3 loc_db.py "$REPORT"
+          else
+            echo "No LOC report file found — skipping DB push."
+          fi

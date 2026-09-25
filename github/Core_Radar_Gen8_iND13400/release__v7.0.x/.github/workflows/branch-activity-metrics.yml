@@ -1,0 +1,366 @@
+name: Branch Activity Metrics
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: "Start date (YYYY-MM-DD). Defaults to yesterday."
+        required: false
+        default: ""
+      to_date:
+        description: "End date (YYYY-MM-DD). Defaults to today."
+        required: false
+        default: ""
+      window:
+        description: "Preset window: 'day', 'week', or 'month'. Overrides from_date/to_date."
+        required: false
+        default: "day"
+        type: choice
+        options:
+          - day
+          - week
+          - month
+          - custom
+      target_branch:
+        description: "Target branch to track merges into (e.g. dev, main)"
+        required: false
+        default: "dev"
+      db_publish_enabled:
+        description: "Publish collected metrics to PostgreSQL"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+#### ── Defaults (used by scheduled runs) ─────────────────────────────────────
+env: # defaults for scheduled runs; workflow_dispatch inputs override these
+  DEFAULT_WINDOW: "day"
+  DEFAULT_TARGET_BRANCH: "dev"
+  DEFAULT_DB_PUBLISH: "true"
+  GITHUB_API_HOST: "aptv.ghe.com"
+  GITHUB_OWNER: "GPO"
+  GITHUB_REPO: "Core_Radar_Gen8_iND13400"
+  METRICS_OUTPUT_FILE: "branch-activity-metrics.jsonl"
+
+jobs:
+  collect-branch-metrics:
+    name: Collect Branch Activity Metrics
+    runs-on: gpo-linux-medium
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      DB_DEBUG_MODE: "false"  # must be job-level so it propagates into composite actions
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Multi-org authentication
+        uses: Aptiv/action-multi-org-authentication@v1
+        with:
+          app-id: ${{ secrets.DSO_BOT_APP_ID }}
+          app-private-key: ${{ secrets.DSO_BOT_PRIVATE_KEY }}
+          organization: '${{ github.repository_owner }},Aptiv'
+
+      - name: Install dependencies
+        run: pip3 install requests psycopg2-binary
+
+      - name: Collect branch activity metrics
+        id: collect
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INPUT_FROM_DATE: ${{ inputs.from_date || '' }}
+          INPUT_TO_DATE: ${{ inputs.to_date || '' }}
+          INPUT_WINDOW: ${{ inputs.window || env.DEFAULT_WINDOW }}
+          INPUT_TARGET_BRANCH: ${{ inputs.target_branch || env.DEFAULT_TARGET_BRANCH }}
+          OUTPUT_FILE: ${{ env.METRICS_OUTPUT_FILE }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          import requests
+
+          # ── Config ──────────────────────────────────────────────────────────
+          api_host = os.environ.get("GITHUB_API_HOST", "aptv.ghe.com")
+          owner    = os.environ.get("GITHUB_OWNER", "GPO")
+          repo     = os.environ.get("GITHUB_REPO", "Core_Radar_Gen8_iND13400")
+          token    = os.environ["GITHUB_TOKEN"]
+          target_branch = os.environ.get("INPUT_TARGET_BRANCH", "dev").strip() or "dev"
+          output_file   = Path(os.environ.get("OUTPUT_FILE", "branch-activity-metrics.jsonl"))
+          window        = os.environ.get("INPUT_WINDOW", "day").strip() or "day"
+
+          base_url = f"https://{api_host}/api/v3"
+          headers  = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github.v3+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
+
+          # ── Date range resolution ────────────────────────────────────────────
+          today = datetime.now(tz=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+
+          raw_from = os.environ.get("INPUT_FROM_DATE", "").strip()
+          raw_to   = os.environ.get("INPUT_TO_DATE", "").strip()
+
+          if window == "week":
+              from_dt = today - timedelta(days=7)
+              to_dt   = today
+          elif window == "month":
+              from_dt = today - timedelta(days=30)
+              to_dt   = today
+          elif window == "custom" and raw_from and raw_to:
+              from_dt = datetime.fromisoformat(raw_from).replace(tzinfo=timezone.utc)
+              to_dt   = datetime.fromisoformat(raw_to).replace(tzinfo=timezone.utc) + timedelta(days=1)
+          else:
+              # Default: previous day
+              from_dt = today - timedelta(days=1)
+              to_dt   = today
+
+          print(f"[branch-metrics] Date window: {from_dt.date()} → {to_dt.date()}")
+          print(f"[branch-metrics] Target branch: {target_branch}")
+
+          # ── GitHub API helpers ──────────────────────────────────────────────
+          def paginate(url, params=None):
+              """Yield all items across all pages from a GitHub list endpoint."""
+              params = dict(params or {})
+              params.setdefault("per_page", 100)
+              page = 1
+              while True:
+                  params["page"] = page
+                  resp = requests.get(url, headers=headers, params=params, timeout=30)
+                  resp.raise_for_status()
+                  data = resp.json()
+                  if not data:
+                      break
+                  if isinstance(data, list):
+                      yield from data
+                      if len(data) < params["per_page"]:
+                          break
+                  else:
+                      yield data
+                      break
+                  page += 1
+
+          def get_commit_count(pr_number):
+              """Return the number of commits in a pull request."""
+              url = f"{base_url}/repos/{owner}/{repo}/pulls/{pr_number}/commits"
+              try:
+                  commits = list(paginate(url))
+                  return len(commits)
+              except Exception as exc:
+                  print(f"[warn] Failed to get commits for PR #{pr_number}: {exc}")
+                  return 0
+
+          # ── Fetch closed PRs (merged into target_branch within window) ───────
+          print(f"[branch-metrics] Fetching closed PRs targeting '{target_branch}'...")
+          closed_pr_url = f"{base_url}/repos/{owner}/{repo}/pulls"
+          all_closed_prs = list(paginate(closed_pr_url, {
+              "state": "closed",
+              "base": target_branch,
+              "sort": "updated",
+              "direction": "desc",
+          }))
+
+          # ── Fetch open PRs ───────────────────────────────────────────────────
+          print(f"[branch-metrics] Fetching open PRs targeting '{target_branch}'...")
+          all_open_prs = list(paginate(closed_pr_url, {
+              "state": "open",
+              "base": target_branch,
+              "sort": "created",
+              "direction": "desc",
+          }))
+
+          print(f"[branch-metrics] Found {len(all_closed_prs)} closed, {len(all_open_prs)} open PRs")
+
+          # ── Build metrics ────────────────────────────────────────────────────
+          metrics = []
+
+          def emit(name, value, tags):
+              metrics.append({"metric_name": name, "metric_value": value, "metric_tags": tags})
+
+          # Daily merge/creation buckets
+          daily_merged  = {}   # date_str → count
+          daily_created = {}   # date_str → count
+
+          # --- Closed / merged PRs ---
+          for pr in all_closed_prs:
+              merged_at_raw = pr.get("merged_at")
+              created_at_raw = pr.get("created_at", "")
+
+              if not merged_at_raw:
+                  continue  # Closed without merge (not relevant)
+
+              merged_at = datetime.fromisoformat(merged_at_raw.replace("Z", "+00:00"))
+              created_at = datetime.fromisoformat(created_at_raw.replace("Z", "+00:00"))
+
+              # Per-PR merge event (one row per merge, useful for detailed table in Grafana)
+              emit("branch_merged_to_dev", 1, {
+                  "branch_name":    pr["head"]["ref"],
+                  "pr_number":      pr["number"],
+                  "pr_title":       pr["title"][:120],
+                  "author":         (pr.get("user") or {}).get("login", "unknown"),
+                  "merged_at":      merged_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                  "created_at":     created_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                  "target_branch":  target_branch,
+                  "days_to_merge":  max(0, (merged_at - created_at).days),
+                  "pr_url":         pr.get("html_url", ""),
+              })
+
+              # Bucket for daily count
+              if from_dt <= merged_at < to_dt:
+                  day_key = merged_at.strftime("%Y-%m-%d")
+                  daily_merged[day_key] = daily_merged.get(day_key, 0) + 1
+
+              # Bucket PR creation date
+              if from_dt <= created_at < to_dt:
+                  day_key = created_at.strftime("%Y-%m-%d")
+                  daily_created[day_key] = daily_created.get(day_key, 0) + 1
+
+          # --- Open / WIP PRs ---
+          total_open_commits = 0
+          for pr in all_open_prs:
+              created_at_raw = pr.get("created_at", "")
+              created_at = datetime.fromisoformat(created_at_raw.replace("Z", "+00:00"))
+              days_open  = max(0, (datetime.now(tz=timezone.utc) - created_at).days)
+              commit_count = get_commit_count(pr["number"])
+              total_open_commits += commit_count
+
+              emit("branch_open_wip", commit_count, {
+                  "branch_name":   pr["head"]["ref"],
+                  "pr_number":     pr["number"],
+                  "pr_title":      pr["title"][:120],
+                  "author":        (pr.get("user") or {}).get("login", "unknown"),
+                  "created_at":    created_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                  "days_open":     days_open,
+                  "target_branch": target_branch,
+                  "pr_url":        pr.get("html_url", ""),
+                  "commit_count":  commit_count,
+              })
+
+              # Creation bucket for open PRs too
+              if from_dt <= created_at < to_dt:
+                  day_key = created_at.strftime("%Y-%m-%d")
+                  daily_created[day_key] = daily_created.get(day_key, 0) + 1
+
+          # --- Daily aggregates ---
+          all_days = set(daily_merged) | set(daily_created)
+          for day_str in sorted(all_days):
+              emit("branch_daily_merged_count", daily_merged.get(day_str, 0), {
+                  "date": day_str,
+                  "target_branch": target_branch,
+              })
+              emit("branch_daily_created_count", daily_created.get(day_str, 0), {
+                  "date": day_str,
+                  "target_branch": target_branch,
+              })
+
+          # --- Summary stats ---
+          emit("branch_open_count",          len(all_open_prs),     {"target_branch": target_branch})
+          emit("branch_merged_count_window", len([p for p in all_closed_prs
+                                                  if p.get("merged_at") and
+                                                  from_dt <= datetime.fromisoformat(
+                                                      p["merged_at"].replace("Z", "+00:00")) < to_dt]),
+               {"target_branch": target_branch, "window": window,
+                "from_date": from_dt.strftime("%Y-%m-%d"), "to_date": to_dt.strftime("%Y-%m-%d")})
+          emit("branch_open_total_commits",  total_open_commits,    {"target_branch": target_branch})
+
+          # ── Write JSONL ──────────────────────────────────────────────────────
+          output_file.write_text(
+              "\n".join(json.dumps(m) for m in metrics) + "\n",
+              encoding="utf-8"
+          )
+          print(f"[branch-metrics] Written {len(metrics)} metric rows to {output_file}")
+
+          # ── Rich step summary ─────────────────────────────────────────────────
+          merged_in_window = [
+              p for p in all_closed_prs
+              if p.get("merged_at") and
+              from_dt <= datetime.fromisoformat(p["merged_at"].replace("Z", "+00:00")) < to_dt
+          ]
+
+          lines = [
+              f"## Branch Activity Metrics — `{target_branch}`",
+              f"**Window:** {from_dt.date()} → {to_dt.date()} ({window})",
+              "",
+              "| Metric | Value |",
+              "|--------|-------|",
+              f"| Open / WIP branches | **{len(all_open_prs)}** |",
+              f"| Branches merged (window) | **{len(merged_in_window)}** |",
+              f"| Total commits in WIP | **{total_open_commits}** |",
+              f"| Metric rows generated | {len(metrics)} |",
+              "",
+              "### Open / WIP Branches",
+              "| PR | Branch | Days Open | Commits |",
+              "|----|--------|-----------|---------|",
+          ]
+          for pr in all_open_prs[:30]:
+              m = next((x for x in metrics if x["metric_name"] == "branch_open_wip"
+                        and x["metric_tags"].get("pr_number") == pr["number"]), None)
+              commits = m["metric_value"] if m else "-"
+              days = max(0, (datetime.now(tz=timezone.utc) -
+                             datetime.fromisoformat(pr["created_at"].replace("Z", "+00:00"))).days)
+              url = pr.get("html_url", "")
+              lines.append(f"| [#{pr['number']}]({url}) | `{pr['head']['ref']}` | {days} | {commits} |")
+          if len(all_open_prs) > 30:
+              lines.append(f"| … | *(and {len(all_open_prs) - 30} more)* | | |")
+
+          lines += [
+              "",
+              f"### Recently Merged into `{target_branch}` (window)",
+              "| PR | Branch | Merged At | Days to Merge |",
+              "|----|--------|-----------|---------------|",
+          ]
+          for pr in merged_in_window[:30]:
+              merged_at = datetime.fromisoformat(pr["merged_at"].replace("Z", "+00:00"))
+              created_at = datetime.fromisoformat(pr["created_at"].replace("Z", "+00:00"))
+              days = max(0, (merged_at - created_at).days)
+              url = pr.get("html_url", "")
+              lines.append(f"| [#{pr['number']}]({url}) | `{pr['head']['ref']}` | {merged_at.strftime('%Y-%m-%d')} | {days} |")
+          if len(merged_in_window) > 30:
+              lines.append(f"| … | *(and {len(merged_in_window) - 30} more)* | | |")
+
+          step_summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if step_summary:
+              with open(step_summary, "a", encoding="utf-8") as fh:
+                  fh.write("\n".join(lines) + "\n")
+
+          # Expose outputs for downstream steps
+          github_output = os.environ.get("GITHUB_OUTPUT")
+          if github_output:
+              with open(github_output, "a", encoding="utf-8") as fh:
+                  fh.write(f"metric-count={len(metrics)}\n")
+                  fh.write(f"open-branch-count={len(all_open_prs)}\n")
+          PY
+
+      - name: Upload metrics artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-activity-metrics-${{ github.run_number }}
+          path: ${{ env.METRICS_OUTPUT_FILE }}
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Publish metrics to PostgreSQL
+        if: ${{ (inputs.db_publish_enabled || env.DEFAULT_DB_PUBLISH) == 'true' && steps.collect.outputs.metric-count != '0' }}
+        uses: ./.github/actions/publish-jsonl-to-postgres
+        with:
+          metrics-file:      ${{ env.METRICS_OUTPUT_FILE }}
+          metrics-db-user:   ${{ secrets.PERCEPTION_DB_USER }}
+          metrics-db-password: ${{ secrets.PERCEPTION_DB_PASSWORD }}
+          metrics-db-host:   ${{ secrets.PERCEPTION_DB_HOST }}
+          metrics-db-port:   ${{ secrets.PERCEPTION_DB_PORT }}
+          metrics-db-name:   ${{ secrets.PERCEPTION_DB_NAME }}
+          commit-id:         ${{ github.sha }}
+          branch:            ${{ github.ref_name }}
+          project-name:      ${{ vars.GRAFANA_PROJECT_KEY || 'Core_Radar_Gen8_iND13400' }}
+          pipeline-name:     branch-activity-metrics
+          build-no:          ${{ github.run_number }}
+          build-url:         ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

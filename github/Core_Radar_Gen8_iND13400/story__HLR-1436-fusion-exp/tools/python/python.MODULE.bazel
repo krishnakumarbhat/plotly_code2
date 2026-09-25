@@ -1,0 +1,10 @@
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+
+pip.parse(
+    experimental_index_url = "https://jfrog.asux.aptiv.com/artifactory/api/pypi/pypi-org-remote/simple",
+    hub_name = "aptiv-pypi",
+    python_version = "3.10.13",
+    requirements_lock = "//tools/python:requirements.txt",
+)
+
+use_repo(pip, "aptiv-pypi")
