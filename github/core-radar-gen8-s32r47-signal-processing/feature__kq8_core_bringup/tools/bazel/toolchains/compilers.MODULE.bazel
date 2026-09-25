@@ -1,0 +1,97 @@
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "mingw64_10_0_0_rev0",
+    build_file = "@bazel_platform//:toolchains/mingw/archive.BUILD",
+    sha256 = "3c0902d7fc08ffc522099170bbff2df09abf1a95c7c1a8c08a745923f86d6fd3",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/mingw/windows/mingw-10.0.0-rev0.zip"],
+)
+
+http_archive(
+    name = "gcc-glibc",
+    build_file = "@bazel_platform//toolchains/gcc:toolchain.BUILD",
+    sha256 = "6808b6cf30ca398390b18cc307626a12d2834adc388eaafd3ba5c6a9b25c7dee",
+    strip_prefix = "x86_64-unknown-linux-gnu",
+    url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_internal-generic-local/gcc/gcc-11.4.0-glibc-2.31-libsanitizer-ubuntu20.tar.zst",
+)
+
+http_archive(
+    name = "windriver_diab_linux",
+    build_file = "@bazel_platform//toolchains/windriver/v7:archive.BUILD",
+    sha256 = "e6e6d94e2debce495f370ad7bc6df5ba7a4f1c37d36b32147492782d424fa487",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/windriver_diab/linux/arm/windriver-diab-7.0.6.0.tar.xz"],
+)
+
+http_archive(
+    name = "windriver_diab_windows",
+    build_file = "@bazel_platform//toolchains/windriver/v7:archive.BUILD",
+    sha256 = "306bc036df419666091c37fafcc596f1ff980791184e0a21f71397a64aed8abc",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/windriver_diab/windows/arm/windriver-diab-7.0.6.0.zip"],
+)
+
+bazel_dep(name = "bbe_windows", version = "2023.11")
+bazel_dep(name = "bbe_linux", version = "2023.11")
+
+bazel_dep(name = "bbe_windows_nxp", version = "2023.11.BBE.R43")
+bazel_dep(name = "bbe_linux_nxp", version = "2023.11.BBE.R43")
+
+single_version_override(
+    module_name = "bbe_windows_nxp",
+    version = "2023.11.BBE.R43",
+    patches = ["//tools/bazel/toolchains/bbe32:bbe_windows_nxp_config.patch"],
+    patch_strip = 1,
+)
+
+single_version_override(
+    module_name = "bbe_linux_nxp",
+    version = "2023.11.BBE.R43",
+    patches = ["//tools/bazel/toolchains/bbe32:bbe_linux_nxp_config.patch"],
+    patch_strip = 1,
+)
+
+bazel_dep(name = "kq8_windows_nxp", version = "2023.11.KQ8.R43")
+bazel_dep(name = "kq8_linux_nxp", version = "2023.11.KQ8.R43")
+
+single_version_override(
+    module_name = "kq8_windows_nxp",
+    version = "2023.11.KQ8.R43",
+    patches = ["//tools/bazel/toolchains/kq8:kq8_windows_nxp_config.patch"],
+    patch_strip = 1,
+)
+
+single_version_override(
+    module_name = "kq8_linux_nxp",
+    version = "2023.11.KQ8.R43",
+    patches = ["//tools/bazel/toolchains/kq8:kq8_linux_nxp_config.patch"],
+    patch_strip = 1,
+)
+
+http_archive(
+    name = "clang_windows",
+    build_file = "@bazel_platform//toolchains/clang:archive.BUILD",
+    sha256 = "14e764eb79e4ed58da1b88320e33e5eb6c6064103446b47c4439b14292b99d12",
+    strip_prefix = "clang+llvm-19.1.2-x86_64-pc-windows-msvc",
+    url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/clang_llvm/windows/clang%2Bllvm-19.1.2-x86_64-pc-windows-msvc.tar.xz",
+)
+
+http_archive(
+    name = "clang_linux",
+    build_file = "@bazel_platform//toolchains/clang:archive.BUILD",
+    sha256 = "eaff94e7823ada86c3ddbfed0a924fc82691eb2674cdcd96802adf8da2790dae",
+    strip_prefix = "LLVM-19.1.2-Linux-X64",
+    url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/clang_llvm/linux/LLVM-19.1.2-Linux-X64.tar.zst",
+)
+
+http_archive(
+    name = "spt_assembler",
+    sha256 = "83e76b244769695c24cb335d47e5ccc82987367ee889438fd6d9b6f8b8e626f7",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-common_3rd_party-local/NXP/spt_assembler/3.8/spt_assembler3.8_2025.3.11.zip"],
+)
+
+# M7 GCC tools required to build the Diagnostics Tool
+http_archive(
+    name = "design_studio_gcc_m7",
+    build_file = "//tools/bazel/toolchains/design_studio_gcc_m7:archive.BUILD",
+    sha256 = "9925eb7bb4581e2574df763136b09ed768a1a7dc420a3e2bc74ccb10e1ab9e3a",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-gen8_s32r47_3rd_party-local/NXP/evb_support/design_studio_gcc_v11_4_m7.zip"],
+)

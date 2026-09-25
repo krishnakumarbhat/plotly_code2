@@ -1,0 +1,10 @@
+# This excludes.yaml file is to be used by the
+# buildAndRunUTAndVote function in the ADVRADAR_CICD repo.
+# Add any folders/files that need to be excluded from the UT analysis.
+# See the ADVRADAR_CICD repo for more information.
+include:
+  - "common/**/*.c"
+  - "internal/**/*.c"
+  - "modules/**/*.c"
+exclude:
+  - "external/**"

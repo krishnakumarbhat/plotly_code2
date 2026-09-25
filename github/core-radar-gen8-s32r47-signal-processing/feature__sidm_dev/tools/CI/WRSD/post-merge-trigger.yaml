@@ -1,0 +1,24 @@
+name: core-radar-s32r47-spbb-post-merge-trigger
+when:
+  eventSource: gerrit
+  eventTypes:
+    - change-merged
+  filters:
+    - property: change.branch
+      operator: in
+      values:
+        - dev
+run:
+  pipeline: core-radar-bb-post-merge
+  params:
+    branch: $(body.change.branch)
+    change-id: $(body.change.number)
+    commit-id: $(body.patchSet.revision)
+    commit-subject: $(body.change.subject)
+    gerrit-project: Core_Radar_Gen8_S32R47_Signal_Processing
+    owner-email: $(body.change.owner.email), $(body.submitter.email)
+    owner-name: $(body.change.owner.name)
+  tasks:
+    - name: update-triggers
+      enabled: true
+url: https://389177498442.awsaptiv.com/webhook/triggers/core-radar-s32r47-spbb-post-merge-trigger

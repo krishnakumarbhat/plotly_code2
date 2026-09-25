@@ -1,0 +1,96 @@
+"""
+This MODULE.bzl file is used to bring in all the required external dependencies and set up global configurations to be used by the entire project.
+
+It is still under development as more modules are moved out of the WORKSPACE.bzlmod file into here.
+If bzlmod is disabled, then the original WORKSPACE file is used instead of this and WORKSPACE.bzlmod
+"""
+
+module(
+    name = "core_radar_gen8_s32r47_signal_processing",
+    version = "dev",
+    compatibility_level = 0,
+    repo_name = "spbb",
+)
+
+include("//:bb.MODULE.bazel")
+
+# -- bazel_dep definitions -- #
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "com_google_googletest", version = "1.11.0")
+bazel_dep(name = "rules_cc", version = "0.0.16")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "rules_python", version = "1.4.1")
+bazel_dep(name = "bazel_platform", version = "bp.0bfc6a05da1213e8645da55bf3bbddce998481f1")
+bazel_dep(name = "fff", version = "7e09f07e5b262b1cc826189dc5057379e40ce886")
+
+coverity = use_extension(
+    "@bazel_platform//:extensions.bzl",
+    "coverity",
+    dev_dependency = True,
+)
+coverity.coverity(
+    major_version = "2024",
+)
+use_repo(
+    coverity,
+    "coverity_2024_6_0_linux",
+    "coverity_2024_6_0_windows",
+    "coverity_toolchain",
+)
+
+include("//tools/bazel/toolchains:compilers.MODULE.bazel")
+
+include("//tools/python:python.MODULE.bazel")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "local_repository")
+
+http_archive(
+    name = "build-tools",
+    sha256 = "2b8e9ff62a71f325ec23cbe6a5fd80a742645a7ab9668e115482e4d0ad16e3d6",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-common_3rd_party-local/bazel/build-tools/build-tools-1.0.zip"],
+)
+
+"""Load all local repositories"""
+
+# This is where spbb_include.h must be located (Application Inclusion Dependency)
+# See the building block documentation for defines that must be declared through the inclusion of this file.
+local_repository(
+    name = "bb_cfg",
+    path = "appl_cfg/bb_cfg",
+)
+
+local_repository(
+    name = "appl_inclusion_dep",
+    path = "appl_cfg/bb_include",
+)
+
+local_repository(
+    name = "spbb_include",
+    path = "appl_cfg/bb_include",
+)
+
+local_repository(
+    name = "build_config",
+    path = "tools/bazel/config",
+)
+
+local_repository(
+    name = "kq8_build_config",
+    path = "tools/bazel/kq8_config",
+)
+
+register_toolchains(
+    "//tools/bazel/toolchains/windriver_m7:windriver_m7_toolchain",
+    "//tools/bazel/toolchains/windriver_m7:windriver_m7_toolchain_linux",
+    "//tools/bazel/toolchains/mingw:mingw_windows_toolchain",
+    "//tools/bazel/toolchains/bbe32:bbe_toolchain_windows",
+    "//tools/bazel/toolchains/bbe32:bbe_toolchain_linux",
+    "//tools/bazel/toolchains/kq8:kq8_toolchain_windows",
+    "//tools/bazel/toolchains/kq8:kq8_toolchain_linux",
+    "//tools/bazel/toolchains/gcc:gcc_linux_toolchain",
+    "//tools/bazel/toolchains/design_studio_gcc_m7:design_studio_gcc_m7_toolchain_windows",
+)

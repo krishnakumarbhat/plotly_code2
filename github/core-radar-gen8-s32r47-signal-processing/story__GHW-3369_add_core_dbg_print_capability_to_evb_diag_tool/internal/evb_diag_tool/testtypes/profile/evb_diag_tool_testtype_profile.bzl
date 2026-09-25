@@ -1,0 +1,218 @@
+"""
+Macro to build a complete EVB Diagnostics Tool test suite for profiling code.
+
+This macro generates the build targets for the tested cores, and the M7 code that controls the test,
+including compilation, linking, image generation, and size analysis.
+"""
+
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("//internal/evb_diag_tool/base:evb_diag_tool_test.bzl", "evb_diag_tool_test")
+
+def evb_diag_tool_testtype_profile(
+        name,
+        m7_profile_defs_h,  # List of header paths for the M7, will become a cc_library added to the M7 deps
+        core_profile_defs_h = [],  # List of header paths shared by the cores, will become a cc_library() added to the core's deps
+        m7_copts = [],
+        m7_linkopts = [],
+        m7_deps = [],  # Additional M7 cc_library dependencies (e.g. scenario init libraries)
+        m7_test_helpers_srcs = [],  # Files(s) that contain the implementation of the M7_Test_Helper_* functions
+        m7_srcs = [],  # Additional M7 source files compiled alongside the profile framework
+        spt_0_srcs = [],  # The SPT source(s) that contain the kernel labels to be tested
+        spt_0_deps = [],
+        spt_0_linkopts = [],
+        spt_1_srcs = [],  # The SPT source(s) that contain the kernel labels to be tested
+        spt_1_deps = [],
+        spt_1_linkopts = [],
+        bbe_0_srcs = [],  # The BBE0 source(s) that contain the code to be tested
+        bbe_0_deps = [],
+        bbe_0_copts = [],
+        bbe_0_defines = [],
+        bbe_0_linkopts = [],
+        bbe_0_hdrs = [],
+        bbe_1_srcs = [],  # The BBE1 source(s) that contain the code to be tested
+        bbe_1_deps = [],
+        bbe_1_copts = [],
+        bbe_1_defines = [],
+        bbe_1_linkopts = [],
+        bbe_1_hdrs = [],
+        kq8_0_srcs = [],  # The KQ80 source(s) that contain the code to be tested
+        kq8_0_deps = [],
+        kq8_0_copts = [],
+        kq8_0_defines = [],
+        kq8_0_linkopts = [],
+        kq8_0_hdrs = [],
+        kq8_1_srcs = [],  # The KQ81 source(s) that contain the code to be tested
+        kq8_1_deps = [],
+        kq8_1_copts = [],
+        kq8_1_defines = [],
+        kq8_1_linkopts = [],
+        kq8_1_hdrs = []):
+    """
+    Build a complete EVB Diagnostics Tool test suite for profiling code.
+
+    Args:
+        name: The base name for generated targets
+        m7_profile_defs_h: The headers that defines the test structs and information, must all be in the same directory.
+        core_profile_defs_h: Headers shared by the M7, SPT, BBE, and KQ8 cores, must all be in the same directory.
+        m7_copts: (Optional) Additional compiler options for M7 core. Defaults to [].
+        m7_linkopts: (Optional) Additional linker options for M7 core. Defaults to [].
+        m7_deps: (Optional) Additional cc_library dependencies for M7 core (e.g. scenario init libraries). Defaults to [].
+        m7_test_helpers_srcs: (Optional) Files(s) that contain the implementation of the M7_Test_Helper_* functions. Defaults to [].
+        m7_srcs: (Optional) Additional source files compiled for M7 core alongside the profile framework. Defaults to [].
+        spt_0_srcs: (Optional) The SPT source(s) that contain the kernel labels to be tested
+        spt_0_deps: (Optional) Additional cc_library dependencies for SPT core 0. Defaults to [].
+        spt_0_linkopts: (Optional) Additional linker options for SPT core 0. Defaults to [].
+        spt_1_srcs: (Optional) The SPT source(s) that contain the kernel labels to be tested
+        spt_1_deps: (Optional) Additional cc_library dependencies for SPT core 1. Defaults to [].
+        spt_1_linkopts: (Optional) Additional linker options for SPT core 1. Defaults to [].
+        bbe_0_srcs: (Optional) The BBE source(s) that contain the code to be tested
+        bbe_0_deps: (Optional) The BBE deps(s) for the code to be tested
+        bbe_0_copts: (Optional) Additional compiler options for BBE core 0. Defaults to [].
+        bbe_0_defines: (Optional) Preprocessor defines for BBE core 0. Defaults to [].
+        bbe_0_linkopts: (Optional) Linker options for BBE core 0 binary. Defaults to [].
+        bbe_0_hdrs: (Optional) Header files for BBE core 0 to expose via `hdrs` on the generated cc_library. Defaults to [].
+        bbe_1_srcs: (Optional) The BBE source(s) that contain the code to be tested
+        bbe_1_deps: (Optional) The BBE deps(s) for the code to be tested
+        bbe_1_copts: (Optional) Additional compiler options for BBE core 1. Defaults to [].
+        bbe_1_defines: (Optional) Preprocessor defines for BBE core 1. Defaults to [].
+        bbe_1_linkopts: (Optional) Linker options for BBE core 1 binary. Defaults to [].
+        bbe_1_hdrs: (Optional) Header files for BBE core 1 to expose via `hdrs` on the generated cc_library. Defaults to [].
+        kq8_0_srcs: (Optional) The KQ8 source(s) that contain the code to be tested
+        kq8_0_deps: (Optional) The KQ8 deps(s) for the code to be tested
+        kq8_0_copts: (Optional) Additional compiler options for KQ8 core 0. Defaults to [].
+        kq8_0_defines: (Optional) Preprocessor defines for KQ8 core 0. Defaults to [].
+        kq8_0_linkopts: (Optional) Linker options for KQ8 core 0 binary. Defaults to [].
+        kq8_0_hdrs: (Optional) Header files for KQ8 core 0 to expose via `hdrs` on the generated cc_library. Defaults to [].
+        kq8_1_srcs: (Optional) The KQ8 source(s) that contain the code to be tested
+        kq8_1_deps: (Optional) The KQ8 deps(s) for the code to be tested
+        kq8_1_copts: (Optional) Additional compiler options for KQ8 core 1. Defaults to [].
+        kq8_1_defines: (Optional) Preprocessor defines for KQ8 core 1. Defaults to [].
+        kq8_1_linkopts: (Optional) Linker options for KQ8 core 1 binary. Defaults to [].
+        kq8_1_hdrs: (Optional) Header files for KQ8 core 1 to expose via `hdrs` on the generated cc_library. Defaults to [].
+    """
+    # ====================================================================
+    # Argument Preparation
+    # ====================================================================
+
+    # Assign default if no M7 helper source is specified
+    m7_test_helpers_srcs = m7_test_helpers_srcs if m7_test_helpers_srcs else ["//internal/evb_diag_tool/testtypes/profile:src/m7_testtype_profile_default_helpers.c"]
+
+    # Assign defaults if no BBE sources are specified
+    bbe_0_sources = bbe_0_srcs if bbe_0_srcs else ["//internal/evb_diag_tool/testtypes/profile:src/bbe_default_scenario.c"]
+    bbe_1_sources = bbe_1_srcs if bbe_1_srcs else ["//internal/evb_diag_tool/testtypes/profile:src/bbe_default_scenario.c"]
+
+    # Assign defaults if no KQ8 sources are specified
+    kq8_0_sources = kq8_0_srcs if kq8_0_srcs else ["//internal/evb_diag_tool/testtypes/profile:src/kq8_default_scenario.c"]
+    kq8_1_sources = kq8_1_srcs if kq8_1_srcs else ["//internal/evb_diag_tool/testtypes/profile:src/kq8_default_scenario.c"]
+
+    # ====================================================================
+    # Code
+    # ====================================================================
+
+    # Build m7 user header files into a library so it can be included in the build deps to provide the proper include path.
+    # Strip any directory prefix so callers can #include it directly.
+    # Expect a list of header strings.
+    m7_profile_defs_list = m7_profile_defs_h
+
+    if len(m7_profile_defs_list) > 0 and "/" in m7_profile_defs_list[0]:
+        strip_prefix = m7_profile_defs_list[0][:m7_profile_defs_list[0].rfind("/")]
+    else:
+        strip_prefix = ""
+    cc_library(
+        name = name + "_m7_profile_defs_h_lib",
+        hdrs = m7_profile_defs_list,
+        strip_include_prefix = strip_prefix,
+        include_prefix = "",
+        visibility = ["//visibility:private"],
+    )
+
+    # Build core user header files into a library so it can be included in the build deps to provide the proper include path.
+    # Strip any directory prefix so callers can #include it directly.
+    # Expect a list of header strings.
+    core_profile_defs_list = core_profile_defs_h
+
+    if len(core_profile_defs_list) > 0 and "/" in core_profile_defs_list[0]:
+        strip_prefix = core_profile_defs_list[0][:core_profile_defs_list[0].rfind("/")]
+    else:
+        strip_prefix = ""
+    cc_library(
+        name = name + "_core_profile_defs_h_lib",
+        hdrs = core_profile_defs_list,
+        strip_include_prefix = strip_prefix,
+        include_prefix = "",
+        visibility = ["//visibility:private"],
+    )
+
+    # Call the base macro
+    evb_diag_tool_test(
+        name = name,
+        m7_hdrs = [
+            "//internal/evb_diag_tool/testtypes/profile:m7_testtype_profile_info_h",
+        ],
+        m7_test_src = "//internal/evb_diag_tool/testtypes/profile:m7_testtype_profile_c",
+        m7_srcs = m7_test_helpers_srcs + m7_srcs,
+        m7_deps = [
+            "//internal/evb_diag_tool/testtypes/profile:m7_testtype_profile_info_h",
+            ":" + name + "_m7_profile_defs_h_lib",
+            ":" + name + "_core_profile_defs_h_lib",
+            "@reuse//:reuse",
+        ] + m7_deps,
+        m7_copts = m7_copts,
+        m7_linkopts = m7_linkopts,
+        spt_0_srcs = spt_0_srcs,
+        spt_0_deps = spt_0_deps + [
+            ":" + name + "_core_profile_defs_h_lib",
+        ],
+        spt_0_linkopts = spt_0_linkopts,
+        spt_1_srcs = spt_1_srcs,
+        spt_1_deps = spt_1_deps + [
+            ":" + name + "_core_profile_defs_h_lib",
+        ],
+        spt_1_linkopts = spt_1_linkopts,
+        bbe_0_src = "//internal/evb_diag_tool/testtypes/profile:src/main_bbe_wrapper.c",
+        bbe_0_srcs = bbe_0_sources,
+        bbe_0_deps = bbe_0_deps + [
+            "//internal/evb_diag_tool/testtypes/profile:m7_testtype_profile_info_h",
+            ":" + name + "_core_profile_defs_h_lib",
+            "//modules/helpers:timing_helpers_h",
+            "//internal/bbe32/linker:mpu_table_lib",
+            "@reuse//:reuse",
+        ],
+        bbe_0_copts = bbe_0_copts,
+        bbe_0_defines = bbe_0_defines,
+        bbe_0_linkopts = bbe_0_linkopts,
+        bbe_0_hdrs = bbe_0_hdrs,
+        bbe_1_src = "//internal/evb_diag_tool/testtypes/profile:src/main_bbe_wrapper.c",
+        bbe_1_srcs = bbe_1_sources,
+        bbe_1_deps = bbe_1_deps + [
+            "//internal/evb_diag_tool/testtypes/profile:m7_testtype_profile_info_h",
+            ":" + name + "_core_profile_defs_h_lib",
+            "//modules/helpers:timing_helpers_h",
+            "//internal/bbe32/linker:mpu_table_lib",
+            "@reuse//:reuse",
+        ],
+        bbe_1_copts = bbe_1_copts,
+        bbe_1_defines = bbe_1_defines,
+        bbe_1_linkopts = bbe_1_linkopts,
+        bbe_1_hdrs = bbe_1_hdrs,
+        kq8_0_src = "//internal/evb_diag_tool/testtypes/profile:src/main_kq8_wrapper.c",
+        kq8_0_srcs = kq8_0_sources,
+        kq8_0_deps = kq8_0_deps + [
+            "//modules/helpers/imp:profiling_helpers_lib",
+            ":" + name + "_core_profile_defs_h_lib",
+        ],
+        kq8_0_copts = kq8_0_copts,
+        kq8_0_defines = kq8_0_defines,
+        kq8_0_linkopts = kq8_0_linkopts,
+        kq8_0_hdrs = kq8_0_hdrs,
+        kq8_1_src = "//internal/evb_diag_tool/testtypes/profile:src/main_kq8_wrapper.c",
+        kq8_1_srcs = kq8_1_sources,
+        kq8_1_deps = kq8_1_deps + [
+            "//modules/helpers/imp:profiling_helpers_lib",
+            ":" + name + "_core_profile_defs_h_lib",
+        ],
+        kq8_1_copts = kq8_1_copts,
+        kq8_1_defines = kq8_1_defines,
+        kq8_1_linkopts = kq8_1_linkopts,
+        kq8_1_hdrs = kq8_1_hdrs,
+    )

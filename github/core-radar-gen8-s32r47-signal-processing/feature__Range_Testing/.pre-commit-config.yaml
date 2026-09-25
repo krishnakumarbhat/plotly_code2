@@ -1,0 +1,93 @@
+repos:
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: v13.0.1
+  hooks:
+  - id: clang-format
+    name: format C code
+    types_or: [c++, c]
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    exclude: |
+      (?x)^(
+        # Add files here that should not be auto-formatted.
+        # This should NOT include any hand coded files, only auto-generated or vendor provided libraries.
+      )$
+- repo: https://github.com/Warchant/pre-commit-buildifier
+  rev: 0.0.2
+  hooks:
+  - id: buildifier
+# Not currently working on Linux - some dependency is required that is not present in our Docker image.
+# - repo: https://github.com/DavidAnson/markdownlint-cli2
+#   rev: v0.6.0
+#   hooks:
+#   - id: markdownlint-cli2-fix
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+  - id: check-added-large-files
+    name: "Prevent Binary Files"
+    alias: forbid-binary
+    types: ['binary']
+    exclude_types: ['image']
+    args: ['--maxkb=0']
+    exclude: |
+      (?x)^(
+          bazelisk.exe                 | # Windows Bazelisk
+          bazelisk                     | # Linux Bazelisk
+          tools/spt_assembler/bin/.*   | # SPT Assembler binaries
+      )$
+  - id: check-merge-conflict
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+  - id: end-of-file-fixer
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+          .*html                                                    | # HTML files
+          .*url                                                     | # URL files
+      )$
+  - id: trailing-whitespace
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+          .*html                                                    | # HTML files
+          .*url                                                     | # URL files
+      )$
+  - id: check-shebang-scripts-are-executable
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+      )$
+  - id: check-executables-have-shebangs
+    additional_dependencies: [--trusted-host, pypi.org, --trusted-host, pypi.python.org, --trusted-host, files.pythonhosted.org]
+    # types_or: [c++, c]
+    exclude: |
+      (?x)^(
+      )$
+- repo: https://github.com/psf/black
+  rev: 22.8.0
+  hooks:
+  - id: black
+    name: "black: format python"
+    args: [--config, tools/preCommit/pyproject.toml]
+    exclude: |
+      (?x)^(
+      )$
+- repo: https://github.com/pycqa/flake8
+  rev: 7.1.1
+  hooks:
+  - id: flake8
+    name: "flake8: lint python"
+    args: [--config, tools/preCommit/f8_python.ini]
+    types: [python]
+    additional_dependencies: [flake8-docstrings, flake8-bugbear, flake8-builtins, flake8-comprehensions]
+    exclude: |
+      (?x)^(
+        .*__init__.py                                   | # Ignore __init__.py files
+      )$
+  - id: flake8
+    name: "flake8: lint bazel"
+    args: [--config, tools/preCommit/f8_bazel.ini]
+    types: [bazel]
+    additional_dependencies: [flake8-docstrings]

@@ -1,0 +1,50 @@
+name: Building Block CI Verification
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: bb-ci-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    if: always()
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      pull-requests: write
+    uses: GPO/Core_Radar_CICD/.github/workflows/common-bb-verification.yml@v0.3.1
+    secrets:
+      NETRC_CONTENT: ${{ secrets.ADVRADAR_NETRC_CONTENT }}
+      ARB_TOKEN: ${{ secrets.ADVRADAR_ARB_TOKEN }}
+      JIRA_TOKEN: ${{ secrets.ADVRADAR_SID_JIRA_API_KEY }}
+    with:
+      # Common controls
+      run-ut: false
+      run-build: false
+
+      # PR validation
+      run-pr-validation: true
+      jira-url: ${{ vars.JIRA_URL }}
+
+  post_merge:
+    if: github.event_name == 'push'
+    # if: false # To Disable this Stage you can make this line uncommented
+    uses: GPO/Core_Radar_CICD/.github/workflows/common-bb-post-merge.yml@v0.3.1
+    with:
+      project-name: Core_Radar_Gen8_S32R47_Signal_Processing
+      base-sha: ${{ github.event.before }}
+      head-sha: ${{ github.sha }}
+      version-file: version.yaml
+      package-include-patterns: "**"
+      package-exclude-paths: "tools/*"
+      package-exclude-files: "repo_init.py .gitignore .pre-commit-config.yaml .gitattributes .flake8 ADMIN_AUDIT_LOG.md"
+    secrets:
+      app-id: ${{ secrets.DSO_BOT_APP_ID }}
+      app-private-key: ${{ secrets.DSO_BOT_PRIVATE_KEY }}

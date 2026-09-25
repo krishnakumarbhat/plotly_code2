@@ -1,0 +1,1 @@
+These files are the pre-built images from the NXP S32 Design Studio install of the S32R47 Diagnostics Tool v1 install, that this test doesn't build locally. They are required to go into the final M7 test image.

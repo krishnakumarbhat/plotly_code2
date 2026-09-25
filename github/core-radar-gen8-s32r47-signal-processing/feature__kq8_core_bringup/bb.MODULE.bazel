@@ -1,0 +1,33 @@
+r"""
+Bazel file defining all building blocks, local and remote.
+
+Many times, developers will need to override the http_archive calls to develop their building block code locally.
+To do this, use the override_repository flag during build.
+This can be either added on the command line, or for convenience it can be added to a user.bazelrc file in the root of the repo.
+Simply create this user.bazelrc file and add one of the following lines (or similar) and that parameter will be appended to all build commands.
+
+Example for Linux:
+build --override_repository=_main~_repo_rules~reuse="/home/repos/reuse_repository"
+Example for Windows:
+common --override_repository=_main~_repo_rules~reuse="C:\\reuse_repository"
+
+If not using the user.bazelrc file, the build command might look like this:
+bazel build //:gen7 --override_repository=_main~_repo_rules~reuse="/home/repos/reuse_repository"
+"""
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_archive(
+    name = "reuse",
+    sha256 = "798129c9985ff91411fab461b7f2e4ede7fd5d9cdfa0eb0177f2c6e3cf4ba9b9",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-building_blocks-local/Core_Radar_Reuse/v1/Core_Radar_Reuse_v1.2.4.zip"],
+)
+
+http_archive(
+    name = "diag_tool",
+    build_file = "//tools/diag_tool:archive.BUILD",
+    sha256 = "d583d4e095ce5beea8cfd5684b6b5e5000ce8a79b3630dd590b7c25e73c1f3d4",
+    url = "https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-gen8_s32r47_3rd_party-local/NXP/evb_support/S32R47_Diagnostics_Tool_v1.0__bundled.zip",
+)
