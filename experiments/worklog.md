@@ -21,6 +21,15 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 5: T3 async satellite motion extrapolation — novelty_score=68.0 (DISCARD)
+- Timestamp: 2026-09-26 (inline, 12h continuous block; 3-agent literature swarm in parallel)
+- What changed: `resim_research/async_motion_compensation.py` (new) — exact constant-turn rigid-body reference, directive first-order candidate, 2-satellite U[5,45]ms staleness, `demo()` asserts ≥30% cut over ω=0.1..0.6.
+- Math: E3 verified. Sign of R_z challenged explicitly (flipped variant hurts −26% at ω=0.6) — directive survives.
+- Result: residual cut 86/76/65/54/43/32% across the yaw sweep (mean ≈59%).
+- Swarm novelty (3 research agents, 2026-09-26): A (async comp) CLEAR — 4 URLs adjacent only (IET rsn2.12693, IEEE 5940472/10978756), exact formula absent; B (adaptive gating) CLEAR; C (spectral cov) CLEAR (arXiv 2603.18027, 2512.17505, 2602.21128, 2301.08087); D (RadarSplat) CLEAR (2506.01379, 2504.00859, 2604.13492, 2609.11894); E (prefix-scan) CLEAR (Särkkä + Blelloch primitives known, replay application novel); F (fast DA) MIXED — Kellner T-ITS 8688104 + Danzer RA-L 8954835 cover online calibration core, specific gain schedule + replay injection unverified.
+- Scoring: prior_art_clear=1 but lidar deskewing is the same paradigm → contrast 62 → 68, below bar. Discarded; artifact retained.
+- Next: N5 (T4 adaptive gating, swarm-CLEAR) → N6 → N7 → N8 → N10/N12 → paper.
+
 ### Run 4: N11 Doppler disambiguation of the decoy blind spot — novelty_score=63.0 (DISCARD)
 - Timestamp: 2026-09-26 (inline; driver halted 3/3 stale, user selected inline mode)
 - What changed: `resim_research/doppler_disambiguation.py` (new) — track-velocity-prior Doppler gate `|vr_b−u_sb·v_a| ≤ K√(SIG_V²+Sv)` (K=3, σv=0.5) on geometric pair candidates + 2-scan confirmation; `demo()` asserts precision lift ≥0.20, GRR ≥0.60, recall cost ≤0.03.

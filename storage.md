@@ -67,3 +67,25 @@ K-sweep: K=2.5 → 0.886/rec 0.909; K=2.0 → 0.902/rec 0.866 (recall cost too h
 - `python resim_research/script.py` needs sys.path bootstrap (script-dir shadowing) — added, noted for all future prototypes.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS as engineering (GRR 0.661 ≥ 0.60 directive point, recall preserved). Idea novelty 63 → DISCARD (ICSIDP 2024 + Roos prior art); prototype retained per directive.
+
+## Experiment Ledger [2026-09-26 inline] — Run 5: T3 async motion extrapolation (N4)
+### Hypothesis & Theoretical Basis
+Independent satellite clocks (Δt∈[5,45]ms) smear fused clouds in yaw. First-order ego-motion extrapolation to t_DC restores coherence. Equations E3.
+### Target Codebase Touchpoints
+`resim_research/async_motion_compensation.py` (new); fusion/association code untouched.
+### Code Changes & Prototypes Created
+Exact constant-turn reference (rigid body) + directive candidate; 2 satellites × independent staleness; 8-post static world; `demo()` asserts ≥30% cut, ω=0.1..0.6.
+### Raw Metric Outputs & KPI Comparison Tables
+Mean fused RMS error (m), naive vs corrected:
+
+| ω | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 |
+|---|---|---|---|---|---|---|
+| naive | 0.627 | 0.630 | 0.641 | 0.658 | 0.682 | 0.711 |
+| corrected | 0.087 | 0.151 | 0.223 | 0.302 | 0.389 | 0.485 |
+| reduction | 86% | 76% | 65% | 54% | 43% | 32% |
+
+Sign-flip control R(−ωΔt): +74/+30/−26% (refuted — directive sign load-bearing at high yaw).
+### Failure Analysis & Anomalies Encountered
+- Residual grows with ω (2nd-order truncation + rotation-lever); 0.6 rad/s passes thinly at 32%. Clothoid transients unmodeled (jerk term noted in file).
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS (all ≥30%, mean ≈59%). Novelty 68 → DISCARD (paradigm shared with lidar deskewing); artifact retained.

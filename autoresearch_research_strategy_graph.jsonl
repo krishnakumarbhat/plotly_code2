@@ -9,7 +9,7 @@
 {"id":"N2","metric":62.0,"parent":"N1","status":"explored","strategy":"critical x assumption-violation x CFAR-static-R0 (T1)","timestamp":1758860000,"type":"node"}
 {"id":"N3","metric":74.0,"parent":"N1","status":"explored","strategy":"spatial x missing-paradigm x specular-ghost (T2)","timestamp":1790427159,"type":"node"}
 {"from":"N3","kind":"derived","to":"N9","type":"edge"}
-{"id":"N4","metric":0.0,"parent":"N1","status":"frontier","strategy":"first-principles x domain-fault x async-epochs (T3)","timestamp":1758860000,"type":"node"}
+{"id":"N4","metric":68.0,"parent":"N1","status":"explored","strategy":"first-principles x domain-fault x async-epochs (T3)","timestamp":1790427159,"type":"node"}
 {"id":"N5","metric":0.0,"parent":"N1","status":"frontier","strategy":"probabilistic x generalization-gap x adaptive-gating (T4)","timestamp":1758860000,"type":"node"}
 {"id":"N6","metric":0.0,"parent":"N1","status":"frontier","strategy":"information-theoretic x assumption-violation x spectral-covariance (T5)","timestamp":1758860000,"type":"node"}
 {"id":"N7","metric":0.0,"parent":"N1","status":"frontier","strategy":"lateral-graphics-to-radar x missing-paradigm x doppler-radarsplat (F)","timestamp":1758860000,"type":"node"}
