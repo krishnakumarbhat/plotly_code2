@@ -3,7 +3,7 @@
 | Node | Thinking mode × gap type × routing | Why new | Outcome | Status |
 |------|-----------------------------------|---------|---------|--------|
 | N1 | env-audit × field-map × local-corpus | session seed | baseline 55.0 | kept |
-| N2 | critical × assumption-violation (static R0) × RadarConf/CFAR | attacks SOTA's founding average | — | frontier |
+| N2 | critical × assumption-violation (static R0) × RadarConf/CFAR | attacks SOTA's founding average | executed: edge-skirt recall 0.50→1.00, FA 1→0 — but mechanism traces to VI-CFAR/OFPI/ACCA lineage; combination (dual time-scale + track mask + M-of-2) is engineering, not paradigm shift | explored (62) |
 | N3 | spatial × missing-paradigm (specular geometry) × RadarConf/multipath | geometry the field thresholds away | — | frontier |
 | N4 | first-principles × domain-fault (async epochs) × filtering/EKF | derives correction from clock axioms | — | frontier |
 | N5 | probabilistic × generalization-gap (kinematic gating) × tracking/Mahalanobis | gate as function of maneuver state | — | frontier |

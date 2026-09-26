@@ -1,1 +1,2 @@
 {"bestDirection":"higher","metricName":"novelty_score","metricUnit":"pts","name":"ADAS Radar Perception, TinyML Micro-Kernels, HPCC Parallelization & Generative Resimulation","type":"config"}
+{"commit":"e2673d8","description":"baseline: env audit + field map (CEER HDF5 verified, 124-row MF4 manifest, N2-N8 frontier, E1-E7)","metric":55.0,"metrics":{"contrast_score":0,"prior_art_clear":1,"proof_strength":0,"sota_gap_pct":0},"run":1,"segment":0,"status":"keep","timestamp":1758860000}

@@ -6,7 +6,7 @@
 {"from":"N1","kind":"derived","to":"N6","type":"edge"}
 {"from":"N1","kind":"derived","to":"N7","type":"edge"}
 {"from":"N1","kind":"derived","to":"N8","type":"edge"}
-{"id":"N2","metric":0.0,"parent":"N1","status":"frontier","strategy":"critical x assumption-violation x CFAR-static-R0 (T1)","timestamp":1758860000,"type":"node"}
+{"id":"N2","metric":62.0,"parent":"N1","status":"explored","strategy":"critical x assumption-violation x CFAR-static-R0 (T1)","timestamp":1758860000,"type":"node"}
 {"id":"N3","metric":0.0,"parent":"N1","status":"frontier","strategy":"spatial x missing-paradigm x specular-ghost (T2)","timestamp":1758860000,"type":"node"}
 {"id":"N4","metric":0.0,"parent":"N1","status":"frontier","strategy":"first-principles x domain-fault x async-epochs (T3)","timestamp":1758860000,"type":"node"}
 {"id":"N5","metric":0.0,"parent":"N1","status":"frontier","strategy":"probabilistic x generalization-gap x adaptive-gating (T4)","timestamp":1758860000,"type":"node"}
