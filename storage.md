@@ -89,3 +89,24 @@ Sign-flip control R(−ωΔt): +74/+30/−26% (refuted — directive sign load-b
 - Residual grows with ω (2nd-order truncation + rotation-lever); 0.6 rad/s passes thinly at 32%. Clothoid transients unmodeled (jerk term noted in file).
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS (all ≥30%, mean ≈59%). Novelty 68 → DISCARD (paradigm shared with lidar deskewing); artifact retained.
+
+## Experiment Ledger [2026-09-26 inline] — Run 6: T4 adaptive gating (N5)
+### Hypothesis & Theoretical Basis
+Fixed χ² gates lose cut-in targets under stiff CV tunes. Acceleration + innovation-energy expansion with hard bounds restores handoff without open-door divergence. Equations E4.
+### Target Codebase Touchpoints
+`resim_research/adaptive_gating.py` (new); tracker association logic untouched (read-only).
+### Code Changes & Prototypes Created
+CVTracker (predict/coast/update) + γ_adapt with finite-difference a_hat; 6 m/s² / 1.0 s cut-in scene, 3 uniform clutter/scan, nearest-within-gate; `demo()` triple assert.
+### Raw Metric Outputs & KPI Comparison Tables
+40 seeds, handoff window 1.0–2.0 s:
+
+| Gate | Handoff recall | Maneuver RMSE |
+|---|---|---|
+| Fixed χ² 9.21 | 0.863 | 0.283 m |
+| Adaptive [9.21, 40] | 0.996 | 0.212 m |
+
+Self-check intermediate (no clutter): 0.665→1.000 flagged open-door; clutter+RMSE answered it.
+### Failure Analysis & Anomalies Encountered
+- Mild scenario (4.2 m/s², soft tune) gave 0.998 baseline — failure regime needs emergency accel + stiff tune + confident sensor. Documented, not hidden.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS (recall +13.3pts, RMSE −25%). Novelty 71 → KEEP.

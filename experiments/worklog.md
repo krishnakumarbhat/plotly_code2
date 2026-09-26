@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 6: T4 kinematics-aware adaptive gating — novelty_score=71.0 (KEEP)
+- Timestamp: 2026-09-26 (inline, 12h block)
+- What changed: `resim_research/adaptive_gating.py` (new) — CV EKF with coast(), fixed χ² gate vs γ_adapt with finite-difference accel estimate, hard [9.21, 40] bounds; 6 m/s² cut-in + 3 clutter/scan nearest-within-gate scene; `demo()` asserts recall ≥0.97, margin ≥0.05, RMSE strictly better.
+- Math: E4 verified. Self-caught SELECTIVITY fault: gate pegged at GMAX (open door, recall 1.000 trivially) → answered with clutter + RMSE metric.
+- Result: 40 seeds — recall **0.863→0.996**, maneuver RMSE **0.283→0.212 m**. Fixed-gate 0.863 reproduces the directive's ≈88% baseline regime.
+- Novelty: swarm sweep B CLEAR (IEEE 11699489/10726762 = adaptive-Q/init-gating only; no acceleration+innovation-grade γ). prior_art_clear=1, contrast 68 → 71 KEEP.
+- Next: N6 (T5 spectral covariance, swarm-CLEAR) → N7 → N8 → N10/N12 → paper (N9 + N5).
+
 ### Run 5: T3 async satellite motion extrapolation — novelty_score=68.0 (DISCARD)
 - Timestamp: 2026-09-26 (inline, 12h continuous block; 3-agent literature swarm in parallel)
 - What changed: `resim_research/async_motion_compensation.py` (new) — exact constant-turn rigid-body reference, directive first-order candidate, 2-satellite U[5,45]ms staleness, `demo()` asserts ≥30% cut over ω=0.1..0.6.
