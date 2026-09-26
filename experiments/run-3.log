@@ -1,0 +1,16 @@
+[E2a] rank-1 |p-p_s|=2d : max abs err over 2000 samples = 1.066e-14
+[E2a] naive mirror-image bearing 7.595deg vs true -7.595deg  -> 15.189deg error, 8.000 m at 30.3 m
+[E2a] naive model range error = 0.000e+00 m (range-exact, bearing-wrong => half-correct failure)
+[E2b] ghost Doppler -1.322 vs parent 0.665 m/s (offset -1.987); FD check err 5.47e-10; same_bin=False; decodable at 40 sigma
+[E2c/planar] ndet=20  1-DOF  recall=0.845 prec=0.727 det=0.90 refl=1.12 2d_err=0.618m R=0.896
+[E2c/planar]             3-DOF  recall=0.993 prec=0.909 det=1.00 refl=1.00 2d_err=0.077m
+[E2c/curved] ndet=30  1-DOF  recall=0.300 prec=0.296 det=0.95 refl=1.68 2d_err=1.557m R=0.944
+[E2c/curved]             3-DOF  recall=0.450 prec=0.717 det=1.00 refl=1.00 2d_err=1.137m
+[E2c/decoy ] ndet=24  1-DOF  recall=0.917 prec=0.638 det=1.00 refl=1.45 2d_err=1.459m R=0.996
+[E2c/decoy ]             3-DOF  recall=0.983 prec=0.799 det=1.00 refl=1.00 2d_err=0.059m
+[E2c] VERDICT 1-DOF vs 3-DOF on planar: recall 0.845 vs 0.993, precision 0.727 vs 0.909 -> DOF reduction costs accuracy; 3-DOF search WINS
+[E2e] cylinder: 2D sweeps [-6.00,126.00] m, band 132.00 m = 1320.0x range noise
+[E2d] xi_err=(d 0.00 m, n 0.0deg)  pos RMSE: direct=3.242 m  dual_naive=0.739 m  dual(R_eff)=0.739 m  coupling gain=+0.0%
+[E2d] xi_err=(d 0.05 m, n 0.5deg)  pos RMSE: direct=3.242 m  dual_naive=0.737 m  dual(R_eff)=0.716 m  coupling gain=+2.9%
+[E2d] xi_err=(d 0.15 m, n 2.0deg)  pos RMSE: direct=3.242 m  dual_naive=0.733 m  dual(R_eff)=0.637 m  coupling gain=+13.2%
+demo PASS

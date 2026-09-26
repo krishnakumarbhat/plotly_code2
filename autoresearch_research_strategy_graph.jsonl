@@ -13,3 +13,11 @@
 {"id":"N6","metric":0.0,"parent":"N1","status":"frontier","strategy":"information-theoretic x assumption-violation x spectral-covariance (T5)","timestamp":1758860000,"type":"node"}
 {"id":"N7","metric":0.0,"parent":"N1","status":"frontier","strategy":"lateral-graphics-to-radar x missing-paradigm x doppler-radarsplat (F)","timestamp":1758860000,"type":"node"}
 {"id":"N8","metric":0.0,"parent":"N1","status":"frontier","strategy":"algebraic x complexity-blowup x prefix-scan-KF (H)","timestamp":1758860000,"type":"node"}
+{"id":"N9","metric":74.0,"parent":"N1","status":"kept","strategy":"spatial x missing-paradigm x specular-ghost (T2) — rank-1 displacement 2dn + ghost-as-virtual-aperture assimilation","timestamp":1790427159,"type":"node"}
+{"from":"N1","kind":"derived","to":"N9","type":"edge"}
+{"from":"N9","kind":"branch","to":"N10","type":"edge"}
+{"id":"N10","metric":0.0,"parent":"N9","status":"frontier","strategy":"first-principles x domain-fault x bent-guardrail: bearing-conditioned 2D(phi)=2Rc+2(yg+Rc)cosphi(u_d) 1-DOF bend fit (E2e fix); recall collapsed 0.993->0.450","timestamp":1790427159,"type":"node"}
+{"from":"N9","kind":"branch","to":"N11","type":"edge"}
+{"id":"N11","metric":0.0,"parent":"N9","status":"frontier","strategy":"probabilistic x missing-paradigm x temporal disambiguation: E2b Doppler invariant (40sigma) as the ONLY resolver of the provable decoy blind spot (prec 0.638 geometric-only)","timestamp":1790427159,"type":"node"}
+{"from":"N9","kind":"branch","to":"N12","type":"edge"}
+{"id":"N12","metric":0.0,"parent":"N9","status":"frontier","strategy":"algebraic x complexity-blowup x hybrid consensus: 1-DOF excess-resultant PREFILTER then LOCAL 2-D direction refinement (recovers 3-DOF accuracy at 1-DOF global cost)","timestamp":1790427159,"type":"node"}
