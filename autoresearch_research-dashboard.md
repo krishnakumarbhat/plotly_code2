@@ -11,7 +11,7 @@
 | 3 | cdc4890 | **74.0pts (+34.5%)** | **keep** | T2 rank-1 specular displacement `p−p_s=2d·n̂` (exact, 1.066e-14) + ghost-as-virtual-aperture: RMSE 3.242→0.739 m (−77.2%); naive mirror-image model range-exact but bearing-wrong (8.000 m); R_eff coupling +13.2% |
 | 4 | 5256da9 | 63.0pts (+14.5%) | discard | N11 Doppler gate: decoy prec 0.638→0.877, GRR 0.661, recall cost ≤0.009; mechanism published (ICSIDP 2024) |
 | 5 | f13469e | 68.0pts (+23.6%) | discard | T3 async extrapolation: residual cut 32–86% over yaw sweep; sign challenge survived; lidar-deskewing paradigm |
-| 6 | TBD6 | 71.0pts (+29.1%) | keep | T4 adaptive gating: cut-in recall 0.863→0.996, RMSE 0.283→0.212 m; open-door fault answered; swarm-CLEAR |
+| 6 | fa2baaf | 71.0pts (+29.1%) | keep | T4 adaptive gating: cut-in recall 0.863→0.996, RMSE 0.283→0.212 m; open-door fault answered; swarm-CLEAR |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
