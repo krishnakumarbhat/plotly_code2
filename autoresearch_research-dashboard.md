@@ -7,4 +7,4 @@
 | # | commit | novelty_score | status | description |
 |---|--------|---------------|--------|-------------|
 | 1 | e2673d8 | 55.0pts | keep | baseline: env audit + field map |
-| 2 | TBD | 62.0pts (+12.7%) | discard | T1 dual-loop CFAR: recall 0.50→1.00, FA 1→0, prior-art lineage |
+| 2 | f741d8b | 62.0pts (+12.7%) | discard | T1 dual-loop CFAR: recall 0.50→1.00, FA 1→0, prior-art lineage |
