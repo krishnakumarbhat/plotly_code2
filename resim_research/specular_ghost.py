@@ -440,10 +440,10 @@ def ekf_filter(truths, reflectors, xi_err=(0.0, 0.0), mode="dual", n_steps=25,
         vr_d = float(u_d @ v_true)
         z_d = [r_d + rng.normal(0.0, SIG_R), vr_d + rng.normal(0.0, SIG_V)]
         ghost = None
-        n_hat = None
         d_hat = 0.0
-        Jxi = None
-        Sig_xi = None
+        n_hat = np.zeros(3)
+        Jxi = np.zeros((4, 4))
+        Sig_xi = np.zeros((4, 4))
         if mode != "direct":
             d_hat = reflectors[0][0] + rng.normal(0.0, xi_err[0])
             n_hat = reflectors[0][1].copy()
@@ -454,13 +454,13 @@ def ekf_filter(truths, reflectors, xi_err=(0.0, 0.0), mode="dual", n_steps=25,
             vr_s = float(u_s @ v_true)
             z_s = [r_s + rng.normal(0.0, SIG_R), vr_s + rng.normal(0.0, SIG_V)]
             ghost = (d_hat, n_hat, z_s)
-        R_sig = SIG_R ** 2 if mode == "direct" else np.diag(
-            [SIG_R ** 2, SIG_V ** 2] * 2)
-        Jxi = None
+        Jxi = np.zeros((4, 4))
+        Sig_xi = np.zeros((4, 4))
         if mode == "dual":
-            Jxi = np.zeros((4, 4))
-            Sig_xi = np.zeros((4, 4))
             Sig_xi[0, 0] = xi_err[0] ** 2
+            # n is a UNIT vector: its uncertainty lives in the tangent plane,
+            # so Sigma_n = sigma_n^2 (I - n n^T) is the gauge-respecting form
+            # (2 DOF, not 3).
             Sig_xi[1:, 1:] = xi_err[1] ** 2 * (np.eye(3) - np.outer(n_hat, n_hat))
 
         # ITERATED EKF update with EXACT residuals. Two traps here, both found
