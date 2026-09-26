@@ -1,0 +1,15 @@
+{"id":"N1","metric":55.0,"parent":null,"status":"kept","strategy":"env-audit x field-map x local-corpus","timestamp":1758860000,"type":"node"}
+{"from":"N1","kind":"derived","to":"N2","type":"edge"}
+{"from":"N1","kind":"derived","to":"N3","type":"edge"}
+{"from":"N1","kind":"derived","to":"N4","type":"edge"}
+{"from":"N1","kind":"derived","to":"N5","type":"edge"}
+{"from":"N1","kind":"derived","to":"N6","type":"edge"}
+{"from":"N1","kind":"derived","to":"N7","type":"edge"}
+{"from":"N1","kind":"derived","to":"N8","type":"edge"}
+{"id":"N2","metric":0.0,"parent":"N1","status":"frontier","strategy":"critical x assumption-violation x CFAR-static-R0 (T1)","timestamp":1758860000,"type":"node"}
+{"id":"N3","metric":0.0,"parent":"N1","status":"frontier","strategy":"spatial x missing-paradigm x specular-ghost (T2)","timestamp":1758860000,"type":"node"}
+{"id":"N4","metric":0.0,"parent":"N1","status":"frontier","strategy":"first-principles x domain-fault x async-epochs (T3)","timestamp":1758860000,"type":"node"}
+{"id":"N5","metric":0.0,"parent":"N1","status":"frontier","strategy":"probabilistic x generalization-gap x adaptive-gating (T4)","timestamp":1758860000,"type":"node"}
+{"id":"N6","metric":0.0,"parent":"N1","status":"frontier","strategy":"information-theoretic x assumption-violation x spectral-covariance (T5)","timestamp":1758860000,"type":"node"}
+{"id":"N7","metric":0.0,"parent":"N1","status":"frontier","strategy":"lateral-graphics-to-radar x missing-paradigm x doppler-radarsplat (F)","timestamp":1758860000,"type":"node"}
+{"id":"N8","metric":0.0,"parent":"N1","status":"frontier","strategy":"algebraic x complexity-blowup x prefix-scan-KF (H)","timestamp":1758860000,"type":"node"}
