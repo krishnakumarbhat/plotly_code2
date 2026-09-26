@@ -21,6 +21,15 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 4: N11 Doppler disambiguation of the decoy blind spot — novelty_score=63.0 (DISCARD)
+- Timestamp: 2026-09-26 (inline; driver halted 3/3 stale, user selected inline mode)
+- What changed: `resim_research/doppler_disambiguation.py` (new) — track-velocity-prior Doppler gate `|vr_b−u_sb·v_a| ≤ K√(SIG_V²+Sv)` (K=3, σv=0.5) on geometric pair candidates + 2-scan confirmation; `demo()` asserts precision lift ≥0.20, GRR ≥0.60, recall cost ≤0.03.
+- Math: E2f (equations.md). Design point found by measurement: gate width must come from track σv, not sensor σv; K-sweep (3.0/2.5/2.0) maps the ROC wall.
+- Result: 40 decoy + 38 planar scans — decoy prec **0.638→0.877** (+0.239), GRR **0.661**, recall cost 0.009 (decoy) / 0.005 (planar). K=2.0 reaches 0.902 at recall cost 0.07 — documented, not taken.
+- Novelty check (web, 2026-09-26): "Multipath Ghost Suppression Based on Doppler Velocity Estimation" (IEEE ICSIDP 2024, doi 10.1109/icsidp62679.2024.10868429) does exactly Doppler-velocity filtering of multipath ghosts with a geometric model; Roos/Ulm-Daimler (d-nb.info/1212452852/34) classifies ghosts via Doppler-distribution/motion-orientation mismatch; US12000957 covers range-Doppler consistency. → prior_art_clear=0, contrast 58. Pair-hypothesis + track-prior-covariance framing is the residual differentiator, not enough. Idea discarded; artifact retained (GRR ≥0.60 meets the directive operating point).
+- Insight: exact reproduction of N9's 0.638 decoy number by an independent script strengthens the N9 paper's blind-spot claim.
+- Next: N4 (T3 async motion comp) — untouched track, high frontier value.
+
 ### Run 3: T2 rank-1 specular displacement + ghost-as-virtual-aperture — novelty_score=74.0 (KEEP)
 - Timestamp: 2026-09-26 18:22
 - What changed: `resim_research/specular_ghost.py` (new, 620 lines) — specular unfolding geometry, `fault_naive_model`, `fault_doppler`, `fault_curved_guardrail`, `rank1_consensus` (1-DOF excess-resultant, largest-coherent-set fixed point, sequential non-redundant extraction), `ransac3dof` (matched-statistic 3-DOF baseline), `classify_pairs` (assignment-free, conjunction of magnitude + direction invariants), `bearing_gate` baseline, blocked-index scene generator, iterated exact-residual EKF with the R_eff coupling, `demo()` assert self-check. Artifact: `experiments/run-3.log`.

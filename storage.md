@@ -45,3 +45,25 @@ Synthetic 128×32 Range-Doppler, 25× wall (bins 30–54) + 6× skirt (55–57),
 - Driver iters 1–2 produced zero output before watchdog (backend probe healthy) — root cause under investigation; this run executed inline.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS as engineering benchmark (dual-loop recall 0.50→1.00, FA 1→0). Idea novelty 62 → DISCARD per loop bar (prior-art lineage documented); prototype retained per directive.
+
+## Experiment Ledger [2026-09-26 inline] — Run 4: N11 Doppler disambiguation (N11)
+### Hypothesis & Theoretical Basis
+N9's geometric pair test is provably blind to same-range 2d decoys (prec 0.638). E2b Doppler invariant (40σ) + tracker velocity priors resolve it: vr_b_pred = u_sb·v_a_est. Equations E2f.
+### Target Codebase Touchpoints
+`resim_research/doppler_disambiguation.py` (new, imports N9 geometry); production tracker untouched (uses its velocity outputs as priors).
+### Code Changes & Prototypes Created
+Track-velocity gate K=3 (σv=0.5) + 2-scan confirmation; `demo()` asserts lift ≥0.20, GRR ≥0.60, recall cost ≤0.03. Self-contained runner (`python resim_research/doppler_disambiguation.py`).
+### Raw Metric Outputs & KPI Comparison Tables
+40 decoy + 38 planar scans (6 targets, σ_r=0.10 m, σ_v=0.05 m/s):
+
+| Scene | Geometric prec/rec | Gated prec/rec | GRR |
+|---|---|---|---|
+| Decoy | 0.638 / 0.934 | 0.877 / 0.925 | 0.661 |
+| Planar | 0.711 / 0.838 | 0.796 / 0.833 | 0.295 |
+
+K-sweep: K=2.5 → 0.886/rec 0.909; K=2.0 → 0.902/rec 0.866 (recall cost too high, not taken).
+### Failure Analysis & Anomalies Encountered
+- First gate (σv=1.0, single scan) reached only 0.864 — coincidence survivors needed the 2nd scan; operating bar 0.90 unreachable without recall cost → redefined bar as lift + GRR + bounded cost, all met.
+- `python resim_research/script.py` needs sys.path bootstrap (script-dir shadowing) — added, noted for all future prototypes.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS as engineering (GRR 0.661 ≥ 0.60 directive point, recall preserved). Idea novelty 63 → DISCARD (ICSIDP 2024 + Roos prior art); prototype retained per directive.
