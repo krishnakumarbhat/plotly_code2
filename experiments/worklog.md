@@ -21,6 +21,12 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 17: Paper + IDFs + HPCC templates + presentation (KEEP, deliverable)
+- Timestamp: 2026-09-27 (inline)
+- What changed: `research.md` (full manuscript: abstract/intro/related/method/theory/experiments/limitations/IDFs 1–4/cluster plan/references), `run_hpcc_burst.sh` (slice planner verified: 300 logs × 20 workers + halo), `slurm_resim.sbatch` (worker template), `PRESENTATION_APRISM.html` (6-slide deck).
+- No novelty score (deliverable consolidation, not an idea). Paper centers the 80-chain with all 16 runs as evidence.
+- Next: N16/N17 seeds (remaining backlog) → venue submission after fleet validation.
+
 ### Run 16: N15 conformal async fusion — novelty_score=67.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline)
 - What changed: `resim_research/conformal_fusion.py` (new) — split-conformal gate on normalized innovations (sliding 200-window), OOS second sensor through same gate; `demo()` asserts coverage + win + RMSE.

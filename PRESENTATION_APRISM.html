@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A-PRISM: Ghosts Are Measurements — Results Presentation</title>
+<style>
+body{font-family:Segoe UI,Arial,sans-serif;margin:0;background:#0f1b2d;color:#eaf2f8}
+.slide{max-width:960px;margin:24px auto;padding:36px;background:#16263f;border-radius:12px}
+h1{color:#5bc0ff}h2{color:#5bc0ff;border-bottom:2px solid #3498db;padding-bottom:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid #3c5a7a;padding:6px 10px;text-align:right}
+th{background:#1f6fb2;color:#fff}
+td:first-child,th:first-child{text-align:left}
+.big{font-size:44px;color:#7CFC98;font-weight:700}
+.note{color:#9fb3c8;font-size:13px}
+</style>
+</head>
+<body>
+<div class="slide"><h1>A-PRISM: Ghosts Are Measurements</h1>
+<p>Autonomous radar perception: 16 runs · 7 keeps · every number executed.<br>
+Branch: <b>research/adas-radar-20260926</b> · Evidence: <b>resim_research/</b></p>
+<p class="big">Best: 80.0 — closed ghost chain (−67% track error)</p></div>
+
+<div class="slide"><h2>Headline: estimate → gate → assimilate (Run 14, keep 80)</h2>
+<table><tr><th>Leg</th><th>Old (field)</th><th>New (chain)</th></tr>
+<tr><td>Ghost edges rec / prec</td><td>0.000 / 0.000</td><td><b>0.969 / 0.902</b></td></tr>
+<tr><td>Parent track RMSE</td><td>1.969 m</td><td><b>0.651 m (−67%)</b></td></tr>
+<tr><td>Reflector estimate error</td><td>—</td><td>0.26 m / 3.3° (estimated, not oracle)</td></tr></table>
+<p>Theorem behind it: rank-1 displacement ‖p − p<sub>s</sub>‖ = 2d exact to 1e-14 (Run 3, keep 74).</p></div>
+
+<div class="slide"><h2>All keeps</h2>
+<table><tr><th>Run</th><th>Idea</th><th>Result</th><th>Score</th></tr>
+<tr><td>3</td><td>Ghost-as-virtual-aperture + R_eff</td><td>RMSE 3.242→0.739 m; coupling +13.2%</td><td>74</td></tr>
+<tr><td>6</td><td>Adaptive gating</td><td>recall 0.863→0.996; RMSE −25%</td><td>71</td></tr>
+<tr><td>8</td><td>Doppler-RadarSplat MVP</td><td>R⁴ exact; CDC 6/6 recovery</td><td>70</td></tr>
+<tr><td>14</td><td>Closed chain (estimated ξ)</td><td>edges 0→0.97/0.90; track −67%</td><td>80</td></tr>
+<tr><td>9–10</td><td>Harness + HDF-KPI + MF4</td><td>KPI 100%; MF4 round-trip exact</td><td>60</td></tr></table></div>
+
+<div class="slide"><h2>Discards with numbers (no hiding)</h2>
+<table><tr><th>Run</th><th>Idea</th><th>Measured</th><th>Why discarded</th></tr>
+<tr><td>2</td><td>Dual-loop CFAR</td><td>recall 0.50→1.00</td><td>VI/OFPI/ACCA lineage</td></tr>
+<tr><td>4</td><td>Doppler gate</td><td>GRR 0.661</td><td>ICSIDP 2024</td></tr>
+<tr><td>5</td><td>Async extrapolation</td><td>−32…−86%</td><td>lidar-deskewing paradigm</td></tr>
+<tr><td>7</td><td>Spectral covariance</td><td>spray −65%</td><td>Sage-Husa lineage</td></tr>
+<tr><td>11</td><td>Prefix-scan KF</td><td>span 16 vs 50k</td><td>Särkkä operator prior art</td></tr>
+<tr><td>12</td><td>Fermat cylinder RANSAC</td><td>curved 0.20→0.75</td><td>wall-RANSAC lineage</td></tr>
+<tr><td>13</td><td>Hybrid consensus</td><td>0.965 @ 18% evals</td><td>standard practice</td></tr>
+<tr><td>15</td><td>Residual DSP + INT8</td><td>4.5× fewer mults</td><td>2609.30176 lineage</td></tr>
+<tr><td>16</td><td>Conformal gate</td><td>coverage .04→1.0</td><td>conformal-filtering lineage</td></tr></table></div>
+
+<div class="slide"><h2>Refutations (our own rouges gallery)</h2>
+<ul><li>Naive mirror-image ghost: range-exact, bearing-wrong 8 m</li>
+<li>1-DOF consensus loses to 3-DOF (0.845 vs 0.993)</li>
+<li>Midpoint-on-surface invariant: false (t to 17 m)</li>
+<li>Open-door gating without RMSE metric</li>
+<li>Naive Särkkä elements: 0.1 error at step 1 (need Lemma 7)</li>
+<li>Conformal loses under pure outliers (regime matters)</li></ul></div>
+
+<div class="slide"><h2>What runs on real data today</h2>
+<ul><li>Production UDP CSV-KPI: identity 100.0; +20 mm → Tier-2 0.0 / Tier-1 100%</li>
+<li>Production UDP HDF-KPI direct-call: 100.00% (50/50)</li>
+<li>Candidate output .mf4 via asammdf: round-trip bit-exact</li>
+<li>Blocked: SiL exe (no MSVC, jfrog token) · CAN-HDF schema flavor · labeled ghosts</li></ul>
+<p class="note">Next: cluster grant → HPCC burst (run_hpcc_burst.sh + slurm_resim.sbatch) → fleet validation → venue submission.</p></div>
+</body>
+</html>

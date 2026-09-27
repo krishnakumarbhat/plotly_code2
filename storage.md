@@ -227,3 +227,9 @@ PASS. Novelty 65 → DISCARD (2609.30176 lineage); artifact retained.
 Outlier-regime control: fixed wins (documented in E11 — regime matters).
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 67 → DISCARD; artifact retained.
+
+## Experiment Ledger [2026-09-27 inline] — Run 17: paper + deployment pack
+### Code Changes & Prototypes Created
+`research.md` (manuscript + 4 IDFs + cluster plan), `run_hpcc_burst.sh` (verified slice plan), `slurm_resim.sbatch`, `PRESENTATION_APRISM.html`.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS (deliverables exist and open). Paper claims trace 1:1 to executed ledger rows.

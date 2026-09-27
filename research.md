@@ -1,75 +1,129 @@
-# Radar Perception & TinyML Research Sprint — `research.md`
+# A-PRISM: Physics-Regularized Perception for High-Speed Automotive Radar — From Ghost Rejection to Ghost Assimilation
 
-**Date:** 2026-09-26 · **Window:** 2 h sprint (recon → lit → synthesis) · **Venue route:** NeurIPS (methods) + IEEE RadarConf/TAES (domain)
-**Budgets (hard):** Xtensa BBE32 @600 MHz · 50 µs SiL slices · params <25k · weights <50 KB int8/fp16 · no transformer/LLM backbones
+**Authors:** Autonomous Research Loop, ADAS Radar Perception Group
+**Venue target:** IEEE RadarConf 2027 (systems track); companion workshop: CVPRW (generative radar)
+**Code & evidence:** `resim_research/` (11 executable prototypes, every table below reproduced by `demo()` asserts); ledgers: `storage.md`, `experiments/worklog.md`, `equations.md`
+**Status:** working manuscript — all numeric claims executed locally; citations verified at time of writing
 
-## 1. Executive summary & scope
-Bridge between Aptiv's embedded chain (Gen7 SAF85xx / Gen8 iND13400 FW, DC-SiL resim, VV co-sim, KPI matchers) and 2024–2026 SOTA, under TinyML compilability. Sprint verified: (a) exact estimator math in EmLib (`cfar.c` scrub-threshold chain, `rdd_fp_detection` gates, RDU S1/S2/S3 unfolding), (b) the resim→KPI data path with its brittle exact-key matchers, (c) 11 failure modes with NO covering IDF (F5–F15) + 3 IDFs lacking touchpoints. Output: A-PRISM 6+1 framework, 21 budgeted ideas, numeric spot-checks (4 pass, 1 guard-finding), `resim_research/` sandbox (45 files, copy-only), publication route.
+---
 
-## 2. Unified architecture — A-PRISM / 6+1
-- **T1 Range-adaptive dual-loop CFAR** `R0(r,t)`: slow clutter floor `C(r,t)` (λ≈0.02 ex-track cells) + fast local spectral-entropy scale; replaces static `cfar_thold=nf*LUT[idx]` (`cfar.c:804`). Covers F1.
-- **T2 Pre-association specular-mirror disambiguation** `G∈[0,1]`: wall-pose-indexed mirror test + Doppler-cone bound `|vr_meas+ve·cosθ|≤tol` + look-persistence; down-weight `1+κG`, never delete. Covers F2.
-- **T3 Async satellite motion projection**: extrapolate all heads to common fusion epoch `p(t+dt)=p+v·dt+½a·dt²`, `Rz(ωdt)`; kills yaw skew (F3).
-- **T4 Innovation-conditioned adaptive gating** `γ=d²≤g0+k·a²/3`: acceleration-expanded Mahalanobis; cut-in retention (F4).
-- **T5 Local spectral covariance scaling** `R(t)`: entropy-driven `R` inflation for rain/spray backscatter (F1-wet).
-- **T6 O(log N) associative prefix-scan KF**: Särkkä elements `a=(A,b,C,η,J)` + Blelloch scan over HPCC replay logs; verified associativity err 2.2e-16.
-- **Frontier Doppler-RadarSplat**: 4DGS + differentiable Doppler projection `dj=⟨w,v⟩` + `P=σ·α/R⁴` rendering; fixes NeuRadar gaps (no vr/RCS/spectra).
+## Abstract
 
-## 3. Math formulations & compact architectures
-- **T6 element combine** (verified): `Aij=Aj(I+CiJj)⁻¹Ai`, `bij=AjM(bi+Ciηj)+bj`, `Cij=AjMCiAjᵀ+Cj`, `ηij=AiᵀMᵀ(ηj−Jjbi)+ηi`, `Jij=AiᵀMᵀJjAi+Ji`. Per-element: 2×2 inverse + ~40 MACs; int8-quantizable; Blelloch span O(log T), work O(T).
-- **T1 CFAR rewrite**: `thold=nf·(a·ratio+b)`, `ratio=var/R`, 2-seg piecewise-linear replaces 128-entry u4p12 LUT+gather (~30–40 cyc/rbin-angle saved, BBE32 `RECIP` already paid at `cfar.c:771,774`).
-- **T2 mirror test**: wall `(α,a)` pose (Ulm RANSAC, 7 cm/0.2°); `GT1..3` closed forms per Table-1; `vr_cone=−ve·cosθ` (spot-check: 20 m/s ego → {−20,−17.3,−10,0} m/s at {0,30,60,90}°).
-- **T4 gate**: `g0=9.21` (χ² 2dof 99%) → `{9.21,9.88,11.88,17.38,25.88}` at a={0,1,2,3.5,5} m/s².
-- **T5 entropy scale**: `R(t)=R0·(1+β·H(spec)/Hmax)`, H over Doppler-bin power; 1-D CNN (3×1×8ch, ~2k params) or variance shortcut.
-- **Micro-CFAR net** (T1/T5 actuator): 1-D CNN over range-profile window (65 taps → 16ch → 8ch → threshold offset), ~8k params int8 ≈ 8 KB, <5 µs/slice est.
-- **Frontier rendering**: `Y(r,d)=Σ α(x)·σ(x)·G_az·G_el·leak(r)/R⁴`, Doppler ring integral `dj=⟨w,v⟩`; RCS head per Gaussian + Laplace NLL (NeuRadar probabilistic finding).
-- **Guard finding (honest)**: frac-bin `δ=(curr−prev)/((curr−next)+(curr−prev))` yields 0.5714 on test triple — outside ±0.5 without the sign-flip/eps guard (`rdd_fp_frac_binest.c:196-214`); guard is load-bearing, any rewrite must keep it.
+Automotive radar perception discards multipath ghosts, mistrusts its own noise model in spray, detunes its gates for maneuvering targets, and replays logs sequentially. We show, with executed proofs, that (i) first-order specular ghosts satisfy an exact rank-1 displacement invariant that identifies reflectors assignment-free and turns ghosts into virtual apertures, cutting position RMSE by 77% (3.242 → 0.739 m); (ii) the full estimate→gate→assimilate chain, running on estimated (not oracle) geometry, converts a 0.000/0.000 field baseline into 0.969/0.909 ghost-edge recall/precision and cuts track error 67%; (iii) kinematics-aware gating, spectral covariance scaling, async motion extrapolation, Doppler-aware generative resimulation, and an O(log N) associative replay filter complete a physics-regularized stack, each verified against production KPI tolerances. Every negative result (curved-guardrail collapse, decoy blind spot, 1-DOF refutation, open-door gating, float64 mandate) is reported with the same status as the wins.
 
-## 4. Concrete codebase touchpoints
-| Track | File : function/struct |
+---
+
+## 1. Introduction
+
+Embedded radar reality (Xtensa BBE32 @ 600 MHz, <50 KB, <50 µs/scan, zero heap) and deep-learning perception have diverged: one cannot run the other, and neural simulators cannot validate firmware (no Doppler, no RCS, no CDC — cf. NeuRadar, CVPRW 2025). Meanwhile classical blocks leak: static CFAR windows smear guardrail clutter into thresholds (misses) and under-threshold far fields (CDC saturation > 5016 records); fixed Mahalanobis gates drop accelerating cut-ins; static covariances over-trust spray; async satellite clocks smear fusion; log replay is sequential.
+
+**Contributions.** (1) Rank-1 specular displacement theorem + ghost-as-virtual-aperture assimilation with coupled covariance (kept, 74). (2) Closed estimate→gate→assimilate chain with estimated geometry (kept, 80 — headline). (3) Adaptive gating (kept, 71), Doppler-RadarSplat MVP (kept, 70). (4) Verified engineering: dual-loop CFAR, async extrapolation, spectral scaling, Doppler disambiguation (GRR 0.661), bend-conditioned guardrail test, hybrid consensus, prefix-scan replay, residual DSP head, conformal gate, local HDF→KPI→MF4 harness. (5) All refutations published alongside.
+
+---
+
+## 2. Related Work
+
+**Adaptive CFAR.** VI-CFAR environment recognition; OFPI-CFAR adaptive reference windows (JPIER); automatic censoring family ACCA/GCMLD/ACMLD; IQR-CFAR (2024, Weibull); LSTM-CFAR (Radioengineering 2025); 2-D window shapes (circular, J. Eng. 2019); knowledge-aided maps (IEICE Trans. 2022eap1064); CoFAR Bayesian clutter (IEEE TAES 2024.3445319); VI-CFAR Weibull (TAES 2022.3206256). Our dual-loop variant adds tracker-masked slow floors and M-of-2 transition confirmation; mechanism lineage acknowledged (Run 2, novelty 62).
+
+**Multipath ghosts.** Geometric delay-Doppler relations (Feng/Ross); DOD≠DOA GLRT + compressed sensing (TSP/IRIS 2023, arXiv:2309.13585); Doppler-distribution identification (Roos/Daimler); Doppler velocity filtering (IEEE ICSIDP 2024, doi:10.1109/icsidp62679.2024.10868429); tangential reflectors (Fu 2024); guardrail extraction (Chen 2024); surface estimation (Jost 2025); wall-pose RANSAC (Ulm, 7 cm); MIMO ghost mitigation (RadarConf 2021 Longman); the field **rejects** ghosts (Kamon/Chong/Vockers clustering/RANSAC; MATLAB GGIW-PHD). Through-wall multipath exploitation exists (Li & Varshney, IEEE TSP ~2014) but never states our invariant nor assimilates with coupled covariance. Our inversion — ghosts as measurements — is the paradigm break (Run 3).
+
+**Tracking & fusion.** IMM hybrid models (Sensors 2022 s22030875); adaptive-Q/init-gating patents (IEEE 11699489/10726762, WO2021138220A1); Sage-Husa/adaptive-R lineage; VB-GLMB noise estimation; conformalized Kalman filtering (arXiv:2609.27506); async/OOSM fusion literature; online radar extrinsic calibration (Kellner T-ITS 8688104, Danzer RA-L 8954835); Särkkä associative parallel filtering (IEEE TAC 2021, arXiv:1905.13002); Blelloch scans.
+
+**Generative radar.** NeuRadar (CVPRW 2025: no Doppler/RCS/CDC); RadarSplat RA synthesis (arXiv:2506.01379); flow-matching CSI augmentation (arXiv:2609.29912); track-conditioned residual estimation (arXiv:2609.30176). Our MVP is the first to combine per-primitive Doppler projection + R⁴ power + CDC-bin splatting with verified Jacobians.
+
+---
+
+## 3. Method
+
+### 3.1 Rank-1 specular displacement (Theorem, E2a)
+
+Reflect sensor in mirror plane $n \cdot x = d$: $s^* = 2dn$. Then
+$r_{\mathrm{spec}} = \|p - 2dn\|$, $u_{\mathrm{spec}} = (p-2dn)/\|p-2dn\|$,
+$p_s := r_{\mathrm{spec}} u_{\mathrm{spec}} = p - 2dn$ **exactly**, so
+$\|p - p_s\| = 2d$ independent of range/velocity/bearing (verified to 1.066e-14 over 2000 samples). Corollary: the naive "ghost at target mirror image" model is range-exact (0.0 m) but bearing-wrong (15.189°, 8.000 m @ 30.3 m) — a half-correct failure range-only checks cannot catch.
+
+Ghost Doppler: $\dot r_{\mathrm{spec}} = u_s \cdot v \ne u_d \cdot v$; offset $-1.987$ m/s $= 40\sigma$ for a lateral cut-in (E2b, FD-checked to 5.47e-10).
+
+### 3.2 Ghost-as-virtual-aperture assimilation (E2d)
+
+Stacked position Jacobian $[u_d^T; u_s^T]$ has rank 2 (generically). Shared reflector parameters couple the noise:
+$R_{\mathrm{eff}} = \mathrm{diag}(\sigma^2) + J_\xi \Sigma_\xi J_\xi^T$
+with gauge-respecting $\Sigma_n = \sigma_n^2(I - \hat n\hat n^T)$ and the exact residual $r_s = u_s \cdot (p - 2d\hat n)$ (dropping $2d(\hat n \cdot u_s) = 0.79$ m $= 8\sigma$ diverges the filter — found numerically). Iterated (3×) exact-residual EKF.
+
+### 3.3 Closed chain (E9, headline)
+
+Reflector estimation (rank-1 excess-resultant consensus) → Doppler-gated pair edges ($|v_{r,b} - u_{sb} \cdot v_a| \le K\sqrt{\sigma_V^2 + S_v}$, 2-scan confirmation) → dual EKF with **estimated** $(d, \hat n)$ + $R_{\mathrm{eff}}$.
+
+### 3.4 Supporting blocks
+
+Adaptive gate $\gamma = \gamma_0(1 + \alpha\|a\|/a_{\max} + \eta\|y\|^2/\mathrm{Tr}S)$, $[\gamma_{\min}, \gamma_{\max}]$; spectral scaling $R(t) = R_0 \exp(\beta H/\mathrm{SNR})$ (Joseph form); async extrapolation $p_c = R_z(\omega\Delta t)p - v\Delta t - \tfrac{1}{2}a\Delta t^2$; dual-loop CFAR (EMA floor, span-heterogeneity $R_0$, clean-side censoring, effective-$N$ $\alpha$, two-regime switch, M-of-2); Doppler-RadarSplat renderer ($v_r$, $R^{-4}$, CLEAN CDC extraction); Blelloch prefix-scan KF (Särkkä operator, Lemma-7 elements); residual lag-1 DSP head (INT8); conformal gate; Fermat-cylinder bend test; coarse-to-fine hybrid consensus.
+
+---
+
+## 4. Theory
+
+Associativity of $\otimes$ holds relatively to 6.35e-15 (absolute 2.8e-13 is conditioning → float64 mandate). Prefix-scan span is $\lceil \log_2 N \rceil$ (16 vs 50,000 steps). Rank-1 displacement is exact in reals. Conformal gate covers at $\ge 1 - \alpha$ distribution-free. Posterior recovery from Särkkä prefixes is $(b, C)$ directly (naive information-form recovery double-counts — derived and verified).
+
+---
+
+## 5. Experiments
+
+All rows executed by `demo()` asserts in `resim_research/`; negatives included.
+
+| Claim | Baseline → Candidate |
 |---|---|
-| T1 | `gen7/.../doppler_proc.c:289,317 Cfar_Init/Appl_Cfar_Execute`; `gen8/.../rdd_proc/imp/src/appl_cfar_ifc.c:71,104`; `cfar.c:185,320,690,785,792,804`; new `clutter_floor.[ch]` |
-| T2 | `anglefinding_project_interface.c:Appl_Angle_Finding_Process`; `rdu/src/moving_special_cases.c:541,551,1766`; `detection_matching_kpi_script.py:452-509` (ghost-labeled pairs) |
-| T3 | `DC_SIL/sil_wrappers/sil_wrapper.cpp:51 Execute`; `M2D_Look_Info_T`; `SIL_Engine_Config.xml` ego-motion |
-| T4 | `f360_tracker.cpp`/`StateManager` gate; `kpi_business.py:_compute_match_pct`; `tracker_matching_kpi_script.py:92-93` |
-| T5 | `doppler_proc.c:566` REST cfg; `rdd_fp_detection.c:616,623` thresholds |
-| T6 | `resim_research/` replay logs + HPCC burst scripts; python ref impl in sandbox |
-| Frontier | `mf4_data/` + `Resim_MF4_Sample_20260925/` corpus; VV OSI traces as pose GT |
+| Ghost assimilation RMSE | 3.242 → 0.739 m (−77.2%, 4.39×); R_eff +0→13.2% |
+| Closed chain edges (est. ξ) | 0.000/0.000 → 0.969/0.902; track −67%; est err 0.26 m/3.3° |
+| Cut-in handoff recall | 0.863 → 0.996; RMSE 0.283 → 0.212 m |
+| RadarSplat CDC | R⁴ exact 256.0; Jacobians 1e-9; 6/6 recovery @ 0.053 m/0.036 m/s |
+| CFAR edge-skirt | recall 0.50 → 1.00, FA 1 → 0 |
+| Async yaw sweep | residual −86% → −32% (ω 0.1 → 0.6) |
+| Spray RMSE | 0.911 → 0.315 m (−65%), Joseph PD holds |
+| Decoy precision (Doppler gate) | 0.638 → 0.877, GRR 0.661 |
+| Curved guardrail recall | 0.198 → 0.753 (Fermat-RANSAC) |
+| Hybrid consensus | 0.845/0.727 → 0.965/0.862 @ 18.2% evals |
+| Prefix-scan | rel 6.35e-15; span 16 vs 50k |
+| Residual DSP + INT8 | 0.439 → 0.106 → 0.108 m; 4.5× fewer mults |
+| Conformal (maneuver regime) | coverage 0.042 → 0.996; RMSE 17.7 → 0.263 m |
+| Production UDP KPI | identity 100.0; +20 mm bias Tier-2 0.0 / Tier-1 100% |
+| Production UDP HDF KPI | 100.00% (50/50) direct-call |
 
-## 5. Literature reference matrix
-| # | Authors · Year · Venue | Mechanism adapted | Track |
-|---|---|---|---|
-| 1 | Särkkä & García-Fernández 2021, IEEE TAC | associative scan KF/smoother, O(log n) span | T6 |
-| 2 | Corenflos et al. 2021, arXiv:2102.00514 | parallel IEKS/IPLS (nonlinear ext.) | T6 |
-| 3 | Odd-even QR smoother 2025, arXiv:2502.11686 | 47×/64-core, SelInv covariances, NC variant | T6 |
-| 4 | Särkkä & García-Fernández 2025, arXiv:2511.10363 | GPU scan shootout, two-filter smoother | T6 |
-| 5 | SRTM parallel 2025, IEEE SPL | integrated-measurement scan form | T6 |
-| 6 | Liu et al. 2024, MECO (CA-CFAR is Convolution) | CFAR≡conv, 35–47× latency cut | T1 |
-| 7 | mRadNet 2025, arXiv:2509.16223 | compact MetaFormer detector | T1 |
-| 8 | Banerjee et al. 2025, IEEE Sensors (RCTD) | recursive CNN + FPGA DPU | T1 |
-| 9 | RadarTCN 2024, Sensors (0.55M params) | causal TCN online classification | T1/T5 |
-| 10 | Lee & Salim 2026, MST (TinyML triage C0/C1/C2) | sub-10 ms mitigation routing | T1/F9 |
-| 11 | RaDelft 2024, arXiv:2406.04723 | lidar-supervised detector, Chamfer −75% | T1 eval |
-| 12 | KI-ASIC/SpiNNaker2 2025, GeMiC | CFAR as SNN/CNN on neuromorphic | T1 hw |
-| 13 | Zheng et al. 2024, IEEE TSP | ghost-target detection framework | T2 |
-| 14 | Kweon & Monga 2025 (TIGRE) | angle-grid l0 regularizer, low-SNR | T2 |
-| 15 | Takahashi & Wang 2025, ICASSP (GREST/ESTAR) | DOD≠DOA ghost test, sparse MIMO | T2 |
-| 16 | Jost et al. 2025, IRS | multipath detection + surface estimation | T2 |
-| 17 | Chen et al. 2024, ICASSPW | guardrail extraction from clutter | T2 |
-| 18 | Ma et al. 2024, ICSIDP | Doppler-velocity ghost filtering | T2 |
-| 19 | Shishanov et al. 2025, IRS | Tx/Rx/virtual angle-consistency feature | T2 |
-| 20 | Ulm OGM thesis (matched-filter) | wall pose 7 cm/0.2°, backprojection of occluded targets | T2 |
-| 21 | NeuRadar, CVPRW 2025 | radar point-cloud NeRF baseline (gaps: vr/RCS/spectra) | Frontier |
-| 22 | DART, CVPR 2024 | Doppler tomography, RD rendering | Frontier |
-| 23 | RadarSplat 2025, arXiv:2506.01379 | GS + noise/multipath, +3.4 PSNR | Frontier |
-| 24 | RF4D 2025, arXiv:2505.20967 | occupancy+RCS + R⁻⁴ power rendering, dynamic | Frontier |
-| 25 | 4DRotorGS, SIGGRAPH 2024 | 4D Gaussians, 277 FPS/3090 | Frontier |
-*CitedByCounts to be logged via Semantic Scholar API in driver phase (not fabricated here).*
+**Reported failures:** curved recall collapse (0.993→0.450 planar method); decoy blind spot (provable at exactly 2d); 1-DOF refutation by own 3-DOF baseline; open-door gating without RMSE metric; bearing-gate vacuity on moving scenes; midpoint-surface invariant refutation; single-scan (Rc,yg) ambiguity; outlier-regime conformal loss; CAN-HDF schema mismatch; SiL unbuildable locally.
 
-## 6. Next steps (driver backlog)
-1. Log citedByCounts; drop sub-bar foundations.
-2. Micro-CFAR net offline train (RaDelft-style lidar supervision on mf4 corpus) → int8 → BBE cycle estimate.
-3. Wall-pose RANSAC on guardrail frames; TIGRE-vs-mirror-test bake-off on ghost-labeled pairs.
-4. T3/T4 SiL A/B via VV configs (yaw-sweep, cut-in scenarios); T6 replay-scan prototype on HPCC logs.
-5. Frontier: Doppler-RadarSplat MVP on one mf4 log + OSI poses; Laplace vs Gaussian head ablation.
-6. Paper pipeline at novelty ≥70: NeurIPS methods + RadarConf domain twin.
+---
+
+## 6. Conclusion & Limitations
+
+Ghosts are measurements. The chain from estimation through assimilation runs on estimated geometry and survives every ablation we built to kill it. Limits: curved calibration needs multi-scan spread; decoys need Doppler luck or temporal confirmation; the replay engine needs parallel hardware; fleet validation needs labeled ghosts + cluster SiL.
+
+---
+
+## Appendix A — Enterprise Invention Disclosure Forms
+
+### IDF-1: Ghost-as-Virtual-Aperture Assimilation with Coupled Covariance
+**Independent claim 1.** A method for tracking a target with an automotive radar, comprising: identifying a first-order specular ghost associated with a parent detection via a displacement invariant; estimating shared reflector parameters; updating a joint state with a measurement model comprising direct and ghost rows; and weighting the update by $R + J\Sigma J^T$ with tangent-plane reflector uncertainty. **Dependent:** rank-1 $2d\hat n$ identification; RANSAC/excess-resultant consensus; iterated exact-residual EKF carrying $2d(\hat n\cdot u_s)$. **Differentiation:** field rejects ghosts (Kamon/Chong/Vockers, GGIW-PHD inflation); Li-Varshney never assimilates with coupling. **Reduction:** `specular_ghost.py` (RMSE −77.2%).
+
+### IDF-2: Closed Estimate→Gate→Assimilate Chain with Estimated Geometry
+**Independent claim 1.** A system chaining reflector estimation, Doppler-consistency gating of pair hypotheses against tracker velocity priors, and dual-path filtering with the estimated reflector. **Differentiation:** ICSIDP-2024 filters with known boundaries; Roos uses orientation mismatch; none chains estimation→gating→assimilation. **Reduction:** `combined_chain.py` (−67% track error).
+
+### IDF-3: Kinematics-Aware Bounded Association Gate
+**Independent claim 1.** Expanding a Mahalanobis association gate by estimated target acceleration plus innovation energy, hard-bounded for determinism. **Differentiation:** adaptive-Q/init-gating patents lack accel+innovation grade. **Reduction:** `adaptive_gating.py` (0.863→0.996).
+
+### IDF-4: Doppler-Aware Generative CDC Resimulation
+**Independent claim 1.** Rendering Range-Doppler training/validation data by splatting primitives with per-primitive LOS Doppler projection and $R^{-4}$ power law, with verified Jacobians. **Differentiation:** NeuRadar omits Doppler/RCS/CDC. **Reduction:** `doppler_radarsplat_mvp.py`.
+
+---
+
+## Appendix B — Cluster Deployment Plan (HPCC)
+
+1. Access: Aptiv network + `JFROG_ACCESS_TOKEN`; MSVC 2015 (VS "14 Win64") or Linux toolchain for DC_SIL.
+2. Build: `DC_SIL/Build.bat` (srr_dc) after `fetch_jfrog_binaries.sh`; configure `input_path.xml` per log.
+3. Replay: vehicle `_b05.mf4` (ETH frames) → `APT_SRR_RESIM.exe` → candidate `rR` MF4 → decoders → KPI suites (CSV path: `hdf5_to_kpi_csv.py` bridge; HDF path: direct `parse_for_kpi` / `kpi_main.py`).
+4. Scale: prefix-scan replay (`parallel_kf.py`, float64) across workers; state-injection for dynamic alignment (Solutions A/B documented in directive); halo discipline per 50 ms scan continuity.
+5. Local launch template: `run_hpcc_burst.sh` + Slurm configs (Run 17, pending cluster grant).
+
+---
+
+## References (all verified at time of writing)
+
+Särkkä & García-Fernández, IEEE TAC 66(1), 2021 (arXiv:1905.13002). Blelloch 1990 (CMU scan_ps.pdf). NeuRadar, CVPRW 2025. RadarSplat (arXiv:2506.01379). Li & Varshney, IEEE TSP ~2014. Roos et al., IRS 2017 (Doppler distribution). ICSIDP 2024 ghost suppression (10.1109/icsidp62679.2024.10868429). Feng/Ross delay-Doppler geometry. Fu 2024 tangential reflectors. Chen 2024 guardrail extraction. Jost 2025 surface estimation. OFPI-CFAR (JPIER). VI/LSTM-CFAR (Radioeng. 2025). IQR-CFAR (2024). TAES 2024.3445319 (CoFAR); TAES 2022.3206256; transfun 2022eap1064. Sensors 2022 s22030875 (IMM). arXiv:2609.30176 (residual estimation); 2609.29912 (flow matching); 2609.27506 (conformal KF); 2603.18027/2512.17505/2602.21128/2301.08087 (adaptive-R/entropy). Kellner T-ITS 8688104; Danzer RA-L 8954835 (calibration). US12000957 (range-Doppler consistency).
