@@ -243,6 +243,13 @@ synth overpass KPI: identity 100.0 / bias 0.0 (Tier-1 yield 100%).
 Replay (300 logs × 20 workers): slow 360k dropped/0 conv → fast 914/20 → inject 0/20.
 ### Verification Verdict: PASS. Infrastructure keep.
 
+## Experiment Ledger [2026-09-27 inline] — Run 19: driving alignment (N19)
+### Raw Metric Outputs (20 drives × 60 scans)
+Fused normal error: scan5 13.0° → scan30 1.73° → scan60 0.955°.
+Failed fusions (documented): plain mean (19°), median (12-18°), gated (18° lockout), vote (15°), 2d-accumulation (11°), EM gate (0 pass — lever arm), RANSAC-3° (1.44°), pooling (no gain).
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS (holds ~1° where 5 schemes diverge). Novelty 67 → DISCARD; artifact retained. 80 stands.
+
 ## Experiment Ledger [2026-09-27 inline] — Run 17: paper + deployment pack
 ### Code Changes & Prototypes Created
 `research.md` (manuscript + 4 IDFs + cluster plan), `run_hpcc_burst.sh` (verified slice plan), `slurm_resim.sbatch`, `PRESENTATION_APRISM.html`.

@@ -27,6 +27,14 @@
 - No novelty score (deliverable consolidation, not an idea). Paper centers the 80-chain with all 16 runs as evidence.
 - Next: N16/N17 seeds (remaining backlog) → venue submission after fleet validation.
 
+### Run 19: N19 driving ghost alignment — novelty_score=67.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline, beat-80 block)
+- What changed: `resim_research/ego_ghost_alignment.py` (new) — driving scene (24 cars + posts, 60 scans), tight-magnitude-cluster direction + running median; `demo()` asserts <1.0 and improvement.
+- Math: E14 (new row). Killed: midpoint-surface invariant (again), EM nominal gate (lever-arm!), mean/median/gated/vote/2d-accumulation fusions, RANSAC-3° (too tight vs 2.4° pair noise), harmonic lattice analysis (collinear posts).
+- Result: 13.0 → 1.73 → 0.955° over 60 scans (vs B+ 1.146 single-scan, vs 30-40 logs DA).
+- Novelty: ghost-geometry alignment (from B+) extended to driving; fusion robustness is engineering → 67 DISCARD. 80 STANDS; path to 90 = real labeled data or new theorem (stated, not faked).
+- Next: N16/N17 seeds → venue submission after fleet validation.
+
 ### Run 18: Synthetic generator + halo replay orchestrator — novelty_score=60.0 (KEEP, infrastructure)
 - Timestamp: 2026-09-27 (inline, directive-completion block)
 - What changed: `resim_research/synthetic_generator.py` (overpass/cutin/spray/curve in SENSOR1 HDF5 schema, Tier-1/2-consistent quantization, schema self-check), `resim_research/hpcc_local_orchestrator.py` (300×20 halo replay sim with MEASURED sub-models); synth HDF5 + KPI evidence in `kpi_work/synth*`.
