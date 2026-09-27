@@ -27,6 +27,21 @@
 - No novelty score (deliverable consolidation, not an idea). Paper centers the 80-chain with all 16 runs as evidence.
 - Next: N16/N17 seeds (remaining backlog) → venue submission after fleet validation.
 
+### Run 21: N17 censored sector pooling — novelty_score=58.0 (DISCARD, refuted win)
+- Timestamp: 2026-09-27 (inline, backlog completion)
+- What changed: `resim_research/sector_clutter_map.py` (new) — global per-bin EMA vs sector-pooled median/LN2 with in-pool 6 dB censoring, sparse-update regime (10% bins/scan).
+- Math: E16. REFUTED as big win: fixed sectors lose via boundary bias (dB-MSE 6.5 vs 1.8); median trim biased low on exponentials; win only 1.86× at 10% sparsity (56.4→30.4). Collapses back to T1's censoring design — sharpens T1's justification.
+- Result: sparse MSE 56.393 → 30.382. Prior art (CoFAR/sector lineage) → 58 DISCARD.
+- Next: push; backlog EMPTY (N13–N17 all executed).
+
+### Run 20: N16 ghost-conditioned augmentation — novelty_score=64.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline, backlog completion)
+- What changed: `resim_research/ghost_augmentation.py` (new) — N9-geometry ghost injection into RadarSplat renderer, normalized peak statistic (R⁴ spread removed via tracker power prediction), clean-vs-augmented threshold calibration; `demo()` asserts flood + FA hold + recall.
+- Math: E15 (new row below). Fault caught: raw peak energies dominated by R⁴ spread (500×), hiding the effect — normalized stat required.
+- Result: clean-tuned FA **0.425** on multipath vs aug-tuned **0.033**, recall 1.000 both.
+- Novelty: generative augmentation lineage (flow-matching) + ghost sims (MATLAB) → prior_art_clear=0 → 64 DISCARD; artifact retained as paper training-story evidence.
+- Next: N17 sector clutter map → push both.
+
 ### Run 19: N19 driving ghost alignment — novelty_score=67.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline, beat-80 block)
 - What changed: `resim_research/ego_ghost_alignment.py` (new) — driving scene (24 cars + posts, 60 scans), tight-magnitude-cluster direction + running median; `demo()` asserts <1.0 and improvement.

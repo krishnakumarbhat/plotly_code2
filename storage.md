@@ -250,6 +250,11 @@ Failed fusions (documented): plain mean (19°), median (12-18°), gated (18° lo
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS (holds ~1° where 5 schemes diverge). Novelty 67 → DISCARD; artifact retained. 80 stands.
 
+## Experiment Ledger [2026-09-27 inline] — Runs 20+21: backlog completion
+### N16 ghost augmentation: clean-tuned FA 0.425 → aug-tuned 0.033, recall 1.000. Novelty 64 → DISCARD. PASS.
+### N17 sector pooling: sparse MSE 56.4 → 30.4 (1.86×); fixed-sector win REFUTED (boundary bias). Novelty 58 → DISCARD. PASS.
+Backlog EMPTY. Paper + presentation + HPCC pack shipped. All directive files exist.
+
 ## Experiment Ledger [2026-09-27 inline] — Run 17: paper + deployment pack
 ### Code Changes & Prototypes Created
 `research.md` (manuscript + 4 IDFs + cluster plan), `run_hpcc_burst.sh` (verified slice plan), `slurm_resim.sbatch`, `PRESENTATION_APRISM.html`.
