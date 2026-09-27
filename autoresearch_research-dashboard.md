@@ -25,8 +25,8 @@
 | 17 | b99328e | 70.0pts (+27.3%) | keep | Fast DA A+B+B+: real az −1.145; lock 46 vs 400; ghost seed 1.146° (floor proven) |
 | 18 | b99328e | 60.0pts (+9.1%) | keep | Synth 4-scenario generator + halo replay: drops 360k→914→0 (infrastructure) |
 | 19 | 78d4ba9 | 67.0pts (+21.8%) | discard | Driving alignment: 13→0.96°; 5 fusions fail documented; 80 stands |
-| 20 | TBD20 | 64.0pts (+16.4%) | discard | Ghost augmentation: FA 0.425→0.033, recall 1.000; normalized stat |
-| 21 | TBD21 | 58.0pts (+5.5%) | discard | Sector pooling: sparse 56→30 (1.86×); fixed-sector win refuted |
+| 20 | 8d301eb | 64.0pts (+16.4%) | discard | Ghost augmentation: FA 0.425→0.033, recall 1.000; normalized stat |
+| 21 | 8d301eb | 58.0pts (+5.5%) | discard | Sector pooling: sparse 56→30 (1.86×); fixed-sector win refuted |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
