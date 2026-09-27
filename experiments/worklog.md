@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 15: N14 track-conditioned residual estimator + INT8 — novelty_score=65.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline)
+- What changed: `resim_research/track_conditioned.py` (new) — FMCW beat model, full-FFT+parabolic baseline, lag-1 residual estimator, symmetric INT8 fake-quant path; `demo()` asserts accuracy parity + INT8 bound + ≥4× flop cut.
+- Math: E10. Fault caught: single-chirp beat is range-dominated (velocity metric nonsense) → reframed to range RMSE. Bonus: lag-1 beats FFT 4× (bin-free vs scalloping).
+- Result: range RMSE 0.439 → 0.106 → 0.108 (INT8) m; 4608 vs 1024 mults (4.5×).
+- Novelty: arXiv:2609.30176 prior art → 65 DISCARD; artifact retained (TinyML envelope verified).
+- Next: N15 conformal fusion → paper + presentation + HPCC scripts.
+
 ### Run 14: N18 closed ghost chain (NEW BEST) — novelty_score=80.0 (KEEP)
 - Timestamp: 2026-09-27 (inline, breakthrough block)
 - What changed: `resim_research/combined_chain.py` (new) — rank1 estimation → Doppler gating → dual EKF with ESTIMATED (d̂,n̂) + R_eff, all modules composed, old-vs-new on one scene; `demo()` asserts precision lift, no recall loss, track win.

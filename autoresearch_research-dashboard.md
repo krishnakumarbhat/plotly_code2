@@ -1,6 +1,6 @@
 # Autoresearch Research Dashboard: ADAS Radar Perception, TinyML, HPCC, Generative Resimulation
 
-**Runs:** 14 | **Kept:** 7 | **Discarded:** 7 | **Crashed:** 0
+**Runs:** 15 | **Kept:** 7 | **Discarded:** 8 | **Crashed:** 0
 **Baseline:** novelty_score: 55.0pts (#1)
 **Best:** novelty_score: 80.0pts (#14, +45.5%)
 
@@ -20,6 +20,7 @@
 | 12 | fcb56f6 | 63.0pts (+14.5%) | discard | Fermat cylinder RANSAC: curved rec 0.198→0.753; midpoint invariant refuted; wall-RANSAC lineage |
 | 13 | 3207679 | 61.0pts (+10.9%) | discard | Coarse-to-fine joint: 0.965/0.862 at 18% evals; 1-DOF-local refuted; standard practice |
 | 14 | 8114bb0 | **80.0pts (+45.5%)** | **keep** | N18 closed chain: edges 0→0.969/0.902, track −67%, estimated reflector (breakthrough) |
+| 15 | TBD15 | 65.0pts (+18.2%) | discard | Residual estimator + INT8: 0.439→0.106→0.108 m, 4.5× fewer mults; 2609.30176 lineage |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 

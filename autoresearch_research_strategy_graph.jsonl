@@ -24,3 +24,7 @@
 {"id":"N11","metric":63.0,"parent":"N9","status":"explored","strategy":"probabilistic x missing-paradigm x temporal disambiguation: E2b Doppler invariant (40sigma) as the ONLY resolver of the provable decoy blind spot (prec 0.638 geometric-only)","timestamp":1790427159,"type":"node"}
 {"from":"N9","kind":"branch","to":"N12","type":"edge"}
 {"id":"N12","metric":61.0,"parent":"N9","status":"explored","strategy":"algebraic x complexity-blowup x hybrid consensus: 1-DOF excess-resultant PREFILTER then LOCAL 2-D direction refinement (recovers 3-DOF accuracy at 1-DOF global cost)","timestamp":1790427159,"type":"node"}
+{"id":"N14","metric":65.0,"parent":"N13","status":"explored","strategy":"TinyML residual estimator + INT8 head","timestamp":1790427159,"type":"node"}
+{"from":"N13","kind":"derived","to":"N14","type":"edge"}
+{"from":"N13","kind":"derived","to":"N15","type":"edge"}
+{"id":"N15","metric":0.0,"parent":"N13","status":"frontier","strategy":"conformal async fusion","timestamp":1790427159,"type":"node"}

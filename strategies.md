@@ -25,5 +25,5 @@ Branched from N13 (kept, 80 — new best, breakthrough chain):
 
 | Node | Thinking mode × gap type × routing | Why new | Outcome | Status |
 |------|-----------------------------------|---------|---------|--------|
-| N14 | TinyML × assumption-violation (FFT-first DSP) × MLSys | track-conditioned residual Doppler (4 complex sums, 16× reduction) — detector AFTER tracker, not before | — | frontier |
+| N14 | TinyML × assumption-violation (FFT-first DSP) × MLSys | track-conditioned residual Doppler (4 complex sums, 16× reduction) — detector AFTER tracker, not before | executed: range RMSE 0.439→0.106→0.108 INT8, 4.5× fewer mults; beat-is-range fault reframed; lineage 2609.30176 | explored (65) |
 | N15 | probabilistic × missing-paradigm (distribution-free fusion) × filtering | conformal credible regions for async/OOS fusion without Gaussian assumption | — | frontier |

@@ -207,3 +207,13 @@ PASS. Novelty 61 → DISCARD (standard practice); artifact retained. All N9 bran
 | Reflector est error | — | 0.26 m, 3.28° |
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 80 → KEEP (new best, breakthrough chain).
+
+## Experiment Ledger [2026-09-27 inline] — Run 15: residual estimator (N14)
+### Raw Metric Outputs (60 trials, tracker err 0.3 m / 0.5 m/s)
+| Estimator | Range RMSE | Mults |
+|---|---|---|
+| Full 512-FFT + parabolic | 0.439 m | 4608 |
+| Lag-1 residual (float) | 0.106 m | 1024 (4.5× fewer) |
+| Lag-1 residual (INT8) | 0.108 m | same |
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 65 → DISCARD (2609.30176 lineage); artifact retained.
