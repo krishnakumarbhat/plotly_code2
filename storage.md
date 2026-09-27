@@ -187,3 +187,13 @@ PASS. Novelty 64 → DISCARD (operator prior art); engine retained for HPCC plan
 Fit distribution: (45,3.0) ×31, (30,3.0) ×3, None ×2 — calibration ambiguous, classification robust.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 63 → DISCARD (wall-RANSAC lineage); artifact retained.
+
+## Experiment Ledger [2026-09-27 inline] — Run 13: hybrid consensus (N12)
+### Raw Metric Outputs (40 planar scans, 10 targets + ghosts)
+| Detector | Recall | Precision | 2d err | evals |
+|---|---|---|---|---|
+| 1-DOF | 0.845 | 0.727 | 0.618 (med 0.093) | ~1800 |
+| 3-DOF | 0.993 | 0.909 | 0.077 | 16800 |
+| Hybrid coarse-to-fine | 0.965 | 0.862 | 0.083 med (0.903 mean) | 3050 (18.2%) |
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 61 → DISCARD (standard practice); artifact retained. All N9 branches (N10/N11/N12) now closed.

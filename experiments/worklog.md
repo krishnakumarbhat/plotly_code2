@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 13: N12 hybrid consensus — novelty_score=61.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline, fast block)
+- What changed: `resim_research/hybrid_consensus.py` (new) — local_patch(), coarse-to-fine joint search (100-dir coarse + 20° gate, fine 25-dir patch + relative gate + consume-in-order), evaluate() with robust median + mean transparency; `demo()` asserts operating point + cost fraction + beats-1-DOF.
+- Math: E2h. Faults: coarse-grid culling (recall 0.025!), raw-top-k noise admission, mean-metric fragility. Original 1-DOF-local plan REFUTED (== 1-DOF exactly); coarse-to-fine joint is the working variant.
+- Result: recall 0.965 / prec 0.862 / 2d_med 0.083 m at 3050 evals (18.2%); 1-DOF re-confirmed 0.845/0.727.
+- Novelty: coarse-to-fine is standard practice → prior_art_clear=0 → 61 DISCARD; artifact retained.
+- Next: N18 combined chain on real pairs → paper + presentation.
+
 ### Run 12: N10 Fermat cylinder RANSAC — novelty_score=63.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline, fast block)
 - What changed: `resim_research/bend_conditioned.py` (new) — faceted-cylinder truth generator (same-side + sensor-mirror foot + occlusion), Fermat forward-model RANSAC over (Rc,yg) grid with parent-orientation rule; `demo()` asserts lift ≥0.25, rec ≥0.70, prec ≥0.60.
