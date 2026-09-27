@@ -110,3 +110,13 @@ Self-check intermediate (no clutter): 0.665→1.000 flagged open-door; clutter+R
 - Mild scenario (4.2 m/s², soft tune) gave 0.998 baseline — failure regime needs emergency accel + stiff tune + confident sensor. Documented, not hidden.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS (recall +13.3pts, RMSE −25%). Novelty 71 → KEEP.
+
+## Experiment Ledger [2026-09-27 inline] — Run 7: T5 spectral covariance (N6)
+### Hypothesis & Theoretical Basis
+Spray breaks Gaussian trust; entropy/SNR-modulated R coasts the filter. E5.
+### Code Changes & Prototypes Created
+`spectral_covariance_scaling.py`: Joseph update, spray schedule (H=0.9/SNR=0.25 bursts), PD assert.
+### Raw Metric Outputs
+30 seeds: static spray RMSE 0.911 m → scaled 0.315 m (−65%); minEig > 0 all frames both modes.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 67 → DISCARD (adaptive-R lineage); artifact retained. Driver worker pool 0-for-7 since Run 3 — inline is the productive path; driver NOT relaunched.

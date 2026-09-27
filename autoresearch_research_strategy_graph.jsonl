@@ -11,7 +11,7 @@
 {"from":"N3","kind":"derived","to":"N9","type":"edge"}
 {"id":"N4","metric":68.0,"parent":"N1","status":"explored","strategy":"first-principles x domain-fault x async-epochs (T3)","timestamp":1790427159,"type":"node"}
 {"id":"N5","metric":71.0,"parent":"N1","status":"kept","strategy":"probabilistic x generalization-gap x adaptive-gating (T4)","timestamp":1790427159,"type":"node"}
-{"id":"N6","metric":0.0,"parent":"N1","status":"frontier","strategy":"information-theoretic x assumption-violation x spectral-covariance (T5)","timestamp":1758860000,"type":"node"}
+{"id":"N6","metric":67.0,"parent":"N1","status":"explored","strategy":"information-theoretic x assumption-violation x spectral-covariance (T5)","timestamp":1790427159,"type":"node"}
 {"id":"N7","metric":0.0,"parent":"N1","status":"frontier","strategy":"lateral-graphics-to-radar x missing-paradigm x doppler-radarsplat (F)","timestamp":1758860000,"type":"node"}
 {"id":"N8","metric":0.0,"parent":"N1","status":"frontier","strategy":"algebraic x complexity-blowup x prefix-scan-KF (H)","timestamp":1758860000,"type":"node"}
 {"id":"N9","metric":74.0,"parent":"N1","status":"kept","strategy":"spatial x missing-paradigm x specular-ghost (T2) — rank-1 displacement 2dn + ghost-as-virtual-aperture assimilation","timestamp":1790427159,"type":"node"}

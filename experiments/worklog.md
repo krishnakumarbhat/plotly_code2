@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 7: T5 spectral covariance scaling — novelty_score=67.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline; driver exited 3/3 stale 02:24, inline continues per 12h directive)
+- What changed: `resim_research/spectral_covariance_scaling.py` (new) — R(t)=R0·exp(βH/SNR), Joseph-form update, lead-truck CV + 2 spray bursts; `demo()` asserts spray-RMSE win + PD (min eig > 0).
+- Math: E5 verified. No faults (construction guarantees PD; measurement confirms).
+- Result: 30 seeds — spray RMSE **0.911→0.315 m (−65%)**, minEig 2.4e-3 > 0.
+- Novelty: swarm C CLEAR exact form; Sage-Husa adaptive-R lineage → contrast 60 → 67 DISCARD; artifact retained.
+- Next: N7 (F Doppler-RadarSplat MVP, swarm-CLEAR) → N8 → N10/N12 → synthetic generator → real-KPI eval → paper.
+
 ### Run 6: T4 kinematics-aware adaptive gating — novelty_score=71.0 (KEEP)
 - Timestamp: 2026-09-26 (inline, 12h block)
 - What changed: `resim_research/adaptive_gating.py` (new) — CV EKF with coast(), fixed χ² gate vs γ_adapt with finite-difference accel estimate, hard [9.21, 40] bounds; 6 m/s² cut-in + 3 clutter/scan nearest-within-gate scene; `demo()` asserts recall ≥0.97, margin ≥0.05, RMSE strictly better.

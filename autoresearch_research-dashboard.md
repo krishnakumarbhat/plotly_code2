@@ -1,6 +1,6 @@
 # Autoresearch Research Dashboard: ADAS Radar Perception, TinyML, HPCC, Generative Resimulation
 
-**Runs:** 6 | **Kept:** 3 | **Discarded:** 3 | **Crashed:** 0
+**Runs:** 7 | **Kept:** 3 | **Discarded:** 4 | **Crashed:** 0
 **Baseline:** novelty_score: 55.0pts (#1)
 **Best:** novelty_score: 74.0pts (#3, +34.5%)
 
@@ -12,6 +12,7 @@
 | 4 | 5256da9 | 63.0pts (+14.5%) | discard | N11 Doppler gate: decoy prec 0.638→0.877, GRR 0.661, recall cost ≤0.009; mechanism published (ICSIDP 2024) |
 | 5 | f13469e | 68.0pts (+23.6%) | discard | T3 async extrapolation: residual cut 32–86% over yaw sweep; sign challenge survived; lidar-deskewing paradigm |
 | 6 | fa2baaf | 71.0pts (+29.1%) | keep | T4 adaptive gating: cut-in recall 0.863→0.996, RMSE 0.283→0.212 m; open-door fault answered; swarm-CLEAR |
+| 7 | TBD7 | 67.0pts (+21.8%) | discard | T5 spectral covariance: spray RMSE 0.911→0.315 m, Joseph PD holds; adaptive-R lineage |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
