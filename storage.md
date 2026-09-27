@@ -217,3 +217,13 @@ PASS. Novelty 80 → KEEP (new best, breakthrough chain).
 | Lag-1 residual (INT8) | 0.108 m | same |
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 65 → DISCARD (2609.30176 lineage); artifact retained.
+
+## Experiment Ledger [2026-09-27 inline] — Run 16: conformal fusion (N15)
+### Raw Metric Outputs (20 trials, 600 scans, unmodeled maneuver + OOS sensor)
+| Gate | Coverage (target 0.90) | Width | RMSE |
+|---|---|---|---|
+| Fixed χ² | 0.042 | 8.18 | 17.683 m |
+| Conformal | 0.996 | 2.78 | 0.263 m |
+Outlier-regime control: fixed wins (documented in E11 — regime matters).
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 67 → DISCARD; artifact retained.

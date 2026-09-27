@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 16: N15 conformal async fusion — novelty_score=67.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline)
+- What changed: `resim_research/conformal_fusion.py` (new) — split-conformal gate on normalized innovations (sliding 200-window), OOS second sensor through same gate; `demo()` asserts coverage + win + RMSE.
+- Math: E11. Key fault caught: conformal LOSES under pure outlier contamination (calibration poisoning) — its regime is model mismatch, reframed accordingly.
+- Result: unmodeled sinusoidal velocity — fixed coverage 0.042/RMSE 17.683 m (total loss) vs conformal 0.996/0.263 m.
+- Novelty: conformal-filtering lineage → 67 DISCARD; artifact retained. Synergy note: N5 adaptive gate addresses the same regime parametrically.
+- Next: paper (research.md) + IDFs → HPCC scripts → presentation.
+
 ### Run 15: N14 track-conditioned residual estimator + INT8 — novelty_score=65.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline)
 - What changed: `resim_research/track_conditioned.py` (new) — FMCW beat model, full-FFT+parabolic baseline, lag-1 residual estimator, symmetric INT8 fake-quant path; `demo()` asserts accuracy parity + INT8 bound + ≥4× flop cut.
