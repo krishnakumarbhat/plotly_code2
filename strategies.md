@@ -20,3 +20,10 @@ Branched from N9 (kept, 74):
 | N12 | algebraic × complexity-blowup (hybrid consensus) × RadarConf | 1-DOF excess-resultant prefilter + LOCAL 2-D direction refinement should recover 3-DOF accuracy at 1-DOF global cost; directly attacks the E2c refutation | executed: 1-DOF-local FAILED (==1-DOF); coarse-to-fine joint succeeds 0.965/0.862 at 18% cost; E2c re-confirmed | explored (61) |
 
 Hard-ban a thinking-mode category after 3 uses. Same-category repeats are void.
+
+Branched from N13 (kept, 80 — new best, breakthrough chain):
+
+| Node | Thinking mode × gap type × routing | Why new | Outcome | Status |
+|------|-----------------------------------|---------|---------|--------|
+| N14 | TinyML × assumption-violation (FFT-first DSP) × MLSys | track-conditioned residual Doppler (4 complex sums, 16× reduction) — detector AFTER tracker, not before | — | frontier |
+| N15 | probabilistic × missing-paradigm (distribution-free fusion) × filtering | conformal credible regions for async/OOS fusion without Gaussian assumption | — | frontier |

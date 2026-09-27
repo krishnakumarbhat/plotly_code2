@@ -197,3 +197,13 @@ PASS. Novelty 63 → DISCARD (wall-RANSAC lineage); artifact retained.
 | Hybrid coarse-to-fine | 0.965 | 0.862 | 0.083 med (0.903 mean) | 3050 (18.2%) |
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 61 → DISCARD (standard practice); artifact retained. All N9 branches (N10/N11/N12) now closed.
+
+## Experiment Ledger [2026-09-27 inline] — Run 14: N18 closed chain (N13)
+### Raw Metric Outputs (40 seeds, 6 moving targets + ghosts + decoys)
+| Leg | Old | New |
+|---|---|---|
+| Ghost edges rec/prec | 0.000 / 0.000 (bearing gate) | 0.969 / 0.902 |
+| Parent track RMSE | 1.969 m (direct) | 0.651 m (dual, estimated ξ) |
+| Reflector est error | — | 0.26 m, 3.28° |
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 80 → KEEP (new best, breakthrough chain).

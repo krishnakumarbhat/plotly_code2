@@ -15,6 +15,8 @@
 {"id":"N7","metric":70.0,"parent":"N1","status":"kept","strategy":"lateral-graphics-to-radar x missing-paradigm x doppler-radarsplat (F)","timestamp":1790427159,"type":"node"}
 {"id":"N8","metric":64.0,"parent":"N1","status":"explored","strategy":"algebraic x complexity-blowup x prefix-scan-KF (H)","timestamp":1790427159,"type":"node"}
 {"id":"N9","metric":74.0,"parent":"N1","status":"kept","strategy":"spatial x missing-paradigm x specular-ghost (T2) — rank-1 displacement 2dn + ghost-as-virtual-aperture assimilation","timestamp":1790427159,"type":"node"}
+{"id":"N13","metric":80.0,"parent":"N9","status":"kept","strategy":"systems x paradigm-proof x N18 closed chain estimate-gate-assimilate with ESTIMATED reflector","timestamp":1790427159,"type":"node"}
+{"from":"N9","kind":"derived","to":"N13","type":"edge"}
 {"from":"N1","kind":"derived","to":"N9","type":"edge"}
 {"from":"N9","kind":"branch","to":"N10","type":"edge"}
 {"id":"N10","metric":63.0,"parent":"N9","status":"explored","strategy":"first-principles x domain-fault x bent-guardrail: bearing-conditioned 2D(phi)=2Rc+2(yg+Rc)cosphi(u_d) 1-DOF bend fit (E2e fix); recall collapsed 0.993->0.450","timestamp":1790427159,"type":"node"}

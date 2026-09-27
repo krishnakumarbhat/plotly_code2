@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 14: N18 closed ghost chain (NEW BEST) — novelty_score=80.0 (KEEP)
+- Timestamp: 2026-09-27 (inline, breakthrough block)
+- What changed: `resim_research/combined_chain.py` (new) — rank1 estimation → Doppler gating → dual EKF with ESTIMATED (d̂,n̂) + R_eff, all modules composed, old-vs-new on one scene; `demo()` asserts precision lift, no recall loss, track win.
+- Math: E9. Old baseline (bearing gate) scores 0.000/0.000 on moving scenes — reported, not hidden; the chain's margin is vs field practice, and vs direct-only tracking where it counts.
+- Result: 40 seeds — edges 0.000/0.000 → **0.969/0.902**; track RMSE **1.969 → 0.651 m (−67%)**; estimator error 0.26 m / 3.28°.
+- Novelty: no published chain estimates-then-assimilates ghosts (field rejects; ours inverts). Chain-level proof with estimated geometry (not oracle) → contrast 75, proof 82 → 80 KEEP. Path to 90: real labeled-ghost HDF validation, or a new theorem (residual estimator N14?).
+- Next: paper + presentation now have their headline (N13/N9+N5+N7); HPCC scripts; N14/N15 frontier.
+
 ### Run 13: N12 hybrid consensus — novelty_score=61.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline, fast block)
 - What changed: `resim_research/hybrid_consensus.py` (new) — local_patch(), coarse-to-fine joint search (100-dir coarse + 20° gate, fine 25-dir patch + relative gate + consume-in-order), evaluate() with robust median + mean transparency; `demo()` asserts operating point + cost fraction + beats-1-DOF.
