@@ -19,7 +19,7 @@
 | 11 | 7306464 | 64.0pts (+16.4%) | discard | Prefix-scan KF: rel 6e-15, span 16 vs 50k, Lemma-7 fix from source; operator prior art |
 | 12 | fcb56f6 | 63.0pts (+14.5%) | discard | Fermat cylinder RANSAC: curved rec 0.198→0.753; midpoint invariant refuted; wall-RANSAC lineage |
 | 13 | 3207679 | 61.0pts (+10.9%) | discard | Coarse-to-fine joint: 0.965/0.862 at 18% evals; 1-DOF-local refuted; standard practice |
-| 14 | TBD14 | **80.0pts (+45.5%)** | **keep** | N18 closed chain: edges 0→0.969/0.902, track −67%, estimated reflector (breakthrough) |
+| 14 | 8114bb0 | **80.0pts (+45.5%)** | **keep** | N18 closed chain: edges 0→0.969/0.902, track −67%, estimated reflector (breakthrough) |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
