@@ -8,7 +8,7 @@
 | N4 | first-principles × domain-fault (async epochs) × filtering/EKF | derives correction from clock axioms | executed: 32–86% residual cut; sign challenge survived; swarm CLEAR but lidar-deskewing paradigm caps contrast | explored (68) |
 | N5 | probabilistic × generalization-gap (kinematic gating) × tracking/Mahalanobis | gate as function of maneuver state | KEPT (71): cut-in recall 0.863→0.996 + RMSE −25% under clutter; open-door fault caught via RMSE metric; swarm-CLEAR exact formula | kept (71) |
 | N6 | information-theoretic × assumption-violation (Gaussian R0) × filtering/covariance | entropy-modulated trust | executed: spray RMSE −65%, PD holds; swarm-CLEAR exact form but Sage-Husa lineage caps contrast | explored (67) |
-| N7 | lateral (graphics→radar) × missing-paradigm (Doppler+CDC synthesis) × CVPR/generative | steals Gaussian splatting for 4D radar | — | frontier |
+| N7 | lateral (graphics→radar) × missing-paradigm (Doppler+CDC synthesis) × CVPR/generative | steals Gaussian splatting for 4D radar | KEPT (70): R⁴ exact, gradients 1e-9, 6/6 CDC recovery; near-far answered by CLEAN; NeuRadar gap confirmed | kept (70) |
 | N8 | algebraic × complexity-blowup (O(N)→O(log N)) × NeurIPS-theory/parallel-KF | associative operator + Blelloch scan | — | frontier |
 
 Branched from N9 (kept, 74):

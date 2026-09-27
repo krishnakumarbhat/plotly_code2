@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 8: F Doppler-RadarSplat MVP — novelty_score=70.0 (KEEP)
+- Timestamp: 2026-09-27 (inline, 12h block)
+- What changed: `resim_research/doppler_radarsplat_mvp.py` (new) — RadarPrimitive, analytic LOS Doppler + R⁴ projection, Gaussian CDC splat renderer, CLEAN peak extractor with noise-floor termination; `demo()` asserts R⁴ ratio, Jacobian/FD agreement, recovery clean + cluttered.
+- Math: E7 verified. Three implementation faults caught: near-far masking (2200× dynamic range blinds 5%-of-max), out-of-band Doppler at 25 m/s ego, runaway CLEAN loop (fixed by absolute floor + cap).
+- Result: R⁴ 256.0 exact; grad relerr 9e-9/1e-9; recovery 6/6 both scenes; range RMSE 0.053 m, Doppler 0.036 m/s.
+- Novelty: swarm D CLEAR (NeuRadar 2504.00859 confirms the gap; no sim combines all three). Lateral paradigm transfer + new capability → contrast 70 → 70 KEEP (borderline, carried by verification depth).
+- Next: N8 (prefix-scan + fast DA) → N10/N12 → synthetic generator → real-KPI eval → paper (N9+N5+N7).
+
 ### Run 7: T5 spectral covariance scaling — novelty_score=67.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline; driver exited 3/3 stale 02:24, inline continues per 12h directive)
 - What changed: `resim_research/spectral_covariance_scaling.py` (new) — R(t)=R0·exp(βH/SNR), Joseph-form update, lead-truck CV + 2 spray bursts; `demo()` asserts spray-RMSE win + PD (min eig > 0).

@@ -120,3 +120,20 @@ Spray breaks Gaussian trust; entropy/SNR-modulated R coasts the filter. E5.
 30 seeds: static spray RMSE 0.911 m → scaled 0.315 m (−65%); minEig > 0 all frames both modes.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 67 → DISCARD (adaptive-R lineage); artifact retained. Driver worker pool 0-for-7 since Run 3 — inline is the productive path; driver NOT relaunched.
+
+## Experiment Ledger [2026-09-27 inline] — Run 8: F Doppler-RadarSplat MVP (N7)
+### Hypothesis & Theoretical Basis
+No published neural radar sim synthesizes per-primitive Doppler + R⁴ power + CDC spectra (NeuRadar gap). Differentiable LOS projection + Gaussian splat renderer closes it. E7.
+### Code Changes & Prototypes Created
+`doppler_radarsplat_mvp.py`: primitive, project(), render(), CLEAN extract_peaks(); `demo()` 4 asserts.
+### Raw Metric Outputs
+| Check | Result |
+|---|---|
+| R⁴ law P(10)/P(40) | 256.0 exact |
+| dvr/dmu, dPr/dmu vs FD | 9.1e-9, 1.3e-9 |
+| CDC recovery (6 prims) | 6/6 clean, 6/6 +30 clutter |
+| Range / Doppler RMSE | 0.053 m / 0.036 m/s |
+### Failure Analysis & Anomalies Encountered
+- Near-far masking, out-of-band Doppler, runaway CLEAN — all caught by asserts, fixed (see E7). Infinite-loop class bug (threshold tracking residual) terminated by floor+cap.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 70 → KEEP (borderline, verification depth carries it).
