@@ -13,7 +13,7 @@
 | 5 | f13469e | 68.0pts (+23.6%) | discard | T3 async extrapolation: residual cut 32–86% over yaw sweep; sign challenge survived; lidar-deskewing paradigm |
 | 6 | fa2baaf | 71.0pts (+29.1%) | keep | T4 adaptive gating: cut-in recall 0.863→0.996, RMSE 0.283→0.212 m; open-door fault answered; swarm-CLEAR |
 | 7 | 71817be | 67.0pts (+21.8%) | discard | T5 spectral covariance: spray RMSE 0.911→0.315 m, Joseph PD holds; adaptive-R lineage |
-| 8 | TBD8 | 70.0pts (+27.3%) | keep | F RadarSplat MVP: R⁴ exact, grad 1e-9, CDC 6/6 recovery; CLEAN fixes; NeuRadar gap confirmed |
+| 8 | 71112c5 | 70.0pts (+27.3%) | keep | F RadarSplat MVP: R⁴ exact, grad 1e-9, CDC 6/6 recovery; CLEAN fixes; NeuRadar gap confirmed |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
