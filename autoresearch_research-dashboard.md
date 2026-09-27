@@ -17,7 +17,7 @@
 | 9 | e4c233a | 60.0pts (+9.1%) | keep | Phase-4 harness: KPI identity 100.0 / bias 0.0, MF4 round-trip exact (infrastructure) |
 | 10 | 7bb174a | 60.0pts (+9.1%) | keep | HDF-KPI 100% direct-call; CAN schema documented; SiL unbuildable locally; backlog N13–N18 |
 | 11 | 7306464 | 64.0pts (+16.4%) | discard | Prefix-scan KF: rel 6e-15, span 16 vs 50k, Lemma-7 fix from source; operator prior art |
-| 12 | TBD12 | 63.0pts (+14.5%) | discard | Fermat cylinder RANSAC: curved rec 0.198→0.753; midpoint invariant refuted; wall-RANSAC lineage |
+| 12 | fcb56f6 | 63.0pts (+14.5%) | discard | Fermat cylinder RANSAC: curved rec 0.198→0.753; midpoint invariant refuted; wall-RANSAC lineage |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
