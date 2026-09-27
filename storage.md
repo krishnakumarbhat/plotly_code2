@@ -165,3 +165,15 @@ PASS. Infrastructure keep (60, novelty-bar-exempt).
 | SiL local build | BLOCKED (no MSVC, jfrog token, tracker sources) |
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS (harness now covers CSV-KPI + HDF-KPI + MF4). Infrastructure keep.
+
+## Experiment Ledger [2026-09-27 inline] — Run 11: prefix-scan KF (N8)
+### Raw Metric Outputs
+| N | seqKF (s) | seqReduce (s) | scan 1-core (s) | maxErr vs KF | span levels |
+|---|---|---|---|---|---|
+| 1k | 0.015 | 0.025 | 0.074 | 1.0e-12 | 10 |
+| 5k | 0.070 | 0.123 | 0.560 | 5.5e-12 | 13 |
+| 10k | 0.159 | 0.247 | 1.358 | 1.7e-11 | 14 |
+| 50k | 0.722 | 1.238 | 4.838 | 1.5e-10 | 16 |
+Assoc: rel 6.35e-15. Span 16 vs 50000 sequential (3125× with parallel units).
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 64 → DISCARD (operator prior art); engine retained for HPCC plan.

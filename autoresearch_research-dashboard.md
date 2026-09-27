@@ -1,6 +1,6 @@
 # Autoresearch Research Dashboard: ADAS Radar Perception, TinyML, HPCC, Generative Resimulation
 
-**Runs:** 10 | **Kept:** 6 | **Discarded:** 4 | **Crashed:** 0
+**Runs:** 11 | **Kept:** 6 | **Discarded:** 5 | **Crashed:** 0
 **Baseline:** novelty_score: 55.0pts (#1)
 **Best:** novelty_score: 74.0pts (#3, +34.5%)
 
@@ -16,6 +16,7 @@
 | 8 | 71112c5 | 70.0pts (+27.3%) | keep | F RadarSplat MVP: R⁴ exact, grad 1e-9, CDC 6/6 recovery; CLEAN fixes; NeuRadar gap confirmed |
 | 9 | e4c233a | 60.0pts (+9.1%) | keep | Phase-4 harness: KPI identity 100.0 / bias 0.0, MF4 round-trip exact (infrastructure) |
 | 10 | 7bb174a | 60.0pts (+9.1%) | keep | HDF-KPI 100% direct-call; CAN schema documented; SiL unbuildable locally; backlog N13–N18 |
+| 11 | TBD11 | 64.0pts (+16.4%) | discard | Prefix-scan KF: rel 6e-15, span 16 vs 50k, Lemma-7 fix from source; operator prior art |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 

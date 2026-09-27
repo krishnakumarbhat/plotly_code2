@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 11: N8 associative prefix-scan KF — novelty_score=64.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline)
+- What changed: `resim_research/parallel_kf.py` (new) — Särkkä operator (vectorized), Lemma-7 element builder, Blelloch up/down-sweep, independent sequential-KF reference, timing ladder 1k→50k.
+- Math: E6 verified FROM SOURCE (fetched arXiv:1905.13002 HTML, read Lemma 7/8 + Thm 3). Two real faults: naive elements incompatible (0.1 @step 1), down-sweep operand order. Assoc: abs 2.8e-13 (conditioning) / rel 6.35e-15 ✓. Scan==KF: 1e-12→1.5e-10. Span 16 vs 50000 steps (3125×); single-core wall favors sequential (paper-consistent).
+- Result: the HPCC replay engine is built and verified; needs parallel hardware (or batched-GPU port) to realize span.
+- Novelty: swarm E CLEAR application, operator prior art → 64 DISCARD; engine retained.
+- Next: N10/N12 → N18 combined chain → paper + presentation.
+
 ### Run 10: HDF-KPI verification + SiL build verdict + ideas backlog — novelty_score=60.0 (KEEP, infrastructure)
 - Timestamp: 2026-09-27 (inline)
 - HDF KPIs (user correction: CSV scripts are legacy): NEW UDP HDF KPI (`UDP_KPI/a_persistence_layer.parse_for_kpi`, direct call, no ZMQ server) scores dummy pair1 veh-vs-output **100.00% (50/50)**; identity candidate 100%, +20 mm bias Tier-1 **100%** (Tier-2 failure already proven on CSV path — tier separation cross-confirmed). CAN HDF KPI (`can_kpi_hdf/kpi_main.py`) runs but returns EMPTY tables on Bordnet-decoded HDF: it expects SiL CAN-out flavor (HEADER_STREAM/DETECTION_STREAM), a schema mismatch documented for the HPCC plan; IFV7XX pair additionally has `CEER_ FL` vs `CEER_FL` decoder-version drift.
