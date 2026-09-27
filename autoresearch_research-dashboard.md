@@ -18,7 +18,7 @@
 | 10 | 7bb174a | 60.0pts (+9.1%) | keep | HDF-KPI 100% direct-call; CAN schema documented; SiL unbuildable locally; backlog N13–N18 |
 | 11 | 7306464 | 64.0pts (+16.4%) | discard | Prefix-scan KF: rel 6e-15, span 16 vs 50k, Lemma-7 fix from source; operator prior art |
 | 12 | fcb56f6 | 63.0pts (+14.5%) | discard | Fermat cylinder RANSAC: curved rec 0.198→0.753; midpoint invariant refuted; wall-RANSAC lineage |
-| 13 | TBD13 | 61.0pts (+10.9%) | discard | Coarse-to-fine joint: 0.965/0.862 at 18% evals; 1-DOF-local refuted; standard practice |
+| 13 | 3207679 | 61.0pts (+10.9%) | discard | Coarse-to-fine joint: 0.965/0.862 at 18% evals; 1-DOF-local refuted; standard practice |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
