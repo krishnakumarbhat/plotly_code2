@@ -27,4 +27,4 @@
 {"id":"N14","metric":65.0,"parent":"N13","status":"explored","strategy":"TinyML residual estimator + INT8 head","timestamp":1790427159,"type":"node"}
 {"from":"N13","kind":"derived","to":"N14","type":"edge"}
 {"from":"N13","kind":"derived","to":"N15","type":"edge"}
-{"id":"N15","metric":0.0,"parent":"N13","status":"frontier","strategy":"conformal async fusion","timestamp":1790427159,"type":"node"}
+{"id":"N15","metric":67.0,"parent":"N13","status":"explored","strategy":"conformal async fusion","timestamp":1790427159,"type":"node"}

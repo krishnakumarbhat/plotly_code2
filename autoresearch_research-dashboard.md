@@ -21,7 +21,7 @@
 | 13 | 3207679 | 61.0pts (+10.9%) | discard | Coarse-to-fine joint: 0.965/0.862 at 18% evals; 1-DOF-local refuted; standard practice |
 | 14 | 8114bb0 | **80.0pts (+45.5%)** | **keep** | N18 closed chain: edges 0→0.969/0.902, track −67%, estimated reflector (breakthrough) |
 | 15 | 6a022d1 | 65.0pts (+18.2%) | discard | Residual estimator + INT8: 0.439→0.106→0.108 m, 4.5× fewer mults; 2609.30176 lineage |
-| 16 | TBD16 | 67.0pts (+21.8%) | discard | Conformal gate: coverage 0.042→0.996, RMSE 17.7→0.263 m; outlier-regime fault noted |
+| 16 | 0d12b38 | 67.0pts (+21.8%) | discard | Conformal gate: coverage 0.042→0.996, RMSE 17.7→0.263 m; outlier-regime fault noted |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
