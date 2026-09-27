@@ -228,6 +228,21 @@ Outlier-regime control: fixed wins (documented in E11 — regime matters).
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 67 → DISCARD; artifact retained.
 
+## Experiment Ledger [2026-09-27 inline] — Run 17: fast DA (HPCC)
+### Raw Metric Outputs
+| Solution | Result |
+|---|---|
+| A extraction (real HDF) | 400 frames, az −1.145°, el −0.018°, header built |
+| B lock (10 seeds) | slow 400-cap (never) vs fast 46 (<100 bar, 8.7×) |
+| B+ coarse lock (20 seeds) | 1.146° mean (physics floor ~1.1°, documented) |
+### Verification Verdict: PASS. Novelty 70 → KEEP.
+
+## Experiment Ledger [2026-09-27 inline] — Run 18: synthetic + replay sim
+### Raw Metric Outputs
+synth overpass KPI: identity 100.0 / bias 0.0 (Tier-1 yield 100%).
+Replay (300 logs × 20 workers): slow 360k dropped/0 conv → fast 914/20 → inject 0/20.
+### Verification Verdict: PASS. Infrastructure keep.
+
 ## Experiment Ledger [2026-09-27 inline] — Run 17: paper + deployment pack
 ### Code Changes & Prototypes Created
 `research.md` (manuscript + 4 IDFs + cluster plan), `run_hpcc_burst.sh` (verified slice plan), `slurm_resim.sbatch`, `PRESENTATION_APRISM.html`.

@@ -27,6 +27,20 @@
 - No novelty score (deliverable consolidation, not an idea). Paper centers the 80-chain with all 16 runs as evidence.
 - Next: N16/N17 seeds (remaining backlog) → venue submission after fleet validation.
 
+### Run 18: Synthetic generator + halo replay orchestrator — novelty_score=60.0 (KEEP, infrastructure)
+- Timestamp: 2026-09-27 (inline, directive-completion block)
+- What changed: `resim_research/synthetic_generator.py` (overpass/cutin/spray/curve in SENSOR1 HDF5 schema, Tier-1/2-consistent quantization, schema self-check), `resim_research/hpcc_local_orchestrator.py` (300×20 halo replay sim with MEASURED sub-models); synth HDF5 + KPI evidence in `kpi_work/synth*`.
+- Result: synth overpass identity Accuracy 100.0 / +20 mm bias 0.0 (Tier-1 100%); replay cold-start drops 360,000 → 914 (394×) → 0; all 20 workers converged (fast/inject).
+- Next: consolidated differentials (N18-style per-scenario old-vs-new) → paper touch-up → venue.
+
+### Run 17: HPCC fast dynamic alignment A+B+B+ — novelty_score=70.0 (KEEP)
+- Timestamp: 2026-09-27 (inline, directive-completion block)
+- What changed: `resim_research/fast_da.py` (new) — Solution A (real HDF boresight extraction + Calib_Data_T injection), Solution B (dual-horizon gain race), Solution B+ (ghost-normal coarse seed, NEW: multipath geometry for calibration).
+- Math: E12. Hard-won physics: single-scan floor ~1.1° proven by noise analysis (2.4°/pair); pooling/RANSAC/tight-gate/denser-scenes all tried; midpoint invariant refuted again; trim-mean is the robust point.
+- Result: A az −1.145°/el −0.018° extracted (400 frames, converged); B lock 46 vs 400-cap (8.7×, <100 directive bar); B+ 1.146° coarse lock seeding B.
+- Novelty: ghost-constrained alignment absent from Kellner/Danzer line → prior_art_clear=1; B+ modesty caps contrast → 70 KEEP (borderline, directive-metric-driven).
+- Next: synthetic generator (done Run 18) → differentials → paper.
+
 ### Run 16: N15 conformal async fusion — novelty_score=67.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline)
 - What changed: `resim_research/conformal_fusion.py` (new) — split-conformal gate on normalized innovations (sliding 200-window), OOS second sensor through same gate; `demo()` asserts coverage + win + RMSE.

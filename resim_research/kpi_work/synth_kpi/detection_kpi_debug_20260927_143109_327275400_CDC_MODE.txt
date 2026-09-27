@@ -1,0 +1,47 @@
+
+[INFO] Input folder: C:\Users\ouymc2\Desktop\plotly_code2\resim_research\kpi_work\synth_kpi
+[INFO] Output folder: C:\Users\ouymc2\Desktop\plotly_code2\resim_research\kpi_work\synth_kpi
+
+[INFO] Meta data used:
+   * SiL_Engine: synthetic
+   * SW: research
+   * RSP_SiL: python
+   * Tracker: none
+   * Mode: CDC
+   * Max_CDC_Records: 5016
+   * Range_Saturation_Thresh_Front_Radar: 135
+   * Range_Saturation_Thresh_Corner_Radar: 135
+   * Max_DS_Detections_Front_Radar: 128
+   * Max_DS_Detections_Corner_Radar: 64
+
+[INFO] Processing log: 1/1 : synth_overpass_FL
+[INFO] Reading the CSVs...
+[INFO] Reading DET CSV...
+[INFO] Reading CDC CSV...
+[INFO] CDC data available...
+[INFO] Reading RDD CSV...
+[INFO] Reading VSE CSV...
+[INFO] VSE data available...
+[INFO] RDD Detection Matching...
+[INFO] Merging the dataframes...
+[INFO] AF Detection Matching...
+[INFO] VSE Data Processing...
+[KPI] Accuracy: 0.0
+[KPI] Accuracy excluding CDC saturation: 0.0
+[KPI] % of scans with CDC saturation: 0.0
+[KPI] % of scans with range saturation: 0.0
+[TIMING] Log synth_overpass_FL processed in 17.40 seconds
+
+[KPI] Yield summary till now
+[KPI] Scan Yield FC: 0.00% (Scans in veh = 0, Scans in sim = 0)
+[KPI] Mileage Yield FC: 0.00% (Veh mileage = 0.0km, Sim mileage = 0.0km)
+[KPI] Scan Yield FL: 100.00% (Scans in veh = 39, Scans in sim = 39)
+[KPI] Mileage Yield FL: 97.50% (Veh mileage = 0.05km, Sim mileage = 0.05km)
+[KPI] Scan Yield FR: 0.00% (Scans in veh = 0, Scans in sim = 0)
+[KPI] Mileage Yield FR: 0.00% (Veh mileage = 0.0km, Sim mileage = 0.0km)
+[KPI] Scan Yield RL: 0.00% (Scans in veh = 0, Scans in sim = 0)
+[KPI] Mileage Yield RL: 0.00% (Veh mileage = 0.0km, Sim mileage = 0.0km)
+[KPI] Scan Yield RR: 0.00% (Scans in veh = 0, Scans in sim = 0)
+[KPI] Mileage Yield RR: 0.00% (Veh mileage = 0.0km, Sim mileage = 0.0km)
+
+[TIMING] Script execution completed in 19.26 seconds (0.32 minutes)
