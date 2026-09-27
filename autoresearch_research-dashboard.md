@@ -22,8 +22,8 @@
 | 14 | 8114bb0 | **80.0pts (+45.5%)** | **keep** | N18 closed chain: edges 0→0.969/0.902, track −67%, estimated reflector (breakthrough) |
 | 15 | 6a022d1 | 65.0pts (+18.2%) | discard | Residual estimator + INT8: 0.439→0.106→0.108 m, 4.5× fewer mults; 2609.30176 lineage |
 | 16 | 0d12b38 | 67.0pts (+21.8%) | discard | Conformal gate: coverage 0.042→0.996, RMSE 17.7→0.263 m; outlier-regime fault noted |
-| 17 | TBD17 | 70.0pts (+27.3%) | keep | Fast DA A+B+B+: real az −1.145; lock 46 vs 400; ghost seed 1.146° (floor proven) |
-| 18 | TBD18 | 60.0pts (+9.1%) | keep | Synth 4-scenario generator + halo replay: drops 360k→914→0 (infrastructure) |
+| 17 | b99328e | 70.0pts (+27.3%) | keep | Fast DA A+B+B+: real az −1.145; lock 46 vs 400; ghost seed 1.146° (floor proven) |
+| 18 | b99328e | 60.0pts (+9.1%) | keep | Synth 4-scenario generator + halo replay: drops 360k→914→0 (infrastructure) |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
