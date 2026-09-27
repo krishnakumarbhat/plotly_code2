@@ -137,3 +137,19 @@ No published neural radar sim synthesizes per-primitive Doppler + R⁴ power + C
 - Near-far masking, out-of-band Doppler, runaway CLEAN — all caught by asserts, fixed (see E7). Infinite-loop class bug (threshold tracking residual) terminated by floor+cap.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 70 → KEEP (borderline, verification depth carries it).
+
+## Experiment Ledger [2026-09-27 inline] — Run 9: output-MF4 resim harness
+### Hypothesis & Theoretical Basis
+User needs vehicle→candidate .mf4 testing without cluster. Production SiL is unrunnable locally (no exe, jfrog-only); the Python candidate path (HDF5→transform→CSV→KPI, HDF5→MF4) is the local equivalent for pre-tracking validation.
+### Code Changes & Prototypes Created
+`hdf5_to_kpi_csv.py`, `candidate_mf4.py`, sandbox `logger.py`/`meta_data.py` copies, `kpi_work/` evidence.
+### Raw Metric Outputs
+| Candidate | Tier-1 yield | Tier-2 accuracy |
+|---|---|---|
+| Identity golden | 100% (9/9 FL) | 100.0 |
+| +20 mm range bias | 100% (9/9 FL) | 0.0 |
+MF4 round-trip: exact. Mileage yield 80% (0.01 km dummy).
+### Failure Analysis
+SiL-exe absence is environmental, not a code gap — documented for the HPCC plan.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Infrastructure keep (60, novelty-bar-exempt).

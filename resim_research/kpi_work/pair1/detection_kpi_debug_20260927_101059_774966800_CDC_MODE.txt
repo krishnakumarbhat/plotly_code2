@@ -1,0 +1,20 @@
+
+[INFO] Input folder: resim_research/kpi_work/pair1
+[INFO] Output folder: resim_research/kpi_work/pair1
+
+[INFO] Meta data used:
+   * SiL_Engine: local-harness
+   * SW: research
+   * RSP_SiL: python
+   * Tracker: none
+   * Mode: CDC
+   * Max_CDC_Records: 5016
+   * Range_Saturation_Thresh_Front_Radar: 135
+   * Range_Saturation_Thresh_Corner_Radar: 135
+   * Max_DS_Detections_Front_Radar: 128
+   * Max_DS_Detections_Corner_Radar: 64
+
+[INFO] Processing log: 1/1 : kpi_dummy_pair1_input_FL
+[INFO] Reading the CSVs...
+[INFO] Reading DET CSV...
+[INFO] Reading CDC CSV...

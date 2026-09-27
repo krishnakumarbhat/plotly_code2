@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 9: Phase-4 local resim harness (HDF5→CSV→KPI→MF4) — novelty_score=60.0 (KEEP, infrastructure)
+- Timestamp: 2026-09-27 (inline, user-requested output-MF4 path)
+- What changed: `hdf5_to_kpi_csv.py` (HDF5 SENSOR1 streams → KPI wide-column CSVs + identity/bias candidates + log_path/meta_data), `candidate_mf4.py` (candidate HDF5 → output .mf4 via asammdf), copied `logger.py`+`meta_data.py` from source repo into sandbox, `kpi_work/` test evidence (CSVs + candidate MF4 + KPI reports).
+- Key finding: production SiL CANNOT run locally — no APT_SRR_RESIM.exe anywhere (binaries via jfrog at build/HPCC time), C++ decoder lib has no binary either. Local resim = Python candidate path (this harness) + cluster for the true SiL. Vehicle .mf4 holds raw ETH frames (5 radar heads); decoded HDF5 pairs are the workable local input.
+- Result: production `detection_matching_kpi_script.py` executes on our CSVs — identity Accuracy **100.0**, +20 mm bias Accuracy **0.0** with Tier-1 yield 100% (tier separation proven); candidate MF4 round-trip bit-exact (ran_0 verified).
+- Harness faults fixed: CDC suffix, sensor filename tag, KPI glob double-path bug (absolute log_path required).
+- Next: N8 (prefix-scan) → N10/N12 → real-log eval with THIS harness (all 5 dummy pairs + ThunderMCIP) → paper.
+
 ### Run 8: F Doppler-RadarSplat MVP — novelty_score=70.0 (KEEP)
 - Timestamp: 2026-09-27 (inline, 12h block)
 - What changed: `resim_research/doppler_radarsplat_mvp.py` (new) — RadarPrimitive, analytic LOS Doppler + R⁴ projection, Gaussian CDC splat renderer, CLEAN peak extractor with noise-floor termination; `demo()` asserts R⁴ ratio, Jacobian/FD agreement, recovery clean + cluttered.

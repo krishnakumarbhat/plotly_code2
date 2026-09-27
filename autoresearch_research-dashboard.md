@@ -1,6 +1,6 @@
 # Autoresearch Research Dashboard: ADAS Radar Perception, TinyML, HPCC, Generative Resimulation
 
-**Runs:** 8 | **Kept:** 4 | **Discarded:** 4 | **Crashed:** 0
+**Runs:** 9 | **Kept:** 5 | **Discarded:** 4 | **Crashed:** 0
 **Baseline:** novelty_score: 55.0pts (#1)
 **Best:** novelty_score: 74.0pts (#3, +34.5%)
 
@@ -14,6 +14,7 @@
 | 6 | fa2baaf | 71.0pts (+29.1%) | keep | T4 adaptive gating: cut-in recall 0.863→0.996, RMSE 0.283→0.212 m; open-door fault answered; swarm-CLEAR |
 | 7 | 71817be | 67.0pts (+21.8%) | discard | T5 spectral covariance: spray RMSE 0.911→0.315 m, Joseph PD holds; adaptive-R lineage |
 | 8 | 71112c5 | 70.0pts (+27.3%) | keep | F RadarSplat MVP: R⁴ exact, grad 1e-9, CDC 6/6 recovery; CLEAN fixes; NeuRadar gap confirmed |
+| 9 | TBD9 | 60.0pts (+9.1%) | keep | Phase-4 harness: KPI identity 100.0 / bias 0.0, MF4 round-trip exact (infrastructure) |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
