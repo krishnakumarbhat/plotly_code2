@@ -153,3 +153,15 @@ MF4 round-trip: exact. Mileage yield 80% (0.01 km dummy).
 SiL-exe absence is environmental, not a code gap — documented for the HPCC plan.
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Infrastructure keep (60, novelty-bar-exempt).
+
+## Experiment Ledger [2026-09-27 inline] — Run 10: HDF KPI + SiL verdict + backlog
+### Raw Metric Outputs
+| Check | Result |
+|---|---|
+| UDP HDF KPI, veh vs SiL output (pair1) | 100.00% (50/50) |
+| UDP HDF KPI, identity candidate | 100% |
+| UDP HDF KPI, +20 mm candidate (Tier-1) | 100% (Tier-2 0% on CSV path) |
+| CAN HDF KPI on Bordnet HDF | runs, EMPTY (schema flavor mismatch, documented) |
+| SiL local build | BLOCKED (no MSVC, jfrog token, tracker sources) |
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS (harness now covers CSV-KPI + HDF-KPI + MF4). Infrastructure keep.

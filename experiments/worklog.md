@@ -21,6 +21,13 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 10: HDF-KPI verification + SiL build verdict + ideas backlog — novelty_score=60.0 (KEEP, infrastructure)
+- Timestamp: 2026-09-27 (inline)
+- HDF KPIs (user correction: CSV scripts are legacy): NEW UDP HDF KPI (`UDP_KPI/a_persistence_layer.parse_for_kpi`, direct call, no ZMQ server) scores dummy pair1 veh-vs-output **100.00% (50/50)**; identity candidate 100%, +20 mm bias Tier-1 **100%** (Tier-2 failure already proven on CSV path — tier separation cross-confirmed). CAN HDF KPI (`can_kpi_hdf/kpi_main.py`) runs but returns EMPTY tables on Bordnet-decoded HDF: it expects SiL CAN-out flavor (HEADER_STREAM/DETECTION_STREAM), a schema mismatch documented for the HPCC plan; IFV7XX pair additionally has `CEER_ FL` vs `CEER_FL` decoder-version drift.
+- SiL build verdict: APT_SRR_RESIM.exe CANNOT be built locally — no MSVC (`cl` absent, VS2015 "Visual Studio 14 Win64" generator required), jfrog binaries need an Aptiv-network token (`JFROG_ACCESS_TOKEN`), tracker sources via `update.py` from F360TrackerLib. Cluster recipe: VS2015 + token + `Build.bat` (srr_dc) + input_path.xml.
+- PhD swarm (2 agents): 10 verified papers (arXiv 2609.29342/28400/30176/29912/27506, TAES 2024.3445319/2022.3206256, transfun 2022eap1064, Sensors s22030875, Measurement 114797) → backlog N13–N18 in `autoresearch_research.ideas.md`. Headline seeds: track-conditioned residual estimation (TinyML), conformal async fusion, IMM accel-gate, ghost-conditioned generative augmentation, CoFAR sector prior, N18 combined-ideas chain (the breakthrough vehicle).
+- Next: N8 (prefix-scan) → N18 combined chain on real pairs → paper + presentation.
+
 ### Run 9: Phase-4 local resim harness (HDF5→CSV→KPI→MF4) — novelty_score=60.0 (KEEP, infrastructure)
 - Timestamp: 2026-09-27 (inline, user-requested output-MF4 path)
 - What changed: `hdf5_to_kpi_csv.py` (HDF5 SENSOR1 streams → KPI wide-column CSVs + identity/bias candidates + log_path/meta_data), `candidate_mf4.py` (candidate HDF5 → output .mf4 via asammdf), copied `logger.py`+`meta_data.py` from source repo into sandbox, `kpi_work/` test evidence (CSVs + candidate MF4 + KPI reports).
