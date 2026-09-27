@@ -24,7 +24,7 @@
 | 16 | 0d12b38 | 67.0pts (+21.8%) | discard | Conformal gate: coverage 0.042→0.996, RMSE 17.7→0.263 m; outlier-regime fault noted |
 | 17 | b99328e | 70.0pts (+27.3%) | keep | Fast DA A+B+B+: real az −1.145; lock 46 vs 400; ghost seed 1.146° (floor proven) |
 | 18 | b99328e | 60.0pts (+9.1%) | keep | Synth 4-scenario generator + halo replay: drops 360k→914→0 (infrastructure) |
-| 19 | TBD19 | 67.0pts (+21.8%) | discard | Driving alignment: 13→0.96°; 5 fusions fail documented; 80 stands |
+| 19 | 78d4ba9 | 67.0pts (+21.8%) | discard | Driving alignment: 13→0.96°; 5 fusions fail documented; 80 stands |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
