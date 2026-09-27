@@ -177,3 +177,13 @@ PASS (harness now covers CSV-KPI + HDF-KPI + MF4). Infrastructure keep.
 Assoc: rel 6.35e-15. Span 16 vs 50000 sequential (3125× with parallel units).
 ### Verification Verdict (PASS / FAIL / REGRESSION)
 PASS. Novelty 64 → DISCARD (operator prior art); engine retained for HPCC plan.
+
+## Experiment Ledger [2026-09-27 inline] — Run 12: bend-conditioned guardrail (N10)
+### Raw Metric Outputs (40 faceted-cylinder scans, 8 targets)
+| Detector | Recall | Precision |
+|---|---|---|
+| Planar rank-1 consensus | 0.198 | 0.220 |
+| Fermat-RANSAC bend test | 0.753 | 0.834 |
+Fit distribution: (45,3.0) ×31, (30,3.0) ×3, None ×2 — calibration ambiguous, classification robust.
+### Verification Verdict (PASS / FAIL / REGRESSION)
+PASS. Novelty 63 → DISCARD (wall-RANSAC lineage); artifact retained.

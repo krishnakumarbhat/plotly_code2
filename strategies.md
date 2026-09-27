@@ -15,7 +15,7 @@ Branched from N9 (kept, 74):
 
 | Node | Thinking mode × gap type × routing | Why new | Outcome | Status |
 |------|-----------------------------------|---------|---------|--------|
-| N10 | first-principles × domain-fault (curved guardrail) × RadarConf | E2e proved the constant-2d spike smears over a 132 m band = 1320× range noise, and guardrails ARE curved — this is the blocking gap for the target environment | — | frontier |
+| N10 | first-principles × domain-fault (curved guardrail) × RadarConf | E2e proved the constant-2d spike smears over a 132 m band = 1320× range noise, and guardrails ARE curved — this is the blocking gap for the target environment | executed: Fermat-RANSAC rec 0.198→0.753/prec 0.834; midpoint invariant refuted; fit ambiguous single-scan; wall-RANSAC lineage | explored (63) |
 | N11 | probabilistic × missing-paradigm (temporal disambiguation) × tracking | the geometric test is provably blind to a same-range pair at exactly 2d (precision 0.638); only the E2b Doppler invariant (40σ) can separate ghost from decoy | executed: track-velocity gate + 2-scan confirmation → decoy prec 0.638→0.877, GRR 0.661, recall cost ≤0.009 — but Doppler velocity filtering of ghosts published (ICSIDP 2024, Roos/Daimler) | explored (63) |
 | N12 | algebraic × complexity-blowup (hybrid consensus) × RadarConf | 1-DOF excess-resultant prefilter + LOCAL 2-D direction refinement should recover 3-DOF accuracy at 1-DOF global cost; directly attacks the E2c refutation | — | frontier |
 

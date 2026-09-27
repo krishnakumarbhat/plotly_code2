@@ -21,6 +21,14 @@
 - Then resume N4 (T3 yaw-sweep residual), N5 (T4 cut-in recall), N6 (T5 Joseph-form definiteness), N7 (F Doppler-RadarSplat MVP), N8 (H prefix-scan associativity + speedup).
 - Deferred per `autoresearch_directive.md` item 4: LaTeX paper for the kept N9 idea (novelty 74 ≥ 70) — write after N10/N11 close the curved-guardrail gap, so the paper ships with its limitation answered.
 
+### Run 12: N10 Fermat cylinder RANSAC — novelty_score=63.0 (DISCARD)
+- Timestamp: 2026-09-27 (inline, fast block)
+- What changed: `resim_research/bend_conditioned.py` (new) — faceted-cylinder truth generator (same-side + sensor-mirror foot + occlusion), Fermat forward-model RANSAC over (Rc,yg) grid with parent-orientation rule; `demo()` asserts lift ≥0.25, rec ≥0.70, prec ≥0.60.
+- Math: E2g. Two refutations: midpoint-on-surface invariant (t to 17 m along plane), single-scan (Rc,yg) identifiability (fit (45,3) 31/40).
+- Result: 40 cylinder scans — planar rec 0.198/prec 0.220 → bend rec **0.753**/prec **0.834**.
+- Novelty: Fu2024 tangential reflectors, Chen2024 guardrail extraction, Jost2025 surface estimation, Ulm wall-pose RANSAC (7 cm) → prior_art_clear=0 → 63 DISCARD; artifact retained.
+- Next: N12 hybrid → N18 combined chain → paper + presentation.
+
 ### Run 11: N8 associative prefix-scan KF — novelty_score=64.0 (DISCARD)
 - Timestamp: 2026-09-27 (inline)
 - What changed: `resim_research/parallel_kf.py` (new) — Särkkä operator (vectorized), Lemma-7 element builder, Blelloch up/down-sweep, independent sequential-KF reference, timing ladder 1k→50k.

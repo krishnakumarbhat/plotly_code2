@@ -1,6 +1,6 @@
 # Autoresearch Research Dashboard: ADAS Radar Perception, TinyML, HPCC, Generative Resimulation
 
-**Runs:** 11 | **Kept:** 6 | **Discarded:** 5 | **Crashed:** 0
+**Runs:** 12 | **Kept:** 6 | **Discarded:** 6 | **Crashed:** 0
 **Baseline:** novelty_score: 55.0pts (#1)
 **Best:** novelty_score: 74.0pts (#3, +34.5%)
 
@@ -17,6 +17,7 @@
 | 9 | e4c233a | 60.0pts (+9.1%) | keep | Phase-4 harness: KPI identity 100.0 / bias 0.0, MF4 round-trip exact (infrastructure) |
 | 10 | 7bb174a | 60.0pts (+9.1%) | keep | HDF-KPI 100% direct-call; CAN schema documented; SiL unbuildable locally; backlog N13–N18 |
 | 11 | 7306464 | 64.0pts (+16.4%) | discard | Prefix-scan KF: rel 6e-15, span 16 vs 50k, Lemma-7 fix from source; operator prior art |
+| 12 | TBD12 | 63.0pts (+14.5%) | discard | Fermat cylinder RANSAC: curved rec 0.198→0.753; midpoint invariant refuted; wall-RANSAC lineage |
 
 ## Run 3 — executed evidence (`experiments/run-3.log`)
 
