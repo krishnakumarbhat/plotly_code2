@@ -1,0 +1,22 @@
+{
+    "INPUT_HDF": [
+        [
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_004_ORCAS_UDP_GEN7_DET_CORE.h5",
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_004_ORCAS_UDP_GEN7_VSE_CORE.h5"
+        ],
+        [
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_005_ORCAS_UDP_GEN7_DET_CORE.h5",
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_005_ORCAS_UDP_GEN7_VSE_CORE.h5"
+        ]
+    ],
+    "OUTPUT_HDF": [
+        [
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_004_ORCAS_r00050204_UDP_GEN7_DET_CORE.h5",
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_004_ORCAS_r00050204_UDP_GEN7_VSE_CORE.h5"
+        ],
+        [
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_005_ORCAS_r00050204_UDP_GEN7_DET_CORE.h5",
+            "C:/Users/ouymc2/Desktop/plotly_52/hdf_DB/hdf_all/Gen7v2_20250307_103655_005_ORCAS_r00050204_UDP_GEN7_VSE_CORE.h5"
+        ]
+    ]
+}
