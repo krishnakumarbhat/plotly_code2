@@ -3711,6 +3711,7 @@ def _write_askpass_script(password: str, path: str) -> None:
 _LOG_FAILURE_MARKERS = [
     ('permission denied', 'Permission denied (likely an NFS/ACL restriction on a third-party project path).'),
     ('no such file or directory', 'A required file/script was not found.'),
+    ('does not exist', 'A required file/script was not found.'),
     ('command not found', 'A required command was not found in the remote shell.'),
     ('traceback (most recent call last)', 'The remote Python script raised an unhandled exception.'),
 ]
@@ -3751,6 +3752,30 @@ def _start_resim_input_feeder(config_xml: str):
     )
 
 
+_RESIM_PIPELINE_SUBMISSION_RE = re.compile(
+    r'PipeLine\s+Triggered\s+ReSIm_docker:\s*([0-9,]+)\s*\|\s*'
+    r'ReSim_Mining:\s*(\d+)\s*\|\s*Stats_Mining:\s*(\d+)',
+    re.IGNORECASE,
+)
+
+
+def _parse_resim_pipeline_submission(text: str):
+    match = _RESIM_PIPELINE_SUBMISSION_RE.search(text or '')
+    if not match:
+        return None
+    return {
+        'resim': match.group(1),
+        'resim_mining': match.group(2),
+        'stats_mining': match.group(3),
+    }
+
+
+def _resim_job_completion_status(submission_detected: bool, return_code: int, failure_reason: str):
+    if submission_detected and (return_code != 0 or failure_reason):
+        return 'SUBMITTED'
+    return 'COMPLETED' if return_code == 0 and not failure_reason else 'FAILED'
+
+
 def _run_ssh_job_background(
     job_id: int,
     cmd,
@@ -3760,6 +3785,7 @@ def _run_ssh_job_background(
     config_xml: str = '',
 ):
     """Run a command via SSH as the logged-in user in the background and update JobHistory."""
+    submission_detected = False
     def _safe_read_text(path: str, limit: int = 4096) -> str:
         try:
             with open(path, 'r', encoding='utf-8', errors='replace') as fp:
@@ -3844,6 +3870,7 @@ def _run_ssh_job_background(
             # path. Close stdin afterward so later prompts cannot be answered
             # accidentally with an unbounded stream of "y" responses.
             yes_proc = _start_resim_input_feeder(config_xml)
+            scan_offset = os.path.getsize(log_path)
             proc = subprocess.Popen(
                 cmd,
                 cwd='/',
@@ -3854,14 +3881,42 @@ def _run_ssh_job_background(
             )
             yes_proc.stdout.close()  # let yes_proc get SIGPIPE once proc exits
 
-            # Safety net: never let a stuck SSH/remote-prompt hang the job (and
-            # the polling UI) forever — fail cleanly instead.
+            scan_buffer = ''
+            submission_deadline = time.monotonic() + 1800
             try:
-                rc = proc.wait(timeout=1800)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-                rc = proc.wait()
-                log_fp.write('\nTIMEOUT: process exceeded 1800s and was killed.\n')
+                while True:
+                    with open(log_path, 'rb') as live_log:
+                        live_log.seek(scan_offset)
+                        chunk = live_log.read()
+                    if chunk:
+                        scan_offset += len(chunk)
+                        scan_buffer = (scan_buffer + chunk.decode('utf-8', errors='replace'))[-8192:]
+                        pipeline_ids = None
+                        if not submission_detected:
+                            pipeline_ids = _parse_resim_pipeline_submission(scan_buffer)
+                        if pipeline_ids:
+                            submission_detected = True
+                            with app.app_context():
+                                job = JobHistory.query.get(job_id)
+                                if job:
+                                    job.status = 'SUBMITTED'
+                                    params = dict(job.parameters or {})
+                                    params['resim_slurm_job_ids'] = pipeline_ids
+                                    job.parameters = params
+                                    db.session.commit()
+
+                    rc = proc.poll()
+                    if rc is not None:
+                        break
+                    if not submission_detected and time.monotonic() >= submission_deadline:
+                        proc.kill()
+                        rc = proc.wait()
+                        log_fp.write(
+                            '\nTIMEOUT: no Slurm pipeline submission was reported within 1800s; '
+                            'the SSH process was killed.\n'
+                        )
+                        break
+                    time.sleep(0.5)
             finally:
                 yes_proc.kill()
                 yes_proc.wait()
@@ -3873,26 +3928,35 @@ def _run_ssh_job_background(
         with app.app_context():
             job = JobHistory.query.get(job_id)
             if job:
-                job.completed_at = datetime.utcnow()
                 # trig_helios.sh has no `set -e` and always ends on a trivial
                 # `deactivate`, so it exits 0 even when the real work (source
                 # venv / run resim_main.py) failed with "Permission denied"
                 # on a third-party project path — exit code alone is not
                 # trustworthy for this tool. Sniff the captured output too.
                 failure_reason = _first_failure_marker_in_log(log_path)
-                if rc == 0 and not failure_reason:
-                    job.status = 'COMPLETED'
+                result_status = _resim_job_completion_status(submission_detected, rc, failure_reason)
+                if result_status == 'SUBMITTED':
+                    job.status = 'SUBMITTED'
+                    job.error_message = (
+                        'Slurm accepted the pipeline, but SSH monitoring ended before completion '
+                        f'(exit code {rc}). Check the saved Slurm job IDs and log: '
+                        f'{_container_path_to_host_path(log_path)}'
+                    )
                 else:
-                    job.status = 'FAILED'
-                    display_path = _container_path_to_host_path(log_path)
-                    if failure_reason:
-                        job.error_message = f'{failure_reason} See log: {display_path}'
+                    job.completed_at = datetime.utcnow()
+                    job.status = result_status
+                    if result_status == 'FAILED':
+                        display_path = _container_path_to_host_path(log_path)
+                        if failure_reason:
+                            job.error_message = f'{failure_reason} See log: {display_path}'
+                        else:
+                            job.error_message = f'Process exit code {rc}. See log: {display_path}'
                     else:
-                        job.error_message = f'Process exit code {rc}. See log: {display_path}'
+                        job.error_message = None
                 db.session.commit()
 
                 params = job.parameters or {}
-                if params.get('create_jira'):
+                if result_status != 'SUBMITTED' and params.get('create_jira'):
                     _create_jira_ticket_for_job(job, log_path)
     except Exception as exc:
         logger.exception('SSH job runner failed')
@@ -3900,9 +3964,13 @@ def _run_ssh_job_background(
             with app.app_context():
                 job = JobHistory.query.get(job_id)
                 if job:
-                    job.completed_at = datetime.utcnow()
-                    job.status = 'FAILED'
-                    job.error_message = str(exc)
+                    if submission_detected:
+                        job.status = 'SUBMITTED'
+                        job.error_message = f'Slurm accepted the pipeline, but SSH monitoring failed: {exc}'
+                    else:
+                        job.completed_at = datetime.utcnow()
+                        job.status = 'FAILED'
+                        job.error_message = str(exc)
                     db.session.commit()
         except Exception:
             pass

@@ -256,6 +256,8 @@ if (consoleOutput && consolePaneSelect && consoleInput && sendConsoleInputBtn &&
     }
     if ((payload.status || '') === 'PENDING') {
       consoleStatusNote.textContent = payload.status_detail || 'Waiting for Slurm allocation. The console will update when compute starts.';
+    } else if ((payload.status || '') === 'SUBMITTED') {
+      consoleStatusNote.textContent = 'Slurm accepted the ReSim pipeline. Waiting for ReSim and dependent stages to finish.';
     } else if (['QUEUED', 'RUNNING', 'SUBMITTED'].includes(payload.status || '')) {
       consoleStatusNote.textContent = 'Showing the last {{ n_lines }} lines immediately, then polling for live updates.';
     }

@@ -15,6 +15,7 @@ LLAMA_SERVER_URL = os.environ.get(
 
 class JiraIntegration:
     def __init__(self):
+        self._load_runtime_config_file()
         self.base_url = os.environ.get('JIRA_BASE_URL', '').rstrip('/')
         self.pat = os.environ.get('JIRA_PAT', '')
         self.user = os.environ.get('JIRA_USER', '')
@@ -25,9 +26,35 @@ class JiraIntegration:
         if not self._enabled:
             logger.warning('Jira not configured: set JIRA_BASE_URL and JIRA_PAT (or JIRA_USER + JIRA_API_TOKEN)')
 
+    @staticmethod
+    def _load_runtime_config_file() -> None:
+        config_path = os.environ.get('HPCC_JIRA_CONFIG_FILE', '')
+        if not config_path:
+            return
+        try:
+            with open(config_path, 'r', encoding='utf-8') as config_file:
+                settings = json.load(config_file)
+        except (OSError, ValueError):
+            logger.warning('Unable to load Jira configuration file: %s', config_path)
+            return
+
+        allowed_keys = {
+            'JIRA_BASE_URL', 'JIRA_PAT', 'JIRA_USER', 'JIRA_API_TOKEN',
+            'JIRA_DEFAULT_PROJECT', 'JIRA_DEFAULT_BOARD',
+        }
+        if not isinstance(settings, dict):
+            return
+        for key, value in settings.items():
+            if key in allowed_keys and isinstance(value, str) and value:
+                if not os.environ.get(key):
+                    os.environ[key] = value
+
     def _headers(self) -> Dict[str, str]:
         if self.pat:
-            auth = self.pat
+            return {
+                'Authorization': f'Bearer {self.pat}',
+                'Content-Type': 'application/json',
+            }
         else:
             import base64
             auth = base64.b64encode(f'{self.user}:{self.api_token}'.encode()).decode()
@@ -110,9 +137,13 @@ class JiraIntegration:
     def _create_ticket(self, summary: str, description: str, story_points: int = 1, board: str = 'FHW') -> Optional[str]:
         if not self._enabled:
             return None
+        project_key = (board or '').strip() or self.default_project
+        if not project_key:
+            logger.error('Jira project key is not configured')
+            return None
         url = f'{self.base_url}/rest/api/2/issue'
         fields = {
-            'project': {'key': self.default_project},
+            'project': {'key': project_key},
             'summary': summary,
             'description': description,
             'issuetype': {'name': 'Task'},

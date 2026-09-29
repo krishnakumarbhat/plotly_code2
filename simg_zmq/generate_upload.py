@@ -647,6 +647,23 @@ def _load_env():
     return env
 
 
+def _jira_config_payload(env):
+    keys = (
+        'JIRA_BASE_URL', 'JIRA_PAT', 'JIRA_USER', 'JIRA_API_TOKEN',
+        'JIRA_DEFAULT_PROJECT', 'JIRA_DEFAULT_BOARD',
+    )
+    settings = {}
+    for key in keys:
+        value = os.environ.get(key) or env.get(key, '')
+        if value:
+            settings[key] = value
+    if not settings.get('JIRA_BASE_URL') or not (
+        settings.get('JIRA_PAT') or (settings.get('JIRA_USER') and settings.get('JIRA_API_TOKEN'))
+    ):
+        return None
+    return json.dumps(settings, sort_keys=True).encode('utf-8')
+
+
 def _sftp_ensure_dir(sftp, path, known_dirs=None):
     normalized = str(PurePosixPath(path))
     if known_dirs is not None and normalized in known_dirs:
@@ -662,6 +679,26 @@ def _sftp_ensure_dir(sftp, path, known_dirs=None):
             sftp.mkdir(p)
         if known_dirs is not None:
             known_dirs.add(p)
+
+
+def _upload_private_jira_config(sftp, remote_root, known_dirs, payload):
+    remote_dir = str(PurePosixPath(remote_root) / 'runtime_secrets')
+    _sftp_ensure_dir(sftp, remote_dir, known_dirs)
+    sftp.chmod(remote_dir, 0o700)
+    remote_path = str(PurePosixPath(remote_dir) / 'jira.json')
+    staged_path = str(PurePosixPath(remote_dir) / f'.jira.{os.getpid()}.uploading')
+    try:
+        with sftp.open(staged_path, 'wb') as secret_file:
+            secret_file.write(payload)
+        sftp.chmod(staged_path, 0o600)
+        sftp.posix_rename(staged_path, remote_path)
+        sftp.chmod(remote_path, 0o600)
+    except Exception:
+        try:
+            sftp.remove(staged_path)
+        except (FileNotFoundError, OSError):
+            pass
+        raise
 
 
 def _atomic_sftp_put(sftp, local_path, remote_path, callback=None, executable=False, preserve_partial=False):
@@ -714,6 +751,7 @@ def _atomic_sftp_put(sftp, local_path, remote_path, callback=None, executable=Fa
 
 def upload():
     env = _load_env()
+    jira_config_payload = _jira_config_payload(env)
     if not env:
         print('ERROR: .env file not found or empty. Create simg_zmq/.env with:')
         print('  netid=your_netid')
@@ -798,13 +836,18 @@ def upload():
         skipped = 0
 
     total = len(files_to_upload)
-    if total == 0:
+    if total == 0 and jira_config_payload is None:
         print(f'All files unchanged ({skipped} skipped, {excluded} runtime dirs excluded)')
         meta['upload'] = new_hashes
         _save_meta(meta)
         return
 
-    _p(f'Uploading {total} changed files ({skipped} unchanged, {excluded} runtime dirs excluded)...')
+    if total:
+        _p(f'Uploading {total} changed files ({skipped} unchanged, {excluded} runtime dirs excluded)...')
+    else:
+        _p('No bundle file changes; syncing Jira runtime configuration.')
+    if jira_config_payload is None:
+        _p('No complete Jira configuration found locally; existing remote Jira secrets will be left unchanged.')
 
     failures = []
     failures_lock = threading.Lock()
@@ -953,6 +996,13 @@ def upload():
                     print(msg, flush=True)
                     with failures_lock:
                         failures.append(msg)
+            if jira_config_payload is not None:
+                if sftp is None:
+                    transport, sftp, ensured_dirs, remote_has_bundle = _connect_target(
+                        target_name, target_host, remote_root
+                    )
+                _upload_private_jira_config(sftp, remote_root, ensured_dirs, jira_config_payload)
+                print(f'[{target_name}] Updated owner-only Jira runtime secret.', flush=True)
         except Exception as exc:
             msg = f'[{target_name}] FAIL stage=connect remote_root={remote_root} error={exc}'
             print(msg, flush=True)

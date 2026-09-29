@@ -442,9 +442,19 @@ if [[ "$HPCC_AUTO_START_RAG" =~ ^(1|true|yes|y)$ ]]; then
     RAG_SERVICE_URL="http://${PUBLIC_HOST:-127.0.0.1}:$RAG_PORT"
 fi
 
+jira_container_args=()
+JIRA_CONFIG_HOST_FILE="${HPCC_JIRA_HOST_CONFIG_FILE:-$SCRIPT_DIR/runtime_secrets/jira.json}"
+if [[ -f "$JIRA_CONFIG_HOST_FILE" ]]; then
+    jira_container_args+=(
+        --bind "$JIRA_CONFIG_HOST_FILE:/run/secrets/hpcc_jira.json:ro"
+        --env "HPCC_JIRA_CONFIG_FILE=/run/secrets/hpcc_jira.json"
+    )
+fi
+
 ui_cmd=(
     "$RUNTIME_BIN" run
     "${bind_args[@]}"
+    "${jira_container_args[@]}"
     --env "HPCC_BUNDLE_ROOT=$HPCC_BUNDLE_ROOT"
     --env "HPCC_PROJECT_ROOT=$HPCC_PROJECT_ROOT"
     --env "HPCC_BROKER_HOST=127.0.0.1"
@@ -473,6 +483,7 @@ if [[ -n "$QWEN_MODEL_DIR" ]]; then
     ui_cmd=(
         "$RUNTIME_BIN" run
         "${bind_args[@]}"
+        "${jira_container_args[@]}"
         --env "HPCC_BUNDLE_ROOT=$HPCC_BUNDLE_ROOT"
         --env "HPCC_PROJECT_ROOT=$HPCC_PROJECT_ROOT"
         --env "HPCC_BROKER_HOST=127.0.0.1"

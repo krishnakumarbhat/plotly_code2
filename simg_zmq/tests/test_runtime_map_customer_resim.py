@@ -254,6 +254,50 @@ def test_resim_input_feeder_sends_xml_after_yes():
         feeder.wait()
 
 
+def test_resim_pipeline_submission_marker_parses_all_slurm_ids():
+    marker = (
+        '[INFO] : PipeLine Triggered  ReSIm_docker: 25682374 '
+        '| ReSim_Mining: 25682375 | Stats_Mining: 25682376'
+    )
+
+    assert main._parse_resim_pipeline_submission(marker) == {
+        'resim': '25682374',
+        'resim_mining': '25682375',
+        'stats_mining': '25682376',
+    }
+    assert main._parse_resim_pipeline_submission('Still waiting for ReSim') is None
+
+
+@pytest.mark.parametrize(
+    ('submission_detected', 'return_code', 'failure_reason', 'expected_status'),
+    [
+        (True, 255, '', 'SUBMITTED'),
+        (True, 0, 'process failed', 'SUBMITTED'),
+        (False, 0, '', 'COMPLETED'),
+        (False, 1, '', 'FAILED'),
+    ],
+)
+def test_resim_completion_status_preserves_scheduler_acceptance(
+    submission_detected, return_code, failure_reason, expected_status
+):
+    assert main._resim_job_completion_status(
+        submission_detected, return_code, failure_reason
+    ) == expected_status
+
+
+def test_resim_missing_input_message_is_failed(tmp_path):
+    log_path = tmp_path / 'resim.log'
+    log_path.write_text(
+        '[ERROR] : logs_veh.txt does not exist. Exiting Application\n',
+        encoding='utf-8',
+    )
+
+    failure_reason = main._first_failure_marker_in_log(str(log_path))
+
+    assert failure_reason == 'A required file/script was not found.'
+    assert main._resim_job_completion_status(False, 0, failure_reason) == 'FAILED'
+
+
 def test_resim_accepts_case_insensitive_profile_and_uses_athena(resim_boundary_mocks):
     _session, thread_class, _tmp_path = resim_boundary_mocks
 
