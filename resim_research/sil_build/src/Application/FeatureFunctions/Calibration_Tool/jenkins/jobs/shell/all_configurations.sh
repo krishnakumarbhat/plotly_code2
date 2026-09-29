@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+if [ "${CONFIGURATION}" = "1" ]; then
+   export CMAKE_DEFINES="-DCT_INITIALIZE_COMPONENT_CALIBRATION=1"
+elif [ "${CONFIGURATION}" = "2" ]; then
+   export CMAKE_DEFINES="-DCT_INITIALIZE_COMPONENT_CALIBRATION=1 -DCT_BIG_ENDIAN=1"
+elif [ "${CONFIGURATION}" = "3" ]; then
+   export CMAKE_DEFINES="-DCT_ACTIVATE_CAL_PRINT=1"
+else
+   exit 1
+fi

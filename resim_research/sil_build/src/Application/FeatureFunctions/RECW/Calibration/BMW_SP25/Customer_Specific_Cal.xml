@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="../RECW_Core/customer_stylesheet.xsl"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_recw_min_existence_prob</NAME>
+    <VALUE>[0.5f 0.5f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_min_cycles_with_min_crash_prob</NAME>
+    <VALUE>3u</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_heading_accuracy_threshold</NAME>
+    <VALUE>0.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_f_allow_alert_on_coasted_objects</NAME>
+    <VALUE>[0u 0u]</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_lane_filter_max_abs_ego_speed_vcs_coord</NAME>
+    <VALUE>2.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_min_host_speed_hys</NAME>
+    <VALUE>0.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_max_allowed_rel_vel_long_diff</NAME>
+    <VALUE>4.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_min_stage_age_for_alert_level</NAME>
+    <VALUE>[6u 0u]</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_min_object_age</NAME>
+    <VALUE>10u</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_rear_blockage_ego_speed_threshold</NAME>
+    <VALUE>1.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_min_crash_prob</NAME>
+    <VALUE>[0.05f 0.99f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_f_make_use_of_guardrail</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_max_host_speed</NAME>
+    <VALUE>[70.0f 70.0f 70.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_lane_filter_width</NAME>
+    <VALUE>1.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_recw_f_suppress_alert_lvl_2_for_pedestrian</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+</data-set>

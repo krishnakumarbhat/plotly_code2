@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_lcda_enable_via_cal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_enable_via_cal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_enable_via_cal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_slc_enable_via_cal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_elc_enable_via_cal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_alert_holding_cycles</NAME>
+    <!-- Number of holding cycles for BSW alert. -->
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_alert_holding_cycles</NAME>
+    <!-- Number of holding cycles for CVW alert. -->
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_min_exist_prop</NAME>
+    <!-- Min existance propability for tracks -->
+    <VALUE>0.7</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_zone_calculation_mode</NAME>
+    <!-- Determines how the zone will be calculated. 0=DEFAULT, 1=Zone based on Vehicle Length and Lane Width, 2=Zone fixed to be taken from LCDA core input-->
+    <VALUE>2</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_ttc</NAME>
+    <!-- Maximum TTC to issue an alert -->
+    <!-- RENAULT:3 / NISSAN:3.5 / MMC:4.5 -->
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_ttc_hys</NAME>
+    <!-- Added to TTC threshold when an alert is active -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_gap_bridge</NAME>
+    <!-- Parameter describing the time between two alerts, when the Alert should not go off -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_fallback_rel_vel_thres</NAME>
+    <!-- A target will be considered as slow back falling object if the relative velocity is above threshold -->
+    <!-- RENAULT:-5.555556/ NISSAN:-4.166667 / MMC:-4.166667  -->
+    <VALUE>-5.555556</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_dynzone_speed</NAME>
+    <!-- Dynamic BSW zone lookup table to increase the BSW zone based on the host vehicle speed  (kph: [ 0 62.5 125 187.5 250 360]) Note: The point
+    coordinates have to be sequenced in strict monotonic order -->
+    <VALUE>[0 8.3 11.1 22.2 69.4 100]</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_dynzone_range</NAME>
+    <!-- Dynamic BSW zone lookup table to increase the BSW zone based on the host vehicle speed  (kph: [ 0 62.5 125 187.5 250 360]) Note: The point
+    coordinates have to be sequenced in strict monotonic order -->
+    <VALUE>[3 3 0 0 -10 -10]</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_uses_cvw_alert_state_enabled</NAME>
+    <!-- Enables use of CVW alert state info in BSW 1) BSW hys zone is used directly 2) BSW mature count in zone is bypassed if
+    there is a previous CVW alert on the object -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_alert_track_age</NAME>
+    <!-- Minimum Track age to trigger a warning immediately even though the object does not pass the mature in zone check -->
+    <VALUE>255</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_y0_hys</NAME>
+    <!-- The absolute width of the bottom lateral hysteresis of BSW zone on right side (offset to p3 of initial zone) -->
+    <!-- RENAULT:0.5 / NISSAN:0.5 / MMC:0.5  -->
+    <VALUE>0.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_enable_dynspeed_zone</NAME>
+    <!-- Enables dynamic BSW zone adaptation based on ego speed -->
+    <!-- RENAULT:1 / NISSAN:0 / MMC:0  -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_host_activation_speed_min</NAME>
+    <!-- Activation speed for LCDA if previously below the activation speed (below this speed, LCDA feature is not active) -->
+    <!-- RENAULT:4.166667 / NISSAN:4.166667 / MMC:2.77778  -->
+    <VALUE>4.166667</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_host_activation_speed_min_hys</NAME>
+    <!-- Added to activiation speed threshold for LCDA if LCDA is currently active -->
+    <VALUE>0.28</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_zone_check_method</NAME>
+    <VALUE>1</VALUE>
+    <!-- Ref point check -->
+  </record>
+  <record>
+    <NAME>k_lcda_zone_intersect_critical_point_lateral_ratio</NAME>
+    <!-- Determines which point is checked for objects heading towards the zone if CRITICAL_POINT_IN_ZONE is used as intersect detection. 0.0=lateral center of object, 1.0=lateral inner edge -->
+    <VALUE>0.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_candidate_ttc</NAME>
+    <!-- If TTC of an object is lower than this threshold it is considered a candidate for a CVW alert -->
+    <VALUE>5.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_suppress_late_warning_max_time_till_leave</NAME>
+    <!-- Maximum time until the object leaves the rear bsd zone border in which a BSD warning can be suppressed -->
+    <VALUE>0.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_zone_y_hys</NAME>
+    <!-- Offset as a factor of the lane width that is to be added/subtracted from the initial CVW zone y-coord to get
+    the hysteresis zone y-coord. Hys zone is always larger than the initial zone -->
+    <VALUE>[0.5 0.5 0.1 0.1 0.5 0.5]</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_min_obj_long_vel</NAME>
+    <!-- The minimum longitudinal velocity in vcs of an object for the bsw zone -->
+    <VALUE>0.1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cvw_min_obj_curvi_long_vel</NAME>
+    <!-- The minimum longitudinal velocity in vcs of an object for the cvw zone -->
+    <VALUE>0.1</VALUE>
+  </record>
+  <record>
+    <NAME>k_bsw_enable_factor_based_host_speed_adjustment</NAME>
+    <!-- Enables a host speed dependend bsw zone adjustment with the same factor for normal and hysteresis zone related to host rear. NOTE: Zone definitions must be handled very carefully when enabled! \reqtrace{SDD-LCDA-k_bsw_enable_factor_based_host_speed_adjustment}{} -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_lcda_f_enable_obj_in_ego_lane_check</NAME>
+    <VALUE>0</VALUE>
+  </record>
+</data-set>

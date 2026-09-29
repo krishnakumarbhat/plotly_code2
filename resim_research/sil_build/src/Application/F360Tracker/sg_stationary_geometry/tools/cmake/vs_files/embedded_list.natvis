@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <!-- VC 2015 -->
+  <Type Name="EmbeddedList&lt;*,*&gt;">
+    <DisplayString>{{ size={m_list_size} }}</DisplayString>
+
+    <Expand>
+      <LinkedListItems>
+        <Size>m_list_size</Size>
+        <HeadPointer>m_dummy_head.next</HeadPointer>
+        <NextPointer>next</NextPointer>
+        <ValueNode>(*(DataNode*)this).data</ValueNode>
+      </LinkedListItems>
+    </Expand>
+  </Type>
+
+  <!-- VC 2015 -->
+  <Type Name="EmbeddedList&lt;*,*&gt;::Node">
+    <DisplayString Condition="prev == nullptr">no data</DisplayString>
+    <DisplayString Condition="next == nullptr">no data</DisplayString>
+  </Type>
+
+  <!-- VC 2015 -->
+  <Type Name="EmbeddedList&lt;*,*&gt;::DataNode">
+    <DisplayString>{{ data={data} }}</DisplayString>
+  </Type>
+
+</AutoVisualizer>

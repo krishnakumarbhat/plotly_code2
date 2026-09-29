@@ -1,0 +1,59 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Host'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target vehicle'. Internal name is 'object_2'.
+% The dimensions of 'object_1' are set to [Width: 2 m, Length: 5 m, PivotPoint: 0 m].
+% The dimensions of 'object_2' are set to [Width: 2 m, Length: 5 m, PivotPoint: 0 m].
+% The initial conditions of Host are set to: [Start-Speed: 0 kph, Start-Heading: 0 deg].
+% The initial conditions of Target vehicle are set to: [Start-Speed: 50 kph, Start-Heading: -90 deg].
+% The start position of Target vehicle is shifted by Lateral-Offset: -11.5 m, Longitudinal-Offset: -61 mHeading: 0°.
+% Register signal Host with: Name: k_cta_min_object_age_check_valid, Interpolation: enum_interpolation.PREVIOUS).
+% Change signal value Host: Name: k_cta_min_object_age_check_valid, Value: 200).
+% Add a stationary section to Host with: Duration: 5 s, Section-Generic-Properties().
+% Add a straight section to Target vehicle with: End-Speed: 50 kph, Distance: 72 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Host');
+object_2 = class_scenario_properties(enum_object_types.TARGET, 'Target vehicle');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(2, 5, 0);
+object_2.set_dimension(2, 5, 0);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(0, 0);
+object_2.set_starting_values(50, -90);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+object_2.set_start_pos_offsets(-11.5, -61, 0);
+
+%% Define trajectories of the objects
+object_1.add_section_signal_register('k_cta_min_object_age_check_valid', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('k_cta_min_object_age_check_valid', 200);
+section_generic_properties = class_section_generic_properties();
+object_1.add_stationary_section(5, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(50, 72, section_generic_properties);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);
+scenario.set_polarion_info('CSCSA-46512', 'SF-202,SF-167');
+scenario.set_test_type('Simulation');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);
+scenario.add_object(object_2);

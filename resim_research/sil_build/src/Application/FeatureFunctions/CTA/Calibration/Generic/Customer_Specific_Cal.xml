@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <record>
+       <NAME>k_cta_ego_abs_speed_max</NAME>
+       <VALUE>4.167f</VALUE>
+    </record>
+    <record>
+       <NAME>k_cta_min_speed</NAME>
+       <VALUE>1.f</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_max_length_fov</NAME>
+        <VALUE>50.f</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_max_long_point_criticality_level</NAME>
+        <VALUE>[[0.0 0.0][6.0 6.0]]</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_min_long_point_criticality_level</NAME>
+        <VALUE>[[6.0 6.0][0.0 0.0]]</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_f_adapt_intersect_lines_by_obj_heading</NAME>
+            <VALUE>0</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_f_adapt_intersect_lines_by_steering_angle</NAME>
+            <VALUE>0</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_angles_zone_definition</NAME>
+        <VALUE>[0.814516145f 0.814516145f]</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_cycle_count_hold_true_warning</NAME>
+        <VALUE>4</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_min_object_age_check_valid</NAME>
+        <VALUE>3</VALUE>
+    </record>
+    <record>
+        <NAME>k_cta_speed_criticality_level</NAME>
+        <VALUE>[[0.0 7.0][0.0 7.0]]</VALUE>
+  </record>
+</data-set>

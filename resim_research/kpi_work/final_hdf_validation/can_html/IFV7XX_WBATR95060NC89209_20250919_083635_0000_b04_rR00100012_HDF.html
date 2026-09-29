@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PCAN KPI — IFV7XX_WBATR95060NC89209_20250919_083635_0000_b04_rR00100012_HDF</title>
+<link rel="preconnect" href="https://cdn.plot.ly">
+<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+<style>
+
+html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+body { font-family: Segoe UI, Arial, sans-serif; margin: 0; padding: 16px; background: #f5f6fa; }
+h1 { margin: 0 0 12px 0; color: #2c3e50; }
+h2 { color: #34495e; margin: 18px 0 8px 0; }
+h3 { color: #2c3e50; margin: 12px 0 6px 0; }
+
+.tab-bar {
+    display: flex; flex-wrap: wrap; gap: 0; border-bottom: 2px solid #3498db;
+    margin-bottom: 16px; background: #fff; border-radius: 8px 8px 0 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.tab-btn {
+    padding: 10px 22px; border: none; background: #ecf0f1; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: #7f8c8d; transition: all 0.2s;
+    border-radius: 8px 8px 0 0; margin-right: 2px;
+}
+.tab-btn:hover { background: #d5dbdb; color: #2c3e50; }
+.tab-btn.active { background: #3498db; color: #fff; }
+
+.tab-content { display: none; }
+
+.plot-card {
+    background: #fff; border-radius: 8px; padding: 12px; margin: 10px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #e8ecef;
+}
+.plots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 1200px) { .plots-grid { grid-template-columns: 1fr; } }
+
+.summary-section {
+    background: #fff; border-radius: 8px; padding: 16px; margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #e8ecef;
+}
+.tables-container { display: flex; flex-wrap: wrap; gap: 12px; }
+.table-wrapper { flex: 1 1 300px; max-width: 48%; }
+@media (max-width: 900px) {
+    body { padding: 10px; }
+    .table-wrapper { max-width: 100%; flex-basis: 100%; }
+}
+.scroll { max-height: 300px; overflow: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+th, td { border: 1px solid #bdc3c7; padding: 5px 8px; text-align: right; }
+th { background: #3498db; position: sticky; top: 0; color: #fff; font-weight: 600; }
+tr:nth-child(even) { background: #f8f9fa; }
+tr:hover { background: #eaf2f8; }
+
+</style>
+</head><body>
+<h1>PCAN KPI — IFV7XX_WBATR95060NC89209_20250919_083635_0000_b04_rR00100012_HDF</h1>
+<div class="summary-section">
+<h3>Overview — All Sensors</h3><div class="scroll"><table><thead><tr><th>Sensor</th><th>Scans (Input)</th><th>Scans (Output)</th><th>Common Scans</th><th>Scan Match %</th><th>Det Signals (Input)</th><th>Det Signals (Output)</th></tr></thead><tbody></tbody></table></div>
+</div>
+<div class="tab-bar">
+<button class="tab-btn active" onclick="switchTab('KPI', this)">KPI</button>
+</div>
+<div id="tab_KPI" class="tab-content" style="display:block"><h2>KPI Summary</h2>
+<div class="plot-card"><div>                            <div id="aef4cdc6-158a-45db-ba4d-724cbd251c6b" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("aef4cdc6-158a-45db-ba4d-724cbd251c6b")) {                    Plotly.newPlot(                        "aef4cdc6-158a-45db-ba4d-724cbd251c6b",                        [],                        {"height":400,"hovermode":"closest","legend":{"orientation":"h","x":1,"xanchor":"right","y":1.02,"yanchor":"bottom"},"margin":{"b":45,"l":50,"r":20,"t":60},"template":{"data":{"scatter":[{"type":"scatter"}]}},"title":{"text":"Overall Match % Across Sensors"},"xaxis":{"title":{"text":"Scan Index"}},"yaxis":{"range":[0,105],"title":{"text":"Match %"}}},                        {"responsive": true, "displayModeBar": true, "scrollZoom": true}                    )                };            </script>        </div></div>
+<h3>KPI Summary — Sensors</h3><div class="scroll"><table><thead><tr><th>Sensor</th><th>Aligned Scans</th><th>Overall</th><th>Precision</th><th>Recall</th><th>F1</th><th>Accuracy</th></tr></thead><tbody></tbody></table></div></div>
+<script>
+
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab_' + tabId).style.display = 'block';
+    btn.classList.add('active');
+    var plots = document.getElementById('tab_' + tabId).querySelectorAll('.js-plotly-plot');
+    plots.forEach(function(p) { Plotly.Plots.resize(p); });
+}
+
+</script>
+</body></html>

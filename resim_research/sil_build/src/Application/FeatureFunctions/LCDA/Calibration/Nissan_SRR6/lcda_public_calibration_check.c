@@ -1,0 +1,187 @@
+/**
+* @file lcda_public_calibration_check.c
+* @author SFL (Side Feature Logic) scrum team
+* @brief Provides implementation of boundary checks for the calibrations defined in lcda_cal.xml.
+* This file is auto-generated with SFL calibration tool v5.0.3 and shall not be edited manually.
+*
+* @copyright Copyright (C) 2025 Aptiv. All rights reserved.
+*/
+
+/**************************************************
+ * Includes
+ **************************************************/
+
+#include "lcda_public_calibration_check.h" // IWYU pragma: keep
+#include "lcda_public_calibration.h" // IWYU pragma: keep
+#include "ct_boundaries_check_function_helpers.h" // IWYU pragma: keep
+#include "ct_calibration_header_t.h" // IWYU pragma: keep
+
+/**************************************************
+ * Global function definition
+ **************************************************/
+
+/* coverity[HIS_CCM][High CCM in this auto-generated function is expected] */
+/* coverity[misra_c_2012_rule_8_7_violation][Interface function must be defined with external linkage] */
+boolean_T Lcda_Public_Cal_In_Boundary(const Lcda_Public_Calibration_T *p_calibration)
+{
+   boolean_T f_lcda_calibration_in_boundaries = (boolean_T) 1;
+   
+   CAN_BE_UNUSED(p_calibration);
+
+   /**< Check boundaries of all calibrations. In case of multidimensional arrays for loops are shared across
+   calibrations with the same dimension. */
+   
+   {
+    uint8_t x;
+    for (x = 0u; x < LCDA_K_BSW_DYNZONE_OBJECT_RANGE_ARRAY_SIZE_DIM0; x++)
+        {
+        Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_DYNZONE_OBJECT_RANGE, p_calibration->k_bsw_dynzone_object_range[x], LCDA_MAX_K_BSW_DYNZONE_OBJECT_RANGE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_DYNZONE_OBJECT_REL_VEL, p_calibration->k_bsw_dynzone_object_rel_vel[x], LCDA_MAX_K_BSW_DYNZONE_OBJECT_REL_VEL);
+
+        }
+}
+{
+    uint8_t x;
+    for (x = 0u; x < LCDA_K_BSW_OBJECT_POSITION_CORRECTION_DELAY_TIME_ARRAY_SIZE_DIM0; x++)
+        {
+        Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_OBJECT_POSITION_CORRECTION_DELAY_TIME, p_calibration->k_bsw_object_position_correction_delay_time[x], LCDA_MAX_K_BSW_OBJECT_POSITION_CORRECTION_DELAY_TIME);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_DYN_CVW_TTC_COMPENS_TIME, p_calibration->k_lcda_dyn_cvw_ttc_compens_time[x], LCDA_MAX_K_LCDA_DYN_CVW_TTC_COMPENS_TIME);
+
+        }
+}
+{
+    uint8_t x;
+    for (x = 0u; x < LCDA_K_CVW_MIN_OBJECT_CURVI_RELATIVE_SPEED_ARRAY_SIZE_DIM0; x++)
+        {
+        Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_MIN_OBJECT_CURVI_RELATIVE_SPEED, p_calibration->k_cvw_min_object_curvi_relative_speed[x], LCDA_MAX_K_CVW_MIN_OBJECT_CURVI_RELATIVE_SPEED);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_CVW_TTC_ACCEL, p_calibration->k_lcda_cvw_ttc_accel[x], LCDA_MAX_K_LCDA_CVW_TTC_ACCEL);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_CVW_TTC_CONST, p_calibration->k_lcda_cvw_ttc_const[x], LCDA_MAX_K_LCDA_CVW_TTC_CONST);
+
+        }
+}
+{
+    uint8_t x;
+    for (x = 0u; x < LCDA_K_BSW_DYNZONE_RANGE_ARRAY_SIZE_DIM0; x++)
+        {
+        Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_DYNZONE_RANGE, p_calibration->k_bsw_dynzone_range[x], LCDA_MAX_K_BSW_DYNZONE_RANGE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_DYNZONE_SPEED, p_calibration->k_bsw_dynzone_speed[x], LCDA_MAX_K_BSW_DYNZONE_SPEED);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_FIXED_ZONE_X, p_calibration->k_bsw_fixed_zone_x[x], LCDA_MAX_K_BSW_FIXED_ZONE_X);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_FIXED_ZONE_X_HYS, p_calibration->k_bsw_fixed_zone_x_hys[x], LCDA_MAX_K_BSW_FIXED_ZONE_X_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_FIXED_ZONE_Y, p_calibration->k_bsw_fixed_zone_y[x], LCDA_MAX_K_BSW_FIXED_ZONE_Y);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_FIXED_ZONE_Y_HYS, p_calibration->k_bsw_fixed_zone_y_hys[x], LCDA_MAX_K_BSW_FIXED_ZONE_Y_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_X, p_calibration->k_bsw_zone_x[x], LCDA_MAX_K_BSW_ZONE_X);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_X_HYS, p_calibration->k_bsw_zone_x_hys[x], LCDA_MAX_K_BSW_ZONE_X_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_Y, p_calibration->k_bsw_zone_y[x], LCDA_MAX_K_BSW_ZONE_Y);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_Y_HYS, p_calibration->k_bsw_zone_y_hys[x], LCDA_MAX_K_BSW_ZONE_Y_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ZONE_X, p_calibration->k_cvw_zone_x[x], LCDA_MAX_K_CVW_ZONE_X);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ZONE_Y, p_calibration->k_cvw_zone_y[x], LCDA_MAX_K_CVW_ZONE_Y);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ZONE_Y_HYS, p_calibration->k_cvw_zone_y_hys[x], LCDA_MAX_K_CVW_ZONE_Y_HYS);
+
+        }
+}
+
+   /* coverity[misra_c_2012_rule_14_3_violation][The condition must be true] */
+   Ct_Is_Uint8_In_Bondaries(&f_lcda_calibration_in_boundaries, 0, p_calibration->k_bsw_alert_holding_cycles, LCDA_MAX_K_BSW_ALERT_HOLDING_CYCLES);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ENABLE_DYNSPEED_ZONE, p_calibration->k_bsw_enable_dynspeed_zone, LCDA_MAX_K_BSW_ENABLE_DYNSPEED_ZONE);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ENABLE_TRAILER_ZONE_EXTENSION, p_calibration->k_bsw_enable_trailer_zone_extension, LCDA_MAX_K_BSW_ENABLE_TRAILER_ZONE_EXTENSION);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_F_ENABLE_OBJECT_REL_VEL_DYNZONE, p_calibration->k_bsw_f_enable_object_rel_vel_dynzone, LCDA_MAX_K_BSW_F_ENABLE_OBJECT_REL_VEL_DYNZONE);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_F_USE_FRONT_ZONE_AS_N_LINE, p_calibration->k_bsw_f_use_front_zone_as_n_line, LCDA_MAX_K_BSW_F_USE_FRONT_ZONE_AS_N_LINE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_FALLBACK_REL_VEL_THRES, p_calibration->k_bsw_fallback_rel_vel_thres, LCDA_MAX_K_BSW_FALLBACK_REL_VEL_THRES);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_FALLBACK_REL_VEL_THRES_HYS, p_calibration->k_bsw_fallback_rel_vel_thres_hys, LCDA_MAX_K_BSW_FALLBACK_REL_VEL_THRES_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_LANE_CHANGE_INTENTION_POS_LAT_THRES, p_calibration->k_bsw_lane_change_intention_pos_lat_thres, LCDA_MAX_K_BSW_LANE_CHANGE_INTENTION_POS_LAT_THRES);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_LANE_CHANGE_INTENTION_POS_LONG_THRES, p_calibration->k_bsw_lane_change_intention_pos_long_thres, LCDA_MAX_K_BSW_LANE_CHANGE_INTENTION_POS_LONG_THRES);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_LINE_TO_STOP_TOS_ALERT, p_calibration->k_bsw_line_to_stop_TOS_alert, LCDA_MAX_K_BSW_LINE_TO_STOP_TOS_ALERT);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MAX_HEADING_ABS, p_calibration->k_bsw_max_heading_abs, LCDA_MAX_K_BSW_MAX_HEADING_ABS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MAX_HEADING_ABS_HYSTERESIS, p_calibration->k_bsw_max_heading_abs_hysteresis, LCDA_MAX_K_BSW_MAX_HEADING_ABS_HYSTERESIS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MAX_OBJ_LONG_VEL, p_calibration->k_bsw_max_obj_long_vel, LCDA_MAX_K_BSW_MAX_OBJ_LONG_VEL);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MAX_OBJ_LONG_VEL_HYSTERESIS, p_calibration->k_bsw_max_obj_long_vel_hysteresis, LCDA_MAX_K_BSW_MAX_OBJ_LONG_VEL_HYSTERESIS);
+Ct_Is_Uint8_In_Bondaries(&f_lcda_calibration_in_boundaries, 0, p_calibration->k_bsw_min_mature_cycles, LCDA_MAX_K_BSW_MIN_MATURE_CYCLES);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MIN_OBJ_LONG_VEL, p_calibration->k_bsw_min_obj_long_vel, LCDA_MAX_K_BSW_MIN_OBJ_LONG_VEL);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MIN_OBJ_LONG_VEL_HYSTERESIS, p_calibration->k_bsw_min_obj_long_vel_hysteresis, LCDA_MAX_K_BSW_MIN_OBJ_LONG_VEL_HYSTERESIS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_MIN_SPEED_FOR_TOS_SCENARIO, p_calibration->k_bsw_min_speed_for_tos_scenario, LCDA_MAX_K_BSW_MIN_SPEED_FOR_TOS_SCENARIO);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_N_LINE_POSITION_FOR_LONG_OBJECT_SOT_SCENARIO, p_calibration->k_bsw_n_line_position_for_long_object_sot_scenario, LCDA_MAX_K_BSW_N_LINE_POSITION_FOR_LONG_OBJECT_SOT_SCENARIO);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_OBJ_MAX_REL_VEL_HYS, p_calibration->k_bsw_obj_max_rel_vel_hys, LCDA_MAX_K_BSW_OBJ_MAX_REL_VEL_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_OBJ_MAX_REL_VEL_THRESH, p_calibration->k_bsw_obj_max_rel_vel_thresh, LCDA_MAX_K_BSW_OBJ_MAX_REL_VEL_THRESH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_OBJECT_POSITION_CORRECTION_THRESHOLD, p_calibration->k_bsw_object_position_correction_threshold, LCDA_MAX_K_BSW_OBJECT_POSITION_CORRECTION_THRESHOLD);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_OVERLAP_AREA_CHECK_ENABLE, p_calibration->k_bsw_overlap_area_check_enable, LCDA_MAX_K_BSW_OVERLAP_AREA_CHECK_ENABLE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_OVERLAP_AREA_THRESHOLD, p_calibration->k_bsw_overlap_area_threshold, LCDA_MAX_K_BSW_OVERLAP_AREA_THRESHOLD);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_SHRINK_ZONE_METHOD, p_calibration->k_bsw_shrink_zone_method, LCDA_MAX_K_BSW_SHRINK_ZONE_METHOD);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_SUPPRESS_LATE_WARNING_MAX_TIME_TILL_LEAVE, p_calibration->k_bsw_suppress_late_warning_max_time_till_leave, LCDA_MAX_K_BSW_SUPPRESS_LATE_WARNING_MAX_TIME_TILL_LEAVE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_TRAILER_ZONE_EXT_SAFETY_MARGIN, p_calibration->k_bsw_trailer_zone_ext_safety_margin, LCDA_MAX_K_BSW_TRAILER_ZONE_EXT_SAFETY_MARGIN);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_TRAILER_ZONE_EXT_SAFETY_MARGIN_HYS, p_calibration->k_bsw_trailer_zone_ext_safety_margin_hys, LCDA_MAX_K_BSW_TRAILER_ZONE_EXT_SAFETY_MARGIN_HYS);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_USE_CURVI_COORDINATES, p_calibration->k_bsw_use_curvi_coordinates, LCDA_MAX_K_BSW_USE_CURVI_COORDINATES);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_USES_CVW_ALERT_STATE_ENABLED, p_calibration->k_bsw_uses_cvw_alert_state_enabled, LCDA_MAX_K_BSW_USES_CVW_ALERT_STATE_ENABLED);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_X0, p_calibration->k_bsw_x0, LCDA_MAX_K_BSW_X0);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_X_LENGTH, p_calibration->k_bsw_x_length, LCDA_MAX_K_BSW_X_LENGTH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_Y0, p_calibration->k_bsw_y0, LCDA_MAX_K_BSW_Y0);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_Y_WIDTH, p_calibration->k_bsw_y_width, LCDA_MAX_K_BSW_Y_WIDTH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_FRONT_EGO_SIDE_X, p_calibration->k_bsw_zone_front_ego_side_x, LCDA_MAX_K_BSW_ZONE_FRONT_EGO_SIDE_X);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_FRONT_EGO_SIDE_X_HYS, p_calibration->k_bsw_zone_front_ego_side_x_hys, LCDA_MAX_K_BSW_ZONE_FRONT_EGO_SIDE_X_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_FRONT_EGO_SIDE_Y, p_calibration->k_bsw_zone_front_ego_side_y, LCDA_MAX_K_BSW_ZONE_FRONT_EGO_SIDE_Y);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_FRONT_EGO_SIDE_Y_HYS, p_calibration->k_bsw_zone_front_ego_side_y_hys, LCDA_MAX_K_BSW_ZONE_FRONT_EGO_SIDE_Y_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_REAR_OUTER_SIDE_X, p_calibration->k_bsw_zone_rear_outer_side_x, LCDA_MAX_K_BSW_ZONE_REAR_OUTER_SIDE_X);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_REAR_OUTER_SIDE_X_HYS, p_calibration->k_bsw_zone_rear_outer_side_x_hys, LCDA_MAX_K_BSW_ZONE_REAR_OUTER_SIDE_X_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_REAR_OUTER_SIDE_Y, p_calibration->k_bsw_zone_rear_outer_side_y, LCDA_MAX_K_BSW_ZONE_REAR_OUTER_SIDE_Y);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_REAR_OUTER_SIDE_Y_HYS, p_calibration->k_bsw_zone_rear_outer_side_y_hys, LCDA_MAX_K_BSW_ZONE_REAR_OUTER_SIDE_Y_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_Y_HYS_MAX, p_calibration->k_bsw_zone_y_hys_max, LCDA_MAX_K_BSW_ZONE_Y_HYS_MAX);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_BSW_ZONE_Y_HYS_MIN, p_calibration->k_bsw_zone_y_hys_min, LCDA_MAX_K_BSW_ZONE_Y_HYS_MIN);
+Ct_Is_Uint8_In_Bondaries(&f_lcda_calibration_in_boundaries, 0, p_calibration->k_cvw_alert_holding_cycles, LCDA_MAX_K_CVW_ALERT_HOLDING_CYCLES);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_CANDIDATE_TTC, p_calibration->k_cvw_candidate_ttc, LCDA_MAX_K_CVW_CANDIDATE_TTC);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ENABLE, p_calibration->k_cvw_enable, LCDA_MAX_K_CVW_ENABLE);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ENABLE_VIA_CAL, p_calibration->k_cvw_enable_via_cal, LCDA_MAX_K_CVW_ENABLE_VIA_CAL);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_GAP_BRIDGE, p_calibration->k_cvw_gap_bridge, LCDA_MAX_K_CVW_GAP_BRIDGE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_MAX_CURVI_HEADING_ABS, p_calibration->k_cvw_max_curvi_heading_abs, LCDA_MAX_K_CVW_MAX_CURVI_HEADING_ABS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_MAX_OBJECT_CURVI_RELATIVE_SPEED, p_calibration->k_cvw_max_object_curvi_relative_speed, LCDA_MAX_K_CVW_MAX_OBJECT_CURVI_RELATIVE_SPEED);
+Ct_Is_Uint8_In_Bondaries(&f_lcda_calibration_in_boundaries, 0, p_calibration->k_cvw_min_mature_cycles, LCDA_MAX_K_CVW_MIN_MATURE_CYCLES);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_MIN_OBJ_CURVI_LONG_VEL, p_calibration->k_cvw_min_obj_curvi_long_vel, LCDA_MAX_K_CVW_MIN_OBJ_CURVI_LONG_VEL);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_OBJECT_CURVI_RELATIVE_SPEED_HYS, p_calibration->k_cvw_object_curvi_relative_speed_hys, LCDA_MAX_K_CVW_OBJECT_CURVI_RELATIVE_SPEED_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_TTC, p_calibration->k_cvw_ttc, LCDA_MAX_K_CVW_TTC);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_TTC_HYS, p_calibration->k_cvw_ttc_hys, LCDA_MAX_K_CVW_TTC_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_X0, p_calibration->k_cvw_x0, LCDA_MAX_K_CVW_X0);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_X_LENGTH0, p_calibration->k_cvw_x_length0, LCDA_MAX_K_CVW_X_LENGTH0);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_X_LENGTH1, p_calibration->k_cvw_x_length1, LCDA_MAX_K_CVW_X_LENGTH1);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_Y0, p_calibration->k_cvw_y0, LCDA_MAX_K_CVW_Y0);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_Y1, p_calibration->k_cvw_y1, LCDA_MAX_K_CVW_Y1);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_Y_WIDTH0, p_calibration->k_cvw_y_width0, LCDA_MAX_K_CVW_Y_WIDTH0);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_Y_WIDTH1, p_calibration->k_cvw_y_width1, LCDA_MAX_K_CVW_Y_WIDTH1);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ZONE_Y_HYS_MAX, p_calibration->k_cvw_zone_y_hys_max, LCDA_MAX_K_CVW_ZONE_Y_HYS_MAX);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_CVW_ZONE_Y_HYS_MIN, p_calibration->k_cvw_zone_y_hys_min, LCDA_MAX_K_CVW_ZONE_Y_HYS_MIN);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_HONDA_ALERT_LEVEL_TWO_HOLDING_TIME, p_calibration->k_honda_alert_level_two_holding_time, LCDA_MAX_K_HONDA_ALERT_LEVEL_TWO_HOLDING_TIME);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_HONDA_BEEPER_ZONE_LENGTH, p_calibration->k_honda_beeper_zone_length, LCDA_MAX_K_HONDA_BEEPER_ZONE_LENGTH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_HONDA_BEEPER_ZONE_WIDTH, p_calibration->k_honda_beeper_zone_width, LCDA_MAX_K_HONDA_BEEPER_ZONE_WIDTH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_HONDA_EGO_SPEED_STOP_HOLDING, p_calibration->k_honda_ego_speed_stop_holding, LCDA_MAX_K_HONDA_EGO_SPEED_STOP_HOLDING);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_HONDA_SRR6_ENABLE_ALERT_HOLD_DUE_OUT_OF_FOV, p_calibration->k_honda_srr6_enable_alert_hold_due_out_of_fov, LCDA_MAX_K_HONDA_SRR6_ENABLE_ALERT_HOLD_DUE_OUT_OF_FOV);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_HONDA_SRR6_ENABLE_ALERT_HOLD_DUE_SLOW_DOWN, p_calibration->k_honda_srr6_enable_alert_hold_due_slow_down, LCDA_MAX_K_HONDA_SRR6_ENABLE_ALERT_HOLD_DUE_SLOW_DOWN);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_2WHEEL_MIN_SIZE, p_calibration->k_lcda_2wheel_min_size, LCDA_MAX_K_LCDA_2WHEEL_MIN_SIZE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_2WHEEL_MIN_SPEED, p_calibration->k_lcda_2wheel_min_speed, LCDA_MAX_K_LCDA_2WHEEL_MIN_SPEED);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_DISTANCE_TRAVELED_SCALE_FACTOR, p_calibration->k_lcda_distance_traveled_scale_factor, LCDA_MAX_K_LCDA_DISTANCE_TRAVELED_SCALE_FACTOR);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_DYN_CVW_TTC_COMPENS_REL_VEL_THRESH, p_calibration->k_lcda_dyn_cvw_ttc_compens_rel_vel_thresh, LCDA_MAX_K_LCDA_DYN_CVW_TTC_COMPENS_REL_VEL_THRESH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_DYN_CVW_TTC_SPEED_PARAMETER, p_calibration->k_lcda_dyn_cvw_ttc_speed_parameter, LCDA_MAX_K_LCDA_DYN_CVW_TTC_SPEED_PARAMETER);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_EGO_LANE_CHECK_CENTER_POINT_ONLY, p_calibration->k_lcda_ego_lane_check_center_point_only, LCDA_MAX_K_LCDA_EGO_LANE_CHECK_CENTER_POINT_ONLY);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_EGO_LANE_EFFECTIVE_LANE_WIDTH_FACTOR, p_calibration->k_lcda_ego_lane_effective_lane_width_factor, LCDA_MAX_K_LCDA_EGO_LANE_EFFECTIVE_LANE_WIDTH_FACTOR);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_F_DISABLE_DUE_TO_SMALL_CURVE_RADIUS, p_calibration->k_lcda_f_disable_due_to_small_curve_radius, LCDA_MAX_K_LCDA_F_DISABLE_DUE_TO_SMALL_CURVE_RADIUS);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_F_ENABLE_ALERT_OBJ_IN_EGO_LANE, p_calibration->k_lcda_f_enable_alert_obj_in_ego_lane, LCDA_MAX_K_LCDA_F_ENABLE_ALERT_OBJ_IN_EGO_LANE);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_F_ENABLE_DYN_CVW_TTC_THRESHOLD, p_calibration->k_lcda_f_enable_dyn_cvw_ttc_threshold, LCDA_MAX_K_LCDA_F_ENABLE_DYN_CVW_TTC_THRESHOLD);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_F_ENABLE_FALLBACK_HANDLER, p_calibration->k_lcda_f_enable_fallback_handler, LCDA_MAX_K_LCDA_F_ENABLE_FALLBACK_HANDLER);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_F_ENABLE_OBJ_IN_EGO_LANE_CHECK, p_calibration->k_lcda_f_enable_obj_in_ego_lane_check, LCDA_MAX_K_LCDA_F_ENABLE_OBJ_IN_EGO_LANE_CHECK);
+Ct_Is_Bool_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_F_ENABLE_OBJ_REFLECTION_FLAG_CHECK, p_calibration->k_lcda_f_enable_obj_reflection_flag_check, LCDA_MAX_K_LCDA_F_ENABLE_OBJ_REFLECTION_FLAG_CHECK);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_HONDA_NARROW_BEEPER_MAX_SPEED_H, p_calibration->k_lcda_honda_narrow_beeper_max_speed_h, LCDA_MAX_K_LCDA_HONDA_NARROW_BEEPER_MAX_SPEED_H);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_HONDA_NARROW_BEEPER_MAX_SPEED_L, p_calibration->k_lcda_honda_narrow_beeper_max_speed_l, LCDA_MAX_K_LCDA_HONDA_NARROW_BEEPER_MAX_SPEED_L);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_HOST_ACTIVATION_SPEED_MAX, p_calibration->k_lcda_host_activation_speed_max, LCDA_MAX_K_LCDA_HOST_ACTIVATION_SPEED_MAX);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_HOST_ACTIVATION_SPEED_MAX_HYS, p_calibration->k_lcda_host_activation_speed_max_hys, LCDA_MAX_K_LCDA_HOST_ACTIVATION_SPEED_MAX_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_HOST_ACTIVATION_SPEED_MIN, p_calibration->k_lcda_host_activation_speed_min, LCDA_MAX_K_LCDA_HOST_ACTIVATION_SPEED_MIN);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_HOST_ACTIVATION_SPEED_MIN_HYS, p_calibration->k_lcda_host_activation_speed_min_hys, LCDA_MAX_K_LCDA_HOST_ACTIVATION_SPEED_MIN_HYS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_LANE_CHANGE_INTENTION_VEL_LAT_THRESH, p_calibration->k_lcda_lane_change_intention_vel_lat_thresh, LCDA_MAX_K_LCDA_LANE_CHANGE_INTENTION_VEL_LAT_THRESH);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_MIN_CURVE_RADIUS, p_calibration->k_lcda_min_curve_radius, LCDA_MAX_K_LCDA_MIN_CURVE_RADIUS);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_MIN_CURVE_RADIUS_HYS, p_calibration->k_lcda_min_curve_radius_hys, LCDA_MAX_K_LCDA_MIN_CURVE_RADIUS_HYS);
+Ct_Is_Uint8_In_Bondaries(&f_lcda_calibration_in_boundaries, 0, p_calibration->k_lcda_min_track_age, LCDA_MAX_K_LCDA_MIN_TRACK_AGE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_PEDESTRIAN_MIN_SIZE, p_calibration->k_lcda_pedestrian_min_size, LCDA_MAX_K_LCDA_PEDESTRIAN_MIN_SIZE);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_PEDESTRIAN_MIN_SPEED, p_calibration->k_lcda_pedestrian_min_speed, LCDA_MAX_K_LCDA_PEDESTRIAN_MIN_SPEED);
+Ct_Is_Uint8_In_Bondaries(&f_lcda_calibration_in_boundaries, 0, p_calibration->k_lcda_zone_check_method, LCDA_MAX_K_LCDA_ZONE_CHECK_METHOD);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LCDA_ZONE_INTERSECT_CRITICAL_POINT_LATERAL_RATIO, p_calibration->k_lcda_zone_intersect_critical_point_lateral_ratio, LCDA_MAX_K_LCDA_ZONE_INTERSECT_CRITICAL_POINT_LATERAL_RATIO);
+Ct_Is_Float_In_Bondaries(&f_lcda_calibration_in_boundaries, LCDA_MIN_K_LKA_OV_ZONE_WIDTH, p_calibration->k_lka_ov_zone_width, LCDA_MAX_K_LKA_OV_ZONE_WIDTH);
+
+
+   return f_lcda_calibration_in_boundaries;
+}
+

@@ -1,0 +1,22 @@
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_FILE})
+
+target_include_directories(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_debug_writer.h)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_common_functions.h)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_debug_interface.h)
+target_sources(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ced_persistent_t.h)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced.h)
+target_sources(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ced_types.h)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_create_zones.h)
+target_sources(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ced_iface.h)
+target_sources(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ced_core_input_t.h)
+target_sources(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ced_core_output_t.h)
+target_sources(CED PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ced_instance.h)
+
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_debug_writer.c)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_common_functions.c)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_debug_interface.c)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_iface.c)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced.c)
+target_sources(CED PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ced_create_zones.c)

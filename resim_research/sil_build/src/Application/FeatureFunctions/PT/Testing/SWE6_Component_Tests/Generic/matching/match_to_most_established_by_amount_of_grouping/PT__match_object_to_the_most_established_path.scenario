@@ -1,0 +1,118 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target1_Path_0'. Internal name is 'object_2'.
+% This scenario includes the TARGET-object, named 'Target2_Path_0'. Internal name is 'object_3'.
+% This scenario includes the TARGET-object, named 'Target3_Path_1'. Internal name is 'object_4'.
+% This scenario includes the TARGET-object, named 'Target4_Match_To_Path0'. Internal name is 'object_5'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target1_Path_0 are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target2_Path_0 are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target3_Path_1 are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target4_Match_To_Path0 are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The initial conditions of Ego are set to: [Start-Speed: 10 kph, Start-Heading: 0 deg].
+% The initial conditions of Target1_Path_0 are set to: [Start-Speed: 50 kph, Start-Heading: 90 deg].
+% The initial conditions of Target2_Path_0 are set to: [Start-Speed: 50 kph, Start-Heading: 90 deg].
+% The initial conditions of Target3_Path_1 are set to: [Start-Speed: 40 kph, Start-Heading: 90 deg].
+% The initial conditions of Target4_Match_To_Path0 are set to: [Start-Speed: 50 kph, Start-Heading: 90 deg].
+% The start position of Target1_Path_0 is shifted by Lateral-Offset: 5 m, Longitudinal-Offset: -45 mHeading: 0°.
+% The start position of Target2_Path_0 is shifted by Lateral-Offset: 5 m, Longitudinal-Offset: -45 mHeading: 0°.
+% The start position of Target3_Path_1 is shifted by Lateral-Offset: 6.3 m, Longitudinal-Offset: -45 mHeading: 0°.
+% The start position of Target4_Match_To_Path0 is shifted by Lateral-Offset: 5.8 m, Longitudinal-Offset: -45 mHeading: 0°.
+% Add a stationary section to Ego with: Duration: 15 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target1_Path_0 with: End-Speed: 50 kph, Distance: 80 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a stationary section to Target2_Path_0 with: Duration: 1 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target2_Path_0 with: End-Speed: 50 kph, Distance: 80 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a stationary section to Target3_Path_1 with: Duration: 1 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target3_Path_1 with: End-Speed: 40 kph, Distance: 30 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a diagonal section to Target3_Path_1 with: End-Speed: 10 kph, Distance: 70 m, Lateral-Offset: 6 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a stationary section to Target4_Match_To_Path0 with: Duration: 6 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target4_Match_To_Path0 with: End-Speed: 50 kph, Distance: 80 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+object_2 = class_scenario_properties(enum_object_types.TARGET, 'Target1_Path_0');
+object_3 = class_scenario_properties(enum_object_types.TARGET, 'Target2_Path_0');
+object_4 = class_scenario_properties(enum_object_types.TARGET, 'Target3_Path_1');
+object_5 = class_scenario_properties(enum_object_types.TARGET, 'Target4_Match_To_Path0');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+object_2.set_dimension(enum_object_specific_variants.VEHICLE);
+object_3.set_dimension(enum_object_specific_variants.VEHICLE);
+object_4.set_dimension(enum_object_specific_variants.VEHICLE);
+object_5.set_dimension(enum_object_specific_variants.VEHICLE);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(10, 0);
+object_2.set_starting_values(50, 90);
+object_3.set_starting_values(50, 90);
+object_4.set_starting_values(40, 90);
+object_5.set_starting_values(50, 90);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+object_2.set_start_pos_offsets(5, -45, 0);
+object_3.set_start_pos_offsets(5, -45, 0);
+object_4.set_start_pos_offsets(6.3, -45, 0);
+object_5.set_start_pos_offsets(5.8, -45, 0);
+
+%% Define trajectories of the objects
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_stationary_section(15, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(50, 80, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_3.add_stationary_section(1, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_3.add_straight_section(50, 80, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_4.add_stationary_section(1, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_4.add_straight_section(40, 30, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_4.add_diagonal_section(10, 70, 6, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_5.add_stationary_section(6, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_5.add_straight_section(50, 80, section_generic_properties);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);
+scenario.set_polarion_info('CSCSA-47052', 'SF-1538');
+scenario.set_test_type('positive');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);
+scenario.add_object(object_2);
+scenario.add_object(object_3);
+scenario.add_object(object_4);
+scenario.add_object(object_5);

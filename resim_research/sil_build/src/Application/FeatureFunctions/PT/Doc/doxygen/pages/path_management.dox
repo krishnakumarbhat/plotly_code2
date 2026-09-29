@@ -1,0 +1,10 @@
+/**
+ \page path_management Creation of paths
+In the process of path creation an object with mature status is expected. At first there is a need to find an available path index at which the new path can be saved. This is basically an index within the global array path struct in which an arbitrary amount
+of paths can be saved. Since there exists a predefined grid whose default range is from -60 m to 60m in vcs-coordinate system with a granularity of 5 m, it is necessary to check if 
+the considered object has passed a grid point in the current cycle. For this also the last object border of the path is considered and if the last object border and the current object position surround the respective grid point a new 
+path point will be interpolated with help of the two previous mentioned position information. Since it is possible that the object does not move through the whole range of the path tracker, it is useful that the incomplete path gets extrapolated over the whole
+range after the object gets lost. After that the path will not enter the loop within the Path\_Track module anymore until it is reset. Only other operations like rotation, grouping etc. are still in use for the finished path.
+
+ 
+ */

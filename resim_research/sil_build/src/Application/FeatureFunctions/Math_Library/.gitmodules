@@ -1,0 +1,4 @@
+[submodule "deps/ST_SharedTools"]
+	path = deps/ST_SharedTools
+	url = https://gitgerrit.asux.aptiv.com/CORECOMP/ALSW/ST_SharedTools
+	branch = fdf69edb3ef5eca3e0ef7f993a059ae64b25ddc8

@@ -1,0 +1,107 @@
+# ifndef CTA_CUSTOMER_CALIBRATION_H
+# define CTA_CUSTOMER_CALIBRATION_H
+
+/**
+* @file cta_customer_calibration.h
+* @author SFL (Side Feature Logic) scrum team
+* @brief Provides the declaration of the calibrations defined in cta_cal.xml.
+* This file is auto-generated with SFL calibration tool v5.0.3 and shall not be edited manually.
+*
+* @copyright Copyright (C) 2025 Aptiv. All rights reserved.
+*/
+
+/*===========================================================================*\
+* Includes
+\*===========================================================================*/
+#include "cta_customer_calibration_t.h"
+#include "pa_reuse.h" // IWYU pragma: keep
+#ifdef CT_ACTIVATE_CAL_PRINT
+#include <stdio.h>
+#endif
+
+/*===========================================================================*\
+* Defines
+\*===========================================================================*/
+
+/* Macros for minimum range of calibrations */
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_BMW_SP25_EGO_ABS_SPEED_MAX_HYS ((float32_T)(0.0f)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_BMW_SP25_BANNER_CRITERIA_CHECK_TIME ((float32_T)(0.0f)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_BMW_SP25_BANNER_TIME ((float32_T)(0.0f)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_BMW_SP25_BANNER_CRITERIA_CHECK ((boolean_T)(0u)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_UNUSED_PADDING_BYTE_0 ((uint8_t)(0u)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_UNUSED_PADDING_BYTE_1 ((uint8_t)(0u)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MIN_K_UNUSED_PADDING_BYTE_2 ((uint8_t)(0u)) 
+
+/* Macros for maximum range of calibrations */
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_BMW_SP25_EGO_ABS_SPEED_MAX_HYS ((float32_T)(10.0f)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_BMW_SP25_BANNER_CRITERIA_CHECK_TIME ((float32_T)(10.0f)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_BMW_SP25_BANNER_TIME ((float32_T)(10.0f)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_BMW_SP25_BANNER_CRITERIA_CHECK ((boolean_T)(1u)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_UNUSED_PADDING_BYTE_0 ((uint8_t)(255u)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_UNUSED_PADDING_BYTE_1 ((uint8_t)(255u)) 
+/* coverity[misra_c_2012_rule_2_5_violation][Macro definition shall be available for external usage] */
+#define CTA_MAX_K_UNUSED_PADDING_BYTE_2 ((uint8_t)(255u)) 
+
+
+/*===========================================================================*\
+* Global function declarations
+\*===========================================================================*/
+
+#ifdef CT_BIG_ENDIAN
+/**
+ * @brief Reverses arrays with variable length of 1, 2 or 4 bytes. Dependent on whether arrays are given.
+ *
+ * @return void
+ *
+ * @SRS{n/a}
+ * @SAE{n/a}
+ * @SDD{n/a}
+ * @verification{}
+ **/
+void Cta_Customer_Cal_Reverse_Array_Cta_Cal(Cta_Customer_Calibration_T* cal_dst);
+#endif /*CT_BIG_ENDIAN*/
+
+#ifdef CT_ACTIVATE_CAL_PRINT
+
+/**
+ * @brief Prints values of calibrations.
+ *
+ * @return void
+ *
+ * @SRS{n/a}
+ * @SAE{n/a}
+ * @SDD{n/a}
+ * @verification{}
+ **/
+void Cta_Customer_Cal_Print(FILE* c_file_ptr, const Cta_Customer_Calibration_T* p_cals);
+
+#endif /*CT_ACTIVATE_CAL_PRINT*/
+
+/**
+ * @brief This function updates all calibrations of the component to their respective defaults given by the customer specific xml sheet.
+ *
+ * @return void
+ *
+ * @SRS{n/a}
+ * @SAE{n/a}
+ * @SDD{n/a}
+ * @verification{}
+ **/
+void Cta_Customer_Cal_Update_Defaults(Cta_Customer_Calibration_T* cal_dst);
+
+
+
+#endif /* CTA_CUSTOMER_CALIBRATION_H */

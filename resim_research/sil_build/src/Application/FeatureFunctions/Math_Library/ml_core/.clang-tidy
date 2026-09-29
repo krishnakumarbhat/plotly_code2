@@ -1,0 +1,54 @@
+Checks: '
+  *,
+  -readability-magic-numbers,
+  -clang-analyzer-alpha.*,
+  -abseil*,
+  -android*,
+  -boost*,
+  -cert*,
+  -darwin*,
+  -fuchsia*,
+  -google*,
+  -hicpp*,
+  -linuxkernel*,
+  -llvm*,
+  -llvmlibc*,
+  -objc*,
+  -openmp*,
+  -zircon*,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -readability-uppercase-literal-suffix,
+  -hicpp-uppercase-literal-suffix,
+  readability-identifier-naming,
+  -readability-avoid-const-params-in-decls,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -altera-struct-pack-align,
+  -altera-unroll-loops,
+  -cppcoreguidelines-macro-usage,
+  -readability-identifier-length,
+  -readability-suspicious-call-argument,
+  -modernize-deprecated-headers,
+  -altera-id-dependent-backward-branch
+  '
+HeaderFilterRegex:   'ml_core/include/'
+CheckOptions:
+  - { key: readability-identifier-naming.VariableCase,  value: lower_case }
+  - { key: readability-identifier-naming.FunctionCase,  value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.ParameterCase, value: lower_case }
+  - { key: readability-identifier-naming.LocalVariableCase, value: lower_case }
+  - { key: readability-identifier-naming.GlobalFunctionCase,  value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.GlobalVariableCase,  value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.StructCase,    value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.StructSuffix,  value: _Tag }
+  - { key: readability-identifier-naming.TypedefCase,   value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.TypedefSuffix, value: _T }
+  - { key: readability-identifier-naming.EnumCase ,     value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.EnumSuffix,    value: _Tag }
+  - { key: readability-identifier-naming.EnumConstantCase, value: UPPER_CASE }
+  - { key: readability-identifier-naming.PointerParameterCase, value: lower_case }
+  - { key: readability-identifier-naming.LocalPointerCase, value: lower_case }
+  - { key: readability-identifier-naming.LocalConstantPointerCase, value: lower_case }
+  - { key: readability-identifier-naming.GlobalPointerCase, value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.GlobalConstantPointerCase, value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.ConstantPointerParameterCase, value: lower_case }

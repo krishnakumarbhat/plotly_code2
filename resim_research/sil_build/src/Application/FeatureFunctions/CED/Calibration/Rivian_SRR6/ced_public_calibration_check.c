@@ -1,0 +1,121 @@
+/**
+* @file ced_public_calibration_check.c
+* @author SFL (Side Feature Logic) scrum team
+* @brief Provides implementation of boundary checks for the calibrations defined in ced_cal.xml.
+* This file is auto-generated with SFL calibration tool v5.0.3 and shall not be edited manually.
+*
+* @copyright Copyright (C) 2025 Aptiv. All rights reserved.
+*/
+
+/**************************************************
+ * Includes
+ **************************************************/
+
+#include "ced_public_calibration_check.h" // IWYU pragma: keep
+#include "ced_public_calibration.h" // IWYU pragma: keep
+#include "ct_boundaries_check_function_helpers.h" // IWYU pragma: keep
+#include "ct_calibration_header_t.h" // IWYU pragma: keep
+
+/**************************************************
+ * Global function definition
+ **************************************************/
+
+/* coverity[HIS_CCM][High CCM in this auto-generated function is expected] */
+/* coverity[misra_c_2012_rule_8_7_violation][Interface function must be defined with external linkage] */
+boolean_T Ced_Public_Cal_In_Boundary(const Ced_Public_Calibration_T *p_calibration)
+{
+   boolean_T f_ced_calibration_in_boundaries = (boolean_T) 1;
+   
+   CAN_BE_UNUSED(p_calibration);
+
+   /**< Check boundaries of all calibrations. In case of multidimensional arrays for loops are shared across
+   calibrations with the same dimension. */
+   
+   {
+    uint8_t x;
+    for (x = 0u; x < CED_K_CED_ALERT_TTP_MIN_ARRAY_SIZE_DIM0; x++)
+        {
+        Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_ALERT_TTP_MIN, p_calibration->k_ced_alert_ttp_min[x], CED_MAX_K_CED_ALERT_TTP_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_CRASH_LINE_HOST_LENGTH_PERCENTAGE, p_calibration->k_ced_crash_line_host_length_percentage[x], CED_MAX_K_CED_CRASH_LINE_HOST_LENGTH_PERCENTAGE);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_FIRST_WARNING_TTC_THRESHOLD, p_calibration->k_ced_first_warning_ttc_threshold[x], CED_MAX_K_CED_FIRST_WARNING_TTC_THRESHOLD);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_LAT_POS_SHIFT_LAT_DIST_THRESHOLDS, p_calibration->k_ced_lat_pos_shift_lat_dist_thresholds[x], CED_MAX_K_CED_LAT_POS_SHIFT_LAT_DIST_THRESHOLDS);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_LAT_POS_SHIFT_LONG_DIST_THRESHOLDS, p_calibration->k_ced_lat_pos_shift_long_dist_thresholds[x], CED_MAX_K_CED_LAT_POS_SHIFT_LONG_DIST_THRESHOLDS);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SECOND_WARNING_TTC_THRESHOLD, p_calibration->k_ced_second_warning_ttc_threshold[x], CED_MAX_K_CED_SECOND_WARNING_TTC_THRESHOLD);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SLIGHT_TURN_LAT_VEL_TABLE, p_calibration->k_ced_slight_turn_lat_vel_table[x], CED_MAX_K_CED_SLIGHT_TURN_LAT_VEL_TABLE);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SLIGHT_TURN_POSITION_LIMITS, p_calibration->k_ced_slight_turn_position_limits[x], CED_MAX_K_CED_SLIGHT_TURN_POSITION_LIMITS);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_THIRD_WARNING_TTC_THRESHOLD, p_calibration->k_ced_third_warning_ttc_threshold[x], CED_MAX_K_CED_THIRD_WARNING_TTC_THRESHOLD);
+
+        }
+}
+
+   /* coverity[misra_c_2012_rule_14_3_violation][The condition must be true] */
+   Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_BMW_CED_SPEED_MAX_HYSTERESIS, p_calibration->k_bmw_ced_speed_max_hysteresis, CED_MAX_K_BMW_CED_SPEED_MAX_HYSTERESIS);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_alert_holding_cycles, CED_MAX_K_CED_ALERT_HOLDING_CYCLES);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_ALERT_HOLDING_OBJ_ABS_HEADING_MAX, p_calibration->k_ced_alert_holding_obj_abs_heading_max, CED_MAX_K_CED_ALERT_HOLDING_OBJ_ABS_HEADING_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_ALERT_HOLDING_OBJ_LONG_VEL_MIN, p_calibration->k_ced_alert_holding_obj_long_vel_min, CED_MAX_K_CED_ALERT_HOLDING_OBJ_LONG_VEL_MIN);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_alert_qualifying_cycles, CED_MAX_K_CED_ALERT_QUALIFYING_CYCLES);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_alert_qualifying_cycles_slow_objects, CED_MAX_K_CED_ALERT_QUALIFYING_CYCLES_SLOW_OBJECTS);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_allow_opposite_side_alerts, CED_MAX_K_CED_ALLOW_OPPOSITE_SIDE_ALERTS);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_COLLISION_ZONE_WIDTH, p_calibration->k_ced_collision_zone_width, CED_MAX_K_CED_COLLISION_ZONE_WIDTH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_EGO_ABS_SPEED_MAX, p_calibration->k_ced_ego_abs_speed_max, CED_MAX_K_CED_EGO_ABS_SPEED_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_EGO_LANE_PARKING_MANEUVER_SPEED, p_calibration->k_ced_ego_lane_parking_maneuver_speed, CED_MAX_K_CED_EGO_LANE_PARKING_MANEUVER_SPEED);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_EGO_LANE_PARKING_RANGE, p_calibration->k_ced_ego_lane_parking_range, CED_MAX_K_CED_EGO_LANE_PARKING_RANGE);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_EGO_LANE_WIDTH, p_calibration->k_ced_ego_lane_width, CED_MAX_K_CED_EGO_LANE_WIDTH);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_ADAPT_HEADING_EGO_LANE, p_calibration->k_ced_f_adapt_heading_ego_lane, CED_MAX_K_CED_F_ADAPT_HEADING_EGO_LANE);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_ALLOW_COASTED_OBJECT_ALERTS, p_calibration->k_ced_f_allow_coasted_object_alerts, CED_MAX_K_CED_F_ALLOW_COASTED_OBJECT_ALERTS);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_ALLOW_EGO_LANE_ALERTS, p_calibration->k_ced_f_allow_ego_lane_alerts, CED_MAX_K_CED_F_ALLOW_EGO_LANE_ALERTS);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_f_choose_ref_point_funnel_check, CED_MAX_K_CED_F_CHOOSE_REF_POINT_FUNNEL_CHECK);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_ENABLE_HEADING_EXP_MOVING_AVERAGE, p_calibration->k_ced_f_enable_heading_exp_moving_average, CED_MAX_K_CED_F_ENABLE_HEADING_EXP_MOVING_AVERAGE);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_HANDLE_BOTH_SIDE_ALERTS_AS_OBJECT_SIDE, p_calibration->k_ced_f_handle_both_side_alerts_as_object_side, CED_MAX_K_CED_F_HANDLE_BOTH_SIDE_ALERTS_AS_OBJECT_SIDE);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_OBJECT_LAT_ON_ONE_SIDE_OF_BORDER, p_calibration->k_ced_f_object_lat_on_one_side_of_border, CED_MAX_K_CED_F_OBJECT_LAT_ON_ONE_SIDE_OF_BORDER);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_PATH_TRACKING_ENABLE, p_calibration->k_ced_f_path_tracking_enable, CED_MAX_K_CED_F_PATH_TRACKING_ENABLE);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_SECOND_WARNING_LEVEL_ENABLE, p_calibration->k_ced_f_second_warning_level_enable, CED_MAX_K_CED_F_SECOND_WARNING_LEVEL_ENABLE);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_SUPPRESS_ALERT_HOLDING_FOR_OBJ_BELOW_MIN_TTP, p_calibration->k_ced_f_suppress_alert_holding_for_obj_below_min_ttp, CED_MAX_K_CED_F_SUPPRESS_ALERT_HOLDING_FOR_OBJ_BELOW_MIN_TTP);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_SUPPRESS_ALERT_HOLDING_FOR_UNCRITICAL_OBJECTS, p_calibration->k_ced_f_suppress_alert_holding_for_uncritical_objects, CED_MAX_K_CED_F_SUPPRESS_ALERT_HOLDING_FOR_UNCRITICAL_OBJECTS);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_THIRD_WARNING_LEVEL_ENABLE, p_calibration->k_ced_f_third_warning_level_enable, CED_MAX_K_CED_F_THIRD_WARNING_LEVEL_ENABLE);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_F_USE_ONLY_MATURE_PATHS, p_calibration->k_ced_f_use_only_mature_paths, CED_MAX_K_CED_F_USE_ONLY_MATURE_PATHS);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_FUNNEL_ZONE_LENGTH, p_calibration->k_ced_funnel_zone_length, CED_MAX_K_CED_FUNNEL_ZONE_LENGTH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_FUNNEL_ZONE_WIDTH, p_calibration->k_ced_funnel_zone_width, CED_MAX_K_CED_FUNNEL_ZONE_WIDTH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_LAT_POS_MAX_SHIFT, p_calibration->k_ced_lat_pos_max_shift, CED_MAX_K_CED_LAT_POS_MAX_SHIFT);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_LAT_POS_OF_BORDER, p_calibration->k_ced_lat_pos_of_border, CED_MAX_K_CED_LAT_POS_OF_BORDER);
+Ct_Is_Bool_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_LAT_POS_SHIFT_ENABLE, p_calibration->k_ced_lat_pos_shift_enable, CED_MAX_K_CED_LAT_POS_SHIFT_ENABLE);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_LAT_POS_SHIFT_WIDTH_THRESH, p_calibration->k_ced_lat_pos_shift_width_thresh, CED_MAX_K_CED_LAT_POS_SHIFT_WIDTH_THRESH);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_min_cycles_for_path_match_for_no_suppress, CED_MAX_K_CED_MIN_CYCLES_FOR_PATH_MATCH_FOR_NO_SUPPRESS);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_ACCELERATION_WEIGHT, p_calibration->k_ced_object_acceleration_weight, CED_MAX_K_CED_OBJECT_ACCELERATION_WEIGHT);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_object_age_min, CED_MAX_K_CED_OBJECT_AGE_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_EXISTENCE_PROBABILITY_MIN, p_calibration->k_ced_object_existence_probability_min, CED_MAX_K_CED_OBJECT_EXISTENCE_PROBABILITY_MIN);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_object_ftm_age_min, CED_MAX_K_CED_OBJECT_FTM_AGE_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_FTM_EXISTENCE_PROBABILITY_MIN, p_calibration->k_ced_object_ftm_existence_probability_min, CED_MAX_K_CED_OBJECT_FTM_EXISTENCE_PROBABILITY_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_FTM_HEADING_ABS_ANGLE_MIN, p_calibration->k_ced_object_ftm_heading_abs_angle_min, CED_MAX_K_CED_OBJECT_FTM_HEADING_ABS_ANGLE_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_FTM_LAT_VEL_MAX, p_calibration->k_ced_object_ftm_lat_vel_max, CED_MAX_K_CED_OBJECT_FTM_LAT_VEL_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_FTM_LONG_VEL_MIN, p_calibration->k_ced_object_ftm_long_vel_min, CED_MAX_K_CED_OBJECT_FTM_LONG_VEL_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_FTM_LONG_VEL_REL_MAX, p_calibration->k_ced_object_ftm_long_vel_rel_max, CED_MAX_K_CED_OBJECT_FTM_LONG_VEL_REL_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_FTM_LONG_VEL_REL_MIN, p_calibration->k_ced_object_ftm_long_vel_rel_min, CED_MAX_K_CED_OBJECT_FTM_LONG_VEL_REL_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_HEADING_ABS_ANGLE_MAX, p_calibration->k_ced_object_heading_abs_angle_max, CED_MAX_K_CED_OBJECT_HEADING_ABS_ANGLE_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_HEADING_EXP_MOVING_AVERAGE_ALPHA, p_calibration->k_ced_object_heading_exp_moving_average_alpha, CED_MAX_K_CED_OBJECT_HEADING_EXP_MOVING_AVERAGE_ALPHA);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_HEADING_PREDICTED_WEIGHT, p_calibration->k_ced_object_heading_predicted_weight, CED_MAX_K_CED_OBJECT_HEADING_PREDICTED_WEIGHT);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_LAT_VEL_MAX, p_calibration->k_ced_object_lat_vel_max, CED_MAX_K_CED_OBJECT_LAT_VEL_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_LONG_VEL_MIN, p_calibration->k_ced_object_long_vel_min, CED_MAX_K_CED_OBJECT_LONG_VEL_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_LONG_VEL_REL_MAX, p_calibration->k_ced_object_long_vel_rel_max, CED_MAX_K_CED_OBJECT_LONG_VEL_REL_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_LONG_VEL_REL_MIN, p_calibration->k_ced_object_long_vel_rel_min, CED_MAX_K_CED_OBJECT_LONG_VEL_REL_MIN);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_MAX_WIDTH_INCREASE_FACTOR_WITH_PATH_MATCH, p_calibration->k_ced_object_max_width_increase_factor_with_path_match, CED_MAX_K_CED_OBJECT_MAX_WIDTH_INCREASE_FACTOR_WITH_PATH_MATCH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_MAX_WIDTH_INCREASE_FACTOR_WITHOUT_PATH_MATCH, p_calibration->k_ced_object_max_width_increase_factor_without_path_match, CED_MAX_K_CED_OBJECT_MAX_WIDTH_INCREASE_FACTOR_WITHOUT_PATH_MATCH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_MIN_DIST_TO_CRASH_LINE_FOR_PATH_MATCH, p_calibration->k_ced_object_min_dist_to_crash_line_for_path_match, CED_MAX_K_CED_OBJECT_MIN_DIST_TO_CRASH_LINE_FOR_PATH_MATCH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_PREDICTED_MAX_WIDTH_SLOPE_OFFSET, p_calibration->k_ced_object_predicted_max_width_slope_offset, CED_MAX_K_CED_OBJECT_PREDICTED_MAX_WIDTH_SLOPE_OFFSET);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_PREDICTED_MAX_WIDTH_SLOPE_REDUCE_FACTOR, p_calibration->k_ced_object_predicted_max_width_slope_reduce_factor, CED_MAX_K_CED_OBJECT_PREDICTED_MAX_WIDTH_SLOPE_REDUCE_FACTOR);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_VEL_MAX, p_calibration->k_ced_object_vel_max, CED_MAX_K_CED_OBJECT_VEL_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_WIDTH_SAFETY_MARGIN_FOR_ACTIVE_ALERT, p_calibration->k_ced_object_width_safety_margin_for_active_alert, CED_MAX_K_CED_OBJECT_WIDTH_SAFETY_MARGIN_FOR_ACTIVE_ALERT);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OBJECT_WIDTH_SAFETY_MARGIN_FOR_CRITICAL_PATH_MATCH, p_calibration->k_ced_object_width_safety_margin_for_critical_path_match, CED_MAX_K_CED_OBJECT_WIDTH_SAFETY_MARGIN_FOR_CRITICAL_PATH_MATCH);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_OFFSET_TO_PATH_WEIGHT, p_calibration->k_ced_offset_to_path_weight, CED_MAX_K_CED_OFFSET_TO_PATH_WEIGHT);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SECOND_WARNING_PRED_LAT_DIST_MAX, p_calibration->k_ced_second_warning_pred_lat_dist_max, CED_MAX_K_CED_SECOND_WARNING_PRED_LAT_DIST_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SLOW_OBJECTS_LONG_VEL_MAX, p_calibration->k_ced_slow_objects_long_vel_max, CED_MAX_K_CED_SLOW_OBJECTS_LONG_VEL_MAX);
+Ct_Is_Uint8_In_Bondaries(&f_ced_calibration_in_boundaries, 0, p_calibration->k_ced_suppress_alert_object_age_max, CED_MAX_K_CED_SUPPRESS_ALERT_OBJECT_AGE_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SUPPRESS_PT_HEADING_DIFF_CED_ALERT_MAX, p_calibration->k_ced_suppress_pt_heading_diff_ced_alert_max, CED_MAX_K_CED_SUPPRESS_PT_HEADING_DIFF_CED_ALERT_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_SUPPRESS_RANGE_TO_NEAREST_PATH_MAX, p_calibration->k_ced_suppress_range_to_nearest_path_max, CED_MAX_K_CED_SUPPRESS_RANGE_TO_NEAREST_PATH_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_THIRD_WARNING_PRED_LAT_DIST_MAX, p_calibration->k_ced_third_warning_pred_lat_dist_max, CED_MAX_K_CED_THIRD_WARNING_PRED_LAT_DIST_MAX);
+Ct_Is_Float_In_Bondaries(&f_ced_calibration_in_boundaries, CED_MIN_K_CED_WARNING_PRED_LAT_DIST_MAX_HISTERESIS, p_calibration->k_ced_warning_pred_lat_dist_max_histeresis, CED_MAX_K_CED_WARNING_PRED_LAT_DIST_MAX_HISTERESIS);
+
+
+   return f_ced_calibration_in_boundaries;
+}
+

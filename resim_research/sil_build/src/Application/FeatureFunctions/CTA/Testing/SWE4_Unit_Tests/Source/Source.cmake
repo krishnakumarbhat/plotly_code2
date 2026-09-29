@@ -1,0 +1,16 @@
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_FILE})
+
+target_include_directories(CTA_Unit_Test PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_criticality_level_calculation_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_conflict_zone_adapter_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_counters_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_factory_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_iface_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_object_validator_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_struct_initializer_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_braking_logic_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_core_calibration_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_public_calibration_test.cpp)
+target_sources(CTA_Unit_Test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cta_customer_calibration_test.cpp)

@@ -1,0 +1,118 @@
+/**
+ \page rotation_of_paths Rotation of paths
+ 
+At the end of the Path Management component the ego vehicle movement is considered in order to adapt the paths to it by rotation and shifting. 
+Since this submodule consists of many functionalities, the order of those functionalites is briefly described at this point and after that those functionalities are
+described in detail. For this brief description the following figures are used.
+
+@anchor rot_path_init @image html path_tracking_initial_situation.png "Example of a tracked path." width=1000px
+@anchor rot_path_ego_shift @image html path_tracking_ego_rotates_with_ego_shift_shown.png "Rotated path with given ego shift." width=1000px
+@anchor adaption_path_rot @image html path_tracking_ego_rotates_back_in_vcs_reason_for_adaption_step.png "Rotated and interpolated path in vcs-coordinate system." width=1000px
+
+At first consider the situation within the @ref rot_path_init "first figure". Here a longitudinal path is already created which is indicated by the blue diamonds. The corner diamonds which are surrounded by a circle depict
+the path point borders whose indices are also maintained within the path struct. Those borders give information about where the tracked object has moved and passed the grid point arrays granularity, which is in 
+steps of 5 m. The blue crosses instead mark the first and last given position information of the object which is provided by the tracker also called the object borders of the path.
+Now consider that the ego vehicle moved, which is indicated by shift between the gray box in the background and the ego vehicle in the @ref rot_path_ego_shift "second figure". The old coordinate system and its corresponding path points are
+shown in grey color while the new coordinate system and its corresponding path points are marked with blue diamonds and black solid lines. The ego vehicle movement is only depicted for the sake of clarification. Since the path algorithm is
+based on processing within the vcs-coordinate system, the ego vehicle stays at the origin of the gray cooridnate system. This results into the situation depicted by @ref adaption_path_rot "the last figure". The rotated points within this figure 
+correspond to the rotated grid points in vcs-coordinate system of the @ref rot_path_ego_shift "aforementioned situation". Now it can be seen, that the rotated points are not lying on the grid array anymore but instead of that on a rotated version of the grid array axis (x-axis). 
+Therefore there is a need to adapt the rotated points with help of interpolation onto the original grid array. For this process the path borders are used in order to start linear interpolation from the left side in this figure. After application of that process to each 
+path point the blue marked path of @ref adaption_path_rot "adaption step" represents the result of the overall process of path rotation. 
+The whole process is summarized as follows:
+
+@arg Calculate the ego shifting vector and rotation angle of the ego vehicle.
+@arg Shift and rotate the object path boundaries (Those are independent of path direction so no case distinction is needed here). 
+@arg Check if the path boundaries are still within the path tracking range. 
+@arg If before mentioned criteria is true the rest of the path gets rotated aswell. If not the path gets reset.
+@arg Because of the @ref adaption_path_rot "shown effects" there is a need to adapt the rotated points on the original grid array.
+
+In the following the subfunctions of the process are described separatly in more detail.
+
+@section sec_calc_ego_movement Calculation of ego shifting and rotation
+
+In order to be able to apply the above mentioned process it is necessary to determine the rotation angle as well as the shifting vector of the ego vehicle.
+For the following deviation of this calculation figure \ref{fig:calc_shift_rot} is given in which the world coordinate system depicted by 
+($y_{\mathrm{w}}$,$x_{\mathrm{w}}$) is a suitable chosen coordinate system for the subsequent considerations. 
+
+@anchor calc_shift_rot @image html rot_calc_of_shift_and_rot_values.png "Shifting of coordinate systems." width=600px
+The vcs-coordinate system depicted by (\f$y_{\mathrm{lat}}\f$,\f$x_{\mathrm{long}}\f$) describes the initial coordinate system while (\f$y_{\mathrm{tf,lat}}\f$,\f$x_{\mathrm{tf,long}}\f$) represents the same vcs-coordinate system after rotation and shifting caused 
+by ego vehicle movement.
+With the physical law for circular motion described by
+\f[
+	\omega=\frac{v}{r} \hat{=} \quad \dot{\phi}_{\mathrm{rot}} =\frac{c}{R}\\
+\f]
+and the relationship between yawrate and yaw 
+\f[
+\phi_{\mathrm{rot}}=\dot{\phi}_{\mathrm{rot}} \Delta t
+\f]
+as well as the geometric conditions given by @ref calc_shift_rot "above depicted situation" \f$\Delta x\f$ \f$\Delta y\f$ are given by 
+@anchor eq_calc_of_ego_shift_great_angles
+\f{align*}{
+\Delta x = R \sin(\phi_{\mathrm{rot}})= R \sin(\dot{\phi}_{\mathrm{rot}} \Delta t)= \frac{v}{\dot{\phi}_{\mathrm{rot}}}\sin(\dot{\phi}_{\mathrm{rot}} \Delta t) \\
+\Delta y = R - R' = R - R\cos(\phi_{rot}) = \frac{v}{\dot{\phi}}\cdot (1 - \cos(\dot{\phi} \Delta t))
+\f}
+However if the angle reaches small values the @ref eq_calc_of_ego_shift_great_angles "calculation with help of the radius" of the circular motion may be ill conditioned.
+For this reason a taylor series in the well known form of
+\f[
+\sum_{n=0}^{\infty} \frac{1}{n!}\dfrac{\partial^{n}}{\partial x^{n}}f(x)(x-x_{0})^{n}\bigg|_{x=x_0} \label{eq:taylor_series}
+\f]
+is applied for an operating point of \f$x_0=0\f$. The application of the taylor series to @ref eq_calc_of_ego_shift_great_angles "the ego shifts" results in
+\f{align*}{
+\Delta x &= R \sin(\phi_{0}) + R \cos(\phi_{0})(\phi_{\mathrm{rot}} - \phi_{0}) - \frac{1}{2} R \sin(\phi_{0})(\phi_{\mathrm{rot}} - \phi_{0})^{2} \bigg|_{\phi_{0}=0} &=&v \Delta t \\
+\Delta y &= R - R\cos({\phi_{0}})+ R\sin({\phi_{0}})\phi_{\mathrm{rot}} +\frac{1}{2}R\cos({\phi_{0}})(\phi_{\mathrm{rot}}-\phi_{0})^{2} \bigg|_{\phi_{0}=0} &=& \frac{1}{2}v \dot{\phi}_{\mathrm{rot}} \Delta t^2. 
+\f}
+This procedure is implemented @ref fcn_determine_ego_shifting_vector "here".
+
+@section rot_of_bounds Rotation of boundaries
+
+The transformation and shift is given by 
+@anchor eq_two_dim_rot 
+\f[
+\label{eq:two_D_rotation}
+\left[ \begin{array}{c}y_{\mathrm{tf,lat}} \\ x_{\mathrm{tf,long}} \end{array}\right]=
+\begin{bmatrix}\cos{\phi_{\mathrm{rot}}}&-\sin{\phi_{\mathrm{rot}}}\\ \sin{\phi_{\mathrm{rot}}}&\cos{\phi_{\mathrm{rot}}}\end{bmatrix} \cdot \left[\begin{array}{c} y_{\mathrm{lat}} \\x_{\mathrm{long}} \end{array} \right].
+\f]
+This displays the standard two dimensional rotation matrix multiplication. For clearance the y and x component from the vcs-coordinate system are noted with 
+\f$y_{\mathrm{lat}}\f$ and \f$x_{\mathrm{long}}\f$ while the transformed quantities are indicated with \f$y_{\mathrm{tf,lat}}\f$ and \f$x_{\mathrm{tf,long}}\f$.
+As already mentioned the boundaries are independent of the path direction. However since the calculation of the ego shifting vector and rotation always occures respective
+to the previous cycle the path boundaries are not allowed to be rotated if they are additionally updated in the current cycle.
+This case distinction is also handled here and can be summarized as follows.
+
+@arg If both path borders are updated in the current cycle (set by PATH\_BOTH\_BORDERS\_NEW), then rotation is not allowed
+@arg If the first path border is updated (set by PATH\_BORDER\_NEW\_FIRST), then this path border shall not be rotated.
+@arg If the last path border is updated (set by PATH\_BORDER\_NEW\_LAST), then this path border shall not be rotated.
+@arg If none of the path borders are updated (e.g. when object is already unassigned from path or if object is coasting in the current cycle, both indicated by PATH\_BORDER\_POINTS\_MATURE), then both borders shall be rotated.
+
+The rotated path borders play an important role for the adaption function, since the outer path points are interpolated with one of the path borders and with
+the transformed path vector (consisting of path point and grid component).
+
+
+@section rot_of_path_points Rotation of path points
+Within the transformation of the path points the main functionality of @ref eq_two_dim_rot "already mentioned rotation" is used. The only difference of this compared to the case
+in @ref rot_of_bounds "the above section" lies within the way how the longitudinal and lateral component are set before and after the call. If the path is longitudinal
+oriented \f$x_{\mathrm{long}}\f$ is defined by the grid values and \f$y_{\mathrm{lat}}\f$ by the path points, whereas for lateral paths it is defined conversely. 
+Since the path direction gets calculated the first time when the minimum length of two path points is reached, there is also an approximation of the path direction 
+for paths with one point. This is reached by comparing the differences of longitudinal as well as lateral path border components. Thus if the longitudinal
+difference is higher than the lateral, the respective path is considered as longitudinal path. This approximation is only used if the path direction is set to none.
+Similar to the update of the path borders there is also a need for case distinctions when a path point value is updated. Therefore the discrete path borders, described by
+first\_p and last\_p are used and adapted in a temporary border struct. This case distinction can be summarized as follows:
+
+
+@arg If the path is extending by object moving against the vcs coordinate system in the current cycle (set by PATH\_POINT\_NEW\_FIRST), 
+   then this point is exluded from the rotation process by adaption of the temporary borders.
+@arg If the path is extending by object moving aligned with the vcs coordinate system in the current cycle (set by PATH\_POINT\_NEW\_LAST), 
+   then this point is exluded from the rotation process by adaption of the temporary borders.
+@arg If no update occured in the current cycle for the considered path (indicated by PATH\_POINT\_NEW\_MATURE), then every path point unequal to the
+   default path point value gets rotated.
+
+After the rotation of path points and grid values there is a need to adapt those two dimensional vectors to the original local vcs-coordinate system grid array, which 
+is considered in the following subsection.
+
+@section adapt_on_grid Adaption of transformed points onto the original grid array
+Additionally to the interpolation functionality of the above shown @ref adaption_path_rot "adaption function" there is a functionality which is provides checking if the path has shrunk or extended due to 
+rotation or shifting. 
+Lets consider that the left blue cross, declared as the left path object border, within the @ref adaption_path_rot "figure" exceeds the left discrete path border, marked by the circled blue diamond, to the right.
+If that case occures, the path will be reduced by one since the the path object border is now to the right side of the discrete path border. This is done since the recorded path would not exist out of the shifted bounds. 
+The opposite case is also considered. Just consider that the before mentioned situation gets reversed. Then the path is extended again to the left before the rest of the path gets adapted onto the original grid array.
+
+*/

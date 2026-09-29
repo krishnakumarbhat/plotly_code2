@@ -1,0 +1,51 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The initial conditions of Ego are set to: [Start-Speed: 0 kph, Start-Heading: 0 deg].
+% Add a stationary section to Ego with: Duration: 30 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(0, 0);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+
+
+%% BMW SP25 specific input signals
+object_1.add_section_signal_register('speed_kph', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('speed_kph', 0);
+object_1.add_section_signal_register('vehicle_driving_direction', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('vehicle_driving_direction', 1);
+object_1.add_section_signal_register('vehicle_condition', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('vehicle_condition', 10);
+
+%% Define trajectories of the objects
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_stationary_section(30, section_generic_properties);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);
+scenario.set_polarion_info('CSCSA-47237', 'SF-2125');
+scenario.set_test_type('negative');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);

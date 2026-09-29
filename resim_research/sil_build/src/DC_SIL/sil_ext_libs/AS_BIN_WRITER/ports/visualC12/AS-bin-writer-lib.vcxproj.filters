@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{b363b7f3-99c5-4edb-bed8-2d28c5d31e96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{40ed3659-d98e-43d8-8aea-0e76f705403a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\lib\birary_writer_lib_plainC.h" />
+    <ClInclude Include="..\..\lib\binary_writer_lib.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\AS_bin_writer_wrapper.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lib\AS_bin_writer_wrapper_plainC.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\lib\binary_writer_lib.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\AS_bin_writer_wrapper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

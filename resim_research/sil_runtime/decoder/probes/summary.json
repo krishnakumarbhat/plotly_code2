@@ -1,0 +1,34 @@
+[
+  {
+    "key": "DEBG",
+    "canoe": false,
+    "exit": 0,
+    "stdout": "\r\n\r\t\t\t**************************************************************** \r\n\r\t\t\t%                                                              %\r\n\r\t\t\t%\t                  MDF_DECODER\t                       %\r\n\r\t\t\t%                                                              %\r\n\r\t\t\t%    APTIV CORPORATION PROPRIETARY,  Copyright \u00a9 2020, 2021    %\r\n\r\t\t\t%                                                              %\r\n\r\t\t\t**************************************************************** \r\n\r\n\r[INFO]:MDF_DECODER (Version)21.29.03.03\r\n\r\n\r\n-------------------------------------------------------------------------------------\r\n[INFO]:Conversion completed...\r\n\r\n",
+    "stderr": "",
+    "files": [
+      [
+        "in\\CEER_S12_20260701_151836_0003_b05_r00100010.mf4",
+        47140216
+      ]
+    ],
+    "log": "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\resim_research\\sil_runtime\\decoder\\probes\\DEBG_no_output\\decoder.log"
+  },
+  {
+    "key": "SRR_DEBUG",
+    "canoe": true,
+    "exit": 0,
+    "stdout": "\r\n\r\t\t\t**************************************************************** \r\n\r\t\t\t%                                                              %\r\n\r\t\t\t%\t                  MDF_DECODER\t                       %\r\n\r\t\t\t%                                                              %\r\n\r\t\t\t%    APTIV CORPORATION PROPRIETARY,  Copyright \u00a9 2020, 2021    %\r\n\r\t\t\t%                                                              %\r\n\r\t\t\t**************************************************************** \r\n\r\n\r[INFO]:MDF_DECODER (Version)21.29.03.03\r\n\r\n[INFO]:ORCAS MDF4 to CANOE OR CANAPE MDF4 conversion started...\r\n\r\n\r\n-------------------------------------------------------------------------------------\r\n\r\n\r[ERROR]: MDF library load failed...\r\n-------------------------------------------------------------------------------------\r\n[ERR]:Conversion failed...\r\n\r\n",
+    "stderr": "",
+    "files": [
+      [
+        "in\\CEER_S12_20260701_151836_0003_b05_r00100010.mf4",
+        47140216
+      ],
+      [
+        "in\\CEER_S12_20260701_151836_0003_b05_r00100010.mf4.csv",
+        0
+      ]
+    ],
+    "log": "C:\\Users\\ouymc2\\Desktop\\plotly_code2\\resim_research\\sil_runtime\\decoder\\probes\\SRR_DEBUG_canoe\\decoder.log"
+  }
+]

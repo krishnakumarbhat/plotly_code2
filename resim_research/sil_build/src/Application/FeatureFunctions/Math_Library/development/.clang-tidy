@@ -1,0 +1,61 @@
+Checks: '
+  *,
+  -readability-magic-numbers,
+  -clang-analyzer-alpha.*,
+  -abseil*,
+  -android*,
+  -boost*,
+  -cert*,
+  -darwin*,
+  -fuchsia*,
+  -google*,
+  -hicpp*,
+  -linuxkernel*,
+  -llvm*,
+  -llvmlibc*,
+  -objc*,
+  -openmp*,
+  -zircon*,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -readability-uppercase-literal-suffix,
+  -hicpp-uppercase-literal-suffix,
+  readability-identifier-naming,
+  -readability-avoid-const-params-in-decls,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-special-member-functions,
+  -cppcoreguidelines-avoid-goto,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg,
+  -modernize-use-trailing-return-type,
+  -modernize-loop-convert,
+  -altera-unroll-loops,
+  -altera-id-dependent-backward-branch,
+  -altera-struct-pack-align,
+  -modernize-use-using,
+  -misc-non-private-member-variables-in-classes,
+  -readability-identifier-length,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -modernize-deprecated-headers,
+  -cppcoreguidelines-macro-usage,
+  -readability-suspicious-call-argument
+  '
+HeaderFilterRegex: 'unit_test/'
+CheckOptions:
+  - { key: readability-identifier-naming.VariableCase,  value: lower_case }
+  - { key: readability-identifier-naming.FunctionCase,  value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.ParameterCase, value: lower_case }
+  - { key: readability-identifier-naming.LocalVariableCase, value: lower_case }
+  - { key: readability-identifier-naming.GlobalFunctionCase,  value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.StructCase,    value: Camel_Snake_Case }
+  - { key: readability-identifier-naming.ClassCase,    value: CamelCase }
+  - { key: readability-identifier-naming.MemberCase,    value: lower_case }
+  - { key: readability-identifier-naming.MemberPrefix,    value: m_ }
+  - { key: readability-identifier-naming.EnumConstantCase, value: UPPER_CASE }
+  - { key: readability-identifier-naming.PointerParameterCase, value: lower_case }
+  - { key: readability-identifier-naming.LocalPointerCase, value: lower_case }
+  - { key: readability-identifier-naming.LocalConstantPointerCase, value: lower_case }
+  - { key: readability-identifier-naming.ConstantPointerParameterCase, value: lower_case }

@@ -1,0 +1,12 @@
+/*****************************************************************************
+* COPYRIGHT, 2021, Aptiv All Rights reserved
+*****************************************************************************/
+
+ltb_calibration_t.o (.bss)
+ltb_post_run.o (.bss)
+ltb_pre_run.o (.bss)
+ltb.o (.bss)
+ltb_create_zones.o (.bss)
+ltb_debug_interface.o (.bss)
+ltb_debug_writer.o (.bss)
+ltb_iface.o (.bss)

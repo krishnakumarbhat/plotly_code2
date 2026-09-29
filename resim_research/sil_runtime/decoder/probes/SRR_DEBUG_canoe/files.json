@@ -1,0 +1,10 @@
+{
+  "reprocessingInputFileStreams": [
+    {
+      "key": "SRR_DEBUG",
+      "files": [
+        "C:/Users/ouymc2/Desktop/plotly_code2/resim_research/sil_runtime/decoder/probes/SRR_DEBUG_canoe/in/CEER_S12_20260701_151836_0003_b05_r00100010.mf4"
+      ]
+    }
+  ]
+}

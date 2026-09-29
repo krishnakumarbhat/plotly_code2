@@ -1,0 +1,13 @@
+/**
+ \page algorithm_description Algorithm descriptions
+ Some general information and details about algorithms used in the Path Tracking feature .
+ 
+ \subpage general_information General information about the Path Tracking feature.
+ 
+ \subpage path_management Management of created paths
+ 
+ \subpage rotation_of_paths Rotation of paths within path Tracking
+ 
+ \subpage matching_of_objects_to_paths Matching of objects to path
+ 
+ */

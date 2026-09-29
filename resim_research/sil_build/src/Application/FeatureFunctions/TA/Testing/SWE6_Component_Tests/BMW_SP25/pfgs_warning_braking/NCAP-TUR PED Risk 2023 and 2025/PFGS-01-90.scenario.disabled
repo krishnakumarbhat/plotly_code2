@@ -1,0 +1,69 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_9
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target'. Internal name is 'object_2'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of 'object_2' are set to [Width: 1 m, Length: 1 m, PivotPoint: -0.5 m].
+% The initial conditions of Ego are set to: [Start-Speed: 5 kph, Start-Heading: 0 deg].
+% The initial conditions of Target are set to: [Start-Speed: 0 kph, Start-Heading: 0 deg].
+% Shift the scenario of Target so that it has a collision with the Ego at following Collision-Points:
+% -> Ego-Collision-Point: FRONT_RIGHT (Lateral offset: 75%, Longitudinal offset: 0%).
+% -> Target-Collision-Point: FRONT_LEFT (Lateral offset: 0%, Longitudinal offset: 50%).
+% Add a straight section to Ego with: End-Speed: 5 kph, Distance: 2 m, Precision: 5, Tracker-data( Track-Status: MATURE ).
+% Add a circle section to Ego with: Speed: 5 kph, Radius: 7.5 m, End-Heading: 90 deg, Precision: 5, Tracker-data( Track-Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 3 kph, Distance: 1 m, Precision: 5, Tracker-data( Track-Status: MATURE  Object-Class: PEDESTRIAN ).
+% Add a straight section to Target with: End-Speed: 3 kph, Distance: 10 m, Precision: 5, Tracker-data( Track-Status: MATURE  Object-Class: PEDESTRIAN ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+object_2 = class_scenario_properties(enum_object_types.TARGET, 'Target');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+object_2.set_dimension(1, 1, -0.5);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(5, 0);
+object_2.set_starting_values(0, 0);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+object_2.set_egos_collision_point(enum_collision_point.FRONT_RIGHT, 75, 0);
+object_2.set_targets_collision_point(enum_collision_point.FRONT_LEFT, 0, 50);
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+
+%% Define trajectories of the objects
+tracker_data = class_scenario_tracker_data();
+tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_straight_section(5, 2, 5, tracker_data);
+
+tracker_data = class_scenario_tracker_data();
+tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_circle_section(5, 7.5, 90, 5, tracker_data);
+
+tracker_data = class_scenario_tracker_data();
+tracker_data.status = enum_track_status_T.MATURE;
+tracker_data.object_class = enum_track_object_class.PEDESTRIAN;
+object_2.add_straight_section(3, 1, 5, tracker_data);
+
+tracker_data = class_scenario_tracker_data();
+tracker_data.status = enum_track_status_T.MATURE;
+tracker_data.object_class = enum_track_object_class.PEDESTRIAN;
+object_2.add_straight_section(3, 10, 5, tracker_data);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_9);
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);
+scenario.add_object(object_2);

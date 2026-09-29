@@ -1,0 +1,70 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target'. Internal name is 'object_2'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target are set to the PEDESTRIAN-Preset: [Width: 0.4 m, Length: 0.4 m, PivotPoint: -0.2 m].
+% The initial conditions of Ego are set to: [Start-Speed: 10 kph, Start-Heading: 0 deg].
+% The initial conditions of Target are set to: [Start-Speed: 8 kph, Start-Heading: 90 deg].
+% Shift the scenario of Target so that it has a collision with the Ego at following Collision-Points:
+% -> Ego-Collision-Point: PIVOT_POINT (Lateral offset: 0%, Longitudinal offset: 0%).
+% -> Target-Collision-Point: PIVOT_POINT (Lateral offset: 0%, Longitudinal offset: 0%).
+% The end position of Target is shifted by Lateral-Offset: 2 m, Longitudinal-Offset: 3 mHeading: 0°.
+% Add a stationary section to Ego with: Duration: 10 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Register signal Target with: Name: object_class, Interpolation: enum_interpolation.PREVIOUS).
+% Change signal value Target: Name: object_class, Value: 1).
+% Add a straight section to Target with: End-Speed: 10 kph, Distance: 15 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+object_2 = class_scenario_properties(enum_object_types.TARGET, 'Target');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+object_2.set_dimension(enum_object_specific_variants.PEDESTRIAN);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(10, 0);
+object_2.set_starting_values(8, 90);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+object_2.set_egos_collision_point(enum_collision_point.PIVOT_POINT, 0, 0);
+object_2.set_targets_collision_point(enum_collision_point.PIVOT_POINT, 0, 0);
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+object_2.set_end_pos_offsets(2, 3, 0);
+
+%% Define trajectories of the objects
+
+object_1.add_section_signal_register('k_cta_pedestrian_min_speed', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('k_cta_pedestrian_min_speed', 3.0);
+object_1.add_section_signal_register('k_cta_pedestrian_min_size', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('k_cta_pedestrian_min_size', 0.5);
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_stationary_section(10, section_generic_properties);
+
+object_2.add_section_signal_register('object_class', enum_interpolation.PREVIOUS);
+object_2.add_section_signal_change('object_class', 1);
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(10, 15, section_generic_properties);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);
+scenario.set_polarion_info('CSCSA-146107', 'CSCSA-145887');
+scenario.set_test_type('Simulation');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);
+scenario.add_object(object_2);

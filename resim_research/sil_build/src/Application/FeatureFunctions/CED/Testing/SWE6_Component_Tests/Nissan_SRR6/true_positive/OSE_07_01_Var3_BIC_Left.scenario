@@ -1,0 +1,66 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target_1'. Internal name is 'object_2'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target_1 are set to the BICYCLE-Preset: [Width: 0.5 m, Length: 1.5 m, PivotPoint: -1 m].
+% The initial conditions of Ego are set to: [Start-Speed: 0 kph, Start-Heading: 0 deg].
+% The initial conditions of Target_1 are set to: [Start-Speed: 10 kph, Start-Heading: 15 deg].
+% Shift the scenario of Target_1 so that it has a collision with the Ego at following Collision-Points:
+% -> Ego-Collision-Point: FRONT_LEFT (Lateral offset: 0%, Longitudinal offset: 0%).
+% -> Target-Collision-Point: FRONT_RIGHT (Lateral offset: 0%, Longitudinal offset: 0%).
+% The path of Target_1 is shifted so that Target at mid of section XY maps to Ego.
+% The position of Target_1 at the mid of selected Section for mapping is shifted by Lateral-Offset: -1 m, Longitudinal-Offset: 0 m, Heading: 0°.
+% Add a stationary section to Ego with: Duration: 10 s, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a circle section to Target_1 with: Speed: 10 kph, Radius: 75 m, End-Heading: -30 deg, Section-Generic-Properties( Tracker-Data.Status: MATURE  Tracker-Data.Object-Class: TWOWHEEL  Precision: 2  Section-Marker: true ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+object_2 = class_scenario_properties(enum_object_types.TARGET, 'Target_1');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+object_2.set_dimension(enum_object_specific_variants.BICYCLE);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(0, 0);
+object_2.set_starting_values(10, 15);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+object_2.set_egos_collision_point(enum_collision_point.FRONT_LEFT, 0, 0);
+object_2.set_targets_collision_point(enum_collision_point.FRONT_RIGHT, 0, 0);
+object_2.set_alignment_to_sec_pos_mid();
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+object_2.set_sec_pos_mid_offsets(-1, 0, 0);
+
+%% Define trajectories of the objects
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_stationary_section(10, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+section_generic_properties.tracker_data.object_class = enum_track_object_class.TWOWHEEL;
+section_generic_properties.precision = 2;
+section_generic_properties.section_marker = true;
+object_2.add_circle_section(10, 75, -30, section_generic_properties);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);
+scenario.set_polarion_info('CSCSA-46415', '');
+scenario.set_test_type('positive');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);
+scenario.add_object(object_2);

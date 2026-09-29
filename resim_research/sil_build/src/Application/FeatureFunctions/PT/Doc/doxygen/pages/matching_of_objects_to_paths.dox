@@ -1,0 +1,41 @@
+/**
+ \page matching_of_objects_to_paths Matching of objects to path
+Within the object to path matching the best matching path needs to be extracted first. For this purpose a level of better matching is introduced which is initialized with zero first for each new considered local path.
+For this two different criteria are defined one for the current best matching path and one for the path which is currently taken into account as candidate.
+In order to reach a level of better matching greater than one several conditions are tested which are based on the ego to path edge index distance as well as the object to path edge index distance. 
+The ego to path edge index distance is described as the distance between the mid grid point index and the relevant discrete path border depending on the path direction. For longitudinal forward and lateral right paths 
+this relevant point is depicted by last\_p for the other directions this is represented by first\_p of the path struct. The object to path edge distance is represented by the distance between the closest grid point index to the left of the object
+and first\_p for the longitudinal forward and lateral right case and last\_p in case of the other path directions.
+The conditions for a level of better matching unequal to zero are summarized as follows:
+
+@arg If the local ego to path edge distance is smaller than the global one, the level is set to 2.
+@arg If the local ego to path edge distance is equal to the global one the level can be set to 2 or 1 based on the following conditions.
+@arg If the local object to path edge distance is smaller than the global one, the level is set to 2.
+@arg If the local object to path edge distance is equal to the global one and if either the local path age is greater one or the global path age is equal to one, the level is set to 1.
+
+If and only if the level of better matching is set to a value greater than zero the following conditions will also be tested for the current path.
+After that the path heading of the current path, which is a valid candidate for a level of better matching is calculated with help of a longitudinal unit vector and the vector between two consecutive path points.
+Depending on the path direction those values may be swapped or multiplied with -1. The distance to the path is defined as the longitudinal distance between the object position and an imaginary line between to consecutive path points for lateral paths.
+More general it is the distance \f$d_{\mathrm{obj,path}}\f$ between both grid components of the detected object and the imaginary line between two consecutive path points.
+This results in
+\f{align}{
+\Delta x_{\mathrm{grid}} &= x_{\mathrm{grid,vcs}} - \mathbf{x}_{\mathrm{grid}}(p_{\mathrm{cl}}) \label{eq:long_diff}\\
+d_{\mathrm{obj,path}} &= y_{\mathrm{val,vcs}} - \mathbf{x}_{\mathrm{val}}(p_{\mathrm{cl}}) -\frac{\Delta x_{\mathrm{grid}}}{\tan(\phi{\mathrm{path}})} \label{eq:dist_obj_to_path}.
+\f}
+
+\f$\Delta x_{\mathrm{grid}}\f$ describes the difference of the grid components of the object and the grid array \f$\mathbf{x}_{\mathrm{grid}}\f$ at index \f$p_{\mathrm{cl}}\f$ which is the index of the closest grid point in relation to the targets left side.
+Within the above formula the value component of the target \f$y_{\mathrm{val,vcs}}\f$ is subtracted with the path point value of the closest point to the left vehicle side \f$\mathbf{x}_{\mathrm{val}}(p_{\mathrm{cl}})\f$. This represents the difference of the
+path point components. At the end the object to path distance is received by subtraction of the proportion of the ramp of two consecutive path points. 
+As mentioned earlier the path heading as well as the object to path distance are evaluated in several conditions before a object is allowed to be matched to a specific path.
+The difference of the path heading and the target heading is not allowed to differ too much. Depending on the targets velocity the difference of headings is allowed to be greater if the target speed exceeds a given threshold.
+If and only if the heading difference is smaller than a given threshold the following conditions are also tested.
+Another conditions which needs to be fulfilled is that the object to path distance is smaller than a given threshold. At least one more condition in order for the path to be specified as the best matching path needs to be fulfilled, which are given as follows:
+
+@arg The level of better matching needs to be 2.
+@arg The temporary object to path distance needs to be smaller than the global one.
+@arg The difference of the local and global object to path distance does not exceed a given threshold and the current local path age is greater than the global one
+
+If one of these conditions is fulfilled along with the aforementioned conditions the current path will be noted as the current best matching path.
+This will be repeated until every path was considered as the local path and thus the best matching path for the current object is determined.
+ 
+ */

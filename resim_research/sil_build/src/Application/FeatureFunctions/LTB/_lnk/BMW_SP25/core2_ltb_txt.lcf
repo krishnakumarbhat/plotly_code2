@@ -1,0 +1,12 @@
+/*****************************************************************************
+* COPYRIGHT, 2021, Aptiv All Rights reserved
+*****************************************************************************/
+
+ltb_calibration_t.o (.text_vle)
+ltb_post_run.o (.text_vle)
+ltb_pre_run.o (.text_vle)
+ltb.o (.text_vle)
+ltb_create_zones.o (.text_vle)
+ltb_debug_interface.o (.text_vle)
+ltb_debug_writer.o (.text_vle)
+ltb_iface.o (.text_vle)

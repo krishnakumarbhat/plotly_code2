@@ -1,0 +1,7 @@
+% CTA True Positive check:
+testcase = class_testcase(h_suite, h_archive, enum_enable.ENABLED, [], 'CTA_true_positive_alert_right', [enum_project.FF_CORE], [enum_tags.ENV_TESTING_GROUND, enum_tags.PRIO_HIGH], enum_test_type.UNIT_TEST);
+
+operator = operator_signal_value_compare_any(testcase, 'cta_out_alert_level_active_right', enum_sensor.ARTIFICIAL_LOGFILE);
+operator.input_signal = class_input_signal(operator, enum_bin.CTA, 'cta_out_alert_level_right');
+operator.input_value = class_input_value(operator, enum_constant.CUSTOM_VALUE, 1);
+operator.input_compare = class_input_compare(operator, enum_compare.GREATER_THAN_OR_EQUALS);

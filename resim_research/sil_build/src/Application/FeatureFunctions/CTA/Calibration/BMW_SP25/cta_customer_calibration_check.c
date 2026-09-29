@@ -1,0 +1,44 @@
+/**
+* @file cta_customer_calibration_check.c
+* @author SFL (Side Feature Logic) scrum team
+* @brief Provides implementation of boundary checks for the calibrations defined in cta_cal.xml.
+* This file is auto-generated with SFL calibration tool v5.0.3 and shall not be edited manually.
+*
+* @copyright Copyright (C) 2025 Aptiv. All rights reserved.
+*/
+
+/**************************************************
+ * Includes
+ **************************************************/
+
+#include "cta_customer_calibration_check.h" // IWYU pragma: keep
+#include "cta_customer_calibration.h" // IWYU pragma: keep
+#include "ct_boundaries_check_function_helpers.h" // IWYU pragma: keep
+#include "ct_calibration_header_t.h" // IWYU pragma: keep
+
+/**************************************************
+ * Global function definition
+ **************************************************/
+
+/* coverity[HIS_CCM][High CCM in this auto-generated function is expected] */
+/* coverity[misra_c_2012_rule_8_7_violation][Interface function must be defined with external linkage] */
+boolean_T Cta_Customer_Cal_In_Boundary(const Cta_Customer_Calibration_T *p_calibration)
+{
+   boolean_T f_cta_calibration_in_boundaries = (boolean_T) 1;
+   
+   CAN_BE_UNUSED(p_calibration);
+
+   /**< Check boundaries of all calibrations. In case of multidimensional arrays for loops are shared across
+   calibrations with the same dimension. */
+   
+   
+   /* coverity[misra_c_2012_rule_14_3_violation][The condition must be true] */
+   Ct_Is_Bool_In_Bondaries(&f_cta_calibration_in_boundaries, CTA_MIN_K_BMW_SP25_BANNER_CRITERIA_CHECK, p_calibration->k_bmw_sp25_banner_criteria_check, CTA_MAX_K_BMW_SP25_BANNER_CRITERIA_CHECK);
+Ct_Is_Float_In_Bondaries(&f_cta_calibration_in_boundaries, CTA_MIN_K_BMW_SP25_BANNER_CRITERIA_CHECK_TIME, p_calibration->k_bmw_sp25_banner_criteria_check_time, CTA_MAX_K_BMW_SP25_BANNER_CRITERIA_CHECK_TIME);
+Ct_Is_Float_In_Bondaries(&f_cta_calibration_in_boundaries, CTA_MIN_K_BMW_SP25_BANNER_TIME, p_calibration->k_bmw_sp25_banner_time, CTA_MAX_K_BMW_SP25_BANNER_TIME);
+Ct_Is_Float_In_Bondaries(&f_cta_calibration_in_boundaries, CTA_MIN_K_BMW_SP25_EGO_ABS_SPEED_MAX_HYS, p_calibration->k_bmw_sp25_ego_abs_speed_max_hys, CTA_MAX_K_BMW_SP25_EGO_ABS_SPEED_MAX_HYS);
+
+
+   return f_cta_calibration_in_boundaries;
+}
+

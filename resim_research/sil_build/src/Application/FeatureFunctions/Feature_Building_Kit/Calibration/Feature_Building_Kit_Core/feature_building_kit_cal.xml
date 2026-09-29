@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CALIBRATION_GENERIC_INFO>
+    <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+    <CAL_SIZE_MACRO>FBK_CAL_SIZE</CAL_SIZE_MACRO>
+    <COMPONENT_NAME>Fbk</COMPONENT_NAME>	
+    <CUSTOMERS>[Generic BMW_SP25 Honda_SRR6 STLA_Thunder Rivian_SRR6]</CUSTOMERS>
+    <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+    <FILE_NAME>fbk_calibration</FILE_NAME>
+    <STRUCTURE_OBJ_NAME>Fbk_Cal</STRUCTURE_OBJ_NAME>
+  </CALIBRATION_GENERIC_INFO>
+  <CALIBRATION_HEADER>
+    <record>
+      <NAME>version</NAME>
+      <VALUE>1</VALUE>
+    </record>
+  </CALIBRATION_HEADER>
+  <CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_fbk_host_trail_max_recording_speed</NAME>
+      <DESCRIPTION>If host speed is above threshold, do no longer create host trail.</DESCRIPTION>
+      <Comp>FBK</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>30.0f</RANGE_MAX>
+      <DEFAULT_VALUE>15.0f</DEFAULT_VALUE>
+    </record> 
+    <record>
+      <NAME>k_fbk_host_trail_dist_separation</NAME>
+      <DESCRIPTION>If the ego vehicle moved farther than the given distance, then create new host trail point.</DESCRIPTION>
+      <Comp>FBK</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+    </record> 
+    <record>
+      <NAME>k_fbk_host_trail_heading_separation</NAME>
+      <DESCRIPTION>If the ego vehicle heading changed more than the given distance, then create new host trail point.</DESCRIPTION>
+      <Comp>FBK</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.141f</RANGE_MAX>
+      <DEFAULT_VALUE>0.2617f</DEFAULT_VALUE>
+    </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

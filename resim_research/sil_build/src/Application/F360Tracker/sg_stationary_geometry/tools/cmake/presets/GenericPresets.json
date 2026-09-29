@@ -1,0 +1,52 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+            {
+            "name": "generic_platform",
+            "displayName": "Generic platform setup",
+            "description": "Default build to be used as initial one for any other preset",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": 
+            {
+                "RSPP_VARIANT": "D",
+                "F360_TRACKER_VARIANT": "D"
+            }    
+        },
+        {
+            "name": "generic_development",
+            "displayName": "Generic development setup",
+            "description": "Default build to be used by all other development configurations",
+            "inherits": "generic_platform",
+            "cacheVariables": 
+            {
+                "SG_MOCK_EXTERNAL_INCLUDES": "ON"
+            }    
+        },
+        {
+            "name": "generic_release",
+            "displayName": "Generic release setup",
+            "description": "Default build to be used by all other release configurations",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "inherits": "generic_platform",
+            "cacheVariables": {
+                "SG_MOCK_EXTERNAL_INCLUDES": "ON",
+                "CMAKE_CXX_FLAGS": "-O2"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "generic_release",
+            "configurePreset": "generic_release",
+            "displayName": "Generic release | system compiler | RSPP variant default",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        }
+    ]
+}

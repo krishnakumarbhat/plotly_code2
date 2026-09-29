@@ -1,0 +1,28 @@
+{
+	"reprocessingInputFileStreams": [
+		{
+			"key": "BN_CALIFR",
+			"files": [
+				"C:\\FMU\\Core_RESIM_DC_Emb_Library\\CEER_S13_20251106_134103_0001_b05.MF4"
+			]
+		},
+		{
+			"key": "BN_FASETH",
+			"files": [
+				"C:\\FMU\\Core_RESIM_DC_Emb_Library\\CEER_S13_20251106_134103_0001_b05.MF4"
+			]
+		},
+		{
+			"key": "SRR_DEBUG",
+			"files": [
+				"C:\\FMU\\Core_RESIM_DC_Emb_Library\\CEER_S13_20251106_134103_0001_b05.MF4"
+			]
+		},
+		{
+			"key": "SRR_REFERENCE",
+			"files": [
+				"C:\\FMU\\Core_RESIM_DC_Emb_Library\\CEER_S13_20251106_134103_0001_g03.MF4"
+			]
+		}
+	]
+}

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+  <NAME>k_cta_enable_modes</NAME>
+    <!-- Only use RCTA. -->
+    <VALUE>[1 0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ttc_criticality_level</NAME>
+    <!-- c_t_RCP_TTC: 3 sec  -->
+    <VALUE>[[3.5 3.5][3.5 3.5]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ego_abs_speed_max</NAME>
+    <VALUE>3.05f</VALUE>
+    <!-- c_RCP_MaxSubjectSpeed: 11 kph -->
+  </record>
+  <record>
+    <NAME>k_cta_min_speed</NAME>
+    <VALUE>2.04f</VALUE>
+    <!-- c_RCP_MinTargetSpeed: 8.2 kph -->
+  </record>
+  <record>
+    <NAME>k_cta_max_speed</NAME>
+    <VALUE>16.66f</VALUE>
+    <!-- c_RCP_MaxTargetSpeed: 60 kph -->
+  </record>
+  <record>
+    <NAME>k_cta_heading_range</NAME>
+    <VALUE>[0.6f 2.38f]</VALUE>
+    <!-- c_RCP_MinHeading: 40 deg | c_RCP_MaxHeading: 140 deg -->
+  </record>
+  <record>
+    <NAME>k_cta_enable_ctb</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <!-- [c_RCP_MinSubjectSpeed: 2 kph] and [c_t_RCP_TTC_Disable: 7 sec] currently missing in Core implementation -->
+  <record>
+    <NAME>k_cta_max_long_point_criticality_level</NAME>
+    <VALUE>[[0.0 0.0][0.0 0.0]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_long_point_criticality_level</NAME>
+    <VALUE>[[6.2 3.0][0.0 0.0]]</VALUE>
+  </record>  
+  <record>
+    <NAME>k_cta_speed_criticality_level</NAME>
+    <VALUE>[[0.0 7.0][0.0 7.0]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_length_fov</NAME>
+    <VALUE>50.f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_angles_zone_definition</NAME>
+    <VALUE>[0.9f 0.9f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_steering_angle</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_obj_heading</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_cycle_count_hold_true_warning</NAME>
+    <VALUE>4</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_cycle_count_suppress_true_warning</NAME>
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_pedestrian_min_size</NAME>
+    <VALUE>0.3</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_pedestrian_min_speed</NAME>
+    <VALUE>3.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_2wheel_min_size</NAME>
+    <VALUE>1.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_2wheel_min_speed</NAME>
+    <VALUE>3.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_apply_heading_compensation_on_intersection_point</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_stop_alert_ttp</NAME>
+    <VALUE>0.05f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_stop_mode_ttp</NAME>
+    <VALUE>1</VALUE>
+  </record>  
+  <record>
+    <NAME>k_cta_rel_warning_hysteresis</NAME>
+    <VALUE>0.25</VALUE>
+  </record>
+  <CUSTOMER_SPECIFIC_CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_stla_crit_zone_G_E_line</NAME>
+      <DESCRIPTION>Distance between STLA CTA critical zones borders G(L) and E(J) - outer lateral borders </DESCRIPTION>
+      <Comp>CTA</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>3.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_stla_crit_zone_D_C_line</NAME>
+      <DESCRIPTION>Distance between STLA CTA critical zones borders D and C - driver longitudinal position </DESCRIPTION>
+      <Comp>CTA</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.35f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_stla_crit_zone_N_Q_line</NAME>
+      <DESCRIPTION>Distance between STLA CTA critical zones borders N and Q  - first level behind rear bumper</DESCRIPTION>
+      <Comp>CTA</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>6.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_stla_crit_zone_Q_QH_line</NAME>
+      <DESCRIPTION>Distance between STLA CTA critical zones borders QH and Q   - second level behind rear bumper</DESCRIPTION>
+      <Comp>CTA</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+  </CUSTOMER_SPECIFIC_CALIBRATION_COMPONENT>
+</data-set>

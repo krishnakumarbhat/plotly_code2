@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_cta_enable_modes</NAME>
+    <!-- Only use RCTA. -->
+    <VALUE>[1 0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_sensor_fov_border</NAME>
+    <!-- Beyond that threshold additional suppression cylces shall be applied for RCTA. -->
+    <VALUE>[0.890118 2.46091]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_long_point_criticality_level</NAME>
+    <!-- Minimum Offset of the (closest) target's point of intersection with the x-axis for RCTA warning level. FCTA stubbed with some other values here. -->
+    <VALUE>[[5.0 5.0][-0.5 -0.5]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_long_point_criticality_level</NAME>
+    <!-- Maximum Offset of the (closest) target's point of intersection with the x-axis for RCTA warning level. FCTA stubbed with some other values here. -->
+    <VALUE>[[-0.5 -0.5][5.0 5.0]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ttc_criticality_level</NAME>
+    <!-- Maximum Offset of the target's TTC for the second warning level. RCTA - first dimensions. FCTA second dimensions stubbed with equal values here. -->
+    <VALUE>[[3.15 3.15][3.15 3.15]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_stop_alert_ttc</NAME>
+    <!--  Time to stop a triggered alert. \Requirements \reqtrace{SDD-CTA-k_cta_stop_alert_ttc}{CFE-SRD-CTA-486-1, CFE-SRD-CTA-492-1} -->
+    <VALUE>0.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_speed</NAME>
+    <!-- Maximum speed of object to be a valid candidate for CTA.
+        \Requirements \reqtrace{SDD-CTA-k_cta_max_speed}{CFE-SRD-CTA-1075-1, CFE-SRD-CTA-1115-1} -->
+    <!-- RENAULT:?? / NISSAN:70 / MMC:70  -->
+    <VALUE>100</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_calc_ttc_ego_side_enabled</NAME>
+    <!-- Switch to turn on or off calculate TTC with reference to the ego side instead of x-axis defined in VCS -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_object_min_object_age_in_cycles</NAME>
+    <!-- Flag indicating wether object age threshold is used to check cta relevance for this object. -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_heading_for_relative_velocity_calculation</NAME>
+    <!-- If flag is set to true, the relative velocity vector of an object will be calculated by making use of heading and absolute velocity of an object.
+        If it is set to false, the relative velocity provided by the tracker will be used. -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_apply_path_tracking</NAME>
+    <!-- Switch to turn on or off path tracking algorithm -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_cycles_coasted_to_ignore</NAME>
+    <!-- Defines the cycles that an object can maximal be coasted to be still considered by the algo-->
+    <VALUE>6</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_length_fov</NAME>
+    <!-- One of the parameter defining field of interest.
+        This parameter defines maximum length of that area in polar coordinate system attached to the radar position. -->
+    <!-- RENAULT:60 / NISSAN:60 / MMC:60 -->
+    <VALUE>60</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_rel_existence_probability</NAME>
+    <!-- Minimum relative existance probability -->
+    <VALUE>0.85</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_speed</NAME>
+    <!-- Minimum speed for a target to be considered.
+        \Requirements \reqtrace{SDD-CTA-k_cta_min_speed}{CFE-SRD-CTA-1077-1, CFE-SRD-CTA-1076-1} -->
+    <!-- RENAULT:1.1 / NISSAN:1.333334 / MMC:1.333334  -->
+    <VALUE>1.1111</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_lateral_approach_speed</NAME>
+    <!-- Minimum lateral speed of targets to be considered.
+        \Requirements \reqtrace{SDD-CTA-k_cta_min_lateral_approach_speed}{CFE-SRD-CTA-1080-1, CFE-SRD-CTA-1081-1} -->
+    <VALUE>0.68</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_steering_angle</NAME>
+    <!-- Switch to turn on or off steering-angle-based adaptation of the intersect lines associated with the criticality levels -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_obj_heading</NAME>
+    <!-- Switch to turn on or off object-heading-based adaptation of the intersect lines associated with the criticality levels  -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_enable_thres_crit_level_reset</NAME>
+    <!-- Flag indicating wether to reset the criticality level when an object passes a user defined threshold  -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_object_age_check_valid</NAME>
+    <!-- Minimal age of an object in cycles to be considered by the algorithm.
+        \Requirements \reqtrace{SDD-CTA-k_cta_min_object_age_check_valid}{CFE-SRD-CTA-487-1, CFE-SRD-CTA-1078-1}. -->
+    <VALUE>4</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_additional_qualification_mature_cycles</NAME>
+    <!-- Additional maturity cycles for an object to qualify for a warning level. -->
+    <VALUE>2</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_ttc_additional_mature_qualification</NAME>
+    <!-- Above this parameter additional maturity cycles are required to trigger warning level. -->
+    <VALUE>3.5</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_mature_cycles_level_qualifiction</NAME>
+    <!-- Minimum required number of consecutive cycles for an object status to be mature for activation of a criticality level. -->
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_object_age_thres</NAME>
+    <!-- Minimal age of an object in cycles used for criticality level calculation. -->
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_object_eclipse_for_level_qualification</NAME>
+    <!-- Minimum required number of consecutive cycles for an object status to be mature for activation of a criticality level. -->
+    <VALUE>0.4</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_addit_mature_cycles_outside_sensor_fov</NAME>
+    <!-- Additional suppression cycles which are applied in case that objects are moving outside a given field of view threshold. -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_host_width_sensor_fov_suppr_factor</NAME>
+    <!-- Enables user to shift the lateral component of origin for sensor FOV suppression cycle calculation. -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_age_obj_outside_sensor_fov</NAME>
+    <!-- Minimum age for objects which are declared outside of the sensor field of view. -->
+    <VALUE>10</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_heading_variance</NAME>
+    <!-- Maximum heading variance for valid objects. -->
+    <VALUE>3.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_qual_age_obj_crossing_paths</NAME>
+    <!-- minimum needed cycles of objects which are crossing the nearest path in order to be valid. -->
+    <VALUE>20</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_ghost_detector</NAME>
+    <!-- Ghost detector shall be enabled for reduction of FP. -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_range_to_path_segment_ghost_qualif</NAME>
+    <!-- Ghost detector shall be enabled for reduction of FP. -->
+    <VALUE>6.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_apply_heading_compensation_on_intersection_point</NAME>
+    <!-- Heading compensation shall be discabled. -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_angles_zone_definition</NAME>
+    <VALUE>[0.78f 0.78f]</VALUE>
+  </record>
+</data-set>

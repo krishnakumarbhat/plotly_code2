@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_cta_ttc_criticality_level</NAME>
+    <VALUE>[[3.0 3.0][3.0 3.0]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ttc_warntrigger_late</NAME>
+    <VALUE>2.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ttc_warntrigger_early</NAME>
+    <VALUE>3.5f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ego_abs_speed_max</NAME>
+    <VALUE>3.33f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_lateral_approach_speed</NAME>
+    <VALUE>0.83</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_enable_ctb</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_butterfly_long</NAME>
+    <VALUE>[-12.5 7.0 7.0 -12.5 0.0 0.0 0.0 0.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_butterfly_lat</NAME>
+    <VALUE>[0.5 0.5 25.5 25.5 0.0 0.0 0.0 0.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_long_point_criticality_level</NAME>
+    <VALUE>[[-0.5 -0.5][7.0 7.0]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_long_point_criticality_level</NAME>
+    <VALUE>[[7.0 7.0][-0.5 -0.5]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_cycle_count_hold_true_warning</NAME>
+    <VALUE>9</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_length_fov</NAME>
+    <VALUE>25</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_angles_zone_definition</NAME>
+    <VALUE>[0.43 0.43]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_amount_butterfly_points_in_use</NAME>
+    <VALUE>4</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_speed</NAME>
+    <VALUE>0.83f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_speed</NAME>
+    <VALUE>27.78f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_steering_angle</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_calc_ttc_ego_side_enabled</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_stop_alert_ttc</NAME>
+    <VALUE>0.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_lateral_approach_speed</NAME>
+    <VALUE>0.0f</VALUE>
+  </record>
+</data-set>

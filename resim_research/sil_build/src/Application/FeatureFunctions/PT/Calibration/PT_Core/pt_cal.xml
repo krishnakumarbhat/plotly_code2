@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CALIBRATION_GENERIC_INFO>
+    <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+    <CAL_SIZE_MACRO>PT_CAL_SIZE</CAL_SIZE_MACRO>
+    <COMPONENT_NAME>Pt</COMPONENT_NAME>
+    <CUSTOMERS>[Generic BMW_SP25 Honda_SRR6 STLA_Thunder Rivian_SRR6]</CUSTOMERS>
+    <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+    <FILE_NAME>pt_calibration</FILE_NAME>
+    <STRUCTURE_OBJ_NAME>Pt_Cal</STRUCTURE_OBJ_NAME>
+  </CALIBRATION_GENERIC_INFO>
+  <CALIBRATION_HEADER>
+    <record>
+      <NAME>version</NAME>
+      <VALUE>21</VALUE>
+    </record>
+  </CALIBRATION_HEADER>
+  <CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_pt_zone_max_posn</NAME>
+      <DESCRIPTION>indicates the maximum value of the estimated path point. For position outside this range, defined infinitive value is used.</DESCRIPTION>
+      <Comp>pathTracking_helper</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>50</RANGE_MIN>
+      <RANGE_MAX>300</RANGE_MAX>
+      <DEFAULT_VALUE>300.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_obj_speed</NAME>
+      <DESCRIPTION>indicates the minimum speed of the object to be used to create path</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>20</RANGE_MAX>
+      <DEFAULT_VALUE>4.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_overlap_max_match_value</NAME>
+      <DESCRIPTION>indicates the maximum match value of the deviation between average value and first value with residuals to group related paths</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>15</RANGE_MIN>
+      <RANGE_MAX>50</RANGE_MAX>
+      <DEFAULT_VALUE>30.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_move_max_value</NAME>
+      <DESCRIPTION>indicates the maximum value to check if path edges exceed limits after rotation</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>15</RANGE_MIN>
+      <RANGE_MAX>50</RANGE_MAX>
+      <DEFAULT_VALUE>30.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_max_match_value</NAME>
+      <DESCRIPTION>indicates the maximum match value of the difference of path points to group related paths.indicates the minimum required match value of the difference of path points to group related paths</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.4</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>3.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_max_match_value_ad</NAME>
+      <DESCRIPTION>indicates the maximum match value of the difference of path points to group related paths for better match</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.4</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>2.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_dir_max_diff_value</NAME>
+      <DESCRIPTION>indicates the maximum difference value to distinguish two path</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.5</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>1.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_dir_max_avg_diff_value</NAME>
+      <DESCRIPTION>indicates the maximum average difference value to distinguish two path</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.7</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>2.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_find_max_lat_posn</NAME>
+      <DESCRIPTION>indicates the maximum lateral position of the object to be considered as valid</DESCRIPTION>
+      <Comp>Object_Matching pathTracking_modify_grid_cals</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>30</RANGE_MIN>
+      <RANGE_MAX>70</RANGE_MAX>
+      <DEFAULT_VALUE>60.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_find_min_speed</NAME>
+      <DESCRIPTION>indicates the minimum speed of the object when object is valid for find match algorithm</DESCRIPTION>
+      <Comp>Object_Matching</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.0001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>30</RANGE_MAX>
+      <DEFAULT_VALUE>0.01</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_find_max_long_posn</NAME>
+      <DESCRIPTION>indicates the maximum longitudinal position of the object within conflict zone</DESCRIPTION>
+      <Comp>Object_Matching pathTracking_modify_grid_cals</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>30</RANGE_MIN>
+      <RANGE_MAX>70</RANGE_MAX>
+      <DEFAULT_VALUE>60.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_change_match_hyst_default</NAME>
+      <DESCRIPTION>Hysteresis for the confidence value which is applied additive when a path change shall be applied to a given object. This here depicts the default value when two compared paths are equally established.</DESCRIPTION>
+      <Comp>Object_Matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>0.15</RANGE_MAX>
+      <DEFAULT_VALUE>0.05</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_change_differing_states_hyst_default</NAME>
+      <DESCRIPTION>Hysteresis for the confidence value which is applied additive when a path change shall be applied to a given object. This here depicts the default value when two compared paths are equally established, but in different states.</DESCRIPTION>
+      <Comp>Object_Matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>0.2</RANGE_MAX>
+      <DEFAULT_VALUE>0.15</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_change_match_hyst_more_established</NAME>
+      <DESCRIPTION>Hysteresis for the confidence value which is applied additive when a path change shall be applied to a given object. This hysteresis will be used when two paths are compared which are unequally established.</DESCRIPTION>
+      <Comp>Object_Matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>0.35</RANGE_MAX>
+      <DEFAULT_VALUE>0.20</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_change_one_grouped_one_mature</NAME>
+      <DESCRIPTION>Hysteresis for the confidence value which is applied additive when a path change shall be applied to a given object. This hysteresis is used when one path is in grouped state while the other is in mature state.</DESCRIPTION>
+      <Comp>Object_Matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>0.35</RANGE_MAX>
+      <DEFAULT_VALUE>0.30</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_change_one_grouped_one_creation</NAME>
+      <DESCRIPTION>Hysteresis for the confidence value which is applied additive when a path change shall be applied to a given object. This hysteresis is used when one path is in grouped state while the other is in creation state.</DESCRIPTION>
+      <Comp>Object_Matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>0.45</RANGE_MAX>
+      <DEFAULT_VALUE>0.40</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_kill_path_exceed_dist_thres</NAME>
+      <DESCRIPTION>indicates the threshold of the position of the zero reference point to kill 3rd 4th lane path in vcs.</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>5</RANGE_MIN>
+      <RANGE_MAX>30</RANGE_MAX>
+      <DEFAULT_VALUE>15.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_kill_path_max_diff_posn</NAME>
+      <DESCRIPTION>indicates the max differential position between [ZERO-1, ZERO+1] to kill 3rd 4th lane path.</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>5.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_max_diff_num_path_point</NAME>
+      <DESCRIPTION>indicates the maximum difference of path points</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals pathTracking_Move_Points</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>4</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_path_min_overlap_count</NAME>
+      <DESCRIPTION>indicates the minimum overlap count value to determine if two path matches</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_path_min_overlap_count_ad</NAME>
+      <DESCRIPTION>indicates the minimum overlap count value to determine if two path perfectly matches </DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals pathTracking_Move_Points</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>4</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_find_min_diff_path_points</NAME>
+      <DESCRIPTION>indicates the minimum difference of points of the path tha can be used for matching</DESCRIPTION>
+      <Comp>pathTracking_closest_to_ego_path pathTracking_modify_grid_cals Object_Matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_find_max_diff_path_points</NAME>
+      <DESCRIPTION>indicates the maximum difference of points between path and left point of object that can be used for matching</DESCRIPTION>
+      <Comp>pathTracking_modify_grid_cals Object_Matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>3</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_kill_lane_change_min_diff_path_point</NAME>
+      <DESCRIPTION>indicates the min difference of points of the path that can be considered as potential lane change path</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals Object_Matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>24</RANGE_MAX>
+      <DEFAULT_VALUE>5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_diff_num_path_points</NAME>
+      <DESCRIPTION>indicates the min differential path points between two paths for killing the path with lower number of points</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>63</RANGE_MAX>
+      <DEFAULT_VALUE>4</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_f_apply_move_point</NAME>
+      <DESCRIPTION>indicates the flag to switch on/off function move point based on yawrate and vehicle speed. Default switch off it will have impact on adapt intersection length based on steering angle</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_lower_lim_obj_orient_lat</NAME>
+      <DESCRIPTION>indicates the lower heading limit for an object to be classified as laterally moving</DESCRIPTION>
+      <Comp>pathTracking_helper</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.0001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>3.1459</RANGE_MAX>
+      <DEFAULT_VALUE>0.7</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_upper_lim_obj_orient_lat</NAME>
+      <DESCRIPTION>indicates the upper heading limit for an object to be classified as laterally moving</DESCRIPTION>
+      <Comp>pathTracking_helper</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.0001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>3.1459</RANGE_MAX>
+      <DEFAULT_VALUE>2.44</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_apply_move_point_min_speed</NAME>
+      <DESCRIPTION>indicates the lower speed threshold for applying moving of path points</DESCRIPTION>
+      <Comp>pathTracking pathTracking_Move_Points</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.02</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_apply_move_point_min_yaw_rate</NAME>
+      <DESCRIPTION>indicates the lower yaw rate threshold for applying moving of path points</DESCRIPTION>
+      <Comp>pathTracking pathTracking_Move_Points</Comp>
+      <UNIT>rad/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.0001</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.006</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_move_point_yaw_rate_thres_calc_ego_shift</NAME>
+      <DESCRIPTION>indicates the lower angle threshold for calculation of ego shifting vector by curvature</DESCRIPTION>
+      <Comp>pathTracking_Move_Points</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.000001f</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.01f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_paths_min_interval_dist</NAME>
+      <DESCRIPTION>indicates the minimum difference distance between two path points to be considered as crossing paths</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>3.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_track_long_range_limit</NAME>
+      <DESCRIPTION>Indicates the maximum longitudinal distance for objects to be used for tracking paths.</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>85.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_path_track_lat_range_limit</NAME>
+      <DESCRIPTION>Indicates the maximum lateral distance for objects to be used for tracking paths.</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>100</RANGE_MAX>
+      <DEFAULT_VALUE>85.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_path_length_proc_lane_change</NAME>
+      <DESCRIPTION>indicates the minimum number of path points to to apply processing of path points for lane change paths</DESCRIPTION>
+      <Comp>pathTracking pathTracking_modify_grid_cals</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>255</RANGE_MAX>
+      <DEFAULT_VALUE>13</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_group_overlap_paths_min_diff</NAME>
+      <DESCRIPTION>indicates the minimum distance between two paths at the the same grid point for path overlapping</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10.0</RANGE_MAX>
+      <DEFAULT_VALUE>3.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_en_algo_min_vel_inactive</NAME>
+      <DESCRIPTION>indicates the minimum ego velocity to enable path algo</DESCRIPTION>
+      <Comp>pathTracking_iface</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10.0</RANGE_MAX>
+      <DEFAULT_VALUE>5.0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_en_algo_max_val_active</NAME>
+      <DESCRIPTION>indicates the maximum ego velocity to keep path algo active</DESCRIPTION>
+      <Comp>pathTracking_iface</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10.0</RANGE_MAX>
+      <DEFAULT_VALUE>7.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_point_diff_grouping_borders_lut</NAME>
+      <DESCRIPTION>Describes the borders of grouping so that an weighting factor is chosen accordingly. This applies only to points which are contained in one path only</DESCRIPTION>
+      <Comp>pt_grouping</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>[0 1 2 3 4]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_point_diff_weighting_factor_lut</NAME>
+      <DESCRIPTION>Describes the borders of grouping so that an weighting factor is chosen accordingly. This applies only to points which are contained in one path only</DESCRIPTION>
+      <Comp>pt_grouping</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.5f 0.6f 0.75f 0.9f 1.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_cond_kill_implaus_path</NAME>
+      <DESCRIPTION>indicates the difference of number of path points for validity analysis of path</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>2</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_default_range_of_tracking_zone</NAME>
+      <DESCRIPTION>indicates the default absolute maximum lateral distance which can be displayed by the grid point array</DESCRIPTION>
+      <Comp>pathTracking_modify_grid_cals</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>10</DATA_RESOLUTION>
+      <RANGE_MIN>20</RANGE_MIN>
+      <RANGE_MAX>80</RANGE_MAX>
+      <DEFAULT_VALUE>60</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_exist_prob_to_be_valid</NAME>
+      <DESCRIPTION>minimum existence probability an object needs to have in order for it to be considered for path tracking.</DESCRIPTION>
+      <Comp>pathTracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_path_length_after_rot</NAME>
+      <DESCRIPTION>Describes the minimum path length which is needed for paths after rotation to be valid enough for objects being matched to them.</DESCRIPTION>
+      <Comp>path_tracking_path_rotation</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>4</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_obj_to_border_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for distance between object and path border metric. This lists the values of the metric</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>5</RANGE_MAX>
+      <DEFAULT_VALUE>[0 1 3 5]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_obj_to_border_conf_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for distance between object and path border metric. This lists the confidence values</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0 0.9 0.7 0.25]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_border_to_isect_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for distance between path border and intersection with coordinate axis metric. This lists the values of the metric</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>[0 1 2 4]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_border_to_isect_conf_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for distance between path border and intersection with coordinate axis metric. This lists the confidence values</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0 0.85 0.75 0.4]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_obj_to_path_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for distance between object to next path point metric. This lists the values of the metric </DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>6.0</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0 1.5 3.0 5.0 6.0]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_obj_to_path_conf_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for distance between object to next path point metric. This lists the confidence values</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0 0.8 0.7 0.25 0.1]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_similarity_trail_path_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for similarity of left path points by object and path pair candidate metric. This lists the values of the metric</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>6</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0 0.5 1.2 1.8 2.3]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_similarity_trail_path_conf_lut</NAME>
+      <DESCRIPTION>Used for calculation of confidence of a path object pair for similarity of left path points by object and path pair candidate metric. This lists the values of the metric</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>6</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0 0.8 0.56 0.3 0.1]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_weight_of_last_trail_point</NAME>
+      <DESCRIPTION>Weight for the last created point of the path to which the object is associated to. Used for similarity calculation of a path</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.7</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_weight_of_sec_last_trail_point</NAME>
+      <DESCRIPTION>Weight for the second last created point of the path to which the object is associated to. Used for similarity calculation of a path</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.3</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_heading_diff_lut</NAME>
+      <DESCRIPTION>Describes the heading difference between path heading and tracker heading in rad</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.0001</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>3.14</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0873 0.1745 0.3490 0.5235]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_heading_diff_conf_lut</NAME>
+      <DESCRIPTION>Describes the confidence of heading difference between path heading and tracker heading.</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>[1.0 0.8 0.35 0.1]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_weight_heading_diff_confidence</NAME>
+      <DESCRIPTION>Since three heading differences are calculated in total, the actual heading difference where the object is located shall be weighted stronger than the next headings. </DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>[0.6 0.3 0.1]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_confidence_valid_match</NAME>
+      <DESCRIPTION>Threshold for the confidence in order for the path to be a valid match to an object</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.35</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_dist_betw_paths_similarity_matching</NAME>
+      <DESCRIPTION>Threshold of difference of distances between object and path and also for host an path. When two paths are similar, the nearer path to the host shall be used as match.</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>0.45</RANGE_MAX>
+      <DEFAULT_VALUE>0.3</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_min_path_length_obj_trail</NAME>
+      <DESCRIPTION>Minimum path length of the created object trail for further comparison in matching</DESCRIPTION>
+      <Comp>path_tracking_object_matching</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>2</RANGE_MIN>
+      <RANGE_MAX>2</RANGE_MAX>
+      <DEFAULT_VALUE>2</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_f_check_object_age_plausibility</NAME>
+      <DESCRIPTION>Flag to enable or disable the object age plausibility check.</DESCRIPTION>
+      <Comp>path_tracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_range_nearest_border_impl_path</NAME>
+      <DESCRIPTION>Index range between host and nearest path border to the host.</DESCRIPTION>
+      <Comp>path_tracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>7</RANGE_MAX>
+      <DEFAULT_VALUE>4</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_host_implausibilty_range</NAME>
+      <DESCRIPTION>Offset which is applied to the host dimensions such that when a path point of a extrapolated path is contained in the extrapolation process, the path is invalidated.</DESCRIPTION>
+      <Comp>path_tracking</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_start_of_lane_change_processing</NAME>
+      <DESCRIPTION>Start from which grid points will be used for lane change processing.</DESCRIPTION>
+      <Comp>path_tracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_end_of_lane_change_processing</NAME>
+      <DESCRIPTION>End until which grid points will be used for lane change processing.</DESCRIPTION>
+      <Comp>path_tracking</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>255u</RANGE_MAX>
+      <DEFAULT_VALUE>24u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_trail_max_speed_trail_to_path_conv</NAME>
+      <DESCRIPTION>Speed based criteria for conversion of trail to path information. If the host speed is lower than the threshold, the trail information can be converted to trail information. </DESCRIPTION>
+      <Comp>path_tracking_trail</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.5</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_minimum_host_trail_length</NAME>
+      <DESCRIPTION>criteria for length of the host trail. Only if the length of the trail is exceeding the threshold, a path shall be created based on the trail. </DESCRIPTION>
+      <Comp>path_tracking_trail</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>30.0f</RANGE_MAX>
+      <DEFAULT_VALUE>20.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_enable_host_trail</NAME>
+      <DESCRIPTION>Flag to enable or disable creation of host trails used for host path generation. </DESCRIPTION>
+      <Comp>path_tracking_trail</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_max_heading_diff_valid_interval</NAME>
+      <DESCRIPTION>Threshold indicating the maximum allowed heading difference for an interval to be used for path creation. </DESCRIPTION>
+      <Comp>path_tracking_trail</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.001f</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>0.5f</RANGE_MAX>
+      <DEFAULT_VALUE>0.1f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_pt_minimum_amount_of_trail_points</NAME>
+      <DESCRIPTION>Amount of minimum needed points for path creation based on trail information. </DESCRIPTION>
+      <Comp>path_tracking_trail</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>1</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>4</DEFAULT_VALUE>
+    </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

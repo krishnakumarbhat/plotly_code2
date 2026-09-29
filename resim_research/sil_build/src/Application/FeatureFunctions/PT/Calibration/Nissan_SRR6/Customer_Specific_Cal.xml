@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_pt_kill_path_exceed_dist_thres</NAME>
+    <VALUE>30.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_path_track_long_range_limit</NAME>
+    <VALUE>60.0f</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_start_of_lane_change_processing</NAME>
+    <VALUE>4u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_end_of_lane_change_processing</NAME>
+    <VALUE>28u</VALUE>
+  </record>
+  <record>
+    <NAME>k_pt_apply_move_point_min_yaw_rate</NAME>
+    <VALUE>0.016</VALUE>
+  </record>
+</data-set>

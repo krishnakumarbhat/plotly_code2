@@ -1,0 +1,20 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target_1'. Internal name is 'object_2'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target_1 are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The initial conditions of Ego are set to: [Start-Speed: 50 kph, Start-Heading: 0 deg].
+% The initial conditions of Target_1 are set to: [Start-Speed: 80 kph, Start-Heading: 0 deg].
+% Shift the scenario of Target_1 so that it has a collision with the Ego at following Collision-Points:
+% -> Ego-Collision-Point: PIVOT_POINT (Lateral offset: 0%, Longitudinal offset: 0%).
+% -> Target-Collision-Point: FRONT_LEFT (Lateral offset: 0%, Longitudinal offset: 0%).
+% The path of Target_1 is shifted so that Target at mid of section XY maps to Ego.
+% The end position of Target_1 is shifted by Lateral-Offset: 3 m, Longitudinal-Offset: -10 mHeading: 0°.
+% Add a straight section to Ego with: End-Speed: 50 kph, Distance: 250 m, Section-Generic-Properties( Tracker-Data.Status: MATURE  Precision: 2 ).
+% Add a straight section to Target_1 with: End-Speed: 80 kph, Distance: 200 m, Section-Generic-Properties( Tracker-Data.Status: MATURE  Precision: 2 ).
+% Add a straight section to Target_1 with: End-Speed: 50 kph, Distance: 20 m, Section-Generic-Properties( Tracker-Data.Status: MATURE  Precision: 2 ).
+% Add a straight section to Target_1 with: End-Speed: 45 kph, Distance: 50 m, Section-Generic-Properties( Tracker-Data.Status: MATURE  Precision: 2 ).
+

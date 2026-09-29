@@ -1,0 +1,5 @@
+target_sources(PT PRIVATE ${CMAKE_CURRENT_LIST_FILE})
+
+target_include_directories(PT PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+include(${CMAKE_CURRENT_LIST_DIR}/${PT_PROJECT_VARIANT}/${PT_PROJECT_VARIANT}.cmake)

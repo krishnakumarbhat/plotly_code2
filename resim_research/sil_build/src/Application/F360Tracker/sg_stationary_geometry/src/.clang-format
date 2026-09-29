@@ -1,0 +1,59 @@
+# SG clang format style guide (based on GAAT team style)
+
+# Format in accordance with APTIV C++ Coding Standards
+# ESGW_4-2_PE-SWx_00-01-A01_EN.docx (September 6, 2020)
+
+Language: Cpp # Should be used for C and C++.
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false # back to true once the pointer alignment bug is fixed
+AlignEscapedNewlinesLeft: true
+AlignOperands: true
+AlignTrailingComments: true
+AllowShortFunctionsOnASingleLine: false # [S18]
+AllowShortIfStatementsOnASingleLine: false # [S27]
+AllowShortLoopsOnASingleLine: false # [S29] [S30] [S31]
+AlwaysBreakAfterReturnType: None # [S17] [S18]
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: true # [S19]
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Allman # [S4] [S18] [S27] [S28] [S29] [S30] [S31]
+ColumnLimit: 131 # [S2]
+ContinuationIndentWidth: 3 # [S1]
+DerivePointerAlignment: false # [S15]
+FixNamespaceComments: false
+IndentCaseLabels: true # [S28]
+IndentWidth: 3 # [S1]
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakComment: 10
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakString: 10
+PenaltyExcessCharacter: 5
+PenaltyReturnTypeOnItsOwnLine: 100
+PointerAlignment: Right # [S15]
+SortIncludes: CaseInsensitive
+SpaceAfterCStyleCast: true
+SpaceBeforeAssignmentOperators: true # [S6]
+SpaceBeforeParens: ControlStatements # [S7] [S8] [S19]
+SpaceInEmptyParentheses: false # [S19]
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false # [S17] [S18] [S19] [S27] [S28] [S29] [S30] [S31]
+TabWidth: 3 # [S1]
+UseTab: Never
+
+# SG/DC teams extensions over GAAT setup
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+BasedOnStyle: Google
+CommentPragmas: '^(Return Type|Arguments)\s*'
+Cpp11BracedListStyle: true
+
+# Notes
+# https://releases.llvm.org/5.0.0/tools/clang/docs/ClangFormatStyleOptions.html

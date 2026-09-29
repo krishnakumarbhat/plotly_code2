@@ -1,0 +1,40 @@
+#ifndef PT_DEBUG_WRITER_H
+#define PT_DEBUG_WRITER_H
+
+/**
+ * @file pt_debug_writer.h
+ * @author SFL (Side Feature Logic) scrum team
+ * @brief Contains function declarations for PT bin writer functions.
+ *
+ * @copyright Copyright (C) 2020 Aptiv. All rights reserved.
+ */
+
+#ifdef BINARY_DEBUG
+
+#include "AS_bin_writer_wrapper.h"
+
+#ifdef __GNUC__
+static const char *Pt_Bin_Writer_Suffix __attribute__((unused)) = "PathTrackingOutput";
+#else
+static const char *Pt_Bin_Writer_Suffix = "PathTrackingOutput";
+#endif
+
+/* Declare function used to write bin files. */
+void Pt_Write_Bin_File(void);
+
+/* clang-format off */
+#define PT_STORE_VAL_MGR_WPR(var_name, value)                                  STORE_VAL_MGR_WPR(Pt_Bin_Writer_Suffix, var_name, value)
+#define PT_STORE_VAL_MGR_WPR_INDEXED(var_name, value, index)                   STORE_VAL_MGR_WPR_INDEXED(Pt_Bin_Writer_Suffix, var_name, value, index)
+#define PT_STORE_ARRAY_ELEM_MGR_WPR(var_name, value, arr_index)                STORE_ARRAY_ELEM_MGR_WPR(Pt_Bin_Writer_Suffix, var_name, value, arr_index)
+#define PT_STORE_ARRAY_ELEM_MGR_WPR_INDEXED(var_name, value, arr_index, index) STORE_ARRAY_ELEM_MGR_WPR_INDEXED(Pt_Bin_Writer_Suffix, var_name, value, arr_index, index)
+/* clang-format on */
+
+#define Binary_Pt_Write_Bin_File() Pt_Write_Bin_File()
+
+#else
+
+#define Binary_Pt_Write_Bin_File()
+
+#endif /* BINARY_DEBUG */
+
+#endif /* PT_DEBUG_WRITER_H */

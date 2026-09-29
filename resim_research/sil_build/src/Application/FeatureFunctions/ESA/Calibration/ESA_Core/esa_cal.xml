@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <CALIBRATION_GENERIC_INFO>
+        <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+        <CAL_SIZE_MACRO>ESA_CAL_SIZE</CAL_SIZE_MACRO>
+        <COMPONENT_NAME>Esa</COMPONENT_NAME>
+        <CUSTOMERS>[Generic BMW_SP25]</CUSTOMERS>
+        <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+        <EXPORT_BOUNDARY_CHECKS>False</EXPORT_BOUNDARY_CHECKS>
+        <FILE_NAME>esa_calibration</FILE_NAME>
+        <STRUCTURE_NAME>Esa_Core_Calibration_T</STRUCTURE_NAME>
+        <STRUCTURE_OBJ_NAME>Esa_Cal</STRUCTURE_OBJ_NAME>
+    </CALIBRATION_GENERIC_INFO>
+    <CALIBRATION_HEADER>
+        <record>
+            <NAME>version</NAME>
+            <VALUE>2</VALUE>
+        </record>
+    </CALIBRATION_HEADER>
+    <CALIBRATION_COMPONENT>
+        <record>
+            <NAME>k_esa_f_enable_via_cal</NAME>
+            <DESCRIPTION>Used to decide whether Emergency Steering Assist should be enabled based on the calibration. If TRUE then k_esa_enable is used to enable ESA, if FALSE then ESAEnabled flag from the core input is used to enable ESA.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_f_enable</NAME>
+            <DESCRIPTION>Enables the Emergency Steering Assist feature when the k_esa_enable_via_cal is also set to TRUE.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_zone_x</NAME>
+            <DESCRIPTION>Corners of polygon defining Emergency Steering Assist zone in curvi coordinates.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>-100</RANGE_MIN>
+            <RANGE_MAX>100</RANGE_MAX>
+            <DEFAULT_VALUE>[-1 -40 -90 -90 -40 -1]</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_zone_x_hys</NAME>
+            <DESCRIPTION>Offset that is to be added to the initial ESA zone x-coord to get the hysteresis zone x-coord. Hys zone is always larger than the initial zone.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>10</RANGE_MAX>
+            <DEFAULT_VALUE>[1 0 5 5 0 1]</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_zone_y</NAME>
+            <DESCRIPTION>Corners of polygon defining the ESA zone in curvi coordinates. It is specified as a factor of the lane width.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>-100</RANGE_MIN>
+            <RANGE_MAX>100</RANGE_MAX>
+            <DEFAULT_VALUE>[2.5 2.5 2.5 0.5 0.5 0.5]</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_zone_y_hys</NAME>
+            <DESCRIPTION>Offset that is to be added to the initial ESA zone y-coord to get the hysteresis zone y-coord. Hys zone is always larger than the initial zone.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>10</RANGE_MAX>
+            <DEFAULT_VALUE>[0.1 0.3 0.4 0.4 0.3 0.1]</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_max_range</NAME>
+            <DESCRIPTION>Maximum Range of a track that can trigger a warning.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>100.0f</RANGE_MAX>
+            <DEFAULT_VALUE>100.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_lane_width</NAME>
+            <DESCRIPTION>Minimum lane width - used for plausibility checking during zone creation. If input lane width is lower than this, this value width is used.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>15</RANGE_MAX>
+            <DEFAULT_VALUE>2.0</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_max_lane_width</NAME>
+            <DESCRIPTION>Maximum lane width - used for plausibility checking during zone creation. If input lane width is larger than this, this max lane width is used.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>15</RANGE_MAX>
+            <DEFAULT_VALUE>7.0</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_exist_prob</NAME>
+            <DESCRIPTION>Min existence probability for Tracks</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>1.0f</RANGE_MAX>
+            <DEFAULT_VALUE>0.7f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_track_age</NAME>
+            <DESCRIPTION>Minimum Track age for an object to be selected as a valid candidate for ESA.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>uint8_t</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>100u</RANGE_MAX>
+            <DEFAULT_VALUE>2u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_curve_radius</NAME>
+            <DESCRIPTION>ESA is disabled when the host is navigating a curve with a radius smaller than this value.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>50.0f</RANGE_MAX>
+            <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_curve_radius_hys</NAME>
+            <DESCRIPTION>Hysteresis value to be applied before ESA is disabled for small curve radius.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>50.0f</RANGE_MAX>
+            <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_max_curvi_heading_abs</NAME>
+            <DESCRIPTION>The maximum allowed absolute curvi heading for objects to be considered as valid Emergency Steering Assist candidates.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>rad</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.0001</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>3.142f</RANGE_MAX>
+            <DEFAULT_VALUE>0.785f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_obj_curvi_long_vel_abs</NAME>
+            <DESCRIPTION>The minimum longitudinal absolute curvi velocity of the object to be considered as a valid candidate for Emergency Steering Assist.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>100.0f</RANGE_MAX>
+            <DEFAULT_VALUE>1.4f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_critical_longitudinal_ttc</NAME>
+            <DESCRIPTION>Longitudinal TTC threshold below which a target is considered as critical for ESA.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>second</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>30</RANGE_MAX>
+            <DEFAULT_VALUE>5</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_critical_longitudinal_ttc_hys</NAME>
+            <DESCRIPTION>Longitudinal TTC threshold below which a target needs to stay to remain critical for ESA.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>second</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>30</RANGE_MAX>
+            <DEFAULT_VALUE>6</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_obj_safe_deceleration_threshold</NAME>
+            <DESCRIPTION>Deceleration threshold above which a target is considered as critical for ESA.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s^2</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>10</RANGE_MAX>
+            <DEFAULT_VALUE>5</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_obj_safe_deceleration_threshold_hys</NAME>
+            <DESCRIPTION>Deceleration threshold above which a target needs to stay to remain critical for ESA.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s^2</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.001</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>10</RANGE_MAX>
+            <DEFAULT_VALUE>4</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_f_allow_min_curve_radius</NAME>
+            <DESCRIPTION>Decides whether ESA functionality should be disabled when the host is moving with a very small curve radius such as a round about.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_f_allow_obj_critical_ttc_and_deceleration</NAME>
+            <DESCRIPTION>Allow TTC and deceleration criteria for object criticality assessment</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_f_allow_obj_selection_ttc</NAME>
+            <DESCRIPTION>Allow TTC criterion for most critical object selection</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_f_allow_obj_selection_deceleration</NAME>
+            <DESCRIPTION>Allow deceleration criterion for most critical object selection</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_f_allow_obj_selection_long_distance</NAME>
+            <DESCRIPTION>Allow longitudinal distance to the Host criterion for most critical object selection</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>boolean_T</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>1u</RANGE_MAX>
+            <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_min_mature_cycles</NAME>
+            <DESCRIPTION>When the mature count in zone exceeds this threshold the object is allowed to create an ESA alert.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>uint8_t</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>10u</RANGE_MAX>
+            <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_host_activation_speed_min</NAME>
+            <DESCRIPTION>Minimal host speed for which ESA shall be active.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>70.0f</RANGE_MAX>
+            <DEFAULT_VALUE>5.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_host_activation_speed_min_hys</NAME>
+            <DESCRIPTION>Hysteresis for k_esa_host_activation_speed_min_min. This value will be subtracted from minimal activation speed threshold if ESA is currently active.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>10</RANGE_MAX>
+            <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_host_activation_speed_max</NAME>
+            <DESCRIPTION>Maximal host speed for which ESA shall be active.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+            <RANGE_MIN>0.0f</RANGE_MIN>
+            <RANGE_MAX>150.0f</RANGE_MAX>
+            <DEFAULT_VALUE>100.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_host_activation_speed_max_hys</NAME>
+            <DESCRIPTION>Hysteresis for k_esa_host_activation_speed_min_max. This value will be added to maximal activation speed threshold if ESA is currently active.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>m/s</UNIT>
+            <DATA_TYPE>float32_T</DATA_TYPE>
+            <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+            <RANGE_MIN>0</RANGE_MIN>
+            <RANGE_MAX>10</RANGE_MAX>
+            <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+        </record>
+        <record>
+            <NAME>k_esa_alert_holding_cycles</NAME>
+            <DESCRIPTION>Number of holding cycles for ESA alert.</DESCRIPTION>
+            <Comp>ESA</Comp>
+            <UNIT>none</UNIT>
+            <DATA_TYPE>uint8_t</DATA_TYPE>
+            <DATA_RESOLUTION>1</DATA_RESOLUTION>
+            <RANGE_MIN>0u</RANGE_MIN>
+            <RANGE_MAX>20u</RANGE_MAX>
+            <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+        </record>
+    </CALIBRATION_COMPONENT>
+</data-set>

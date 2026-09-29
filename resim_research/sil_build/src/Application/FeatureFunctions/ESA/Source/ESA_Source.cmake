@@ -1,0 +1,20 @@
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_FILE})
+
+target_include_directories(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_debug_writer.h)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_debug_interface.h)
+target_sources(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR}/esa_persistent_t.h)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa.h)
+target_sources(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR}/esa_types.h)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_create_zone.h)
+target_sources(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR}/esa_iface.h)
+target_sources(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR}/esa_instance_t.h)
+target_sources(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR}/esa_core_input_t.h)
+target_sources(ESA PUBLIC ${CMAKE_CURRENT_LIST_DIR}/esa_core_output_t.h)
+
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_debug_writer.c)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_debug_interface.c)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_iface.c)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa.c)
+target_sources(ESA PRIVATE ${CMAKE_CURRENT_LIST_DIR}/esa_create_zone.c)

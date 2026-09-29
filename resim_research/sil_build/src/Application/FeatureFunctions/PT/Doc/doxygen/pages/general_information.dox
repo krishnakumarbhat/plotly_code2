@@ -1,0 +1,17 @@
+/**
+\page general_information General Information
+ 
+ As briefly explained within the introduction the path tracking algorithm uses a local vcs-coordinate system grid array with a
+constant granularity which is either placed on the longitudinal or lateral axis. This axis management is dependend of the path direction which
+can be longitudinal backwards, longitudinal forward, lateral left or lateral right. For lateral paths the grid array, also called the grid component, 
+is placed on the lateral axis (y-axis) while for longitudinal paths the grid component is displayed by the longitudinal component (x-axis).
+When an object passes a grid point the position component, which is described by the lateral component for paths with longitudinal direction and 
+longitudinal component for lateral paths, gets extrapolated with help of the current and previous object location. This is needed due to limitation of 
+the sensors sample rate.
+
+@image html flowchart.png "Flowchart of Path Tracking" width=1000px
+
+Mainly it can be noted that the path tracking algorithm is separated into two modules. The first is the Path\_Track module in which the whole path management (e.g. creation, grouping and rotation) is done.
+The second module is indicated by the Objects\_To\_Path\_Matching module. Here the best matching path is searched for the respective objects, also the output for other feature functions is prepared here.
+
+ */

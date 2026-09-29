@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Embedded_Library_Output_Control>
+  
+  
+  <DC_Library_XML_Version>1.0</DC_Library_XML_Version>
+  
+  
+  <Customer_Name>CEER</Customer_Name>
+
+   
+  <Sensor_Type>SRR7Plus</Sensor_Type>   
+          
+  <HDF_FILES>
+           
+        <INPUT>ENABLE</INPUT>
+        <OUTPUT>ENABLE</OUTPUT>
+  </HDF_FILES>
+
+   
+   <DC_IP_DQ_Chk_Print>DISABLE</DC_IP_DQ_Chk_Print>
+
+	
+          
+  <XTRK_FILES>ENABLE</XTRK_FILES>
+
+  
+
+  <BIN_FILES>ENABLE</BIN_FILES>
+  
+  
+  <UDP_Stream_to_use>Gen7</UDP_Stream_to_use>
+
+       
+  <DGPS_Decode_Status>ENABLE</DGPS_Decode_Status>
+
+       
+  <DGPS_SM_Config>C:\Users\ouymc2\Desktop\plotly_code2\resim_research\sil_runtime\gen7\dgps_config</DGPS_SM_Config>
+  
+ </Embedded_Library_Output_Control>

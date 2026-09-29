@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_cta_enable_modes</NAME>
+    <!-- Only use RCTA. -->
+    <VALUE>[1 0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_long_point_criticality_level</NAME>
+    <!-- Minimum Offset of the (closest) target's point of intersection with the x-axis for RCTA warning level. FCTA stubbed with some other values here. -->
+    <VALUE>[[5.0 5.0][-0.5 -0.5]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_long_point_criticality_level</NAME>
+    <!-- Maximum Offset of the (closest) target's point of intersection with the x-axis for RCTA warning level. FCTA stubbed with some other values here. -->
+    <VALUE>[[-0.5 -0.5][5.0 5.0]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ttc_criticality_level</NAME>
+    <!-- Maximum Offset of the target's TTC for the second warning level. RCTA - first dimensions. FCTA second dimensions stubbed with equal values here. -->
+    <VALUE>[[3.15 3.15][3.15 3.15]]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_speed</NAME>
+    <!-- Maximum speed of object to be a valid candidate for CTA. -->
+    <VALUE>100</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_speed</NAME>
+    <!-- Minimum speed for a target to be considered. -->
+    <VALUE>0.8</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_lateral_approach_speed</NAME>
+    <!-- Minimum lateral speed of targets to be considered. -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_calc_ttc_ego_side_enabled</NAME>
+    <!-- Switch to turn on or off calculate TTC with reference to the ego side instead of x-axis defined in VCS -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_object_min_object_age_in_cycles</NAME>
+    <!-- Flag indicating wether object age threshold is used to check cta relevance for this object. -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_apply_path_tracking</NAME>
+    <!-- Switch to turn on or off path tracking algorithm -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_cycles_coasted_to_ignore</NAME>
+    <!-- Defines the cycles that an object can maximal be coasted to be still considered by the algo-->
+    <VALUE>6</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_max_length_fov</NAME>
+    <!-- One of the parameter defining field of interest.
+    This parameter defines maximum length of that area in polar coordinate system attached to the radar position. -->
+    <VALUE>40</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_angles_zone_definition</NAME>
+    <!-- One of the parameter defining field of interest.
+    This parameter defines bottom border of that area measured from the horizontal line covering radar position down toward the x axis. -->
+    <VALUE>[0.785398 0.785398]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_butterfly_lat</NAME>
+    <VALUE>[0 0 60 60 0 0 0 0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_butterfly_long</NAME>
+    <VALUE>[-4 -10 -70 55 0 0 0 0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_min_mature_cycles_level_qualifiction</NAME>
+    <!-- Minimum required number of consecutive cycles for an object status to be mature for activation of a criticality level. -->
+    <VALUE>2</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_steering_angle</NAME>
+    <!-- Switch to turn on or off steering-angle-based adaptation of the intersect lines associated with the criticality levels -->
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_adapt_intersect_lines_by_obj_heading</NAME>
+    <!-- Switch to turn on or off object-heading-based adaptation of the intersect lines associated with the criticality levels  -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_stop_alert_ttc</NAME>
+    <!--  Time to stop a triggered alert. -->
+    <VALUE>0.0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_heading_for_relative_velocity_calculation</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_ego_abs_speed_max</NAME>
+    <VALUE>4.1667</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_enable_thres_crit_level_reset</NAME>
+    <!-- Flag indicating wether to reset the criticality level when an object passes a user defined threshold  -->
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_check_reflection_signal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_enable_heading_exp_moving_average</NAME>
+    <VALUE>1</VALUE>
+  </record> 
+  <record>
+    <NAME>k_cta_object_heading_exp_moving_average_alpha</NAME>
+    <VALUE>0.10f</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_use_front_corners_dist_stop</NAME>
+    <VALUE>1</VALUE>
+  </record>
+  <record>
+    <NAME>k_cta_f_check_obstruction_probability_signal</NAME>
+    <VALUE>1</VALUE>
+  </record>
+</data-set>

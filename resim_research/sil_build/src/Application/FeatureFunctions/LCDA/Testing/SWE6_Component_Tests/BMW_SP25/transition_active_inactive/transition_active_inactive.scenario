@@ -1,0 +1,66 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11          
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The initial conditions of Ego are set to: [Start-Speed: 60 kph, Start-Heading: 0 deg].
+% Register signal Ego with: Name: c_f_lcda_enabled, Interpolation: enum_interpolation.PREVIOUS.
+% Change signal value Ego: Name: c_f_lcda_enabled, Value: 1.
+% Register signal Ego with: Name: c_f_lcda_enable_bsw, Interpolation: enum_interpolation.PREVIOUS.
+% Change signal value Ego: Name: c_f_lcda_enable_bsw, Value: 1.
+% Register signal Ego with: Name: veh_speed, Interpolation: enum_interpolation.PREVIOUS.
+% Change signal value Ego: Name: veh_speed, Value: 60.
+% Register signal Ego with: Name: lcda_vehicle_condition, Interpolation: enum_interpolation.PREVIOUS.
+% Change signal value Ego: Name: lcda_vehicle_condition, Value: 10.
+% Register signal Ego with: Name: curve_radii, Interpolation: enum_interpolation.PREVIOUS.
+% Change signal value Ego: Name: curve_radii, Value: 11.
+% Add a straight section to Ego with: Speed: 60 kph, Distance: 42 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+% Register signal Ego with: Name: lcda_function_error, Interpolation: enum_interpolation.PREVIOUS.
+% Change signal value Ego: Name: lcda_function_error, Value: 0.
+% Change signal value Ego: Name: curve_radii, Value: 8.
+% Add a straight section to Ego with: Speed: 60 kph, Distance: 42 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(60, 0);
+
+%% Define trajectories of the objects
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+
+object_1.add_section_signal_register('c_f_lcda_enabled', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('c_f_lcda_enabled', 1);
+object_1.add_section_signal_register('c_f_lcda_enable_bsw', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('c_f_lcda_enable_bsw', 1);
+object_1.add_section_signal_register('veh_speed', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('veh_speed', 60);
+object_1.add_section_signal_register('curve_radii', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('curve_radii', 11);
+object_1.add_section_signal_register('lcda_vehicle_condition', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('lcda_vehicle_condition', 10);
+object_1.add_straight_section(60, 42, section_generic_properties);
+
+object_1.add_section_signal_change('curve_radii', 8);
+object_1.add_section_signal_register('lcda_function_error', enum_interpolation.PREVIOUS);
+object_1.add_section_signal_change('lcda_function_error', 0);
+object_1.add_straight_section(60, 42, section_generic_properties);
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);     
+scenario.set_polarion_info('CSCSA-92607', '');   
+scenario.set_test_type('positive');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);

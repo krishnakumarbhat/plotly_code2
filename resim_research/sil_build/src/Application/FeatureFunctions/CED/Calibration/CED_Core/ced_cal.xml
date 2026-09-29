@@ -1,0 +1,835 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CALIBRATION_GENERIC_INFO>
+    <BASIC_TYPE_INCLUDE_FILE>pa_reuse.h</BASIC_TYPE_INCLUDE_FILE>
+    <CAL_SIZE_MACRO>CED_CAL_SIZE</CAL_SIZE_MACRO>
+    <COMPONENT_NAME>Ced</COMPONENT_NAME>
+    <CUSTOMERS>[Generic BMW_SP25 Honda_SRR6 STLA_Thunder Rivian_SRR6]</CUSTOMERS>
+    <EXPORT_ASIL_CHECK>False</EXPORT_ASIL_CHECK>
+    <FILE_NAME>ced_calibration</FILE_NAME>
+    <STRUCTURE_OBJ_NAME>Ced_Cal</STRUCTURE_OBJ_NAME>
+  </CALIBRATION_GENERIC_INFO>
+  <CALIBRATION_HEADER>
+    <record>
+      <NAME>version</NAME>
+      <VALUE>44</VALUE>
+    </record>
+  </CALIBRATION_HEADER>
+  <CALIBRATION_COMPONENT>
+    <record>
+      <NAME>k_ced_object_acceleration_weight</NAME>
+      <DESCRIPTION>Weights the influence of the objects acceleration on the prediction and TTC calculation.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_heading_predicted_weight</NAME>
+      <DESCRIPTION>Weights the predicted heading that will be used for objects without path match. This parameter can control the influence of the object heading on the predicted object and can be used as a temporary fix to ignore an inaccurate tracker heading for the predicted object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_existence_probability_min</NAME>
+      <DESCRIPTION>Minimum existence probability of the target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.9f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_heading_abs_angle_max</NAME>
+      <DESCRIPTION>Maximum allowed absolute heading angle of the target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>2.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.52f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_long_vel_rel_min</NAME>
+      <DESCRIPTION>Minimum approaching longitudinal relative velocity of the target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>5.0</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_long_vel_min</NAME>
+      <DESCRIPTION>Minimum longitudinal target object velocity.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>5.0</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_lat_vel_max</NAME>
+      <DESCRIPTION>Maximum lateral target velocity.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>20.0</RANGE_MAX>
+      <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_max_width_increase_factor_with_path_match</NAME>
+      <DESCRIPTION>Maximal width increase factor of the predicted object for objects with path match. The applied width increase factor will be at the maximal value at the end of the funnel zone and will decrease linearly based on the distance to the crash line. Thus setting the value to 0.0f deactivates the width increase completely.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.4f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_max_width_increase_factor_without_path_match</NAME>
+      <DESCRIPTION>Maximal width increase factor of the predicted object for objects without path match. The applied width increase factor will be at the maximal value at the end of the funnel zone and will decrease linearly based on the distance to the crash line. Thus setting the value to 0.0f deactivates the width increase completely.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.8f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_heading_exp_moving_average_alpha</NAME>
+      <DESCRIPTION>Set alpha value for exponential moving average filter for object heading. Higher alpha means more weight for current values.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.00f</RANGE_MIN>
+      <RANGE_MAX>1.00f</RANGE_MAX>
+      <DEFAULT_VALUE>0.80f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_existence_probability_min</NAME>
+      <DESCRIPTION>The minimum existence probability of the target object coming from front direction.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>1.0</RANGE_MAX>
+      <DEFAULT_VALUE>0.9f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_heading_abs_angle_min</NAME>
+      <DESCRIPTION>The minimum allowed absolute heading angle of the front coming target.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>3.14</RANGE_MAX>
+      <DEFAULT_VALUE>2.61f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_long_vel_rel_min</NAME>
+      <DESCRIPTION>The minimum relative longitudinal velocity of the front oncoming target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_long_vel_min</NAME>
+      <DESCRIPTION>The minimum longitudinal front approaching target object velocity.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_lat_vel_max</NAME>
+      <DESCRIPTION>The maximum lateral front oncoming target object velocity.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_first_warning_ttc_threshold</NAME>
+      <DESCRIPTION>This parameter defines the TTC threshold for the first warning level. [FRONT REAR]</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[2.6f 2.6f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_second_warning_ttc_threshold</NAME>
+      <DESCRIPTION>This parameter defines the TTC threshold for the second warning level if it is enabled. [FRONT REAR]</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[2.0f 2.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_third_warning_ttc_threshold</NAME>
+      <DESCRIPTION>This parameter defines the TTC threshold for the third warning level if it is enabled. [FRONT REAR]</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>sec</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[1.5f 1.5f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_second_warning_pred_lat_dist_max</NAME>
+      <DESCRIPTION>This parameter defines the maximum lateral object distance threshold for the second warning level. It shall not be less than k_ced_collision_zone_width.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_third_warning_pred_lat_dist_max</NAME>
+      <DESCRIPTION>This parameter defines the maximum lateral object distance threshold for the third warning level. It shall not be less than k_ced_collision_zone_width.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_alert_ttp_min</NAME>
+      <DESCRIPTION>Only objects with a time-to-pass equal or above this value can trigger a warning. Also alert holding can be deactived for objects with a TTP below this value using k_ced_f_suppress_alert_holding_for_obj_below_min_ttp.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-1.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_ego_abs_speed_max</NAME>
+      <DESCRIPTION>CED will only work for absolute ego speed values equal or below this value.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_crash_line_host_length_percentage</NAME>
+      <DESCRIPTION>The crash line is set as a percentage of the vehicle length. (0.0 = front bumper, 1.0 = rear bumper). Element [0] refers to objects coming from front, [1] from rear </DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.00f</RANGE_MIN>
+      <RANGE_MAX>1.00f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.5f 0.5f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_width_safety_margin_for_active_alert</NAME>
+      <DESCRIPTION>This value is added to the width of the predicted object, for any object that was alerted in the previous cycle.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.00f</RANGE_MIN>
+      <RANGE_MAX>1.00f</RANGE_MAX>
+      <DEFAULT_VALUE>0.30f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_width_safety_margin_for_critical_path_match</NAME>
+      <DESCRIPTION>This value is added to the width of the predicted object, for any object that is matched to the same path as any object with an active alert.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.00f</RANGE_MIN>
+      <RANGE_MAX>1.00f</RANGE_MAX>
+      <DEFAULT_VALUE>0.30f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_min_dist_to_crash_line_for_path_match</NAME>
+      <DESCRIPTION>Specifies the minimum absolute distance of the object to the crash line to activate path matching functionality. Objects that are closer will be predicted using their heading.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>10.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_offset_to_path_weight</NAME>
+      <DESCRIPTION>Weight to change the influence of the path offset for the predicted object at the crash line.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>%</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_collision_zone_width</NAME>
+      <DESCRIPTION>Sets the width of the collision zone next to the vehicle. Should be set to door length plus safety margin.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.5f</RANGE_MIN>
+      <RANGE_MAX>3.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_funnel_zone_length</NAME>
+      <DESCRIPTION>Sets the length of the funnel zones.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>10.0f</RANGE_MIN>
+      <RANGE_MAX>80.0f</RANGE_MAX>
+      <DEFAULT_VALUE>60.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_funnel_zone_width</NAME>
+      <DESCRIPTION>Sets the width of the funnel zones on the side furthest away from the ego.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>1.0f</RANGE_MIN>
+      <RANGE_MAX>40.0f</RANGE_MAX>
+      <DEFAULT_VALUE>20.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_alert_qualifying_cycles</NAME>
+      <DESCRIPTION>Number of qualifying cycles for objects that are not classified as slow objects. See also k_ced_alert_qualifying_cycles_slow_objects and k_ced_slow_objects_long_vel_max.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_alert_qualifying_cycles_slow_objects</NAME>
+      <DESCRIPTION>Number of qualifying cycles for objects that are classified as slow objects. See also k_ced_alert_qualifying_cycles and k_ced_slow_objects_long_vel_max.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>10</RANGE_MAX>
+      <DEFAULT_VALUE>6u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_slow_objects_long_vel_max</NAME>
+      <DESCRIPTION>Maximal longitudinal object velocity of an object to be classified as slow object regarding alert qualifying. Use 0.0f to disable different handling of slow objects.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0</RANGE_MIN>
+      <RANGE_MAX>20.0</RANGE_MAX>
+      <DEFAULT_VALUE>2.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_alert_holding_cycles</NAME>
+      <DESCRIPTION>Number of holding cycles for alert.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>50</RANGE_MAX>
+      <DEFAULT_VALUE>8u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_allow_opposite_side_alerts</NAME>
+      <DESCRIPTION>Objects on one ego side are allowed to give an alert for the opposite side (0: not allowed, 1: only allowed if object is matched to a path, 2: allowed for all objects).</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>2</RANGE_MAX>
+      <DEFAULT_VALUE>2u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_ego_lane_width</NAME>
+      <DESCRIPTION>Sets the virtual width of the ego lane. Is used for classifying objects ego side as EGO_LANE and alert side as INTERSEC_BOTH_SIDES.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_ego_lane_parking_range</NAME>
+      <DESCRIPTION>Sets the range for a parking scenario of an approaching object. Is used for suppression of objects moving on the ego lane when those are parking.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>50.0f</RANGE_MAX>
+      <DEFAULT_VALUE>20.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_ego_lane_parking_maneuver_speed</NAME>
+      <DESCRIPTION>Sets the speed for a parking scenario of an approaching object. Is used for suppression of objects moving on the ego lane when those are parking.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>13.0f</RANGE_MAX>
+      <DEFAULT_VALUE>4.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_alert_holding_obj_abs_heading_max</NAME>
+      <DESCRIPTION>Maximum allowed absolute heading angle of the target object for alert holding logic.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_alert_holding_obj_long_vel_min</NAME>
+      <DESCRIPTION>Minimum approaching longitudinal relative velocity of the target object for alert holding logic.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_suppress_pt_heading_diff_ced_alert_max</NAME>
+      <DESCRIPTION>Maximum allowed heading difference of the target object and its nearest path for alerting the object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>rad</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>0.5f</RANGE_MAX>
+      <DEFAULT_VALUE>0.35f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_suppress_range_to_nearest_path_max</NAME>
+      <DESCRIPTION>Maximum allowed range between the target object and its nearest path segment.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>3.5f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_suppress_alert_object_age_max</NAME>
+      <DESCRIPTION>Based on the nearest path a young object causing an alert can be suppressed. In case that nearest path suppression shall not be used, this calibration can be set to zero.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>25u</RANGE_MAX>
+      <DEFAULT_VALUE>20u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_min_cycles_for_path_match_for_no_suppress</NAME>
+      <DESCRIPTION>Minimum amount of consecutive cycles a new object needs to be matched to a path so that suppression is not applied to it.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>10u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_age_min</NAME>
+      <DESCRIPTION>Minimal tracker age of object needed to be relevant.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>5u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_age_min</NAME>
+      <DESCRIPTION>Minimal tracker age of object coming from front direction needed to be relevant.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0u</RANGE_MIN>
+      <RANGE_MAX>5u</RANGE_MAX>
+      <DEFAULT_VALUE>3u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_enable_heading_exp_moving_average</NAME>
+      <DESCRIPTION>Indicates if the exponential moving average function for the object heading is enabled.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_second_warning_level_enable</NAME>
+      <DESCRIPTION>Enable the second warning level.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_third_warning_level_enable</NAME>
+      <DESCRIPTION>Enable the third warning level.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_suppress_alert_holding_for_uncritical_objects</NAME>
+      <DESCRIPTION>If enabled alert holding on objects with heading or long velocity out of allowed range is suppressed.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_suppress_alert_holding_for_obj_below_min_ttp</NAME>
+      <DESCRIPTION>If enabled alert holding on objects with a TTP below k_ced_alert_ttp_min is suppressed.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_path_tracking_enable</NAME>
+      <DESCRIPTION>Enable use of path tracking information.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_handle_both_side_alerts_as_object_side</NAME>
+      <DESCRIPTION>Objects that alert both sides are restricted to only alert their current side.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_allow_ego_lane_alerts</NAME>
+      <DESCRIPTION>Objects that are laterally in the ego lane (defined by k_ced_ego_lane_width) are allowed to give alerts.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_use_only_mature_paths</NAME>
+      <DESCRIPTION>Pathtracking data can be used only if matched path is mature.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_allow_coasted_object_alerts</NAME>
+      <DESCRIPTION>Objects that are coasting are allowed to give alerts.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>1u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_long_vel_rel_max</NAME>
+      <DESCRIPTION>Maximum approaching longitudinal relative velocity of the target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>80.0f</RANGE_MAX>
+      <DEFAULT_VALUE>79.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_ftm_long_vel_rel_max</NAME>
+      <DESCRIPTION>The maximum relative longitudinal velocity of the front oncoming target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>80.0f</RANGE_MAX>
+      <DEFAULT_VALUE>79.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_vel_max</NAME>
+      <DESCRIPTION>The maximum speed of the target object.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>80.0f</RANGE_MAX>
+      <DEFAULT_VALUE>80.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_choose_ref_point_funnel_check</NAME>
+      <DESCRIPTION>Set refference point in funnel occupance check. (0: deafult, 1: front bumper, 2: nearest corner)</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>uint8_t</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>2</RANGE_MAX>
+      <DEFAULT_VALUE>0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_adapt_heading_ego_lane</NAME>
+      <DESCRIPTION>Flag whether heading angle should be zeroed </DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_slight_turn_lat_vel_table</NAME>
+      <DESCRIPTION>Table with the lateral velocity thresholds for the slight turn logic. If y-speed is below 1st value, sets heading to 0; if over 2nd value, keep initial heading; if between thresholds, heading grows linearly from zero to initial value</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>10.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 0.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_slight_turn_position_limits</NAME>
+      <DESCRIPTION>Longitudinal (first) and lateral (second) thresholds for object distance in slight turn logic. By default set to invalid ced distance</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>100.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[100.0f 100.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_f_object_lat_on_one_side_of_border</NAME>
+      <DESCRIPTION>Flag to check if the alert should be suppressed due to the location of the object. Only if the reference point (depend on FOV in which it is located) is on the correct side of the specified line(k_ced_lat_pos_of_border), alert shall be triggered</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0u</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_lat_pos_of_border</NAME>
+      <DESCRIPTION>Lateral position of line indicating the longitudinal boundary along which we verify the alert. For RL FOV: Calculated from the left side of the host, For RR FOV: Calculated from the right side of the host</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-2.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_lat_pos_shift_enable</NAME>
+      <DESCRIPTION>Flag enabling logic for shifting lateral position</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>boolean_T</DATA_TYPE>
+      <DATA_RESOLUTION>1</DATA_RESOLUTION>
+      <RANGE_MIN>0</RANGE_MIN>
+      <RANGE_MAX>1</RANGE_MAX>
+      <DEFAULT_VALUE>0</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_lat_pos_max_shift</NAME>
+      <DESCRIPTION>Maximal value of the lateral position shift, in direction away from ego</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>-5.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+     <record>
+      <NAME>k_ced_lat_pos_shift_long_dist_thresholds</NAME>
+      <DESCRIPTION>Longitudinal distance thresholds for lateral shift calculations. Full shift is applied for objects located farer than 2nd threshold, no shift below 1st threshold, linear slope between them</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1000.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 5.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_lat_pos_shift_lat_dist_thresholds</NAME>
+      <DESCRIPTION>Lateral distance thresholds for lateral shift calculations. Full shift is applied for objects located farer than 2nd threshold, no shift below 1st threshold, linear slope between them</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1000.0f</RANGE_MAX>
+      <DEFAULT_VALUE>[0.0f 5.0f]</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_bmw_ced_speed_max_hysteresis</NAME>
+      <DESCRIPTION>CED will only work for absolute ego speed values equal or below this value of hysteresis for activation speed.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m/s</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>20.0f</RANGE_MAX>
+      <DEFAULT_VALUE>2.77778f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_predicted_max_width_slope_reduce_factor</NAME>
+      <DESCRIPTION>Factor reducing the slope of predicted width.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>none</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>1.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_object_predicted_max_width_slope_offset</NAME>
+      <DESCRIPTION>Offset added to object predicted width. It compensates error related to the slope reduce factor.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_lat_pos_shift_width_thresh</NAME>
+      <DESCRIPTION>If object width is equal or greater than this threshold, the lateral position shift will be applied.</DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.1</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>5.0f</RANGE_MAX>
+      <DEFAULT_VALUE>1.2f</DEFAULT_VALUE>
+    </record>
+    <record>
+      <NAME>k_ced_warning_pred_lat_dist_max_histeresis</NAME>
+      <DESCRIPTION>This parameter defines the hystereis of maximum lateral object distance threshold for the ALL warning levels. </DESCRIPTION>
+      <Comp>CED</Comp>
+      <UNIT>m</UNIT>
+      <DATA_TYPE>float32_T</DATA_TYPE>
+      <DATA_RESOLUTION>0.01</DATA_RESOLUTION>
+      <RANGE_MIN>0.0f</RANGE_MIN>
+      <RANGE_MAX>2.0f</RANGE_MAX>
+      <DEFAULT_VALUE>0.0f</DEFAULT_VALUE>
+    </record>
+  </CALIBRATION_COMPONENT>
+</data-set>

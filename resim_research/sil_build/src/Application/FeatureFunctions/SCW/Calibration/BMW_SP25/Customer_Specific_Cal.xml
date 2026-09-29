@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data-set xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>k_scw_f_enable_via_cal</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_f_dynamic_enable_via_cal</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_f_guardrail_enable_via_cal</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_min_host_speed</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_min_host_speed_hys</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_candidate_relative_velocity</NAME>
+    <VALUE>[-2.75 10.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_f_adjust_zones_to_ego_size</NAME>
+    <VALUE>1u</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_initial_zone_x</NAME>
+    <VALUE>[1.0 0.0 -1.0 -1.0 0.0 1.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_initial_zone_y</NAME>
+    <VALUE>[5.0 5.0 5.0 0.0 0.0 0.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_hys_zone_x_offset</NAME>
+    <VALUE>[1.0 0.0 -1.0 -1.0 0.0 1.0]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_hys_zone_y_offset</NAME>
+    <VALUE>[1.0 1.0 1.0 -0.5 -0.5 -0.5]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_min_exist_prob_radar_guardrail</NAME>
+    <VALUE>0.6</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_candidate_mature_cycles_in_zone_threshold</NAME>
+    <VALUE>3</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_candidate_velocity</NAME>
+    <VALUE>[1.0f 100.0f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_min_candidate_age</NAME>
+    <VALUE>0</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_candidate_heading</NAME>
+    <VALUE>[-0.8f 0.8f]</VALUE>
+  </record>
+  <record>
+    <NAME>k_scw_lateral_distance_default</NAME>
+    <VALUE>30</VALUE>
+  </record>
+</data-set>

@@ -1,0 +1,454 @@
+/**************************************
+ - Multibranch Pipeline
+    * SCM: Git
+    * Repository URL: https://gitgerrit.asux.aptiv.com/CORECOMP/ALSW/CT_CalibrationTool
+    * Credentials: GSS-GERRIT-gid_ad_oem_integ
+    * Script Path: jenkins/jobs/Calibration_Tool_Build.jenkins
+***************************************/
+
+// For a Gerrit review set stages that should run automatically
+if(env.GERRIT_CHANGE_NUMBER != null)
+{
+    env.UNIT_TEST = true
+    env.PYLINT = true
+    env.C_TESTING = true
+    env.IWYU_REPORT = true
+    env.EXE_TESTING = true
+    env.SPHINX_DOCUMENTATION = true
+}
+
+def run_shell_script(script_path)
+{
+    sh '#!/bin/bash \n set -e -x; chmod +x ' + script_path + '; . ' + script_path
+}
+
+def run_shell_script_with_parameter(script_path, parameter)
+{
+    sh 'bash -e -c -x "chmod +x ' + script_path + '; . ' + script_path + ' ' + parameter + '"'
+}
+
+pipeline {
+    agent
+    {
+        docker
+        {
+            image 'jfrog.asux.aptiv.com/corecomp_devops-aptiv-00000000-docker-local/alsw-coverity:5.0'
+            label 'docker'
+        }
+    }
+    parameters
+    {
+        separator(name: "BUILD STAGES", sectionHeader: "Build Stages")
+        booleanParam(name: 'UNIT_TEST', defaultValue: true, description: 'Include the Unit Test Build for the Python source code in this job')
+        booleanParam(name: 'PYLINT', defaultValue: true, description: 'Include the Pylint checks for the python source code and python testing code in this job')
+        booleanParam(name: 'C_TESTING', defaultValue: true, description: 'Include testing of the generated C code in this job')
+        booleanParam(name: 'IWYU_REPORT', defaultValue: true, description: 'Include IWYU checks in this job')
+        booleanParam(name: 'EXE_TESTING', defaultValue: true, description: 'Include test if the provided executable is up-to-date in this job')
+        booleanParam(name: 'SPHINX_DOCUMENTATION', defaultValue: true, description: 'Include sphinx documentation generation in this job')
+    }
+    environment
+    {
+        REPO_PATH = "${WORKSPACE}/Calibration_Tool"
+    }
+    options
+    {
+        checkoutToSubdirectory('Calibration_Tool')
+    }
+
+    stages
+    {
+        stage("Prepare")
+        {
+            steps
+            {
+                script
+                {
+                    if(env.GERRIT_CHANGE_NUMBER != null)
+                    {
+                        // Send message to Gerrit review that build has started
+                        gerritReview message: "Started build ${env.BUILD_URL} to verify patch set ${env.GERRIT_PATCHSET_NUMBER}"
+                    }
+
+                    // special case for first run
+                    if(env.UNIT_TEST == null || env.PYLINT == null)
+                    {
+                        currentBuild.displayName = "Parameter loading"
+                        currentBuild.result = "ABORTED"
+                        error "This build was required to load the parameters. Please restart the pipeline for an actual run of the pipeline."
+                    }
+
+                    currentBuild.displayName = "Calibration_Tool" + "@" + String.valueOf(env.GIT_COMMIT.take(7))
+                }
+            }
+        }
+        stage("Install packages")
+        {
+            steps
+            {
+                // install required packages
+                sh """
+                    cd ${REPO_PATH}
+                    pip install -r requirements.txt
+                    pip install -r testing/python_testing/requirements.txt
+                    pip install -r docs/requirements.txt
+                """
+            }
+        }
+        stage("Run Calibration Tool")
+        {
+            steps
+            {
+                // run Calibration Tool on example as a smoke test
+                sh """
+                    python ${REPO_PATH}/ct_main.py ${REPO_PATH}/testing/example_files/Core/cool_feature_cal.xml
+                """
+            }
+        }
+
+        stage("Run all tests")
+        {
+            parallel
+            {
+                stage ('Unit Tests (Pytest)')
+                {
+                    when{expression{Boolean.valueOf(env.UNIT_TEST)}}
+                    stages
+                    {
+                        stage("Unit Tests")
+                        {
+                            steps
+                            {
+                                sh """
+                                    mkdir -p ${WORKSPACE}/unit_test_logs
+                                    cd ${REPO_PATH}
+                                    pytest --junitxml=${WORKSPACE}/unit_test_logs/results.xml --cov-report html:${WORKSPACE}/unit_test_logs/cov_html --cov-report xml:${WORKSPACE}/unit_test_logs/cov.xml --cov=python_src --cov-branch testing/python_testing/
+                                """
+
+                                archiveArtifacts 'unit_test_logs/results.xml'
+                                junit allowEmptyResults: false, testResults: 'unit_test_logs/results.xml'
+                            }
+                        }
+                        stage("Code Coverage")
+                        {
+                            steps
+                            {
+                                archiveArtifacts 'unit_test_logs/cov.xml'
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'unit_test_logs/cov_html', reportFiles: 'index.html', reportName: 'Code Coverage Report'])
+
+                                // set build and stage unstable if coverage is too low
+                                catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE')
+                                {
+                                    // cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'unit_test_logs/cov.xml', conditionalCoverageTargets: '90, 0, 90', failUnhealthy: false, failUnstable: true, fileCoverageTargets: '90, 0, 90', lineCoverageTargets: '90, 0, 90', maxNumberOfBuilds: 50, methodCoverageTargets: '90, 0, 90', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+                                    recordCoverage failOnError:true, qualityGates: [
+                                            [criticality: 'UNSTABLE', metric: 'BRANCH', threshold: 90.0],
+                                            [criticality: 'UNSTABLE', metric: 'LINE', threshold: 90.0]
+                                        ],
+                                        tools: [
+                                            [parser: 'COBERTURA', pattern: 'unit_test_logs/cov.xml']
+                                        ]
+                                }
+                            }
+                        }
+                    }
+                }
+                stage ('Pylint Analysis')
+                {
+                    when{expression{Boolean.valueOf(env.PYLINT)}}
+                    steps
+                    {
+                        sh """
+                            mkdir -p pylint_logs
+                            cd ${REPO_PATH}
+                            pip install -r requirements.txt
+                            pip install -r testing/python_testing/requirements.txt
+                            pylint --rcfile=pylintrc testing/python_testing python_src python_src/file_skeletons | tee -a ${WORKSPACE}/pylint_logs/result.txt
+                        """
+
+                        archiveArtifacts 'pylint_logs/result.txt'
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'pylint_logs', reportFiles: 'result.txt', reportName: 'Pylint Report'])
+
+                        script
+                        {
+                            def file = readFile('pylint_logs/result.txt')
+                            def lines = file.readLines()
+                            def string_with_rating = lines.get(lines.size()-2)
+                            env.PYLINT_RATING      = string_with_rating.replaceAll("[^0-9./]", "").split("/")[0]
+                            if (env.PYLINT_RATING != "10.00")
+                            {
+                                unstable 'Pylint has findings, please see the Pylint Report.'
+                            }
+                        }
+                    }
+                }
+                stage ('C Testing (Configuration 1)')
+                {
+                    when
+                    {expression{Boolean.valueOf(params.C_TESTING)}}
+                    stages
+                    {
+                        stage("Build")
+                        {
+                            steps
+                            {
+                                run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/c_build.sh", "1")
+                                archiveArtifacts 'c_testing_logs/build_log_config_1.txt'
+                            }
+                        }
+                        stage("Compiler Warnings")
+                        {
+                            steps
+                            {
+                                recordIssues (
+                                    filters: [excludeFile('(.*Mock_Files.*)')],
+                                    //healthy: 1, ignoreFailedBuilds: false, ignoreQualityGate: true, qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true], [threshold: 1, type: 'TOTAL_ERROR', unstable: false]],
+                                    tools: [gcc(name: 'C Testing (Configuration 1)', pattern: 'c_testing_logs/build_log_config_1.txt', id: "GCC_Config_1")],
+                                    unhealthy: 2
+                                )
+                            }
+                        }
+                        stage("Coverity")
+                        {
+                            steps
+                            {
+                                run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/c_coverity_build.sh", "1")
+
+                                // publish results
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'c_coverity_logs_1/report', reportFiles: 'index.html', reportName: 'Coverity Report'])
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'c_coverity_logs_1/summary', reportFiles: 'summary.html', reportName: 'Coverity Summary'])
+
+                                script
+                                {
+                                    def file = readFile "c_coverity_logs_1/summary/summary.html"
+                                    def lines = file.readLines()
+                                    def string_with_number_of_errors = lines.get(lines.size()-4)
+                                    env.NUMBER_OF_COVERITY_ERRORS = String.valueOf(String.valueOf(string_with_number_of_errors).replaceAll("[^0-9]", ""))
+                                    def current_line = 12
+                                    while(current_line < lines.size()-5){
+                                        print lines.get(current_line)
+                                        if(!(lines.get(current_line).contains("HIS_")) || lines.get(current_line).contains("HIS_CCM"))
+                                        {
+                                            //unstable 'Coverity analysis found issues other than HIS_* findings'
+                                            break
+                                        }
+                                        current_line = current_line + 4
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage ('C Testing (Configuration 2)')
+                {
+                    when
+                    {expression{Boolean.valueOf(params.C_TESTING)}}
+                    stages
+                    {
+                        stage("Build")
+                        {
+                            steps
+                            {
+                                run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/c_build.sh", "2")
+                                archiveArtifacts 'c_testing_logs/build_log_config_2.txt'
+                            }
+                        }
+                        stage("Compiler Warnings")
+                        {
+                            steps
+                            {
+                                recordIssues (
+                                    filters: [excludeFile('(.*Mock_Files.*)')],
+                                    //healthy: 1, ignoreFailedBuilds: false, ignoreQualityGate: true, qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true], [threshold: 1, type: 'TOTAL_ERROR', unstable: false]],
+                                    tools: [gcc(name: 'C Testing (Configuration 2)', pattern: 'c_testing_logs/build_log_config_1.txt', id: "GCC_Config_2")],
+                                unhealthy: 2
+                                )
+                            }
+                        }
+                    }
+                }
+                stage ('C Testing (Configuration 3)')
+                {
+                    when
+                    {expression{Boolean.valueOf(params.C_TESTING)}}
+                    stages
+                    {
+                        stage("Build")
+                        {
+                            steps
+                            {
+                                run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/c_build.sh", "3")
+                                archiveArtifacts 'c_testing_logs/build_log_config_3.txt'
+                            }
+                        }
+                        stage("Compiler Warnings")
+                        {
+                            steps
+                            {
+                                recordIssues (
+                                    filters: [excludeFile('(.*Mock_Files.*)')],
+                                    //healthy: 1, ignoreFailedBuilds: false, ignoreQualityGate: true, qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true], [threshold: 1, type: 'TOTAL_ERROR', unstable: false]],
+                                    tools: [gcc(name: 'C Testing (Configuration 3)', pattern: 'c_testing_logs/build_log_config_1.txt', id: "GCC_Config_3")],
+                                    unhealthy: 2
+                                )
+                            }
+                        }
+                    }
+                }
+                stage ('Iwyu Reports')
+                {
+                    when
+                    {expression{Boolean.valueOf(params.IWYU_REPORT)}}
+                    stages
+                    {
+                        stage ('Iwyu Report (Configuration 1)')
+                        {
+                            steps
+                            {
+                                script
+                                {
+                                    run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/iwyu_checks.sh", "1")
+
+                                    def file = readFile('iwyu_check_log_1/iwyu_report.txt')
+                                    def lines = file.readLines()
+                                    def string_with_number_of_errors = lines.get(lines.size()-1)
+                                    env.NUMBER_OF_IWYU_FINDINGS      = String.valueOf(String.valueOf(string_with_number_of_errors).replaceAll("[^0-9]", ""))
+                                    if (env.NUMBER_OF_IWYU_FINDINGS != "0")
+                                    {
+                                        unstable 'IWYU found issues, please check the report.'
+                                    }
+                                }
+
+                                archiveArtifacts 'iwyu_check_log_1/iwyu_checks_log_config_1.txt, iwyu_check_log_1/iwyu_report.txt'
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'iwyu_check_log_1', reportFiles: 'iwyu_report.txt', reportName: 'Include-what-you-use Repor_1'])
+                            }
+                        }
+                        stage ('Iwyu Report (Configuration 2)')
+                        {
+                            steps
+                            {
+                                script
+                                {
+                                    run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/iwyu_checks.sh", "2")
+
+                                    def file = readFile('iwyu_check_log_2/iwyu_report.txt')
+                                    def lines = file.readLines()
+                                    def string_with_number_of_errors = lines.get(lines.size()-1)
+                                    env.NUMBER_OF_IWYU_FINDINGS      = String.valueOf(String.valueOf(string_with_number_of_errors).replaceAll("[^0-9]", ""))
+                                    if (env.NUMBER_OF_IWYU_FINDINGS != "0")
+                                    {
+                                        unstable 'IWYU found issues, please check the report.'
+                                    }
+                                }
+
+                                archiveArtifacts 'iwyu_check_log_2/iwyu_checks_log_config_2.txt, iwyu_check_log_2/iwyu_report.txt'
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'iwyu_check_log_2', reportFiles: 'iwyu_report.txt', reportName: 'Include-what-you-use Report_2'])
+                            }
+                        }
+                        stage ('Iwyu Report (Configuration 3)')
+                        {
+                            steps
+                            {
+                                script
+                                {
+                                    run_shell_script_with_parameter("${REPO_PATH}/jenkins/jobs/shell/iwyu_checks.sh", "3")
+
+                                    def file = readFile('iwyu_check_log_3/iwyu_report.txt')
+                                    def lines = file.readLines()
+                                    def string_with_number_of_errors = lines.get(lines.size()-1)
+                                    env.NUMBER_OF_IWYU_FINDINGS      = String.valueOf(String.valueOf(string_with_number_of_errors).replaceAll("[^0-9]", ""))
+                                    if (env.NUMBER_OF_IWYU_FINDINGS != "0")
+                                    {
+                                        unstable 'IWYU found issues, please check the report.'
+                                    }
+                                }
+
+                                archiveArtifacts 'iwyu_check_log_3/iwyu_checks_log_config_3.txt, iwyu_check_log_3/iwyu_report.txt'
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'iwyu_check_log_3', reportFiles: 'iwyu_report.txt', reportName: 'Include-what-you-use Report_3'])
+                            }
+                        }
+                    }
+                }
+                
+                stage("Executable Check (Unix)")
+                {
+                    when
+                    {expression{Boolean.valueOf(params.EXE_TESTING)}}
+                    steps
+                    {
+                        script
+                        {
+                            run_shell_script("${REPO_PATH}/jenkins/jobs/shell/check_executable.sh")
+
+                            def file = readFile "executable_check_logs/cal_file_diff.txt"
+                            if(file.length() != 0)
+                            {
+                                unstable 'Calibration Tool Unix executable in folder dist/ is not up-to-date!'
+                            }
+                        }
+
+                        // archive results
+                        archiveArtifacts 'executable_check_logs/cal_file_diff.txt'
+                    }
+                }
+                stage('Sphinx Documentation')
+                {
+                    when
+                    {expression{Boolean.valueOf(params.SPHINX_DOCUMENTATION)}}
+                    steps
+                    {
+                        sh """
+                            cd ${REPO_PATH}
+                            sphinx-build -b html docs/source ${WORKSPACE}/sphinx_logs
+                        """
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'sphinx_logs', reportFiles: 'index.html', reportName: 'Sphinx Documentation'])
+                    }
+                }
+            }
+        }
+    }
+
+    post
+    {
+        always
+        {
+            sh 'set > env.txt'
+            archiveArtifacts 'env.txt'
+        }
+        success
+        {
+            script
+            {
+                if(env.GERRIT_CHANGE_NUMBER != null)
+                {
+                    // Set the "Verified" label in Gerrit if it was a build of a changeset.
+                    gerritReview labels: [Verified: 1], message: "Verified via ${env.BUILD_URL}"
+                }
+            }
+        }
+        failure
+        {
+            script
+            {
+                if(env.GERRIT_CHANGE_NUMBER != null)
+                {
+                    // Set the "Verified" label in Gerrit if it was a build of a changeset.
+                    gerritReview labels: [Verified: -1], message: "Build failed: ${env.BUILD_URL}"
+                }
+            }
+        }
+        unstable
+        {
+            script
+            {
+                if(env.GERRIT_CHANGE_NUMBER != null)
+                {
+                    // Set the "Verified" label in Gerrit if it was a build of a changeset.
+                    gerritReview labels: [Verified: -1], message: "Build is unstable: ${env.BUILD_URL}"
+                }
+            }
+        }
+        cleanup
+        {
+           cleanWs(notFailBuild: true, deleteDirs: true)
+        }
+    }
+}

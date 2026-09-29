@@ -1,0 +1,70 @@
+{
+    "version": 4,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "include": [
+        "GenericPresets.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "release_GCC",
+            "inherits": "generic_release",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_C",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP variant C",
+            "cacheVariables": {
+                "RSPP_VARIANT": "C",
+                "F360_TRACKER_VARIANT": "C"
+            }
+        },
+        {
+            "name": "release_PC_GCC_RSPP_D",
+            "inherits": "release_GCC",
+            "displayName": "Release: GCC | RSPP variant D",
+            "cacheVariables": {
+                "RSPP_VARIANT": "D",
+                "F360_TRACKER_VARIANT": "D"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release_GCC",
+            "configurePreset": "release_GCC",
+            "displayName": "Release PC | GCC | RSPP variant A (default)",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "release_PC_GCC_RSPP_C",
+            "configurePreset": "release_PC_GCC_RSPP_C",
+            "displayName": "Release: GCC | RSPP variant C",
+            "hidden": false,
+            "configuration": "Release",
+            "jobs": 8
+        },
+        {
+            "name": "release_PC_GCC_RSPP_D",
+            "configurePreset": "release_PC_GCC_RSPP_D",
+            "displayName": "Release: GCC | RSPP variant D",
+            "configuration": "Release",
+            "jobs": 8
+        }
+    ]
+}

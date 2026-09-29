@@ -1,0 +1,11 @@
+/*****************************************************************************
+* COPYRIGHT, 2021, Aptiv All Rights reserved
+*****************************************************************************/
+
+ltb_post_run.o (.data)
+ltb_pre_run.o (.data)
+ltb.o (.data)
+ltb_create_zones.o (.data)
+ltb_debug_interface.o (.data)
+ltb_debug_writer.o (.data)
+ltb_iface.o (.data)

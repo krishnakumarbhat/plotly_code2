@@ -1,0 +1,96 @@
+%% This is a scenario file, which can be read in by the MATE-Scenario-Creator-Plugin.
+% File Version: VERSION_11
+
+%% Scenario Description:
+% This scenario includes the EGO-object, named 'Ego'. Internal name is 'object_1'.
+% This scenario includes the TARGET-object, named 'Target'. Internal name is 'object_2'.
+% The dimensions of Ego are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The dimensions of Target are set to the VEHICLE-Preset: [Width: 1.83 m, Length: 4.65 m, PivotPoint: -3.5 m].
+% The initial conditions of Ego are set to: [Start-Speed: 50 kph, Start-Heading: 0 deg].
+% The initial conditions of Target are set to: [Start-Speed: 48 kph, Start-Heading: 0 deg].
+% The end position of Target is shifted by Lateral-Offset: -3.5 m, Longitudinal-Offset: -2.3 mHeading: 0°.
+% Add a straight section to Ego with: End-Speed: 50 kph, Distance: 208 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Ego with: End-Speed: 50 kph, Distance: 300 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 50 kph, Distance: 208 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 52 kph, Distance: 30 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 55 kph, Distance: 50 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 48 kph, Distance: 70 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 52 kph, Distance: 30 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 45 kph, Distance: 30 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 53 kph, Distance: 50 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+% Add a straight section to Target with: End-Speed: 46 kph, Distance: 42.3 m, Section-Generic-Properties( Tracker-Data.Status: MATURE ).
+
+%% Set up enums
+[enum_object_types, enum_object_specific_variants]  = enum_base.get_by_name('enum_object_types', 'enum_object_specific_variants');
+[enum_track_status_T, enum_collision_point, enum_track_object_class] = enum_base.get_by_name('enum_track_status_T', 'enum_collision_point', 'enum_track_object_class');
+
+%% Create Objects and define start and end conditions of the scenario
+% Mandatory: Create objects for scenario (Type[enum], Name[char])
+object_1 = class_scenario_properties(enum_object_types.EGO, 'Ego');
+object_2 = class_scenario_properties(enum_object_types.TARGET, 'Target');
+
+% Mandatory: Define start objects dimensions (Width[m], Length[m], Pivot_Point[m]) OR (Preset[enum])
+object_1.set_dimension(enum_object_specific_variants.VEHICLE);
+object_2.set_dimension(enum_object_specific_variants.VEHICLE);
+
+% Mandatory: Define objects starting values (Speed[kph], Heading[deg])
+object_1.set_starting_values(50, 0);
+object_2.set_starting_values(48, 0);
+
+% Optional: Define objects to end its scenario together with ego
+
+% Optional: Define objects to have collision with Ego (Collision_Point[enum], CP-Lat-Offset[%], CP-Long-Offset[%])
+
+% Optional: Define end position offsets for targets (Lat.[m] / Long.[m])
+object_2.set_end_pos_offsets(-3.5, -2.3, 0);
+
+%% Define trajectories of the objects
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_straight_section(50, 208, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_1.add_straight_section(50, 300, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(50, 208, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(52, 30, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(55, 50, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(48, 70, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(52, 30, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(45, 30, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(53, 50, section_generic_properties);
+
+section_generic_properties = class_section_generic_properties();
+section_generic_properties.tracker_data.status = enum_track_status_T.MATURE;
+object_2.add_straight_section(46, 42.3, section_generic_properties);
+
+
+%% Create scenario property, containing all of the objects.
+scenario = class_scenario_creator();
+scenario.set_version(enum_scenario_file_versions.VERSION_11);
+scenario.set_polarion_info('CSCSA-46697', '');
+scenario.set_test_type('positive');
+scenario.set_default_timestep(0.05);
+scenario.add_object(object_1);
+scenario.add_object(object_2);

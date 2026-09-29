@@ -1,0 +1,6 @@
+coloredlogs==15.0.1
+pyinstaller==5.4.1
+pytest
+pytest-cov
+numpy
+hypothesis

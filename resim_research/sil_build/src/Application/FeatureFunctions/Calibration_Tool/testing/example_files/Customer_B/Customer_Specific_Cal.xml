@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-set xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <record>
+    <NAME>cal_float_array_1</NAME> <!-- This shall produce a warning due to dimension mismatch-->
+    <VALUE>150.0f</VALUE>
+  </record>
+  <record>
+    <NAME>cal_5</NAME> <!-- This shall produce a warning since cal is not an array-->
+    <VALUE>[25u 30u]</VALUE>
+  </record>
+  <record>
+    <NAME>cal_i_am_not_existing_in_main_cal_sheet</NAME> <!-- This shall produce a warning due to missing existence of cal -->
+    <VALUE>15u</VALUE>
+  </record>
+  <record>
+    <NAME>cal_i_am_a_2d_array</NAME> <!-- This shall produce a warning due to dimension mismatch -->
+    <VALUE>[[5.0f -14.0f][26.0f 4.0f][0.5f 1.0f]]</VALUE>
+  </record>
+  <record>
+    <NAME>cal_1</NAME> <!-- Overwrite it here and once more after this to enforce a warning -->
+    <VALUE>50u</VALUE>
+  </record>
+  <record>
+    <NAME>cal_1</NAME> <!-- This shall produce a warning due to multiple setting -->
+    <VALUE>75u</VALUE>
+  </record>
+  <record>
+    <NAME>cal_3</NAME> <!-- This shall produce an error since the overwritten value is outside of the allowed given range -->
+    <VALUE>260u</VALUE>
+  </record>
+</data-set>

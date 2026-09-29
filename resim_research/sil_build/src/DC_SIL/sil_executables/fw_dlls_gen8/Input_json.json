@@ -1,0 +1,35 @@
+{ 
+	"reprocessingInputFileStreams": [
+		{
+			"key": "BN_CALIFR",
+			"files": [
+				"C:/Users/zqdnxm/Downloads/UPU/ThunderMCIP_WS11656_20250727_161019_0002_b04.MF4"
+				
+			]
+		},
+
+		{
+			"key": "BN_FASETH",
+			"files": [
+				
+				"C:/Users/zqdnxm/Downloads/UPU/ThunderMCIP_WS11656_20250727_161019_0002_b04.MF4"
+			]
+		},
+		{
+			"key": "SRR_DEBUG",
+			"files": [
+			"C:/Users/zqdnxm/Downloads/mcip_logs/mcip_logs/ThunderMCIP_WS11656_20250723_132447_0002_b05.MF4",
+			"C:/Users/zqdnxm/Downloads/mcip_logs/mcip_logs/ThunderMCIP_WS11656_20250723_132447_0002_b05.MF4"
+
+			]
+		},
+		{
+			"key":"SRR_REFERENCE",
+			"files": [
+				
+			]
+ 
+		}
+ 
+	]
+}
