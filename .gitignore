@@ -112,5 +112,13 @@ edge_hdf/udp/output/
 **/*(*).h5
 # GHE migration clones (local-only source of truth, nested .git per branch)
 github/
+# SiL build artifacts + runtime captures (extensionless ELF/exe, large logs)
+resim_research/sil_build/src/DC_SIL/sil_executables/
+resim_research/sil_build/src/DC_SIL/sil_ext_libs/HDF/HDF_Linux/bin/
+resim_research/sil_build/src/DC_SIL/sil_ext_libs/HDF/HDF_Windows/bin/
+resim_research/sil_runtime/decoder/input
+resim_research/sil_runtime/gen7/APT_SRR_RESIM
+resim_research/sil_runtime/gen7/output/
+New/.store/
 # Edge-case measurement corpus (local-only binaries, manifest pushed separately)
 mf4_data/
