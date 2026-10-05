@@ -1,0 +1,19 @@
+hermite_clothoid.py PASS 0.5s :: demo PASS
+occupancy_blue.py PASS 0.7s :: demo PASS
+yawfree_clock.py PASS 0.5s :: demo PASS
+specular_contact.py PASS 0.6s :: demo PASS
+guarded_replay.py PASS 0.5s :: demo PASS
+gram_lift.py PASS 1.2s :: demo PASS
+n23_residual_track.py PASS 0.5s :: demo PASS
+n24_rank_gate.py PASS 1.1s :: demo PASS
+n25_ghost_yaw.py PASS 0.7s :: demo PASS
+imm_accel_gate.py PASS 1.5s :: demo PASS (N15 standalone REFUTED; hybrid == N5-class, grounding adds nothing)
+blue_closed_loop.py PASS 0.5s :: demo PASS
+gram_filter_compare.py PASS 21.9s :: demo PASS (UKF/IEKS comparison open; joint-pos negative retained)
+specular_ghost.py PASS 42.4s :: demo PASS
+combined_chain.py PASS 1.0s :: demo PASS
+adaptive_gating.py PASS 0.7s :: demo PASS
+dual_loop_cfar.py PASS 0.8s :: demo PASS
+doppler_disambiguation.py PASS 1.1s :: demo PASS
+parallel_kf.py PASS 47.8s :: demo PASS
+RESULT 18/18 PASS

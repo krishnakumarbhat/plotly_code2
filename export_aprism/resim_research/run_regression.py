@@ -11,15 +11,13 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     files = [
         "adaptive_gating.py", "async_motion_compensation.py",
-        "bend_conditioned.py", "blue_closed_loop.py", "combined_chain.py",
-        "conformal_fusion.py", "gram_filter_compare.py",
+        "bend_conditioned.py", "combined_chain.py", "conformal_fusion.py",
         "doppler_disambiguation.py", "doppler_radarsplat_mvp.py",
         "dual_loop_cfar.py", "ego_ghost_alignment.py", "fast_da.py",
         "ghost_augmentation.py", "gram_lift.py", "guarded_replay.py",
-        "hermite_clothoid.py", "hybrid_consensus.py", "imm_accel_gate.py",
-        "n23_residual_track.py", "n24_rank_gate.py", "n25_ghost_yaw.py",
-        "occupancy_blue.py", "parallel_kf.py", "sector_clutter_map.py",
-        "specular_contact.py", "spectral_covariance_scaling.py", "specular_ghost.py",
+        "hermite_clothoid.py", "hybrid_consensus.py", "occupancy_blue.py",
+        "parallel_kf.py", "sector_clutter_map.py", "specular_contact.py",
+        "spectral_covariance_scaling.py", "specular_ghost.py",
         "synthetic_generator.py", "track_conditioned.py", "yawfree_clock.py",
     ]
     logs, failures = [], []

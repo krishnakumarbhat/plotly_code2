@@ -1,0 +1,32 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {algocf}{\numberline {1}{\ignorespaces Range-adaptive dual-loop CFAR. All buffers preallocated.}}{47}{algocf.1}%
+\contentsline {algocf}{\numberline {2}{\ignorespaces Joseph-form EKF with Mahalanobis gating. \cref {eq:joseph} is the update that survives 32-bit silicon.}}{48}{algocf.2}%
+\contentsline {algocf}{\numberline {3}{\ignorespaces Blelloch scan: $O(\log N)$ span. Operand order is load-bearing for the non-commutative $\otimes $.}}{48}{algocf.3}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

@@ -1,0 +1,115 @@
+\contentsline {part}{I\hspace {1em}Electromagnetic Foundations \& FMCW Front-End Physics}{11}{part.1}%
+\contentsline {chapter}{\numberline {1}The Monostatic Radar Paradigm \& FMCW Principles}{12}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Intuition: echoes, pitch, and the laser tape measure}{12}{section.1.1}%
+\contentsline {section}{\numberline {1.2}The 77\,GHz automotive band}{12}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Why continuous wave and not pulses}{13}{section.1.3}%
+\contentsline {section}{\numberline {1.4}The LFMCW ramp, line by line}{13}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Heterodyne downmixing: the beat is born}{13}{section.1.5}%
+\contentsline {paragraph}{Worked example.}{14}{section*.6}%
+\contentsline {section}{\numberline {1.6}Quadrature demodulation: why one mixer is not enough}{14}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Figures: transceiver and chirp geometry}{14}{section.1.7}%
+\contentsline {part}{II\hspace {1em}Two-Dimensional Spectral Estimation \& Data Cube Architecture}{16}{part.2}%
+\contentsline {chapter}{\numberline {2}The Fast-Time / Slow-Time Two-Dimensional DSP Chain}{17}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Intuition: ripples in a pond, frame by frame}{17}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Fast time: sampling the beat, the Range-FFT}{17}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Slow time: the movie between chirps}{17}{section.2.3}%
+\contentsline {section}{\numberline {2.4}The Range-Doppler matrix}{18}{section.2.4}%
+\contentsline {chapter}{\numberline {3}The Compressed Data Cube \& Embedded Memory Constraints}{19}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Intuition: packing a library into a suitcase}{19}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Worked sizing: the $33.5\,\mathrm {MB}$ suitcase}{19}{section.3.2}%
+\contentsline {section}{\numberline {3.3}The CDC record and the wire}{19}{section.3.3}%
+\contentsline {part}{III\hspace {1em}Detection, Calibration \& Direction of Arrival}{20}{part.3}%
+\contentsline {chapter}{\numberline {4}Adaptive Peak Detection \& Cell-Averaging CFAR}{21}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Intuition: hearing a whisper next to a waterfall}{21}{section.4.1}%
+\contentsline {section}{\numberline {4.2}The CA-CFAR window}{21}{section.4.2}%
+\contentsline {section}{\numberline {4.3}When the waterfall is a wall: F1 and the dual loop}{21}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Digital Beamforming, Virtual MIMO \& Antenna Calibration}{23}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Intuition: two ears tell direction}{23}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Virtual MIMO by convolution}{23}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Calibration: SMC, USC, fascia}{23}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Post-Signal Processing \& Range-Doppler Unfolding}{25}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Worked unfolding: two rulers, one room}{25}{section.6.1}%
+\contentsline {part}{IV\hspace {1em}Embedded Tracking \& Satellite Network Fusion}{26}{part.4}%
+\contentsline {chapter}{\numberline {7}Multi-Target State Estimation: The Extended Kalman Filter}{27}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Intuition: the blindfolded navigator}{27}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Frames, state, and motion}{27}{section.7.2}%
+\contentsline {section}{\numberline {7.3}The polar measurement and its Jacobian}{27}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Multiple models and why gating beat them}{28}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Gating, birth, death}{28}{section.7.5}%
+\contentsline {section}{\numberline {7.6}The Joseph form: symmetry as survival}{28}{section.7.6}%
+\contentsline {chapter}{\numberline {8}Central Domain Controller Fusion \& Bus Serialization}{29}{chapter.8}%
+\contentsline {section}{\numberline {8.1}The five-eyed car}{29}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Worked packing: one track onto the bus}{29}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Wire layouts: datagram and frame}{29}{section.8.3}%
+\contentsline {section}{\numberline {8.4}CAN-FD: physics into integers}{29}{section.8.4}%
+\contentsline {part}{V\hspace {1em}Re-Simulation Platform, HPCC \& KPI Verification}{31}{part.5}%
+\contentsline {chapter}{\numberline {9}The Re-Simulation Harness}{32}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Intuition: replaying the match with a new referee}{32}{section.9.1}%
+\contentsline {section}{\numberline {9.2}SiL, HiL, decoders}{32}{section.9.2}%
+\contentsline {chapter}{\numberline {10}Dual-Tier KPI Verification}{33}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Intuition: instant replay with two referees}{33}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Tier 1: integer pairing; Tier 2: tolerance contract}{33}{section.10.2}%
+\contentsline {chapter}{\numberline {11}HPCC Parallelization \& the Alignment Bottleneck}{34}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Intuition: twenty cooks, one cold oven}{34}{section.11.1}%
+\contentsline {section}{\numberline {11.2}The 400-frame lock}{34}{section.11.2}%
+\contentsline {part}{VI\hspace {1em}The A-PRISM Research Advancements \& Inventions}{36}{part.6}%
+\contentsline {chapter}{\numberline {12}Invariant Specular Geometry \& the Virtual Aperture}{37}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Intuition: the hall of mirrors}{37}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Theorem E2a: the bearing correction}{37}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Theorem E2b: the $40\sigma $ Doppler invariant}{37}{section.12.3}%
+\contentsline {section}{\numberline {12.4}Consensus: finding pairs without assignment}{37}{section.12.4}%
+\contentsline {section}{\numberline {12.5}Curved rails: where the spike goes}{38}{section.12.5}%
+\contentsline {section}{\numberline {12.6}Run 14: ghosts as virtual antennas}{38}{section.12.6}%
+\contentsline {chapter}{\numberline {13}Kinematics-Aware Gating \& Spectral Covariance}{40}{chapter.13}%
+\contentsline {chapter}{\numberline {14}Prefix-Scan Filtering \& Generative Simulation}{41}{chapter.14}%
+\contentsline {section}{\numberline {14.1}S\"arkk\"a elements and the Blelloch tree}{41}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Doppler-RadarSplat}{41}{section.14.2}%
+\contentsline {chapter}{\numberline {15}Frontier Derivations \& Refutations (Runs 22--30)}{42}{chapter.15}%
+\contentsline {section}{\numberline {15.1}N20g: tangent-mirror Hermite clothoids}{42}{section.15.1}%
+\contentsline {section}{\numberline {15.2}Synthetic proving ground: four scenarios}{42}{section.15.2}%
+\contentsline {section}{\numberline {15.3}N22g: Occupancy-BLUE CFAR}{42}{section.15.3}%
+\contentsline {section}{\numberline {15.4}The rogues' gallery}{43}{section.15.4}%
+\contentsline {chapter}{\numberline {16}Intermediate Layers \& Intuitions for Working Chapters}{44}{chapter.16}%
+\contentsline {section}{\numberline {16.1}CDC suitcases, RDU wraparounds, CAN integers (Chapters 3, 6, 8)}{44}{section.16.1}%
+\contentsline {section}{\numberline {16.2}N23 stencil, step by step (Run~26)}{44}{section.16.2}%
+\contentsline {section}{\numberline {16.3}Full intermediate proofs (spec compliance)}{44}{section.16.3}%
+\contentsline {section}{\numberline {16.4}References}{45}{section.16.4}%
+\contentsline {chapter}{\numberline {17}Enterprise Patent Portfolio}{46}{chapter.17}%
+\contentsline {chapter}{\numberline {18}Embedded Algorithms \& Data Structures}{47}{chapter.18}%
+\contentsline {section}{\numberline {18.1}Intuition: recipes the chip can taste}{47}{section.18.1}%
+\contentsline {section}{\numberline {18.2}Dual-loop CFAR (Run~2)}{47}{section.18.2}%
+\contentsline {section}{\numberline {18.3}Track loop with Joseph update (Runs~3--6)}{48}{section.18.3}%
+\contentsline {section}{\numberline {18.4}Blelloch prefix scan (Run~11)}{48}{section.18.4}%
+\contentsline {section}{\numberline {18.5}Hermite barrier solve (N20g) and Occupancy-BLUE (N22g)}{48}{section.18.5}%
+\contentsline {section}{\numberline {18.6}C structs on the wire}{48}{section.18.6}%
+\contentsline {chapter}{\numberline {19}Worked End-to-End Example: One Target, Chirp to CAN}{50}{chapter.19}%
+\contentsline {section}{\numberline {19.1}A car at $60\,\mathrm {m}$, closing at $10\,\mathrm {m/s}$}{50}{section.19.1}%
+\contentsline {chapter}{\numberline {20}Advanced Derivations: Unfolding, Scans, Certificates}{51}{chapter.20}%
+\contentsline {section}{\numberline {20.1}Staggered-PRF unfolding (Chinese remainders)}{51}{section.20.1}%
+\contentsline {section}{\numberline {20.2}S\"arkk\"a Lemmas 7--8, precisely}{51}{section.20.2}%
+\contentsline {section}{\numberline {20.3}N24 sandwich, N25 certificate, N26 inverse, N27 clock}{51}{section.20.3}%
+\contentsline {part}{VII\hspace {1em}Scenes, Code Internals, Statistics \& Data Analysis}{53}{part.7}%
+\contentsline {chapter}{\numberline {21}One Car, Rain, a Curve, and a Bridge}{54}{chapter.21}%
+\contentsline {section}{\numberline {21.1}Intuition: start from the driver's seat}{54}{section.21.1}%
+\contentsline {section}{\numberline {21.2}How loud is the echo: the $R^{-4}$ toll}{54}{section.21.2}%
+\contentsline {section}{\numberline {21.3}How angle is heard: the array factor}{55}{section.21.3}%
+\contentsline {section}{\numberline {21.4}How speed wraps: the aliasing phasor}{55}{section.21.4}%
+\contentsline {section}{\numberline {21.5}What the waves actually do}{55}{section.21.5}%
+\contentsline {section}{\numberline {21.6}The bridge from the side: three bounces}{56}{section.21.6}%
+\contentsline {section}{\numberline {21.7}Inside the tensor: 2D to 4D}{57}{section.21.7}%
+\contentsline {chapter}{\numberline {22}Inside the Code: Prototypes, Equations, Measured Deltas}{58}{chapter.22}%
+\contentsline {section}{\numberline {22.1}How to read this chapter}{58}{section.22.1}%
+\contentsline {section}{\numberline {22.2}Detection block}{58}{section.22.2}%
+\contentsline {section}{\numberline {22.3}Geometry block}{58}{section.22.3}%
+\contentsline {section}{\numberline {22.4}Tracking and DSP block}{59}{section.22.4}%
+\contentsline {section}{\numberline {22.5}Calibration and replay block}{59}{section.22.5}%
+\contentsline {chapter}{\numberline {23}Statistics \& Data Analysis in Depth}{61}{chapter.23}%
+\contentsline {section}{\numberline {23.1}Reading a $P_{\mathrm {fa}}$ curve}{61}{section.23.1}%
+\contentsline {section}{\numberline {23.2}Coverage: what ``90\%'' survives}{61}{section.23.2}%
+\contentsline {section}{\numberline {23.3}Timing, filters, and error budgets}{61}{section.23.3}%
+\contentsline {chapter}{\numberline {A}Failure-Mode Atlas \& Parameter Tables}{64}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Prototype Ledger: Thirty Files, Thirty Verdicts}{65}{appendix.B}%
+\contentsline {chapter}{\numberline {C}Open Problems: What Fleet Data Must Decide}{66}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Glossary: From Bumper to Bus}{67}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Repository Map \& Reproduction Guide}{68}{appendix.E}%
+\contentsline {chapter}{\numberline {F}Notation \& Constants}{69}{appendix.F}%

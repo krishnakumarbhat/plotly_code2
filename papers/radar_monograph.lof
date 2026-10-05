@@ -1,0 +1,61 @@
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces RF transceiver: the VCO chirp feeds the power amplifier and, as LO, the quadrature mixer; the echo returns through the LNA. The $154\,\mathrm {GHz}$ sum term dies in the LPF.}}{14}{figure.1.1}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Frequency versus time: the echo is a delayed copy of the ramp; the vertical gap is the beat frequency $f_b=S\tau $ of \cref {eq:fb}.}}{15}{figure.1.2}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Sampling grid: fast-time ADC samples run down each chirp column; the Doppler-FFT runs across the slow-time row. The red cells are one target's range bin marching in phase down the column.}}{18}{figure.2.1}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Range-Doppler power surface $|Y[k,l]|^2$ with two targets; CFAR (\cref {ch:cfar}) must find both without drowning in the sidelobe skirts.}}{18}{figure.2.2}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces CA-CFAR sliding window: CUT fenced by guard cells $G$, background from reference cells $R$. Threshold $T=\alpha \hat {P}_{\mathrm {noise}}$.}}{22}{figure.4.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Virtual MIMO synthesis: convolution of physical apertures into a long virtual uniform linear array.}}{24}{figure.5.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {8.1}{\ignorespaces Wire layouts: 35 CDC records per UDP datagram; 4 objects per CAN-FD frame across 32 sequential messages.}}{29}{figure.8.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Resim closed loop: record once, re-score every build. The dashed edge is the whole business model.}}{32}{figure.9.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {11.1}{\ignorespaces Shard map: every worker replays its slice, but each pays the alignment lock prefix first. Cutting 400 frames to 46 is pure throughput.}}{34}{figure.11.1}%
+\contentsline {figure}{\numberline {11.2}{\ignorespaces Dynamic alignment convergence: dual-horizon schedule reaches the noise floor in 46 frames versus 400.}}{35}{figure.11.2}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {12.1}{\ignorespaces The $15.2^\circ $ discovery: the ghost arrives along $s^*\!\to \!p$ (blue), not along the naive mirror-target ray (red dashed). Same range, $8.000\,\mathrm {m}$ apart at $30.3\,\mathrm {m}$.}}{38}{figure.12.1}%
+\contentsline {figure}{\numberline {12.2}{\ignorespaces End-to-end pipeline with data shapes: \cref {ch:fmcw}--\cref {ch:kpi} in one flow. Every arrow carries a counted, timed, budgeted tensor.}}{39}{figure.12.2}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Gate expansion along the acceleration vector inside hard bounds.}}{40}{figure.13.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {14.1}{\ignorespaces Blelloch up-sweep: associative $\otimes $ reduces $N$ filtering elements in $\lceil \log _2N\rceil $ parallel levels.}}{41}{figure.14.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {15.1}{\ignorespaces Four synthetic scenes, each stressing one subsystem; all in production HDF5 schema so KPIs run unmodified.}}{42}{figure.15.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {21.1}{\ignorespaces Top view of the complex scene: rain, curved guardrail, overhead bridge, spray, cut-in, and a shadowed motorcycle. Solid blue: direct path; dashed red: reciprocal ghost bounce $s\to q\to p\to q\to s$.}}{54}{figure.21.1}%
+\contentsline {figure}{\numberline {21.2}{\ignorespaces Two-way vs one-way path loss: forgetting the return trip overstates a $150\,\mathrm {m}$ echo by $43\,\mathrm {dB}$.}}{55}{figure.21.2}%
+\contentsline {figure}{\numberline {21.3}{\ignorespaces Array factor: mainlobe width $\approx 2/N$ rad, $-13\,\mathrm {dB}$ sidelobes. Grating lobes would repeat this shape if $d>\lambda /2$.}}{55}{figure.21.3}%
+\contentsline {figure}{\numberline {21.4}{\ignorespaces Slow-time phasor march: beyond $\pi $ per step the rotation aliases and velocity wraps.}}{56}{figure.21.4}%
+\contentsline {figure}{\numberline {21.5}{\ignorespaces Wavefronts at a smooth rail: crests stay parallel, the normal bisects incidence and reflection. Roughness $\ll \lambda $ preserves this; diffuse scatter destroys it.}}{56}{figure.21.5}%
+\contentsline {figure}{\numberline {21.6}{\ignorespaces Side view: the three-bounce deck path parks a phantom inside the concrete. Length audit, not amplitude, exposes it.}}{56}{figure.21.6}%
+\contentsline {figure}{\numberline {21.7}{\ignorespaces Dimension ladder: chirp (1D) $\to $ burst (2D) $\to $ array (3D) $\to $ track history (4D). Each rung multiplies memory; each rung removes one ambiguity (range, velocity, angle, maneuver).}}{57}{figure.21.7}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {22.1}{\ignorespaces Recall/coverage lifts: CFAR edge-skirt, cut-in handoff, conformal under unmodeled maneuver. IMM-pure sits at $0.880$ (refuted).}}{58}{figure.22.1}%
+\contentsline {figure}{\numberline {22.2}{\ignorespaces Direct/ghost pair per satellite: the difference $D$ carries only relative yaw; the midpoint carries the surveyed baseline.}}{59}{figure.22.2}%
+\contentsline {figure}{\numberline {22.3}{\ignorespaces Hermite rail recovery: two point--slope contacts determine the cubic; every further pair is a linear residual vote.}}{59}{figure.22.3}%
+\contentsline {figure}{\numberline {22.4}{\ignorespaces Async compensation sweep (Run~5): residual cuts $86\%\to 32\%$; the flipped-sign control hurts ($-26\%$), proving the sign load-bearing.}}{60}{figure.22.4}%
+\contentsline {figure}{\numberline {22.5}{\ignorespaces RMSE waterfall across five claims (log scale): every bar is an executed \texttt {demo()} assert, negatives reported alongside.}}{60}{figure.22.5}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {23.1}{\ignorespaces False-alarm curves from executed weights: BLUE pays a visible, priced averaging loss for robustness instead of a hidden bias.}}{61}{figure.23.1}%
+\contentsline {figure}{\numberline {23.2}{\ignorespaces Coverage under model mismatch and contamination. The frozen gate overcovers by design; the sliding gate it replaces poisons $19\times $.}}{62}{figure.23.2}%
+\contentsline {figure}{\numberline {23.3}{\ignorespaces N27 clock RMSE by geometry: tangential timing information survives through $rw=\|v\|^2\tau $.}}{62}{figure.23.3}%
+\contentsline {figure}{\numberline {23.4}{\ignorespaces 200-run filter comparison: no single lifted config wins both columns --- the honest three-way verdict of Run~30.}}{63}{figure.23.4}%
+\contentsline {figure}{\numberline {23.5}{\ignorespaces N25 certificate as a stacked budget: $0.092^\circ <0.1^\circ $ releases; production noise refuses at $27^\circ $.}}{63}{figure.23.5}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
