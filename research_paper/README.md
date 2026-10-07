@@ -1,6 +1,6 @@
 # Research Paper Library — every source behind Runs 1–30
 
-42 PDFs in `papers/`, all downloaded and magic-byte verified 2026-09-30.
+39 PDFs in `papers/`, all downloaded and magic-byte verified 2026-09-30.
 Titles marked [verified] were confirmed from the publisher page/API this
 session; titles marked [role] are described by their documented function in
 our ledgers — confirm the title page inside the PDF before citing.
