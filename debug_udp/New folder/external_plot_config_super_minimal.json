@@ -1,0 +1,82 @@
+{
+  "Gen7V1_V2": {
+    "DETECTION_STREAM": {
+      "num_af_det": {
+        "aliases": [
+          "num_af_det",
+          "af_det",
+          "af_dets_num_af_det",
+          "af_ds_dets_num_af_det"
+        ],
+        "call": [
+          "num_af_det"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "meters",
+        "range_to_be_accepted": [
+          0,
+          500
+        ]
+      }
+    },
+    "RADAR_CAPABILITY_STREAM": {
+      "aligned_mounting_angle_az_rad": {
+        "aliases": [
+          "aligned_mounting_angle_az_rad",
+          "aligned_mounting_angle_az",
+          "az_rad",
+          "azimuth_alignment"
+        ],
+        "call": [
+          "AzimuthAlignment"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "rad"
+      },
+      "aligned_mounting_angle_el_rad": {
+        "aliases": [
+          "aligned_mounting_angle_el_rad",
+          "aligned_mounting_angle_el",
+          "el_rad",
+          "elevation_alignment"
+        ],
+        "call": [
+          "ElevationAlignment"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "rad"
+      }
+    },
+    "VSE_STREAM": {
+      "veh_speed": {
+        "aliases": [
+          "speed"
+        ],
+        "call": [
+          "Speed"
+        ],
+        "plot_types": [
+          "scatter_plot_mstokmh"
+        ]
+      }
+    }
+  },
+  "sequence_of_plot": {
+    "scatter": [
+      "Range;scatter_plot",
+      "Rangerate;scatter_plot",
+      "Azimuth;scatter_plot",
+      "elevation;scatter_plot"
+    ],
+    "scatter_mismatch": [
+      "num_af_det;scatter_plot"
+    ],
+    "histogram": []
+  }
+}

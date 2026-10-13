@@ -1,0 +1,16 @@
+2026-09-02 21:01:45,134 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for Injection_Pcap_Traces_R11_0_4_ORCAS: FL: missing required signals ['ran']
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 415, in _run_sil_artifacts_once
+    kpi_paths = sil_kpi.process_pair(
+        pair,
+    ...<3 lines>...
+        max_sensors=6,
+    )
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 2014, in process_pair
+    veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 746, in load_radar_hdf
+    storage, metadata, dataset_map = _load_radar_storage(handle, sensor)
+                                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 690, in _load_radar_storage
+    raise ValueError(f"{sensor}: missing required signals {missing_required}")
+ValueError: FL: missing required signals ['ran']

@@ -1,0 +1,186 @@
+{
+  "Gen7V1_V2": {
+    "DETECTION_STREAM": {
+      "ran": {
+        "aliases": [
+          "ran",
+          "detection_range",
+          "af_dets_ran",
+          "af_ds_dets_ran",
+          "range",
+          "af_dets_range",
+          "af_ds_dets_range"
+        ],
+        "call": [
+          "Range"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "meters",
+        "range_to_be_accepted": [
+          0,
+          500
+        ],
+        "grp": "Vse_stream"
+      },
+      "num_af_det": {
+        "aliases": [
+          "num_af_det",
+          "af_det",
+          "af_dets_num_af_det",
+          "af_ds_dets_num_af_det"
+        ],
+        "call": [
+          "num_af_det"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "meters",
+        "range_to_be_accepted": [
+          0,
+          500
+        ]
+      },
+      "vel": {
+        "aliases": [
+          "vel",
+          "velocity",
+          "detectionvelocity",
+          "af_dets_vel",
+          "af_ds_dets_vel",
+          "rr",
+          "rangerate"
+        ],
+        "call": [
+          "Rangerate"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ]
+      },
+      "theta": {
+        "aliases": [
+          "theta",
+          "azimuth",
+          "af_dets_theta",
+          "af_ds_dets_theta",
+          "azi",
+          "az"
+        ],
+        "call": [
+          "Azimuth"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "radiance",
+        "range_to_be_accepted": [
+          -80,
+          80
+        ]
+      },
+      "phi": {
+        "aliases": [
+          "phi",
+          "elevation",
+          "af_dets_phi",
+          "af_ds_dets_phi",
+          "eli",
+          "el"
+        ],
+        "call": [
+          "elevation"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "radiance",
+        "range_to_be_accepted": [
+          -120,
+          120
+        ]
+      }
+    },
+    "RADAR_CAPABILITY_STREAM": {
+      "aligned_mounting_angle_az_rad": {
+        "aliases": [
+          "aligned_mounting_angle_az_rad",
+          "aligned_mounting_angle_az",
+          "az_rad",
+          "azimuth_alignment"
+        ],
+        "call": [
+          "AzimuthAlignment"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "rad"
+      },
+      "aligned_mounting_angle_el_rad": {
+        "aliases": [
+          "aligned_mounting_angle_el_rad",
+          "aligned_mounting_angle_el",
+          "el_rad",
+          "elevation_alignment"
+        ],
+        "call": [
+          "ElevationAlignment"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ],
+        "unit": "rad"
+      }
+    },
+    "VSE_STREAM": {
+      "veh_yaw": {
+        "aliases": [
+          "yaw"
+        ],
+        "call": [
+          "Yaw"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ]
+      },
+      "veh_speed": {
+        "aliases": [
+          "speed"
+        ],
+        "call": [
+          "Speed"
+        ],
+        "plot_types": [
+          "scatter_plot_mstokmh"
+        ]
+      },
+      "veh_steering_angle": {
+        "aliases": [
+          "steering_angle"
+        ],
+        "call": [
+          "Steering_angle"
+        ],
+        "plot_types": [
+          "scatter_plot"
+        ]
+      }
+    }
+  },
+  "sequence_of_plot": {
+    "scatter": [
+      "Range;scatter_plot",
+      "Rangerate;scatter_plot",
+      "Azimuth;scatter_plot",
+      "elevation;scatter_plot"
+    ],
+    "scatter_mismatch": [
+      "num_af_det;scatter_plot"
+    ],
+    "histogram": []
+  }
+}

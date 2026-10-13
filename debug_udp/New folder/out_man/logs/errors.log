@@ -1,0 +1,82 @@
+2026-09-02 23:16:34,882 - root - ERROR - _process_signal_plot:321 - Failed to write plot Rangerate;scatter_plot to C:\Users\ouymc2\AppData\Local\Temp\plotly_temp_dr2ai09s\Rangerate;scatter_plot.json: 
+2026-09-02 23:19:53,126 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for AshLey_CheetahBus_20260819_115747_0004_b05: Unable to allocate 69.9 MiB for an array with shape (2292000, 4) and data type float64
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 415, in _run_sil_artifacts_once
+    kpi_paths = sil_kpi.process_pair(
+        pair,
+    ...<3 lines>...
+        max_sensors=6,
+    )
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 2019, in process_pair
+    bundle = _build_comparison_bundle(veh, resim)
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 1143, in _build_comparison_bundle
+    resim=_build_side_bundle(signal_payloads, "O"),
+          ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 1115, in _build_side_bundle
+    & (np.abs(points) <= EXPONENTIAL_MATCH_THRESHOLD).all(axis=1)
+       ~~~~~~^^^^^^^^
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 69.9 MiB for an array with shape (2292000, 4) and data type float64
+2026-09-02 23:22:27,775 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for AshLey_CheetahBus_20260819_115747_0004_b05: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 415, in _run_sil_artifacts_once
+    kpi_paths = sil_kpi.process_pair(
+        pair,
+    ...<3 lines>...
+        max_sensors=6,
+    )
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 2014, in process_pair
+    veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 746, in load_radar_hdf
+    storage, metadata, dataset_map = _load_radar_storage(handle, sensor)
+                                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 690, in _load_radar_storage
+    raise ValueError(f"{sensor}: missing required signals {missing_required}")
+ValueError: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+2026-09-02 23:25:02,805 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for AshLey_CheetahBus_20260819_115747_0005_b05: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 415, in _run_sil_artifacts_once
+    kpi_paths = sil_kpi.process_pair(
+        pair,
+    ...<3 lines>...
+        max_sensors=6,
+    )
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 2014, in process_pair
+    veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 746, in load_radar_hdf
+    storage, metadata, dataset_map = _load_radar_storage(handle, sensor)
+                                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 690, in _load_radar_storage
+    raise ValueError(f"{sensor}: missing required signals {missing_required}")
+ValueError: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+2026-09-02 23:27:21,420 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for AshLey_CheetahBus_20260819_115747_0006_b05: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 415, in _run_sil_artifacts_once
+    kpi_paths = sil_kpi.process_pair(
+        pair,
+    ...<3 lines>...
+        max_sensors=6,
+    )
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 2014, in process_pair
+    veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 746, in load_radar_hdf
+    storage, metadata, dataset_map = _load_radar_storage(handle, sensor)
+                                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 690, in _load_radar_storage
+    raise ValueError(f"{sensor}: missing required signals {missing_required}")
+ValueError: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+2026-09-02 23:30:02,513 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for AshLey_CheetahBus_20260819_115747_0003_b05: FC: missing required signals ['ran', 'vel', 'theta', 'phi']
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 415, in _run_sil_artifacts_once
+    kpi_paths = sil_kpi.process_pair(
+        pair,
+    ...<3 lines>...
+        max_sensors=6,
+    )
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 2014, in process_pair
+    veh = load_radar_hdf(pair.veh_path, sensor=sensor, build_frame=False)
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 746, in load_radar_hdf
+    storage, metadata, dataset_map = _load_radar_storage(handle, sensor)
+                                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\New folder\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 690, in _load_radar_storage
+    raise ValueError(f"{sensor}: missing required signals {missing_required}")
+ValueError: FC: missing required signals ['ran', 'vel', 'theta', 'phi']

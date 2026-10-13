@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
+    const overlay = document.getElementById('plot-overlay');
+    const overlayContent = document.getElementById('plot-overlay-content');
+    let expandedCard = null;
+
+    function resizePlot(card) {
+        if (!card || typeof Plotly === 'undefined') {
+            return;
+        }
+        const graph = card.querySelector('.js-plotly-plot');
+        if (graph) {
+            requestAnimationFrame(function() {
+                Plotly.Plots.resize(graph);
+            });
+            setTimeout(function() {
+                Plotly.Plots.resize(graph);
+            }, 90);
+        }
+    }
+
+    function restoreCard(card) {
+        if (!card || !card._placeholder) {
+            return;
+        }
+        card.classList.remove('expanded');
+        const button = card.querySelector('.plot-expand-btn');
+        if (button) {
+            button.textContent = 'Expand';
+            button.setAttribute('aria-expanded', 'false');
+        }
+        card._placeholder.replaceWith(card);
+        card._placeholder = null;
+        resizePlot(card);
+    }
+
+    function closeExpandedPlot() {
+        if (!expandedCard) {
+            return;
+        }
+        restoreCard(expandedCard);
+        overlay.classList.remove('visible');
+        body.classList.remove('modal-open');
+        overlayContent.innerHTML = '';
+        expandedCard = null;
+    }
+
+    document.querySelectorAll('.plot-shell').forEach(function(card, idx) {
+        card.style.animationDelay = (idx * 24) + 'ms';
+        const button = card.querySelector('.plot-expand-btn');
+        if (!button) {
+            return;
+        }
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (expandedCard === card) {
+                closeExpandedPlot();
+                return;
+            }
+            if (expandedCard) {
+                closeExpandedPlot();
+            }
+            const placeholder = document.createElement('div');
+            placeholder.className = 'plot-placeholder';
+            card._placeholder = placeholder;
+            card.parentNode.insertBefore(placeholder, card);
+            expandedCard = card;
+            card.classList.add('expanded');
+            button.textContent = 'Back';
+            button.setAttribute('aria-expanded', 'true');
+            overlayContent.appendChild(card);
+            overlay.classList.add('visible');
+            body.classList.add('modal-open');
+            resizePlot(card);
+        });
+    });
+
+    if (overlay) {
+        overlay.addEventListener('click', function(event) {
+            if (event.target === overlay) {
+                closeExpandedPlot();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeExpandedPlot();
+        }
+    });
+});</script>
+    <style>:root{--page-bg:#edf3f8;--panel-bg:#ffffff;--panel-border:#d7e3ee;--text-main:#16324a;--text-muted:#627486;--accent:#145f80;--accent-soft:#e9f4f9;--shadow:0 10px 26px rgba(17,44,68,.08)}*{box-sizing:border-box}html,body{margin:0;padding:0;background:radial-gradient(circle at top,#f9fcff 0%,var(--page-bg) 42%,#e7eef5 100%);color:var(--text-main);font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}body{padding:22px}.modal-open{overflow:hidden}.page{max-width:1640px;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px;flex-wrap:wrap}.hero{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:22px;box-shadow:var(--shadow);padding:22px 24px;flex:1 1 420px}.hero h1{margin:0 0 8px;font-size:2rem;letter-spacing:.01em}.hero p{margin:0;color:var(--text-muted);font-size:1.02rem}.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;flex:2 1 760px}.info-card{background:#fff;border:1px solid var(--panel-border);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow)}.info-card strong{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:8px}.plot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}.plot-shell{position:relative;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-width:0;opacity:0;transform:translateY(10px);animation:fadeUp .2s ease-out forwards}.plot-shell.expanded{width:min(96vw,1680px);height:calc(100vh - 32px);margin:0;border-color:#bdd6e4;box-shadow:0 20px 48px rgba(18,43,67,.18);opacity:1;transform:none;animation:none}.plot-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #e8eef5;background:linear-gradient(180deg,#fcfeff 0%,#f3f8fb 100%)}.plot-head h4{margin:0;font-size:1.04rem;color:var(--accent);word-break:break-word}.plot-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}.plot-expand-btn{appearance:none;border:1px solid #c8dce8;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:7px 12px;font-size:.86rem;font-weight:700;cursor:pointer;transition:background .12s ease,border-color .12s ease}.plot-expand-btn:hover{background:#dceef7;border-color:#b4d1e0}.plot-body{padding:12px 12px 8px;min-height:420px}.plot-shell.expanded .plot-body{height:calc(100% - 62px);min-height:0}.plot-body>div{width:100%;height:100%}.plot-body .js-plotly-plot{width:100%!important}.js-plotly-plot .plotly .modebar{right:10px!important;top:10px!important}.plot-placeholder{display:none}.plot-overlay{position:fixed;inset:0;background:rgba(16,34,50,.18);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .12s ease;z-index:1000}.plot-overlay.visible{opacity:1;visibility:visible;pointer-events:auto}.plot-overlay-content{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:16px}.page-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0 8px;flex-wrap:wrap}.page-nav a{color:var(--accent);text-decoration:none;font-weight:600;background:var(--accent-soft);border:1px solid #cfe0e8;border-radius:999px;padding:8px 14px;transition:background .16s ease,color .16s ease}.page-nav a:hover{background:#dcebf2}.page-nav .page-count{color:var(--text-muted);font-size:.95rem}.empty-state{background:var(--panel-bg);border:1px dashed var(--panel-border);border-radius:18px;padding:28px;text-align:center;color:var(--text-muted)}footer{text-align:center;color:#54708a;margin:22px 0 6px;font-size:.95rem}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@media (max-width:980px){body{padding:14px}.plot-grid{grid-template-columns:1fr}.plot-head{align-items:flex-start;flex-direction:column}.plot-shell.expanded{width:calc(100vw - 16px);height:calc(100vh - 16px)}.plot-overlay-content{padding:8px}}</style>
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <section class="hero">
+                <h1>Interactive Plots</h1>
+                <p>FL · AshLey_CheetahBus_20260819_115747_0004_b05</p>
+            </section>
+            <section class="info-grid">
+                <div class="info-card"><strong>Tool run on</strong><span>win32</span></div>
+                <div class="info-card"><strong>Tool Version</strong><span>1.0</span></div>
+                <div class="info-card"><strong>Generated</strong><span>2026-09-02 23:23:14</span></div>
+                <div class="info-card"><strong>Output File</strong><span>AshLey_CheetahBus_20260819_115747_0004_b05_rR00060100</span></div>
+            </section>
+        </div>
+        
+        
+        
+        <div class="plot-grid">
+            <section class="plot-shell" data-category="general">
+                <div class="plot-head">
+                    <h4>FL num_af_det;scatter_plot</h4>
+                    <div class="plot-tools">
+                        <button type="button" class="plot-expand-btn" aria-expanded="false">Expand</button>
+                    </div>
+                </div>
+                <div class="plot-body">
+                    <div>                            <div id="25d3f27c-8584-4c5a-ac47-e6343bf821d6" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("25d3f27c-8584-4c5a-ac47-e6343bf821d6")) {                    Plotly.newPlot(                        "25d3f27c-8584-4c5a-ac47-e6343bf821d6",                        [{"marker":{"color":"red","opacity":0.7,"size":2,"symbol":"circle"},"mode":"markers","name":"INPUT","x":{"dtype":"u2","bdata":"GQ0aDRsNHA0dDR4NHw0gDSENIg0jDSQNJQ0mDScNKA0pDSoNKw0sDS0NLg0vDTANMQ0yDTMNNA01DTYNNw04DTkNOg07DTwNPQ0+DT8NQA1BDUINQw1EDUUNRg1HDUgNSQ1KDUsNTA1NDU4NTw1QDVENUg1TDVQNVQ1WDVcNWA1ZDVoNWw1cDV0NXg1fDWANYQ1iDWMNZA1lDWYNZw1oDWkNag1rDWwNbQ1uDW8NcA1xDXINcw10DXUNdg13DXgNeQ16DXsNfA19DX4Nfw2ADYENgg2DDYQNhQ2GDYcNiA2JDYoNiw2MDY0Njg2PDZANkQ2SDZMNlA2VDZYNlw2YDZkNmg2bDZwNnQ2eDZ8NoA2hDaINow2kDaUNpg2nDagNqQ2qDasNrA2tDa4Nrw2wDbENsg2zDbQNtQ22DbcNuA25DboNuw28Db0Nvg2\u002fDcANwQ3CDcMNxA3FDcYNxw3IDckNyg3LDcwNzQ3ODc8N0A3RDdIN0w3UDdUN1g3XDdgN2Q3aDdsN3A3dDd4N3w3gDeEN4g3jDeQN5Q3mDecN6A3pDeoN6w3sDe0N7g3vDfAN8Q3yDfMN9A31DfYN9w34DfkN+g37DfwN\u002fQ3+Df8NAA4BDgIOAw4EDgUOBg4HDggOCQ4KDgsODA4NDg4ODw4QDhEOEg4TDhQOFQ4WDhcOGA4ZDhoOGw4cDh0OHg4fDiAOIQ4iDiMOJA4lDiYOJw4oDikOKg4rDiwOLQ4uDi8OMA4xDjIOMw40DjUONg43DjgOOQ46DjsOPA49Dj4OPw5ADkEOQg5DDkQORQ5GDkcOSA5JDkoOSw5MDk0OTg5PDlAOUQ5SDlMOVA5VDlYOVw5YDlkOWg5bDlwOXQ5eDl8OYA5hDmIOYw5kDmUOZg5nDmgOaQ5qDmsObA5tDm4Obw5wDnEOcg5zDnQOdQ52DncOeA55DnoOew58Dn0Ofg5\u002fDoAOgQ6CDoMOhA6FDoYOhw6IDokOig6LDowOjQ6ODo8OkA6RDpIOkw6UDpUOlg6XDpgOmQ6aDpsOnA6dDp4Onw6gDqEOog6jDqQOpQ6mDqcOqA6pDg=="},"y":{"dtype":"f8","bdata":"AAAAAAAA+H8AAAAAAABYQAAAAAAAAPh\u002fAAAAAAAA+H8AAAAAAAD4fwAAAAAAAPh\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AAAAAAABgQAAAAAAAQFxAAAAAAAAgYEAAAAAAAMBgQAAAAAAAYGFAAAAAAADAX0AAAAAAAEBcQAAAAAAAAGFAAAAAAABAXUAAAAAAAABiQAAAAAAAIGFAAAAAAAAgYEAAAAAAAEBhQAAAAAAAgF9AAAAAAAAAXEAAAAAAAABbQAAAAAAAQFpAAAAAAACAW0AAAAAAAMBaQAAAAAAAwFtAAAAAAACAWEAAAAAAAMBWQAAAAAAAAFhAAAAAAAAAWEAAAAAAAABZQAAAAAAAgFdAAAAAAADAVEAAAAAAAABVQAAAAAAAgFVAAAAAAAAAVEAAAAAAAABXQAAAAAAAgFZAAAAAAAAAWEAAAAAAAMBWQAAAAAAAAFJAAAAAAADAUUAAAAAAAABVQAAAAAAAAFNAAAAAAADAU0AAAAAAAMBRQAAAAAAAQFNAAAAAAADAUkAAAAAAAIBYQAAAAAAAwFZAAAAAAADAVkAAAAAAAIBXQAAAAAAAAFZAAAAAAABAVkAAAAAAAABWQAAAAAAAgFRAAAAAAADAUkAAAAAAAIBTQAAAAAAAAFVAAAAAAADAUkAAAAAAAIBTQAAAAAAAAFZAAAAAAAAAVUAAAAAAAIBYQA=="},"type":"scattergl"},{"marker":{"color":"blue","opacity":0.7,"size":2,"symbol":"square"},"mode":"markers","name":"OUTPUT","x":{"dtype":"u2","bdata":"GQ0aDRsNHA0dDR4NHw0gDSENIg0jDSQNJQ0mDScNKA0pDSoNKw0sDS0NLg0vDTANMQ0yDTMNNA01DTYNNw04DTkNOg07DTwNPQ0+DT8NQA1BDUINQw1EDUUNRg1HDUgNSQ1KDUsNTA1NDU4NTw1QDVENUg1TDVQNVQ1WDVcNWA1ZDVoNWw1cDV0NXg1fDWANYQ1iDWMNZA1lDWYNZw1oDWkNag1rDWwNbQ1uDW8NcA1xDXINcw10DXUNdg13DXgNeQ16DXsNfA19DX4Nfw2ADYENgg2DDYQNhQ2GDYcNiA2JDYoNiw2MDY0Njg2PDZANkQ2SDZMNlA2VDZYNlw2YDZkNmg2bDZwNnQ2eDZ8NoA2hDaINow2kDaUNpg2nDagNqQ2qDasNrA2tDa4Nrw2wDbENsg2zDbQNtQ22DbcNuA25DboNuw28Db0Nvg2\u002fDcANwQ3CDcMNxA3FDcYNxw3IDckNyg3LDcwNzQ3ODc8N0A3RDdIN0w3UDdUN1g3XDdgN2Q3aDdsN3A3dDd4N3w3gDeEN4g3jDeQN5Q3mDecN6A3pDeoN6w3sDe0N7g3vDfAN8Q3yDfMN9A31DfYN9w34DfkN+g37DfwN\u002fQ3+Df8NAA4BDgIOAw4EDgUOBg4HDggOCQ4KDgsODA4NDg4ODw4QDhEOEg4TDhQOFQ4WDhcOGA4ZDhoOGw4cDh0OHg4fDiAOIQ4iDiMOJA4lDiYOJw4oDikOKg4rDiwOLQ4uDi8OMA4xDjIOMw40DjUONg43DjgOOQ46DjsOPA49Dj4OPw5ADkEOQg5DDkQORQ5GDkcOSA5JDkoOSw5MDk0OTg5PDlAOUQ5SDlMOVA5VDlYOVw5YDlkOWg5bDlwOXQ5eDl8OYA5hDmIOYw5kDmUOZg5nDmgOaQ5qDmsObA5tDm4Obw5wDnEOcg5zDnQOdQ52DncOeA55DnoOew58Dn0Ofg5\u002fDoAOgQ6CDoMOhA6FDoYOhw6IDokOig6LDowOjQ6ODo8OkA6RDpIOkw6UDpUOlg6XDpgOmQ6aDpsOnA6dDp4Onw6gDqEOog6jDqQOpQ6mDqcOqA6pDg=="},"y":{"dtype":"f8","bdata":"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\u002fAAAAAAAA+H8AAAAAAAD4fwAAAAAAAPh\u002fAAAAAAAA+H8AAAAAAAD4fwAAAAAAAPh\u002fAAAAAAAA+H8AAAAAAAD4fw=="},"type":"scattergl"}],                        {"hovermode":"closest","legend":{"title":{"text":"Categories"}},"template":{"data":{"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"#E5ECF6","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2}}},"title":{"text":"Scatter IN\u002fOUT Plot of num_af_det"},"xaxis":{"title":{"text":"Scan Index"}},"yaxis":{"title":{"text":"Values of num_af_det"}}},                        {"displayModeBar": true, "scrollZoom": true, "responsive": true, "doubleClick": false, "displaylogo": false}                    )                };            </script>        </div>
+                </div>
+            </section>
+            </div>
+        
+        
+        <footer>APTIV Interactive Plot Report</footer>
+    </div>
+    <div id="plot-overlay" class="plot-overlay" aria-hidden="true">
+        <div id="plot-overlay-content" class="plot-overlay-content"></div>
+    </div>
+</body>
+</html>

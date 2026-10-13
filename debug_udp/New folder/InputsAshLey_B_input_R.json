@@ -1,0 +1,14 @@
+{
+  "INPUT_HDF": [
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0003_b05_rR00060100.h5",
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0004_b05_rR00060100.h5",
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0005_b05_rR00060100.h5",
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0006_b05_rR00060100.h5"
+  ],
+  "OUTPUT_HDF": [
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0003_b05.h5",
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0004_b05.h5",
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0005_b05.h5",
+    "C:\\Users\\ouymc2\\Desktop\\New folder\\AshLey_CheetahBus_20260819_115747_0006_b05.h5"
+  ]
+}
