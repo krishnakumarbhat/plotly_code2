@@ -1,0 +1,3 @@
+[
+  "tests/test_bordnet_config.py::test_bordnet_detection_stream_maps_required_signals"
+]

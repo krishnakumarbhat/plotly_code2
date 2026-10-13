@@ -1,0 +1,1319 @@
+2026-09-16 16:24:04,222 - root - INFO - setup_logging:75 - Enhanced logging initialized. Log directory: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\logs
+2026-09-16 16:24:04,222 - root - INFO - log_to_both:78 - Plot configuration source: InteractivePlot/c_data_storage/config_storage.py
+2026-09-16 16:24:04,222 - root - INFO - wrapper:13 - Function run_async took 0.0000 seconds to execute.
+2026-09-16 16:24:04,222 - asyncio - DEBUG - __init__:631 - Using proactor: IocpProactor
+2026-09-16 16:24:04,224 - root - INFO - wrapper:13 - Function _parse_config_async took 0.0000 seconds to execute.
+2026-09-16 16:24:04,227 - root - INFO - log_to_both:78 - Parsing XML configuration file...
+2026-09-16 16:24:04,228 - root - DEBUG - log_to_file_only:81 - XML parsing complete. HDF file type: HDF_WITH_ALLSENSOR
+2026-09-16 16:24:04,229 - root - INFO - log_to_both:78 - Parsing JSON input file...
+2026-09-16 16:24:04,229 - root - DEBUG - log_to_file_only:81 - JSON parsing complete.
+2026-09-16 16:24:04,230 - root - INFO - wrapper:13 - Function process_async took 0.0000 seconds to execute.
+2026-09-16 16:24:04,230 - root - INFO - parse:54 - 
+Processing input file: CEER_PT048_20260814_121515_0338_b04_HDF.h5
+2026-09-16 16:24:04,230 - root - INFO - parse:55 - Processing output file: CEER_PT048_20260814_121515_0338_b04_rR00110006_HDF.h5 
+
+2026-09-16 16:24:04,354 - root - INFO - parse:77 - Warning: Missing data if in input not in output or viceversa : {'missing_groups': [], 'missing_datasets': []}
+2026-09-16 16:24:04,354 - root - INFO - parse:81 - Found 5 sensors: CEER_FL, CEER_FLR, CEER_FR, CEER_RL, CEER_RR
+2026-09-16 16:24:04,354 - root - INFO - parse:82 - Found 108 streams: ALIGNMENT_001, ALIGNMENT_002, CAPABILITY, DETECTION_001_004, DETECTION_005_008, DETECTION_009_012, DETECTION_013_016, DETECTION_017_020, DETECTION_021_024, DETECTION_025_028, DETECTION_029_032, DETECTION_033_036, DETECTION_037_040, DETECTION_041_044, DETECTION_045_048, DETECTION_049_052, DETECTION_053_056, DETECTION_057_060, DETECTION_061_064, DETECTION_065_068, DETECTION_069_072, DETECTION_073_076, DETECTION_077_080, DETECTION_081_084, DETECTION_085_088, DETECTION_089_092, DETECTION_093_096, DETECTION_097_100, DETECTION_101_104, DETECTION_105_108, DETECTION_109_112, DETECTION_113_116, DETECTION_117_120, DETECTION_121_124, DETECTION_125_128, DETECTION_129_132, DETECTION_133_136, DETECTION_137_140, DETECTION_141_144, DETECTION_145_148, DETECTION_149_152, DETECTION_153_156, DETECTION_157_160, DETECTION_161_164, DETECTION_165_168, DETECTION_169_172, DETECTION_173_176, DETECTION_177_180, DETECTION_181_184, DETECTION_185_188, DETECTION_189_192, DETECTION_193_196, DETECTION_197_200, DETECTION_201_204, DETECTION_205_208, DETECTION_209_212, DETECTION_213_216, DETECTION_217_220, DETECTION_221_224, DETECTION_225_228, DETECTION_229_232, DETECTION_233_236, DETECTION_237_240, DETECTION_241_244, DETECTION_245_248, DETECTION_249_252, DETECTION_253_256, DETECTION_257_260, DETECTION_261_264, DETECTION_265_268, DETECTION_269_272, DETECTION_273_276, DETECTION_277_280, DETECTION_281_284, DETECTION_285_288, DETECTION_289_292, DETECTION_293_296, DETECTION_297_300, DETECTION_301_304, DETECTION_305_308, DETECTION_309_312, DETECTION_313_316, DETECTION_317_320, DETECTION_321_324, DETECTION_325_328, DETECTION_329_332, DETECTION_333_336, DETECTION_337_340, DETECTION_341_344, DETECTION_345_348, DETECTION_349_352, DETECTION_353_356, DETECTION_357_360, DETECTION_361_364, DETECTION_365_368, DETECTION_369_372, DETECTION_373_376, DETECTION_377_380, DETECTION_381_384, DETECTION_385_388, DETECTION_389_392, DETECTION_393_396, DETECTION_397_400, HEADER_001, OTHER, STATUS, STATUS_001, STATUS_002
+2026-09-16 16:24:04,357 - root - INFO - parse:109 - Processing 540 sensor/stream combinations with 12 worker threads
+2026-09-16 16:24:04,358 - InteractivePlot.kpi_client.can_kpi_integration - DEBUG - __init__:81 - CanKpiIntegration initialized with base_name=CEER_PT048_20260814_121515_0338_b04_HDF, sensor=CEER_FL, input_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\CEER_PT048_20260814_121515_0338_b04_HDF.h5, output_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\OUTPUT\CEER_PT048_20260814_121515_0338_b04_rR00110006_HDF.h5, output_dir=C:\Users\ouymc2\Desktop\can_debug_2\out\interactive, server_host=127.0.0.1, server_port=5556
+2026-09-16 16:24:07,122 - InteractivePlot.kpi_client.can_kpi_integration - INFO - _ensure_server_process:176 - CAN KPI server started successfully
+2026-09-16 16:24:07,154 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:222 - Sending CAN KPI request for sensor CEER_FL
+2026-09-16 16:24:17,939 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:236 - CAN KPI response: success
+2026-09-16 16:24:17,941 - root - INFO - parse:129 - KPI request sent for sensor=CEER_FL status=success message=CAN KPI HTML generated
+2026-09-16 16:24:18,079 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0941 in RDR_DETECTION_009_012
+2026-09-16 16:24:18,103 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1085 in RDR_DETECTION_029_032
+2026-09-16 16:24:18,137 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1271 in RDR_DETECTION_025_028
+2026-09-16 16:24:18,184 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1840 in RDR_DETECTION_017_020
+2026-09-16 16:24:18,223 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2389 in RDR_DETECTION_021_024
+2026-09-16 16:24:18,266 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2691 in RDR_DETECTION_013_016
+2026-09-16 16:24:18,295 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3335 in RDR_DETECTION_001_004
+2026-09-16 16:24:18,328 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3295 in RDR_DETECTION_037_040
+2026-09-16 16:24:18,333 - root - WARNING - set_value:85 - Truncating dataset for theta: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,333 - root - WARNING - set_value:85 - Truncating dataset for phi: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,334 - root - WARNING - set_value:85 - Truncating dataset for ran: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,334 - root - WARNING - set_value:85 - Truncating dataset for vel: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,334 - root - WARNING - set_value:85 - Truncating dataset for rcs: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,334 - root - WARNING - set_value:85 - Truncating dataset for snr: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,335 - root - WARNING - set_value:85 - Truncating dataset for f_superres_target: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,335 - root - WARNING - set_value:85 - Truncating dataset for timestamp: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:24:18,354 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3781 in RDR_DETECTION_005_008
+2026-09-16 16:24:18,397 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4039 in RDR_DETECTION_033_036
+2026-09-16 16:24:18,490 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4768 in RDR_DETECTION_045_048
+2026-09-16 16:24:18,518 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5136 in RDR_DETECTION_041_044
+2026-09-16 16:24:18,556 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3720 in RDR_DETECTION_025_028
+2026-09-16 16:24:18,648 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5054 in RDR_DETECTION_009_012
+2026-09-16 16:24:18,710 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4850 in RDR_DETECTION_017_020
+2026-09-16 16:24:18,729 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4318 in RDR_DETECTION_013_016
+2026-09-16 16:24:18,789 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5207 in RDR_DETECTION_021_024
+2026-09-16 16:24:18,820 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3686 in RDR_DETECTION_005_008
+2026-09-16 16:24:18,839 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3921 in RDR_DETECTION_033_036
+2026-09-16 16:24:18,858 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2839 in RDR_DETECTION_041_044
+2026-09-16 16:24:18,881 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4578 in RDR_DETECTION_037_040
+2026-09-16 16:24:18,904 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4913 in RDR_DETECTION_001_004
+2026-09-16 16:24:18,936 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3509 in RDR_DETECTION_045_048
+2026-09-16 16:24:18,985 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8362 in RDR_DETECTION_029_032
+2026-09-16 16:24:19,025 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1161 in RDR_DETECTION_085_088
+2026-09-16 16:24:19,052 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4709 in RDR_DETECTION_049_052
+2026-09-16 16:24:19,086 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1729 in RDR_DETECTION_077_080
+2026-09-16 16:24:19,151 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4148 in RDR_DETECTION_057_060
+2026-09-16 16:24:19,184 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2734 in RDR_DETECTION_065_068
+2026-09-16 16:24:19,212 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5456 in RDR_DETECTION_053_056
+2026-09-16 16:24:19,246 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4522 in RDR_DETECTION_061_064
+2026-09-16 16:24:19,364 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4581 in RDR_DETECTION_069_072
+2026-09-16 16:24:19,414 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4646 in RDR_DETECTION_089_092
+2026-09-16 16:24:19,439 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5013 in RDR_DETECTION_081_084
+2026-09-16 16:24:19,498 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4997 in RDR_DETECTION_093_096
+2026-09-16 16:24:19,545 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5490 in RDR_DETECTION_073_076
+2026-09-16 16:24:19,601 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3518 in RDR_DETECTION_053_056
+2026-09-16 16:24:19,634 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4818 in RDR_DETECTION_077_080
+2026-09-16 16:24:19,663 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6331 in RDR_DETECTION_085_088
+2026-09-16 16:24:19,696 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2496 in RDR_DETECTION_089_092
+2026-09-16 16:24:19,735 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4364 in RDR_DETECTION_061_064
+2026-09-16 16:24:19,735 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6406 in RDR_DETECTION_049_052
+2026-09-16 16:24:19,813 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6215 in RDR_DETECTION_065_068
+2026-09-16 16:24:19,850 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6601 in RDR_DETECTION_057_060
+2026-09-16 16:24:19,902 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4511 in RDR_DETECTION_081_084
+2026-09-16 16:24:19,946 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3106 in RDR_DETECTION_097_100
+2026-09-16 16:24:19,974 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3700 in RDR_DETECTION_073_076
+2026-09-16 16:24:20,014 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6408 in RDR_DETECTION_069_072
+2026-09-16 16:24:20,079 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3307 in RDR_DETECTION_101_104
+2026-09-16 16:24:20,128 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3878 in RDR_DETECTION_105_108
+2026-09-16 16:24:20,272 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4079 in RDR_DETECTION_121_124
+2026-09-16 16:24:20,327 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5881 in RDR_DETECTION_109_112
+2026-09-16 16:24:20,405 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9024 in RDR_DETECTION_093_096
+2026-09-16 16:24:20,502 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5976 in RDR_DETECTION_129_132
+2026-09-16 16:24:20,574 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7072 in RDR_DETECTION_125_128
+2026-09-16 16:24:20,651 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8979 in RDR_DETECTION_117_120
+2026-09-16 16:24:20,696 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6052 in RDR_DETECTION_097_100
+2026-09-16 16:24:20,728 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7064 in RDR_DETECTION_137_140
+2026-09-16 16:24:20,771 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9156 in RDR_DETECTION_113_116
+2026-09-16 16:24:20,815 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7229 in RDR_DETECTION_133_136
+2026-09-16 16:24:20,882 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5370 in RDR_DETECTION_121_124
+2026-09-16 16:24:20,939 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7813 in RDR_DETECTION_105_108
+2026-09-16 16:24:20,974 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8318 in RDR_DETECTION_101_104
+2026-09-16 16:24:21,029 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6770 in RDR_DETECTION_109_112
+2026-09-16 16:24:21,108 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5205 in RDR_DETECTION_141_144
+2026-09-16 16:24:21,146 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5454 in RDR_DETECTION_129_132
+2026-09-16 16:24:21,197 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4624 in RDR_DETECTION_137_140
+2026-09-16 16:24:21,255 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3495 in RDR_DETECTION_113_116
+2026-09-16 16:24:21,322 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7293 in RDR_DETECTION_125_128
+2026-09-16 16:24:21,445 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5407 in RDR_DETECTION_149_152
+2026-09-16 16:24:21,482 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5841 in RDR_DETECTION_133_136
+2026-09-16 16:24:21,531 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7584 in RDR_DETECTION_145_148
+2026-09-16 16:24:21,592 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9285 in RDR_DETECTION_117_120
+2026-09-16 16:24:21,662 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6852 in RDR_DETECTION_153_156
+2026-09-16 16:24:21,721 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6807 in RDR_DETECTION_157_160
+2026-09-16 16:24:21,767 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6113 in RDR_DETECTION_141_144
+2026-09-16 16:24:21,816 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7495 in RDR_DETECTION_161_164
+2026-09-16 16:24:21,937 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5764 in RDR_DETECTION_173_176
+2026-09-16 16:24:22,032 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6948 in RDR_DETECTION_177_180
+2026-09-16 16:24:22,148 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7938 in RDR_DETECTION_169_172
+2026-09-16 16:24:22,221 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6210 in RDR_DETECTION_185_188
+2026-09-16 16:24:22,272 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9389 in RDR_DETECTION_165_168
+2026-09-16 16:24:22,403 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9074 in RDR_DETECTION_181_184
+2026-09-16 16:24:22,432 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8176 in RDR_DETECTION_145_148
+2026-09-16 16:24:22,482 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9901 in RDR_DETECTION_149_152
+2026-09-16 16:24:22,639 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6826 in RDR_DETECTION_161_164
+2026-09-16 16:24:22,686 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0063 in RDR_DETECTION_153_156
+2026-09-16 16:24:22,787 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8169 in RDR_DETECTION_173_176
+2026-09-16 16:24:22,825 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9966 in RDR_DETECTION_189_192
+2026-09-16 16:24:22,869 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0380 in RDR_DETECTION_205_208
+2026-09-16 16:24:22,905 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0656 in RDR_DETECTION_209_212
+2026-09-16 16:24:22,930 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0927 in RDR_DETECTION_201_204
+2026-09-16 16:24:23,019 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0777 in RDR_DETECTION_157_160
+2026-09-16 16:24:23,020 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1438 in RDR_DETECTION_205_208
+2026-09-16 16:24:23,066 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1305 in RDR_DETECTION_209_212
+2026-09-16 16:24:23,100 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8158 in RDR_DETECTION_185_188
+2026-09-16 16:24:23,148 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0801 in RDR_DETECTION_213_216
+2026-09-16 16:24:23,180 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1103 in RDR_DETECTION_201_204
+2026-09-16 16:24:23,211 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0354 in RDR_DETECTION_177_180
+2026-09-16 16:24:23,236 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0834 in RDR_DETECTION_217_220
+2026-09-16 16:24:23,292 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0543 in RDR_DETECTION_213_216
+2026-09-16 16:24:23,327 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0853 in RDR_DETECTION_225_228
+2026-09-16 16:24:23,426 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1323 in RDR_DETECTION_217_220
+2026-09-16 16:24:23,426 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1851 in RDR_DETECTION_229_232
+2026-09-16 16:24:23,544 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2963 in RDR_DETECTION_221_224
+2026-09-16 16:24:23,618 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1895 in RDR_DETECTION_237_240
+2026-09-16 16:24:23,651 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3563 in RDR_DETECTION_233_236
+2026-09-16 16:24:23,730 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1628 in RDR_DETECTION_229_232
+2026-09-16 16:24:23,730 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5513 in RDR_DETECTION_169_172
+2026-09-16 16:24:23,759 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2000 in RDR_DETECTION_221_224
+2026-09-16 16:24:23,794 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3501 in RDR_DETECTION_193_196
+2026-09-16 16:24:23,885 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0884 in RDR_DETECTION_245_248
+2026-09-16 16:24:23,885 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0915 in RDR_DETECTION_233_236
+2026-09-16 16:24:23,919 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4002 in RDR_DETECTION_197_200
+2026-09-16 16:24:24,015 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1262 in RDR_DETECTION_249_252
+2026-09-16 16:24:24,016 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7103 in RDR_DETECTION_165_168
+2026-09-16 16:24:24,045 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2471 in RDR_DETECTION_241_244
+2026-09-16 16:24:24,073 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2439 in RDR_DETECTION_253_256
+2026-09-16 16:24:24,104 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2163 in RDR_DETECTION_237_240
+2026-09-16 16:24:24,166 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2456 in RDR_DETECTION_257_260
+2026-09-16 16:24:24,206 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4731 in RDR_DETECTION_225_228
+2026-09-16 16:24:24,295 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1260 in RDR_DETECTION_245_248
+2026-09-16 16:24:24,345 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2703 in RDR_DETECTION_249_252
+2026-09-16 16:24:24,376 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1661 in RDR_DETECTION_241_244
+2026-09-16 16:24:24,427 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1347 in RDR_DETECTION_261_264
+2026-09-16 16:24:24,485 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.0437 in RDR_DETECTION_181_184
+2026-09-16 16:24:24,539 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1644 in RDR_DETECTION_265_268
+2026-09-16 16:24:24,572 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7338 in RDR_DETECTION_189_192
+2026-09-16 16:24:24,629 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2495 in RDR_DETECTION_277_280
+2026-09-16 16:24:24,653 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3041 in RDR_DETECTION_269_272
+2026-09-16 16:24:24,677 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2466 in RDR_DETECTION_253_256
+2026-09-16 16:24:24,698 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2644 in RDR_DETECTION_257_260
+2026-09-16 16:24:24,740 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1964 in RDR_DETECTION_273_276
+2026-09-16 16:24:24,783 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1538 in RDR_DETECTION_261_264
+2026-09-16 16:24:24,817 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1627 in RDR_DETECTION_281_284
+2026-09-16 16:24:24,855 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0360 in RDR_DETECTION_269_272
+2026-09-16 16:24:24,886 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0593 in RDR_DETECTION_273_276
+2026-09-16 16:24:24,914 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0907 in RDR_DETECTION_265_268
+2026-09-16 16:24:24,945 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0879 in RDR_DETECTION_277_280
+2026-09-16 16:24:24,980 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1224 in RDR_DETECTION_297_300
+2026-09-16 16:24:25,056 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0695 in RDR_DETECTION_305_308
+2026-09-16 16:24:25,082 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2276 in RDR_DETECTION_281_284
+2026-09-16 16:24:25,103 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1563 in RDR_DETECTION_293_296
+2026-09-16 16:24:25,125 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2111 in RDR_DETECTION_285_288
+2026-09-16 16:24:25,159 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3378 in RDR_DETECTION_289_292
+2026-09-16 16:24:25,239 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0782 in RDR_DETECTION_289_292
+2026-09-16 16:24:25,240 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2921 in RDR_DETECTION_309_312
+2026-09-16 16:24:25,296 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2377 in RDR_DETECTION_313_316
+2026-09-16 16:24:25,364 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2380 in RDR_DETECTION_305_308
+2026-09-16 16:24:25,459 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4687 in RDR_DETECTION_301_304
+2026-09-16 16:24:25,524 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2232 in RDR_DETECTION_285_288
+2026-09-16 16:24:25,590 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1278 in RDR_DETECTION_321_324
+2026-09-16 16:24:25,627 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0329 in RDR_DETECTION_301_304
+2026-09-16 16:24:25,686 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5281 in RDR_DETECTION_317_320
+2026-09-16 16:24:25,712 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1832 in RDR_DETECTION_297_300
+2026-09-16 16:24:25,754 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2304 in RDR_DETECTION_293_296
+2026-09-16 16:24:25,849 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1341 in RDR_DETECTION_329_332
+2026-09-16 16:24:25,880 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1602 in RDR_DETECTION_309_312
+2026-09-16 16:24:25,926 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2084 in RDR_DETECTION_325_328
+2026-09-16 16:24:26,045 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3264 in RDR_DETECTION_313_316
+2026-09-16 16:24:26,147 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4309 in RDR_DETECTION_333_336
+2026-09-16 16:24:26,153 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3940 in RDR_DETECTION_317_320
+2026-09-16 16:24:26,192 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3107 in RDR_DETECTION_337_340
+2026-09-16 16:24:26,268 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.4673 in RDR_DETECTION_193_196
+2026-09-16 16:24:26,319 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3901 in RDR_DETECTION_321_324
+2026-09-16 16:24:26,345 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1937 in RDR_DETECTION_329_332
+2026-09-16 16:24:26,370 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1765 in RDR_DETECTION_341_344
+2026-09-16 16:24:26,404 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.1921 in RDR_DETECTION_197_200
+2026-09-16 16:24:26,502 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2248 in RDR_DETECTION_345_348
+2026-09-16 16:24:26,548 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2649 in RDR_DETECTION_357_360
+2026-09-16 16:24:26,604 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3322 in RDR_DETECTION_337_340
+2026-09-16 16:24:26,638 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3180 in RDR_DETECTION_349_352
+2026-09-16 16:24:26,711 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4443 in RDR_DETECTION_333_336
+2026-09-16 16:24:26,744 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3974 in RDR_DETECTION_353_356
+2026-09-16 16:24:26,774 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4292 in RDR_DETECTION_325_328
+2026-09-16 16:24:26,799 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0238 in RDR_DETECTION_369_372
+2026-09-16 16:24:26,833 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0876 in RDR_DETECTION_373_376
+2026-09-16 16:24:26,900 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2555 in RDR_DETECTION_341_344
+2026-09-16 16:24:26,925 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5184 in RDR_DETECTION_361_364
+2026-09-16 16:24:26,950 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1474 in RDR_DETECTION_377_380
+2026-09-16 16:24:26,977 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2615 in RDR_DETECTION_365_368
+2026-09-16 16:24:27,001 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0734 in RDR_DETECTION_381_384
+2026-09-16 16:24:27,032 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0797 in RDR_DETECTION_369_372
+2026-09-16 16:24:27,107 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3604 in RDR_DETECTION_349_352
+2026-09-16 16:24:27,144 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3440 in RDR_DETECTION_345_348
+2026-09-16 16:24:27,169 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2185 in RDR_DETECTION_353_356
+2026-09-16 16:24:27,203 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2484 in RDR_DETECTION_373_376
+2026-09-16 16:24:27,320 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2883 in RDR_DETECTION_377_380
+2026-09-16 16:24:27,382 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2684 in RDR_DETECTION_361_364
+2026-09-16 16:24:27,410 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2397 in RDR_DETECTION_389_392
+2026-09-16 16:24:27,441 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0287 in RDR_DETECTION_365_368
+2026-09-16 16:24:27,471 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5453 in RDR_DETECTION_357_360
+2026-09-16 16:24:27,528 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4980 in RDR_DETECTION_381_384
+2026-09-16 16:24:27,528 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4167 in RDR_DETECTION_385_388
+2026-09-16 16:24:27,573 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1622 in RDR_DETECTION_397_400
+2026-09-16 16:24:27,600 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0704 in RDR_DETECTION_393_396
+2026-09-16 16:24:27,633 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0297 in RDR_DETECTION_385_388
+2026-09-16 16:24:27,689 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0864 in RDR_DETECTION_397_400
+2026-09-16 16:24:27,689 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0876 in RDR_DETECTION_389_392
+2026-09-16 16:24:27,719 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0287 in RDR_DETECTION_393_396
+2026-09-16 16:24:28,987 - DataPrep - DEBUG - _track_memory_usage:115 - Resident Set Size (RSS): 130.68 MB
+2026-09-16 16:24:28,987 - DataPrep - DEBUG - _track_memory_usage:116 - Virtual Memory Size: 724.88 MB
+2026-09-16 16:24:28,987 - DataPrep - INFO - _track_memory_usage:121 - Initial memory usage: 130.6796875 MiB
+2026-09-16 16:24:29,502 - numexpr.utils - INFO - _init_num_threads:151 - Note: NumExpr detected 20 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+2026-09-16 16:24:29,502 - numexpr.utils - INFO - _init_num_threads:164 - NumExpr defaulting to 16 threads.
+2026-09-16 16:24:29,952 - DataPrep - INFO - generate_plots:218 - Using sequential processing for plot generation
+2026-09-16 16:24:31,844 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 400 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:24:31,909 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.06422710418701172 in Range
+2026-09-16 16:24:31,971 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 400 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:24:32,046 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07347917556762695 in Range
+2026-09-16 16:24:32,155 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Range')
+2026-09-16 16:24:32,699 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1445331573486328 in Rangerate
+2026-09-16 16:24:32,942 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1489706039428711 in Rangerate
+2026-09-16 16:24:33,077 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Rangerate')
+2026-09-16 16:24:33,469 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.10612654685974121 in Azimuth
+2026-09-16 16:24:33,771 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.21222758293151855 in Azimuth
+2026-09-16 16:24:33,874 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Azimuth')
+2026-09-16 16:24:34,432 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.13916611671447754 in elevation
+2026-09-16 16:24:34,749 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.20462465286254883 in elevation
+2026-09-16 16:24:34,859 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'elevation')
+2026-09-16 16:24:35,144 - root - INFO - _replace_exponential_scatter_values:232 - Replaced 1 exponential scatter points for 'Timestamp' (|value| > 1000) with 0.0.
+2026-09-16 16:24:35,250 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.10554289817810059 in Timestamp
+2026-09-16 16:24:35,725 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.05541539192199707 in signal_to_noise_ratio
+2026-09-16 16:24:35,845 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.061016082763671875 in signal_to_noise_ratio
+2026-09-16 16:24:35,917 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'signal_to_noise_ratio')
+2026-09-16 16:24:36,497 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.04936623573303223 in radar_cross_section
+2026-09-16 16:24:36,769 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.21145057678222656 in radar_cross_section
+2026-09-16 16:24:36,900 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'radar_cross_section')
+2026-09-16 16:24:37,303 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.058672189712524414 in super_res_target
+2026-09-16 16:24:37,661 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07756757736206055 in super_res_target
+2026-09-16 16:24:37,733 - root - DEBUG - generate_plots:230 - Time taken by generate plot in parllel or seq figures for 7.7813379764556885 in DETECTION_STREAM
+2026-09-16 16:24:37,733 - root - INFO - wrapper:13 - Function generate_plots took 8.7464 seconds to execute.
+2026-09-16 16:24:37,736 - HtmlGenerator - INFO - _create_folder_structure:87 - Created folder structure for CEER_PT048_20260814_121515_0338_b04_HDF
+2026-09-16 16:24:37,736 - HtmlGenerator - INFO - generate_and_save_html_files:256 - Generating HTML files for 3 categories
+2026-09-16 16:24:38,029 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_histogram.html (1786.1 KB)
+2026-09-16 16:24:38,066 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_histogram2.html (457.1 KB)
+2026-09-16 16:24:38,253 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_general.html (2302.9 KB)
+2026-09-16 16:24:38,293 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_general2.html (435.1 KB)
+2026-09-16 16:24:38,720 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_mismatch.html (810.2 KB)
+2026-09-16 16:24:38,722 - HtmlGenerator - INFO - _create_external_assets:569 - CSS file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.css
+2026-09-16 16:24:38,729 - HtmlGenerator - INFO - _create_external_assets:575 - JavaScript file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.js
+2026-09-16 16:24:38,747 - HtmlGenerator - INFO - generate_and_save_html_files:315 - Received KPI HTML path: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_kpi.html
+2026-09-16 16:24:38,775 - root - INFO - parse:191 - Merged 100 streams into one plot set for sensor /CEER_FL/ in 11.1s
+2026-09-16 16:24:38,781 - root - INFO - _write_sensor_sync_sidecar:379 - Wrote scan-sync sidecar: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FL\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_sync.json
+2026-09-16 16:24:38,782 - root - INFO - parse:197 - Generated HTML report for sensor /CEER_FL/ with /108/ streams
+2026-09-16 16:24:38,783 - InteractivePlot.kpi_client.can_kpi_integration - DEBUG - __init__:81 - CanKpiIntegration initialized with base_name=CEER_PT048_20260814_121515_0338_b04_HDF, sensor=CEER_FLR, input_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\CEER_PT048_20260814_121515_0338_b04_HDF.h5, output_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\OUTPUT\CEER_PT048_20260814_121515_0338_b04_rR00110006_HDF.h5, output_dir=C:\Users\ouymc2\Desktop\can_debug_2\out\interactive, server_host=127.0.0.1, server_port=5556
+2026-09-16 16:24:38,788 - InteractivePlot.kpi_client.can_kpi_integration - INFO - _ensure_server_process:134 - CAN KPI server already responding
+2026-09-16 16:24:38,793 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:222 - Sending CAN KPI request for sensor CEER_FLR
+2026-09-16 16:24:46,599 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:236 - CAN KPI response: success
+2026-09-16 16:24:46,600 - root - INFO - parse:129 - KPI request sent for sensor=CEER_FLR status=success message=CAN KPI HTML generated
+2026-09-16 16:24:46,770 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1507 in RDR_DETECTION_045_048
+2026-09-16 16:24:46,836 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2136 in RDR_DETECTION_033_036
+2026-09-16 16:24:46,893 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2752 in RDR_DETECTION_037_040
+2026-09-16 16:24:46,952 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3197 in RDR_DETECTION_009_012
+2026-09-16 16:24:47,007 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3869 in RDR_DETECTION_029_032
+2026-09-16 16:24:47,128 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5019 in RDR_DETECTION_017_020
+2026-09-16 16:24:47,230 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6167 in RDR_DETECTION_021_024
+2026-09-16 16:24:47,401 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7731 in RDR_DETECTION_013_016
+2026-09-16 16:24:47,484 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8795 in RDR_DETECTION_001_004
+2026-09-16 16:24:47,566 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9505 in RDR_DETECTION_041_044
+2026-09-16 16:24:47,722 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0925 in RDR_DETECTION_025_028
+2026-09-16 16:24:47,818 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8037 in RDR_DETECTION_037_040
+2026-09-16 16:24:47,898 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1230 in RDR_DETECTION_045_048
+2026-09-16 16:24:47,968 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3391 in RDR_DETECTION_005_008
+2026-09-16 16:24:48,083 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0646 in RDR_DETECTION_029_032
+2026-09-16 16:24:48,201 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1853 in RDR_DETECTION_009_012
+2026-09-16 16:24:48,273 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2521 in RDR_DETECTION_033_036
+2026-09-16 16:24:48,386 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7828 in RDR_DETECTION_017_020
+2026-09-16 16:24:48,454 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8395 in RDR_DETECTION_041_044
+2026-09-16 16:24:48,570 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8286 in RDR_DETECTION_025_028
+2026-09-16 16:24:48,668 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0622 in RDR_DETECTION_013_016
+2026-09-16 16:24:48,892 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9858 in RDR_DETECTION_049_052
+2026-09-16 16:24:49,029 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4364 in RDR_DETECTION_021_024
+2026-09-16 16:24:49,095 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4848 in RDR_DETECTION_001_004
+2026-09-16 16:24:49,201 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9261 in RDR_DETECTION_057_060
+2026-09-16 16:24:49,317 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4251 in RDR_DETECTION_077_080
+2026-09-16 16:24:49,404 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1948 in RDR_DETECTION_005_008
+2026-09-16 16:24:49,456 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8877 in RDR_DETECTION_069_072
+2026-09-16 16:24:49,524 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3208 in RDR_DETECTION_053_056
+2026-09-16 16:24:49,639 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7115 in RDR_DETECTION_049_052
+2026-09-16 16:24:49,771 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4894 in RDR_DETECTION_065_068
+2026-09-16 16:24:49,771 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7372 in RDR_DETECTION_085_088
+2026-09-16 16:24:49,928 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6496 in RDR_DETECTION_061_064
+2026-09-16 16:24:50,136 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6763 in RDR_DETECTION_073_076
+2026-09-16 16:24:50,226 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0890 in RDR_DETECTION_089_092
+2026-09-16 16:24:50,422 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5076 in RDR_DETECTION_081_084
+2026-09-16 16:24:50,584 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0326 in RDR_DETECTION_077_080
+2026-09-16 16:24:50,651 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0916 in RDR_DETECTION_093_096
+2026-09-16 16:24:50,723 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0774 in RDR_DETECTION_069_072
+2026-09-16 16:24:50,791 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2587 in RDR_DETECTION_057_060
+2026-09-16 16:24:50,883 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9515 in RDR_DETECTION_065_068
+2026-09-16 16:24:50,956 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3113 in RDR_DETECTION_053_056
+2026-09-16 16:24:50,958 - root - DEBUG - set_value:96 - Skipping plot for theta: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,959 - root - DEBUG - set_value:96 - Skipping plot for phi: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,959 - root - DEBUG - set_value:96 - Skipping plot for ran: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,960 - root - DEBUG - set_value:96 - Skipping plot for vel: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,960 - root - DEBUG - set_value:96 - Skipping plot for rcs: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,961 - root - DEBUG - set_value:96 - Skipping plot for snr: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,962 - root - DEBUG - set_value:96 - Skipping plot for f_superres_target: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:50,962 - root - DEBUG - set_value:96 - Skipping plot for timestamp: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:24:51,034 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2469 in RDR_DETECTION_097_100
+2026-09-16 16:24:51,110 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1596 in RDR_DETECTION_085_088
+2026-09-16 16:24:51,183 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2271 in RDR_DETECTION_061_064
+2026-09-16 16:24:51,288 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1280 in RDR_DETECTION_073_076
+2026-09-16 16:24:51,450 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9981 in RDR_DETECTION_089_092
+2026-09-16 16:24:51,540 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0367 in RDR_DETECTION_081_084
+2026-09-16 16:24:51,671 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8682 in RDR_DETECTION_101_104
+2026-09-16 16:24:51,767 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9636 in RDR_DETECTION_105_108
+2026-09-16 16:24:51,864 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0546 in RDR_DETECTION_109_112
+2026-09-16 16:24:52,021 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8994 in RDR_DETECTION_121_124
+2026-09-16 16:24:52,084 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0386 in RDR_DETECTION_117_120
+2026-09-16 16:24:52,186 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0714 in RDR_DETECTION_097_100
+2026-09-16 16:24:52,302 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5014 in RDR_DETECTION_093_096
+2026-09-16 16:24:52,392 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2775 in RDR_DETECTION_113_116
+2026-09-16 16:24:52,476 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1493 in RDR_DETECTION_129_132
+2026-09-16 16:24:52,555 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2412 in RDR_DETECTION_125_128
+2026-09-16 16:24:52,696 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1284 in RDR_DETECTION_137_140
+2026-09-16 16:24:52,774 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2211 in RDR_DETECTION_133_136
+2026-09-16 16:24:52,844 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9553 in RDR_DETECTION_105_108
+2026-09-16 16:24:52,920 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0379 in RDR_DETECTION_101_104
+2026-09-16 16:24:52,993 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1052 in RDR_DETECTION_109_112
+2026-09-16 16:24:53,126 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0325 in RDR_DETECTION_117_120
+2026-09-16 16:24:53,219 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1277 in RDR_DETECTION_121_124
+2026-09-16 16:24:53,298 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8146 in RDR_DETECTION_113_116
+2026-09-16 16:24:53,451 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1463 in RDR_DETECTION_141_144
+2026-09-16 16:24:53,631 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0731 in RDR_DETECTION_129_132
+2026-09-16 16:24:53,793 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3069 in RDR_DETECTION_145_148
+2026-09-16 16:24:53,918 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3504 in RDR_DETECTION_125_128
+2026-09-16 16:24:54,018 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3094 in RDR_DETECTION_137_140
+2026-09-16 16:24:54,093 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9511 in RDR_DETECTION_157_160
+2026-09-16 16:24:54,197 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2741 in RDR_DETECTION_149_152
+2026-09-16 16:24:54,373 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2295 in RDR_DETECTION_161_164
+2026-09-16 16:24:54,564 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7805 in RDR_DETECTION_133_136
+2026-09-16 16:24:54,683 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4561 in RDR_DETECTION_165_168
+2026-09-16 16:24:54,959 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8196 in RDR_DETECTION_153_156
+2026-09-16 16:24:54,960 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6118 in RDR_DETECTION_169_172
+2026-09-16 16:24:55,072 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4111 in RDR_DETECTION_173_176
+2026-09-16 16:24:55,181 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2516 in RDR_DETECTION_177_180
+2026-09-16 16:24:55,382 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9040 in RDR_DETECTION_141_144
+2026-09-16 16:24:55,491 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3973 in RDR_DETECTION_181_184
+2026-09-16 16:24:55,618 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5170 in RDR_DETECTION_145_148
+2026-09-16 16:24:55,762 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5527 in RDR_DETECTION_157_160
+2026-09-16 16:24:55,969 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7453 in RDR_DETECTION_149_152
+2026-09-16 16:24:56,068 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9887 in RDR_DETECTION_185_188
+2026-09-16 16:24:56,177 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7900 in RDR_DETECTION_161_164
+2026-09-16 16:24:56,264 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1788 in RDR_DETECTION_165_168
+2026-09-16 16:24:56,449 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2603 in RDR_DETECTION_169_172
+2026-09-16 16:24:56,531 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3388 in RDR_DETECTION_173_176
+2026-09-16 16:24:56,593 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6204 in RDR_DETECTION_153_156
+2026-09-16 16:24:56,696 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9080 in RDR_DETECTION_193_196
+2026-09-16 16:24:56,941 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7204 in RDR_DETECTION_177_180
+2026-09-16 16:24:57,117 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5746 in RDR_DETECTION_181_184
+2026-09-16 16:24:57,189 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6897 in RDR_DETECTION_189_192
+2026-09-16 16:24:57,262 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4600 in RDR_DETECTION_197_200
+2026-09-16 16:24:57,416 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4407 in RDR_DETECTION_201_204
+2026-09-16 16:24:57,524 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7733 in RDR_DETECTION_193_196
+2026-09-16 16:24:57,592 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4044 in RDR_DETECTION_185_188
+2026-09-16 16:24:57,746 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5599 in RDR_DETECTION_205_208
+2026-09-16 16:24:57,919 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1930 in RDR_DETECTION_221_224
+2026-09-16 16:24:57,979 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2414 in RDR_DETECTION_213_216
+2026-09-16 16:24:58,085 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3538 in RDR_DETECTION_217_220
+2026-09-16 16:24:58,152 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7119 in RDR_DETECTION_201_204
+2026-09-16 16:24:58,255 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7217 in RDR_DETECTION_209_212
+2026-09-16 16:24:58,455 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1923 in RDR_DETECTION_189_192
+2026-09-16 16:24:58,535 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2561 in RDR_DETECTION_197_200
+2026-09-16 16:24:58,618 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5264 in RDR_DETECTION_217_220
+2026-09-16 16:24:58,679 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5573 in RDR_DETECTION_225_228
+2026-09-16 16:24:58,762 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8409 in RDR_DETECTION_237_240
+2026-09-16 16:24:58,830 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5630 in RDR_DETECTION_229_232
+2026-09-16 16:24:58,951 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9677 in RDR_DETECTION_205_208
+2026-09-16 16:24:59,026 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0360 in RDR_DETECTION_213_216
+2026-09-16 16:24:59,188 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0984 in RDR_DETECTION_233_236
+2026-09-16 16:24:59,311 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7591 in RDR_DETECTION_241_244
+2026-09-16 16:24:59,379 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7611 in RDR_DETECTION_249_252
+2026-09-16 16:24:59,568 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5763 in RDR_DETECTION_221_224
+2026-09-16 16:24:59,723 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8838 in RDR_DETECTION_225_228
+2026-09-16 16:25:00,121 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4406 in RDR_DETECTION_245_248
+2026-09-16 16:25:00,121 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5712 in RDR_DETECTION_209_212
+2026-09-16 16:25:00,282 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4410 in RDR_DETECTION_229_232
+2026-09-16 16:25:00,346 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5033 in RDR_DETECTION_253_256
+2026-09-16 16:25:00,487 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6378 in RDR_DETECTION_237_240
+2026-09-16 16:25:00,652 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4247 in RDR_DETECTION_261_264
+2026-09-16 16:25:00,748 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6082 in RDR_DETECTION_273_276
+2026-09-16 16:25:00,893 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7482 in RDR_DETECTION_265_268
+2026-09-16 16:25:00,966 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8299 in RDR_DETECTION_269_272
+2026-09-16 16:25:01,095 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6614 in RDR_DETECTION_241_244
+2026-09-16 16:25:01,160 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7487 in RDR_DETECTION_249_252
+2026-09-16 16:25:01,344 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.1122 in RDR_DETECTION_233_236
+2026-09-16 16:25:01,477 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.2647 in RDR_DETECTION_257_260
+2026-09-16 16:25:01,556 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6630 in RDR_DETECTION_261_264
+2026-09-16 16:25:01,659 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5208 in RDR_DETECTION_245_248
+2026-09-16 16:25:01,755 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2573 in RDR_DETECTION_281_284
+2026-09-16 16:25:01,835 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4712 in RDR_DETECTION_277_280
+2026-09-16 16:25:01,919 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4181 in RDR_DETECTION_253_256
+2026-09-16 16:25:01,985 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4041 in RDR_DETECTION_289_292
+2026-09-16 16:25:02,067 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0899 in RDR_DETECTION_265_268
+2026-09-16 16:25:02,174 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5862 in RDR_DETECTION_257_260
+2026-09-16 16:25:02,291 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7141 in RDR_DETECTION_293_296
+2026-09-16 16:25:02,395 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4126 in RDR_DETECTION_269_272
+2026-09-16 16:25:02,548 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9546 in RDR_DETECTION_297_300
+2026-09-16 16:25:02,669 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5067 in RDR_DETECTION_273_276
+2026-09-16 16:25:02,874 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8844 in RDR_DETECTION_305_308
+2026-09-16 16:25:02,949 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8703 in RDR_DETECTION_309_312
+2026-09-16 16:25:03,017 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0295 in RDR_DETECTION_281_284
+2026-09-16 16:25:03,135 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4625 in RDR_DETECTION_301_304
+2026-09-16 16:25:03,233 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2348 in RDR_DETECTION_277_280
+2026-09-16 16:25:03,362 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7791 in RDR_DETECTION_285_288
+2026-09-16 16:25:03,422 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3451 in RDR_DETECTION_289_292
+2026-09-16 16:25:03,579 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1600 in RDR_DETECTION_317_320
+2026-09-16 16:25:03,776 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5896 in RDR_DETECTION_313_316
+2026-09-16 16:25:03,852 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9734 in RDR_DETECTION_297_300
+2026-09-16 16:25:03,959 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9363 in RDR_DETECTION_325_328
+2026-09-16 16:25:04,101 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2178 in RDR_DETECTION_305_308
+2026-09-16 16:25:04,184 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5448 in RDR_DETECTION_317_320
+2026-09-16 16:25:04,343 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2004 in RDR_DETECTION_309_312
+2026-09-16 16:25:04,459 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.0613 in RDR_DETECTION_293_296
+2026-09-16 16:25:04,833 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9470 in RDR_DETECTION_321_324
+2026-09-16 16:25:04,835 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6818 in RDR_DETECTION_301_304
+2026-09-16 16:25:04,999 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4115 in RDR_DETECTION_333_336
+2026-09-16 16:25:05,064 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6372 in RDR_DETECTION_285_288
+2026-09-16 16:25:05,166 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8010 in RDR_DETECTION_329_332
+2026-09-16 16:25:05,359 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1732 in RDR_DETECTION_341_344
+2026-09-16 16:25:05,417 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4470 in RDR_DETECTION_325_328
+2026-09-16 16:25:05,479 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6188 in RDR_DETECTION_313_316
+2026-09-16 16:25:05,671 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7804 in RDR_DETECTION_353_356
+2026-09-16 16:25:05,672 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7897 in RDR_DETECTION_357_360
+2026-09-16 16:25:05,811 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8919 in RDR_DETECTION_349_352
+2026-09-16 16:25:05,980 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.1189 in RDR_DETECTION_337_340
+2026-09-16 16:25:06,087 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2246 in RDR_DETECTION_345_348
+2026-09-16 16:25:06,220 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3094 in RDR_DETECTION_321_324
+2026-09-16 16:25:06,284 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1061 in RDR_DETECTION_329_332
+2026-09-16 16:25:06,457 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6374 in RDR_DETECTION_341_344
+2026-09-16 16:25:06,529 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3529 in RDR_DETECTION_361_364
+2026-09-16 16:25:06,714 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7251 in RDR_DETECTION_353_356
+2026-09-16 16:25:06,881 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7075 in RDR_DETECTION_333_336
+2026-09-16 16:25:06,981 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1512 in RDR_DETECTION_357_360
+2026-09-16 16:25:07,063 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7646 in RDR_DETECTION_373_376
+2026-09-16 16:25:07,125 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1246 in RDR_DETECTION_369_372
+2026-09-16 16:25:07,255 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0306 in RDR_DETECTION_345_348
+2026-09-16 16:25:07,329 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0356 in RDR_DETECTION_377_380
+2026-09-16 16:25:07,441 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4571 in RDR_DETECTION_349_352
+2026-09-16 16:25:07,531 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5243 in RDR_DETECTION_337_340
+2026-09-16 16:25:07,627 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6349 in RDR_DETECTION_365_368
+2026-09-16 16:25:07,747 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2064 in RDR_DETECTION_381_384
+2026-09-16 16:25:07,989 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0966 in RDR_DETECTION_385_388
+2026-09-16 16:25:08,126 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5642 in RDR_DETECTION_361_364
+2026-09-16 16:25:08,264 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2757 in RDR_DETECTION_389_392
+2026-09-16 16:25:08,265 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2746 in RDR_DETECTION_393_396
+2026-09-16 16:25:08,396 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2589 in RDR_DETECTION_369_372
+2026-09-16 16:25:08,557 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4301 in RDR_DETECTION_373_376
+2026-09-16 16:25:08,737 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3706 in RDR_DETECTION_377_380
+2026-09-16 16:25:08,809 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5302 in RDR_DETECTION_385_388
+2026-09-16 16:25:08,927 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5510 in RDR_DETECTION_397_400
+2026-09-16 16:25:09,022 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2368 in RDR_DETECTION_381_384
+2026-09-16 16:25:09,108 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3486 in RDR_DETECTION_365_368
+2026-09-16 16:25:09,255 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9362 in RDR_DETECTION_393_396
+2026-09-16 16:25:09,336 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0037 in RDR_DETECTION_389_392
+2026-09-16 16:25:09,437 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4123 in RDR_DETECTION_397_400
+2026-09-16 16:25:10,767 - DataPrep - DEBUG - _track_memory_usage:115 - Resident Set Size (RSS): 240.14 MB
+2026-09-16 16:25:10,767 - DataPrep - DEBUG - _track_memory_usage:116 - Virtual Memory Size: 828.83 MB
+2026-09-16 16:25:10,767 - DataPrep - INFO - _track_memory_usage:121 - Initial memory usage: 240.13671875 MiB
+2026-09-16 16:25:10,768 - DataPrep - INFO - generate_plots:218 - Using sequential processing for plot generation
+2026-09-16 16:25:12,429 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 984 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:25:12,600 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1702101230621338 in Range
+2026-09-16 16:25:12,758 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 984 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:25:12,845 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.08668994903564453 in Range
+2026-09-16 16:25:12,989 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Range')
+2026-09-16 16:25:13,870 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1594231128692627 in Rangerate
+2026-09-16 16:25:14,239 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.24939322471618652 in Rangerate
+2026-09-16 16:25:14,465 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Rangerate')
+2026-09-16 16:25:15,296 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07690286636352539 in Azimuth
+2026-09-16 16:25:15,654 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.22968053817749023 in Azimuth
+2026-09-16 16:25:15,872 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Azimuth')
+2026-09-16 16:25:16,614 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.09711503982543945 in elevation
+2026-09-16 16:25:17,030 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.2782762050628662 in elevation
+2026-09-16 16:25:17,209 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'elevation')
+2026-09-16 16:25:17,769 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.06613612174987793 in Timestamp
+2026-09-16 16:25:18,819 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.15110111236572266 in signal_to_noise_ratio
+2026-09-16 16:25:19,171 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.12819314002990723 in signal_to_noise_ratio
+2026-09-16 16:25:19,298 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'signal_to_noise_ratio')
+2026-09-16 16:25:20,105 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.13779234886169434 in radar_cross_section
+2026-09-16 16:25:20,551 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.35886073112487793 in radar_cross_section
+2026-09-16 16:25:20,832 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'radar_cross_section')
+2026-09-16 16:25:21,322 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07293057441711426 in super_res_target
+2026-09-16 16:25:22,255 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07547640800476074 in super_res_target
+2026-09-16 16:25:22,414 - root - DEBUG - generate_plots:230 - Time taken by generate plot in parllel or seq figures for 11.645636081695557 in DETECTION_STREAM
+2026-09-16 16:25:22,415 - root - INFO - wrapper:13 - Function generate_plots took 11.6475 seconds to execute.
+2026-09-16 16:25:22,424 - HtmlGenerator - INFO - _create_folder_structure:87 - Created folder structure for CEER_PT048_20260814_121515_0338_b04_HDF
+2026-09-16 16:25:22,425 - HtmlGenerator - INFO - generate_and_save_html_files:256 - Generating HTML files for 3 categories
+2026-09-16 16:25:22,757 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_histogram.html (3207.2 KB)
+2026-09-16 16:25:22,863 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_histogram2.html (883.1 KB)
+2026-09-16 16:25:23,058 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_general.html (4518.4 KB)
+2026-09-16 16:25:23,092 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_general2.html (858.1 KB)
+2026-09-16 16:25:23,746 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_mismatch.html (1540.1 KB)
+2026-09-16 16:25:23,748 - HtmlGenerator - INFO - _create_external_assets:569 - CSS file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.css
+2026-09-16 16:25:23,750 - HtmlGenerator - INFO - _create_external_assets:575 - JavaScript file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.js
+2026-09-16 16:25:23,776 - HtmlGenerator - INFO - generate_and_save_html_files:315 - Received KPI HTML path: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_kpi.html
+2026-09-16 16:25:23,802 - root - INFO - parse:191 - Merged 100 streams into one plot set for sensor /CEER_FLR/ in 14.4s
+2026-09-16 16:25:23,809 - root - INFO - _write_sensor_sync_sidecar:379 - Wrote scan-sync sidecar: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FLR\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_sync.json
+2026-09-16 16:25:23,809 - root - INFO - parse:197 - Generated HTML report for sensor /CEER_FLR/ with /108/ streams
+2026-09-16 16:25:23,810 - InteractivePlot.kpi_client.can_kpi_integration - DEBUG - __init__:81 - CanKpiIntegration initialized with base_name=CEER_PT048_20260814_121515_0338_b04_HDF, sensor=CEER_FR, input_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\CEER_PT048_20260814_121515_0338_b04_HDF.h5, output_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\OUTPUT\CEER_PT048_20260814_121515_0338_b04_rR00110006_HDF.h5, output_dir=C:\Users\ouymc2\Desktop\can_debug_2\out\interactive, server_host=127.0.0.1, server_port=5556
+2026-09-16 16:25:23,840 - InteractivePlot.kpi_client.can_kpi_integration - INFO - _ensure_server_process:134 - CAN KPI server already responding
+2026-09-16 16:25:23,852 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:222 - Sending CAN KPI request for sensor CEER_FR
+2026-09-16 16:25:31,680 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:236 - CAN KPI response: success
+2026-09-16 16:25:31,681 - root - INFO - parse:129 - KPI request sent for sensor=CEER_FR status=success message=CAN KPI HTML generated
+2026-09-16 16:25:31,959 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2696 in RDR_DETECTION_029_032
+2026-09-16 16:25:31,976 - root - DEBUG - set_value:96 - Skipping plot for theta: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,976 - root - DEBUG - set_value:96 - Skipping plot for phi: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,977 - root - DEBUG - set_value:96 - Skipping plot for ran: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,977 - root - DEBUG - set_value:96 - Skipping plot for vel: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,977 - root - DEBUG - set_value:96 - Skipping plot for rcs: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,977 - root - DEBUG - set_value:96 - Skipping plot for snr: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,978 - root - DEBUG - set_value:96 - Skipping plot for f_superres_target: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:31,978 - root - DEBUG - set_value:96 - Skipping plot for timestamp: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:25:32,094 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3907 in RDR_DETECTION_009_012
+2026-09-16 16:25:32,201 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4994 in RDR_DETECTION_025_028
+2026-09-16 16:25:32,332 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6004 in RDR_DETECTION_021_024
+2026-09-16 16:25:32,437 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7226 in RDR_DETECTION_041_044
+2026-09-16 16:25:32,531 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8096 in RDR_DETECTION_005_008
+2026-09-16 16:25:32,619 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8922 in RDR_DETECTION_045_048
+2026-09-16 16:25:32,722 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0161 in RDR_DETECTION_001_004
+2026-09-16 16:25:32,815 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0952 in RDR_DETECTION_017_020
+2026-09-16 16:25:32,921 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2120 in RDR_DETECTION_013_016
+2026-09-16 16:25:33,073 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3496 in RDR_DETECTION_033_036
+2026-09-16 16:25:33,201 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4895 in RDR_DETECTION_037_040
+2026-09-16 16:25:33,328 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9874 in RDR_DETECTION_021_024
+2026-09-16 16:25:33,424 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4967 in RDR_DETECTION_005_008
+2026-09-16 16:25:33,566 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6284 in RDR_DETECTION_001_004
+2026-09-16 16:25:33,680 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2386 in RDR_DETECTION_025_028
+2026-09-16 16:25:33,758 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8272 in RDR_DETECTION_045_048
+2026-09-16 16:25:33,837 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7336 in RDR_DETECTION_029_032
+2026-09-16 16:25:33,957 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0059 in RDR_DETECTION_013_016
+2026-09-16 16:25:34,078 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7441 in RDR_DETECTION_009_012
+2026-09-16 16:25:34,167 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2324 in RDR_DETECTION_017_020
+2026-09-16 16:25:34,255 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4354 in RDR_DETECTION_041_044
+2026-09-16 16:25:34,340 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9078 in RDR_DETECTION_049_052
+2026-09-16 16:25:34,495 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2584 in RDR_DETECTION_037_040
+2026-09-16 16:25:34,627 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6603 in RDR_DETECTION_073_076
+2026-09-16 16:25:34,697 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8574 in RDR_DETECTION_065_068
+2026-09-16 16:25:34,852 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6364 in RDR_DETECTION_033_036
+2026-09-16 16:25:34,978 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5347 in RDR_DETECTION_053_056
+2026-09-16 16:25:35,072 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2205 in RDR_DETECTION_069_072
+2026-09-16 16:25:35,078 - root - WARNING - set_value:85 - Truncating dataset for theta: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,078 - root - WARNING - set_value:85 - Truncating dataset for phi: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,079 - root - WARNING - set_value:85 - Truncating dataset for ran: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,154 - root - WARNING - set_value:85 - Truncating dataset for vel: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,155 - root - WARNING - set_value:85 - Truncating dataset for rcs: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,155 - root - WARNING - set_value:85 - Truncating dataset for snr: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,155 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3064 in RDR_DETECTION_061_064
+2026-09-16 16:25:35,155 - root - WARNING - set_value:85 - Truncating dataset for f_superres_target: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,156 - root - WARNING - set_value:85 - Truncating dataset for timestamp: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,232 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8868 in RDR_DETECTION_085_088
+2026-09-16 16:25:35,348 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5066 in RDR_DETECTION_057_060
+2026-09-16 16:25:35,471 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1202 in RDR_DETECTION_077_080
+2026-09-16 16:25:35,622 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2655 in RDR_DETECTION_049_052
+2026-09-16 16:25:35,782 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1512 in RDR_DETECTION_089_092
+2026-09-16 16:25:35,946 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9548 in RDR_DETECTION_053_056
+2026-09-16 16:25:35,988 - root - WARNING - set_value:85 - Truncating dataset for theta: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,990 - root - WARNING - set_value:85 - Truncating dataset for phi: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,991 - root - WARNING - set_value:85 - Truncating dataset for ran: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,991 - root - WARNING - set_value:85 - Truncating dataset for vel: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,992 - root - WARNING - set_value:85 - Truncating dataset for rcs: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,992 - root - WARNING - set_value:85 - Truncating dataset for snr: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,994 - root - WARNING - set_value:85 - Truncating dataset for f_superres_target: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:35,995 - root - WARNING - set_value:85 - Truncating dataset for timestamp: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:25:36,105 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7383 in RDR_DETECTION_081_084
+2026-09-16 16:25:36,213 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2259 in RDR_DETECTION_093_096
+2026-09-16 16:25:36,331 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4383 in RDR_DETECTION_073_076
+2026-09-16 16:25:36,428 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1840 in RDR_DETECTION_069_072
+2026-09-16 16:25:36,566 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5848 in RDR_DETECTION_065_068
+2026-09-16 16:25:36,753 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3960 in RDR_DETECTION_061_064
+2026-09-16 16:25:36,849 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4908 in RDR_DETECTION_057_060
+2026-09-16 16:25:37,021 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9076 in RDR_DETECTION_089_092
+2026-09-16 16:25:37,114 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7525 in RDR_DETECTION_085_088
+2026-09-16 16:25:37,196 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0786 in RDR_DETECTION_081_084
+2026-09-16 16:25:37,359 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7320 in RDR_DETECTION_077_080
+2026-09-16 16:25:37,465 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3537 in RDR_DETECTION_101_104
+2026-09-16 16:25:37,654 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0794 in RDR_DETECTION_105_108
+2026-09-16 16:25:37,655 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6763 in RDR_DETECTION_097_100
+2026-09-16 16:25:37,769 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5415 in RDR_DETECTION_093_096
+2026-09-16 16:25:37,896 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1263 in RDR_DETECTION_117_120
+2026-09-16 16:25:38,172 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9650 in RDR_DETECTION_129_132
+2026-09-16 16:25:38,172 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4158 in RDR_DETECTION_113_116
+2026-09-16 16:25:38,297 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4294 in RDR_DETECTION_121_124
+2026-09-16 16:25:38,395 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1905 in RDR_DETECTION_133_136
+2026-09-16 16:25:38,532 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9518 in RDR_DETECTION_109_112
+2026-09-16 16:25:38,679 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4703 in RDR_DETECTION_125_128
+2026-09-16 16:25:38,817 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0484 in RDR_DETECTION_105_108
+2026-09-16 16:25:38,955 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4899 in RDR_DETECTION_137_140
+2026-09-16 16:25:39,064 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2854 in RDR_DETECTION_101_104
+2026-09-16 16:25:39,162 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2567 in RDR_DETECTION_117_120
+2026-09-16 16:25:39,266 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4953 in RDR_DETECTION_097_100
+2026-09-16 16:25:39,366 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5679 in RDR_DETECTION_141_144
+2026-09-16 16:25:39,512 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8215 in RDR_DETECTION_125_128
+2026-09-16 16:25:39,638 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2213 in RDR_DETECTION_133_136
+2026-09-16 16:25:39,716 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5216 in RDR_DETECTION_129_132
+2026-09-16 16:25:39,806 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6198 in RDR_DETECTION_113_116
+2026-09-16 16:25:39,916 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5083 in RDR_DETECTION_121_124
+2026-09-16 16:25:40,057 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2308 in RDR_DETECTION_145_148
+2026-09-16 16:25:40,159 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4485 in RDR_DETECTION_109_112
+2026-09-16 16:25:40,362 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9896 in RDR_DETECTION_141_144
+2026-09-16 16:25:40,458 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0832 in RDR_DETECTION_153_156
+2026-09-16 16:25:40,546 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1570 in RDR_DETECTION_157_160
+2026-09-16 16:25:40,764 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5917 in RDR_DETECTION_149_152
+2026-09-16 16:25:40,895 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1686 in RDR_DETECTION_165_168
+2026-09-16 16:25:41,124 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9497 in RDR_DETECTION_137_140
+2026-09-16 16:25:41,201 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2805 in RDR_DETECTION_161_164
+2026-09-16 16:25:41,287 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3701 in RDR_DETECTION_169_172
+2026-09-16 16:25:41,411 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4766 in RDR_DETECTION_173_176
+2026-09-16 16:25:41,553 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6129 in RDR_DETECTION_177_180
+2026-09-16 16:25:41,716 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5425 in RDR_DETECTION_145_148
+2026-09-16 16:25:42,060 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8779 in RDR_DETECTION_181_184
+2026-09-16 16:25:42,203 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4175 in RDR_DETECTION_185_188
+2026-09-16 16:25:42,378 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5709 in RDR_DETECTION_149_152
+2026-09-16 16:25:42,459 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1636 in RDR_DETECTION_169_172
+2026-09-16 16:25:42,596 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3043 in RDR_DETECTION_189_192
+2026-09-16 16:25:42,735 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9614 in RDR_DETECTION_153_156
+2026-09-16 16:25:42,874 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2700 in RDR_DETECTION_201_204
+2026-09-16 16:25:43,024 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.2207 in RDR_DETECTION_157_160
+2026-09-16 16:25:43,196 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9826 in RDR_DETECTION_165_168
+2026-09-16 16:25:43,313 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2734 in RDR_DETECTION_205_208
+2026-09-16 16:25:43,392 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.0987 in RDR_DETECTION_161_164
+2026-09-16 16:25:43,468 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2685 in RDR_DETECTION_201_204
+2026-09-16 16:25:43,557 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7397 in RDR_DETECTION_193_196
+2026-09-16 16:25:43,713 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2395 in RDR_DETECTION_205_208
+2026-09-16 16:25:43,982 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5048 in RDR_DETECTION_217_220
+2026-09-16 16:25:44,122 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6462 in RDR_DETECTION_213_216
+2026-09-16 16:25:44,246 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.4825 in RDR_DETECTION_177_180
+2026-09-16 16:25:44,400 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0840 in RDR_DETECTION_209_212
+2026-09-16 16:25:44,493 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9281 in RDR_DETECTION_221_224
+2026-09-16 16:25:44,726 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2213 in RDR_DETECTION_225_228
+2026-09-16 16:25:44,861 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3501 in RDR_DETECTION_213_216
+2026-09-16 16:25:45,132 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 3.3392 in RDR_DETECTION_173_176
+2026-09-16 16:25:45,257 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 3.1811 in RDR_DETECTION_181_184
+2026-09-16 16:25:45,343 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1990 in RDR_DETECTION_221_224
+2026-09-16 16:25:45,416 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9013 in RDR_DETECTION_217_220
+2026-09-16 16:25:45,515 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2535 in RDR_DETECTION_209_212
+2026-09-16 16:25:45,726 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3043 in RDR_DETECTION_229_232
+2026-09-16 16:25:45,915 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3966 in RDR_DETECTION_245_248
+2026-09-16 16:25:46,174 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6577 in RDR_DETECTION_225_228
+2026-09-16 16:25:46,290 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5446 in RDR_DETECTION_249_252
+2026-09-16 16:25:46,388 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6469 in RDR_DETECTION_241_244
+2026-09-16 16:25:46,463 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2870 in RDR_DETECTION_237_240
+2026-09-16 16:25:46,545 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 4.3304 in RDR_DETECTION_185_188
+2026-09-16 16:25:46,627 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8948 in RDR_DETECTION_233_236
+2026-09-16 16:25:46,807 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1764 in RDR_DETECTION_257_260
+2026-09-16 16:25:46,884 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4213 in RDR_DETECTION_241_244
+2026-09-16 16:25:46,961 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4963 in RDR_DETECTION_229_232
+2026-09-16 16:25:47,107 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5607 in RDR_DETECTION_253_256
+2026-09-16 16:25:47,186 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5536 in RDR_DETECTION_249_252
+2026-09-16 16:25:47,277 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3126 in RDR_DETECTION_261_264
+2026-09-16 16:25:47,492 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5243 in RDR_DETECTION_237_240
+2026-09-16 16:25:47,724 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6116 in RDR_DETECTION_253_256
+2026-09-16 16:25:48,082 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9685 in RDR_DETECTION_233_236
+2026-09-16 16:25:48,225 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9456 in RDR_DETECTION_257_260
+2026-09-16 16:25:48,302 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8045 in RDR_DETECTION_265_268
+2026-09-16 16:25:48,303 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3361 in RDR_DETECTION_245_248
+2026-09-16 16:25:48,385 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6562 in RDR_DETECTION_273_276
+2026-09-16 16:25:48,466 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1594 in RDR_DETECTION_293_296
+2026-09-16 16:25:48,637 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3321 in RDR_DETECTION_269_272
+2026-09-16 16:25:48,711 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9858 in RDR_DETECTION_261_264
+2026-09-16 16:25:48,858 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5489 in RDR_DETECTION_285_288
+2026-09-16 16:25:49,137 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6669 in RDR_DETECTION_277_280
+2026-09-16 16:25:49,224 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7565 in RDR_DETECTION_281_284
+2026-09-16 16:25:49,321 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6072 in RDR_DETECTION_265_268
+2026-09-16 16:25:49,447 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5775 in RDR_DETECTION_289_292
+2026-09-16 16:25:49,676 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 6.9375 in RDR_DETECTION_197_200
+2026-09-16 16:25:49,753 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6144 in RDR_DETECTION_273_276
+2026-09-16 16:25:49,836 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 6.8040 in RDR_DETECTION_189_192
+2026-09-16 16:25:49,912 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2345 in RDR_DETECTION_269_272
+2026-09-16 16:25:50,199 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7460 in RDR_DETECTION_297_300
+2026-09-16 16:25:50,200 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3625 in RDR_DETECTION_293_296
+2026-09-16 16:25:50,286 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3714 in RDR_DETECTION_281_284
+2026-09-16 16:25:50,360 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5198 in RDR_DETECTION_285_288
+2026-09-16 16:25:50,497 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5806 in RDR_DETECTION_277_280
+2026-09-16 16:25:50,584 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2973 in RDR_DETECTION_305_308
+2026-09-16 16:25:50,732 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3712 in RDR_DETECTION_313_316
+2026-09-16 16:25:50,819 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.4019 in RDR_DETECTION_193_196
+2026-09-16 16:25:51,009 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2740 in RDR_DETECTION_297_300
+2026-09-16 16:25:51,105 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8165 in RDR_DETECTION_301_304
+2026-09-16 16:25:51,191 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4570 in RDR_DETECTION_321_324
+2026-09-16 16:25:51,340 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5991 in RDR_DETECTION_329_332
+2026-09-16 16:25:51,531 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7943 in RDR_DETECTION_289_292
+2026-09-16 16:25:51,651 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6408 in RDR_DETECTION_309_312
+2026-09-16 16:25:51,787 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2519 in RDR_DETECTION_325_328
+2026-09-16 16:25:52,000 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2034 in RDR_DETECTION_321_324
+2026-09-16 16:25:52,001 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2618 in RDR_DETECTION_317_320
+2026-09-16 16:25:52,228 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6949 in RDR_DETECTION_305_308
+2026-09-16 16:25:52,306 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5168 in RDR_DETECTION_301_304
+2026-09-16 16:25:52,382 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1513 in RDR_DETECTION_325_328
+2026-09-16 16:25:52,579 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7833 in RDR_DETECTION_329_332
+2026-09-16 16:25:52,579 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7869 in RDR_DETECTION_341_344
+2026-09-16 16:25:52,690 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8958 in RDR_DETECTION_313_316
+2026-09-16 16:25:52,832 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0410 in RDR_DETECTION_337_340
+2026-09-16 16:25:53,074 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7662 in RDR_DETECTION_309_312
+2026-09-16 16:25:53,198 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3432 in RDR_DETECTION_357_360
+2026-09-16 16:25:53,400 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5485 in RDR_DETECTION_361_364
+2026-09-16 16:25:53,401 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7042 in RDR_DETECTION_353_356
+2026-09-16 16:25:53,586 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7380 in RDR_DETECTION_333_336
+2026-09-16 16:25:53,587 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5087 in RDR_DETECTION_349_352
+2026-09-16 16:25:53,698 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8402 in RDR_DETECTION_317_320
+2026-09-16 16:25:53,782 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1936 in RDR_DETECTION_365_368
+2026-09-16 16:25:53,867 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6676 in RDR_DETECTION_337_340
+2026-09-16 16:25:54,048 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1852 in RDR_DETECTION_345_348
+2026-09-16 16:25:54,048 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2641 in RDR_DETECTION_357_360
+2026-09-16 16:25:54,153 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3698 in RDR_DETECTION_341_344
+2026-09-16 16:25:54,224 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4374 in RDR_DETECTION_349_352
+2026-09-16 16:25:54,298 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5126 in RDR_DETECTION_333_336
+2026-09-16 16:25:54,382 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5153 in RDR_DETECTION_373_376
+2026-09-16 16:25:54,481 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2557 in RDR_DETECTION_361_364
+2026-09-16 16:25:54,581 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1924 in RDR_DETECTION_353_356
+2026-09-16 16:25:54,694 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5415 in RDR_DETECTION_369_372
+2026-09-16 16:25:54,819 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4344 in RDR_DETECTION_365_368
+2026-09-16 16:25:54,903 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6765 in RDR_DETECTION_345_348
+2026-09-16 16:25:54,975 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.0687 in RDR_DETECTION_389_392
+2026-09-16 16:25:55,111 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2913 in RDR_DETECTION_385_388
+2026-09-16 16:25:55,202 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3796 in RDR_DETECTION_377_380
+2026-09-16 16:25:55,277 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3732 in RDR_DETECTION_381_384
+2026-09-16 16:25:55,388 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1848 in RDR_DETECTION_397_400
+2026-09-16 16:25:55,458 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4823 in RDR_DETECTION_393_396
+2026-09-16 16:25:55,531 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1414 in RDR_DETECTION_385_388
+2026-09-16 16:25:55,616 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3377 in RDR_DETECTION_389_392
+2026-09-16 16:25:55,705 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5003 in RDR_DETECTION_373_376
+2026-09-16 16:25:55,834 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5528 in RDR_DETECTION_369_372
+2026-09-16 16:25:55,906 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1993 in RDR_DETECTION_393_396
+2026-09-16 16:25:55,993 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1572 in RDR_DETECTION_377_380
+2026-09-16 16:25:56,112 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2752 in RDR_DETECTION_397_400
+2026-09-16 16:25:56,196 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6639 in RDR_DETECTION_381_384
+2026-09-16 16:25:56,273 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.9109 in RDR_DETECTION_197_200
+2026-09-16 16:25:57,767 - DataPrep - DEBUG - _track_memory_usage:115 - Resident Set Size (RSS): 273.80 MB
+2026-09-16 16:25:57,767 - DataPrep - DEBUG - _track_memory_usage:116 - Virtual Memory Size: 865.86 MB
+2026-09-16 16:25:57,768 - DataPrep - INFO - _track_memory_usage:121 - Initial memory usage: 273.796875 MiB
+2026-09-16 16:25:57,769 - DataPrep - INFO - generate_plots:218 - Using sequential processing for plot generation
+2026-09-16 16:25:58,679 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 632 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:25:58,875 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.19378066062927246 in Range
+2026-09-16 16:25:58,971 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 632 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:25:59,187 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.21458911895751953 in Range
+2026-09-16 16:25:59,319 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Range')
+2026-09-16 16:25:59,701 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07171893119812012 in Rangerate
+2026-09-16 16:26:00,010 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.17655158042907715 in Rangerate
+2026-09-16 16:26:00,174 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Rangerate')
+2026-09-16 16:26:00,690 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.16214561462402344 in Azimuth
+2026-09-16 16:26:01,010 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.23293352127075195 in Azimuth
+2026-09-16 16:26:01,171 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Azimuth')
+2026-09-16 16:26:01,661 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.09583449363708496 in elevation
+2026-09-16 16:26:01,935 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1839587688446045 in elevation
+2026-09-16 16:26:02,205 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'elevation')
+2026-09-16 16:26:02,550 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07391190528869629 in Timestamp
+2026-09-16 16:26:03,267 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07237744331359863 in signal_to_noise_ratio
+2026-09-16 16:26:03,606 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.21535444259643555 in signal_to_noise_ratio
+2026-09-16 16:26:03,811 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'signal_to_noise_ratio')
+2026-09-16 16:26:04,350 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.07430219650268555 in radar_cross_section
+2026-09-16 16:26:04,739 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.23765802383422852 in radar_cross_section
+2026-09-16 16:26:04,958 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'radar_cross_section')
+2026-09-16 16:26:05,392 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.078887939453125 in super_res_target
+2026-09-16 16:26:05,919 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.18819594383239746 in super_res_target
+2026-09-16 16:26:06,100 - root - DEBUG - generate_plots:230 - Time taken by generate plot in parllel or seq figures for 8.331434965133667 in DETECTION_STREAM
+2026-09-16 16:26:06,100 - root - INFO - wrapper:13 - Function generate_plots took 8.3326 seconds to execute.
+2026-09-16 16:26:06,102 - HtmlGenerator - INFO - _create_folder_structure:87 - Created folder structure for CEER_PT048_20260814_121515_0338_b04_HDF
+2026-09-16 16:26:06,102 - HtmlGenerator - INFO - generate_and_save_html_files:256 - Generating HTML files for 3 categories
+2026-09-16 16:26:06,280 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_histogram.html (1791.7 KB)
+2026-09-16 16:26:06,319 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_histogram2.html (456.7 KB)
+2026-09-16 16:26:06,575 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_general.html (2303.5 KB)
+2026-09-16 16:26:06,598 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_general2.html (434.9 KB)
+2026-09-16 16:26:07,101 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_mismatch.html (1371.2 KB)
+2026-09-16 16:26:07,102 - HtmlGenerator - INFO - _create_external_assets:569 - CSS file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.css
+2026-09-16 16:26:07,104 - HtmlGenerator - INFO - _create_external_assets:575 - JavaScript file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.js
+2026-09-16 16:26:07,113 - HtmlGenerator - INFO - generate_and_save_html_files:315 - Received KPI HTML path: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_kpi.html
+2026-09-16 16:26:07,162 - root - INFO - parse:191 - Merged 100 streams into one plot set for sensor /CEER_FR/ in 10.9s
+2026-09-16 16:26:07,181 - root - INFO - _write_sensor_sync_sidecar:379 - Wrote scan-sync sidecar: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_FR\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_sync.json
+2026-09-16 16:26:07,182 - root - INFO - parse:197 - Generated HTML report for sensor /CEER_FR/ with /108/ streams
+2026-09-16 16:26:07,187 - InteractivePlot.kpi_client.can_kpi_integration - DEBUG - __init__:81 - CanKpiIntegration initialized with base_name=CEER_PT048_20260814_121515_0338_b04_HDF, sensor=CEER_RL, input_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\CEER_PT048_20260814_121515_0338_b04_HDF.h5, output_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\OUTPUT\CEER_PT048_20260814_121515_0338_b04_rR00110006_HDF.h5, output_dir=C:\Users\ouymc2\Desktop\can_debug_2\out\interactive, server_host=127.0.0.1, server_port=5556
+2026-09-16 16:26:07,206 - InteractivePlot.kpi_client.can_kpi_integration - INFO - _ensure_server_process:134 - CAN KPI server already responding
+2026-09-16 16:26:07,212 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:222 - Sending CAN KPI request for sensor CEER_RL
+2026-09-16 16:26:14,299 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:236 - CAN KPI response: success
+2026-09-16 16:26:14,300 - root - INFO - parse:129 - KPI request sent for sensor=CEER_RL status=success message=CAN KPI HTML generated
+2026-09-16 16:26:14,538 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2279 in RDR_DETECTION_005_008
+2026-09-16 16:26:14,721 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4060 in RDR_DETECTION_041_044
+2026-09-16 16:26:14,972 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6050 in RDR_DETECTION_033_036
+2026-09-16 16:26:15,202 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8947 in RDR_DETECTION_021_024
+2026-09-16 16:26:15,367 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0228 in RDR_DETECTION_017_020
+2026-09-16 16:26:15,462 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1572 in RDR_DETECTION_001_004
+2026-09-16 16:26:15,542 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2242 in RDR_DETECTION_029_032
+2026-09-16 16:26:15,650 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3201 in RDR_DETECTION_037_040
+2026-09-16 16:26:15,759 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3997 in RDR_DETECTION_045_048
+2026-09-16 16:26:15,870 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5330 in RDR_DETECTION_009_012
+2026-09-16 16:26:15,961 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6066 in RDR_DETECTION_013_016
+2026-09-16 16:26:16,133 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7854 in RDR_DETECTION_025_028
+2026-09-16 16:26:16,465 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9175 in RDR_DETECTION_005_008
+2026-09-16 16:26:16,564 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9126 in RDR_DETECTION_017_020
+2026-09-16 16:26:16,677 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0211 in RDR_DETECTION_021_024
+2026-09-16 16:26:16,791 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6295 in RDR_DETECTION_013_016
+2026-09-16 16:26:16,882 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7082 in RDR_DETECTION_037_040
+2026-09-16 16:26:17,006 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.2332 in RDR_DETECTION_041_044
+2026-09-16 16:26:17,100 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7239 in RDR_DETECTION_033_036
+2026-09-16 16:26:17,190 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3188 in RDR_DETECTION_001_004
+2026-09-16 16:26:17,295 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1358 in RDR_DETECTION_025_028
+2026-09-16 16:26:17,395 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7396 in RDR_DETECTION_029_032
+2026-09-16 16:26:17,485 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3144 in RDR_DETECTION_009_012
+2026-09-16 16:26:17,609 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4408 in RDR_DETECTION_045_048
+2026-09-16 16:26:17,821 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2421 in RDR_DETECTION_049_052
+2026-09-16 16:26:18,037 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0283 in RDR_DETECTION_061_064
+2026-09-16 16:26:18,087 - root - DEBUG - set_value:96 - Skipping plot for theta: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,088 - root - DEBUG - set_value:96 - Skipping plot for phi: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,089 - root - DEBUG - set_value:96 - Skipping plot for ran: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,089 - root - DEBUG - set_value:96 - Skipping plot for vel: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,090 - root - DEBUG - set_value:96 - Skipping plot for rcs: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,090 - root - DEBUG - set_value:96 - Skipping plot for snr: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,091 - root - DEBUG - set_value:96 - Skipping plot for f_superres_target: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,091 - root - DEBUG - set_value:96 - Skipping plot for timestamp: dataset length (199) does not match scan indices length (200)
+2026-09-16 16:26:18,202 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8042 in RDR_DETECTION_081_084
+2026-09-16 16:26:18,307 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5098 in RDR_DETECTION_057_060
+2026-09-16 16:26:18,400 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9082 in RDR_DETECTION_077_080
+2026-09-16 16:26:18,502 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7027 in RDR_DETECTION_053_056
+2026-09-16 16:26:18,648 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1545 in RDR_DETECTION_073_076
+2026-09-16 16:26:18,802 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3053 in RDR_DETECTION_085_088
+2026-09-16 16:26:18,915 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8107 in RDR_DETECTION_065_068
+2026-09-16 16:26:19,087 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5995 in RDR_DETECTION_069_072
+2026-09-16 16:26:19,321 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8225 in RDR_DETECTION_089_092
+2026-09-16 16:26:19,525 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6679 in RDR_DETECTION_049_052
+2026-09-16 16:26:19,626 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7730 in RDR_DETECTION_093_096
+2026-09-16 16:26:19,726 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6818 in RDR_DETECTION_061_064
+2026-09-16 16:26:19,907 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5893 in RDR_DETECTION_057_060
+2026-09-16 16:26:20,054 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7356 in RDR_DETECTION_081_084
+2026-09-16 16:26:20,152 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2272 in RDR_DETECTION_053_056
+2026-09-16 16:26:20,363 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4365 in RDR_DETECTION_085_088
+2026-09-16 16:26:20,455 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5316 in RDR_DETECTION_077_080
+2026-09-16 16:26:20,572 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6503 in RDR_DETECTION_073_076
+2026-09-16 16:26:20,669 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5591 in RDR_DETECTION_065_068
+2026-09-16 16:26:20,759 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0275 in RDR_DETECTION_097_100
+2026-09-16 16:26:20,856 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4979 in RDR_DETECTION_069_072
+2026-09-16 16:26:21,080 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7264 in RDR_DETECTION_089_092
+2026-09-16 16:26:21,359 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7212 in RDR_DETECTION_093_096
+2026-09-16 16:26:21,486 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7366 in RDR_DETECTION_101_104
+2026-09-16 16:26:21,656 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5886 in RDR_DETECTION_109_112
+2026-09-16 16:26:21,762 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5696 in RDR_DETECTION_113_116
+2026-09-16 16:26:21,878 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4179 in RDR_DETECTION_117_120
+2026-09-16 16:26:22,011 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8538 in RDR_DETECTION_105_108
+2026-09-16 16:26:22,205 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3431 in RDR_DETECTION_129_132
+2026-09-16 16:26:22,307 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7301 in RDR_DETECTION_121_124
+2026-09-16 16:26:22,428 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7514 in RDR_DETECTION_125_128
+2026-09-16 16:26:22,528 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4360 in RDR_DETECTION_097_100
+2026-09-16 16:26:22,631 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5078 in RDR_DETECTION_137_140
+2026-09-16 16:26:22,766 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2692 in RDR_DETECTION_141_144
+2026-09-16 16:26:22,880 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7839 in RDR_DETECTION_133_136
+2026-09-16 16:26:22,969 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3086 in RDR_DETECTION_101_104
+2026-09-16 16:26:23,055 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2779 in RDR_DETECTION_113_116
+2026-09-16 16:26:23,156 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4912 in RDR_DETECTION_109_112
+2026-09-16 16:26:23,281 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0619 in RDR_DETECTION_105_108
+2026-09-16 16:26:23,391 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9598 in RDR_DETECTION_121_124
+2026-09-16 16:26:23,583 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5214 in RDR_DETECTION_153_156
+2026-09-16 16:26:23,790 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8199 in RDR_DETECTION_133_136
+2026-09-16 16:26:24,016 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5810 in RDR_DETECTION_129_132
+2026-09-16 16:26:24,120 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8114 in RDR_DETECTION_117_120
+2026-09-16 16:26:24,207 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6762 in RDR_DETECTION_125_128
+2026-09-16 16:26:24,332 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2673 in RDR_DETECTION_141_144
+2026-09-16 16:26:24,486 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8535 in RDR_DETECTION_145_148
+2026-09-16 16:26:24,584 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5180 in RDR_DETECTION_149_152
+2026-09-16 16:26:24,729 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.0863 in RDR_DETECTION_137_140
+2026-09-16 16:26:24,891 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4831 in RDR_DETECTION_165_168
+2026-09-16 16:26:25,192 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7747 in RDR_DETECTION_161_164
+2026-09-16 16:26:25,395 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7851 in RDR_DETECTION_153_156
+2026-09-16 16:26:25,492 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.0476 in RDR_DETECTION_157_160
+2026-09-16 16:26:25,628 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1237 in RDR_DETECTION_181_184
+2026-09-16 16:26:25,816 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3231 in RDR_DETECTION_185_188
+2026-09-16 16:26:26,020 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8915 in RDR_DETECTION_169_172
+2026-09-16 16:26:26,303 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8051 in RDR_DETECTION_145_148
+2026-09-16 16:26:26,304 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.0897 in RDR_DETECTION_173_176
+2026-09-16 16:26:26,429 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.0944 in RDR_DETECTION_177_180
+2026-09-16 16:26:26,564 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3629 in RDR_DETECTION_165_168
+2026-09-16 16:26:26,667 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7416 in RDR_DETECTION_149_152
+2026-09-16 16:26:26,822 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1513 in RDR_DETECTION_201_204
+2026-09-16 16:26:26,945 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2663 in RDR_DETECTION_205_208
+2026-09-16 16:26:27,050 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.0954 in RDR_DETECTION_189_192
+2026-09-16 16:26:27,147 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1875 in RDR_DETECTION_205_208
+2026-09-16 16:26:27,319 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8203 in RDR_DETECTION_193_196
+2026-09-16 16:26:27,591 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6331 in RDR_DETECTION_201_204
+2026-09-16 16:26:27,677 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.4667 in RDR_DETECTION_161_164
+2026-09-16 16:26:27,773 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3399 in RDR_DETECTION_197_200
+2026-09-16 16:26:27,900 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2211 in RDR_DETECTION_209_212
+2026-09-16 16:26:28,037 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2623 in RDR_DETECTION_213_216
+2026-09-16 16:26:28,265 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.6268 in RDR_DETECTION_157_160
+2026-09-16 16:26:28,353 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.0864 in RDR_DETECTION_213_216
+2026-09-16 16:26:28,438 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1681 in RDR_DETECTION_209_212
+2026-09-16 16:26:28,524 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.1992 in RDR_DETECTION_169_172
+2026-09-16 16:26:28,691 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3333 in RDR_DETECTION_221_224
+2026-09-16 16:26:28,789 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 3.1479 in RDR_DETECTION_181_184
+2026-09-16 16:26:29,173 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.7422 in RDR_DETECTION_173_176
+2026-09-16 16:26:29,173 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9057 in RDR_DETECTION_217_220
+2026-09-16 16:26:29,503 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6829 in RDR_DETECTION_233_236
+2026-09-16 16:26:29,630 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4366 in RDR_DETECTION_221_224
+2026-09-16 16:26:29,726 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9254 in RDR_DETECTION_229_232
+2026-09-16 16:26:29,899 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0880 in RDR_DETECTION_225_228
+2026-09-16 16:26:30,053 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3257 in RDR_DETECTION_217_220
+2026-09-16 16:26:30,154 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5214 in RDR_DETECTION_237_240
+2026-09-16 16:26:30,300 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3941 in RDR_DETECTION_229_232
+2026-09-16 16:26:30,499 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7698 in RDR_DETECTION_241_244
+2026-09-16 16:26:30,592 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 4.1523 in RDR_DETECTION_177_180
+2026-09-16 16:26:30,684 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5289 in RDR_DETECTION_225_228
+2026-09-16 16:26:30,846 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 4.3894 in RDR_DETECTION_185_188
+2026-09-16 16:26:31,079 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3934 in RDR_DETECTION_253_256
+2026-09-16 16:26:31,079 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 3.7436 in RDR_DETECTION_189_192
+2026-09-16 16:26:31,222 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5284 in RDR_DETECTION_245_248
+2026-09-16 16:26:31,346 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1894 in RDR_DETECTION_233_236
+2026-09-16 16:26:31,566 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4841 in RDR_DETECTION_257_260
+2026-09-16 16:26:31,691 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9936 in RDR_DETECTION_249_252
+2026-09-16 16:26:31,824 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1333 in RDR_DETECTION_237_240
+2026-09-16 16:26:31,921 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2287 in RDR_DETECTION_241_244
+2026-09-16 16:26:32,058 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4896 in RDR_DETECTION_265_268
+2026-09-16 16:26:32,163 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1053 in RDR_DETECTION_249_252
+2026-09-16 16:26:32,279 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3553 in RDR_DETECTION_253_256
+2026-09-16 16:26:32,402 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0536 in RDR_DETECTION_261_264
+2026-09-16 16:26:32,542 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1867 in RDR_DETECTION_269_272
+2026-09-16 16:26:32,674 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9806 in RDR_DETECTION_273_276
+2026-09-16 16:26:32,798 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3955 in RDR_DETECTION_245_248
+2026-09-16 16:26:32,936 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5277 in RDR_DETECTION_281_284
+2026-09-16 16:26:33,091 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1529 in RDR_DETECTION_261_264
+2026-09-16 16:26:33,224 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6755 in RDR_DETECTION_257_260
+2026-09-16 16:26:33,387 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4460 in RDR_DETECTION_269_272
+2026-09-16 16:26:33,532 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5882 in RDR_DETECTION_281_284
+2026-09-16 16:26:33,657 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7109 in RDR_DETECTION_265_268
+2026-09-16 16:26:33,974 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4274 in RDR_DETECTION_277_280
+2026-09-16 16:26:33,974 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0312 in RDR_DETECTION_285_288
+2026-09-16 16:26:34,109 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1607 in RDR_DETECTION_289_292
+2026-09-16 16:26:34,346 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 6.2677 in RDR_DETECTION_197_200
+2026-09-16 16:26:34,563 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6133 in RDR_DETECTION_293_296
+2026-09-16 16:26:34,687 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1539 in RDR_DETECTION_273_276
+2026-09-16 16:26:34,840 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1383 in RDR_DETECTION_301_304
+2026-09-16 16:26:34,939 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2491 in RDR_DETECTION_297_300
+2026-09-16 16:26:35,139 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4205 in RDR_DETECTION_277_280
+2026-09-16 16:26:35,450 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7354 in RDR_DETECTION_313_316
+2026-09-16 16:26:35,649 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7078 in RDR_DETECTION_301_304
+2026-09-16 16:26:35,776 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9319 in RDR_DETECTION_293_296
+2026-09-16 16:26:35,924 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9846 in RDR_DETECTION_309_312
+2026-09-16 16:26:36,121 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6610 in RDR_DETECTION_285_288
+2026-09-16 16:26:36,210 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2670 in RDR_DETECTION_321_324
+2026-09-16 16:26:36,358 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9003 in RDR_DETECTION_305_308
+2026-09-16 16:26:36,558 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0969 in RDR_DETECTION_289_292
+2026-09-16 16:26:36,559 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1055 in RDR_DETECTION_317_320
+2026-09-16 16:26:36,770 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2025 in RDR_DETECTION_337_340
+2026-09-16 16:26:36,986 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2085 in RDR_DETECTION_297_300
+2026-09-16 16:26:37,110 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 9.5113 in RDR_DETECTION_193_196
+2026-09-16 16:26:37,204 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6346 in RDR_DETECTION_325_328
+2026-09-16 16:26:37,453 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8849 in RDR_DETECTION_305_308
+2026-09-16 16:26:37,553 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4398 in RDR_DETECTION_345_348
+2026-09-16 16:26:37,673 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1095 in RDR_DETECTION_313_316
+2026-09-16 16:26:37,847 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7320 in RDR_DETECTION_321_324
+2026-09-16 16:26:38,047 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9356 in RDR_DETECTION_333_336
+2026-09-16 16:26:38,125 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0090 in RDR_DETECTION_309_312
+2026-09-16 16:26:38,236 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6832 in RDR_DETECTION_337_340
+2026-09-16 16:26:38,330 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8737 in RDR_DETECTION_341_344
+2026-09-16 16:26:38,575 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0225 in RDR_DETECTION_325_328
+2026-09-16 16:26:38,673 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3379 in RDR_DETECTION_317_320
+2026-09-16 16:26:38,784 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5468 in RDR_DETECTION_329_332
+2026-09-16 16:26:38,939 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3578 in RDR_DETECTION_353_356
+2026-09-16 16:26:39,026 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4469 in RDR_DETECTION_361_364
+2026-09-16 16:26:39,118 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4410 in RDR_DETECTION_333_336
+2026-09-16 16:26:39,304 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7274 in RDR_DETECTION_345_348
+2026-09-16 16:26:39,410 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0764 in RDR_DETECTION_349_352
+2026-09-16 16:26:39,566 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8903 in RDR_DETECTION_365_368
+2026-09-16 16:26:39,664 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8773 in RDR_DETECTION_357_360
+2026-09-16 16:26:39,772 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7451 in RDR_DETECTION_369_372
+2026-09-16 16:26:39,871 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2049 in RDR_DETECTION_381_384
+2026-09-16 16:26:39,991 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8710 in RDR_DETECTION_341_344
+2026-09-16 16:26:40,161 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8548 in RDR_DETECTION_361_364
+2026-09-16 16:26:40,292 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8797 in RDR_DETECTION_373_376
+2026-09-16 16:26:40,450 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1194 in RDR_DETECTION_349_352
+2026-09-16 16:26:40,549 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3854 in RDR_DETECTION_369_372
+2026-09-16 16:26:40,627 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7535 in RDR_DETECTION_329_332
+2026-09-16 16:26:40,842 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8467 in RDR_DETECTION_353_356
+2026-09-16 16:26:40,843 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5297 in RDR_DETECTION_365_368
+2026-09-16 16:26:41,055 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4893 in RDR_DETECTION_377_380
+2026-09-16 16:26:41,379 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0576 in RDR_DETECTION_389_392
+2026-09-16 16:26:41,640 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7971 in RDR_DETECTION_381_384
+2026-09-16 16:26:41,641 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2620 in RDR_DETECTION_373_376
+2026-09-16 16:26:41,854 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8583 in RDR_DETECTION_357_360
+2026-09-16 16:26:41,957 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6541 in RDR_DETECTION_385_388
+2026-09-16 16:26:42,082 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2374 in RDR_DETECTION_393_396
+2026-09-16 16:26:42,413 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4510 in RDR_DETECTION_397_400
+2026-09-16 16:26:42,413 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3292 in RDR_DETECTION_377_380
+2026-09-16 16:26:42,735 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6501 in RDR_DETECTION_389_392
+2026-09-16 16:26:42,735 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5401 in RDR_DETECTION_385_388
+2026-09-16 16:26:42,926 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1903 in RDR_DETECTION_393_396
+2026-09-16 16:26:42,927 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1919 in RDR_DETECTION_397_400
+2026-09-16 16:26:44,441 - DataPrep - DEBUG - _track_memory_usage:115 - Resident Set Size (RSS): 301.27 MB
+2026-09-16 16:26:44,442 - DataPrep - DEBUG - _track_memory_usage:116 - Virtual Memory Size: 892.40 MB
+2026-09-16 16:26:44,442 - DataPrep - INFO - _track_memory_usage:121 - Initial memory usage: 301.2734375 MiB
+2026-09-16 16:26:44,446 - DataPrep - INFO - generate_plots:218 - Using sequential processing for plot generation
+2026-09-16 16:26:45,727 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 584 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:26:46,003 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.2756502628326416 in Range
+2026-09-16 16:26:46,256 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 584 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:26:46,555 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.29660987854003906 in Range
+2026-09-16 16:26:46,689 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Range')
+2026-09-16 16:26:47,139 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.083160400390625 in Rangerate
+2026-09-16 16:26:47,720 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.3959505558013916 in Rangerate
+2026-09-16 16:26:48,108 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Rangerate')
+2026-09-16 16:26:48,748 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.09990739822387695 in Azimuth
+2026-09-16 16:26:49,361 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.3511226177215576 in Azimuth
+2026-09-16 16:26:49,643 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Azimuth')
+2026-09-16 16:26:50,346 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.18863821029663086 in elevation
+2026-09-16 16:26:50,784 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.23136544227600098 in elevation
+2026-09-16 16:26:50,970 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'elevation')
+2026-09-16 16:26:51,440 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.13526105880737305 in Timestamp
+2026-09-16 16:26:52,322 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.22269320487976074 in signal_to_noise_ratio
+2026-09-16 16:26:52,835 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.18210220336914062 in signal_to_noise_ratio
+2026-09-16 16:26:52,982 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'signal_to_noise_ratio')
+2026-09-16 16:26:53,403 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.0856626033782959 in radar_cross_section
+2026-09-16 16:26:53,881 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.27109742164611816 in radar_cross_section
+2026-09-16 16:26:54,051 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'radar_cross_section')
+2026-09-16 16:26:54,410 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.09778809547424316 in super_res_target
+2026-09-16 16:26:54,981 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1434934139251709 in super_res_target
+2026-09-16 16:26:55,089 - root - DEBUG - generate_plots:230 - Time taken by generate plot in parllel or seq figures for 10.642749071121216 in DETECTION_STREAM
+2026-09-16 16:26:55,089 - root - INFO - wrapper:13 - Function generate_plots took 10.6467 seconds to execute.
+2026-09-16 16:26:55,091 - HtmlGenerator - INFO - _create_folder_structure:87 - Created folder structure for CEER_PT048_20260814_121515_0338_b04_HDF
+2026-09-16 16:26:55,091 - HtmlGenerator - INFO - generate_and_save_html_files:256 - Generating HTML files for 3 categories
+2026-09-16 16:26:55,340 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_histogram.html (1787.1 KB)
+2026-09-16 16:26:55,381 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_histogram2.html (455.2 KB)
+2026-09-16 16:26:55,606 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_general.html (2297.6 KB)
+2026-09-16 16:26:55,635 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_general2.html (435.1 KB)
+2026-09-16 16:26:56,125 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_mismatch.html (1396.4 KB)
+2026-09-16 16:26:56,127 - HtmlGenerator - INFO - _create_external_assets:569 - CSS file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.css
+2026-09-16 16:26:56,129 - HtmlGenerator - INFO - _create_external_assets:575 - JavaScript file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.js
+2026-09-16 16:26:56,136 - HtmlGenerator - INFO - generate_and_save_html_files:315 - Received KPI HTML path: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_kpi.html
+2026-09-16 16:26:56,178 - root - INFO - parse:191 - Merged 100 streams into one plot set for sensor /CEER_RL/ in 13.3s
+2026-09-16 16:26:56,189 - root - INFO - _write_sensor_sync_sidecar:379 - Wrote scan-sync sidecar: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RL\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_sync.json
+2026-09-16 16:26:56,190 - root - INFO - parse:197 - Generated HTML report for sensor /CEER_RL/ with /108/ streams
+2026-09-16 16:26:56,192 - InteractivePlot.kpi_client.can_kpi_integration - DEBUG - __init__:81 - CanKpiIntegration initialized with base_name=CEER_PT048_20260814_121515_0338_b04_HDF, sensor=CEER_RR, input_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\CEER_PT048_20260814_121515_0338_b04_HDF.h5, output_file=C:\Users\ouymc2\Desktop\can_debug_2\PCAN\OUTPUT\CEER_PT048_20260814_121515_0338_b04_rR00110006_HDF.h5, output_dir=C:\Users\ouymc2\Desktop\can_debug_2\out\interactive, server_host=127.0.0.1, server_port=5556
+2026-09-16 16:26:56,202 - InteractivePlot.kpi_client.can_kpi_integration - INFO - _ensure_server_process:134 - CAN KPI server already responding
+2026-09-16 16:26:56,206 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:222 - Sending CAN KPI request for sensor CEER_RR
+2026-09-16 16:27:04,922 - InteractivePlot.kpi_client.can_kpi_integration - INFO - send_data_to_kpi_server:236 - CAN KPI response: success
+2026-09-16 16:27:04,922 - root - INFO - parse:129 - KPI request sent for sensor=CEER_RR status=success message=CAN KPI HTML generated
+2026-09-16 16:27:05,212 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2745 in RDR_DETECTION_029_032
+2026-09-16 16:27:05,387 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4433 in RDR_DETECTION_041_044
+2026-09-16 16:27:05,646 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7042 in RDR_DETECTION_037_040
+2026-09-16 16:27:05,837 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8853 in RDR_DETECTION_009_012
+2026-09-16 16:27:05,970 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0201 in RDR_DETECTION_033_036
+2026-09-16 16:27:06,164 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2343 in RDR_DETECTION_001_004
+2026-09-16 16:27:06,338 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.3818 in RDR_DETECTION_025_028
+2026-09-16 16:27:06,438 - root - WARNING - set_value:85 - Truncating dataset for theta: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,438 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5024 in RDR_DETECTION_021_024
+2026-09-16 16:27:06,439 - root - WARNING - set_value:85 - Truncating dataset for phi: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,439 - root - WARNING - set_value:85 - Truncating dataset for ran: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,441 - root - WARNING - set_value:85 - Truncating dataset for vel: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,442 - root - WARNING - set_value:85 - Truncating dataset for rcs: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,442 - root - WARNING - set_value:85 - Truncating dataset for snr: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,443 - root - WARNING - set_value:85 - Truncating dataset for f_superres_target: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,561 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6215 in RDR_DETECTION_017_020
+2026-09-16 16:27:06,561 - root - WARNING - set_value:85 - Truncating dataset for timestamp: dataset length (201) exceeds scan indices length (200)
+2026-09-16 16:27:06,729 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7745 in RDR_DETECTION_005_008
+2026-09-16 16:27:06,857 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9049 in RDR_DETECTION_013_016
+2026-09-16 16:27:06,947 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.0065 in RDR_DETECTION_045_048
+2026-09-16 16:27:07,180 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0051 in RDR_DETECTION_001_004
+2026-09-16 16:27:07,345 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6884 in RDR_DETECTION_029_032
+2026-09-16 16:27:07,535 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8808 in RDR_DETECTION_037_040
+2026-09-16 16:27:07,701 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7505 in RDR_DETECTION_005_008
+2026-09-16 16:27:07,801 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9409 in RDR_DETECTION_009_012
+2026-09-16 16:27:07,943 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.2695 in RDR_DETECTION_041_044
+2026-09-16 16:27:08,114 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2518 in RDR_DETECTION_033_036
+2026-09-16 16:27:08,260 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3066 in RDR_DETECTION_013_016
+2026-09-16 16:27:08,408 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1933 in RDR_DETECTION_021_024
+2026-09-16 16:27:08,520 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5643 in RDR_DETECTION_069_072
+2026-09-16 16:27:08,657 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1184 in RDR_DETECTION_053_056
+2026-09-16 16:27:08,767 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8078 in RDR_DETECTION_045_048
+2026-09-16 16:27:08,870 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9128 in RDR_DETECTION_017_020
+2026-09-16 16:27:08,985 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0393 in RDR_DETECTION_061_064
+2026-09-16 16:27:09,085 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.1172 in RDR_DETECTION_025_028
+2026-09-16 16:27:09,246 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8930 in RDR_DETECTION_049_052
+2026-09-16 16:27:09,404 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8510 in RDR_DETECTION_057_060
+2026-09-16 16:27:09,514 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2198 in RDR_DETECTION_077_080
+2026-09-16 16:27:09,732 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5882 in RDR_DETECTION_073_076
+2026-09-16 16:27:09,839 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7049 in RDR_DETECTION_065_068
+2026-09-16 16:27:10,000 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5848 in RDR_DETECTION_081_084
+2026-09-16 16:27:10,199 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6813 in RDR_DETECTION_049_052
+2026-09-16 16:27:10,399 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5227 in RDR_DETECTION_069_072
+2026-09-16 16:27:10,505 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9882 in RDR_DETECTION_089_092
+2026-09-16 16:27:10,750 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8756 in RDR_DETECTION_085_088
+2026-09-16 16:27:10,848 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4436 in RDR_DETECTION_061_064
+2026-09-16 16:27:10,980 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4545 in RDR_DETECTION_077_080
+2026-09-16 16:27:11,202 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.3303 in RDR_DETECTION_053_056
+2026-09-16 16:27:11,322 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7855 in RDR_DETECTION_057_060
+2026-09-16 16:27:11,499 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9751 in RDR_DETECTION_093_096
+2026-09-16 16:27:11,668 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8162 in RDR_DETECTION_073_076
+2026-09-16 16:27:11,786 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.9126 in RDR_DETECTION_065_068
+2026-09-16 16:27:11,905 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3829 in RDR_DETECTION_089_092
+2026-09-16 16:27:12,004 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4937 in RDR_DETECTION_097_100
+2026-09-16 16:27:12,176 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8485 in RDR_DETECTION_109_112
+2026-09-16 16:27:12,297 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7834 in RDR_DETECTION_081_084
+2026-09-16 16:27:12,468 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9516 in RDR_DETECTION_101_104
+2026-09-16 16:27:12,666 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4286 in RDR_DETECTION_105_108
+2026-09-16 16:27:12,784 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4603 in RDR_DETECTION_113_116
+2026-09-16 16:27:12,950 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.7263 in RDR_DETECTION_085_088
+2026-09-16 16:27:13,074 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7321 in RDR_DETECTION_117_120
+2026-09-16 16:27:13,248 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4451 in RDR_DETECTION_125_128
+2026-09-16 16:27:13,332 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6643 in RDR_DETECTION_093_096
+2026-09-16 16:27:13,431 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4202 in RDR_DETECTION_129_132
+2026-09-16 16:27:13,522 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7255 in RDR_DETECTION_121_124
+2026-09-16 16:27:13,740 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9523 in RDR_DETECTION_105_108
+2026-09-16 16:27:13,838 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6550 in RDR_DETECTION_097_100
+2026-09-16 16:27:14,026 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3449 in RDR_DETECTION_101_104
+2026-09-16 16:27:14,322 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9694 in RDR_DETECTION_133_136
+2026-09-16 16:27:14,445 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.1205 in RDR_DETECTION_109_112
+2026-09-16 16:27:14,548 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4575 in RDR_DETECTION_117_120
+2026-09-16 16:27:14,655 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8637 in RDR_DETECTION_113_116
+2026-09-16 16:27:14,772 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.8101 in RDR_DETECTION_137_140
+2026-09-16 16:27:14,879 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.5448 in RDR_DETECTION_125_128
+2026-09-16 16:27:14,966 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1232 in RDR_DETECTION_145_148
+2026-09-16 16:27:15,152 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8157 in RDR_DETECTION_153_156
+2026-09-16 16:27:15,329 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4895 in RDR_DETECTION_129_132
+2026-09-16 16:27:15,418 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8900 in RDR_DETECTION_121_124
+2026-09-16 16:27:15,667 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3260 in RDR_DETECTION_133_136
+2026-09-16 16:27:15,902 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2366 in RDR_DETECTION_165_168
+2026-09-16 16:27:15,995 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.1548 in RDR_DETECTION_141_144
+2026-09-16 16:27:16,098 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7631 in RDR_DETECTION_149_152
+2026-09-16 16:27:16,266 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7126 in RDR_DETECTION_157_160
+2026-09-16 16:27:16,367 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.6952 in RDR_DETECTION_161_164
+2026-09-16 16:27:16,583 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.4194 in RDR_DETECTION_137_140
+2026-09-16 16:27:16,809 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.6508 in RDR_DETECTION_145_148
+2026-09-16 16:27:16,915 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.7459 in RDR_DETECTION_169_172
+2026-09-16 16:27:17,105 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0974 in RDR_DETECTION_165_168
+2026-09-16 16:27:17,201 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1980 in RDR_DETECTION_181_184
+2026-09-16 16:27:17,308 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.1329 in RDR_DETECTION_153_156
+2026-09-16 16:27:17,413 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.9909 in RDR_DETECTION_173_176
+2026-09-16 16:27:17,621 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.1920 in RDR_DETECTION_177_180
+2026-09-16 16:27:17,761 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.3037 in RDR_DETECTION_161_164
+2026-09-16 16:27:17,859 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.8535 in RDR_DETECTION_141_144
+2026-09-16 16:27:18,017 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4133 in RDR_DETECTION_185_188
+2026-09-16 16:27:18,181 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1513 in RDR_DETECTION_205_208
+2026-09-16 16:27:18,393 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5309 in RDR_DETECTION_201_204
+2026-09-16 16:27:18,493 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3065 in RDR_DETECTION_205_208
+2026-09-16 16:27:18,684 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.3107 in RDR_DETECTION_149_152
+2026-09-16 16:27:18,831 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1403 in RDR_DETECTION_209_212
+2026-09-16 16:27:18,921 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2343 in RDR_DETECTION_201_204
+2026-09-16 16:27:19,073 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1485 in RDR_DETECTION_217_220
+2026-09-16 16:27:19,238 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.7630 in RDR_DETECTION_157_160
+2026-09-16 16:27:19,352 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1140 in RDR_DETECTION_213_216
+2026-09-16 16:27:19,443 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 2.6174 in RDR_DETECTION_189_192
+2026-09-16 16:27:19,567 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1219 in RDR_DETECTION_209_212
+2026-09-16 16:27:19,886 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3120 in RDR_DETECTION_221_224
+2026-09-16 16:27:19,886 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 2.2538 in RDR_DETECTION_177_180
+2026-09-16 16:27:20,019 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 3.0963 in RDR_DETECTION_169_172
+2026-09-16 16:27:20,109 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5282 in RDR_DETECTION_213_216
+2026-09-16 16:27:20,213 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6237 in RDR_DETECTION_225_228
+2026-09-16 16:27:20,318 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7406 in RDR_DETECTION_217_220
+2026-09-16 16:27:20,520 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4980 in RDR_DETECTION_229_232
+2026-09-16 16:27:20,697 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1634 in RDR_DETECTION_221_224
+2026-09-16 16:27:20,806 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2667 in RDR_DETECTION_237_240
+2026-09-16 16:27:20,896 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3446 in RDR_DETECTION_241_244
+2026-09-16 16:27:20,994 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4231 in RDR_DETECTION_229_232
+2026-09-16 16:27:21,271 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7074 in RDR_DETECTION_225_228
+2026-09-16 16:27:21,394 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8358 in RDR_DETECTION_233_236
+2026-09-16 16:27:21,516 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 4.1876 in RDR_DETECTION_193_196
+2026-09-16 16:27:21,925 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3956 in RDR_DETECTION_245_248
+2026-09-16 16:27:21,925 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3932 in RDR_DETECTION_253_256
+2026-09-16 16:27:21,926 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4040 in RDR_DETECTION_237_240
+2026-09-16 16:27:22,015 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4898 in RDR_DETECTION_241_244
+2026-09-16 16:27:22,101 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 4.7772 in RDR_DETECTION_197_200
+2026-09-16 16:27:22,308 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2066 in RDR_DETECTION_249_252
+2026-09-16 16:27:22,431 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5005 in RDR_DETECTION_233_236
+2026-09-16 16:27:22,656 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3471 in RDR_DETECTION_253_256
+2026-09-16 16:27:22,775 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6710 in RDR_DETECTION_245_248
+2026-09-16 16:27:22,998 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6862 in RDR_DETECTION_257_260
+2026-09-16 16:27:23,167 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3878 in RDR_DETECTION_265_268
+2026-09-16 16:27:23,328 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.9130 in RDR_DETECTION_181_184
+2026-09-16 16:27:23,503 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.8734 in RDR_DETECTION_173_176
+2026-09-16 16:27:23,776 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.3801 in RDR_DETECTION_185_188
+2026-09-16 16:27:23,777 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9967 in RDR_DETECTION_249_252
+2026-09-16 16:27:23,900 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5687 in RDR_DETECTION_273_276
+2026-09-16 16:27:23,995 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.2160 in RDR_DETECTION_269_272
+2026-09-16 16:27:24,139 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1426 in RDR_DETECTION_257_260
+2026-09-16 16:27:24,299 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5117 in RDR_DETECTION_261_264
+2026-09-16 16:27:24,390 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4882 in RDR_DETECTION_277_280
+2026-09-16 16:27:24,490 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4902 in RDR_DETECTION_265_268
+2026-09-16 16:27:24,605 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3036 in RDR_DETECTION_273_276
+2026-09-16 16:27:24,727 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7281 in RDR_DETECTION_281_284
+2026-09-16 16:27:24,928 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5340 in RDR_DETECTION_261_264
+2026-09-16 16:27:25,103 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7080 in RDR_DETECTION_269_272
+2026-09-16 16:27:25,213 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2110 in RDR_DETECTION_285_288
+2026-09-16 16:27:25,322 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5921 in RDR_DETECTION_277_280
+2026-09-16 16:27:25,488 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.0969 in RDR_DETECTION_289_292
+2026-09-16 16:27:25,690 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7618 in RDR_DETECTION_293_296
+2026-09-16 16:27:25,780 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5632 in RDR_DETECTION_297_300
+2026-09-16 16:27:25,890 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1988 in RDR_DETECTION_285_288
+2026-09-16 16:27:26,046 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7213 in RDR_DETECTION_305_308
+2026-09-16 16:27:26,216 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9975 in RDR_DETECTION_309_312
+2026-09-16 16:27:26,343 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.4130 in RDR_DETECTION_301_304
+2026-09-16 16:27:26,502 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1365 in RDR_DETECTION_309_312
+2026-09-16 16:27:26,634 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2616 in RDR_DETECTION_281_284
+2026-09-16 16:27:26,766 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3900 in RDR_DETECTION_301_304
+2026-09-16 16:27:26,883 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2475 in RDR_DETECTION_305_308
+2026-09-16 16:27:26,989 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6096 in RDR_DETECTION_297_300
+2026-09-16 16:27:27,088 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4509 in RDR_DETECTION_317_320
+2026-09-16 16:27:27,225 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4526 in RDR_DETECTION_313_316
+2026-09-16 16:27:27,325 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.5573 in RDR_DETECTION_289_292
+2026-09-16 16:27:27,455 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.0851 in RDR_DETECTION_293_296
+2026-09-16 16:27:27,549 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 7.9632 in RDR_DETECTION_189_192
+2026-09-16 16:27:27,667 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6740 in RDR_DETECTION_325_328
+2026-09-16 16:27:27,938 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.8354 in RDR_DETECTION_193_196
+2026-09-16 16:27:28,049 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5928 in RDR_DETECTION_329_332
+2026-09-16 16:27:28,158 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6998 in RDR_DETECTION_333_336
+2026-09-16 16:27:28,252 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.1641 in RDR_DETECTION_321_324
+2026-09-16 16:27:28,355 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1971 in RDR_DETECTION_341_344
+2026-09-16 16:27:28,602 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 5.8244 in RDR_DETECTION_197_200
+2026-09-16 16:27:28,603 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3428 in RDR_DETECTION_329_332
+2026-09-16 16:27:28,912 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6497 in RDR_DETECTION_333_336
+2026-09-16 16:27:29,054 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.7965 in RDR_DETECTION_325_328
+2026-09-16 16:27:29,159 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9000 in RDR_DETECTION_337_340
+2026-09-16 16:27:29,313 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3993 in RDR_DETECTION_321_324
+2026-09-16 16:27:29,405 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1443 in RDR_DETECTION_317_320
+2026-09-16 16:27:29,776 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.5218 in RDR_DETECTION_345_348
+2026-09-16 16:27:29,777 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.7197 in RDR_DETECTION_353_356
+2026-09-16 16:27:29,879 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8238 in RDR_DETECTION_349_352
+2026-09-16 16:27:30,053 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1378 in RDR_DETECTION_313_316
+2026-09-16 16:27:30,181 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4032 in RDR_DETECTION_357_360
+2026-09-16 16:27:30,337 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.4546 in RDR_DETECTION_365_368
+2026-09-16 16:27:30,475 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4196 in RDR_DETECTION_353_356
+2026-09-16 16:27:30,574 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6898 in RDR_DETECTION_369_372
+2026-09-16 16:27:30,821 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4799 in RDR_DETECTION_345_348
+2026-09-16 16:27:30,821 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.9360 in RDR_DETECTION_377_380
+2026-09-16 16:27:30,965 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6260 in RDR_DETECTION_361_364
+2026-09-16 16:27:31,092 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.6149 in RDR_DETECTION_381_384
+2026-09-16 16:27:31,189 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.8447 in RDR_DETECTION_373_376
+2026-09-16 16:27:31,306 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2495 in RDR_DETECTION_341_344
+2026-09-16 16:27:31,458 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.1090 in RDR_DETECTION_349_352
+2026-09-16 16:27:31,578 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 1.2311 in RDR_DETECTION_337_340
+2026-09-16 16:27:31,709 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6169 in RDR_DETECTION_357_360
+2026-09-16 16:27:31,859 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.1455 in RDR_DETECTION_393_396
+2026-09-16 16:27:31,985 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.8907 in RDR_DETECTION_365_368
+2026-09-16 16:27:32,098 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.3863 in RDR_DETECTION_385_388
+2026-09-16 16:27:32,198 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2115 in RDR_DETECTION_361_364
+2026-09-16 16:27:32,348 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.3621 in RDR_DETECTION_369_372
+2026-09-16 16:27:32,570 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 0.5788 in RDR_DETECTION_397_400
+2026-09-16 16:27:32,570 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.4659 in RDR_DETECTION_393_396
+2026-09-16 16:27:32,678 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.6880 in RDR_DETECTION_381_384
+2026-09-16 16:27:32,910 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9220 in RDR_DETECTION_377_380
+2026-09-16 16:27:33,002 - root - DEBUG - _parse_stream:286 - Time taken by input parsing 1.2872 in RDR_DETECTION_389_392
+2026-09-16 16:27:33,098 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.9987 in RDR_DETECTION_373_376
+2026-09-16 16:27:33,358 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2601 in RDR_DETECTION_385_388
+2026-09-16 16:27:33,358 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.2617 in RDR_DETECTION_397_400
+2026-09-16 16:27:33,545 - root - DEBUG - _parse_stream:286 - Time taken by output parsing 0.1851 in RDR_DETECTION_389_392
+2026-09-16 16:27:35,187 - DataPrep - DEBUG - _track_memory_usage:115 - Resident Set Size (RSS): 329.33 MB
+2026-09-16 16:27:35,187 - DataPrep - DEBUG - _track_memory_usage:116 - Virtual Memory Size: 920.61 MB
+2026-09-16 16:27:35,187 - DataPrep - INFO - _track_memory_usage:121 - Initial memory usage: 329.328125 MiB
+2026-09-16 16:27:35,189 - DataPrep - INFO - generate_plots:218 - Using sequential processing for plot generation
+2026-09-16 16:27:36,653 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 400 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:27:36,771 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.117523193359375 in Range
+2026-09-16 16:27:36,949 - root - INFO - _filter_range_scatter_outliers:180 - Filtered 400 outlier points for range scatter signal 'Range' outside [0.0, 1000] or negative/non-finite.
+2026-09-16 16:27:37,050 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.09969043731689453 in Range
+2026-09-16 16:27:37,312 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Range')
+2026-09-16 16:27:37,925 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.25707507133483887 in Rangerate
+2026-09-16 16:27:38,334 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.2424910068511963 in Rangerate
+2026-09-16 16:27:38,525 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Rangerate')
+2026-09-16 16:27:39,089 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.11494874954223633 in Azimuth
+2026-09-16 16:27:39,534 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.24242043495178223 in Azimuth
+2026-09-16 16:27:39,755 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'Azimuth')
+2026-09-16 16:27:40,586 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.2469923496246338 in elevation
+2026-09-16 16:27:41,059 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.24063324928283691 in elevation
+2026-09-16 16:27:41,239 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'elevation')
+2026-09-16 16:27:41,574 - root - INFO - _replace_exponential_scatter_values:232 - Replaced 1 exponential scatter points for 'Timestamp' (|value| > 1000) with 0.0.
+2026-09-16 16:27:41,676 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.10190892219543457 in Timestamp
+2026-09-16 16:27:42,502 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1915602684020996 in signal_to_noise_ratio
+2026-09-16 16:27:42,935 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.23169851303100586 in signal_to_noise_ratio
+2026-09-16 16:27:43,056 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'signal_to_noise_ratio')
+2026-09-16 16:27:43,957 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.3790431022644043 in radar_cross_section
+2026-09-16 16:27:44,302 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.1881260871887207 in radar_cross_section
+2026-09-16 16:27:44,534 - root - DEBUG - bar_mismatch_plots_all:672 - Updated shared_data for ('bar_mismatch_plots_all', 'radar_cross_section')
+2026-09-16 16:27:45,000 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.2005162239074707 in super_res_target
+2026-09-16 16:27:45,614 - root - DEBUG - scatter_plot:109 - time taken by scatter api as whole of 0.20263218879699707 in super_res_target
+2026-09-16 16:27:45,891 - root - DEBUG - generate_plots:230 - Time taken by generate plot in parllel or seq figures for 10.70216679573059 in DETECTION_STREAM
+2026-09-16 16:27:45,892 - root - INFO - wrapper:13 - Function generate_plots took 10.7044 seconds to execute.
+2026-09-16 16:27:45,896 - HtmlGenerator - INFO - _create_folder_structure:87 - Created folder structure for CEER_PT048_20260814_121515_0338_b04_HDF
+2026-09-16 16:27:45,897 - HtmlGenerator - INFO - generate_and_save_html_files:256 - Generating HTML files for 3 categories
+2026-09-16 16:27:46,142 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_histogram.html (1790.6 KB)
+2026-09-16 16:27:46,190 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_histogram2.html (458.3 KB)
+2026-09-16 16:27:46,435 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_general.html (2305.1 KB)
+2026-09-16 16:27:46,485 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_general2.html (435.3 KB)
+2026-09-16 16:27:46,870 - HtmlGenerator - INFO - generate_and_save_html_files:289 - Category HTML saved: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_mismatch.html (765.1 KB)
+2026-09-16 16:27:46,872 - HtmlGenerator - INFO - _create_external_assets:569 - CSS file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.css
+2026-09-16 16:27:46,875 - HtmlGenerator - INFO - _create_external_assets:575 - JavaScript file created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\tab_interface.js
+2026-09-16 16:27:46,897 - HtmlGenerator - INFO - generate_and_save_html_files:315 - Received KPI HTML path: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_kpi.html
+2026-09-16 16:27:46,946 - root - INFO - parse:191 - Merged 100 streams into one plot set for sensor /CEER_RR/ in 13.4s
+2026-09-16 16:27:46,954 - root - INFO - _write_sensor_sync_sidecar:379 - Wrote scan-sync sidecar: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_RR\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_sync.json
+2026-09-16 16:27:46,954 - root - INFO - parse:197 - Generated HTML report for sensor /CEER_RR/ with /108/ streams
+2026-09-16 16:27:47,003 - HtmlGenerator - INFO - create_base_index:650 - Per-base index created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_PT048_20260814_121515_0338_b04_HDF.html
+2026-09-16 16:27:47,006 - root - INFO - parse:206 - Per-base index created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\CEER_PT048_20260814_121515_0338_b04_HDF\CEER_PT048_20260814_121515_0338_b04_HDF.html
+2026-09-16 16:27:47,007 - root - INFO - wrapper:13 - Function parse took 222.7766 seconds to execute.
+2026-09-16 16:27:47,067 - HtmlGenerator - INFO - create_master_index:616 - Master index created: C:\Users\ouymc2\Desktop\can_debug_2\out\interactive\master_index.html
+2026-09-16 16:27:47,068 - root - INFO - log_to_both:78 - 
+Report Generation Completed

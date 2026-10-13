@@ -1,0 +1,610 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Master Interactive Plot Report</title>
+            <style>
+                :root{--page-bg:#eef3f7;--panel-bg:#ffffff;--panel-muted:#f7fafc;--panel-border:#d9e3ec;--text-main:#17324a;--text-muted:#617789;--accent:#175f7b;--accent-strong:#0f4760;--shadow:0 10px 24px rgba(19,45,69,.08)}*{box-sizing:border-box}body{background:var(--page-bg);font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:20px;color:var(--text-main);min-height:100vh}.container{max-width:1440px;margin:0 auto;background:var(--panel-bg);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--panel-border)}.header{background:linear-gradient(180deg,#1c5972 0%,#17324a 100%);color:#fff;padding:24px 28px;text-align:center}.header h1{margin:0;font-size:2.2rem;font-weight:600}.content{padding:20px}.metadata{background:#f6fbfd;padding:14px;border:1px solid var(--panel-border);border-radius:16px;margin-bottom:20px;text-align:center}.metadata-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.metadata-item{background:#fff;padding:10px 12px;border-radius:12px;font-size:.92rem;border:1px solid var(--panel-border)}.sensor-section{background:var(--panel-muted);border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid var(--panel-border)}.sensor-title{font-size:1.05rem;font-weight:700;color:var(--accent-strong);cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.sensor-summary{display:block;flex:1;line-height:1.3}.sensor-summary-primary{display:block}.sensor-summary-secondary{display:block;margin-top:4px;font-size:.92rem;font-weight:600;color:var(--text-main)}.sensor-content{display:none;margin-top:12px}.sensor-content.active{display:block}.stream-section{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--panel-border)}.stream-title{font-size:1rem;font-weight:700;color:var(--text-main);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}.stream-content{display:none;margin-top:10px}.stream-content.active{display:block}.category-section{background:#f9fcfd;border-radius:14px;padding:12px;margin-bottom:10px;border:1px solid var(--panel-border)}.category-title{font-size:1rem;font-weight:700;color:var(--accent-strong);margin-bottom:10px}.plot-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.plot-link{background:#fff;padding:10px 12px;border-radius:12px;text-decoration:none;color:var(--accent-strong);border:1px solid var(--panel-border);transition:background .16s ease,border-color .16s ease;font-size:.92rem}.plot-link:hover{background:#eef7fb;border-color:#bfd4df}.toggle-icon{font-size:1rem;transition:transform .18s ease}.toggle-icon.rotated{transform:rotate(90deg)}@media (max-width:920px){body{padding:14px}}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>📊 Master Interactive Plot Report</h1>
+                    <div class="subtitle">Comprehensive Sensor and Stream Analysis</div>
+                </div>
+                
+        <div class="warning-banner" style="
+            background: linear-gradient(90deg, #7f1d1d, #b91c1c);
+            color: #ffffff; border: 1px solid #ef4444; border-radius: 8px;
+            padding: 14px 18px; margin: 0 0 18px 0; font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);">
+            <div style="font-weight: 700; font-size: 15px; margin-bottom: 6px;">
+                &#9888;&#65039; Attention: scan-index mismatch / low accuracy detected
+            </div>
+            <ul style="margin: 0; padding-left: 18px; line-height: 1.7;">
+                <li>⚠️ <b>CEER_FL</b> — accuracy 92.6% (below 95%) — input (200 scans) vs output (192 scans) scan counts differ — input/output not fully in sync</li><li>⚠️ <b>CEER_FLR</b> — input (200 scans) vs output (192 scans) scan counts differ — input/output not fully in sync</li><li>⚠️ <b>CEER_FR</b> — accuracy 92.5% (below 95%) — input (200 scans) vs output (191 scans) scan counts differ — input/output not fully in sync</li><li>⚠️ <b>CEER_RL</b> — accuracy 91.4% (below 95%) — input (200 scans) vs output (192 scans) scan counts differ — input/output not fully in sync</li><li>⚠️ <b>CEER_RR</b> — input (200 scans) vs output (192 scans) scan counts differ — input/output not fully in sync</li>
+            </ul>
+        </div>
+        
+                <div class="content">
+                    <div class="metadata">
+                        <h3>📋 Report Information</h3>
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <strong>Generated:</strong> 2026-09-16 16:27:46
+                            </div>
+                            <div class="metadata-item">
+                                <strong>Tool run on:</strong> win32
+                            </div>
+                            <div class="metadata-item">
+                                <strong>Tool Version:</strong> 1.0
+                            </div>
+                            <div class="metadata-item">
+                                <strong>HTML Generated Time Info:</strong> 2026-09-16 16:27:46
+                            </div>
+                            <div class="metadata-item">
+                                <strong>Average Accuracy (F1):</strong> 0.9380
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="sensors-container">
+                        
+            <div class="sensor-section">
+                <div class="sensor-title" onclick="toggleSection(this)">
+                    <span class="sensor-summary">
+                        <span class="sensor-summary-primary">🔧 Sensor CEER_FL - Match % : 92.61  Missmatch % : 7.39</span>
+                        <span class="sensor-summary-secondary">ScanIndex Match % : 96.00</span>
+                    </span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="sensor-content">
+                    
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 DETECTION_STREAM (5 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📋</span>
+                    General (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_general.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FL general
+                    </a>
+                
+
+                    <a href="CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_general2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FL general2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📊</span>
+                    Histogram (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_histogram.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FL histogram
+                    </a>
+                
+
+                    <a href="CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_histogram2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FL histogram2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">⚠️</span>
+                    Mismatch (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_mismatch.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FL mismatch
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 KPI (1 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📈</span>
+                    Kpi (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FL\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FL_kpi.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FL kpi
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+                </div>
+            </div>
+            
+
+            <div class="sensor-section">
+                <div class="sensor-title" onclick="toggleSection(this)">
+                    <span class="sensor-summary">
+                        <span class="sensor-summary-primary">🔧 Sensor CEER_FLR - Match % : 97.20  Missmatch % : 2.80</span>
+                        <span class="sensor-summary-secondary">ScanIndex Match % : 96.00</span>
+                    </span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="sensor-content">
+                    
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 DETECTION_STREAM (5 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📋</span>
+                    General (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_general.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FLR general
+                    </a>
+                
+
+                    <a href="CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_general2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FLR general2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📊</span>
+                    Histogram (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_histogram.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FLR histogram
+                    </a>
+                
+
+                    <a href="CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_histogram2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FLR histogram2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">⚠️</span>
+                    Mismatch (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FLR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_mismatch.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FLR mismatch
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 KPI (1 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📈</span>
+                    Kpi (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FLR\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FLR_kpi.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FLR kpi
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+                </div>
+            </div>
+            
+
+            <div class="sensor-section">
+                <div class="sensor-title" onclick="toggleSection(this)">
+                    <span class="sensor-summary">
+                        <span class="sensor-summary-primary">🔧 Sensor CEER_FR - Match % : 92.47  Missmatch % : 7.53</span>
+                        <span class="sensor-summary-secondary">ScanIndex Match % : 95.50</span>
+                    </span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="sensor-content">
+                    
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 DETECTION_STREAM (5 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📋</span>
+                    General (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_general.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FR general
+                    </a>
+                
+
+                    <a href="CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_general2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FR general2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📊</span>
+                    Histogram (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_histogram.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FR histogram
+                    </a>
+                
+
+                    <a href="CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_histogram2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FR histogram2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">⚠️</span>
+                    Mismatch (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_mismatch.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FR mismatch
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 KPI (1 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📈</span>
+                    Kpi (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_FR\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_FR_kpi.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER FR kpi
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+                </div>
+            </div>
+            
+
+            <div class="sensor-section">
+                <div class="sensor-title" onclick="toggleSection(this)">
+                    <span class="sensor-summary">
+                        <span class="sensor-summary-primary">🔧 Sensor CEER_RL - Match % : 91.36  Missmatch % : 8.64</span>
+                        <span class="sensor-summary-secondary">ScanIndex Match % : 96.00</span>
+                    </span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="sensor-content">
+                    
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 DETECTION_STREAM (5 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📋</span>
+                    General (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_general.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RL general
+                    </a>
+                
+
+                    <a href="CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_general2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RL general2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📊</span>
+                    Histogram (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_histogram.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RL histogram
+                    </a>
+                
+
+                    <a href="CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_histogram2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RL histogram2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">⚠️</span>
+                    Mismatch (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RL\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_mismatch.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RL mismatch
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 KPI (1 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📈</span>
+                    Kpi (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RL\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RL_kpi.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RL kpi
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+                </div>
+            </div>
+            
+
+            <div class="sensor-section">
+                <div class="sensor-title" onclick="toggleSection(this)">
+                    <span class="sensor-summary">
+                        <span class="sensor-summary-primary">🔧 Sensor CEER_RR - Match % : 95.36  Missmatch % : 4.64</span>
+                        <span class="sensor-summary-secondary">ScanIndex Match % : 96.00</span>
+                    </span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="sensor-content">
+                    
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 DETECTION_STREAM (5 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📋</span>
+                    General (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_general.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RR general
+                    </a>
+                
+
+                    <a href="CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_general2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RR general2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📊</span>
+                    Histogram (2 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_histogram.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RR histogram
+                    </a>
+                
+
+                    <a href="CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_histogram2.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RR histogram2
+                    </a>
+                
+</div></div>
+
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">⚠️</span>
+                    Mismatch (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RR\DETECTION_STREAM\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_mismatch.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RR mismatch
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+
+            <div class="stream-section">
+                <div class="stream-title" onclick="toggleSection(this)">
+                    <span>🌊 KPI (1 plots)</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="stream-content">
+                    
+            <div class="category-section">
+                <div class="category-title">
+                    <span class="category-icon">📈</span>
+                    Kpi (1 plots)
+                </div>
+                <div class="plot-links">
+            
+
+                    <a href="CEER_RR\KPI\CEER_PT048_20260814_121515_0338_b04_HDF_CEER_RR_kpi.html" class="plot-link">
+                        <span class="plot-icon">📄</span>
+                        CEER PT048 20260814 121515 0338 b04 HDF CEER RR kpi
+                    </a>
+                
+</div></div>
+                </div>
+            </div>
+            
+                </div>
+            </div>
+            
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                
+function toggleSection(element) {
+    const content = element.nextElementSibling;
+    const icon = element.querySelector('.toggle-icon');
+    
+    if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        icon.classList.remove('rotated');
+    } else {
+        content.classList.add('active');
+        icon.classList.add('rotated');
+    }
+}
+
+// Auto-expand first sensor by default
+document.addEventListener('DOMContentLoaded', function() {
+    const firstSensor = document.querySelector('.sensor-title');
+    if (firstSensor) {
+        toggleSection(firstSensor);
+    }
+});
+
+            </script>
+        </body>
+        </html>
+        

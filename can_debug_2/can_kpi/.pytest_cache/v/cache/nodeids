@@ -1,0 +1,8 @@
+[
+  "tests/test_hdf_parser.py::HdfParserRegressionTests::test_parse_attribute_backed_hdf",
+  "tests/test_hdf_parser.py::HdfParserRegressionTests::test_parse_ceer_fc_alias_as_flr",
+  "tests/test_hdf_parser.py::HdfParserRegressionTests::test_parse_dataset_backed_hdf_and_skip_sparse_sensor",
+  "tests/test_kpi_main.py::KpiMainRenderingTests::test_extract_short_name_handles_build_token_before_hdf",
+  "tests/test_kpi_main.py::KpiMainRenderingTests::test_run_pair_shows_flr_status_tab_for_fc_alias",
+  "tests/test_kpi_main.py::KpiMainRenderingTests::test_run_writes_index_accuracy_plot"
+]

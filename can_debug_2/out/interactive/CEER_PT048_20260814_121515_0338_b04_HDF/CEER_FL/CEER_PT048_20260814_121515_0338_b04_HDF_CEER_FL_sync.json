@@ -1,0 +1,15 @@
+{
+  "sensor": "CEER_FL",
+  "input": {
+    "count": 200,
+    "min": 3319,
+    "max": 3518
+  },
+  "output": {
+    "count": 192,
+    "min": 3321,
+    "max": 3512
+  },
+  "matched_scan_count": 192,
+  "offset": 2
+}
