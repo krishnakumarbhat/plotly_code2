@@ -1,0 +1,14 @@
+{
+  "sensor": "CEER_FL",
+  "score": 90.15517979452055,
+  "overall": 90.15517979452055,
+  "accuracy": 87.80029965753425,
+  "precision": 93.7074058219178,
+  "recall": 93.59032534246575,
+  "f1": 93.43450342465754,
+  "aligned_scans": 292,
+  "timestamp_mismatch": true,
+  "offset_exceed_count": 292,
+  "offset_abs_max_ns": 50312769,
+  "offset_median_ns": -50038906
+}

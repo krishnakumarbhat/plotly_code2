@@ -1,0 +1,34 @@
+{
+  "Gen7V1_V2": {
+    "DETECTION_STREAM": {
+      "ran_error": {
+        "aliases": [
+          "ran_err",
+          "det_range_err"
+        ],
+        "call": [
+          "range_error"
+        ],
+        "plot_types": [
+          "scatter_plot",
+          "scatter_with_mismatch"
+        ],
+        "unit": "meters",
+        "range_to_be_accepted": [
+          0,
+          500
+        ],
+        "grp": "DETECTION_STREAM"
+      },
+      "sequence_of_plot": {
+        "scatter": [
+          "ran_error;scatter_plot",
+          "ran_error;scatter_with_mismatch"
+        ],
+        "scatter_mismatch": [
+          "ran_error;scatter_with_mismatch"
+        ]
+      }
+    }
+  }
+}
