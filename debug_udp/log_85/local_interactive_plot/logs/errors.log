@@ -1,0 +1,7 @@
+2026-09-07 12:28:46,125 - root - ERROR - _run_sil_artifacts_once:461 - SIL artifact generation failed for CCA_9010_3100099_DEBUG_20260715_140451_0000: unexpected indent (sil_radar_validation.py, line 15)
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\intplot_kpi\InteractivePlot\b_persistence_layer\allsensor_hdf_parser.py", line 403, in _run_sil_artifacts_once
+    from InteractivePlot.kpi_client import sil_radar_validation as sil_kpi
+  File "C:\Users\ouymc2\Desktop\plotly_code2\simg_zmq\KPI\intplot_kpi\InteractivePlot\kpi_client\sil_radar_validation.py", line 15
+    from typing import Dict, List, Mapping, Optional, Sequence, Tuple
+IndentationError: unexpected indent
