@@ -1,0 +1,116 @@
+{
+  "sensor": "MCIP_RR",
+  "base_name": "ThunderMCIP_WS11656_20250730_121739_0015_b04_HDF",
+  "generated_at": "2026-09-22 09:33:43",
+  "streams_in": [
+    "SRR_RR_ALIGNMENT_STATUS_001",
+    "SRR_RR_ALIGNMENT_STATUS_002",
+    "SRR_RR_CAPABILITY",
+    "SRR_RR_DETECTION_001_004",
+    "SRR_RR_DETECTION_005_008",
+    "SRR_RR_DETECTION_009_012",
+    "SRR_RR_DETECTION_013_016",
+    "SRR_RR_DETECTION_017_020",
+    "SRR_RR_DETECTION_021_024",
+    "SRR_RR_DETECTION_025_028",
+    "SRR_RR_DETECTION_029_032",
+    "SRR_RR_DETECTION_033_036",
+    "SRR_RR_DETECTION_037_040",
+    "SRR_RR_DETECTION_041_044",
+    "SRR_RR_DETECTION_045_048",
+    "SRR_RR_DETECTION_049_052",
+    "SRR_RR_DETECTION_053_056",
+    "SRR_RR_DETECTION_057_060",
+    "SRR_RR_DETECTION_061_064",
+    "SRR_RR_DIAG_REQ_PHYS",
+    "SRR_RR_DIAG_RESP_PHYS",
+    "SRR_RR_HEADER_001",
+    "SRR_RR_NM",
+    "SRR_RR_STATUS_001",
+    "SRR_RR_STATUS_002",
+    "SRR_RR_XCP_CTO_REQ",
+    "SRR_RR_XCP_CTO_RESP",
+    "SRR_RR_XCP_DAQ_RESP"
+  ],
+  "streams_out": [
+    "SRR_RR_ALIGNMENT_STATUS_001",
+    "SRR_RR_ALIGNMENT_STATUS_002",
+    "SRR_RR_CAPABILITY",
+    "SRR_RR_DETECTION_001_004",
+    "SRR_RR_DETECTION_005_008",
+    "SRR_RR_DETECTION_009_012",
+    "SRR_RR_DETECTION_013_016",
+    "SRR_RR_DETECTION_017_020",
+    "SRR_RR_DETECTION_021_024",
+    "SRR_RR_DETECTION_025_028",
+    "SRR_RR_DETECTION_029_032",
+    "SRR_RR_DETECTION_033_036",
+    "SRR_RR_DETECTION_037_040",
+    "SRR_RR_DETECTION_041_044",
+    "SRR_RR_DETECTION_045_048",
+    "SRR_RR_DETECTION_049_052",
+    "SRR_RR_DETECTION_053_056",
+    "SRR_RR_DETECTION_057_060",
+    "SRR_RR_DETECTION_061_064",
+    "SRR_RR_DIAG_REQ_PHYS",
+    "SRR_RR_DIAG_RESP_PHYS",
+    "SRR_RR_HEADER_001",
+    "SRR_RR_IDSM_Audit_Log",
+    "SRR_RR_KMS",
+    "SRR_RR_NM",
+    "SRR_RR_ROE",
+    "SRR_RR_STATUS_001",
+    "SRR_RR_STATUS_002",
+    "SRR_RR_XCP_CTO_REQ",
+    "SRR_RR_XCP_CTO_RESP",
+    "SRR_RR_XCP_DAQ_RESP",
+    "SYS_SRR_RR_IDSM_Audit_Log",
+    "SYS_SRR_RR_KMS"
+  ],
+  "resolution": {
+    "DYNAMIC_ALIGNMENT_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "DETECTION_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "RDD_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "CDC_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "VSE_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "TRACKER_STREAM": {
+      "input": null,
+      "output": null
+    }
+  },
+  "kpis": {
+    "detection": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "ThunderMCIP_WS11656_20250730_121739_0015_b04_HDF_detection_kpi.html"
+    },
+    "alignment": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "ThunderMCIP_WS11656_20250730_121739_0015_b04_HDF_alignment_kpi.html"
+    },
+    "tracker": {
+      "status": "missing",
+      "headline": "\u2014",
+      "detail": "",
+      "file": ""
+    }
+  }
+}

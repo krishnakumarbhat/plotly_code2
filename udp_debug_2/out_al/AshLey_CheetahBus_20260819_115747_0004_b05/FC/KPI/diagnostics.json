@@ -1,0 +1,63 @@
+{
+  "sensor": "FC",
+  "base_name": "AshLey_CheetahBus_20260819_115747_0004_b05",
+  "generated_at": "2026-09-22 12:23:30",
+  "streams_in": [
+    "DETECTION_STREAM",
+    "DOWN_SELECTION_STREAM",
+    "RADAR_CAPABILITY_STREAM",
+    "VSE_STREAM"
+  ],
+  "streams_out": [
+    "DETECTION_STREAM",
+    "DOWN_SELECTION_STREAM",
+    "RADAR_CAPABILITY_STREAM",
+    "VSE_STREAM"
+  ],
+  "resolution": {
+    "DYNAMIC_ALIGNMENT_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "DETECTION_STREAM": {
+      "input": "DETECTION_STREAM",
+      "output": "DETECTION_STREAM"
+    },
+    "RDD_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "CDC_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "VSE_STREAM": {
+      "input": "VSE_STREAM",
+      "output": "VSE_STREAM"
+    },
+    "TRACKER_STREAM": {
+      "input": null,
+      "output": null
+    }
+  },
+  "kpis": {
+    "detection": {
+      "status": "ok",
+      "headline": "79.14%",
+      "detail": "57098/72147 matched",
+      "file": "AshLey_CheetahBus_20260819_115747_0004_b05_detection_kpi.html"
+    },
+    "alignment": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "AshLey_CheetahBus_20260819_115747_0004_b05_alignment_kpi.html"
+    },
+    "tracker": {
+      "status": "missing",
+      "headline": "\u2014",
+      "detail": "",
+      "file": ""
+    }
+  }
+}

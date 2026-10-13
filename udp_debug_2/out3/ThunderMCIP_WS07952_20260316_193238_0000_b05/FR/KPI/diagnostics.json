@@ -1,0 +1,59 @@
+{
+  "sensor": "FR",
+  "base_name": "ThunderMCIP_WS07952_20260316_193238_0000_b05",
+  "generated_at": "2026-09-22 09:32:52",
+  "streams_in": [
+    "DOWN_SELECTION_STREAM",
+    "TOI_STREAM"
+  ],
+  "streams_out": [
+    "DOWN_SELECTION_STREAM",
+    "TOI_STREAM"
+  ],
+  "resolution": {
+    "DYNAMIC_ALIGNMENT_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "DETECTION_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "RDD_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "CDC_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "VSE_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "TRACKER_STREAM": {
+      "input": null,
+      "output": null
+    }
+  },
+  "kpis": {
+    "detection": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "ThunderMCIP_WS07952_20260316_193238_0000_b05_detection_kpi.html"
+    },
+    "alignment": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "ThunderMCIP_WS07952_20260316_193238_0000_b05_alignment_kpi.html"
+    },
+    "tracker": {
+      "status": "missing",
+      "headline": "\u2014",
+      "detail": "",
+      "file": ""
+    }
+  }
+}

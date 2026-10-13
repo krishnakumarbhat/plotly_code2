@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AshLey_CheetahBus_20260819_115747_0005_b05 KPI Reports</title>
+  <style>
+:root {
+    --page-bg: #f2f7fc; --panel-bg: #ffffff; --panel-border: #d9e5ee;
+    --text-main: #17324a; --text-muted: #627789; --accent: #0d6a8b;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 18px;
+    background: linear-gradient(180deg, #f8fbfd 0%, var(--page-bg) 100%);
+    color: var(--text-main);
+}
+h1 { margin: 0 0 12px 0; }
+h2 { margin: 18px 0 8px 0; }
+h3 { margin: 12px 0 6px 0; }
+.muted { color: var(--text-muted); font-size: 0.9em; }
+.tab-bar {
+    display: flex; flex-wrap: wrap; border-bottom: 2px solid #b9d7e6;
+    margin-bottom: 16px; background: rgba(255,255,255,0.92);
+    border-radius: 14px 14px 0 0; box-shadow: 0 10px 22px rgba(18,47,72,0.08);
+}
+.tab-btn {
+    padding: 10px 22px; border: none; background: #edf5f9; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: var(--text-muted);
+    border-radius: 14px 14px 0 0; margin-right: 2px;
+    transition: background 0.16s ease, color 0.16s ease;
+}
+.tab-btn:hover { background: #dcecf4; color: var(--text-main); }
+.tab-btn.active { background: var(--accent); color: #fff; }
+.tab-content { display: none; background: var(--panel-bg); border-radius: 0 0 16px 16px;
+    padding: 16px; margin-bottom: 16px; box-shadow: 0 10px 22px rgba(18,47,72,0.08);
+    border: 1px solid var(--panel-border); border-top: none; }
+.scroll { max-height: 420px; overflow: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; background: #fff; }
+th, td { border: 1px solid #d7e1e9; padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: #edf5fa; position: sticky; top: 0; font-weight: 700; }
+tr:nth-child(even) { background: #f8fbfd; }
+tr:hover { background: #eef6fa; }
+.chip { display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.3px; }
+.chip.ok { background: #e6f4ea; color: #1e7e34; border: 1px solid #b7dfc0; }
+.chip.failed { background: #fff6e5; color: #7a5412; border: 1px solid #f0cf82; }
+.chip.missing { background: #eef1f4; color: #5f6b76; border: 1px solid #d4dae0; }
+.acc { font-weight: 700; color: #0d6a8b; }
+.notice-block { border-radius: 14px; padding: 12px 14px; margin: 12px 0 4px 0; border: 1px solid transparent; }
+.notice-block h3 { margin: 0 0 8px 0; }
+.notice-block ul { margin: 0; padding-left: 18px; }
+.notice-block li { margin: 5px 0; }
+.notice-block.warning { background: #fff6e5; border-color: #f0cf82; color: #7a5412; }
+details { margin-top: 10px; background: var(--panel-bg); border: 1px solid var(--panel-border);
+    border-radius: 12px; padding: 10px 14px; }
+summary { cursor: pointer; font-weight: 600; }
+.btn-link { display: inline-block; padding: 6px 12px; background: var(--accent); color: #fff;
+    text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 600; }
+.btn-link:hover { background: #0a546f; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
+.btn { display: inline-block; padding: 14px 16px; background: #4f46e5; color: #fff; text-decoration: none;
+    border-radius: 8px; font-weight: 600; }
+.empty { color: var(--text-muted); margin-top: 12px; }
+@media (max-width: 900px) { body { padding: 10px; } }
+</style>
+</head>
+<body>
+<h2>KPI Summary</h2><div class="scroll"><table><thead><tr><th>Sensor</th><th>Detection</th><th>Alignment</th><th>Tracker</th></tr></thead><tbody><tr><td><strong>FC</strong></td><td><span class="chip ok">OK</span><br/><span class='acc'>65.27%</span></td><td><span class="chip failed">FAILED</span><br/><span class='acc'>failed</span></td><td><span class="chip missing">MISSING</span><br/><span class='acc'>—</span></td></tr><tr><td><strong>FL</strong></td><td><span class="chip ok">OK</span><br/><span class='acc'>12.42%</span></td><td><span class="chip failed">FAILED</span><br/><span class='acc'>failed</span></td><td><span class="chip missing">MISSING</span><br/><span class='acc'>—</span></td></tr><tr><td><strong>RL</strong></td><td><span class="chip ok">OK</span><br/><span class='acc'>13.52%</span></td><td><span class="chip failed">FAILED</span><br/><span class='acc'>failed</span></td><td><span class="chip missing">MISSING</span><br/><span class='acc'>—</span></td></tr></tbody></table></div><h1>AshLey_CheetahBus_20260819_115747_0005_b05 KPI Reports</h1><div class="tab-bar"><button class="tab-btn active" onclick="switchTab('Detection', this)">Detection</button><button class="tab-btn" onclick="switchTab('Alignment', this)">Alignment</button><button class="tab-btn" onclick="switchTab('Tracker', this)">Tracker</button></div><div id="tab_Detection" class="tab-content" style="display:block"><h3>Detection — per-sensor accuracy</h3><div class="scroll"><table><thead><tr><th>Sensor</th><th>Status</th><th>Accuracy</th><th>Detail</th><th>Report</th></tr></thead><tbody><tr><td><strong>FC</strong></td><td><span class="chip ok">OK</span></td><td>65.27%</td><td>49531/75886 matched</td><td><a class='btn-link' href='FC\KPI\AshLey_CheetahBus_20260819_115747_0005_b05_detection_kpi.html' target='_blank'>Open report</a></td></tr><tr><td><strong>FL</strong></td><td><span class="chip ok">OK</span></td><td>12.42%</td><td>7302/58810 matched</td><td><a class='btn-link' href='FL\KPI\AshLey_CheetahBus_20260819_115747_0005_b05_detection_kpi.html' target='_blank'>Open report</a></td></tr><tr><td><strong>RL</strong></td><td><span class="chip ok">OK</span></td><td>13.52%</td><td>8621/63785 matched</td><td><a class='btn-link' href='RL\KPI\AshLey_CheetahBus_20260819_115747_0005_b05_detection_kpi.html' target='_blank'>Open report</a></td></tr></tbody></table></div></div><div id="tab_Alignment" class="tab-content" style="display:none"><h3>Alignment — per-sensor accuracy</h3><div class="scroll"><table><thead><tr><th>Sensor</th><th>Status</th><th>Accuracy</th><th>Detail</th><th>Report</th></tr></thead><tbody><tr><td><strong>FC</strong></td><td><span class="chip failed">FAILED</span></td><td>failed</td><td></td><td><a class='btn-link' href='FC\KPI\AshLey_CheetahBus_20260819_115747_0005_b05_alignment_kpi.html' target='_blank'>Open report</a></td></tr><tr><td><strong>FL</strong></td><td><span class="chip failed">FAILED</span></td><td>failed</td><td></td><td><a class='btn-link' href='FL\KPI\AshLey_CheetahBus_20260819_115747_0005_b05_alignment_kpi.html' target='_blank'>Open report</a></td></tr><tr><td><strong>RL</strong></td><td><span class="chip failed">FAILED</span></td><td>failed</td><td></td><td><a class='btn-link' href='RL\KPI\AshLey_CheetahBus_20260819_115747_0005_b05_alignment_kpi.html' target='_blank'>Open report</a></td></tr></tbody></table></div><section class="notice-block warning"><h3>Why Alignment is missing / failed</h3><ul><li><strong>FC</strong>: Needs DYNAMIC_ALIGNMENT_STREAM (also accepted as: Dyn_Align_STREAM). It is not present in this log — this log carries no alignment stream at all (no boresight signals). File contains: DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, VSE_STREAM.</li><li><strong>FL</strong>: Needs DYNAMIC_ALIGNMENT_STREAM (also accepted as: Dyn_Align_STREAM). It is not present in this log — this log carries no alignment stream at all (no boresight signals). File contains: DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM.</li><li><strong>RL</strong>: Needs DYNAMIC_ALIGNMENT_STREAM (also accepted as: Dyn_Align_STREAM). It is not present in this log — this log carries no alignment stream at all (no boresight signals). File contains: DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM.</li></ul></section></div><div id="tab_Tracker" class="tab-content" style="display:none"><h3>Tracker — per-sensor accuracy</h3><div class="scroll"><table><thead><tr><th>Sensor</th><th>Status</th><th>Accuracy</th><th>Detail</th><th>Report</th></tr></thead><tbody><tr><td><strong>FC</strong></td><td><span class="chip missing">MISSING</span></td><td>—</td><td></td><td><span class='muted'>no file</span></td></tr><tr><td><strong>FL</strong></td><td><span class="chip missing">MISSING</span></td><td>—</td><td></td><td><span class='muted'>no file</span></td></tr><tr><td><strong>RL</strong></td><td><span class="chip missing">MISSING</span></td><td>—</td><td></td><td><span class='muted'>no file</span></td></tr></tbody></table></div><section class="notice-block warning"><h3>Why Tracker is missing / failed</h3><ul><li><strong>FC</strong>: Needs TRACKER_STREAM (also accepted as: OBJECT_LIST_STREAM). It is not present in this log. File contains: DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, VSE_STREAM.</li><li><strong>FL</strong>: Needs TRACKER_STREAM (also accepted as: OBJECT_LIST_STREAM). It is not present in this log. File contains: DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM.</li><li><strong>RL</strong>: Needs TRACKER_STREAM (also accepted as: OBJECT_LIST_STREAM). It is not present in this log. File contains: DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM.</li></ul></section></div><h2>Log contents per sensor</h2>
+<details><summary><strong>FC</strong></summary><p><strong>Input file streams:</strong> DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, VSE_STREAM</p><p><strong>Output file streams:</strong> DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, VSE_STREAM</p></details>
+<details><summary><strong>FL</strong></summary><p><strong>Input file streams:</strong> DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM</p><p><strong>Output file streams:</strong> DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM</p></details>
+<details><summary><strong>RL</strong></summary><p><strong>Input file streams:</strong> DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM</p><p><strong>Output file streams:</strong> DETECTION_STREAM, DOWN_SELECTION_STREAM, RADAR_CAPABILITY_STREAM, RDD_STREAM, VSE_STREAM</p></details>
+<script>
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab_' + tabId).style.display = 'block';
+    btn.classList.add('active');
+}
+</script>
+</body>
+</html>

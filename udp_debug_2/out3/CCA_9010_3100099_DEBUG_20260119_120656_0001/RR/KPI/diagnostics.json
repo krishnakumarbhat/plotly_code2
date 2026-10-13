@@ -1,0 +1,61 @@
+{
+  "sensor": "RR",
+  "base_name": "CCA_9010_3100099_DEBUG_20260119_120656_0001",
+  "generated_at": "2026-09-22 09:34:08",
+  "streams_in": [
+    "DETECTION_STREAM",
+    "RDD_STREAM",
+    "VSE_STREAM"
+  ],
+  "streams_out": [
+    "DETECTION_STREAM",
+    "RDD_STREAM",
+    "VSE_STREAM"
+  ],
+  "resolution": {
+    "DYNAMIC_ALIGNMENT_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "DETECTION_STREAM": {
+      "input": "DETECTION_STREAM",
+      "output": "DETECTION_STREAM"
+    },
+    "RDD_STREAM": {
+      "input": "RDD_STREAM",
+      "output": "RDD_STREAM"
+    },
+    "CDC_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "VSE_STREAM": {
+      "input": "VSE_STREAM",
+      "output": "VSE_STREAM"
+    },
+    "TRACKER_STREAM": {
+      "input": null,
+      "output": null
+    }
+  },
+  "kpis": {
+    "detection": {
+      "status": "ok",
+      "headline": "99.89%",
+      "detail": "69958/70035 matched",
+      "file": "CCA_9010_3100099_DEBUG_20260119_120656_0001_detection_kpi.html"
+    },
+    "alignment": {
+      "status": "failed",
+      "headline": "failed",
+      "detail": "",
+      "file": "CCA_9010_3100099_DEBUG_20260119_120656_0001_alignment_kpi.html"
+    },
+    "tracker": {
+      "status": "missing",
+      "headline": "\u2014",
+      "detail": "",
+      "file": ""
+    }
+  }
+}

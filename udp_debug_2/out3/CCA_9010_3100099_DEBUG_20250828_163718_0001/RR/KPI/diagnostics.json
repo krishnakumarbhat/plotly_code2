@@ -1,0 +1,63 @@
+{
+  "sensor": "RR",
+  "base_name": "CCA_9010_3100099_DEBUG_20250828_163718_0001",
+  "generated_at": "2026-09-22 09:34:34",
+  "streams_in": [
+    "DETECTION_STREAM",
+    "DYNAMIC_ALIGNMENT_STREAM",
+    "HEADER_STREAM",
+    "RDD_STREAM"
+  ],
+  "streams_out": [
+    "DETECTION_STREAM",
+    "DYNAMIC_ALIGNMENT_STREAM",
+    "HEADER_STREAM",
+    "RDD_STREAM"
+  ],
+  "resolution": {
+    "DYNAMIC_ALIGNMENT_STREAM": {
+      "input": "DYNAMIC_ALIGNMENT_STREAM",
+      "output": "DYNAMIC_ALIGNMENT_STREAM"
+    },
+    "DETECTION_STREAM": {
+      "input": "DETECTION_STREAM",
+      "output": "DETECTION_STREAM"
+    },
+    "RDD_STREAM": {
+      "input": "RDD_STREAM",
+      "output": "RDD_STREAM"
+    },
+    "CDC_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "VSE_STREAM": {
+      "input": null,
+      "output": null
+    },
+    "TRACKER_STREAM": {
+      "input": null,
+      "output": null
+    }
+  },
+  "kpis": {
+    "detection": {
+      "status": "ok",
+      "headline": "91.37%",
+      "detail": "40689/44533 matched",
+      "file": "CCA_9010_3100099_DEBUG_20250828_163718_0001_detection_kpi.html"
+    },
+    "alignment": {
+      "status": "ok",
+      "headline": "Az 100.0% \u00b7 El 100.0%",
+      "detail": "298 scans",
+      "file": "CCA_9010_3100099_DEBUG_20250828_163718_0001_alignment_kpi.html"
+    },
+    "tracker": {
+      "status": "missing",
+      "headline": "\u2014",
+      "detail": "",
+      "file": ""
+    }
+  }
+}
