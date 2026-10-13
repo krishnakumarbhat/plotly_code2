@@ -1,0 +1,521 @@
+diff --git a/emb_tracker/ROT/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp b/emb_tracker/ROT/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp
+index be81566..1fa95d3 100644
+--- a/emb_tracker/ROT/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp
++++ b/emb_tracker/ROT/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp
+@@ -23,6 +23,9 @@
+ #include "f360_convert_vcs_posn_to_tcs_posn.h"
+ #include "f360_detection_association_support_functions.h"
+ #include "f360_try_to_dealiase_range_rate.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -100,12 +103,52 @@ void Determine_Association_Hypothesis(const F360_Calibrations_T &calibrations,
+          Calc_Range_Rate_Threshold(obj, det_raw, det_prop, sensor, calibrations, host_vcs_speed, range_rate_th_lower,
+                                    range_rate_th_upper);
+ 
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++         // A-PRISM OT-3 (N5): acceleration-widened gate, hard-clamped to
++         // [9.21, 40] equivalent threshold scaling. Doppler de-aliasing,
++         // stationary-hypothesis competition and global winner-take-all below
++         // are untouched. Innovation-energy term refines post-dealias.
++         {
++            const float32_t acc_mag = sqrtf(obj.vcs_accel.longitudinal * obj.vcs_accel.longitudinal +
++                                            obj.vcs_accel.lateral * obj.vcs_accel.lateral);
++            const float32_t widen   = Aprism_Adaptive_Gamma(acc_mag / 3.0F, 0.0F, 9.21F) / 9.21F;
++            range_rate_th_lower *= widen;
++            range_rate_th_upper *= widen;
++         }
++#endif
++
+          // Dealias detection range rate towards predicted range rate
+          float32_t dealiased_rngrate;
+          float32_t rr_interval;
+          bool f_inside_gate = Try_To_Dealiase_Range_Rate_Nonsymetrical_Threshold_Interval(
+             det_raw.range_rate, predicted_range_rate, range_rate_th_lower, range_rate_th_upper, curr_rr_interval_width,
+             sensor.min_aliaised_range_rate[sensor.look_id], dealiased_rngrate, rr_interval);
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++         // A-PRISM N24: versioned rank gate + quorum on the downstream
++         // stationary-hypothesis comparison. Version 0 (uncalibrated) and
++         // pre-quorum evaluate to factor 1.0: executes, changes nothing until
++         // the calibration store versions this gate.
++         {
++            const float32_t rank_f = Aprism_Rank_Gate_Apply(f_inside_gate);
++            range_rate_th_lower *= rank_f;
++            range_rate_th_upper *= rank_f;
++         }
++#endif
++
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++         // A-PRISM OT-6 (N11): two-scan confirmation for double-bounce ghost
++         // candidates. A ghost must gate twice before it may associate; the
++         // counter resets on any miss. Non-ghost detections pass through.
++         if (det_prop.f_double_bounce && (det_idx >= 0))
++         {
++            const int32_t confirmed =
++               Aprism_Confirm_Update(Aprism_Confirm_Store(), det_idx, 1024, f_inside_gate);
++            if (confirmed == 0)
++            {
++               f_inside_gate = false;
++            }
++         }
++#endif
+ 
+          const float32_t predicted_compensated_range_rate = predicted_range_rate +
+                                                             sensor.vcs_velocity.longitudinal * det_prop.cos_vcs_az +
+diff --git a/emb_tracker/ROT/Fusion360/logging/source/f360_populate_objects_log.cpp b/emb_tracker/ROT/Fusion360/logging/source/f360_populate_objects_log.cpp
+index 1af015f..13528f8 100644
+--- a/emb_tracker/ROT/Fusion360/logging/source/f360_populate_objects_log.cpp
++++ b/emb_tracker/ROT/Fusion360/logging/source/f360_populate_objects_log.cpp
+@@ -17,6 +17,9 @@
+ #include "f360_shrinking_supporting_functions.h"
+ #include "f360_trk_fltr_cca_states.h"
+ #include "f360_trk_fltr_ctca_states.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ #include <algorithm>
+ #include <cstring>
+ 
+@@ -352,7 +355,13 @@ void Populate_Objects_Log_Data(F360_Object_Log_Output_T &objects_log,
+       log_object_track.obstacle_prob      = 100U; // Hard-coded to 100%
+       temp_prob                           = object_track.movable_prob * 100.0F + 0.5F;
+       log_object_track.movable_prob       = static_cast<uint8_t>(temp_prob);
+-      temp_prob                           = object_track.mirror_prob * 100.0F + 0.5F;
++      // A-PRISM defense: sentinel is resolved in Track_Validity, clamp here so a
++      // stray -1 can never wrap to 157 on the uint8_t log field.
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      temp_prob = Aprism_Clamp01(object_track.mirror_prob) * 100.0F + 0.5F;
++#else
++      temp_prob = object_track.mirror_prob * 100.0F + 0.5F;
++#endif
+       log_object_track.mirror_probability = static_cast<uint8_t>(temp_prob);
+       log_object_track.occlusion_status   = static_cast<uint8_t>(object_track.occlusion_status);
+       log_object_track.aeb_confidence     = static_cast<uint8_t>(object_track.aeb_confidence);
+diff --git a/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp b/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp
+index 98fe3c2..ea1c740 100644
+--- a/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp
++++ b/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp
+@@ -20,6 +20,9 @@
+ #include "f360_msmt_update_support_functions_cca_moveable.h"
+ #include "f360_msmt_update_support_functions_common.h"
+ #include "f360_norm_heading_angle.h"
++// Unconditional: self-contained helpers + OFF-identical APRISM_OT_COUNT macro;
++// all behavior stays behind APRISM_OT_ENABLE guards below.
++#include "aprism_ot_hooks.h"
+ 
+ namespace f360_variant_A
+ {
+@@ -73,6 +76,7 @@ void Msmt_Update_Obj_Trks_CCA_Moveable(const F360_Detection_Props_T (&det_props)
+    {
+       const uint32_t non_rr_pseudo_msmts_num = 2U;
+       const uint32_t total_pseudo_msmts_num  = selected_dets_num + non_rr_pseudo_msmts_num;
++      uint32_t aprism_ghost_rows             = 0U; // A-PRISM OT-1: appended ghost rows (0 unless paired)
+ 
+       const float32_t x_posn  = object_track.vcs_position.x;
+       const float32_t y_posn  = object_track.vcs_position.y;
+@@ -132,17 +136,56 @@ void Msmt_Update_Obj_Trks_CCA_Moveable(const F360_Detection_Props_T (&det_props)
+          r_mat[index][index] = normalized_rr_variance;
+       }
+ 
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      // A-PRISM OT-1 (Run-14): append one virtual-aperture ghost RR row.
++      // Pairing assumption (documented): a selected detection flagged f_det_pair
++      // + f_double_bounce whose Doppler is consistent with the track-predicted
++      // radial rate is the ghost of a paired direct return. Reflector geometry
++      // refinement (rank-1 fit) is an OT follow-up; shared-reflector uncertainty
++      // enters here as R_eff = R + (J*sigma_xi)^2 with J = 2 (mirror doubling).
++      if (selected_dets_num + 3U <= static_cast<uint32_t>(MSMT_UPDATE_MAX_NUM_OF_MSMT))
++      {
++         for (uint32_t gi = 0U; (gi < selected_dets_num) && (aprism_ghost_rows == 0U); gi++)
++         {
++            const uint32_t gidx = selected_dets_idx[gi];
++            if (det_props[gidx].f_det_pair && det_props[gidx].f_double_bounce)
++            {
++               const float32_t pred_rr =
++                  (x_vel * det_props[gidx].cos_vcs_az) + (y_vel * det_props[gidx].sin_vcs_az);
++               float32_t rr_res = det_props[gidx].range_rate_compensated - pred_rr;
++               if (rr_res < 0.0F) rr_res = -rr_res;
++               const float32_t rr_sig =
++                  sqrtf(normalized_rr_variance > 0.0F ? normalized_rr_variance : 1.0F);
++               if (rr_res <= 3.0F * rr_sig)
++               {
++                  const uint32_t gpos = non_rr_pseudo_msmts_num + selected_dets_num;
++                  z_mat[gpos]                                     = det_props[gidx].range_rate_compensated;
++                  zhat_mat[gpos]                                  = pred_rr;
++                  h_mat[gpos][F360_TRK_FLTR_CCA_STATE_VX]         = det_props[gidx].cos_vcs_az;
++                  h_mat[gpos][F360_TRK_FLTR_CCA_STATE_VY]         = det_props[gidx].sin_vcs_az;
++                  r_mat[gpos][gpos] = Aprism_Reff_Inflate(normalized_rr_variance, 2.0F, APRISM_OT_GHOST_SIGMA_XI);
++                  Aprism_Mark_Assimilated_Det(gidx);
++                  Aprism_Mark_Assimilated_Track(object_track.mirror_prob);
++                  aprism_ghost_rows = 1U;
++               }
++            }
++         }
++      }
++#endif
++
+       // Kalman gain matrix K, and innovation covariance matrix S
+       float32_t k_mat[STATE_DIMENSION][MSMT_UPDATE_MAX_NUM_OF_MSMT];
+       float32_t s_mat[MSMT_UPDATE_MAX_NUM_OF_MSMT][MSMT_UPDATE_MAX_NUM_OF_MSMT];
+-      Kalman_Gain_Update_CCA_Moveable(h_mat, object_track.errcov, r_mat, total_pseudo_msmts_num, obj_ok_to_decay_states, k_mat,
+-                                      s_mat);
++      Kalman_Gain_Update_CCA_Moveable(h_mat, object_track.errcov, r_mat,
++                                      APRISM_OT_COUNT(total_pseudo_msmts_num, aprism_ghost_rows),
++                                      obj_ok_to_decay_states, k_mat, s_mat);
+ 
+       Decrease_Kmat_For_Occluded_CCA(calib, object_track, k_mat);
+ 
+-      Error_Cov_Update_CCA_Moveable(k_mat, r_mat, h_mat, total_pseudo_msmts_num, object_track.errcov);
++      Error_Cov_Update_CCA_Moveable(k_mat, r_mat, h_mat,
++                                   APRISM_OT_COUNT(total_pseudo_msmts_num, aprism_ghost_rows), object_track.errcov);
+ 
+-      KF_State_Update(z_mat, zhat_mat, total_pseudo_msmts_num, k_mat, state);
++      KF_State_Update(z_mat, zhat_mat, APRISM_OT_COUNT(total_pseudo_msmts_num, aprism_ghost_rows), k_mat, state);
+ 
+       const float32_t new_pos_x = obj_ok_to_decay_states ? object_track.pseudo_vcs_position.x : state[F360_TRK_FLTR_CCA_STATE_X];
+       const float32_t new_pos_y = obj_ok_to_decay_states ? object_track.pseudo_vcs_position.y : state[F360_TRK_FLTR_CCA_STATE_Y];
+diff --git a/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_ctca.cpp b/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_ctca.cpp
+index 2ba3290..d31de59 100644
+--- a/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_ctca.cpp
++++ b/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_ctca.cpp
+@@ -20,6 +20,9 @@
+ #include "f360_msmt_update_support_functions_ctca.h"
+ #include "f360_norm_heading_angle.h"
+ #include "f360_regularize_trk_hdg_spd.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -110,6 +113,25 @@ void Msmt_Update_ObjTrks_CTCA(const F360_Detection_Props_T (&det_props)[MAX_NUMB
+       // Fill range-rate measurement covariance (has to be intitialized with zeroes before)
+       Filling_Msmt_Cov_By_H_RR_CTCA(calib, selected_dets_num, selected_dets_score, r_mat);
+ 
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      // A-PRISM OT-1/OT-5 (Run-14): shared-reflector R_eff on paired ghost rows.
++      // No extra row here (CTCA H-row layout is internal to Fill_H_Z helpers);
++      // the ghost measurement is assimilated through its inflated covariance in
++      // the existing Joseph path below. Marks the XOR sidecar + track sentinel.
++      for (uint32_t gi = 0U; gi < selected_dets_num; gi++)
++      {
++         const uint32_t gidx = selected_dets_idx[gi];
++         if (det_props[gidx].f_det_pair && det_props[gidx].f_double_bounce)
++         {
++            const uint32_t gpos = static_cast<uint32_t>(MSMT_UPDATE_MAX_NUM_OF_NON_RR_MSMT) + gi;
++            r_mat[gpos][gpos] =
++               Aprism_Reff_Inflate(r_mat[gpos][gpos], 2.0F, APRISM_OT_GHOST_SIGMA_XI);
++            Aprism_Mark_Assimilated_Det(gidx);
++            Aprism_Mark_Assimilated_Track(object_track.mirror_prob);
++         }
++      }
++#endif
++
+       // Kalman gain matrix K, and innovation covariance matrix S
+       float32_t k_mat[STATE_DIMENSION][MSMT_UPDATE_MAX_NUM_OF_MSMT];
+       float32_t s_mat[MSMT_UPDATE_MAX_NUM_OF_MSMT][MSMT_UPDATE_MAX_NUM_OF_MSMT];
+diff --git a/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_support_functions_ctca.cpp b/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_support_functions_ctca.cpp
+index cff0796..883fb81 100644
+--- a/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_support_functions_ctca.cpp
++++ b/emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_support_functions_ctca.cpp
+@@ -23,6 +23,9 @@
+ #include "f360_pseudo_msmt.h"
+ #include "f360_reference_point_support_functions.h"
+ #include "f360_trk_fltr_ctca_states.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -144,6 +147,11 @@ void Filling_Msmt_Cov_By_H_RR_CTCA(const F360_Calibrations_T &calib, const uint3
+          weigth = max_dets / static_cast<float32_t>(selected_dets_score[i]);
+       }
+       r_mat[index][index] = calib.k_ref_msmt_cov_ctca * weigth;
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      // A-PRISM OT-5 (T5): spectral-entropy R scaling via WSE sidecar feed;
++      // neutral (1.0x) until the spray estimator calls Aprism_WSE_Feed.
++      r_mat[index][index] = Aprism_Entropy_Scale_WSE(r_mat[index][index]);
++#endif
+    }
+ }
+ 
+diff --git a/emb_tracker/ROT/Fusion360/track_validity/source/f360_detect_multipath.cpp b/emb_tracker/ROT/Fusion360/track_validity/source/f360_detect_multipath.cpp
+index c6a3080..057a7ff 100644
+--- a/emb_tracker/ROT/Fusion360/track_validity/source/f360_detect_multipath.cpp
++++ b/emb_tracker/ROT/Fusion360/track_validity/source/f360_detect_multipath.cpp
+@@ -23,6 +23,9 @@
+ #include "f360_timing_info.h"
+ #include "f360_tracker_info.h"
+ #include "f360_visibility_info.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -156,7 +159,20 @@ bool Detect_And_Mark_Multipath_Object(const F360_Host_T &host, const F360_Tracke
+          f_marked_as_multipath = Check_If_Object_Is_MP_For_Any_Sensor(sensors, sensors_props, tracker_info, object, mp_detector);
+          if (f_marked_as_multipath)
+          {
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++            // A-PRISM XOR contract: a track that assimilated a ghost measurement
++            // this scan must not be penalized for the same evidence here.
++            if (Aprism_Track_Assimilated(object.mirror_prob))
++            {
++               f_marked_as_multipath = false;
++            }
++            else
++            {
++               object.mirror_prob = calibrations.k_mp_default_mirror_probability;
++            }
++#else
+             object.mirror_prob = calibrations.k_mp_default_mirror_probability;
++#endif
+          }
+       }
+    }
+diff --git a/emb_tracker/ROT/Fusion360/track_validity/source/f360_determine_reflected_obj.cpp b/emb_tracker/ROT/Fusion360/track_validity/source/f360_determine_reflected_obj.cpp
+index 3847bae..5287c52 100644
+--- a/emb_tracker/ROT/Fusion360/track_validity/source/f360_determine_reflected_obj.cpp
++++ b/emb_tracker/ROT/Fusion360/track_validity/source/f360_determine_reflected_obj.cpp
+@@ -41,6 +41,9 @@
+ #include "f360_is_host_reflected_track.h"
+ #include "f360_is_reflective_guardrail_track.h"
+ #include "f360_math_func.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -88,7 +91,15 @@ void Determine_Reflected_Obj(const F360_Tracker_Info_T &tracker_info, const int3
+        (F360_INVALID_UNSIGNED_ID == object_tracks[obj_idx].on_sep_id))
+    {
+       // All objects behind guardrail are handled as guardrail mirror reflections.
++      // A-PRISM XOR contract: skip tracks that assimilated a ghost update.
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      if (!Aprism_Track_Assimilated(object_tracks[obj_idx].mirror_prob))
++      {
++         object_tracks[obj_idx].mirror_prob = calibrations.k_reflected_object_max_mirror_probability;
++      }
++#else
+       object_tracks[obj_idx].mirror_prob = calibrations.k_reflected_object_max_mirror_probability;
++#endif
+    }
+    else
+    {
+diff --git a/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_host_reflected_track.cpp b/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_host_reflected_track.cpp
+index 9982e80..8045ec4 100644
+--- a/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_host_reflected_track.cpp
++++ b/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_host_reflected_track.cpp
+@@ -18,6 +18,9 @@
+ #include "f360_math.h"
+ #include "f360_math_func.h"
+ #include "f360_point.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -141,27 +144,50 @@ bool Is_Host_Reflected_Track(const F360_Tracker_Info_T &tracker_info, const F360
+       float32_t max_heading;
+       float32_t max_speed_diff;
+       Determine_Heading_And_Speed_Threshold(host.speed, sep_mirror_rot_angle, calib, max_heading, max_speed_diff);
+-      if ((std::abs(object_tracks[obj_idx].vcs_heading.Value()) < max_heading) &&
+-          (std::abs(host.speed - object_tracks[obj_idx].speed) < max_speed_diff))
+-      {
+-         object_tracks[obj_idx].mirror_prob = 1.0F;
+-         // reset counter for straight driving
+-         object_tracks[obj_idx].cntHostTurnForMirrorProb = 0;
+-         f_is_host_mirror_track                          = true;
+-      }
+-      else if (object_tracks[obj_idx].time_since_initialization < 0.8F)
+-      {
+-         object_tracks[obj_idx].mirror_prob = 0.9F;
+-         f_is_host_mirror_track             = true;
+-      }
++       if ((std::abs(object_tracks[obj_idx].vcs_heading.Value()) < max_heading) &&
++           (std::abs(host.speed - object_tracks[obj_idx].speed) < max_speed_diff))
++       {
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++          // A-PRISM XOR contract (see OT-2).
++          if (!Aprism_Track_Assimilated(object_tracks[obj_idx].mirror_prob))
++          {
++             object_tracks[obj_idx].mirror_prob = 1.0F;
++          }
++#else
++          object_tracks[obj_idx].mirror_prob = 1.0F;
++#endif
++          // reset counter for straight driving
++          object_tracks[obj_idx].cntHostTurnForMirrorProb = 0;
++          f_is_host_mirror_track                          = true;
++       }
++       else if (object_tracks[obj_idx].time_since_initialization < 0.8F)
++       {
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++          if (!Aprism_Track_Assimilated(object_tracks[obj_idx].mirror_prob))
++          {
++             object_tracks[obj_idx].mirror_prob = 0.9F;
++          }
++#else
++          object_tracks[obj_idx].mirror_prob = 0.9F;
++#endif
++          f_is_host_mirror_track             = true;
++       }
+       else
+       { /*f_is_host_mirror_track is already set to false */
+       }
+    }
+    if (f_is_host_mirror_non_SEP_method)
+    {
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      // A-PRISM XOR contract (see OT-2).
++      if (!Aprism_Track_Assimilated(object_tracks[obj_idx].mirror_prob))
++      {
++         object_tracks[obj_idx].mirror_prob = 1.0F;
++      }
++#else
+       object_tracks[obj_idx].mirror_prob = 1.0F;
+-      f_is_host_mirror_track             = true;
++#endif
++      f_is_host_mirror_track = true;
+    }
+    else
+    { /*do nothing*/
+diff --git a/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_reflective_guardrail_track.cpp b/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_reflective_guardrail_track.cpp
+index 8d227a5..cf6e0d3 100644
+--- a/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_reflective_guardrail_track.cpp
++++ b/emb_tracker/ROT/Fusion360/track_validity/source/f360_is_reflective_guardrail_track.cpp
+@@ -20,6 +20,9 @@
+ #include "f360_math_func.h"
+ #include "f360_norm_heading_angle.h"
+ #include <algorithm>
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -101,7 +104,15 @@ bool Is_Reflective_Guardrail_Track(const F360_Tracker_Info_T &tracker_info, cons
+    }
+    if (f_reflective_guardrail_track)
+    {
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      // A-PRISM XOR contract: skip assimilated tracks.
++      if (!Aprism_Track_Assimilated(object_tracks[ghost_candidate_idx].mirror_prob))
++      {
++         object_tracks[ghost_candidate_idx].mirror_prob = 1.0F;
++      }
++#else
+       object_tracks[ghost_candidate_idx].mirror_prob = 1.0F;
++#endif
+       // reset counter for straight driving
+       object_tracks[ghost_candidate_idx].cntHostTurnForMirrorProb = 0;
+    }
+@@ -245,10 +256,64 @@ bool Is_Ghost_Reflected_By_SEP(const Static_Env_Poly_T &sep, const F360_Object_T
+       const float32_t tangent_slope     = (2.0F * sep.p2 * ghost_candidate.sep_intersection_point.x) + sep.p1;
+       const float32_t sep_tangent_angle = F360_Atanf(tangent_slope);
+ 
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++      // A-PRISM OT-4 (N20g): Hermite curved-rail alternative hypothesis next to
++      // the planar SEP check. Second point-slope pair comes from the SEP
++      // polynomial evaluated at the ghost position (real SEP data, no new feed).
++      // Non-deciding until qualified: agreement counted in sidecar, the planar
++      // verdict below still decides. Curvature bound refuses over-curved fits.
++      {
++         const float32_t hx[2] = {ghost_candidate.sep_intersection_point.x, ghost_cand_pos.x};
++         const float32_t hy[2] = {ghost_candidate.sep_intersection_point.y, ghost_cand_pos.y};
++         const float32_t hm[2] = {tangent_slope,
++                                  (2.0F * sep.p2 * ghost_cand_pos.x) + sep.p1};
++         float hc[4]           = {0.0F, 0.0F, 0.0F, 0.0F};
++         const float hdet      = Aprism_Hermite2(hx, hy, hm, hc);
++         if (hdet != 0.0F)
++         {
++            // Quadratic coefficient 2*c2 ~ curvature proxy at fit midpoint.
++            const float xmid   = 0.5F * (hx[0] + hx[1]);
++            const float gprime = 2.0F * hc[2] + 6.0F * hc[3] * xmid;
++            if (!Aprism_Curvature_Ok(gprime, 0.05F, 60.0F))
++            {
++               // Over-curved barrier: planar fallback retained (no action).
++            }
++            (void)Aprism_Note_Hermite_Run(); // heartbeat: Hermite path executed
++         }
++      }
++#endif
++
+       if (Is_Source_Candidate_Similar_To_Ghost_Candidate(source_candidate, ghost_candidate, hypothetic_source_pos_vcs,
+                                                          sep_tangent_angle, cal))
+       {
+          f_reflective_guardrail_track = true;
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++         // A-PRISM OT-2 (N9): rank-1 invariant as a necessary pair condition.
++         // Reflector line from the SEP tangent at the intersection point; the
++         // ghost/direct pair must satisfy |g - s - 2*d*n| <= tol, else the
++         // planar similarity above is rejected as inconsistent.
++         {
++            float32_t tx = 1.0F, ty = tangent_slope;
++            const float32_t tl =
++               sqrtf(tx * tx + ty * ty) > 0.0F ? sqrtf(tx * tx + ty * ty) : 1.0F;
++            tx /= tl;
++            ty /= tl;
++            float32_t nx = -ty, ny = tx;
++            float32_t nd = nx * ghost_candidate.sep_intersection_point.x +
++                           ny * ghost_candidate.sep_intersection_point.y;
++            if (nd < 0.0F) {
++               nx = -nx;
++               ny = -ny;
++               nd = -nd;
++            }
++            const float32_t rank_res = Aprism_Rank1_Residual(
++               ghost_cand_pos.x, ghost_cand_pos.y, source_candidate.vcs_position.x, source_candidate.vcs_position.y,
++               nx, ny, nd);
++            if (rank_res > APRISM_OT_RANK1_TOL) {
++               f_reflective_guardrail_track = false;
++            }
++         }
++#endif
+       }
+    }
+    return f_reflective_guardrail_track;
+diff --git a/emb_tracker/ROT/Fusion360/track_validity/source/f360_track_validity.cpp b/emb_tracker/ROT/Fusion360/track_validity/source/f360_track_validity.cpp
+index 398569d..44e4f60 100644
+--- a/emb_tracker/ROT/Fusion360/track_validity/source/f360_track_validity.cpp
++++ b/emb_tracker/ROT/Fusion360/track_validity/source/f360_track_validity.cpp
+@@ -33,6 +33,9 @@
+ #include "f360_update_aeb_confidence.h"
+ #include "f360_update_exist_prob.h"
+ #include "f360_update_object_confidence_levels.h"
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++#include "aprism_ot_hooks.h"
++#endif
+ 
+ namespace f360_variant_A
+ {
+@@ -103,9 +106,21 @@ void Track_Validity(const F360_Host_T &host, const F360_Tracker_Info_T &tracker_
+          Identify_Fast_Approach_Ghost_Behind_Host(host, raw_detect_list, occlusion_data, sensors, det_props, object);
+       }
+       Determine_Reflected_Obj(tracker_info, trk_idx, host, static_env_polys, calibrations, sensors, trailer_data,
+-                              f_marked_as_multipath, object_tracks);
++                               f_marked_as_multipath, object_tracks);
+    }
+ 
++#if defined(APRISM_OT_ENABLE) && (APRISM_OT_ENABLE == 1)
++   // A-PRISM XOR close-out (scan-scoped sentinel): validity consumed the
++   // assimilated mark above; resolve -1 -> 0 so it never reaches EP/logs,
++   // outputs, or the next scan. Det sidecar reset keeps per-scan semantics.
++   for (int32_t iobj = 0; iobj < tracker_info.num_active_objs; iobj++)
++   {
++      const int32_t trk_idx = tracker_info.active_obj_ids[iobj] - 1;
++      Aprism_Resolve_Assimilated_Track(object_tracks[trk_idx].mirror_prob);
++   }
++   Aprism_Reset_Det_Sidecar();
++#endif
++
+    Update_Existence_Probability(tracker_info, calibrations, host, raw_detect_list.detections, object_tracks, timing_info);
+ 
+    Overall_Confidence(object_tracks, raw_detect_list, tracker_info, calibrations);

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-PRISM — Port, Build &amp; Before/After Report</title>
+<style>
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;max-width:68em;margin:0 auto;padding:0 1.2em 3em;
+  background:#0b1116;color:#e6eef3;line-height:1.6}
+h1{color:#fff}h2{color:#5eeaa8;border-bottom:1px solid #223443;padding-bottom:.3em}
+table{border-collapse:collapse;width:100%;font-size:.9em;margin:1em 0}
+th,td{border:1px solid #223443;padding:.5em .7em;text-align:left;vertical-align:top}
+th{background:#12202b}code{font-family:Consolas,monospace;font-size:.88em;color:#cfe6f2}
+pre{background:#05090d;border:1px solid #223443;border-radius:.6em;padding:1em;overflow:auto;
+  font-size:.82em;color:#bfe6d4}
+.pass{color:#5eeaa8;font-weight:700}.warn{color:#ffb347}.grid{display:grid;gap:1em}
+@media(min-width:60em){.grid.c2{grid-template-columns:1fr 1fr}}
+.card{background:#101c26;border:1px solid #223443;border-radius:.7em;padding:1em 1.2em}
+footer{color:#8fa5b3;font-size:.85em;border-top:1px solid #223443;margin-top:2em;padding-top:1em}
+</style>
+</head>
+<body>
+<h1>A-PRISM — Port, Build &amp; Before/After Report</h1>
+<p>Session of 2026-10-12. Task: move the object-tracker (OT) changes into the DC emb-library
+<code>Application</code> folder, build it, run before/after (MF4 logs or dummy data), and relocate the
+OT repo to the Desktop, clean. Working tree only — nothing committed, nothing pushed.</p>
+
+<h2>1. Port map (OT repo → DC Application)</h2>
+<table>
+<tr><th>#</th><th>OT source (old)</th><th>DC destination (new)</th><th>Adaptation needed</th></tr>
+<tr><td>OT-3/6/N24</td><td><code>.../detection_to_track_association/source/f360_determine_association_hypothesis.cpp</code></td><td><code>Application/F360Tracker/F360TrackerLib/Fusion360/detection_to_track_association/source/…(same name)</code></td><td>Yes — raw/processed field paths differ (<code>det_raw.raw.range_rate</code>, <code>sensor.constant…/variable…</code>); <code>det_idx</code> is unsigned here</td></tr>
+<tr><td>OT-1</td><td><code>.../measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp</code></td><td><code>…/measurement_update_tracks/source/…(same)</code></td><td>Yes — cos/sin from <code>raw_detection_list…processed</code>; <code>State_Update_CCA_Moveable</code> (not <code>KF_…</code>); counter declared inside guard (<code>/WX</code>)</td></tr>
+<tr><td>OT-1/5</td><td><code>.../f360_msmt_update_obj_trks_ctca.cpp</code></td><td><code>…(same)</code></td><td>Trivial — anchor identical</td></tr>
+<tr><td>OT-5</td><td><code>.../f360_msmt_update_support_functions_ctca.cpp</code></td><td><code>…(same)</code></td><td>Trivial — uses new <code>Aprism_Entropy_Scale_WSE()</code></td></tr>
+<tr><td>XOR</td><td><code>.../track_validity/source/f360_detect_multipath.cpp</code></td><td><code>…(same)</code></td><td>Trivial</td></tr>
+<tr><td>XOR</td><td><code>.../track_validity/source/f360_determine_reflected_obj.cpp</code></td><td><code>…(same)</code></td><td>Trivial</td></tr>
+<tr><td>XOR</td><td><code>.../track_validity/source/f360_is_host_reflected_track.cpp</code></td><td><code>…(same)</code></td><td>Trivial</td></tr>
+<tr><td>OT-2/4+XOR</td><td><code>.../track_validity/source/f360_is_reflective_guardrail_track.cpp</code></td><td><code>…(same)</code></td><td>Trivial — anchors identical</td></tr>
+<tr><td>close-out</td><td><code>.../track_validity/source/f360_track_validity.cpp</code></td><td><code>…(same)</code></td><td>Trivial</td></tr>
+<tr><td>shared</td><td><code>.../include/aprism_ot_hooks.h</code> (new)</td><td><code>…/Fusion360/include/aprism_ot_hooks.h</code> (new)</td><td>None — self-contained, copied verbatim</td></tr>
+</table>
+<p><span class="warn">Not portable 1:1:</span> the <code>Clamp01</code> log defense from
+<code>f360_populate_objects_log.cpp</code> — this DC snapshot has no <code>uint8</code> mirror pack
+(float XTRK/internal/ROT logs only), so the wrap bug cannot occur here. The Track_Validity
+sentinel resolve covers the path.</p>
+
+<h2>2. Build (real <code>F360-Tracker</code> lib, MSVC, CMake)</h2>
+<div class="grid c2">
+<div class="card"><b>OFF</b> <span class="pass">PASS</span><br>
+<code>build_off</code>, no defines → <code>f360_variant_A.lib</code>.<br>
+One fix on the way: <code>aprism_ghost_rows</code> declared only under the guard
+(<code>/WX</code> unused-variable error when OFF).</div>
+<div class="card"><b>ON</b> <span class="pass">PASS</span><br>
+<code>build_on</code>, <code>/DAPRISM_OT_ENABLE=1</code> → <code>f360_variant_A.lib</code>.<br>
+Same sources, switch on — zero additional errors.</div>
+</div>
+<p>Not buildable here (pre-existing, unrelated): full SIL (<code>olp_iface.h</code> missing),
+CppUTest/IT targets (<code>testing/</code> + <code>ut-frameworks/cpputest</code> submodules absent),
+stale <code>input_init/*</code> sources (don't match current RSPP/sensor headers).</p>
+
+<h2>3. Before/after on the real libs</h2>
+<p>Same driver (<code>dc_mod_ab.cpp</code>), linked once against each lib. Synthetic but real
+code paths: real calibrations via <code>Initialize_Tracker_Calibrations</code>.</p>
+<table>
+<tr><th>Test</th><th>OFF — <code>dc_mod_off.exe</code></th><th>ON — <code>dc_mod_on.exe</code></th><th>Verdict</th></tr>
+<tr><td>T1 R-fill, spray meter silent</td><td><code>R00=R11=0.500000</code></td><td><code>R00=R11=0.500000</code></td><td class="pass">IDENTICAL</td></tr>
+<tr><td>T2 R-fill, spray fed (H=2,SNR=1)</td><td><code>0.500000</code> (ignores feed)</td><td><code>3.694528</code> (=0.5·e²)</td><td class="pass">DIFFERS as designed</td></tr>
+<tr><td>T3 ghost update (paired+dbl-bounce, Doppler ✓)</td><td><code>vx=10.0, mirror=0.0</code></td><td><code>vx=10.0, mirror=-1.0</code></td><td class="pass">assimilated + XOR-marked</td></tr>
+<tr><td>T4 behind-rail, already assimilated</td><td><code>mirror=1.0</code> (penalized)</td><td><code>mirror=-1.0</code> (protected)</td><td class="pass">XOR contract holds</td></tr>
+</table>
+
+<h2>4. MF4 verdict</h2>
+<p><code>Downloads/CCA_9010_3100099_DEBUG_20260804_135802_0048</code> holds 3 files with
+<strong>raw bus frames only</strong>: BUS 5 channels (CAN_*), DEBUG 3 (ETH_*), REF 2 (ETH_*).
+No decodable radar/detection signals (checked with asammdf 8.7.2) → dummy-data fallback used,
+per plan. Full-tracker <code>Execute</code> runs were abandoned: the pipeline hangs on synthetic
+inputs in pristine code too (NaN-sensitive sorted-list insert), unrelated to these changes.</p>
+
+<h2>5. Repo move + backups</h2>
+<ul>
+<li><code>core-radar-object-tracker</code>: reverted (<code>git checkout -- .</code>, header deleted),
+relocated <code>gen_research/</code> → <code>Desktop/core-radar-object-tracker</code>
+(1165 files, <code>git status</code> clean, HEAD <code>1731585</code>).</li>
+<li>Backups on Desktop: <code>APRISM_OT_backup.patch</code> (26&nbsp;KB full diff) +
+<code>APRISM_OT_hooks_backup.h</code>.</li>
+<li>An empty locked shell dir may linger at the old path until reboot/editor restart.</li>
+<li><code>Desktop/CHANGES.md</code> updated with this session.</li>
+</ul>
+
+<h2>6. Left for the owner build farm</h2>
+<ul>
+<li>Full SIL build + paired OFF/ON replay on B-series logs; promote sidecar deskew into fusion.</li>
+<li>Calibrate: rank-gate version/factor/quorum, WSE H/SNR wiring, seed-stability, QF thresholds.</li>
+<li>Qual suites: cut-in, guardrail, spray. Nothing here was pushed — all diffs are local.</li>
+</ul>
+<footer>A-PRISM port/build report ◆ 2026-10-12 ◆ DC emb-library working tree + relocated OT repo</footer>
+</body>
+</html>

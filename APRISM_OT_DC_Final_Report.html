@@ -1,0 +1,137 @@
+<!doctype html><html><head><meta charset=utf-8><title>A-PRISM OT+DC final</title><style>body{font-family:sans-serif;max-width:70em;margin:2em auto;padding:0 1em}pre{background:#f4f4f4;padding:1em;overflow:auto}</style></head><body><h1>A-PRISM OT+DC final report (this session)</h1>
+<h2>Scope</h2><p>core-radar-object-tracker (10 files + aprism_ot_hooks.h) + core-resim-dc-emb-library (2 files + aprism_dc_hooks.h). OFF-default guards, no pushes.</p>
+<h2>Bugs found + fixed this session</h2><ol>
+<li><b>Sentinel leak (OT, real):</b> assimilated mark mirror_prob=-1 reached log pack as uint8 157. Fix: scan-scoped resolve -1-&gt;0 at end of Track_Validity + Clamp01 defense in Populate_Objects_Log_Data.</li>
+<li><b>Write-only det sidecar:</b> never reset per scan. Fix: Aprism_Reset_Det_Sidecar() in Track_Validity close-out.</li>
+<li><b>Hardcoded DC seed:</b> (-1.145,-0.018) re-seeded every scan. Fix: live dets_info.AutoAlign*/QF transport wins, static fallback once-only.</li>
+<li><b>Collapsed epochs (DC-2):</b> dt=0 identity loop read uninit host state risk. Fix: per-sensor epochs from header timestamps + current-scan veh_data ego, sidecar-only.</li>
+<li><b>Dead neutral entropy call:</b> replaced with WSE sidecar feed (default identity, Aprism_WSE_Feed() arms it).</li></ol>
+<h2>Diffstat OT</h2><pre> .../f360_determine_association_hypothesis.cpp      | 43 ++++++++++++++
+ .../logging/source/f360_populate_objects_log.cpp   | 11 +++-
+ .../f360_msmt_update_obj_trks_cca_moveable.cpp     | 51 +++++++++++++++--
+ .../source/f360_msmt_update_obj_trks_ctca.cpp      | 22 ++++++++
+ .../f360_msmt_update_support_functions_ctca.cpp    |  8 +++
+ .../source/f360_detect_multipath.cpp               | 16 ++++++
+ .../source/f360_determine_reflected_obj.cpp        | 11 ++++
+ .../source/f360_is_host_reflected_track.cpp        | 54 +++++++++++++-----
+ .../source/f360_is_reflective_guardrail_track.cpp  | 65 ++++++++++++++++++++++
+ .../track_validity/source/f360_track_validity.cpp  | 17 +++++-
+ 10 files changed, 278 insertions(+), 20 deletions(-)
+ M emb_tracker/ROT/Fusion360/detection_to_track_association/source/f360_determine_association_hypothesis.cpp
+ M emb_tracker/ROT/Fusion360/logging/source/f360_populate_objects_log.cpp
+ M emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_cca_moveable.cpp
+ M emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_obj_trks_ctca.cpp
+ M emb_tracker/ROT/Fusion360/measurement_update_tracks/source/f360_msmt_update_support_functions_ctca.cpp
+ M emb_tracker/ROT/Fusion360/track_validity/source/f360_detect_multipath.cpp
+ M emb_tracker/ROT/Fusion360/track_validity/source/f360_determine_reflected_obj.cpp
+ M emb_tracker/ROT/Fusion360/track_validity/source/f360_is_host_reflected_track.cpp
+ M emb_tracker/ROT/Fusion360/track_validity/source/f360_is_reflective_guardrail_track.cpp
+ M emb_tracker/ROT/Fusion360/track_validity/source/f360_track_validity.cpp
+?? emb_tracker/ROT/Fusion360/include/aprism_ot_hooks.h
+</pre>
+<h2>Diffstat DC</h2><pre> DC_SIL/sil_wrappers/Tracker_VariantA_Wrapper.cpp | 55 ++++++++++++++++++++++++
+ DC_SIL/sil_wrappers/sil_wrapper.cpp              | 16 +++++++
+ 2 files changed, 71 insertions(+)
+ M DC_SIL/sil_wrappers/Tracker_VariantA_Wrapper.cpp
+ M DC_SIL/sil_wrappers/sil_wrapper.cpp
+?? DC_SIL/sil_wrappers/aprism_dc_hooks.h
+</pre>
+<h2>A/B harness (real headers, MSVC cl, 40 checks each)</h2>
+<h3>OFF (before/baseline) tail</h3><pre>ok dt note
+ok dt note max
+ok clock tau1
+ok clock taubias2
+ok clock track ok
+ALL PASS</pre>
+<h3>ON (after) tail</h3><pre>ok dt note
+ok dt note max
+ok clock tau1
+ok clock taubias2
+ok clock track ok
+ALL PASS</pre>
+<details><summary>Full OFF log</summary><pre>ok OFF COUNT identical
+ok gamma base
+ok gamma clamp
+ok reff
+ok entropy neutral
+ok wse default identity
+ok wse fed scales
+ok rankgate v0
+ok confirm 1st
+ok confirm 2nd
+ok confirm miss resets
+ok confirm re-arm
+ok hermite det
+ok hermite line
+ok curv ok
+ok curv refuse
+ok hermite exec
+ok rank1 zero
+ok rank1 reject
+ok virtual sensor
+ok doppler in
+ok doppler out
+ok sentinel marked
+ok sentinel resolved
+ok clamp01
+ok det sidecar
+ok det sidecar reset
+ok seed reject az
+ok seed invalid latched
+ok seed qf gate
+ok seed accept
+ok seed header
+ok seed header wins
+ok deskew dt0 identity
+ok deskew ego
+ok dt note
+ok dt note max
+ok clock tau1
+ok clock taubias2
+ok clock track ok
+ALL PASS
+</pre></details>
+<details><summary>Full ON log</summary><pre>ok ON COUNT adds
+ok gamma base
+ok gamma clamp
+ok reff
+ok entropy neutral
+ok wse default identity
+ok wse fed scales
+ok rankgate v0
+ok confirm 1st
+ok confirm 2nd
+ok confirm miss resets
+ok confirm re-arm
+ok hermite det
+ok hermite line
+ok curv ok
+ok curv refuse
+ok hermite exec
+ok rank1 zero
+ok rank1 reject
+ok virtual sensor
+ok doppler in
+ok doppler out
+ok sentinel marked
+ok sentinel resolved
+ok clamp01
+ok det sidecar
+ok det sidecar reset
+ok seed reject az
+ok seed invalid latched
+ok seed qf gate
+ok seed accept
+ok seed header
+ok seed header wins
+ok deskew dt0 identity
+ok deskew ego
+ok dt note
+ok dt note max
+ok clock tau1
+ok clock taubias2
+ok clock track ok
+ALL PASS
+</pre></details>
+<h2>Verification</h2><ul><li>Headers compile standalone OFF+ON (MSVC cl /std:c++17).</li><li>A/B harness ALL PASS both binaries (rc=0).</li><li>Guard audit: every added Aprism_/APRISM_ line under APRISM_*_ENABLE or OFF-identical macro.</li><li>Full TU build still needs Bazel/CMake owner env (MSVC STL too new for clang 18; cl lacks Bazel toolchain setup here).</li></ul>
+<h2>Next steps</h2><ul><li>Owner CI: Bazel OT build OFF+ON, DC cmake variant-A build + qual suites (cut-in, guardrail, spray).</li><li>Calibrate: rank-gate version/factor+quorum, WSE H/SNR feed wiring, QF threshold tightening, per-scan seed stability.</li><li>Replay paired OFF/ON SiL on B-series logs; promote sidecar deskew into fusion buffer.</li></ul></body></html>
