@@ -1,0 +1,11 @@
+{
+  "version": "1.1",
+  "SiL_Engine": "Default_Engine",
+  "SW": "Default_SW",
+  "RSP_SiL": "Default_RSP",
+  "Tracker": "Default_Tracker",
+  "Mode": "CDC",
+  "Max_CDC_Records": 5016,
+  "Range_Saturation_Thresh_Front_Radar": 135.0,
+  "Range_Saturation_Thresh_Corner_Radar": 135.0
+}

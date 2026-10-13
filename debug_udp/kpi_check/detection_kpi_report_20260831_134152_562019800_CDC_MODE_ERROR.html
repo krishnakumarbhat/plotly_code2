@@ -1,0 +1,127 @@
+
+<html>
+<head>
+    <title>Detection KPIs and Plots</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <h1>Detection KPIs and Plots v1.5.0</h1>
+    <small>Unique key: 0d892135-b02f-4578-8834-73f48820ca9e</small>
+    <ul>
+        <li><b>SiL_Engine:</b> Default_Engine</li>
+        <li><b>SW:</b> Default_SW</li>
+        <li><b>RSP_SiL:</b> Default_RSP</li>
+        <li><b>Tracker:</b> Default_Tracker</li>
+        <li><b>Mode:</b> CDC</li>
+    </ul> 
+    <details>
+        <summary><b><i>Glossary</i></b></summary>
+        <ol>
+            <li><b>Definition of match:</b>
+                A detection is said to match a re-simulated detection if it has the same RDD range and doppler index(within a scan index), 
+                and the difference(error) in the range, range rate, azimuth and elevation are within the thresholds mentioned below
+                <ul>
+                    <li>Range : 0.01 m</li>
+                    <li>Range rate : 0.015 m/s</li>
+                    <li>Azimuth : 0.00873 radians</li>
+                    <li>Elevation : 0.00873 radians</li>
+                </ul> 
+            <li><b>Accuracy:</b> (Number of matching detections / total number of detections) * 100
+            <li><b>Saturation:</b> A SI is said to be saturated if the maximum range among all the vehicle detections is >= 135m and re-simulated detections is < 135m
+            <li><b>Plot A:</b> Plot of % of unmatched detections against the corresponding error. Unmatched detections are those 
+            detections having same RDD index in both vehicle and re-simulated data but falling outside at-least one of the above 
+            mentioned thresholds.
+            <li><b>Plot B:</b> Plot of different errors against the corresponding detection's range, range rate, azimuth and elevation
+            <li><b>Plot C:</b> Plot of different parameters across scan indices
+        </ol>
+        <b>Note:</b> The plots are interactive
+        <br>
+        <b>Note:</b> Blank plots indicate no data or zero error
+    </details>    
+
+    <hr width="100%" size="2" color="blue" noshade>
+
+                <b>Log:</b> AshLey_CheetahBus_20260819_115747_0003_b05_FL;
+                
+    <b>KPI:</b> Accuracy: (45977/51118) --> <b>89.94%</b>
+    <details>
+        <summary><i>Details</i></summary>
+        <b>RDD Streams</b><br>
+        Number of SI in (vehicle, simulation) : 400, 0<br>
+        Number of same SI available in both vehicle and simulation: 0<br>
+        % of SI with same number of RDD1 detections: 
+        (0/0) --> None%<br>
+        % of SI with 99% matching (rindx, dindx) pair:
+        (0/0) --> None%
+        <br>
+        % of SI with 99% matching (range, rangerate) pair:
+        (0/0) --> None%
+        <br>
+    
+        <b>Detection Streams</b><br>
+        Number of SI in (vehicle, simulation) : 400, 390<br>
+        Number of same SI available in both vehicle and simulation: 390<br>
+        % of SI with same number of AF detections: 
+        (0/390) --> 0.0%
+        <br>
+      
+        <b>Detection, RDD (and CDC) Streams Merged</b><br>
+        Number of SI in (vehicle, simulation) : 400, 390<br>
+        Number of same SI available in both vehicle and simulation: 390<br>
+        % of SI with 99% matching det params(r,v):
+        (8/390) --> 2.05%
+        <br>
+        % of SI with 99% matching det params(r,v,t,p):
+        (7/390) --> 1.79%
+        <br>
+        Number of detections in (vehicle, simulation): 51118, 71240<br>
+        Accuracy(r,v):
+        (46024/51118) --> 90.03%
+        Accuracy(r,v,t,p):
+        (45977/51118) --> 89.94%
+        <br>
+    <h2 style='color:red'>Processing failed: </h2><pre>Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\kpi_check\detection_matching_kpi_script.py", line 1832, in <module>
+    process_logs(data_files)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\kpi_check\detection_matching_kpi_script.py", line 1367, in process_logs
+    plot_stats()
+    ~~~~~~~~~~^^
+  File "C:\Users\ouymc2\Desktop\kpi_check\detection_matching_kpi_script.py", line 1028, in plot_stats
+    fig_scatter.add_trace(func_scatter(vel, ran_diffs), row=row_num, col=2)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\graph_objs\_figure.py", line 344, in add_trace
+    return super().add_trace(trace, row, col, secondary_y, exclude_empty_subplots)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\basedatatypes.py", line 2129, in add_trace
+    return self.add_traces(
+           ~~~~~~~~~~~~~~~^
+        data=[trace],
+        ^^^^^^^^^^^^^
+    ...<3 lines>...
+        exclude_empty_subplots=exclude_empty_subplots,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\graph_objs\_figure.py", line 422, in add_traces
+    return super().add_traces(
+           ~~~~~~~~~~~~~~~~~~^
+        data, rows, cols, secondary_ys, exclude_empty_subplots
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\basedatatypes.py", line 2272, in add_traces
+    new_traces_data = [deepcopy(trace._props) for trace in data]
+                       ~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 137, in deepcopy
+    y = copier(x, memo)
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 222, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+                             ~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 137, in deepcopy
+    y = copier(x, memo)
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 197, in _deepcopy_list
+    append(deepcopy(a, memo))
+    ~~~~~~^^^^^^^^^^^^^^^^^^^
+MemoryError
+</pre></body></html>

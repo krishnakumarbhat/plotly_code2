@@ -1,0 +1,268 @@
+
+<html>
+<head>
+    <title>Detection KPIs and Plots</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <h1>Detection KPIs and Plots v1.5.0</h1>
+    <small>Unique key: 7b3396d5-27d0-4b07-ba19-da40915e02fa</small>
+    <ul>
+        <li><b>SiL_Engine:</b> Default_Engine</li>
+        <li><b>SW:</b> Default_SW</li>
+        <li><b>RSP_SiL:</b> Default_RSP</li>
+        <li><b>Tracker:</b> Default_Tracker</li>
+        <li><b>Mode:</b> CDC</li>
+    </ul> 
+    <details>
+        <summary><b><i>Glossary</i></b></summary>
+        <ol>
+            <li><b>Definition of match:</b>
+                A detection is said to match a re-simulated detection if it has the same RDD range and doppler index(within a scan index), 
+                and the difference(error) in the range, range rate, azimuth and elevation are within the thresholds mentioned below
+                <ul>
+                    <li>Range : 0.01 m</li>
+                    <li>Range rate : 0.015 m/s</li>
+                    <li>Azimuth : 0.00873 radians</li>
+                    <li>Elevation : 0.00873 radians</li>
+                </ul> 
+            <li><b>Accuracy:</b> (Number of matching detections / total number of detections) * 100
+            <li><b>Saturation:</b> A SI is said to be saturated if the maximum range among all the vehicle detections is >= 135m and re-simulated detections is < 135m
+            <li><b>Plot A:</b> Plot of % of unmatched detections against the corresponding error. Unmatched detections are those 
+            detections having same RDD index in both vehicle and re-simulated data but falling outside at-least one of the above 
+            mentioned thresholds.
+            <li><b>Plot B:</b> Plot of different errors against the corresponding detection's range, range rate, azimuth and elevation
+            <li><b>Plot C:</b> Plot of different parameters across scan indices
+        </ol>
+        <b>Note:</b> The plots are interactive
+        <br>
+        <b>Note:</b> Blank plots indicate no data or zero error
+    </details>    
+
+    <hr width="100%" size="2" color="blue" noshade>
+
+                <b>Log:</b> AshLey_CheetahBus_20260819_115747_0003_b05_FL;
+                
+                <b>NA</b>
+                <hr>
+                
+                    <table>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Scan Yield FC</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Scans in veh = 0, Scans in sim = 0)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Mileage Yield FC</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Veh mileage = 0.0km, Sim mileage = 0.0km)</small></td>
+                        </tr>
+                    </table>          
+                
+                    <table>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Scan Yield FL</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Scans in veh = 0, Scans in sim = 0)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Mileage Yield FL</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Veh mileage = 0.0km, Sim mileage = 0.0km)</small></td>
+                        </tr>
+                    </table>          
+                
+                    <table>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Scan Yield FR</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Scans in veh = 0, Scans in sim = 0)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Mileage Yield FR</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Veh mileage = 0.0km, Sim mileage = 0.0km)</small></td>
+                        </tr>
+                    </table>          
+                
+                    <table>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Scan Yield RL</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Scans in veh = 0, Scans in sim = 0)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Mileage Yield RL</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Veh mileage = 0.0km, Sim mileage = 0.0km)</small></td>
+                        </tr>
+                    </table>          
+                
+                    <table>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Scan Yield RR</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Scans in veh = 0, Scans in sim = 0)</small></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="font-size: 1em;">Mileage Yield RR</strong></td>
+                            <td style="text-align: right; width: 100px; font-family: 'Courier New', monospace;"><strong style="font-size: 1em;">: 0.00%</strong></td>
+                            <td><small>(Veh mileage = 0.0km, Sim mileage = 0.0km)</small></td>
+                        </tr>
+                    </table>          
+                
+                <hr width="100%" size="2" color="blue" noshade> 
+            
+                <div style="margin: 20px 0;">
+                    <label for="threshold" style="font-weight: bold; margin-right: 2px;">
+                        Enter overall accuracy threshold value:
+                    </label>
+                    <input type="number" id="threshold" value="99.0" 
+                    style="margin: 20px; padding: 4px;" oninput="updateTable()">
+                </div>
+                
+                <div id="logs_based_on_acc"></div>
+                <div id="logs_based_on_acc_excluding_cdc_saturation"></div>
+                <div id="logs_based_on_saturation"></div>
+                
+                <script>
+                    const fileNames = [];
+                    const accuracies = [];
+                    const accuracies_excluding_cdc_saturation = [];
+                    const perc_of_scans_with_cdc_saturations = [];
+                    const perc_of_scans_with_range_saturations = [];
+                    const report_file_nums = [];
+                    const isCdcMode = true;
+                    
+                    function updateTable() {
+                        const threshold = document.getElementById('threshold') ? parseFloat(document.getElementById('threshold').value) : 99.0;
+                        const validThreshold = isNaN(threshold) ? 99.0 : threshold;
+                        
+                        // Check if we have data
+                        if (fileNames.length === 0) {
+                            document.getElementById('logs_based_on_acc').innerHTML = "<em>No log data available for filtering.</em>";
+                            document.getElementById('logs_based_on_acc_excluding_cdc_saturation').innerHTML = "<em>No log data available for filtering.</em>";
+                            document.getElementById('logs_based_on_saturation').innerHTML = "<em>No log data available for filtering.</em>";
+                            return;
+                        }
+                        
+                        // Table 1: Filter based on accuracy
+                        const filtered_based_on_acc = fileNames.map((name, i) => ({
+                            name, 
+                            accuracy: accuracies[i],
+                            perc_of_scans_with_cdc_saturation: perc_of_scans_with_cdc_saturations[i],
+                            perc_of_scans_with_range_saturation: perc_of_scans_with_range_saturations[i],
+                            report_file_num: report_file_nums[i],
+                            isBelow: accuracies[i] < validThreshold
+                        })).filter(item => item.isBelow);
+                        
+                        const count_based_on_acc = filtered_based_on_acc.length;
+
+                        const tableHTML_based_on_acc = `
+                            <h3 style="color:red;">Logs with overall accuracy &lt; ${validThreshold}% (No. of logs: ${count_based_on_acc})</h3>
+                            <table style="width:80%; text-align: left; margin-top:20px; border-collapse:collapse;">
+                                <tr style="background:#f0f0f0">
+                                    <th style="padding:10px">File Name</th>
+                                    <th style="padding:10px">Accuracy</th>
+                                    <th style="padding:10px">% of Scans with CDC Saturation</th>
+                                    <th style="padding:10px">% of Scans with Range Saturation</th>
+                                    <th style="padding:10px">Report File Number</th>
+                                </tr>
+                                ${filtered_based_on_acc.map(item => `
+                                    <tr>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.name}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.accuracy}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.perc_of_scans_with_cdc_saturation}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.perc_of_scans_with_range_saturation}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.report_file_num}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        `;
+                        document.getElementById('logs_based_on_acc').innerHTML = tableHTML_based_on_acc;
+                        
+                        // Table 2: Filter based on accuracy excluding CDC saturation (only show if CDC mode is enabled)
+                        if (isCdcMode) {
+                            const filtered_based_on_acc_excluding_cdc_saturation = fileNames.map((name, i) => ({
+                                name, 
+                                accuracy: accuracies[i],
+                                accuracy_excluding_cdc_saturation: accuracies_excluding_cdc_saturation[i],
+                                perc_of_scans_with_cdc_saturation: perc_of_scans_with_cdc_saturations[i],
+                                perc_of_scans_with_range_saturation: perc_of_scans_with_range_saturations[i],
+                                report_file_num: report_file_nums[i],
+                                isBelow: accuracies_excluding_cdc_saturation[i] < validThreshold
+                            })).filter(item => item.isBelow);
+                            
+                            const count_based_on_acc_excluding_cdc_saturation = filtered_based_on_acc_excluding_cdc_saturation.length;
+
+                            const tableHTML_based_on_acc_excluding_cdc_saturation = `
+                                <h3 style="color:red;">Logs with overall accuracy(excluding CDC saturated scans) &lt; ${validThreshold}%  (No. of logs: ${count_based_on_acc_excluding_cdc_saturation})</h3>
+                                <table style="width:80%; text-align: left; margin-top:20px; border-collapse:collapse;">
+                                    <tr style="background:#f0f0f0">
+                                        <th style="padding:10px">File Name</th>
+                                        <th style="padding:10px">Accuracy</th>
+                                        <th style="padding:10px">% of Scans with CDC Saturation</th>
+                                        <th style="padding:10px">% of Scans with Range Saturation</th>
+                                        <th style="padding:10px">Report File Number</th>
+                                    </tr>
+                                    ${filtered_based_on_acc_excluding_cdc_saturation.map(item => `
+                                        <tr>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd">${item.name}</td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd">${item.accuracy_excluding_cdc_saturation}</td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd">${item.perc_of_scans_with_cdc_saturation}</td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd">${item.perc_of_scans_with_range_saturation}</td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd">${item.report_file_num}</td>
+                                        </tr>
+                                    `).join('')}
+                                </table>
+                            `;
+                            document.getElementById('logs_based_on_acc_excluding_cdc_saturation').innerHTML = tableHTML_based_on_acc_excluding_cdc_saturation;
+                        } else {
+                            document.getElementById('logs_based_on_acc_excluding_cdc_saturation').innerHTML = "<em>CDC mode not enabled for this report.</em>";
+                        }
+                        
+                        // Table 3: Filter based on saturation
+                        const filtered_based_on_saturation = fileNames.map((name, i) => ({
+                            name, 
+                            accuracy: accuracies[i],
+                            perc_of_scans_with_cdc_saturation: perc_of_scans_with_cdc_saturations[i],
+                            perc_of_scans_with_range_saturation: perc_of_scans_with_range_saturations[i],
+                            report_file_num: report_file_nums[i],
+                            isSaturated: (perc_of_scans_with_cdc_saturations[i] != 0) || (perc_of_scans_with_range_saturations[i] != 0)
+                        })).filter(item => item.isSaturated);
+                        
+                        const count_based_on_saturation = filtered_based_on_saturation.length;
+
+                        const tableHTML_based_on_saturation = `
+                            <h3 style="color:red;">Logs with either CDC or Range saturation (No. of logs: ${count_based_on_saturation})</h3>
+                            <table style="width:80%; text-align: left; margin-top:20px; border-collapse:collapse;">
+                                <tr style="background:#f0f0f0">
+                                    <th style="padding:10px">File Name</th>
+                                    <th style="padding:10px">Accuracy</th>
+                                    <th style="padding:10px">% of Scans with CDC Saturation</th>
+                                    <th style="padding:10px">% of Scans with Range Saturation</th>
+                                    <th style="padding:10px">Report File Number</th>
+                                </tr>
+                                ${filtered_based_on_saturation.map(item => `
+                                    <tr>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.name}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.accuracy}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.perc_of_scans_with_cdc_saturation}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.perc_of_scans_with_range_saturation}</td>
+                                        <td style="padding:10px; border-bottom:1px solid #ddd">${item.report_file_num}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        `;
+                        document.getElementById('logs_based_on_saturation').innerHTML = tableHTML_based_on_saturation;
+                    }
+
+                    // Call updateTable when DOM is ready
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', updateTable);
+                    } else {
+                        updateTable();
+                    }
+                </script>
+                <hr width="100%" size="2" color="blue" noshade>
+            <p><em>No data across logs to plot</em></p><hr></body></html>

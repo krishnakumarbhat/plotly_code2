@@ -1,0 +1,87 @@
+
+[INFO] Input folder: C:\Users\ouymc2\Desktop\kpi_check
+[INFO] Output folder: C:\Users\ouymc2\Desktop\kpi_check
+
+[INFO] Meta data used:
+   * SiL_Engine: Default_Engine
+   * SW: Default_SW
+   * RSP_SiL: Default_RSP
+   * Tracker: Default_Tracker
+   * Mode: CDC
+   * Max_CDC_Records: 5016
+   * Range_Saturation_Thresh_Front_Radar: 135.0
+   * Range_Saturation_Thresh_Corner_Radar: 135.0
+[INFO] Found 1 log(s) to process
+
+[INFO] Processing log: 1/1 : AshLey_CheetahBus_20260819_115747_0003_b05_FL
+[INFO] Reading the CSVs...
+[INFO] Reading DET CSV...
+[WARNING] AshLey_CheetahBus_20260819_115747_0003_b05_FL_UDP_GEN8_DET_CORE.csv missing 1088 columns (e.g., ['af_dets_544_rdd_idx', 'af_dets_544_ran', 'af_dets_544_vel']), using 4354 existing
+[WARNING] AshLey_CheetahBus_20260819_115747_0003_b05_rR00060100_FL_UDP_GEN8_DET_CORE.csv missing 1088 columns (e.g., ['af_dets_544_rdd_idx', 'af_dets_544_ran', 'af_dets_544_vel']), using 4354 existing
+[INFO] Reading CDC CSV...
+[WARNING] C:\Users\ouymc2\Desktop\kpi_check\AshLey_CheetahBus_20260819_115747_0003_b05_FL_UDP_CDC.csv file is missing
+[WARNING] CDC data not available...
+[INFO] Reading RDD CSV...
+[WARNING] Filtered C:\Users\ouymc2\Desktop\kpi_check\AshLey_CheetahBus_20260819_115747_0003_b05_rR00060100_FL_UDP_GEN8_RDD_CORE.csv is empty (sim RDD empty - all rdd1_num_detect==0)
+[DIAGNOSTIC] sim RDD sample rdd1_num_detect: [0, 0, 0, 0, 0]
+[DIAGNOSTIC] sim RDD total rows before filter: 5 (full file has 389 rows, all zero)
+[WARNING] RDD data not available for both veh and sim - will skip RDD KPIs and use DET-only fallback for merging
+[INFO] Reading VSE CSV...
+[INFO] VSE data available...
+[INFO] Skipping RDD Detection Matching (RDD data unavailable)
+[INFO] Merging the dataframes...
+[WARNING] Veh RDD empty, using DET only for veh_merged (no RDD filtering)
+[WARNING] Sim RDD empty, using DET only for sim_merged (no RDD filtering)
+[INFO] AF Detection Matching...
+[INFO] VSE Data Processing...
+[KPI] Accuracy: 89.94
+[KPI] Accuracy excluding CDC saturation: 0.0
+[KPI] % of scans with CDC saturation: 0.0
+[KPI] % of scans with range saturation: 0.0
+[TIMING] Log AshLey_CheetahBus_20260819_115747_0003_b05_FL processed in 32.03 seconds
+[ERROR] process_logs failed: 
+Traceback (most recent call last):
+  File "C:\Users\ouymc2\Desktop\kpi_check\detection_matching_kpi_script.py", line 1832, in <module>
+    process_logs(data_files)
+    ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ouymc2\Desktop\kpi_check\detection_matching_kpi_script.py", line 1367, in process_logs
+    plot_stats()
+    ~~~~~~~~~~^^
+  File "C:\Users\ouymc2\Desktop\kpi_check\detection_matching_kpi_script.py", line 1028, in plot_stats
+    fig_scatter.add_trace(func_scatter(vel, ran_diffs), row=row_num, col=2)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\graph_objs\_figure.py", line 344, in add_trace
+    return super().add_trace(trace, row, col, secondary_y, exclude_empty_subplots)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\basedatatypes.py", line 2129, in add_trace
+    return self.add_traces(
+           ~~~~~~~~~~~~~~~^
+        data=[trace],
+        ^^^^^^^^^^^^^
+    ...<3 lines>...
+        exclude_empty_subplots=exclude_empty_subplots,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\graph_objs\_figure.py", line 422, in add_traces
+    return super().add_traces(
+           ~~~~~~~~~~~~~~~~~~^
+        data, rows, cols, secondary_ys, exclude_empty_subplots
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\site-packages\plotly\basedatatypes.py", line 2272, in add_traces
+    new_traces_data = [deepcopy(trace._props) for trace in data]
+                       ~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 137, in deepcopy
+    y = copier(x, memo)
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 222, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+                             ~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 137, in deepcopy
+    y = copier(x, memo)
+  File "C:\Users\ouymc2\AppData\Local\Programs\Python\Python313\Lib\copy.py", line 197, in _deepcopy_list
+    append(deepcopy(a, memo))
+    ~~~~~~^^^^^^^^^^^^^^^^^^^
+MemoryError
+
