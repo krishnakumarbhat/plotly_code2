@@ -1,0 +1,32 @@
+
+ HTML Report Generate 0Vector Library is integrated for the Analysis!!
+
+	**************************************************************** 
+	%                                                              %
+	%  		 MUDP_EXTRACTOR_26_28_19_84                     %
+	%                                                              %
+	%   APTIV CORPORATION PROPRIETARY,  Copyright    2017 - 2023   %
+	%                                                              %
+	**************************************************************** 
+
+Major version: 19
+Minor version: 84
+Release week : 28
+Release year : 2026
+
+EXE Build date: Jul 17 2026
+
+MUDP_Log_DataExtracter.exe version 19.0.84 
+/*=========================================================================================================*/
+
+Sensor_Enabled: RL RR FR FL FC 
+Selected_Generation: GEN7
+LOG_REPLAY_MODE: CONTINUOUS_Mode 
+
+Data Extraction operation started for the Log :/mnt/c/Users/ouymc2/Desktop/sdafasdf/CEER_S12_20260701_151002_0000_b05_rR00100012.MF4!!
+
+
+Log duration is 1782911401 seconds
+
+[INFO]: The file format is vigem
+completed

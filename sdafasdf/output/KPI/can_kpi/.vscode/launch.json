@@ -1,0 +1,58 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run KPI main",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/kpi_main.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}
+{
+  // VS Code debug configurations for KPI server
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "KPI: Run (JSON Mode)",
+      "type": "python",
+      "request": "launch",
+      "module": "KPI.kpi_server",
+      "args": ["KPI\\kpi.json", "${workspaceFolder}/out"],
+      "cwd": "${workspaceFolder}/..",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.."
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "KPI: Run (HDF Mode)",
+      "type": "python",
+      "request": "launch",
+      "module": "KPI.kpi_server",
+      "args": [
+        "${workspaceFolder}/input.hdf",
+        "${workspaceFolder}/output.hdf",
+        "${workspaceFolder}/out"
+      ],
+      "cwd": "${workspaceFolder}/..",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.."
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "KPI: Run (ZMQ Server)",
+      "type": "python",
+      "request": "launch",
+      "module": "KPI.kpi_server",
+      "args": ["zmq", "5555"],
+      "cwd": "${workspaceFolder}/..",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.."
+      },
+      "justMyCode": false
+    }
+  ]
+}

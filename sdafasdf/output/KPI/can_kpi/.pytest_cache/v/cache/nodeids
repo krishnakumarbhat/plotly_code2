@@ -1,0 +1,4 @@
+[
+  "tests/test_kpi_main.py::KpiMainRenderingTests::test_run_pair_shows_flr_status_tab_for_fc_alias",
+  "tests/test_kpi_main.py::KpiMainRenderingTests::test_run_writes_index_accuracy_plot"
+]

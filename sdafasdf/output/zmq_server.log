@@ -1,0 +1,77 @@
+2026-07-21 12:27:31,352 - __main__ - INFO - Starting KPI ZMQ server on port 5555...
+2026-07-21 12:27:31,390 - __main__ - INFO - KPI ZMQ server started on port 5555
+2026-07-21 12:27:33,736 - __main__ - INFO - Processing KPI for sensor FR, base IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05
+2026-07-21 12:27:33,744 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [0] DYNAMIC_ALIGNMENT_STREAM
+2026-07-21 12:27:33,744 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream DYNAMIC_ALIGNMENT_STREAM - OD data not found
+2026-07-21 12:27:33,745 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [1] DETECTION_STREAM
+2026-07-21 12:27:33,865 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [2] RDD_STREAM
+2026-07-21 12:27:33,939 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [3] CDC_STREAM
+2026-07-21 12:27:33,939 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream CDC_STREAM - OD data not found
+2026-07-21 12:27:33,939 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [4] VSE_STREAM
+2026-07-21 12:27:33,979 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [5] TRACKER_STREAM
+2026-07-21 12:27:33,979 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream TRACKER_STREAM - OD data not found
+2026-07-21 12:27:33,984 - UDP_KPI.c_business_layer.alignment_matching_kpi - WARNING - Skipping alignment matching KPI for FR - DYNAMIC_ALIGNMENT_STREAM not found
+2026-07-21 12:27:33,985 - UDP_KPI.c_business_layer.alignment_matching_kpi - INFO - Available streams in data: ['DETECTION_STREAM', 'RDD_STREAM', 'VSE_STREAM']
+2026-07-21 12:27:33,989 - UDP_KPI.c_business_layer.detection_matching_kpi - INFO - Detection KPI mode for FR: rdd (RDD index signals available)
+2026-07-21 12:27:36,834 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - KPI parsing complete for sensor=FR base=IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05 in 3.098s
+2026-07-21 12:27:36,838 - root - INFO - Function parse_for_kpi took 3.1017 seconds to execute.
+2026-07-21 12:27:58,799 - __main__ - INFO - Processing KPI for sensor FL, base IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05
+2026-07-21 12:27:58,801 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [0] DYNAMIC_ALIGNMENT_STREAM
+2026-07-21 12:27:58,801 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream DYNAMIC_ALIGNMENT_STREAM - OD data not found
+2026-07-21 12:27:58,802 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [1] DETECTION_STREAM
+2026-07-21 12:27:58,858 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [2] RDD_STREAM
+2026-07-21 12:27:58,901 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [3] CDC_STREAM
+2026-07-21 12:27:58,901 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream CDC_STREAM - OD data not found
+2026-07-21 12:27:58,901 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [4] VSE_STREAM
+2026-07-21 12:27:58,928 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [5] TRACKER_STREAM
+2026-07-21 12:27:58,928 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream TRACKER_STREAM - OD data not found
+2026-07-21 12:27:58,929 - UDP_KPI.c_business_layer.alignment_matching_kpi - WARNING - Skipping alignment matching KPI for FL - DYNAMIC_ALIGNMENT_STREAM not found
+2026-07-21 12:27:58,929 - UDP_KPI.c_business_layer.alignment_matching_kpi - INFO - Available streams in data: ['DETECTION_STREAM', 'RDD_STREAM', 'VSE_STREAM']
+2026-07-21 12:27:58,931 - UDP_KPI.c_business_layer.detection_matching_kpi - INFO - Detection KPI mode for FL: rdd (RDD index signals available)
+2026-07-21 12:28:01,653 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - KPI parsing complete for sensor=FL base=IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05 in 2.853s
+2026-07-21 12:28:01,656 - root - INFO - Function parse_for_kpi took 2.8570 seconds to execute.
+2026-07-21 12:28:25,954 - __main__ - INFO - Processing KPI for sensor FC, base IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05
+2026-07-21 12:28:25,957 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [0] DYNAMIC_ALIGNMENT_STREAM
+2026-07-21 12:28:25,958 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream DYNAMIC_ALIGNMENT_STREAM - OD data not found
+2026-07-21 12:28:25,958 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [1] DETECTION_STREAM
+2026-07-21 12:28:26,057 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [2] RDD_STREAM
+2026-07-21 12:28:26,150 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [3] CDC_STREAM
+2026-07-21 12:28:26,151 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream CDC_STREAM - OD data not found
+2026-07-21 12:28:26,151 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [4] VSE_STREAM
+2026-07-21 12:28:26,205 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [5] TRACKER_STREAM
+2026-07-21 12:28:26,206 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream TRACKER_STREAM - OD data not found
+2026-07-21 12:28:26,208 - UDP_KPI.c_business_layer.alignment_matching_kpi - WARNING - Skipping alignment matching KPI for FC - DYNAMIC_ALIGNMENT_STREAM not found
+2026-07-21 12:28:26,209 - UDP_KPI.c_business_layer.alignment_matching_kpi - INFO - Available streams in data: ['DETECTION_STREAM', 'RDD_STREAM', 'VSE_STREAM']
+2026-07-21 12:28:26,210 - UDP_KPI.c_business_layer.detection_matching_kpi - INFO - Detection KPI mode for FC: rdd (RDD index signals available)
+2026-07-21 12:28:28,453 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - KPI parsing complete for sensor=FC base=IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05 in 2.498s
+2026-07-21 12:28:28,456 - root - INFO - Function parse_for_kpi took 2.5022 seconds to execute.
+2026-07-21 12:28:53,174 - __main__ - INFO - Processing KPI for sensor RR, base IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05
+2026-07-21 12:28:53,177 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [0] DYNAMIC_ALIGNMENT_STREAM
+2026-07-21 12:28:53,177 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream DYNAMIC_ALIGNMENT_STREAM - OD data not found
+2026-07-21 12:28:53,177 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [1] DETECTION_STREAM
+2026-07-21 12:28:53,248 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [2] RDD_STREAM
+2026-07-21 12:28:53,299 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [3] CDC_STREAM
+2026-07-21 12:28:53,299 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream CDC_STREAM - OD data not found
+2026-07-21 12:28:53,299 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [4] VSE_STREAM
+2026-07-21 12:28:53,329 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [5] TRACKER_STREAM
+2026-07-21 12:28:53,330 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream TRACKER_STREAM - OD data not found
+2026-07-21 12:28:53,331 - UDP_KPI.c_business_layer.alignment_matching_kpi - WARNING - Skipping alignment matching KPI for RR - DYNAMIC_ALIGNMENT_STREAM not found
+2026-07-21 12:28:53,332 - UDP_KPI.c_business_layer.alignment_matching_kpi - INFO - Available streams in data: ['DETECTION_STREAM', 'RDD_STREAM', 'VSE_STREAM']
+2026-07-21 12:28:53,334 - UDP_KPI.c_business_layer.detection_matching_kpi - INFO - Detection KPI mode for RR: rdd (RDD index signals available)
+2026-07-21 12:28:56,123 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - KPI parsing complete for sensor=RR base=IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05 in 2.949s
+2026-07-21 12:28:56,127 - root - INFO - Function parse_for_kpi took 2.9531 seconds to execute.
+2026-07-21 12:29:21,211 - __main__ - INFO - Processing KPI for sensor RL, base IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05
+2026-07-21 12:29:21,213 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [0] DYNAMIC_ALIGNMENT_STREAM
+2026-07-21 12:29:21,214 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream DYNAMIC_ALIGNMENT_STREAM - OD data not found
+2026-07-21 12:29:21,214 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [1] DETECTION_STREAM
+2026-07-21 12:29:21,274 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [2] RDD_STREAM
+2026-07-21 12:29:21,328 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [3] CDC_STREAM
+2026-07-21 12:29:21,328 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream CDC_STREAM - OD data not found
+2026-07-21 12:29:21,328 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [4] VSE_STREAM
+2026-07-21 12:29:21,359 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - Processing stream [5] TRACKER_STREAM
+2026-07-21 12:29:21,359 - UDP_KPI.a_persistence_layer.hdf_wrapper - WARNING - Skipping stream TRACKER_STREAM - OD data not found
+2026-07-21 12:29:21,361 - UDP_KPI.c_business_layer.alignment_matching_kpi - WARNING - Skipping alignment matching KPI for RL - DYNAMIC_ALIGNMENT_STREAM not found
+2026-07-21 12:29:21,362 - UDP_KPI.c_business_layer.alignment_matching_kpi - INFO - Available streams in data: ['DETECTION_STREAM', 'RDD_STREAM', 'VSE_STREAM']
+2026-07-21 12:29:21,364 - UDP_KPI.c_business_layer.detection_matching_kpi - INFO - Detection KPI mode for RL: rdd (RDD index signals available)
+2026-07-21 12:29:23,463 - UDP_KPI.a_persistence_layer.hdf_wrapper - INFO - KPI parsing complete for sensor=RL base=IFV7XX_WBATR95060NC89209_20250919_080721_0000_b05 in 2.252s
+2026-07-21 12:29:23,466 - root - INFO - Function parse_for_kpi took 2.2548 seconds to execute.

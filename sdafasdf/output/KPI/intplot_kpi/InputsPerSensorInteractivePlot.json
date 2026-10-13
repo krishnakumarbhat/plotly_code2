@@ -1,0 +1,30 @@
+{
+    "INPUT_HDF": [
+        {
+        "Input1": [
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/inputFL.h5",
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/inputFR.h5"
+        ]
+    },
+    {
+        "Input2": [
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/inputRL.h5",
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/inputRR.h5"
+        ]
+    }
+],
+    "OUTPUT_HDF": [
+        {
+            "output1": [
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/outputFL.h5",
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/outputFR.h5"
+            ]
+        },
+        {
+            "output2": [
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/outputRL.h5",
+            "C:/Users/username/Desktop/plotly_40/hdf_DB/hdf_per/outputRR.h5"
+            ]
+        }
+    ]
+}

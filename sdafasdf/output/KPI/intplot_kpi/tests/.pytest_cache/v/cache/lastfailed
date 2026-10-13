@@ -1,0 +1,7 @@
+{
+  "test_config_layer.py::test_xml_config_parser": true,
+  "test_config_layer.py::test_json_parser_factory_allsensor": true,
+  "test_config_layer.py::test_json_parser_factory_persensor": true,
+  "test_config_layer.py::test_json_parser_factory_paired": true,
+  "test_business_layer.py": true
+}

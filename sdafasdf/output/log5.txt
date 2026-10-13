@@ -1,0 +1,79 @@
+
+ HTML Report Generate 0Vector Library is integrated for the Analysis!!
+
+	**************************************************************** 
+	%                                                              %
+	%  		 MUDP_EXTRACTOR_26_28_19_84                     %
+	%                                                              %
+	%   APTIV CORPORATION PROPRIETARY,  Copyright    2017 - 2023   %
+	%                                                              %
+	**************************************************************** 
+
+Major version: 19
+Minor version: 84
+Release week : 28
+Release year : 2026
+
+EXE Build date: Jul 17 2026
+
+MUDP_Log_DataExtracter.exe version 19.0.84 
+/*=========================================================================================================*/
+
+Sensor_Enabled: RL RR FR FL FC 
+Selected_Generation: GEN7
+LOG_REPLAY_MODE: CONTINUOUS_Mode 
+
+Data Extraction operation started for the Log :/mnt/c/Users/ouymc2/Desktop/sdafasdf/CEER_S12_20260701_151002_0000_b05.MF4!!
+
+
+Log duration is 19 seconds
+
+[INFO]: The file format is UPU
+************************************************************
+ Stream Version info table for the provided log
+_______________________________________________________________________________________________________
+|Customer Name		|Stream Name                |Log Version    |Decoder Version   |Stream Size	|
+_______________________________________________________________________________________________________
+HDF5 file with compressed dataset created at: /mnt/c/Users/ouymc2/Desktop/sdafasdf/output/CEER_S12_20260701_151002_0000_b05.h5
+PLATFORM_SRR7P_V2	 HEADER_STREAM			10		11		892
+PLATFORM_SRR7P_V2	 ALIGNMENT_STREAM		11		11		164
+PLATFORM_SRR7P_V2	 RADAR_CAPABILITY_STREAM	48		53		668
+PLATFORM_SRR7P_V2	 ID_STREAM			5		5		80
+PLATFORM_SRR7P_V2	 TOI_STREAM			10		13		4872
+PLATFORM_SRR7P_V2	 DYNAMIC_ALIGNMENT_STREAM	16		16		1040
+PLATFORM_SRR7P_V2	 DETECTION_STREAM		19		21		29364
+PLATFORM_SRR7P_V2	 STATUS_STREAM			3		4		276
+PLATFORM_SRR7P_V2	 RDD_STREAM			18		18		51248
+PLATFORM_SRR7P_V2	 VSE_STREAM			5		6		112
+PLATFORM_SRR7P_V2	 DEBUG_STREAM			20		21		1372
+PLATFORM_SRR7P_V2	 DETECTION_DEBUG_STREAM		3		3		8292
+PLATFORM_SRR7P_V2	 DOWN_SELECTION_STREAM		14		15		13488
+PLATFORM_SRR7P_V2	 RDD_DEBUG_STREAM		9		9		6328
+PLATFORM_SRR7P_V2	 CDC_STREAM			12		12		0
+PLATFORM_SRR7P_V2	 MMIC_STREAM			16		17		556
+PLATFORM_FLR7_V2	 HEADER_STREAM			10		11		892
+PLATFORM_FLR7_V2	 ALIGNMENT_STREAM		11		11		164
+PLATFORM_FLR7_V2	 RADAR_CAPABILITY_STREAM	48		53		668
+PLATFORM_FLR7_V2	 ID_STREAM			5		5		80
+PLATFORM_FLR7_V2	 TOI_STREAM			10		13		9672
+PLATFORM_FLR7_V2	 DYNAMIC_ALIGNMENT_STREAM	16		16		1040
+PLATFORM_FLR7_V2	 DETECTION_STREAM		19		21		33148
+PLATFORM_FLR7_V2	 STATUS_STREAM			3		4		276
+PLATFORM_FLR7_V2	 RDD_STREAM			18		18		51224
+PLATFORM_FLR7_V2	 VSE_STREAM			5		6		112
+PLATFORM_FLR7_V2	 DEBUG_STREAM			20		21		1372
+PLATFORM_FLR7_V2	 DETECTION_DEBUG_STREAM		3		3		9348
+PLATFORM_FLR7_V2	 DOWN_SELECTION_STREAM		14		15		26888
+PLATFORM_FLR7_V2	 RDD_DEBUG_STREAM		9		9		6232
+PLATFORM_FLR7_V2	 CDC_STREAM			12		0		0
+PLATFORM_FLR7_V2	 MMIC_STREAM			16		17		556
+PLATFORM_SRR7P_V2	 CALIB_STREAM			1		0		0
+PLATFORM_FLR7_V2	 CALIB_STREAM			0		0		0
+DataSet::~DataSet - H5Dclose failed
+DataSet::~DataSet - H5Dclose failed
+DataSet::~DataSet - H5Dclose failed
+DataSet::~DataSet - H5Dclose failed
+DataSet::~DataSet - H5Dclose failed
+DataSet::~DataSet - H5Dclose failed
+DataSet::~DataSet - H5Dclose failed
+terminate called after throwing an instance of 'H5::DataSetIException'

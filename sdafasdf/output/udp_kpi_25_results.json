@@ -1,0 +1,273 @@
+[
+  {
+    "pair": 1,
+    "tag": "pair01_CCA_162336_vs_CCA_162336",
+    "in": "CCA_162336",
+    "out": "CCA_162336",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 2,
+    "tag": "pair02_CCA_162336_vs_CCA_170521",
+    "in": "CCA_162336",
+    "out": "CCA_170521",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 3,
+    "tag": "pair03_CCA_162336_vs_CCA_144737",
+    "in": "CCA_162336",
+    "out": "CCA_144737",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 4,
+    "tag": "pair04_CCA_162336_vs_CEER_S12",
+    "in": "CCA_162336",
+    "out": "CEER_S12",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 5,
+    "tag": "pair05_CCA_162336_vs_IFV7XX_b05",
+    "in": "CCA_162336",
+    "out": "IFV7XX_b05",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 6,
+    "tag": "pair06_CCA_170521_vs_CCA_162336",
+    "in": "CCA_170521",
+    "out": "CCA_162336",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 7,
+    "tag": "pair07_CCA_170521_vs_CCA_170521",
+    "in": "CCA_170521",
+    "out": "CCA_170521",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 8,
+    "tag": "pair08_CCA_170521_vs_CCA_144737",
+    "in": "CCA_170521",
+    "out": "CCA_144737",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 9,
+    "tag": "pair09_CCA_170521_vs_CEER_S12",
+    "in": "CCA_170521",
+    "out": "CEER_S12",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 10,
+    "tag": "pair10_CCA_170521_vs_IFV7XX_b05",
+    "in": "CCA_170521",
+    "out": "IFV7XX_b05",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 11,
+    "tag": "pair11_CCA_144737_vs_CCA_162336",
+    "in": "CCA_144737",
+    "out": "CCA_162336",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 12,
+    "tag": "pair12_CCA_144737_vs_CCA_170521",
+    "in": "CCA_144737",
+    "out": "CCA_170521",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 13,
+    "tag": "pair13_CCA_144737_vs_CCA_144737",
+    "in": "CCA_144737",
+    "out": "CCA_144737",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 14,
+    "tag": "pair14_CCA_144737_vs_CEER_S12",
+    "in": "CCA_144737",
+    "out": "CEER_S12",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 15,
+    "tag": "pair15_CCA_144737_vs_IFV7XX_b05",
+    "in": "CCA_144737",
+    "out": "IFV7XX_b05",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 16,
+    "tag": "pair16_CEER_S12_vs_CCA_162336",
+    "in": "CEER_S12",
+    "out": "CCA_162336",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 17,
+    "tag": "pair17_CEER_S12_vs_CCA_170521",
+    "in": "CEER_S12",
+    "out": "CCA_170521",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 18,
+    "tag": "pair18_CEER_S12_vs_CCA_144737",
+    "in": "CEER_S12",
+    "out": "CCA_144737",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 19,
+    "tag": "pair19_CEER_S12_vs_CEER_S12",
+    "in": "CEER_S12",
+    "out": "CEER_S12",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 20,
+    "tag": "pair20_CEER_S12_vs_IFV7XX_b05",
+    "in": "CEER_S12",
+    "out": "IFV7XX_b05",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 21,
+    "tag": "pair21_IFV7XX_b05_vs_CCA_162336",
+    "in": "IFV7XX_b05",
+    "out": "CCA_162336",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 22,
+    "tag": "pair22_IFV7XX_b05_vs_CCA_170521",
+    "in": "IFV7XX_b05",
+    "out": "CCA_170521",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 23,
+    "tag": "pair23_IFV7XX_b05_vs_CCA_144737",
+    "in": "IFV7XX_b05",
+    "out": "CCA_144737",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 24,
+    "tag": "pair24_IFV7XX_b05_vs_CEER_S12",
+    "in": "IFV7XX_b05",
+    "out": "CEER_S12",
+    "sensors_found": 5,
+    "det_ok": 0,
+    "aln_ok": 0,
+    "accuracies": []
+  },
+  {
+    "pair": 25,
+    "tag": "pair25_IFV7XX_b05_vs_IFV7XX_b05",
+    "in": "IFV7XX_b05",
+    "out": "IFV7XX_b05",
+    "sensors_found": 5,
+    "det_ok": 5,
+    "aln_ok": 0,
+    "accuracies": [
+      {
+        "sensor": "FL",
+        "accuracy": "present"
+      },
+      {
+        "sensor": "FC",
+        "accuracy": "present"
+      },
+      {
+        "sensor": "FR",
+        "accuracy": "present"
+      },
+      {
+        "sensor": "RL",
+        "accuracy": "present"
+      },
+      {
+        "sensor": "RR",
+        "accuracy": "present"
+      }
+    ]
+  }
+]

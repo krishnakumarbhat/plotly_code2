@@ -1,0 +1,11 @@
+{
+    // Basic workspace settings for this KPI project
+    "python.defaultInterpreterPath": "${command:python.interpreterPath}",
+    "editor.formatOnSave": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "explore_*.py": true,
+        "hdf_info.txt": true,
+        "hdf_attrs.txt": true
+    }
+}

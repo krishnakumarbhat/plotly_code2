@@ -1,0 +1,56 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run ResimHTMLReport (config.json)",
+			"type": "shell",
+			"command": "${command:python.interpreterPath}",
+			"args": [
+				"ResimHTMLReport.py",
+				"ConfigInteractivePlots.xml",
+				"InputsInteractivePlot.json",
+				"out_config_fast",
+				"config.json"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build EXE (PyInstaller spec)",
+			"type": "shell",
+			"command": "${command:python.interpreterPath}",
+			"args": [
+				"-m",
+				"PyInstaller",
+				"--clean",
+				"ResimHTMLReport_windows.spec"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build EXE via PyInstaller",
+			"type": "shell",
+			"command": "${command:python.interpreterPath}",
+			"args": [
+				"-m",
+				"PyInstaller",
+				"--clean",
+				"ResimHTMLReport_windows.spec"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

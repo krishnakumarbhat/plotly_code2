@@ -1,0 +1,14 @@
+[
+  "test_config_layer.py::test_invalid_json_file",
+  "test_config_layer.py::test_invalid_xml_file",
+  "test_config_layer.py::test_json_parser_factory_allsensor",
+  "test_config_layer.py::test_json_parser_factory_invalid_type",
+  "test_config_layer.py::test_json_parser_factory_paired",
+  "test_config_layer.py::test_json_parser_factory_persensor",
+  "test_config_layer.py::test_xml_config_parser",
+  "test_data_storage.py::test_data_model_storage_add_data",
+  "test_data_storage.py::test_data_model_storage_get_data",
+  "test_data_storage.py::test_data_model_storage_get_metadata",
+  "test_data_storage.py::test_data_model_storage_get_nonexistent_data",
+  "test_data_storage.py::test_data_model_storage_initialization"
+]
