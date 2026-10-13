@@ -1,0 +1,5 @@
+pip         >= 18.0
+dohq-artifactory >= 0.8.0
+colorama
+pre-commit
+tinynetrc

@@ -1,0 +1,173 @@
+"""
+This Workspace file is used to bring in all the required external dependencies and set up global configurations to be used by the entire project.
+
+Many times, developers will need to override teh http_archive calls to develop their building block code locally.
+To do this, use the local_repository rule instead.
+Comment out the http_archive and copy/paste and update the below local_repository example to match your use case.
+Once done with development, remove the local_repository rule, and update the http_archive rule to point to your new
+Building Block release.
+
+local_repository(
+    name = "ti_arm_1_3_1_windows",
+    path = "C:/git/ti-cgt-armllvm_1.3.1.LTS_windows",
+)
+"""
+
+workspace(name = "rotbb")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+###############################################
+# The building block is dependent on these    #
+# directories provided by the application.    #
+###############################################
+
+http_archive(
+    name = "bazel_platform",
+    sha256 = "46285f811df25b9a91f99f966ae5a045b3e97003e40d06f93c8d0646c041eece",
+    url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_internal-generic-local/bazel_platform/bp_51dd31465b945ace2c24da2f88d601f272e0e864.zip",
+)
+
+load("@bazel_platform//:dependencies.bzl", "bazel_platform_dependencies", "bazel_platform_toolchains")
+
+bazel_platform_dependencies(
+    name = "@bazel_platform",
+    repo_url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/",
+)
+
+# Repository links for supporting toolchains
+
+bazel_platform_toolchains("@bazel_platform")
+
+register_toolchains(
+    "//tools/bazel/toolchains/mingw:mingw_windows_toolchain",
+    "//tools/bazel/toolchains/gcovr:gcovr_windows_toolchain",
+)
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728",
+    urls = [
+        "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/bazel_skylib/bazel-skylib-1.2.1.tar.gz",
+    ],
+)
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+load("@bazel_platform//toolchain/python3/repository_rules:artifactory_wheel.bzl", "artifactory_wheel")
+
+artifactory_wheel(
+    name = "dataDogWheel",
+    default_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/datadog/datadog-0.44.0-py2.py3-none-any.whl"],
+        "sha256": "57c4878d3a8351f652792cdba78050274789dcc44313adec096e87f9d3ca5992",
+    },
+    # Optional: If the wheel contains an unusual prefix, specify it here.
+    # Do not specify it otherwise.
+    # imports = ["."],
+)
+
+artifactory_wheel(
+    name = "pandasWheel",
+    linux_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/pandas/pandas-1.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"],
+        "sha256": "c76f1d104844c5360c21d2ef0e1a8b2ccf8b8ebb40788475e255b9462e32b2be",
+    },
+    windows_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/pandas/pandas-1.4.4-cp310-cp310-win_amd64.whl"],
+        "sha256": "785e878a6e6d8ddcdb8c181e600855402750052497d7fc6d6b508894f6b8830b",
+    },
+)
+
+artifactory_wheel(
+    name = "numpyWheel",
+    linux_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/numpy/numpy-1.23.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"],
+        "sha256": "a8365b942f9c1a7d0f0dc974747d99dd0a0cdfc5949a33119caf05cb314682d3",
+    },
+    windows_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/numpy/numpy-1.23.2-pp38-pypy38_pp73-win_amd64.whl"],
+        "sha256": "be6b350dfbc7f708d9d853663772a9310783ea58f6035eec649fb9c4371b5389",
+    },
+)
+
+artifactory_wheel(
+    name = "dateutilWheel",
+    default_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/dateutil/python_dateutil-2.8.2-py2.py3-none-any.whl"],
+        "sha256": "961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9",
+    },
+)
+
+artifactory_wheel(
+    name = "pytzWheel",
+    default_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/pytz/pytz-2022.5-py2.py3-none-any.whl"],
+        "sha256": "335ab46900b1465e714b4fda4963d87363264eb662aab5e65da039c25f1f5b22",
+    },
+)
+
+artifactory_wheel(
+    name = "sixWheel",
+    default_wheel = {
+        "urls": ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-3rd_party-generic-local/python/wheels/six/six-1.12.0-py2.py3-none-any.whl"],
+        "sha256": "3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c",
+    },
+)
+
+http_archive(
+    name = "mingw64_10_0_0_rev0",
+    build_file = "@bazel_platform//:toolchain/mingw/archive.BUILD",
+    sha256 = "3c0902d7fc08ffc522099170bbff2df09abf1a95c7c1a8c08a745923f86d6fd3",
+    url = "https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/mingw/windows/mingw-10.0.0-rev0.zip",
+)
+
+http_archive(
+    name = "com_google_googletest",
+    sha256 = "353571c2440176ded91c2de6d6cd88ddd41401d14692ec1f99e35d013feda55a",
+    strip_prefix = "googletest-release-1.11.0",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/bazel_tools_external-generic-local/googletest/googletest-release-1.11.0.zip"],
+)
+
+http_archive(
+    name = "smc_srr7p_satellite",
+    build_file = "//module/_common/calibrations/smc:archive.BUILD",
+    sha256 = "5690f5fb85db606b713383743850570ef3c3efdb0b79582742d3ffe3c73a2f5b",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/v34/SRR7P/SRR7P_Satellite_SMC_34_72_0_3_2023-10-11_09-01-43.zip"],
+)
+
+http_archive(
+    name = "smc_srr7p_standalone",
+    build_file = "//module/_common/calibrations/smc:archive.BUILD",
+    sha256 = "2a665a5d00ccbe68ce99d8cbeba438e52696f05207c08a3a2ebcc61a4d31a2b7",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/v34/SRR7P/SRR7P_Standalone_SMC_34_72_0_2_2023-10-03_01-01-41.zip"],
+)
+
+http_archive(
+    name = "smc_srr7hd",
+    build_file = "//module/_common/calibrations/smc:archive.BUILD",
+    sha256 = "6bb8846228b984b42e78c4389baea640773423ea04beeb7e5d787aaae049d370",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/v34/SRR7HD/SRR7HD_SMC_34_75_0_0_2023-10-02_12-58-23.zip"],
+)
+
+http_archive(
+    name = "smc_flr7_satellite",
+    build_file = "//module/_common/calibrations/smc:archive.BUILD",
+    sha256 = "55300baa785ed4d15a33c8cb8620875627802136cc82b789882c4c7736297ea5",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/v34/FLR7/FLR7_TI_Satellite_SMC_34_73_0_8_2023-10-18_12-15-00.zip"],
+)
+
+http_archive(
+    name = "smc_flr7_standalone",
+    build_file = "//module/_common/calibrations/smc:archive.BUILD",
+    sha256 = "97c682e28d3680e00c6c2093de12b27b18e766f1122b009a7e16109f7ddcc9dd",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/core_radar-aptiv-00000000-calibrations-local/SMC/v34/FLR7/FLR7_TI_Standalone_SMC_34_73_0_7_2023-10-18_12-13-08.zip"],
+)
+
+http_archive(
+    name = "spbb",
+    sha256 = "2233c050a78574c6451b2fbee728c95c4fa75724c462c84ad9255ebf91393159",
+    urls = ["https://jfrog.asux.aptiv.com/artifactory/gen7-aptiv-advradar-building_blocks-local/spbb/releases/1.0/gen7_spbb_1.0.08.zip"],
+)

@@ -1,0 +1,84 @@
+/*===========================================================================*\
+* FILE: sg_variant_selector.h
+*============================================================================
+* Copyright (C) 2025 Aptiv Advanced Safety and User Experience. All rights reserved.
+* Confidential - Restricted Aptiv information. Do not disclose.
+*----------------------------------------------------------------------------
+* DESCRIPTION:
+*   It is CMAKE GENERATED file that is used for variant selection!
+*
+* Applicable Standards (in order of precedence: highest first):
+*     ESGW_4-2_PE-SWX_00-01-A01_EN, "Aptiv C++ Coding Standards"[May 26, 2019]
+*     ESGW_4-2_PE-SWX_00-01-A02_EN "Aptiv C Coding Standards" [12-Mar-2006]
+*
+\*===========================================================================*/
+#ifndef SG_VARIANT_SELECTOR_H
+#define SG_VARIANT_SELECTOR_H
+
+#include "sg_rot_rspp_mapper.h"
+#include "sg_variant_bmw_sp25_mrr.h"
+#include "sg_variant_north_star_corner.h"
+#include "sg_variant_north_star_front.h"
+#include "sg_variant_north_star_rear.h"
+#include "sg_variant_platform.h"
+#include "sg_variant_scania_traton.h"
+
+#define @variant_macro_inplace_str@
+
+namespace sg
+{
+#if defined(SG_VARIANT_PLATFORM)
+   using VariantSelected = VariantPlatform;
+#define SG_VARIANT_DEFINED
+// TODO (FZD-2589): Bring back dependency for PLATFORM variant
+// #if !defined(RSPP_VARIANT_DEFINITION_A_H) || !defined(F360_VARIANT_DEFINITION_A_H)
+// #error "Expected ROT/RSPP variant A"
+// #endif
+#endif
+
+#if defined(SG_VARIANT_BMW_SP25_MRR)
+   using VariantSelected = VariantBmwSp25Mrr;
+#define SG_VARIANT_DEFINED
+#if !defined(RSPP_VARIANT_DEFINITION_D_H) || !defined(F360_VARIANT_DEFINITION_D_H)
+#error "Expected ROT/RSPP variant D"
+#endif
+#endif
+
+#if defined(SG_VARIANT_SCANIA_TRATON)
+   using VariantSelected = VariantScaniaTraton;
+#define SG_VARIANT_DEFINED
+#if !defined(RSPP_VARIANT_DEFINITION_K_H) || !defined(RSPP_VARIANT_DEFINITION_K_H)
+#error "Expected ROT/RSPP variant K"
+#endif
+#endif
+
+#if defined(SG_VARIANT_NORTH_STAR_FRONT)
+   using VariantSelected = VariantNorthStarFront;
+#define SG_VARIANT_DEFINED
+#if !defined(RSPP_VARIANT_DEFINITION_H_H) || !defined(RSPP_VARIANT_DEFINITION_H_H)
+#error "Expected ROT/RSPP variant H"
+#endif
+#endif
+
+#if defined(SG_VARIANT_NORTH_STAR_CORNER)
+   using VariantSelected = VariantNorthStarCorner;
+#define SG_VARIANT_DEFINED
+#if !defined(RSPP_VARIANT_DEFINITION_L_H) || !defined(RSPP_VARIANT_DEFINITION_L_H)
+#error "Expected ROT/RSPP variant L"
+#endif
+#endif
+
+#if defined(SG_VARIANT_NORTH_STAR_REAR)
+   using VariantSelected = VariantNorthStarRear;
+#define SG_VARIANT_DEFINED
+#if !defined(RSPP_VARIANT_DEFINITION_O_H) || !defined(RSPP_VARIANT_DEFINITION_O_H)
+#error "Expected ROT/RSPP variant O"
+#endif
+#endif
+
+#if !defined(SG_VARIANT_DEFINED)
+#error "Not selected variant for Stationary Geometries"
+#endif
+}
+
+#endif

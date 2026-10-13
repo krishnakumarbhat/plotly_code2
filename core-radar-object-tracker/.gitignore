@@ -1,0 +1,22 @@
+
+# Generic Ignores
+*.bak
+*.elf
+*.tmp
+*.log
+
+# Python Ignores
+*__pycache__
+*.pyc
+tools/python/toolsInit/artifactoryDownloads/*
+
+# VS Code Ignores
+.vscode
+*.code-workspace
+
+# Bazel ignores
+/bazel-*
+user.bazelrc
+
+# Coverity ignores
+covdir

@@ -1,0 +1,70 @@
+
+# Use half of available workers by default. This helps keep the PC usable during builds.
+build --jobs="HOST_CPUS*.5"
+
+# If true, Bazel picks up host-OS-specific config lines from bazelrc files.
+common --enable_platform_specific_config
+
+# Flag Aliases - MUST document additions in the README.md file at the root of the repo!
+# EXAMPLE: build --flag_alias=variant=@build_config//:variant
+
+# If you use @bazel_platform//tools/gcovr/... rules, you must specify this flag.
+# Why: when there's a testonly=1 rule (named A) that depends on cc_test rule (named B)
+# and we try to build A and B simultaneously (bazel build ...), we get error
+# similar to https://github.com/bazelbuild/bazel/issues/14294
+# Use this flag to fix the error.
+build --experimental_retain_test_configuration_across_testonly
+
+build --experimental_cc_implementation_deps
+
+build --spawn_strategy=local
+
+# discard the PATH from the environment
+# In order to ensure hermetic builds, we discard the PATH so that Bazel can't
+# pick up any tools from the local installation. Note that the default platform
+# toolchains rely on tools in PATH, so a regular cc_binary() doesn't work.
+# TODO: Once fixed, remove the semicolon. This is a workaround for a Bazel bug,
+# see https://github.com/bazelbuild/bazel/issues/15364.
+build:windows --action_env=PATH=;
+# We have to hard code the PATH on linux so remote caches are shared.
+# Bazel needs gcc to opperate, so we cannot make it blank.
+# Linux tools should reside in one of the below directories, if they're needed from the system,
+# but this should be avoided at all reasonable costs.
+build:linux --action_env=PATH="/opt/SquishCoco/wrapper/bin/:/opt/SquishCoco/bin/:/bin:/usr/bin"
+
+# enable platform-based toolchain resolution
+# This disables some legacy code which we want to avoid using.
+build --incompatible_enable_cc_toolchain_resolution
+
+# disable implicit export of files
+# https://github.com/bazelbuild/bazel/issues/10225
+build --incompatible_no_implicit_file_export
+# Use the default Bazel C++ toolchain to build the tools used during the
+# build.
+build --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+# causes output dir name to use a non-default platform name instead of the CPU.
+build --experimental_platform_in_output_dir
+
+# Configure Java Development Kit
+# This fixes an error when a target executes another target with coverage and
+# maybe some other cases. The error you get is "Auto-Configuration Error: Cannot
+# find Java binary bin/java.exe in ...".
+# TODO: It's unclear whether this is a proper fix or just a workaround depending
+# on non-hermetic builds.
+build --java_runtime_version=remotejdk_11
+
+# --toolchain_resolution_debug should be uncommented if you need to debug why a specific toolchain is used
+# It will print debugging info on how Bazel selects its toolchain
+# build --toolchain_resolution_debug=.*
+
+# disable default C++ toolchains. we always provide our own!
+#common --repo_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+# Import a user bazel config file, if available.
+# Flags from user.bazelrc will override the ones in this file
+try-import %workspace%/user.bazelrc
+build --flag_alias=rot=@appl_inclusion_dep//:rot_fusion
+build --flag_alias=rot_out=//f360_tracker:rot_output
+build --flag_alias=rot_gen=@appl_inclusion_dep//:rot_gen
+build --flag_alias=rot_specific_variant=@appl_inclusion_dep//:rot_specific_variant
