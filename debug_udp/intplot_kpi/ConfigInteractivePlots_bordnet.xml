@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Interactiveplot_Extracter_Configuration>
+
+  <Interactiveplot_Extracter_Configuration_Config_XML_Version>2.0</Interactiveplot_Extracter_Configuration_Config_XML_Version>
+
+  
+
+  
+  <HDF_SOURCE_SELECTION>BORDNET</HDF_SOURCE_SELECTION>
+
+  
+  <HDF_FILE>HDF_WITH_ALLSENSOR</HDF_FILE>
+
+  
+  <PLOT_MODE>
+    <PLOT_OVERLAY>1</PLOT_OVERLAY>
+    <KPI>1</KPI>
+    <RAG_DATA_TEXT>0</RAG_DATA_TEXT>
+    <VIDEO_OVERLAY>0</VIDEO_OVERLAY>
+    <D3_VISUALIZATION>0</D3_VISUALIZATION>
+    <ALLUR_REPORT>0</ALLUR_REPORT>
+  </PLOT_MODE>
+
+</Interactiveplot_Extracter_Configuration>
